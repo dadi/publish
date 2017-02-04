@@ -1,0 +1,175 @@
+// ***************************
+// Feedback: Traffic light
+
+.badge {
+	width: 15px; height: 15px;
+	border-radius: 100%;
+	display: inline-block;
+	font-size: 0;
+	box-shadow: 0px 0px 0 1px #fff;
+	text-align: center;
+	line-height: 15px;
+	text-shadow: none !important;
+
+	&--small {
+		width: 10px; height: 10px;
+	}
+	&--number {
+		font-size: 12px;
+	}
+	&--bdr {
+		border: 1px solid;
+	}
+}
+
+// ***************************
+// Lozenge
+
+.loz {
+	font-size: 10px;
+	font-family: 'Menlo', monospace;
+	border: 1px solid #ddd;
+	overflow: hidden;
+	border-radius: $radius;
+	color: #444;
+	display: inline-block;
+	vertical-align: middle;
+
+	&__key {
+		background: #ddd;
+		padding: 3px 5px;
+		display: inline-block;
+	}
+	&__value {
+		padding: 0 4px;
+	}
+}
+a.loz:hover {
+	border-color: $blue;
+}
+a.loz:hover .loz__key {
+	background: $blue;
+	color: #fff;
+}
+
+// ***************************
+// Feedback: Blocks
+
+.feedback--block {
+	background: $light-grey;
+	padding: 15px 20px 15px 50px;
+	border-radius: $radius;
+	position: relative;
+
+	.icon {
+		margin-right: 10px;
+		line-height: 100%;
+		display: block;
+		vertical-align: middle;
+		position: absolute;
+		left: 0;
+		top: 50%;
+		margin-top: -7px;
+		width: 55px;
+		text-align: center;
+	}
+	a {
+		text-decoration: underline;
+	}
+
+	&.success 	{ background: lighten($green, 35%); }
+	&.fail 		{ background: lighten($red, 27%); }
+	&.warn 		{ background: lighten($yellow, 27%); }
+}
+
+.feedback--toaster {
+	position: fixed;
+	left: 0; right: 0;
+	display: block;
+	box-shadow: 0 0 10px rgba($black,0.2);
+	padding: $margin $margin * 2;
+	z-index: 1000;
+
+	&.show {
+		top: auto;
+		animation: 1s slideInOut;
+		animation-fill-mode: forwards;
+	}
+	&.hide {
+		animation: 1s slideInOut;
+		animation-direction: reverse;
+	}
+
+	&.success 	{ background: rgba($green,0.97); color: #fff; }
+	&.fail 		{ background: rgba($red,0.97); color: #fff; }
+	&.warn 		{ background: rgba($yellow,0.97); color: #fff; }
+}
+
+@keyframes slideInOut { 
+	0% { 
+		bottom: -100%;
+	}
+	100% {
+		bottom: 0%;
+	}
+}
+
+// ***************************
+// Feedback: Empty section
+
+.empty-message {
+	border-radius: $radius * 3;
+	border: 2px dashed $bdr-grey;
+	padding: 50px;
+	max-width: 550px;
+
+	&--noborder {
+		border: 0;
+	}
+}
+
+// ***************************
+// Notabene: Sub-note below something
+
+.notabene {
+	border-top: 1px solid $bdr-grey;
+	padding: 10px 30px;
+	margin: $margin 0;
+	position: relative;
+
+	.icon {
+		margin-right: 10px;
+		line-height: 100%;
+		display: block;
+		vertical-align: middle;
+		position: absolute;
+		left: 0;
+		top: 13px;
+		width: 25px;
+		text-align: center;
+	}
+}
+
+// ***************************
+// Feedback: Documentation links
+
+.documentation {
+	@extend .epsilon;
+	vertical-align: middle;
+	color: $blue;
+	font-weight: normal;
+	letter-spacing: normal;
+
+	&:hover {
+		color: $blue;
+
+	}
+	span:after {
+		content: "\f02d";
+		font-family: "FontAwesome";
+		margin-left: 5px;
+		margin-right: 5px;
+		color: $blue;
+	}
+
+}

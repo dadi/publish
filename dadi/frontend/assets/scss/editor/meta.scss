@@ -1,0 +1,12 @@
+.dadiCells__meta {
+	position: fixed;
+	top: 0; right: 0; bottom: 0;
+	padding: $margin * 2 $margin * 2 50px 0;
+	z-index: 3;
+	box-sizing: border-box;
+	overflow: scroll;
+	-webkit-overflow-scrolling: touch;
+	display: none;
+
+	.editorMeta & { display: block; }
+}

@@ -1,0 +1,15 @@
+body.dragging, body.dragging * {
+  cursor: move !important;
+}
+.dragged {
+	display: none;
+}
+.childrenDraggable .placeholder {
+	position: relative;
+	height: 40px;
+	display: block;
+	background: $light-blue;
+	border: 1px solid $mid-blue;
+	margin-bottom: 10px;
+	border-radius: $radius;
+}

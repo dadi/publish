@@ -1,0 +1,18 @@
+// Displays word and char counts
+
+.dadiCells__counter {
+	background: $bdr-grey;
+	color: $mid-grey;
+	border-radius: $radius;
+	padding: 0 3px;
+	font-size: 12px;
+	top: 10px; left: 100%;
+	position: absolute;
+	white-space: nowrap;
+	transition: border-radius $dadiCells-transition;
+
+	.editorRestrictions & 			{ display: none; }
+	.dadiCells__section:hover & 	{ border-radius: 0 $radius $radius 0; }
+	.editorOutline & 				{ border-radius: 0 $radius $radius 0; }
+	.dadiCells--error & 			{ background: $red; color: #fff; border-radius: 0 $radius $radius 0; }
+}

@@ -1,0 +1,110 @@
+.ql-editor {
+	outline: 0px solid transparent;
+    white-space: pre-wrap;
+}
+
+.ql-toolbar {
+	user-select: none;
+
+	.ql-active {
+		color: $blue;
+
+		&:hover {
+			color: #fff;
+		}
+	}
+}
+
+.ql-paste-manager {
+	display: none;
+}
+
+.ql-link-tooltip {
+  padding: 5px 10px;
+
+	input.input {
+		width: 170px;
+	}
+	input.input,
+	a.done {
+		display: none;
+	}
+	a.change {
+		margin-right: 4px;
+	}
+	&.editing input.input,
+	&.editing a.done {
+		display: inline-block;
+	}
+	&.editing a.url,
+	&.editing a.change,
+	&.editing a.remove {
+		display: none;
+	}
+}
+
+.ql-tooltip {
+    background-color: #fff;
+    border: 1px solid #000;
+    box-sizing: border-box;
+    position: absolute;
+    top: 0;
+    white-space: nowrap;
+    z-index: 2000
+}
+
+.ql-multi-cursor {
+    position: absolute;
+    left: 0;
+    top: 0;
+    z-index: 1000
+}
+
+.ql-multi-cursor .cursor {
+    margin-left: -1px;
+    position: absolute;
+
+    &.hidden {
+    	display: none;
+    }
+}
+
+.ql-multi-cursor .cursor-flag {
+    bottom: 100%;
+    position: absolute;
+    white-space: nowrap;
+}
+
+.ql-multi-cursor .cursor-name {
+    display: inline-block;
+    color: #fff;
+    padding: 2px 8px
+}
+
+.ql-multi-cursor .cursor-caret {
+    height: 100%;
+    position: absolute;
+    width: 2px
+}
+
+.ql-multi-cursor .cursor.hidden .cursor-flag {
+    display: none
+}
+
+.ql-multi-cursor .cursor.top .cursor-flag {
+    bottom: auto;
+    top: 100%
+}
+
+.ql-multi-cursor .cursor.right .cursor-flag {
+    right: -2px
+}
+
+.ql-editor ol,
+.ql-editor ul {
+  //list-style-position: inside;
+}
+
+[data-field-type="BulletList"] .ql-editor ol {
+    list-style-type: disc;
+}

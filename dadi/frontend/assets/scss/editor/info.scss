@@ -1,0 +1,51 @@
+.dadiCells-info {
+	@extend .delta;
+	position: fixed;
+	bottom: 0; left: 0; right: 0;
+	padding: 0 $margin * 2 15px;
+	z-index: 3;
+	text-align: center;
+
+	.appNav & { left: $nav; }
+
+	&__editors {
+		list-style: none;
+		margin: -7px 0 -15px -5px;
+
+		li {
+			float: left;
+			margin-right: 10px;
+		}
+	}
+	&__editor {
+		border-radius: 100%;
+		overflow: hidden;
+		border: 1px solid #fff;
+		box-shadow: 0 0 0 2px $blue;
+
+		img {
+			display: block;
+		}
+	}
+	&__view {
+		position: relative;
+	}
+	&__stats {
+		display: inline-block;
+		border-radius: 30px;
+		padding: 1px 15px;
+		background: $text;
+		color: #fff;
+		box-shadow: 0 0 0 2px rgba($black,0.02);
+		border: 1px solid $light-grey;
+
+		li:last-of-type {
+			margin-right: -15px;
+		}
+	}
+
+	.field__helper {
+		bottom: 56px;
+		right: 27px;
+	}
+}

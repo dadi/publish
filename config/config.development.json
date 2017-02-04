@@ -1,0 +1,24 @@
+{
+  "app": {
+    "name": "DADI Publish",
+    "publisher": "Publisher Name",
+    "baseUrl": "http://am.dev.dadi.technology"
+  },
+  "server": {
+    "host": "0.0.0.0",
+    "port": 3000
+  },
+  "monitor": {
+    "enabled": true,
+    "store": true,
+    "refreshCollections": true
+  },
+  "localDB": {
+    "authenticate": false
+  },
+  "caching": {
+    "redis": {
+      "enabled": false
+    }
+  }
+}

@@ -1,0 +1,10 @@
+@import '../../assets/scss/main.scss';
+
+$borderRadius: 5px !default;
+$inputPadding: 2px !default;
+
+.TextInput {
+  border-radius: $borderRadius;
+  padding: $inputPadding;
+  margin: 5px !important;
+}

@@ -1,0 +1,15 @@
+.dadiCells__cell--list {
+	li {
+		margin-left: 1em;
+		margin-bottom: 5px;
+		padding-bottom: 5px;
+		border-bottom: 1px dotted $bdr-grey;
+		list-style: disc;
+
+		&:last-of-type() {
+			padding-bottom: 0;
+			margin-bottom: 0;
+			border-bottom: 0;
+		}
+	}
+}

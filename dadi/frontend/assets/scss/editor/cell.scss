@@ -1,0 +1,39 @@
+// A cell is a single pice of content (text, header, image, web embed, video)
+
+.dadiCells__cell {
+	padding: 5px 10px;
+	position: relative;
+	transition: border-color $dadiCells-transition; 
+	outline: 0px solid transparent;
+
+	.editorOutline & 				{ border: 1px solid $bdr-grey; }
+	.dadiCells--error &				{ border: 1px solid $red !important; }}
+
+.dadiCell__active-area {
+	display: none;
+	background: #fff;
+	padding: $margin;
+	margin: 10px -10px -5px -10px;
+	border-radius: 0 0 $radius $radius;
+	position: relative;
+	border-top: 1px solid #ddd;
+
+	.is_active & {
+		display: block;
+	}
+
+	&:before {
+		bottom: 100%;
+		left: 50%;
+		border: solid transparent;
+		content: " ";
+		height: 0;
+		width: 0;
+		position: absolute;
+		pointer-events: none;
+		border-color: rgba(136, 183, 213, 0);
+		border-bottom-color: $bdr-grey;
+		border-width: 9px;
+		margin-left: -9px;
+	}
+}

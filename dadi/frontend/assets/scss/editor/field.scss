@@ -1,0 +1,120 @@
+// Holds a cell and it's family of components (e.g., word counter)
+
+.dadiCells__field {
+	position: relative;
+	margin-bottom: $margin;
+	transition: margin $dadiCells-transition;
+	border-radius: $radius;
+	z-index: 1;
+	border: 1px solid transparent;
+
+	.feedback {
+		margin-bottom: 10px;
+	}
+
+	&.pulse {
+		animation-name: pulse;
+		animation-duration: 0.25s;
+		transform-origin: 70% 70%;
+		animation-iteration-count: 1;
+		animation-timing-function: linear;
+	}
+
+	p {
+		max-width: auto;
+	}
+
+	.editorOutline & 				{ margin-bottom: $margin; }
+	.dadiCells__section > & 		{ margin-bottom: 5px; }
+
+	// Placeholder attribute
+	.dadiCells__section &:after {
+		display: none;
+	}
+	&.showPlaceholder:after {
+		display: block !important;
+	}
+
+
+	&.is_empty {
+		&:before {
+			color: rgba($text,0.5);
+			content: attr(placeholder);
+			position: absolute;
+			z-index: 1;
+			pointer-events: none;
+			padding: 7px 10px;
+		}
+	}
+
+	&.is_draggable {
+		cursor: grab;
+
+		&.is_active {
+			cursor: inherit !important;
+		}
+	}
+
+	&.gu-transit {
+		opacity: 0.2;
+		cursor: grabbing;
+		user-select: none;
+		pointer-events: none;
+	}
+
+	.placeholdericon {
+		display: block;
+		margin-bottom: 10px;
+	}
+
+	&:hover,
+	&.gu-mirror {
+		background: $light-blue;
+		border: 1px solid $mid-blue;
+	}
+
+	&:before {
+		background: transparent;
+		position: absolute;
+		top: 0; right: 0; bottom: 0; left: 0;
+		display: block;
+		content: ' ';
+		width: 100%; height: 100%;
+		z-index: 1;
+	}
+
+	&.is_active:before,
+	&.is_placeholder:before {
+		display: none;
+	}
+
+	&.is_active,
+	&.is_active:hover {
+		border: 1px solid $grey;
+		background: transparent;
+		z-index: 2;
+		
+		&.gu-transit {
+			cursor: grabbing;
+		}
+	}
+
+	&.is_placeholder,
+	&.is_active.is_placeholder {
+		background: $light-blue;
+		border: 1px solid $mid-blue;
+		margin: 10px;
+	}
+}
+
+.is_invalid {
+	border: 1px solid $red !important;
+	background: rgba($red, 0.1) !important;
+	color: $text !important;
+}
+
+.js-disable_field {
+	color: $grey;
+	cursor: not-allowed;
+	pointer-events: none;
+}

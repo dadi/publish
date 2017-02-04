@@ -1,0 +1,74 @@
+// *************************
+// Sizings
+
+$baseline_px:		16px;
+$radius:			4px;
+$grid-pad:			30px;
+$margin:			$grid-pad / 2;
+$sidebar:			240px;
+$nav:				80px;
+
+// *************************
+// Breakpoints (ems)
+
+// Applied only to narrow
+$break-small:			"handheld, only screen and (max-width: 50em)";
+
+// Applied ONLY to medium screens
+$break-medium:			"handheld, only screen and (min-width: 50em) and (max-width: 70em)";
+
+// Applied to anything (and including) SMALLER than medium screen
+$break-small-medium:	"handheld, only screen and (max-width: 70em)";
+
+// Everything LARGER than small screens
+$break-large:			"handheld, only screen and (min-width: 50em)";
+
+// *************************
+// Global colours
+
+$background:		#FAFAFA;
+$text:				#111111;
+$black:				#000000;
+$white:				#FFFFFF;
+
+$light-grey:		#FAFAFA;
+$grey:				#aaa;
+$mid-grey:			#777;
+$dark-grey:			#313131;
+$bdr-grey:			#E0E0E0;
+
+$light-blue:		#f5fbff;
+$mid-blue:			#c8e9fc;
+$blue:				#4A91FF;
+$dark-blue:			#17273F;
+$green:				#88C24C;
+$red:				#FF4A4A;
+$yellow:			#FBBF52;
+$highlight:			#FFFCCC;
+
+$user-accent: 		$blue;
+
+$colour-name:		bdr-grey	dark-grey	ui 				white 	black	light-blue 	mid-blue 	blue 	green	yellow	light-grey 		grey 	mid-grey	highlight	red		dark-blue;
+$colour-value:		$bdr-grey	$dark-grey	$user-accent 	$white	$black	$light-blue 	$mid-blue 	$blue 	$green	$yellow	$light-grey		$grey 	$mid-grey	$highlight	$red	$dark-blue;
+
+// *************************
+// Font stacks
+
+$font-default:		"Karla", "Helvetica Neue", Arial, Helvetica, Geneva, sans-serif;
+$font-headers:		$font-default;	
+$font-body:			$font-default;
+$font-mono:			Monaco, Consolas, monospace;
+
+// *************************
+// Transitions
+
+$transition-primary-on: 0.4s ease-in-out;
+$transition-primary-off: 0.2s ease-in-out;
+
+@keyframes pulse {
+	0% { transform: scale(1); }
+	30% { transform: scale(1); }
+	50% { transform: scale(1.02); }
+	80% { transform: scale(1); }
+	100% { transform: scale(1); }
+}

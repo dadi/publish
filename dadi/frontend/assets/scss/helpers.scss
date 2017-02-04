@@ -1,0 +1,219 @@
+// ***************************
+// Display & Visability
+
+.invisible 				{ visibility: hidden; }
+.hide 					{ display: none !important; }
+.inline 				{ display: inline; }
+.inline-i 				{ display: inline !important; }
+.block 					{ display: block; }
+.block-i 				{ display: block !important; }
+.inline-block 			{ display:inline-block; }
+.inline-block-i 		{ display:inline-block !important; }
+.overflow-hidden 		{ overflow: hidden; }
+.overflow-auto 			{ overflow: auto; }
+.overflow-visible 		{ overflow: visible !important; }
+.overflow-ellipsis 		{ white-space:nowrap; overflow: hidden; text-overflow: ellipsis; }
+.overflow-touch			{ overflow: auto; -webkit-overflow-scrolling: touch; }
+.disable-pa				{ pointer-events: none; }
+.ws-nowrap				{ white-space: nowrap; }
+.rotate 				{ transform: rotate(-90deg); }
+
+.truncate {
+	overflow: hidden;
+	position: relative;
+
+	&:after {
+		background-image: linear-gradient(to left, rgba(#fff, 1) 0%, rgba(#fff, 0) 100%);
+		position: absolute;
+		top: 0; right: 0; bottom: 0;
+		width: 20%;
+		content: ' ';
+	}
+	&:hover {
+		overflow: visible;
+		text-shadow: 1px 1px 0px #fff,-1px -1px 0px #fff;
+		z-index: 10;
+
+		&:after {
+			display: none;
+		}
+	}
+}
+
+.bg--light-grey .truncate:after {
+	background-image: linear-gradient(to left, rgba($light-grey, 1) 0%, rgba($light-grey, 0) 100%);
+}
+
+// ***************************
+// Cursors
+
+.cursor--wait 			{ cursor: wait; }
+.cursor--pointer 		{ cursor: pointer; user-select: none; }
+
+// ***************************
+// Clearfix
+// http://nicolasgallagher.com/micro-clearfix-hack/
+
+.cf:before,
+.cf:after {
+	content: " "; /* 1 */
+	display: table; /* 2 */
+}
+.cf:after {
+	clear: both;
+}
+.cf {
+	*zoom: 1;
+}
+
+// ***************************
+// Floats
+
+.no-float 				{ float: none; }
+.float--left			{ float: left; }
+.float--right			{ float: right; }
+
+// ***************************
+// Alignment
+
+.alignv 				{ vertical-align: middle; }
+.alignc 				{ text-align: center; }
+.alignl 				{ text-align: left; }
+.alignr 				{ text-align: right; }
+
+.alignv-i 				{ vertical-align: middle !important; }
+.alignc-i 				{ text-align: center !important; }
+.alignl-i 				{ text-align: left !important; }
+.alignr-i 				{ text-align: right !important; }
+
+@media #{$break-small} {
+.bs-alignv 				{ vertical-align: middle; }
+.bs-alignc 				{ text-align: center; }
+.bs-alignl 				{ text-align: left; }
+.bs-alignr 				{ text-align: right; }
+}
+
+// ***************************
+// Vertical & horizontal center in element
+
+.flexc {
+	display: flex;
+
+	&__item {
+		margin: auto;
+		flex: 1 1 auto;
+	}
+	&--100vh {
+		height: 100vh;
+	}
+}
+
+// ***************************
+// Padding
+
+.no-pad 				{ padding: 0; }
+.no-pad-i 				{ padding: 0 !important; }
+
+.pad 					{ padding: $margin; }
+.pad__top 				{ padding-top: $margin; }
+.pad__right 			{ padding-right: $margin; }
+.pad__bottom 			{ padding-bottom: $margin; }
+.pad__left 				{ padding-left: $margin; }
+
+.pad--x2 				{ padding: $margin * 2; }
+.pad__top--x2 			{ padding-top: $margin * 2; }
+.pad__right--x2 		{ padding-right: $margin * 2; }
+.pad__bottom--x2		{ padding-bottom: $margin * 2; }
+.pad__left--x2 			{ padding-left: $margin * 2; }
+
+// ***************************
+// Margin
+
+.no-marg 				{ margin: 0; }
+.no-marg-i 				{ margin: 0 !important; }
+
+.marg 					{ margin: $margin; }
+.marg__top 				{ margin-top: $margin; }
+.marg__right 			{ margin-right: $margin; }
+.marg__bottom 			{ margin-bottom: $margin; }
+.marg__left 			{ margin-left: $margin; }
+
+.marg--x2 				{ margin: $margin * 2; }
+.marg__top--x2 			{ margin-top: $margin * 2; }
+.marg__right--x2 		{ margin-right: $margin * 2; }
+.marg__bottom--x2		{ margin-bottom: $margin * 2; }
+.marg__left--x2 		{ margin-left: $margin * 2; }
+
+@media #{$break-small} {
+	.bs-no-marg 				{ margin: 0; }
+
+	.bs-marg 					{ margin: $margin; }
+	.bs-marg__top 				{ margin-top: $margin; }
+	.bs-marg__right 			{ margin-right: $margin; }
+	.bs-marg__bottom 			{ margin-bottom: $margin; }
+	.bs-marg__left 			{ margin-left: $margin; }
+
+	.bs-marg--x2 				{ margin: $margin * 2; }
+	.bs-marg__top--x2 			{ margin-top: $margin * 2; }
+	.bs-marg__right--x2 		{ margin-right: $margin * 2; }
+	.bs-marg__bottom--x2		{ margin-bottom: $margin * 2; }
+	.bs-marg__left--x2 		{ margin-left: $margin * 2; }
+}
+
+// ***************************
+// Colours
+
+.txt {
+	@for $i from 1 through length($colour-name) {
+		&--#{nth($colour-name, $i)} {
+			color: nth($colour-value, $i);
+		}
+		&--#{nth($colour-name, $i)}-i {
+			color: nth($colour-value, $i) !important;
+		}
+	}
+}
+
+.bg {
+	@for $i from 1 through length($colour-name) {
+		&--#{nth($colour-name, $i)} {
+			background-color: nth($colour-value, $i)
+		}
+	}
+
+	&--transparent { background-color: transparent !important; }
+}
+
+// ***************************
+// Borders
+
+.bdr-radius {
+	border-radius: $radius;
+
+	&--i { border-radius: $radius !important; }
+
+	&__top 		{ border-radius: $radius $radius 0 0; }
+	&__right 	{ border-radius: 0 $radius $radius 0; }
+	&__bottom 	{ border-radius: 0 0 $radius $radius; }
+	&__left 	{ border-radius: $radius 0 0 $radius; }
+
+	&__top--i 	{ border-radius: $radius $radius 0 0 !important; }
+	&__right--i { border-radius: 0 $radius $radius 0 !important; }
+	&__bottom--i{ border-radius: 0 0 $radius $radius !important; }
+	&__left--i 	{ border-radius: $radius 0 0 $radius !important; }
+}
+
+.bdr {
+	border: 1px solid;
+
+	&__top 		{ border-top: 1px solid; }
+	&__right 	{ border-right: 1px solid; }
+	&__bottom 	{ border-bottom: 1px solid; }
+	&__left 	{ border-left: 1px solid; }
+}
+
+@for $i from 1 through length($colour-name) {
+	.bdr--#{nth($colour-name, $i)} {
+		border-color: nth($colour-value, $i)
+	}
+}

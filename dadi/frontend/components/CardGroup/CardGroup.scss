@@ -1,0 +1,10 @@
+@import '../../assets/scss/main.scss';
+
+.CardGroup {
+  clear: both;
+  width: 100%;
+
+  .CardGroupItem {
+    float: left;
+  }
+}

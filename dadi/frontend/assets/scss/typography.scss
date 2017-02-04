@@ -1,0 +1,90 @@
+@font-face {
+	font-family: 'Menlo';
+	font-style: normal;
+	font-weight: normal;
+	src: local('Menlo Regular'), url('../../assets/fonts/Menlo-Regular.woff') format('woff');
+}
+
+// ***************************
+// Globals
+
+body {
+	color: $text;
+	font-family: $font-default;
+	font-weight: normal;
+	-webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+h1,h2,h3,h4,h5,.hdr {
+	font-family: $font-headers;
+	font-weight: 600;
+	letter-spacing: -1px;
+}
+strong {
+	font-weight: 600;
+}
+p, .read {
+	max-width: 680px;
+	font-family: $font-body;
+}
+ul, ol, li, dl, dd, dt, blockquote {
+	margin: 0;
+	padding: 0;
+}
+a {
+	color: inherit;
+	text-decoration: none;
+}
+.smallcaps {
+	text-transform: uppercase;
+	font-size: 13px;
+	letter-spacing: normal;
+}
+
+// ***************************
+// Modifiers
+
+.nowrap					{ white-space: nowrap; }
+.wordwrap				{ word-wrap: normal; }
+.breakall				{ word-wrap: break-word; }
+.wspreline				{ white-space: pre-line; }
+.wsnormal				{ white-space: normal; }
+.fwb 					{ font-weight: bold; }
+.fwn					{ font-weight: normal; }
+.fsi			 		{ font-style: italic; }
+p.pfull					{ width: auto; }
+.upcase 				{ text-transform: uppercase; }
+.downcase 				{ text-transform: lowercase; }
+.titlecase 				{ text-transform: capitalize; }
+.mono 					{ font-family: $font-mono; }
+.strike					{ text-decoration: line-through; }
+.underline				{ text-decoration: underline; }
+
+// ***************************
+// Greek sizing
+
+.hecto 		{ @include rem(font-size,80px); @include rem(line-height,80px); }
+.giga 		{ @include rem(font-size,70px); @include rem(line-height,65px); }
+.mega 		{ @include rem(font-size,50px); @include rem(line-height,50px); }
+.kilo 		{ @include rem(font-size,40px); @include rem(line-height,45px); }
+
+h1,.alpha 	{ @include rem(font-size,28px); @include rem(line-height,34px); }
+h2,.beta 	{ @include rem(font-size,24px); @include rem(line-height,31px); }
+h3,.gamma 	{ @include rem(font-size,20px); @include rem(line-height,26px); }
+h4,.epsilon	{ @include rem(font-size,16px); @include rem(line-height,22px); }
+h5,.delta 	{ @include rem(font-size,14px); @include rem(line-height,20px); }
+
+@media #{$break-small} {
+
+	.bs-hecto 		{ @include rem(font-size,80px); @include rem(line-height,80px); }
+	.bs-giga 		{ @include rem(font-size,70px); @include rem(line-height,65px); }
+	.bs-mega 		{ @include rem(font-size,50px); @include rem(line-height,50px); }
+	.bs-kilo 		{ @include rem(font-size,40px); @include rem(line-height,45px); }
+
+	h1,.bs-alpha	{ @include rem(font-size,28px); @include rem(line-height,34px); }
+	h2,.bs-beta 	{ @include rem(font-size,24px); @include rem(line-height,31px); }
+	h3,.bs-gamma 	{ @include rem(font-size,20px); @include rem(line-height,26px); }
+	h4,.bs-epsilon	{ @include rem(font-size,16px); @include rem(line-height,22px); }
+	h5,.bs-delta 	{ @include rem(font-size,14px); @include rem(line-height,20px); }
+
+}

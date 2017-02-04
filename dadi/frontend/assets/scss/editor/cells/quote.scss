@@ -1,0 +1,8 @@
+.dadiCells__cell--quote {
+	box-shadow: 4px 0 0 0 inset $bdr-grey;
+	padding-left: 25px;
+
+	&:hover {
+		box-shadow: 4px 0 0 0 inset $grey;
+	}
+}
