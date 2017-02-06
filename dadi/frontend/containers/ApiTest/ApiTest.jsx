@@ -5,12 +5,12 @@ import { bindActionCreators } from 'redux'
 import * as testActions from '../../actions/testActions'
 
 import CtaButton from '../../components/CtaButton/CtaButton'
-const localApiBridge = require('./../../lib/local-api-bridge-client')
+// const localApiBridge = require('./../../lib/local-api-bridge-client')
 
 class ApiTest extends Component {
   constructor(props) {
     super(props)
-    this._api = new localApiBridge()
+    // this._api = new localApiBridge()
   }
 
   render() {
@@ -20,10 +20,10 @@ class ApiTest extends Component {
   }
 
   _find() {
-    this._api.find({
-      env: 'remote',
-      collection: 'users'
-    }).whereFieldExists('name').find()
+  //   this._api.find({
+  //     env: 'remote',
+  //     collection: 'users'
+  //   }).whereFieldExists('name').find()
   }
 }
 

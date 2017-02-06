@@ -7,7 +7,7 @@ import * as apiActions from '../../actions/apiActions'
 
 import Nav from '../../components/Nav/Nav'
 
-const localApiBridge = require('./../../lib/local-api-bridge-client')
+// const localApiBridge = require('./../../lib/local-api-bridge-client')
 
 class Api extends Component {
 
@@ -38,10 +38,10 @@ class Api extends Component {
     )
   }
   getApis (state) {
-    return localApiBridge()
-    .in('apis')
-    .whereFieldExists('database')
-    .find({extractResults: true})
+  //   return localApiBridge()
+  //   .in('apis')
+  //   .whereFieldExists('database')
+  //   .find({extractResults: true})
   }
 }
 

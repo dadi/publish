@@ -8,7 +8,7 @@ import * as userActions from '../../actions/userActions'
 import Main from '../../components/Main/Main'
 import Modal from '../../components/Modal/Modal'
 import SubmitButton from '../../components/SubmitButton/SubmitButton'
-import Session from '../../lib/session'
+// import Session from '../../lib/session'
 
 class Login extends Component {
 
@@ -39,13 +39,13 @@ class Login extends Component {
   }
   signIn () {
     const { actions, state } = this.props
-    new Session().createSession({username: 'foo', password: 'bar'}).then((session) => {
-      if (session.signedIn) {
-        actions.signIn(session.username, session.signedIn)
-      } else {
-        console.log("LOGIN FAILED")
-      }
-    })
+    // new Session().createSession({username: 'foo', password: 'bar'}).then((session) => {
+    //   if (session.signedIn) {
+    //     actions.signIn(session.username, session.signedIn)
+    //   } else {
+    //     console.log("LOGIN FAILED")
+    //   }
+    // })
   }
 }
 

@@ -93,14 +93,14 @@ class App extends Component {
 
   sessionStart () {
     const { actions, state } = this.props
-    new Session().getSession().then((session) => {
-      if (session.signedIn) {
-        actions.signIn(session.username, session.signedIn)
-      } else {
+    // new Session().getSession().then((session) => {
+      // if (session.signedIn) {
+        // actions.signIn(session.username, session.signedIn)
+      // } else {
         // Trigger signout
-        actions.signOut()
-      }
-    })
+        // actions.signOut()
+      // }
+    // })
   }
 }
 

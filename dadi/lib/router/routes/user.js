@@ -13,6 +13,6 @@ module.exports = function (app) {
 
   let controller = new Controller()
 
-  app.post('/user', controller.post)
+  // app.post('/user', controller.post)
   // app.put('/user', Controller.put)
 }

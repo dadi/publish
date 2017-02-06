@@ -8,9 +8,7 @@ const path = require('path')
 
 const config = require(GLOBAL.paths.config)
 const Router = require(GLOBAL.paths.lib.router)
-const DB = require(GLOBAL.paths.lib.db)
 const Socket = require(GLOBAL.paths.lib.server + '/socket')
-const Monitor = require(GLOBAL.paths.lib.monitor)
 const log = require('@dadi/logger')
 
 process.env.TZ = config.get('TZ')
@@ -45,7 +43,6 @@ Server.prototype.start = function () {
     new Router().addRoutes(this.app)
     return this.addListeners().then(() => {
       this.socket = new Socket(this.app)
-      this.monitor = new Monitor()
       resolve()
     })
   })

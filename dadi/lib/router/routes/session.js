@@ -34,9 +34,10 @@ module.exports = function (app) {
   })
 
   passport.deserializeUser((id, done) => {
-    return new User().find({_id: id}).then((user) => {
-      return done(null, user)
-    })
+    // return new User().find({_id: id}).then((user) => {
+    //   return done(null, user)
+    // })
+    return done(null, {})
   })
 
   // app.post('/auth/user', sessionController.createUser)
@@ -47,11 +48,12 @@ module.exports = function (app) {
     }, 
     (req, res, next) => {
     if (req.isAuthenticated()) {
-      return new User().find({_id: req.session.passport.user}).then((user) => {
-        res.write(JSON.stringify(user))
+      // return new User().find({_id: req.session.passport.user}).then((user) => {
+        // res.write(JSON.stringify(user))
+        res.write(JSON.stringify({success: false}))
         res.end()
         return next()
-      })
+      // })
     } else {
       res.write(JSON.stringify({success: false}))
       res.end()

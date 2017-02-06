@@ -7,15 +7,15 @@ import * as userActions from '../../actions/userActions'
 
 import Nav from '../../components/Nav/Nav'
 
-const localApiBridge = require('./../../lib/local-api-bridge-client')
+// const localApiBridge = require('./../../lib/local-api-bridge-client')
 
 class UserList extends Component {
 
   componentDidMount() {
     const { state, actions } = this.props
-    return this.getUsers(state).then(users => {
-      actions.setUserList(users)
-    })
+    // return this.getUsers(state).then(users => {
+      // actions.setUserList(users)
+    // })
   }
 
   render() {
@@ -36,10 +36,10 @@ class UserList extends Component {
   }
 
   getUsers (state) {
-    return localApiBridge()
-    .in('users')
-    .whereFieldExists('name')
-    .find({extractResults: true})
+    // return localApiBridge()
+    // .in('users')
+    // .whereFieldExists('name')
+    // .find({extractResults: true})
   }
 }
 

@@ -2,7 +2,6 @@
 
 const _ = require('underscore')
 const config = require(paths.config)
-const DB = require(paths.lib.db)
 const PasswordHelper = require(`${paths.lib.helpers}/password`)
 const StringHelper = require(`${paths.lib.helpers}/string`)
 const gravatar = require('gravatar')
@@ -11,20 +10,20 @@ const User = function () {
   this.collection = 'users'
 }
 
-User.prototype.find = function (query) {
-  return new DB().get({
-    collection: this.collection,
-    filter: query
-  }).then((data) => {
-    if (!_.isUndefined(data.results) && data.results.length) {
-      delete data.results[0].password
-      return data.results[0]
-    } else {
-      return {}
-    }
-  })
-  return {}
-}
+// User.prototype.find = function (query) {
+  // return new DB().get({
+  //   collection: this.collection,
+  //   filter: query
+  // }).then((data) => {
+  //   if (!_.isUndefined(data.results) && data.results.length) {
+  //     delete data.results[0].password
+  //     return data.results[0]
+  //   } else {
+  //     return {}
+  //   }
+  // })
+  // return {}
+// }
 /**
  * Create User
  * @param  {String} options.email    Pre-validated email address

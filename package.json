@@ -55,6 +55,7 @@
     "passport-strategy": "^1.0.0",
     "path": "^0.12.7",
     "pause": "^0.1.0",
+    "preact": "^6.4.0",
     "reasondb-wrapper": "^0.1.0",
     "redis": "^2.6.3",
     "request-promise": "^4.1.1",

@@ -17,10 +17,8 @@ const Globals = function () {
       controllers: path.resolve(`${lib}/controllers`),
       models: path.resolve(`${lib}/models`),
       server: path.resolve(`${lib}/server`),
-      monitor: path.resolve(`${lib}/monitor`),
       router: path.resolve(`${lib}/router`),
-      helpers: path.resolve(`${lib}/helpers`),
-      db: path.resolve(`${lib}/db`)
+      helpers: path.resolve(`${lib}/helpers`)
     }
   }
 }
