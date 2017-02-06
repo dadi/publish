@@ -4,7 +4,8 @@ import 'whatwg-fetch'
 
 const APIWrapper = require('@dadi/api-wrapper-core')
 
-module.exports = ({uri, port, version, database}) => {
+module.exports = ({host, port, version, database}) => {
+  let uri = host
   const APIBridgeClient = function () {
 
   }
@@ -30,9 +31,17 @@ module.exports = ({uri, port, version, database}) => {
   }
 
   APIBridgeClient.prototype._find = APIBridgeClient.prototype.find
+  APIBridgeClient.prototype._getCollections = APIBridgeClient.prototype.getCollections
+  APIBridgeClient.prototype._getStatus = APIBridgeClient.prototype.getStatus
 
   APIBridgeClient.prototype.find = function () {
     return this._fetch(this._find(arguments))
+  }
+  APIBridgeClient.prototype.getCollections = function () {
+    return this._fetch(this._getCollections(arguments))
+  }
+  APIBridgeClient.prototype.getStatus = function () {
+    return this._fetch(this._getStatus(arguments))
   }
 
   return new APIBridgeClient()

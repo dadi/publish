@@ -24,6 +24,10 @@ module.exports = {
       type: Boolean,
       default: true
     },
+    name: {
+      format: String,
+      default: "No Name"
+    },
     host: {
       format: "ipaddress",
       default: "0.0.0.0"
@@ -40,7 +44,7 @@ module.exports = {
       format: String,
       default: "1.0"
     },
-    clientKey: {
+    credentials: {
       format: Object,
       clientId: {
         format: String,

@@ -19,7 +19,8 @@ const Globals = function () {
       server: path.resolve(`${lib}/server`),
       router: path.resolve(`${lib}/router`),
       helpers: path.resolve(`${lib}/helpers`)
-    }
+    },
+    wallet: path.resolve(`${base}/.wallet`)
   }
 }
 

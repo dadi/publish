@@ -15,11 +15,12 @@
   },
   "apis": [
     {
+      "name": "Publish Test API",
       "host": "http://am.dev.dadi.technology",
       "port": 3003,
       "database": "publish",
       "version": "1.0",
-      "clientKey": {
+      "credentials": {
         "clientId": "testClient",
         "secret": "superSecret"
       }

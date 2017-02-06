@@ -1,15 +1,16 @@
 'use strict'
 
-const config = require(GLOBAL.paths.config)
+const config = require(paths.config)
 const passport = require('@dadi/passport')
 const request = require('request-promise')
 const slugify = require("underscore.string/slugify")
+const _ = require('underscore')
 
 const APIBridgeController = function () {
 
 }
 
-const _createPassport = function (host, port, clientId, secret) {
+const _createPassport = function ({host, port, clientId, secret}) {
   return passport({
     issuer: {
       uri: host,
@@ -22,7 +23,7 @@ const _createPassport = function (host, port, clientId, secret) {
     },
     wallet: 'file',
     walletOptions: {
-      path: __dirname + '/../../../../.wallet/' + _generateTokenWalletFilename(host, port, clientId)
+      path: `${paths.wallet}/${_generateTokenWalletFilename(host, port, clientId)}`
     }
   }, request)
 }
@@ -43,18 +44,18 @@ APIBridgeController.prototype.post = function (req, res, next) {
   try {
     const requestObject = req.body
 
-    console.log('** REQ OBJ:', requestObject, this)
-
+    // console.log('** REQ OBJ:', requestObject, this)
+    // 
     const passport = _createPassport({
       host: `${requestObject.uri.protocol}//${requestObject.uri.hostname}`,
-      port: requestObject.uri.port,
-      clientId: 'worker',
-      secret: 'd4d1t3ch'
+      port: Number(requestObject.uri.port),
+      clientId: 'testClient',
+      secret: 'superSecret'
     }).then(request => {
       request({
         uri: requestObject.uri.href,
         method: requestObject.method,
-        body: requestObject.body
+        body: !_.isUndefined(requestObject.body) ? requestObject.body : null
       }).then(response => {
         res.end(JSON.stringify(response))
       })
