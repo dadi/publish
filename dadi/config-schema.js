@@ -18,7 +18,39 @@ module.exports = {
   },
   apis: {
     doc: "Connected APIs",
-    format: Array
+    format: Array,
+    default: [],
+    enabled: {
+      type: Boolean,
+      default: true
+    },
+    host: {
+      format: "ipaddress",
+      default: "0.0.0.0"
+    },
+    port: {
+      format: "port",
+      default: 3000
+    },
+    database: {
+      format: String,
+      default: ""
+    },
+    version: {
+      format: String,
+      default: "1.0"
+    },
+    clientKey: {
+      format: Object,
+      clientId: {
+        format: String,
+        default: "testClient"
+      },
+      secret: {
+        format: String,
+        default: "superSecret"
+      }
+    }
   },
   server: {
     host: {
