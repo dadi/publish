@@ -12,5 +12,17 @@
     "redis": {
       "enabled": false
     }
-  }
+  },
+  "apis": [
+    {
+      "host": "http://am.dev.dadi.technology",
+      "port": 3003,
+      "database": "publish",
+      "version": "1.0",
+      "clientKey": {
+        "clientId": "testClient",
+        "secret": "superSecret"
+      }
+    }
+  ] 
 }

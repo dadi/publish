@@ -4,12 +4,12 @@ const config = require('../../config')
 const _ = require('underscore')
 const whitelist = [
   'app',
+  'apis',
   'ui',
   'server.host',
   'server.port',
   'TZ',
-  'env',
-  'i18n'
+  'env'
 ]
 
 const Config = function () {

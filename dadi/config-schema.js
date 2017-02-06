@@ -16,6 +16,10 @@ module.exports = {
       default: "http://localhost:3001"
     }
   },
+  apis: {
+    doc: "Connected APIs",
+    format: Array
+  },
   server: {
     host: {
       doc: "The IP address or interface to bind to",
@@ -64,23 +68,6 @@ module.exports = {
       env: "SSL_INTERMEDIATE_CERTIFICATE_PATHS"
     }
   },
-  monitor: {
-    enabled: {
-      doc: "If true, monitor the platform server statistics and output in console",
-      format: Boolean,
-      default: true
-    },
-    store: {
-      doc: "If true, store status details against the API record",
-      format: Boolean,
-      default: true
-    },
-    refreshCollections: {
-      doc: "If true, refresh collection schemas",
-      format: Boolean,
-      default: true
-    }
-  },
   paths: {
       doc: "Customisable asset paths",
       format: Object,
@@ -100,53 +87,11 @@ module.exports = {
     default: "development",
     env: "NODE_ENV"
   },
-  i18n: {
-    defaultLanguage: {
-      doc: "Default language for the system, used as a fallback in case a translation is missing",
-      format: String,
-      default: 'en'
-    }
-  },
   ui: {
     inputDelay: {
       doc: "Delay in ms to debounce inputs by",
       format: "integer",
       default: 100
     }
-  },
-  localDB: {
-    authenticate: {
-      doc: "Use authentication on localDB API",
-      format: Boolean,
-      default: true
-    }
-  },
-  caching: {
-    redis: {
-          enabled: {
-            doc: "If enabled, cache files will be saved to the specified Redis server",
-            format: Boolean,
-            default: false,
-            env: "REDIS_ENABLED"
-          },
-          host: {
-            doc: "The Redis server host",
-            format: String,
-            default: "127.0.0.1",
-            env: "REDIS_HOST"
-          },
-          port: {
-            doc: "The port for the Redis server",
-            format: 'port',
-            default: 6379,
-            env: "REDIS_PORT"
-          },
-          password: {
-            doc: "",
-            format: String,
-            default: "",
-            env: "REDIS_PASSWORD"
-          }
-        }
   }
 }
