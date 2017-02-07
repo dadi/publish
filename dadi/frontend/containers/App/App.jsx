@@ -9,7 +9,7 @@ import * as userActions from '../../actions/userActions'
 import * as apiActions from '../../actions/apiActions'
 
 import Home from '../../views/Home/Home'
-import Login from '../../views/Login/Login'
+import SignIn from '../../views/SignIn/SignIn'
 import Api from '../../views/Api/Api'
 import Collection from '../../views/Collection/Collection'
 import DocumentList from '../../views/DocumentList/DocumentList'
@@ -65,7 +65,7 @@ class App extends Component {
   componentDidUpdate () {
     const { state } = this.props
     if (!state.user.signedIn && config['server.authenticate']) {
-      route('/login')
+      route('/signin')
     }
   }
 
@@ -82,7 +82,7 @@ class App extends Component {
     return (
       <Router onChange={this.onRouteChange}>
         <Home path="/" />
-        <Login path="/login" />
+        <SignIn path="/signin" />
         <Api path="/apis/:api?" authenticate />
         <Collection path="/apis/:api/collections/:collection?" authenticate />
         <DocumentList path="/apis/:api/collections/:collection/documents" authenticate />
@@ -144,15 +144,17 @@ class App extends Component {
   }
 
   sessionStart () {
-    // const { actions, state } = this.props
-    // new Session().getSession().then((session) => {
-    //   if (session.signedIn) {
-    //     actions.signIn(session.username, session.signedIn)
-    //   } else {
-        //Trigger signout
+    const { actions, state } = this.props
+    new Session().getSession().then((session) => {
+      if (session.signedIn) {
+        console.log("SESSION")
+        // actions.signIn(session.username, session.signedIn)
+      } else {
+        console.log("NO SESSION")
+        // Trigger signout
         // actions.signOut()
-    //   }
-    // })
+      }
+    })
   }
 }
 

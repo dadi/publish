@@ -31,12 +31,12 @@ Session.prototype.createSession = function ({username, password}) {
     headers: {
       'Content-Type': 'application/json'
     },
-    body: JSON.stringify({username: username, password: password})
+    body: JSON.stringify({username, password})
   }).then(response => {
     return response.json().then(json => {
       return {
-        signedIn: true,
-        username: json.username
+        signedIn: json ? true : false,
+        username: json.username || null
       }
     })
   })
