@@ -33,6 +33,7 @@ module.exports = ({host, port, version, database}) => {
   APIBridgeClient.prototype._find = APIBridgeClient.prototype.find
   APIBridgeClient.prototype._getCollections = APIBridgeClient.prototype.getCollections
   APIBridgeClient.prototype._getStatus = APIBridgeClient.prototype.getStatus
+  APIBridgeClient.prototype._getConfig = APIBridgeClient.prototype.getConfig
 
   APIBridgeClient.prototype.find = function () {
     return this._fetch(this._find(arguments))
@@ -42,6 +43,10 @@ module.exports = ({host, port, version, database}) => {
   }
   APIBridgeClient.prototype.getStatus = function () {
     return this._fetch(this._getStatus(arguments))
+  }
+
+  APIBridgeClient.prototype.getConfig = function () {
+    return this._fetch(this._getConfig(arguments))
   }
 
   return new APIBridgeClient()

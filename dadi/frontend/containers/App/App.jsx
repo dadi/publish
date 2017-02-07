@@ -103,26 +103,46 @@ class App extends Component {
     socket.setRoom(currentUrl)
   }
 
- getApiCollections () {
-   const { state, actions } = this.props
-   let queue = _.map(state.api.apis, (api, key) => {
-     // Has this already been fetched
-     if (api.hasCollections) return
-     // Fetch collections names from API
-     return APIBridge(api)
-     .useDatabase(api.database)
-     .getCollections()
-     .then(collections => {
-       _.extend(state.api.apis[key], {...JSON.parse(collections), hasCollections: true})
-       return out
-     }).catch((err) => {
-       return err
-     })
-   })
-   return Promise.all(queue).then(() => {
-     actions.setApiList(state.api.apis)
-   })
- }
+  getApiCollections () {
+    const { state, actions } = this.props
+
+    let queue = _.chain(state.api.apis)
+    .filter(api => {
+      return !api.hasCollections
+    })
+    .map((api, key) => {
+      return APIBridge(api)
+      .getCollections()
+      .then(collections => {
+        console.log("CALL getCollectionSchemas")
+        return this.getCollectionSchemas({api, ...JSON.parse(collections)}).then(collections => {
+          return _.extend(state.api.apis[key], {collections, hasCollections: true})
+        })
+      }).catch((err) => {
+        // TODO: Graceful deal with failure
+      })
+    }).value()
+
+    return Promise.all(queue).then(() => {
+      actions.setApiList(state.api.apis)
+    })
+  }
+
+  getCollectionSchemas ({api, collections}) {
+    let queue = _.map(collections, collection => {
+      return APIBridge(api)
+      .in(collection.slug)
+      .getConfig()
+      .then(schema => {
+        collection = _.extend(collection, JSON.parse(schema))
+      }).catch(err => {
+        // TODO: Graceful deal with failure
+      })
+    })
+    return Promise.all(queue).then(resp => {
+      return collections
+    })
+  }
 
   sessionStart () {
     // const { actions, state } = this.props
