@@ -114,7 +114,6 @@ class App extends Component {
       return APIBridge(api)
       .getCollections()
       .then(collections => {
-        console.log("CALL getCollectionSchemas")
         return this.getCollectionSchemas({api, ...JSON.parse(collections)}).then(collections => {
           return _.extend(state.api.apis[key], {collections, hasCollections: true})
         })
@@ -133,8 +132,8 @@ class App extends Component {
       return APIBridge(api)
       .in(collection.slug)
       .getConfig()
-      .then(schema => {
-        collection = _.extend(collection, JSON.parse(schema))
+      .then(config => {
+        collection = _.extend(collection, JSON.parse(config))
       }).catch(err => {
         // TODO: Graceful deal with failure
       })
