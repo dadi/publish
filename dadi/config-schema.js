@@ -102,7 +102,12 @@ module.exports = {
       format: Array,
       default: [],
       env: "SSL_INTERMEDIATE_CERTIFICATE_PATHS"
-    }
+    },
+    authenticate: {
+      doc: "Enabled authentication layer",
+      format: Boolean,
+      default: true
+    },
   },
   paths: {
       doc: "Customisable asset paths",

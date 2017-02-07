@@ -8,6 +8,7 @@ const whitelist = [
   'ui',
   'server.host',
   'server.port',
+  'server.authenticate',
   'TZ',
   'env'
 ]

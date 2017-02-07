@@ -2,9 +2,11 @@ import { h, Component } from 'preact'
 import { Router, route } from 'preact-router'
 import { connect } from 'preact-redux'
 import { bindActionCreators } from 'redux'
-import { connectHelper } from '../../lib/util'
+import * as _ from 'underscore'
 
+import { connectHelper } from '../../lib/util'
 import * as userActions from '../../actions/userActions'
+import * as apiActions from '../../actions/apiActions'
 
 import Home from '../../views/Home/Home'
 import Login from '../../views/Login/Login'
@@ -24,6 +26,8 @@ import Error from '../../views/Error/Error'
  */
 import Socket from '../../lib/socket'
 import Session from '../../lib/session'
+import APIBridge from '../../lib/api-bridge-client'
+
 
 // Setup
 let currentUrl = '/'
@@ -51,6 +55,7 @@ class App extends Component {
 
     // Bind class methods
     this.onRouteChange = this.onRouteChange.bind(this)
+    this.getApiCollections = this.getApiCollections.bind(this)
   }
 
   componentWillMount () {
@@ -59,8 +64,15 @@ class App extends Component {
 
   componentDidUpdate () {
     const { state } = this.props
-    if (!state.signedIn) {
+    if (!state.user.signedIn && config['server.authenticate']) {
       route('/login')
+    }
+  }
+
+  componentDidMount() {
+    const { state } = this.props
+    if (state.user.signedIn || !config['server.authenticate']) {
+      this.getApiCollections()
     }
   }
 
@@ -91,20 +103,41 @@ class App extends Component {
     socket.setRoom(currentUrl)
   }
 
+ getApiCollections () {
+   const { state, actions } = this.props
+   let queue = _.map(state.api.apis, (api, key) => {
+     // Has this already been fetched
+     if (api.hasCollections) return
+     // Fetch collections names from API
+     return APIBridge(api)
+     .useDatabase(api.database)
+     .getCollections()
+     .then(collections => {
+       _.extend(state.api.apis[key], {...JSON.parse(collections), hasCollections: true})
+       return out
+     }).catch((err) => {
+       return err
+     })
+   })
+   return Promise.all(queue).then(() => {
+     actions.setApiList(state.api.apis)
+   })
+ }
+
   sessionStart () {
-    const { actions, state } = this.props
+    // const { actions, state } = this.props
     // new Session().getSession().then((session) => {
-      // if (session.signedIn) {
-        // actions.signIn(session.username, session.signedIn)
-      // } else {
-        // Trigger signout
+    //   if (session.signedIn) {
+    //     actions.signIn(session.username, session.signedIn)
+    //   } else {
+        //Trigger signout
         // actions.signOut()
-      // }
+    //   }
     // })
   }
 }
 
 export default connectHelper(
-  state => state.user,
-  dispatch => bindActionCreators(userActions, dispatch)
+  state => state,
+  dispatch => bindActionCreators(_.assign(userActions, apiActions), dispatch)
 )(App)

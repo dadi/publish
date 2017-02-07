@@ -1,3 +1,6 @@
 node_modules
 build
 .wallet
+npm-debug.log
+public/bundle.js
+public/index.html

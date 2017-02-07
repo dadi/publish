@@ -8,18 +8,7 @@ import * as apiActions from '../../actions/apiActions'
 
 import Nav from '../../components/Nav/Nav'
 
-const APIBridge = require('./../../lib/api-bridge-client')
-
 class Api extends Component {
-
-  constructor () {
-    super()
-    this.getApiCollections.bind(this)
-  }
-
-  componentDidMount() {
-    this.getApiCollections()
-  }
 
   render({ api }, { authenticate }) {
     const { state } = this.props
@@ -54,23 +43,6 @@ class Api extends Component {
         )}
       </main>
     )
-  }
-  getApiCollections () {
-    const { state, actions } = this.props
-    let queue = _.map(state.apis, (api, key) => {
-      if (api.collections) return
-      return APIBridge(api)
-      .useDatabase(api.database)
-      .getCollections()
-      .then(collections => {
-        _.extend(state.apis[key], JSON.parse(collections))
-        actions.setApiList(state.apis)
-        return out
-      }).catch((err) => {
-        return err
-      })
-    })
-    return Promise.all(queue)
   }
 }
 
