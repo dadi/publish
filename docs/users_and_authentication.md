@@ -1,16 +1,3 @@
- {
-      "name": "Publish Test API",
-      "host": "http://am.dev.dadi.technology",
-      "port": 3003,
-      "primary": true,
-      "database": "publish",
-      "version": "1.0",
-      "credentials": {
-        "clientId": "testClient",
-        "secret": "superSecret"
-      }
-    }
-
 # Users & Authentication
 
 ### Overview
