@@ -172,6 +172,7 @@ API must have available the following collection schema.
 The **Slugify** hook is currently required. It forces the creation of a handle to be used in the url when accessing a user account in Publish. It looks like this:
 
 ```javascript
+'use strict'
 // Hook: Creates a URL-friendly version (slug) of a field
 const slugify = require("underscore.string/slugify")
 const _ = require('underscore')
@@ -202,7 +203,8 @@ module.exports = (obj, type, data) => {
 The **Password** hook is not required. It is used to hash new passwords, and to perform password matches on GET. It looks like this.
 (This will need updating once the password match check has been added)
 
-```
+```javascript
+'use strict'
 const bcrypt = require('bcrypt-as-promised')
 
 const SALT_LENGTH = 10 //salt doesn't need to be super long
