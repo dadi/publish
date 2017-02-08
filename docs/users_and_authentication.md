@@ -205,7 +205,11 @@ The **Password** hook is not required. It is used to hash new passwords, and to 
 
 ```javascript
 'use strict'
+
 const bcrypt = require('bcrypt-as-promised')
+const model = require('@dadi/api').Model
+const url = require('url')
+const _ = require('underscore')
 
 const SALT_LENGTH = 10 //salt doesn't need to be super long
 
@@ -213,21 +217,57 @@ const SALT_LENGTH = 10 //salt doesn't need to be super long
  * Hash password
  * - trap hash function with salting
  * @param {string} plaintext - password in Plaintext
- * @param {function} cb - callback function
- * @returns {function} - password as a result of bcrypt hash method
+ * @returns {Promise} - password as a result of bcrypt hash method
  */
 const hash = (plaintext) => {
-  return bcrypt.genSalt(SALT_LENGTH).then((err, salt) => {
-    if (err) return err
+  return bcrypt.genSalt(SALT_LENGTH).then((salt, err) => {
+    if (!_.isUndefined(err)) return err
     return bcrypt.hash(plaintext, salt)
   })
 }
 
+/**
+ * Compare password
+ * - wrapper for bcrypt compare
+ * @param {string} plaintext - password in Plaintext
+ * @param {string} hash - the password hash to be applied
+ * @returns {Promise} - instance of bcrypt compare method
+ */
+const compare = (plaintext, hash) => {
+  return bcrypt.compare(plaintext, hash)
+}
+
 module.exports = (obj, type, data) => {
-  if (obj[data.options.from] && (type === 'beforeCreate' || type === 'beforeUpdate')) {
-    return hash(obj[data.options.password]).then((hashed) => {
+  if (type === 'afterGet') {
+
+    // Without the existance of a `beforeGet` hook, this operation will lookup a user by username, then check for a matching hashed password using bcrypt password compare method
+    let params = url.parse(data.req.url, true).query
+    if (!params.filter) return obj
+    let filter = JSON.parse(params.filter)
+    if (!filter.username || !filter.password) return obj
+    let query = {
+      apiVersion: "1.0",
+      username: filter.username   
+    }
+    return new Promise((resolve, reject) => {
+      model(data.collection).find(query, {limit: 1},(err, user) => {
+        if (user.results.length < 1) return obj
+        return compare(filter.password, user.results[0].password).then(match => {
+          if (match) {
+            delete user.results[0].password
+            return resolve(user)
+          }
+          return resolve(obj)
+        })
+      })
+    })
+  } else if (obj[data.options.from] && type === 'beforeCreate') {
+    return hash(obj[data.options.from]).then(hashed => {
       obj[data.options.from] = hashed
       return obj
+    })
+    .catch(err => {
+      console.log(err)
     })
   } else {
     return obj
