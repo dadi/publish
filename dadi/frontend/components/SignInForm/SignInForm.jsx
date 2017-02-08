@@ -11,7 +11,7 @@ export default class SignInForm extends Component {
   render() {
     const { onSubmit } = this.props
     return (
-      <form class="SignInForm" onSubmit={onSubmit}>
+      <form class="SignInForm" onSubmit={ onSubmit }>
         <FormTextInput name="loginUsername" />
         <FormPassword name="loginPassword" />
         <SubmitButton 
@@ -21,22 +21,3 @@ export default class SignInForm extends Component {
     )
   }
 }
-
-/*
-{this.props.children}
-<form onSubmit={this.signIn}>
-          <label> username:
-            <input type="text" />
-          </label>
-          <label> password:
-            <input type="password" />
-          </label>
-          <SubmitButton 
-            value="Sign in" 
-          />
-        </form>
-        <SubmitButton
-          value="Sign out"
-          onClick={actions.signOut}
-          />
- */

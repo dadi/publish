@@ -5,27 +5,18 @@ const _ = require('underscore')
 
 const Api =  function () {}
 
-Api.prototype.init = function () {
-  // Temp
-}
-
 /**
  * Configure API
  * Configure new instance of api-wrapper
  * @param  {Object} conf Configuration settings object
  * @return {DadiAPI}      Configure instance of DADI api-wrapper
  */
-const configure = ({host, port, credentials, version, database, clientKeys}) => {
-  let clientKey = _.findWhere(clientKeys, { primary: true }) || clientKeys[0]
-
+const configure = ({host, port, credentials, version, database}) => {
   return {
     appId: 'DADI Publish',
     uri: host,
     port: port,
-    credentials: {
-      clientId: clientKey.clientId,
-      secret: clientKey.secret
-    },
+    credentials: credentials,
      // debug: config.get('logging.level') === 'debug' ? true : false // Not yet set in config
     version: version || '1.0',
     database: database

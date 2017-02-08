@@ -8,7 +8,7 @@ export default class FormTextInput extends Component {
   render() {
     const { name } = this.props
     return (
-      <input type="text" name={ name } />
+      <input type="text" name={ name } ref={ name } />
     )
   }
 }

@@ -7,7 +7,6 @@ const passport = require('passport-restify')
 const LocalStrategy = require('passport-local')
 
 const SessionController = require(`${paths.lib.controllers}/session`)
-const User = require(`${paths.lib.models}/user`)
 
 module.exports = function (app) {
 
@@ -30,17 +29,14 @@ module.exports = function (app) {
   passport.use(new LocalStrategy(sessionController.authorise))
 
   passport.serializeUser((user, done) => {
-    done(null, user._id)
+    if (!user) return done({err: "User not found"}, null)
+    return done(null, user)
   })
 
-  passport.deserializeUser((id, done) => {
-    // return new User().find({_id: id}).then((user) => {
-    //   return done(null, user)
-    // })
-    return done(null, {})
+  passport.deserializeUser((user, done) => {
+    if (!user) return done({err: "No session"}, null)
+    return done(null, user)
   })
-
-  // app.post('/auth/user', sessionController.createUser)
 
   app.get({
       name: 'session', // This allows us to reuse the auth request
@@ -48,9 +44,7 @@ module.exports = function (app) {
     }, 
     (req, res, next) => {
     if (req.isAuthenticated()) {
-      // return new User().find({_id: req.session.passport.user}).then((user) => {
-        // res.write(JSON.stringify(user))
-        res.write(JSON.stringify({success: false}))
+        res.write(JSON.stringify(req.session.passport.user))
         res.end()
         return next()
       // })
@@ -66,6 +60,7 @@ module.exports = function (app) {
     passport.authenticate('local', (err, user, info) => {
       if (err) { return next(err) }
       req.login(user, {}, (err) => {
+        if (err) console.log("Err", err)
         res.write(JSON.stringify(user))
         res.end()
         return next()

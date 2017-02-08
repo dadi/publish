@@ -37,7 +37,6 @@
     "@dadi/api-wrapper-core": "^1.1.1",
     "@dadi/logger": "^1.1.4",
     "@dadi/passport": "^1.2.0",
-    "bcrypt-as-promised": "^1.1.0",
     "command-line-args": "^3.0.4",
     "connect-flash": "^0.1.1",
     "convict": "^1.5.0",

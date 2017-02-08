@@ -30,13 +30,17 @@ class SignIn extends Component {
   }
   signIn (event) {
     event.preventDefault()
-    const { actions, state, loginUsername, loginPassword } = this.props
+    // loginUsername and loginPassword should come from form fields
+    // const { actions, state, loginUsername, loginPassword } = this.props
+    const { actions, state } = this.props
+    // Temp
+    let loginUsername = 'arthurmingard'
+    let loginPassword = 'publishpass'
     new Session().createSession({username: loginUsername, password: loginPassword}).then((session) => {
       if (session.signedIn) {
-        console.log("SUCCESS")
-    //     actions.signIn(session.username, session.signedIn)
+        actions.signIn(session.username, session.signedIn)
       } else {
-        console.log("SIGNIN FAILED")
+        // actions.signOut()
       }
     })
   }

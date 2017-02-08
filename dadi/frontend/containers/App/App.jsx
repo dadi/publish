@@ -147,12 +147,10 @@ class App extends Component {
     const { actions, state } = this.props
     new Session().getSession().then((session) => {
       if (session.signedIn) {
-        console.log("SESSION")
-        // actions.signIn(session.username, session.signedIn)
+        actions.signIn(session.username, session.signedIn)
       } else {
-        console.log("NO SESSION")
         // Trigger signout
-        // actions.signOut()
+        actions.signOut()
       }
     })
   }
