@@ -56,6 +56,52 @@ module.exports = {
       }
     }
   },
+  auth: {
+    doc: "Connected APIs",
+    format: Object,
+    default: {
+      enabled: true
+    },
+    enabled: {
+      format: Boolean,
+      default: true
+    },
+    name: {
+      format: String,
+      default: "No Name"
+    },
+    host: {
+      format: "ipaddress",
+      default: "0.0.0.0"
+    },
+    port: {
+      format: "port",
+      default: 3000
+    },
+    database: {
+      format: String,
+      default: ""
+    },
+    collection: {
+      format: String,
+      default: ""
+    },
+    version: {
+      format: String,
+      default: "1.0"
+    },
+    credentials: {
+      format: Object,
+      clientId: {
+        format: String,
+        default: "testClient"
+      },
+      secret: {
+        format: String,
+        default: "superSecret"
+      }
+    }
+  },
   server: {
     host: {
       doc: "The IP address or interface to bind to",

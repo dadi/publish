@@ -26,5 +26,16 @@
         "secret": "superSecret"
       }
     }
-  ] 
+  ],
+  "auth": {
+    "host": "http://am.dev.dadi.technology",
+    "port": 3003,
+    "collection": "users",
+    "database": "publish",
+    "version": "1.0",
+    "credentials": {
+      "clientId": "testClient",
+      "secret": "superSecret"
+    }
+  }
 }
