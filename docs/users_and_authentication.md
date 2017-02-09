@@ -6,17 +6,17 @@ Users are currently stored in API and authentication is handled by both Publish 
 
 ### Requirements
 
-One of the APIs in config should have a **primary** flag. This tells Publish that this API stores and controls authentication. It must also have an **authCollection** value to tell Publish which collection is the be used for storing and retrieving authentication.
+Whilst there is no requirement for an API to exist for Publish to launch if **config.server.authenticate** is false, one must be present when true.
 
-Sessions created with credentials stored in the **primary** API cover access to all APIs available in the same instance of Publish, removing the need to login when switching between API instances. The config entry will look something like this:
+The Auth block in config stores the credentials for the authentication API. Regardless of whether the same API exists in the **apis** block, this must exist independently for the possibility of a seperate database instance, and the existence of E2E encryption.
+
+The auth block should look similar to an entry in `apis`, but with the adition of `collection`
 
 ```json
  {
-  "name": "My API",
   "host": "http://hostname.com",
   "port": 3003,
-  "primary": true,
-  "authCollection": "users",
+  "collection": "users",
   "database": "my-api",
   "version": "1.0",
   "credentials": {
