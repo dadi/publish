@@ -2,7 +2,6 @@ import { h, Component } from 'preact'
 import { connect } from 'preact-redux'
 import { bindActionCreators } from 'redux'
 import { connectHelper } from '../../lib/util'
-import * as _ from 'underscore'
 
 import * as apiActions from '../../actions/apiActions'
 

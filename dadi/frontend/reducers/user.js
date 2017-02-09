@@ -23,12 +23,6 @@ export default function user(state = initialState, action = {}) {
         name: null
       }
 
-    case types.SET_USER_LIST:
-      return {
-        ...state,
-        users: action.users
-      }
-
     default:
       return state
   }

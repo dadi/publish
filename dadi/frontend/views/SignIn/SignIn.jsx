@@ -1,5 +1,6 @@
 import { h, Component } from 'preact'
 import { connect } from 'preact-redux'
+import { route } from 'preact-router'
 import { bindActionCreators } from 'redux'
 import { connectHelper } from '../../lib/util'
 
@@ -15,6 +16,13 @@ class SignIn extends Component {
   constructor(props) {
     super(props)
     this.signIn = this.signIn.bind(this)
+  }
+
+  componentWillUpdate() {
+    const { state, actions } = this.props
+    if (state.signedIn) {
+      route('/profile')
+    }
   }
   
   render() {
@@ -39,8 +47,9 @@ class SignIn extends Component {
     new Session().createSession({username: loginUsername, password: loginPassword}).then((session) => {
       if (session.signedIn) {
         actions.signIn(session.username, session.signedIn)
+        route('/profile')
       } else {
-        // actions.signOut()
+        actions.signOut()
       }
     })
   }

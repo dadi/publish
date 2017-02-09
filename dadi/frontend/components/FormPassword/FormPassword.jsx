@@ -8,7 +8,7 @@ export default class FormPassword extends Component {
   render() {
     const { name } = this.props
     return (
-      <input type="password" name={ name } ref={ name } />
+      <input type="password" name={ name } />
     )
   }
 }

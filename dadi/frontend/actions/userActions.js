@@ -13,10 +13,3 @@ export function signOut () {
     type: types.SIGN_OUT
   }
 }
-
-export function setUserList (users) {
-  return {
-    type: types.SET_USER_LIST,
-    users
-  }
-}

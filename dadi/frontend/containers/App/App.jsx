@@ -2,24 +2,24 @@ import { h, Component } from 'preact'
 import { Router, route } from 'preact-router'
 import { connect } from 'preact-redux'
 import { bindActionCreators } from 'redux'
-import * as _ from 'underscore'
 
 import { connectHelper } from '../../lib/util'
 import * as userActions from '../../actions/userActions'
 import * as apiActions from '../../actions/apiActions'
 
-import Home from '../../views/Home/Home'
-import SignIn from '../../views/SignIn/SignIn'
 import Api from '../../views/Api/Api'
 import Collection from '../../views/Collection/Collection'
-import DocumentList from '../../views/DocumentList/DocumentList'
 import DocumentEdit from '../../views/DocumentEdit/DocumentEdit'
-import UserList from '../../views/UserList/UserList'
-import UserEdit from '../../views/UserEdit/UserEdit'
-import RoleList from '../../views/RoleList/RoleList'
-import RoleEdit from '../../views/RoleEdit/RoleEdit'
-import StyleGuide from '../../views/StyleGuide/StyleGuide'
+import DocumentList from '../../views/DocumentList/DocumentList'
 import Error from '../../views/Error/Error'
+import Home from '../../views/Home/Home'
+import MediaLibrary from '../../views/MediaLibrary/MediaLibrary'
+import PasswordReset from '../../views/PasswordReset/PasswordReset'
+import RoleEdit from '../../views/RoleEdit/RoleEdit'
+import RoleList from '../../views/RoleList/RoleList'
+import UserProfile from '../../views/UserProfile/UserProfile'
+import SignIn from '../../views/SignIn/SignIn'
+import StyleGuide from '../../views/StyleGuide/StyleGuide'
 
 /**
  * Lib
@@ -28,8 +28,9 @@ import Socket from '../../lib/socket'
 import Session from '../../lib/session'
 import APIBridge from '../../lib/api-bridge-client'
 
-
-// Setup
+/*
+* Setup
+ */
 let currentUrl = '/'
 let socket = new Socket()
 let session = new Session()
@@ -62,16 +63,9 @@ class App extends Component {
     this.sessionStart()
   }
 
-  componentDidUpdate () {
-    const { state } = this.props
-    if (!state.user.signedIn && config['server.authenticate']) {
-      route('/signin')
-    }
-  }
-
-  componentDidMount() {
-    const { state } = this.props
-    if (state.user.signedIn || !config['server.authenticate']) {
+  componentDidUpdate() {
+    const { state, actions } = this.props
+    if ((state.user.signedIn || !config['server.authenticate']) && state.api.status === 'canFetch') {
       this.getApiCollections()
     }
   }
@@ -81,16 +75,16 @@ class App extends Component {
 
     return (
       <Router onChange={this.onRouteChange}>
-        <Home path="/" />
-        <SignIn path="/signin" />
+        <Home path="/" authenticate />
+        <PasswordReset path="/reset" authenticate/>
         <Api path="/apis/:api?" authenticate />
         <Collection path="/apis/:api/collections/:collection?" authenticate />
         <DocumentList path="/apis/:api/collections/:collection/documents" authenticate />
         <DocumentEdit path="/apis/:api/collections/:collection/document/:method/:document?" authenticate />
-        <UserList path="/users" authenticate/>
-        <UserEdit path="/user/:method/:user?" authenticate />
+        <UserProfile path="/profile" authenticate />
         <RoleList path="/roles" authenticate/>
         <RoleEdit path="/role/:method/:role?" authenticate />
+        <SignIn path="/signin" />
         <StyleGuide path="/styleguide" />
         <Error type="404" default />
       </Router>
@@ -105,35 +99,37 @@ class App extends Component {
 
   getApiCollections () {
     const { state, actions } = this.props
+    actions.setApiFetchStatus('isFetching')
 
-    let queue = _.chain(state.api.apis)
-    .filter(api => {
+    let queue = state.api.apis.filter(api => {
       return !api.hasCollections
-    })
-    .map((api, key) => {
+    }).map((api, key) => {
       return APIBridge(api)
       .getCollections()
       .then(collections => {
         return this.getCollectionSchemas({api, ...JSON.parse(collections)}).then(collections => {
-          return _.extend(state.api.apis[key], {collections, hasCollections: true})
+          return Object.assign({}, state.api.apis[key], {collections, hasCollections: true})
         })
       }).catch((err) => {
         // TODO: Graceful deal with failure
       })
-    }).value()
+    })
 
-    return Promise.all(queue).then(() => {
-      actions.setApiList(state.api.apis)
+    return Promise.all(queue).then((results) => {
+      if (results.length > 0) {
+        actions.setApiList(state.api.apis)
+        actions.setApiFetchStatus('fetchComplete')
+      }
     })
   }
 
   getCollectionSchemas ({api, collections}) {
-    let queue = _.map(collections, collection => {
+    let queue = collections.map(collection => {
       return APIBridge(api)
       .in(collection.slug)
       .getConfig()
       .then(config => {
-        collection = _.extend(collection, JSON.parse(config))
+        collection = Object.assign(collection, JSON.parse(config))
       }).catch(err => {
         // TODO: Graceful deal with failure
       })
@@ -151,6 +147,7 @@ class App extends Component {
       } else {
         // Trigger signout
         actions.signOut()
+        route('/signin')
       }
     })
   }
@@ -158,5 +155,5 @@ class App extends Component {
 
 export default connectHelper(
   state => state,
-  dispatch => bindActionCreators(_.assign(userActions, apiActions), dispatch)
+  dispatch => bindActionCreators(Object.assign(userActions, apiActions), dispatch)
 )(App)

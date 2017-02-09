@@ -1,5 +1,6 @@
 node_modules
 build
+log
 .wallet
 npm-debug.log
 public/bundle.js

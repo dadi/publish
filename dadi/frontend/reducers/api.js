@@ -1,7 +1,8 @@
 import * as types from '../actions/actionTypes'
 
 const initialState = {
-  apis: config.apis
+  apis: config.apis,
+  status: 'canFetch'
 }
 
 export default function api(state = initialState, action = {}) {
@@ -10,6 +11,11 @@ export default function api(state = initialState, action = {}) {
       return {
         ...state,
         apis: action.apis
+      }
+    case types.SET_API_FETCH_STATUS:
+      return {
+        ...state,
+        status: action.status
       }
     default:
       return state
