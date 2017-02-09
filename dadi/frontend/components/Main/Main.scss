@@ -4,11 +4,11 @@
   background-size: 400px auto;
   background-repeat: repeat;
   background-color: $background;
-  background-image: url('/assets/img/bg.png');
+  // background-image: url('/assets/img/bg.png');
   min-height: 100%;
   &.cinematic {
     background-size: cover;
-    background-image:url('/assets/img/mountains.jpg');
+    // background-image:url('/assets/img/mountains.jpg');
     background-repeat: no-repeat;
     background-position: 50% 50%;
     background-color: $background;
