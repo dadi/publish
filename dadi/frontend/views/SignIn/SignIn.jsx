@@ -9,6 +9,10 @@ import * as userActions from '../../actions/userActions'
 import Main from '../../components/Main/Main'
 import SignInForm from '../../components/SignInForm/SignInForm'
 import Debug from '../../components/Debug/Debug'
+
+/*
+* Lib
+ */
 import Session from '../../lib/session'
 
 class SignIn extends Component {
@@ -29,11 +33,11 @@ class SignIn extends Component {
     const { state, actions } = this.props
 
     return (
-      <div >
+      <Main>
         <Debug val={state.signedIn}/>
         <Debug val={state.username}/>
         <SignInForm onSubmit={this.signIn} />
-      </div>
+      </Main>
     )
   }
   signIn (event) {
