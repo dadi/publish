@@ -118,7 +118,6 @@ class App extends Component {
 
     return Promise.all(queue).then((results) => {
       if (results.length > 0) {
-        console.log(state.api.apis)
         actions.setApiList(state.api.apis)
         actions.setApiFetchStatus('fetchComplete')
       }
