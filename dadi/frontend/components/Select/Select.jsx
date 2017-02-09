@@ -4,8 +4,6 @@ import { h, Component } from 'preact'
 
 import Styles from './Select.scss'
 
-const _ = require('underscore')
-
 export default class Select extends Component {
   constructor(props) {
     super(props)
@@ -136,7 +134,7 @@ export default class Select extends Component {
   filterOptions(value, options, maxSuggestions) {
     const { searchable } = this.props
     const visibleOptions = (searchable && value && value.length > 0)
-      ? _.filter(options, o => o.indexOf(value) > -1)
+      ? options.filter(o => o.indexOf(value) > -1)
       : [].concat(options)
 
     maxSuggestions = maxSuggestions || this.state.maxSuggestions

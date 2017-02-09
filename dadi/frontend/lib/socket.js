@@ -35,7 +35,7 @@ Socket.prototype.onConnect = function () {
       this.socket.emit('clientConnect', {user: this.user})
     }
   }
-  _.each(this.onConnectListeners, (connectListener) => {
+  this.onConnectListeners.forEach(connectListener => {
     connectListener()
   })
   return this
@@ -52,8 +52,6 @@ Socket.prototype.isConnected = function () {
   return this.socket
 }
 
-// //User
-
 Socket.prototype.setUser = function (data) {
   this.user = data
   console.log(`User is ${data.user.name}`)
@@ -63,25 +61,6 @@ Socket.prototype.setUser = function (data) {
 Socket.prototype.getUser = function () {
   return this.user
 }
-
-// Socket.prototype.getUsers = function () {
-  // console.log("SENDING", {type: 'userWillEnter', channel: this.room})
-  // this.socket.publish(this.room, {type: 'userWillEnter', channel: this.room}, (data) => {
-    // console.log(JSON.parse(data))
-  // })
-  // this.onConnectListeners.push(() => {
-  //   this.collaborators = []
-  //   _.each(this.rooms, (room) => {
-  //     console.log(room)
-  //     if (this.socket) {
-  //       this.socket.publish(room, {type: 'userWillEnter', channel: room}, (data) => {
-  //         console.log(JSON.parse(data))
-  //       })
-  //     }
-  //   })
-  // })
-  // return this
-// }
 
 Socket.prototype.onError = function (err) {
   console.log(err)
@@ -94,13 +73,6 @@ Socket.prototype.setRoom = function (room) {
   this.enterRoom()
   return this
 }
-
-// Socket.prototype.setRooms = function (rooms) {
-//   this.rooms = _.map(rooms, function (room) {
-//     return JSON.stringify(room)
-//   })
-//   return this
-// }
 
 Socket.prototype.leaveRoom = function () {
   this.socket.off('connect', this.onConnect)
