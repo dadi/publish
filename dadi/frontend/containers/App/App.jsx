@@ -108,7 +108,8 @@ class App extends Component {
       .getCollections()
       .then(collections => {
         return this.getCollectionSchemas({api, ...JSON.parse(collections)}).then(collections => {
-          return Object.assign({}, state.api.apis[key], {collections, hasCollections: true})
+          return Object.assign(state.api.apis[key], {collections, hasCollections: true})
+          // return Object.assign({}, state.api.apis[key], {...collections, hasCollections: true})
         })
       }).catch((err) => {
         // TODO: Graceful deal with failure
@@ -117,6 +118,7 @@ class App extends Component {
 
     return Promise.all(queue).then((results) => {
       if (results.length > 0) {
+        console.log(state.api.apis)
         actions.setApiList(state.api.apis)
         actions.setApiFetchStatus('fetchComplete')
       }
