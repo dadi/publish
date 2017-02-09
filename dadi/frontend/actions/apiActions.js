@@ -8,7 +8,6 @@ export function setApiList (apis) {
 }
 
 export function setApiFetchStatus (status) {
-  console.log("STATUS", status)
   return {
     type: types.SET_API_FETCH_STATUS,
     status
