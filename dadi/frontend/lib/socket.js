@@ -1,14 +1,13 @@
 'use strict'
 
 import {SocketCluster, connect} from 'socketcluster-client'
-const _ = require('underscore')
 
 /**
  * @constructor
  */
 const Socket = function () {
   this.options = {
-    port: config['server.port']
+    port: config.server.port
   }
   this.listeners = {}
   this.onConnectListeners = []

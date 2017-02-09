@@ -65,7 +65,7 @@ class App extends Component {
 
   componentDidUpdate() {
     const { state, actions } = this.props
-    if ((state.user.signedIn || !config['server.authenticate']) && state.api.status === 'canFetch') {
+    if ((state.user.signedIn || !config.server.authenticate) && state.api.status === 'canFetch') {
       this.getApiCollections()
     }
   }

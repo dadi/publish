@@ -18,7 +18,7 @@ export default class TextInput extends Component {
   _onKeyUp(e) {
     const context = this
     const value = e.target.value
-    const delay = this.props.delay || config['ui.inputDelay']
+    const delay = this.props.delay || config.ui.inputDelay
 
     clearTimeout(this._timeout)
     this._timeout = setTimeout(() => {
