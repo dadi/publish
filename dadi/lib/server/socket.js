@@ -1,6 +1,4 @@
 'use strict'
-// const config = require(GLOBAL.paths.config)
-const _ = require('underscore')
 const scServer = require('socketcluster-server')
 
 /**
@@ -88,8 +86,10 @@ Socket.prototype.clearDeltas = function (req) {
  * @return {object} collaborators List of collaborators
  */
 Socket.prototype.getUsers = function (req) {
-  var users = []
-  _.each(req.socket.server.clients, (client) => {
+  let users = []
+  let clients = req.socket.server.clients
+  Object.keys(clients).forEach((clientKey) => {
+    let client = clients[clientKey]
     if (req.socket.server.clients) {
       if (client.authToken && (req.channel === client.authToken.channel || (req.data && req.data.channel === client.authToken.channel))) {
         users.push(client.authToken)
@@ -140,13 +140,13 @@ Socket.prototype.onPublish = function (req, next) {
  */
 Socket.prototype.storeMessage = function (channel, data) {
   // Unsupported currently
-  // var channelData = JSON.parse(channel)
-  // var messageEntry = {
+  // let channelData = JSON.parse(channel)
+  // let messageEntry = {
   //   collectionSlug: channelData.collection,
   //   documentId: channelData.documentId,
   //   message: data.data.value
   // }
-  // var options = {
+  // let options = {
   //   id: channelData.api,
   //   collectionId: 'messages'
   // }
@@ -160,7 +160,7 @@ Socket.prototype.storeMessage = function (channel, data) {
 Socket.prototype.clientConnect = function (data, socket) {
   if (data.user) {
     console.log(`${data.user.user.name} connected`)
-    var authToken = socket.getAuthToken()
+    let authToken = socket.getAuthToken()
     if (!authToken) {
       socket.setAuthToken(data.user)
     }
