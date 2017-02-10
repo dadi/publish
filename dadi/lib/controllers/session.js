@@ -1,6 +1,5 @@
 'use strict'
 
-const _ = require('underscore')
 const config = require(paths.config)
 const Api = require(`${paths.lib.models}/api`)
 

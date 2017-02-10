@@ -1,7 +1,6 @@
 'use strict'
 
 const DadiAPI = require('@dadi/api-wrapper')
-const _ = require('underscore')
 
 const Api =  function () {}
 
@@ -23,14 +22,7 @@ const configure = ({host, port, credentials, version, database}) => {
   }
 }
 
-const extendWithPrototypes = function () {
-  _.each(Object.getPrototypeOf(new Api), (value, key) => {
-    DadiAPI.prototype[key] = value
-  })
-}
-
 module.exports = function (options) {
-  extendWithPrototypes() // Extend API wrapper with Api prototypes
   return new DadiAPI(configure(options))
 }
 
