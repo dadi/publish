@@ -53,7 +53,7 @@ Socket.prototype.isConnected = function () {
 
 Socket.prototype.setUser = function (data) {
   this.user = data
-  console.log(`User is ${data.user.name}`)
+  console.log(`User is ${data.user.username}`)
   return this
 }
 
@@ -75,12 +75,13 @@ Socket.prototype.setRoom = function (room) {
 
 Socket.prototype.leaveRoom = function () {
   this.socket.off('connect', this.onConnect)
+  this.publishMessage('userWillLeave', {channel: this.room})
   this.socket.unsubscribe(this.room)
   return this
 }
 
 Socket.prototype.enterRoom = function () {
-  console.log(`${this.user.name} is entering ${this.room}`)
+  console.log(`${this.user.username} is entering ${this.room}`)
   this.channel = this.socket.subscribe(this.room)
   this.channel.on('subscribeFail', this.onRoomSubscribeFail.bind(this))
   this.channel.on('unsubscribe', this.onRoomUnSubscribe.bind(this))

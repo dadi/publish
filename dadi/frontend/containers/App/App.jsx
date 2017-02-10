@@ -43,11 +43,15 @@ socket.on('userDidEnter', data => {
   console.log("New User", data)
 })
 
-socket.setUser({
-  user: {
-    name: `Publish User`
-  }
+socket.on('userDidLeave', data => {
+  console.log("Users", data)
 })
+
+// socket.setUser({
+//   user: {
+//     name: `Publish User`
+//   }
+// })
 
 class App extends Component {
 
@@ -65,8 +69,13 @@ class App extends Component {
 
   componentDidUpdate() {
     const { state, actions } = this.props
-    if ((state.user.signedIn || !config.server.authenticate) && state.api.status === 'canFetch') {
-      this.getApiCollections()
+    if (state.user.signedIn || !config.server.authenticate) {
+      if (!socket.getUser()) {
+        socket.setUser({user: {username: state.user.username}}).setRoom(currentUrl)
+      }
+      if (state.api.status === 'canFetch') {
+        this.getApiCollections()
+      }
     }
   }
 
@@ -79,8 +88,8 @@ class App extends Component {
         <PasswordReset path="/reset" authenticate/>
         <Api path="/apis/:api?" authenticate />
         <Collection path="/apis/:api/collections/:collection?" authenticate />
-        <DocumentList path="/apis/:api/collections/:collection/documents" authenticate />
-        <DocumentEdit path="/apis/:api/collections/:collection/document/:method/:document?" authenticate />
+        <DocumentList path="/:collection/documents/:page?" authenticate />
+        <DocumentEdit path="/:collection/document/:method/:document?" authenticate />
         <UserProfile path="/profile" authenticate />
         <RoleList path="/roles" authenticate/>
         <RoleEdit path="/role/:method/:role?" authenticate />
@@ -94,7 +103,9 @@ class App extends Component {
   onRouteChange (e) {
     const { actions, state } = this.props
     currentUrl = e.url
-    socket.setRoom(currentUrl)
+    if (socket.getUser()) {
+      socket.setRoom(currentUrl)
+    }
   }
 
   getApiCollections () {

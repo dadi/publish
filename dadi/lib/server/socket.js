@@ -118,6 +118,9 @@ Socket.prototype.onPublish = function (req, next) {
       case 'userWillEnter':
        req.socket.exchange.publish(req.channel, {type: 'userDidEnter', body: {users: this.getUsers(req)}})
       break
+      case 'userWillLeave':
+       req.socket.exchange.publish(req.channel, {type: 'userDidLeave', body: {users: this.getUsers(req)}})
+      break
     }
   }
   return next()
