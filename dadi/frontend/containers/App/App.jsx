@@ -21,8 +21,8 @@ import UserProfile from '../../views/UserProfile/UserProfile'
 import SignIn from '../../views/SignIn/SignIn'
 import StyleGuide from '../../views/StyleGuide/StyleGuide'
 
-/**
- * Lib
+/*
+ * Libs
  */
 import Socket from '../../lib/socket'
 import Session from '../../lib/session'
@@ -118,7 +118,7 @@ class App extends Component {
       return APIBridge(api)
       .getCollections()
       .then(collections => {
-        return this.getCollectionSchemas({api, ...JSON.parse(collections)}).then(collections => {
+        return this.getCollectionSchemas({api, ...collections}).then(collections => {
           return Object.assign(state.api.apis[key], {collections, hasCollections: true})
           // return Object.assign({}, state.api.apis[key], {...collections, hasCollections: true})
         })
@@ -141,7 +141,7 @@ class App extends Component {
       .in(collection.slug)
       .getConfig()
       .then(config => {
-        collection = Object.assign(collection, JSON.parse(config))
+        collection = Object.assign(collection, config)
       }).catch(err => {
         // TODO: Graceful deal with failure
       })

@@ -26,7 +26,9 @@ module.exports = ({host, port, version, database}) => {
       credentials: 'same-origin',
       body: JSON.stringify(requestObject)
     }).then(response => {
-      return response.json()
+      return response.json().then(json => {
+        return JSON.parse(json)
+      })
     })
   }
 
