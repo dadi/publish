@@ -11,7 +11,9 @@
     "init": "validate-commit-msg",
     "watch": "npm-run-all --parallel watch:server watch:build",
     "watch:build": "webpack --watch",
-    "watch:server": "nodemon \"./index.js\" --watch \"./dadi\""
+    "watch:server": "nodemon \"./index.js\" --watch \"./dadi\"",
+    "snyk-protect": "snyk protect",
+    "prepublish": "npm run snyk-protect"
   },
   "repository": {
     "type": "git",
@@ -65,7 +67,8 @@
     "underscore": "^1.8.3",
     "underscore.string": "^3.3.4",
     "url": "^0.11.0",
-    "whatwg-fetch": "^2.0.1"
+    "whatwg-fetch": "^2.0.1",
+    "snyk": "^1.25.0"
   },
   "devDependencies": {
     "babel": "^6.5.2",
@@ -101,5 +104,6 @@
   },
   "directories": {
     "doc": "docs"
-  }
+  },
+  "snyk": true
 }
