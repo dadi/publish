@@ -5,7 +5,6 @@ const restifyErrors = require('restify-errors')
 const serveStatic = require('serve-static-restify')
 const path = require('path')
 const fs = require('fs')
-const _ = require('underscore')
 
 const cookieParser = require('restify-cookies')
 const session = require('cookie-session')
@@ -38,9 +37,9 @@ Router.prototype.addRoutes = function (app) {
 
 Router.prototype.getRoutes = function () {
 
-  _.each(fs.readdirSync(path.resolve(this.routesDir)), (file) => {
+  fs.readdirSync(path.resolve(this.routesDir)).forEach((file) => {
     /* require module with its name (from filename), passing app */
-    var controller = require(path.join(this.routesDir, file))
+    let controller = require(path.join(this.routesDir, file))
 
     controller(this.app)
   })
