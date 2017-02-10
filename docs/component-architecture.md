@@ -10,8 +10,10 @@ App
 │       └───Logo
 │
 └───SignIn
-    │   Session
     │
-    └───Debug
-    └───SignInForm
+    └───Main
+        │   Session
+        │
+        └───Debug
+        └───SignInForm
 ```
