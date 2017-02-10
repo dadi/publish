@@ -3,8 +3,15 @@ import { connect } from 'preact-redux'
 import { bindActionCreators } from 'redux'
 import { connectHelper } from '../../lib/util'
 
+/*
+* Actions
+ */
 import * as apiActions from '../../actions/apiActions'
 
+/*
+* Components
+ */
+import Main from '../../components/Main/Main'
 import Nav from '../../components/Nav/Nav'
 
 class Api extends Component {
@@ -12,7 +19,7 @@ class Api extends Component {
   render({ api }, { authenticate }) {
     const { state } = this.props
     return (
-      <main>
+      <Main>
         <Nav />
         {state.apis.map(api => (
           <li>
@@ -56,7 +63,7 @@ class Api extends Component {
         ) : (
           <h1 />
         )}
-      </main>
+      </Main>
     )
   }
 }

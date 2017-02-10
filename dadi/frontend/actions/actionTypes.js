@@ -10,6 +10,6 @@ export const SET_API_LIST = 'SET_API_LIST'
 export const SET_API_FETCH_STATUS = 'SET_API_FETCH_STATUS'
 
 //
-// Test
+// Document
 //
-export const TEST_ACTION = 'TEST_ACTION'
+export const SET_DOCUMENT_LIST = 'SET_DOCUMENT_LIST'

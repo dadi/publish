@@ -1,11 +1,11 @@
-import app from './app'
-import test from './test'
-import user from './user'
 import api from './api'
+import app from './app'
+import document from './document'
+import user from './user'
 
 export {
+  api,
   app,
-  test,
-  user,
-  api
+  document,
+  user
 }

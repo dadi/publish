@@ -3,7 +3,6 @@ import { connect } from 'preact-redux'
 import { bindActionCreators } from 'redux'
 import { connectHelper } from '../../lib/util'
 
-import * as testActions from '../../actions/testActions'
 import * as userActions from '../../actions/userActions'
 
 import Main from '../../components/Main/Main'
@@ -27,7 +26,7 @@ class StyleGuide extends Component {
     ]
   }
 
-  render(props, state) {
+  render() {
     return (
       <div>
         <CardGroup>
@@ -79,6 +78,6 @@ class StyleGuide extends Component {
 }
 
 export default connectHelper(
-  state => state.test,
-  dispatch => bindActionCreators({ ...testActions, ...userActions}, dispatch)
+  state => state,
+  dispatch => bindActionCreators(userActions, dispatch)
 )(StyleGuide)

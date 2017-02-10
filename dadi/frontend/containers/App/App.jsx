@@ -167,5 +167,5 @@ class App extends Component {
 
 export default connectHelper(
   state => state,
-  dispatch => bindActionCreators(Object.assign(userActions, apiActions), dispatch)
+  dispatch => bindActionCreators({...userActions, ...apiActions}, dispatch)
 )(App)
