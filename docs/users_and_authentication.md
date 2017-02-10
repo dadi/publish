@@ -239,28 +239,33 @@ const compare = (plaintext, hash) => {
 
 module.exports = (obj, type, data) => {
   if (type === 'afterGet') {
-
     // Without the existance of a `beforeGet` hook, this operation will lookup a user by username, then check for a matching hashed password using bcrypt password compare method
     let params = url.parse(data.req.url, true).query
-    if (!params.filter) return obj
-    let filter = JSON.parse(params.filter)
-    if (!filter.username || !filter.password) return obj
-    let query = {
-      apiVersion: "1.0",
-      username: filter.username   
-    }
-    return new Promise((resolve, reject) => {
-      model(data.collection).find(query, {limit: 1},(err, user) => {
-        if (user.results.length < 1) return obj
-        return compare(filter.password, user.results[0].password).then(match => {
-          if (match) {
-            delete user.results[0].password
-            return resolve(user)
-          }
-          return resolve(obj)
+    let filter = params.filter ? JSON.parse(params.filter) : null
+
+    if (filter && filter.username && filter.password) {
+      let query = {
+        apiVersion: "1.0",
+        username: filter.username   
+      }
+      return new Promise((resolve, reject) => {
+        model(data.collection).find(query, {limit: 1},(err, user) => {
+          if (user.results.length < 1) return obj
+          return compare(filter.password, user.results[0].password).then(match => {
+            if (match) {
+              delete user.results[0].password
+              return resolve(user)
+            }
+            return resolve(obj)
+          })
         })
       })
-    })
+    } else {
+      return Object.assign(obj, {results: obj.results.map(doc => {
+        delete doc.password
+        return doc
+      })})
+    }
   } else if (obj[data.options.from] && type === 'beforeCreate') {
     return hash(obj[data.options.from]).then(hashed => {
       obj[data.options.from] = hashed
