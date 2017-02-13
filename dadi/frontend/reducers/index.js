@@ -1,3 +1,5 @@
+'use strict'
+
 import api from './api'
 import app from './app'
 import document from './document'

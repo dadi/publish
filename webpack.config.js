@@ -6,6 +6,24 @@ const frontendConfig = require('./dadi/frontend/lib/config-frontend')
 const ENV = process.env.NODE_ENV || 'development'
 
 module.exports = {
+
+  plugins: ([
+    new webpack.NoErrorsPlugin(),
+    new webpack.optimize.DedupePlugin(),
+    new webpack.DefinePlugin({
+      'process.env': JSON.stringify({ NODE_ENV: ENV })
+    }),
+    new webpack.DefinePlugin({
+      'config': JSON.stringify(frontendConfig)
+    })
+    // new HtmlWebpackPlugin({
+    //   template: './dadi/frontend/index.html',
+    //   minify: { collapseWhitespace: true }
+    // })
+  ]).concat(ENV === 'production' ? [
+    new webpack.optimize.OccurenceOrderPlugin()
+  ] : []),
+
   entry:  path.resolve(__dirname, 'dadi/frontend/index.jsx'),
 
   output: {
@@ -37,23 +55,6 @@ module.exports = {
       'react-dom': 'preact-compat'
     }
   },
-
-  plugins: ([
-    new webpack.NoErrorsPlugin(),
-    new webpack.optimize.DedupePlugin(),
-    new webpack.DefinePlugin({
-      'process.env': JSON.stringify({ NODE_ENV: ENV })
-    }),
-    new webpack.DefinePlugin({
-      'config': JSON.stringify(frontendConfig)
-    })
-    // new HtmlWebpackPlugin({
-    //   template: './dadi/frontend/index.html',
-    //   minify: { collapseWhitespace: true }
-    // })
-  ]).concat(ENV === 'production' ? [
-    new webpack.optimize.OccurenceOrderPlugin()
-  ] : []),
 
   stats: { colors: true },
 

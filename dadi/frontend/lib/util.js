@@ -1,3 +1,5 @@
+'use strict'
+
 import { connect } from 'preact-redux'
 import { bindActionCreators } from 'redux'
 
