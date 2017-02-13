@@ -43,14 +43,13 @@ APIBridgeController.prototype.post = function (req, res, next) {
 
   try {
     const requestObject = req.body
+    const apiConfig = config.get('apis')[requestObject._index]
 
-    // console.log('** REQ OBJ:', requestObject, this)
-    // 
     const passport = _createPassport({
       host: `${requestObject.uri.protocol}//${requestObject.uri.hostname}`,
       port: Number(requestObject.uri.port),
-      clientId: 'testClient',
-      secret: 'superSecret'
+      clientId: apiConfig.credentials.clientId,
+      secret: apiConfig.credentials.secret
     }).then(request => {
       request({
         uri: requestObject.uri.href,

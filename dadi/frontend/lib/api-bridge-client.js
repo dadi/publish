@@ -4,10 +4,11 @@ import 'whatwg-fetch'
 
 const APIWrapper = require('@dadi/api-wrapper-core')
 
-module.exports = ({host, port, version, database}) => {
+module.exports = ({_index, host, port, version, database}) => {
   let uri = host
-  const APIBridgeClient = function () {
 
+  const APIBridgeClient = function () {
+    this._index = _index
   }
 
   APIBridgeClient.prototype = new APIWrapper({
@@ -18,13 +19,15 @@ module.exports = ({host, port, version, database}) => {
   })
 
   APIBridgeClient.prototype._fetch = function (requestObject) {
+    let payload = Object.assign({}, requestObject, {_index: this._index})
+
     return fetch('/api', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
       },
       credentials: 'same-origin',
-      body: JSON.stringify(requestObject)
+      body: JSON.stringify(payload)
     }).then(response => {
       return response.json().then(json => {
         return JSON.parse(json)

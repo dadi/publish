@@ -3,7 +3,9 @@
 import * as types from '../actions/actionTypes'
 
 const initialState = {
-  apis: config.apis,
+  apis: config.apis.map((api, index) => {
+    return Object.assign({}, api, {_index: index})
+  }),
   status: 'canFetch'
 }
 

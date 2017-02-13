@@ -115,14 +115,15 @@ class App extends Component {
 
     let queue = state.api.apis.filter(api => {
       return !api.hasCollections
-    }).map((api, key) => {
+    }).map((api, index) => {
       return APIBridge(api)
-      .getCollections()
-      .then(collections => {
-        return this.getCollectionSchemas({api, ...collections}).then(collections => {
-          return Object.assign(state.api.apis[key], {collections, hasCollections: true})
-          // return Object.assign({}, state.api.apis[key], {...collections, hasCollections: true})
-        })
+        .getCollections()
+        .then(collections => {
+          console.log('** Collections:', collections)
+          return this.getCollectionSchemas({api, ...collections}).then(collections => {
+            return Object.assign(state.api.apis[index], {collections, hasCollections: true})
+            // return Object.assign({}, state.api.apis[index], {...collections, hasCollections: true})
+          })
       }).catch((err) => {
         // TODO: Graceful deal with failure
       })
