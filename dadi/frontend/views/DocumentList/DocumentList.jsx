@@ -52,7 +52,8 @@ class DocumentList extends Component {
     if (nextProps.page && nextProps.page !== page) {
       this.getDocumentList(nextProps.page)
     } else if (nextProps.collection && nextProps.collection !== collection) {
-      actions.setDocumentList(true, null)
+      // Set loading state to true, retaining current documents to avoid reflow
+      actions.setDocumentList(true, state.document.list)
       this.getDocumentList(nextProps.page, nextProps.collection)
     }
   }

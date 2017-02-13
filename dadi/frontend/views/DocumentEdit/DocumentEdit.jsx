@@ -51,6 +51,7 @@ class DocumentEdit extends Component {
   }
   componentWillUnmount () {
     const { actions } = this.props
+    // Clear our documents and reset loading state
     actions.setDocument(true, null)
   }
   getDocument () {
