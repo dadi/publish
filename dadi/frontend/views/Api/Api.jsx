@@ -20,7 +20,7 @@ class Api extends Component {
     const { state } = this.props
     return (
       <Main>
-        <Nav />
+        <Nav apis={ state.apis } />
         {state.apis.map(api => (
           <li>
             <h2>{api.database}</h2>

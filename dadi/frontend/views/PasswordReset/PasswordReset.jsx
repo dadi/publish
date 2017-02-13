@@ -2,12 +2,17 @@ import { h, Component } from 'preact'
 import { connect } from 'preact-redux'
 import { bindActionCreators } from 'redux'
 import { connectHelper } from '../../lib/util'
+/*
+* Components
+ */
+import Main from '../../components/Main/Main'
+
 class PasswordReset extends Component {
   render() {
     return (
-      <main>
+      <Main>
           <h1>Password Reset</h1>
-      </main>
+      </Main>
     )
   }
 }

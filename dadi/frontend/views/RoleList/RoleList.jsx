@@ -3,15 +3,18 @@ import { connect } from 'preact-redux'
 import { bindActionCreators } from 'redux'
 import { connectHelper } from '../../lib/util'
 
-import Nav from '../../components/Nav/Nav'
+/*
+* Components
+ */
+import Main from '../../components/Main/Main'
 
 class RoleList extends Component {
   render() {
     return (
-      <main>
+      <Main>
         <Nav />
         <h1>Role List</h1>
-      </main>
+      </Main>
     )
   }
 }
