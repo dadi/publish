@@ -7,11 +7,17 @@ import Logo from '../../components/Logo/Logo'
 import Main from '../../components/Main/Main'
 import Nav from '../../components/Nav/Nav'
 
+/*
+* Actions
+ */
+import * as apiActions from '../../actions/apiActions'
+
 class Home extends Component {
   render() {
+    const { state } = this.props
     return (
       <Main>
-        <Nav />
+        <Nav apis={ state.apis } />
         <Logo />
       </Main>
     )
@@ -19,6 +25,6 @@ class Home extends Component {
 }
 
 export default connectHelper(
-  state => state,
-  dispatch => bindActionCreators({}, dispatch)
+  state => state.api,
+  dispatch => bindActionCreators(apiActions, dispatch)
 )(Home)

@@ -14,6 +14,6 @@ const store = createStoreWithMiddleware(reducer)
 
 render ((
   <Provider store={store}>
-    <App someProp="fooba"/>
+    <App/>
   </Provider>
 ), document.body)

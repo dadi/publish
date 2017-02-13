@@ -30,7 +30,7 @@ class DocumentList extends Component {
     const { state } = this.props
     return (
       <Main>
-        <Nav />
+        <Nav apis={ state.api.apis } />
         <table border="1">
           {state.document.documents.results.map(document => (
             <tr>

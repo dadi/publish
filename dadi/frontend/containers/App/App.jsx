@@ -90,6 +90,7 @@ class App extends Component {
         <Collection path="/apis/:api/collections/:collection?" authenticate />
         <DocumentList path="/:collection/documents/:page?" authenticate />
         <DocumentEdit path="/:collection/document/:method/:document?" authenticate />
+        <MediaLibrary path="/:collection/media/:document?" authenticate/>
         <UserProfile path="/profile" authenticate />
         <RoleList path="/roles" authenticate/>
         <RoleEdit path="/role/:method/:role?" authenticate />
