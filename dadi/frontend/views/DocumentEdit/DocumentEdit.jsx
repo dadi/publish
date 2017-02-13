@@ -30,7 +30,18 @@ class DocumentEdit extends Component {
         {this.document.err ? (
           <h3>{this.document.err}</h3>
         ) : (
-          <h2>{this.document.username}</h2>
+          <table border="1">
+            <tr>
+              {Object.keys(this.document).map(field => (
+                <td>{field}</td>
+              ))}
+            </tr>
+            <tr>
+              {Object.keys(this.document).map(field => (
+                <td>{this.document[field]}</td>
+              ))}
+            </tr>
+          </table>
         )}
       </Main>
     )
