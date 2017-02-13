@@ -1,7 +1,9 @@
 node_modules
 build
 log
-.wallet
-npm-debug.log
+config/config.development.json
+config/config.production.json
 public/bundle.js
 public/index.html
+.wallet
+npm-debug.log
