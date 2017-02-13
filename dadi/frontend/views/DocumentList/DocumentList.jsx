@@ -28,7 +28,7 @@ class DocumentList extends Component {
       <Main>
         <Nav apis={ state.api.apis } />
         {state.document.listIsLoading ? (
-          <h3>Status: {state.document.listIsLoading}</h3>
+          <h3>Loader based on: {state.document.listIsLoading}</h3>
         ) : (
           <table border="1">
             {state.document.list.results.map(document => (
@@ -50,6 +50,8 @@ class DocumentList extends Component {
   shouldComponentUpdate(nextProps, nextState) {
     const { state, actions, page, collection } = this.props
     if (nextProps.page && nextProps.page !== page) {
+      // Set loading state to true, retaining current documents to avoid reflow
+      actions.setDocumentList(true, state.document.list)
       this.getDocumentList(nextProps.page)
     } else if (nextProps.collection && nextProps.collection !== collection) {
       // Set loading state to true, retaining current documents to avoid reflow
