@@ -6,9 +6,9 @@ const fs = require('fs')
 const url = require('url')
 const path = require('path')
 
-const config = require(GLOBAL.paths.config)
-const Router = require(GLOBAL.paths.lib.router)
-const Socket = require(GLOBAL.paths.lib.server + '/socket')
+const config = require(paths.config)
+const Router = require(paths.lib.router)
+const Socket = require(`${paths.lib.server}/socket`)
 const log = require('@dadi/logger')
 
 process.env.TZ = config.get('TZ')

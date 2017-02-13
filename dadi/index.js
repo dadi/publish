@@ -2,8 +2,8 @@
 
 const globals = require('./globals')
 
-const Server = require(GLOBAL.paths.lib.server)
-const config = require(GLOBAL.paths.config)
+const Server = require(paths.lib.server)
+const config = require(paths.config)
 
 /*
 To-do - this.server.close should be promise based
