@@ -1,7 +1,11 @@
 import { h, Component } from 'preact'
 import { connect } from 'preact-redux'
 import { bindActionCreators } from 'redux'
+/*
+* Libs
+ */
 import { connectHelper } from '../../lib/util'
+import APIBridge from '../../lib/api-bridge-client'
 /*
 * Components
  */
@@ -11,25 +15,47 @@ import Nav from '../../components/Nav/Nav'
 * Actions
  */
 import * as apiActions from '../../actions/apiActions'
+import * as documentActions from '../../actions/documentActions'
 
 class DocumentEdit extends Component {
+  constructor (props) {
+    super(props)
+  }
   render() {
     const { state, method, document } = this.props
     return (
       <Main>
-        <Nav apis={ state.apis } />
-        <h1>Document Edit: { method }</h1>
-        {document ? (
-          <h1>Current Document is { document }</h1>
+        <Nav apis={ state.api.apis } />
+        <h1>Method: { method }</h1>
+        {this.document.err ? (
+          <h3>{this.document.err}</h3>
         ) : (
-          <h1>No Document selected</h1>
+          <h2>{this.document.username}</h2>
         )}
       </Main>
     )
   }
+  componentWillMount () {
+    const { state, document } = this.props
+    this.document = document
+  }
+  get document () {
+    return this._document || {err: "No document with this ID"}
+  }
+  set document (id) {
+    const { state, actions, collection } = this.props
+    return APIBridge(state.api.apis[0])
+    .in(collection)
+    .whereFieldIsEqualTo('_id', id)
+    .find()
+    .then(doc => {
+      this._document = doc.results[0]
+      actions.setDocument(this._document)
+    })
+  }
 }
 
 export default connectHelper(
-  state => state.api,
-  dispatch => bindActionCreators(apiActions, dispatch)
+  state => state,
+  dispatch => bindActionCreators({...documentActions, ...apiActions}, dispatch)
 )(DocumentEdit)

@@ -21,6 +21,11 @@ export default function document(state = initialState, action = {}) {
         ...state,
         documents: action.documents
       }
+    case types.SET_DOCUMENT:
+      return {
+        ...state,
+        document: action.document
+      }
     default:
       return state
   }

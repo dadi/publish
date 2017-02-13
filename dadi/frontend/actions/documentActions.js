@@ -7,3 +7,11 @@ export function setDocumentList (documents) {
   }
 }
 
+export function setDocument (document) {
+  return {
+    type: types.SET_DOCUMENT,
+    document
+  }
+}
+
+

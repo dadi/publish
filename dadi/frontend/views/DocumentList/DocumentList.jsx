@@ -7,13 +7,11 @@ import { bindActionCreators } from 'redux'
  */
 import * as apiActions from '../../actions/apiActions'
 import * as documentActions from '../../actions/documentActions'
-
 /*
 * Components
  */
 import Main from '../../components/Main/Main'
 import Nav from '../../components/Nav/Nav'
-
 /*
 * Libs
  */
@@ -21,10 +19,8 @@ import { connectHelper } from '../../lib/util'
 import APIBridge from '../../lib/api-bridge-client'
 
 class DocumentList extends Component {
-
   constructor (props) {
     super(props)
-    this.getDocumentList = this.getDocumentList.bind(this) 
   }
   render() {
     const { state } = this.props
@@ -34,6 +30,7 @@ class DocumentList extends Component {
         <table border="1">
           {state.document.documents.results.map(document => (
             <tr>
+              <td><a href={ `/${this.props.collection}/document/edit/${document._id}` }>Edit</a></td>
               {Object.keys(document).map(field => (
                 <td>{document[field]}</td>
               ))}
@@ -46,23 +43,21 @@ class DocumentList extends Component {
       </Main>
     )
   }
-
   shouldComponentUpdate(nextProps, nextState) {
     const { state } = this.props
     if (nextProps.page && nextProps.page !== this.props.page) {
       this.getDocumentList(nextProps.page)
     }
   }
-
   componentWillMount () {
-    this.getDocumentList(this.props.page || 1)
+    const { page } = this.props
+    this.getDocumentList(page || 1)
   }
-
   getDocumentList (page) {
-    const { state, actions } = this.props
+    const { state, actions, collection } = this.props
     if (!state.api.apis.length > 0) return
     return APIBridge(state.api.apis[0])
-    .in(this.props.collection)
+    .in(collection)
     .limitTo(20) // Config based on collection schema
     .goToPage(page)
     .sortBy('createdAt', 'desc') // Configure based on user preferences
