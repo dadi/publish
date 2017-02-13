@@ -4,6 +4,5 @@ log
 config/config.development.json
 config/config.production.json
 public/bundle.js
-public/index.html
 .wallet
 npm-debug.log
