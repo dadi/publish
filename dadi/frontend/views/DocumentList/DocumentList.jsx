@@ -27,43 +27,53 @@ class DocumentList extends Component {
     return (
       <Main>
         <Nav apis={ state.api.apis } />
-        <table border="1">
-          {state.document.documents.results.map(document => (
-            <tr>
-              <td><a href={ `/${this.props.collection}/document/edit/${document._id}` }>Edit</a></td>
-              {Object.keys(document).map(field => (
-                <td>{document[field]}</td>
-              ))}
-            </tr>
-          ))}
-        </table>
-        {Array(state.document.documents.metadata.totalPages).fill().map((_, page) => (
+        {state.document.listIsLoading ? (
+          <h3>Status: {state.document.listIsLoading}</h3>
+        ) : (
+          <table border="1">
+            {state.document.list.results.map(document => (
+              <tr>
+                <td><a href={ `/${this.props.collection}/document/edit/${document._id}` }>Edit</a></td>
+                {Object.keys(document).map(field => (
+                  <td>{document[field]}</td>
+                ))}
+              </tr>
+            ))}
+          </table>
+        )}
+        {Array(state.document.list.metadata.totalPages).fill().map((_, page) => (
           <a href={ `/${this.props.collection}/documents/${page+1}` }>{page+1}</a>
         ))}
       </Main>
     )
   }
   shouldComponentUpdate(nextProps, nextState) {
-    const { state } = this.props
-    if (nextProps.page && nextProps.page !== this.props.page) {
+    const { state, actions, page, collection } = this.props
+    if (nextProps.page && nextProps.page !== page) {
       this.getDocumentList(nextProps.page)
+    } else if (nextProps.collection && nextProps.collection !== collection) {
+      actions.setDocumentList(true, null)
+      this.getDocumentList(nextProps.page, nextProps.collection)
     }
   }
   componentWillMount () {
-    const { page } = this.props
-    this.getDocumentList(page || 1)
+    this.getDocumentList()
   }
-  getDocumentList (page) {
-    const { state, actions, collection } = this.props
+  componentWillUnmount () {
+    const { actions } = this.props
+    actions.setDocumentList(true, null)
+  }
+  getDocumentList (nextPage, nextCollection) {
+    const { state, actions, collection, page } = this.props
     if (!state.api.apis.length > 0) return
     return APIBridge(state.api.apis[0])
-    .in(collection)
+    .in(nextCollection || collection)
     .limitTo(20) // Config based on collection schema
-    .goToPage(page)
+    .goToPage(nextPage || page)
     .sortBy('createdAt', 'desc') // Configure based on user preferences
     .find()
     .then(docs => {
-      actions.setDocumentList(docs)
+      actions.setDocumentList(false, docs)
     }).catch((err) => {
       // TODO: Graceful deal with failure
     })

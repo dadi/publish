@@ -27,18 +27,18 @@ class DocumentEdit extends Component {
       <Main>
         <Nav apis={ state.api.apis } />
         <h1>Method: { method }</h1>
-        {this.document.err ? (
-          <h3>{this.document.err}</h3>
+        {state.document.docIsLoading ? (
+          <h3>Status: {state.document.docIsLoading}</h3>
         ) : (
           <table border="1">
             <tr>
-              {Object.keys(this.document).map(field => (
+              {Object.keys(state.document.data).map(field => (
                 <td>{field}</td>
               ))}
             </tr>
             <tr>
-              {Object.keys(this.document).map(field => (
-                <td>{this.document[field]}</td>
+              {Object.keys(state.document.data).map(field => (
+                <td>{state.document.data[field]}</td>
               ))}
             </tr>
           </table>
@@ -47,21 +47,20 @@ class DocumentEdit extends Component {
     )
   }
   componentWillMount () {
-    const { state, document } = this.props
-    this.document = document
+    this.getDocument()
   }
-  get document () {
-    return this._document || {err: "No document with this ID"}
+  componentWillUnmount () {
+    const { actions } = this.props
+    actions.setDocument(true, null)
   }
-  set document (id) {
-    const { state, actions, collection } = this.props
+  getDocument () {
+    const { state, actions, collection, document_id } = this.props
     return APIBridge(state.api.apis[0])
     .in(collection)
-    .whereFieldIsEqualTo('_id', id)
+    .whereFieldIsEqualTo('_id', document_id)
     .find()
     .then(doc => {
-      this._document = doc.results[0]
-      actions.setDocument(this._document)
+      actions.setDocument(false, doc.results[0])
     })
   }
 }

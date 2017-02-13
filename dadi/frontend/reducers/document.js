@@ -3,7 +3,7 @@
 import * as types from '../actions/actionTypes'
 
 const initialState = {
-  documents: {
+  list: {
     results: [],
     metadata: {
       limit: 20,
@@ -11,7 +11,10 @@ const initialState = {
       offset: 0,
       totalPages: 1
     }
-  }
+  },
+  data: {},
+  listIsLoading: true,
+  docIsLoading: true
 }
 
 export default function document(state = initialState, action = {}) {
@@ -19,12 +22,14 @@ export default function document(state = initialState, action = {}) {
     case types.SET_DOCUMENT_LIST:
       return {
         ...state,
-        documents: action.documents
+        listIsLoading: action.listIsLoading,
+        list: action.documents || initialState.list
       }
     case types.SET_DOCUMENT:
       return {
         ...state,
-        document: action.document
+        docIsLoading: action.docIsLoading,
+        data: action.data || initialState.data
       }
     default:
       return state
