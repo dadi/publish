@@ -14,7 +14,7 @@ export default class Nav extends Component {
           <li><a href="/">Home</a></li>
           <li><a href="/profile">Profile</a></li>
         </ul>
-        <CollectionNav collections={ apis[0].collections } />
+        <CollectionNav collections={ apis[0] ? apis[0].collections : [] } />
       </nav>
     )
   }

@@ -23,6 +23,9 @@ export default class CollectionNav extends Component {
   }
   shouldComponentUpdate(nextProps, nextState) {
     const { collections } = this.props
+    if (collections === nextProps.collections) {
+      return false
+    }
   }
 }
 
