@@ -42,22 +42,32 @@ APIBridgeController.prototype.post = function (req, res, next) {
   res.header('Content-Type', 'application/json')
 
   try {
-    const requestObject = req.body
-    const apiConfig = config.get('apis')[requestObject._index]
+    let multiple = Array.isArray(req.body)
+    const requestObjects = multiple ? req.body : [req.body]
 
-    const passport = _createPassport({
-      host: `${requestObject.uri.protocol}//${requestObject.uri.hostname}`,
-      port: Number(requestObject.uri.port),
-      clientId: apiConfig.credentials.clientId,
-      secret: apiConfig.credentials.secret
-    }).then(request => {
-      request({
-        uri: requestObject.uri.href,
-        method: requestObject.method,
-        body: !_.isUndefined(requestObject.body) ? requestObject.body : null
-      }).then(response => {
-        res.end(JSON.stringify(response))
-      })
+    let queue = []
+
+    requestObjects.forEach(requestObject => {
+      const apiConfig = config.get('apis')[requestObject._index]
+
+      queue.push(_createPassport({
+        host: `${requestObject.uri.protocol}//${requestObject.uri.hostname}`,
+        port: Number(requestObject.uri.port),
+        clientId: apiConfig.credentials.clientId,
+        secret: apiConfig.credentials.secret
+      }).then(request => {
+        return request({
+          uri: requestObject.uri.href,
+          method: requestObject.method,
+          body: !_.isUndefined(requestObject.body) ? requestObject.body : null
+        }).then(response => JSON.parse(response))
+      }))
+    })
+
+    Promise.all(queue).then(response => {
+      let output = multiple ? response : response[0]
+
+      res.end(JSON.stringify(output))
     })
   } catch (err) {
     console.log('** ERR:', err)

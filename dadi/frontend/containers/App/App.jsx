@@ -113,43 +113,36 @@ class App extends Component {
     const { state, actions } = this.props
     actions.setApiFetchStatus('isFetching')
 
-    let queue = state.api.apis.filter(api => {
-      return !api.hasCollections
-    }).map((api, index) => {
-      return APIBridge(api)
-        .getCollections()
-        .then(collections => {
-          console.log('** Collections:', collections)
-          return this.getCollectionSchemas({api, ...collections}).then(collections => {
-            return Object.assign(state.api.apis[index], {collections, hasCollections: true})
-            // return Object.assign({}, state.api.apis[index], {...collections, hasCollections: true})
+    let bundler = APIBridge.Bundler()
+    let processedApis = []
+
+    state.api.apis.filter(api => !api.hasCollections).forEach((api, apiIndex) => {
+      return APIBridge(api).getCollections().then(({ collections }) => {
+        collections.forEach(collection => {
+          let query = APIBridge(api, true).in(collection.slug)
+                                          .getConfig()
+
+          // Add query to bundler
+          bundler.add(query)
+        })
+
+        // Run all queries in bundler
+        bundler.run().then(collectionConfigs => {
+          let mergedCollections = collectionConfigs.map((config, index) => {
+            return Object.assign({}, config, collections[index])
           })
-      }).catch((err) => {
-        // TODO: Graceful deal with failure
-      })
-    })
 
-    return Promise.all(queue).then((results) => {
-      if (results.length > 0) {
-        actions.setApiList(state.api.apis)
-        actions.setApiFetchStatus('fetchComplete')
-      }
-    })
-  }
+          const apiWithCollections = Object.assign({}, api, {collections: mergedCollections, hasCollections: true})
 
-  getCollectionSchemas ({api, collections}) {
-    let queue = collections.map(collection => {
-      return APIBridge(api)
-      .in(collection.slug)
-      .getConfig()
-      .then(config => {
-        collection = Object.assign(collection, config)
-      }).catch(err => {
-        // TODO: Graceful deal with failure
+          processedApis.push(apiWithCollections)
+
+          // Have all APIs been processed?
+          if (processedApis.length === state.api.apis.length) {
+            actions.setApiList(processedApis)
+            actions.setApiFetchStatus('fetchComplete')
+          }
+        })
       })
-    })
-    return Promise.all(queue).then(resp => {
-      return collections
     })
   }
 
