@@ -1,10 +1,10 @@
 'use strict'
 
-const config = require('../../config')
-
-const whitelist = {
+const config = require(paths.config)
+const FRONTEND_WHITELIST = {
   app: true,
   apis: {
+    _publishId: true,
     name: true,
     host: true,
     port: true,
@@ -39,8 +39,28 @@ const assign = (subj, pre) => {
   }))
 }
 
-const Config = function () {
-  return assign(whitelist)
+const AppConfigController = function () {
+
 }
 
-module.exports = new Config()
+AppConfigController.prototype.get = function (req, res, next) {
+  if (!req.is('application/json')) {
+    res.end()
+
+    return next()
+  }
+
+  res.header('Content-Type', 'application/json')
+
+  let frontendConfig = assign(FRONTEND_WHITELIST)
+
+  res.end(JSON.stringify(frontendConfig))
+
+  return next()
+}
+
+module.exports = function() {
+  return new AppConfigController()
+}
+
+module.exports.AppConfigController = AppConfigController

@@ -3,7 +3,7 @@
 const config = require(paths.config)
 const passport = require('@dadi/passport')
 const request = require('request-promise')
-const slugify = require("underscore.string/slugify")
+const slugify = require('underscore.string/slugify')
 const _ = require('underscore')
 
 const APIBridgeController = function () {
@@ -42,23 +42,36 @@ APIBridgeController.prototype.post = function (req, res, next) {
   res.header('Content-Type', 'application/json')
 
   try {
-    const requestObject = req.body
+    let multiple = Array.isArray(req.body)
+    const requestObjects = multiple ? req.body : [req.body]
 
-    // console.log('** REQ OBJ:', requestObject, this)
-    // 
-    const passport = _createPassport({
-      host: `${requestObject.uri.protocol}//${requestObject.uri.hostname}`,
-      port: Number(requestObject.uri.port),
-      clientId: 'testClient',
-      secret: 'superSecret'
-    }).then(request => {
-      request({
-        uri: requestObject.uri.href,
-        method: requestObject.method,
-        body: !_.isUndefined(requestObject.body) ? requestObject.body : null
-      }).then(response => {
-        res.end(JSON.stringify(response))
+    let queue = []
+
+    requestObjects.forEach(requestObject => {
+      const apiConfig = config.get('apis').find(api => {
+        return api._publishId === requestObject._publishId
       })
+
+      if (!apiConfig) return
+
+      queue.push(_createPassport({
+        host: `${requestObject.uri.protocol}//${requestObject.uri.hostname}`,
+        port: Number(requestObject.uri.port),
+        clientId: apiConfig.credentials.clientId,
+        secret: apiConfig.credentials.secret
+      }).then(request => {
+        return request({
+          uri: requestObject.uri.href,
+          method: requestObject.method,
+          body: !_.isUndefined(requestObject.body) ? requestObject.body : null
+        }).then(response => JSON.parse(response))
+      }))
+    })
+
+    Promise.all(queue).then(response => {
+      let output = multiple ? response : response[0]
+
+      res.end(JSON.stringify(output))
     })
   } catch (err) {
     console.log('** ERR:', err)

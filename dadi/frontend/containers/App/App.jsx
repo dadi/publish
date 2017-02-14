@@ -6,6 +6,7 @@ import { bindActionCreators } from 'redux'
 import { connectHelper } from '../../lib/util'
 import * as userActions from '../../actions/userActions'
 import * as apiActions from '../../actions/apiActions'
+import * as appActions from '../../actions/appActions'
 
 import Api from '../../views/Api/Api'
 import Collection from '../../views/Collection/Collection'
@@ -26,64 +27,45 @@ import StyleGuide from '../../views/StyleGuide/StyleGuide'
  */
 import Socket from '../../lib/socket'
 import Session from '../../lib/session'
+import getAppConfig from '../../lib/app-config'
 import APIBridge from '../../lib/api-bridge-client'
 
 /*
 * Setup
  */
 let currentUrl = '/'
-let socket = new Socket()
-let session = new Session()
-
-socket.on( 'message', msg => {
-  console.log("message", msg)
-})
-
-socket.on('userDidEnter', data => {
-  console.log("New User", data)
-})
-
-socket.on('userDidLeave', data => {
-  console.log("Users", data)
-})
-
-// socket.setUser({
-//   user: {
-//     name: `Publish User`
-//   }
-// })
 
 class App extends Component {
 
   constructor(props) {
     super(props)
-
-    // Bind class methods
-    this.onRouteChange = this.onRouteChange.bind(this)
-    this.getApiCollections = this.getApiCollections.bind(this)
   }
 
   componentWillMount () {
     this.sessionStart()
   }
 
-  componentDidUpdate() {
+  componentDidUpdate(previousProps) {
     const { state, actions } = this.props
-    if (state.user.signedIn || !config.server.authenticate) {
-      if (!socket.getUser()) {
-        socket.setUser({user: {username: state.user.username}}).setRoom(currentUrl)
-      }
-      if (state.api.status === 'canFetch') {
-        this.getApiCollections()
-      }
+    const previousState = previousProps.state
+
+    // State change: app config has been loaded
+    if (!previousState.app.config && state.app.config) {
+      this.initialiseSocket()
+      this.getApiCollections()
+    }
+
+    // State change: user is now signed in
+    if (!previousState.user.signedIn && state.user.signedIn) {
+      getAppConfig().then(config => {
+        actions.setAppConfig(config)
+      })
     }
   }
 
   render () {
-    const { state, actions } = this.props
-
     return (
-      <Router onChange={this.onRouteChange}>
+      <Router onChange={this.onRouteChange.bind(this)}>
         <Home path="/" authenticate />
         <PasswordReset path="/reset" authenticate/>
         <Api path="/apis/:api?" authenticate />
@@ -103,9 +85,11 @@ class App extends Component {
 
   onRouteChange (e) {
     const { actions, state } = this.props
+
     currentUrl = e.url
-    if (socket.getUser()) {
-      socket.setRoom(currentUrl)
+
+    if (this.socket && this.socket.getUser()) {
+      this.socket.setRoom(currentUrl)
     }
   }
 
@@ -113,47 +97,37 @@ class App extends Component {
     const { state, actions } = this.props
     actions.setApiFetchStatus('isFetching')
 
-    let queue = state.api.apis.filter(api => {
-      return !api.hasCollections
-    }).map((api, key) => {
-      return APIBridge(api)
-      .getCollections()
-      .then(collections => {
-        return this.getCollectionSchemas({api, ...collections}).then(collections => {
-          return Object.assign(state.api.apis[key], {collections, hasCollections: true})
-          // return Object.assign({}, state.api.apis[key], {...collections, hasCollections: true})
+    let bundler = APIBridge.Bundler()
+    let apisToProcess = state.app.config.apis
+    let processedApis = []
+
+    apisToProcess.forEach((api, apiIndex) => {
+      return APIBridge(api).getCollections().then(({ collections }) => {
+        collections.forEach(collection => {
+          let query = APIBridge(api, true).in(collection.slug)
+                                          .getConfig()
+
+          // Add query to bundler
+          bundler.add(query)
         })
-      }).catch((err) => {
-        // TODO: Graceful deal with failure
-      })
-    })
 
-    return Promise.all(queue).then((results) => {
-      if (results.length > 0) {
-        actions.setApiList(state.api.apis)
-        actions.setApiFetchStatus('fetchComplete')
-      }
-    })
-  }
+        // Run all queries in bundler
+        bundler.run().then(collectionConfigs => {
+          let mergedCollections = collectionConfigs.map((config, index) => {
+            return Object.assign({}, config, collections[index])
+          })
 
-  getCollectionSchemas ({api, collections}) {
-    let queue = collections.map(collection => {
-      return APIBridge(api)
-      .in(collection.slug)
-      .getConfig()
-      .then(config => {
-        collection = Object.assign(collection, config)
-      }).catch(err => {
-        // TODO: Graceful deal with failure
+          const apiWithCollections = Object.assign({}, api, {collections: mergedCollections, hasCollections: true})
+
+          actions.setApi(apiWithCollections)
+        })
       })
-    })
-    return Promise.all(queue).then(resp => {
-      return collections
     })
   }
 
   sessionStart () {
     const { actions, state } = this.props
+
     new Session().getSession().then((session) => {
       if (session.signedIn) {
         actions.signIn(session.username, session.signedIn)
@@ -164,9 +138,34 @@ class App extends Component {
       }
     })
   }
+
+  initialiseSocket() {
+    const { actions, state } = this.props
+
+    let socket = new Socket(state.app.config.server.port)
+    let session = new Session()
+
+    socket.on('message', msg => {
+      console.log('message', msg)
+    })
+
+    socket.on('userDidEnter', data => {
+      console.log('New User', data)
+    })
+
+    socket.on('userDidLeave', data => {
+      console.log('Users', data)
+    })
+
+    socket.setUser({user: state.user.username})
+          .setRoom(currentUrl)
+
+    // Save reference to `socket` as a private variable
+    this.socket = socket
+  }
 }
 
 export default connectHelper(
   state => state,
-  dispatch => bindActionCreators({...userActions, ...apiActions}, dispatch)
+  dispatch => bindActionCreators({...userActions, ...apiActions, ...appActions}, dispatch)
 )(App)

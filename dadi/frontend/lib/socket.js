@@ -5,9 +5,9 @@ import {SocketCluster, connect} from 'socketcluster-client'
 /**
  * @constructor
  */
-const Socket = function () {
+const Socket = function (port) {
   this.options = {
-    port: config.server.port
+    port
   }
   this.listeners = {}
   this.onConnectListeners = []
@@ -53,7 +53,7 @@ Socket.prototype.isConnected = function () {
 
 Socket.prototype.setUser = function (data) {
   this.user = data
-  console.log(`User is ${data.user.username}`)
+
   return this
 }
 
@@ -145,8 +145,8 @@ Socket.prototype.onRoomSubscribeFail = function (err) {
 
 // }
 
-module.exports = function () {
-  return new Socket()
+module.exports = function (port) {
+  return new Socket(port)
 }
 
 module.Socket = Socket

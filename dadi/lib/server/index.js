@@ -11,7 +11,18 @@ const Router = require(paths.lib.router)
 const Socket = require(`${paths.lib.server}/socket`)
 const log = require('@dadi/logger')
 
+const md5 = require('md5')
+
 process.env.TZ = config.get('TZ')
+
+// (!) This should probably be moved to a more suitable place
+const getApisBlockWithUUIDs = (apis) => {
+  return apis.map(api => {
+    let uuid = md5(api.host + api.port + api.credentials.clientId)
+
+    return Object.assign({}, api, {_publishId: uuid})
+  })
+}
 
 /**
  * @constructor
@@ -39,6 +50,9 @@ const Server = function () {
  */
 Server.prototype.start = function () {
   return new Promise( (resolve, reject) => {
+    // Inject API UUIDs in config
+    config.set('apis', getApisBlockWithUUIDs(config.get('apis')))
+
     this.createServer()
     new Router().addRoutes(this.app)
     return this.addListeners().then(() => {
