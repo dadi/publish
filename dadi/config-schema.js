@@ -20,6 +20,10 @@ module.exports = {
     doc: "Connected APIs",
     format: Array,
     default: [],
+    _publishId: {
+      type: String,
+      default: ''
+    },
     enabled: {
       type: Boolean,
       default: true

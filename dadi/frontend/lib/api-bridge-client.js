@@ -18,10 +18,10 @@ const apiBridgeFetch = function (requestObject) {
 }
 
 const buildAPIBridgeClient = function (api, preventFetch) {
-  const { _index, host, port, version, database } = api
+  const { _publishId, host, port, version, database } = api
 
   const APIBridgeClient = function () {
-    this._index = _index
+    this._publishId = _publishId
     this.preventFetch = preventFetch
   }
 
@@ -53,7 +53,7 @@ const buildAPIBridgeClient = function (api, preventFetch) {
   }
 
   APIBridgeClient.prototype.serveQuery = function (query) {
-    let queryWithIndex = Object.assign({}, query, {_index: this._index})
+    let queryWithIndex = Object.assign({}, query, {_publishId: this._publishId})
 
     if (preventFetch) return queryWithIndex
 

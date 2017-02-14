@@ -3,17 +3,16 @@
 import * as types from '../actions/actionTypes'
 
 const initialState = {
-  activeApi: {
-    uri: 'http://api.eb.dev.dadi.technology',
-    port: 80,
-    version: 'vjoin',
-    database: 'testdb'
-  }
+  config: null
 }
 
-export default function app (state = initialState, action = {}) {
+export default function app(state = initialState, action = {}) {
   switch (action.type) {
-
+    case types.SET_APP_CONFIG:
+      return {
+        ...state,
+        config: action.config
+      }
     default:
       return state
   }

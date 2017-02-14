@@ -3,7 +3,7 @@
 const config = require(paths.config)
 const passport = require('@dadi/passport')
 const request = require('request-promise')
-const slugify = require("underscore.string/slugify")
+const slugify = require('underscore.string/slugify')
 const _ = require('underscore')
 
 const APIBridgeController = function () {
@@ -48,7 +48,11 @@ APIBridgeController.prototype.post = function (req, res, next) {
     let queue = []
 
     requestObjects.forEach(requestObject => {
-      const apiConfig = config.get('apis')[requestObject._index]
+      const apiConfig = config.get('apis').find(api => {
+        return api._publishId === requestObject._publishId
+      })
+
+      if (!apiConfig) return
 
       queue.push(_createPassport({
         host: `${requestObject.uri.protocol}//${requestObject.uri.hostname}`,

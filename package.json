@@ -45,6 +45,7 @@
     "fetch": "^1.1.0",
     "fs": "0.0.1-security",
     "http": "0.0.0",
+    "md5": "^2.2.1",
     "mkdirp": "^0.5.1",
     "moment": "^2.17.1",
     "passport": "^0.3.2",
@@ -59,12 +60,12 @@
     "restify-cookies": "^0.2.2",
     "restify-errors": "^4.3.0",
     "serve-static-restify": "^1.0.0",
+    "snyk": "^1.25.0",
     "socketcluster-server": "^5.3.0",
     "test-value": "^2.1.0",
     "underscore.string": "^3.3.4",
     "url": "^0.11.0",
-    "whatwg-fetch": "^2.0.1",
-    "snyk": "^1.25.0"
+    "whatwg-fetch": "^2.0.1"
   },
   "devDependencies": {
     "babel": "^6.5.2",
