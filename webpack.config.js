@@ -44,6 +44,7 @@ module.exports = {
       views: path.resolve(__dirname, 'dadi/frontend/src/views'),
       'react': 'preact-compat',
       'react-router': 'preact-router',
+      'react-router-redux': 'preact-router-redux',
       'react-redux': 'preact-redux',
       'react-dom': 'preact-compat'
     }

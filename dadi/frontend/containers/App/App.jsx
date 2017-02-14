@@ -64,8 +64,9 @@ class App extends Component {
   }
 
   render () {
+    const { history } = this.props
     return (
-      <Router onChange={this.onRouteChange.bind(this)}>
+      <Router history={history} onChange={this.onRouteChange.bind(this)}>
         <Home path="/" authenticate />
         <PasswordReset path="/reset" authenticate/>
         <Api path="/apis/:api?" authenticate />
