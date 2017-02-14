@@ -4,7 +4,7 @@ import { Provider } from 'preact-redux'
 import { createStore, applyMiddleware, combineReducers } from 'redux'
 import thunk from 'redux-thunk'
 import createHistory from 'history/createBrowserHistory'
-import { syncHistoryWithStore, routerReducer } from 'preact-router-redux'
+import { syncHistoryWithStore } from 'preact-router-redux'
 
 import * as reducers from './reducers'
 import * as types from './actions/actionTypes'
