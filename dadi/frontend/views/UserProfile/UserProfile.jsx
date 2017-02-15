@@ -1,11 +1,11 @@
 import { h, Component } from 'preact'
 import { connect } from 'preact-redux'
 import { bindActionCreators } from 'redux'
-import { connectHelper } from '../../lib/util'
+import { connectHelper } from 'lib/util'
 
-import * as userActions from '../../actions/userActions'
+import * as userActions from 'actions/userActions'
 
-import Nav from '../../components/Nav/Nav'
+import Nav from 'components/Nav/Nav'
 
 class UserProfile extends Component {
 

@@ -4,18 +4,18 @@ import { bindActionCreators } from 'redux'
 /*
 * Libs
  */
-import { connectHelper } from '../../lib/util'
-import APIBridge from '../../lib/api-bridge-client'
+import { connectHelper } from 'lib/util'
+import APIBridge from 'lib/api-bridge-client'
 /*
 * Components
  */
-import Main from '../../components/Main/Main'
-import Nav from '../../components/Nav/Nav'
+import Main from 'components/Main/Main'
+import Nav from 'components/Nav/Nav'
 /*
 * Actions
  */
-import * as apiActions from '../../actions/apiActions'
-import * as documentActions from '../../actions/documentActions'
+import * as apiActions from 'actions/apiActions'
+import * as documentActions from 'actions/documentActions'
 
 class DocumentEdit extends Component {
   constructor (props) {

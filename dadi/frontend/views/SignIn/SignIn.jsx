@@ -2,18 +2,18 @@ import { h, Component } from 'preact'
 import { connect } from 'preact-redux'
 import { route } from 'preact-router'
 import { bindActionCreators } from 'redux'
-import { connectHelper } from '../../lib/util'
+import { connectHelper } from 'lib/util'
 
-import * as userActions from '../../actions/userActions'
+import * as userActions from 'actions/userActions'
 
-import Main from '../../components/Main/Main'
-import SignInForm from '../../components/SignInForm/SignInForm'
-import Debug from '../../components/Debug/Debug'
+import Main from 'components/Main/Main'
+import SignInForm from 'components/SignInForm/SignInForm'
+import Debug from 'components/Debug/Debug'
 
 /*
 * Lib
  */
-import Session from '../../lib/session'
+import Session from 'lib/session'
 
 class SignIn extends Component {
 

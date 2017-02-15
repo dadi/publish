@@ -1,12 +1,12 @@
 import { h, Component } from 'preact'
 import { connect } from 'preact-redux'
 import { bindActionCreators } from 'redux'
-import { connectHelper } from '../../lib/util'
+import { connectHelper } from 'lib/util'
 
-import Main from '../../components/Main/Main'
-import Select from '../../components/Select/Select'
-import SubmitButton from '../../components/SubmitButton/SubmitButton'
-import TextInput from '../../components/TextInput/TextInput'
+import Main from 'components/Main/Main'
+import Select from 'components/Select/Select'
+import SubmitButton from 'components/SubmitButton/SubmitButton'
+import TextInput from 'components/TextInput/TextInput'
 
 class StyleGuide extends Component {
   constructor(props) {
