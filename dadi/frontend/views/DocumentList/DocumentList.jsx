@@ -19,9 +19,11 @@ import { connectHelper } from 'lib/util'
 import APIBridge from 'lib/api-bridge-client'
 
 class DocumentList extends Component {
+  
   constructor (props) {
     super(props)
   }
+
   render() {
     const { state } = this.props
     return (
@@ -71,6 +73,7 @@ class DocumentList extends Component {
     const { actions } = this.props
     actions.setDocumentList(false, null)
   }
+
   getDocumentList (nextPage, nextCollection) {
     const { state, actions, collection, page } = this.props
     actions.setDocumentList(true, null)

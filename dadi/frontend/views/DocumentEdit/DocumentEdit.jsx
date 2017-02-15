@@ -21,6 +21,7 @@ class DocumentEdit extends Component {
   constructor (props) {
     super(props)
   }
+  
   render() {
     const { state, method, document } = this.props
     return (
@@ -46,6 +47,7 @@ class DocumentEdit extends Component {
       </Main>
     )
   }
+
   componentDidUpdate (previousProps) {
     const { state, actions } = this.props
     const previousState = previousProps.state
@@ -66,8 +68,9 @@ class DocumentEdit extends Component {
   componentWillUnmount () {
     const { actions } = this.props
     // Clear our documents and reset loading state
-    actions.setDocument(true, null)
+    actions.setDocument(false, null)
   }
+
   getDocument () {
     const { state, actions, collection, document_id } = this.props
     return APIBridge(state.api.apis[0])
