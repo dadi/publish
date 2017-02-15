@@ -81,7 +81,7 @@ Socket.prototype.leaveRoom = function () {
 }
 
 Socket.prototype.enterRoom = function () {
-  console.log(`${this.user.username} is entering ${this.room}`)
+  // console.log(`${this.user.username} is entering ${this.room}`)
   this.channel = this.socket.subscribe(this.room)
   this.channel.on('subscribeFail', this.onRoomSubscribeFail.bind(this))
   this.channel.on('unsubscribe', this.onRoomUnSubscribe.bind(this))
@@ -112,7 +112,7 @@ Socket.prototype.publishMessage = function (type, data) {
 
 Socket.prototype.channelDidPublish = function () {
   //Channel publish was successful
-  console.log("Channel did publish")
+  // console.log("Channel did publish")
   return this
 }
 
@@ -124,7 +124,7 @@ Socket.prototype.onRoomUnSubscribe = function () {
 }
 
 Socket.prototype.onRoomSubscribe = function () {
-  console.log("On Room Subscribed")
+  // console.log("On Room Subscribed")
   if (this.channel) {
     this.channel.watch(this.watchChannel.bind(this))
   }

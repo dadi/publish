@@ -47,27 +47,31 @@ class DocumentList extends Component {
       </Main>
     )
   }
-  shouldComponentUpdate(nextProps, nextState) {
-    const { state, actions, page, collection } = this.props
-    if (nextProps.page && nextProps.page !== page) {
-      // Set loading state to true, retaining current documents to avoid reflow
-      actions.setDocumentList(true, state.document.list)
-      this.getDocumentList(nextProps.page)
-    } else if (nextProps.collection && nextProps.collection !== collection) {
-      // Set loading state to true, retaining current documents to avoid reflow
-      actions.setDocumentList(true, state.document.list)
-      this.getDocumentList(nextProps.page, nextProps.collection)
-    }
-  }
-  componentWillMount () {
+
+  componentDidUpdate (previousProps) {
+    const { state, actions } = this.props
+    const previousState = previousProps.state
+    const { listDidLoad, listIsLoading } = state.document
+    const newStatePath = state.routing.locationBeforeTransitions.pathname
+    const previousStatePath = previousState.routing.locationBeforeTransitions.pathname
+
+    // State check: reject when missing config, session, or apis
+    if (!state.app.config || !state.api.apis.length || !state.user.signedIn) return
+    // State check: reject when path matches and document list loaded
+    if (newStatePath === previousStatePath && listDidLoad) return
+    // State check: reject when documents are still loading
+    if (listIsLoading) return
+
     this.getDocumentList()
   }
+
   componentWillUnmount () {
     const { actions } = this.props
-    actions.setDocumentList(true, null)
+    actions.setDocumentList(false, null)
   }
   getDocumentList (nextPage, nextCollection) {
     const { state, actions, collection, page } = this.props
+    actions.setDocumentList(true, null)
     if (!state.api.apis.length > 0) return
     return APIBridge(state.api.apis[0])
     .in(nextCollection || collection)
@@ -78,6 +82,7 @@ class DocumentList extends Component {
     .then(docs => {
       actions.setDocumentList(false, docs)
     }).catch((err) => {
+      actions.setDocumentList(false, null)
       // TODO: Graceful deal with failure
     })
   }

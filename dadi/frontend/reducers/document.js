@@ -13,8 +13,10 @@ const initialState = {
     }
   },
   data: {},
-  listIsLoading: true,
-  docIsLoading: true
+  listDidLoad: false,
+  listIsLoading: false,
+  docDidLoad: false,
+  docIsLoading: false
 }
 
 export default function document(state = initialState, action = {}) {
@@ -23,11 +25,13 @@ export default function document(state = initialState, action = {}) {
       return {
         ...state,
         listIsLoading: action.listIsLoading,
+        listDidLoad: action.documents !== null,
         list: action.documents || initialState.list
       }
     case types.SET_DOCUMENT:
       return {
         ...state,
+        docDidLoad: action.data !== null,
         docIsLoading: action.docIsLoading,
         data: action.data || initialState.data
       }
