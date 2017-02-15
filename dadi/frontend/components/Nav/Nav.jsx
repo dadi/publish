@@ -1,6 +1,6 @@
 import { h, Component } from 'preact'
 
-import CollectionNav from '../../components/CollectionNav/CollectionNav'
+import CollectionNav from 'components/CollectionNav/CollectionNav'
 
 export default class Nav extends Component {
 
