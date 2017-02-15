@@ -1,4 +1,4 @@
-import * as types from './actionTypes'
+import * as types from 'actions/actionTypes'
 
 export function setAppConfig(config) {
   return {

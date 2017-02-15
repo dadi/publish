@@ -44,6 +44,7 @@ module.exports = {
       components:  'frontend/components',
       views:  'frontend/views',
       actions:  'frontend/actions',
+      reducers:  'frontend/reducers',
       'react': 'preact-compat',
       'react-router': 'preact-router',
       'react-router-redux': 'preact-router-redux',

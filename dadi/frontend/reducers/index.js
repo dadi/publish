@@ -1,9 +1,9 @@
 'use strict'
 
-import api from './api'
-import app from './app'
-import document from './document'
-import user from './user'
+import api from 'reducers/api'
+import app from 'reducers/app'
+import document from 'reducers/document'
+import user from 'reducers/user'
 import { routerReducer as routing } from 'preact-router-redux'
 
 export {

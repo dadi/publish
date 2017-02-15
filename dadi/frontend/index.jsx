@@ -6,10 +6,10 @@ import thunk from 'redux-thunk'
 import createHistory from 'history/createBrowserHistory'
 import { syncHistoryWithStore } from 'preact-router-redux'
 
-import * as reducers from './reducers'
-import * as types from './actions/actionTypes'
+import * as reducers from 'reducers'
+import * as types from 'actions/actionTypes'
 
-import App from './containers/App/App'
+import App from 'containers/App/App'
 
 const browserHistory = createHistory()
 
