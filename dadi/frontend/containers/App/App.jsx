@@ -3,11 +3,12 @@ import { Router, route } from 'preact-router'
 import { connect } from 'preact-redux'
 import { bindActionCreators } from 'redux'
 
-import { connectHelper } from 'lib/util'
 import * as userActions from 'actions/userActions'
 import * as apiActions from 'actions/apiActions'
 import * as appActions from 'actions/appActions'
-
+/*
+ * Views
+ */
 import Api from 'views/Api/Api'
 import Collection from 'views/Collection/Collection'
 import DocumentEdit from 'views/DocumentEdit/DocumentEdit'
@@ -21,19 +22,14 @@ import RoleList from 'views/RoleList/RoleList'
 import UserProfile from 'views/UserProfile/UserProfile'
 import SignIn from 'views/SignIn/SignIn'
 import StyleGuide from 'views/StyleGuide/StyleGuide'
-
 /*
  * Libs
  */
+import { connectHelper } from 'lib/util'
 import Socket from 'lib/socket'
 import Session from 'lib/session'
 import getAppConfig from 'lib/app-config'
 import APIBridge from 'lib/api-bridge-client'
-
-/*
-* Setup
- */
-let currentUrl = '/'
 
 class App extends Component {
 
@@ -48,6 +44,8 @@ class App extends Component {
   componentDidUpdate(previousProps) {
     const { state, actions } = this.props
     const previousState = previousProps.state
+    const previousPath = previousState.routing.locationBeforeTransitions.pathname
+    const path = state.routing.locationBeforeTransitions.pathname
 
     // State change: app config has been loaded
     if (!previousState.app.config && state.app.config) {
@@ -61,12 +59,16 @@ class App extends Component {
         actions.setAppConfig(config)
       })
     }
+
+    if (previousPath !== path && (this.socket && this.socket.getUser())) {
+      this.socket.setRoom(path)
+    }
   }
 
   render () {
     const { history } = this.props
     return (
-      <Router history={history} onChange={this.onRouteChange.bind(this)}>
+      <Router history={history}>
         <Home path="/" authenticate />
         <PasswordReset path="/reset" authenticate/>
         <Api path="/apis/:api?" authenticate />
@@ -82,16 +84,6 @@ class App extends Component {
         <Error type="404" default />
       </Router>
     )
-  }
-
-  onRouteChange (e) {
-    const { actions, state } = this.props
-
-    currentUrl = e.url
-
-    if (this.socket && this.socket.getUser()) {
-      this.socket.setRoom(currentUrl)
-    }
   }
 
   getApiCollections () {
@@ -141,24 +133,25 @@ class App extends Component {
 
   initialiseSocket() {
     const { actions, state } = this.props
+    const pathname = state.routing.locationBeforeTransitions.pathname
 
-    let socket = new Socket(state.app.config.server.port)
     let session = new Session()
 
-    socket.on('message', msg => {
-      console.log('message', msg)
-    })
-
-    socket.on('userDidEnter', data => {
-      console.log('New User', data)
-    })
-
-    socket.on('userDidLeave', data => {
-      console.log('Users', data)
-    })
-
-    socket.setUser({user: state.user.username})
-          .setRoom(currentUrl)
+    let socket = new Socket(state.app.config.server.port)
+      .on('message', msg => {
+        console.log('message', msg)
+      })
+      .on('userDidEnter', data => {
+        console.log("USERS ENTERED")
+        // console.log('New User', data.body)
+        console.table(data.body.users)
+      })
+      .on('userDidLeave', data => {
+        console.log("USERS LEFT", data.body)
+        console.table(data.body.users)
+      })
+      .setUser(Object.assign(state.user, {vendor: navigator.vendor, identifier: state.user.username + navigator.vendor})).setRoom(pathname)
+      console.log("PATH", pathname)
 
     // Save reference to `socket` as a private variable
     this.socket = socket

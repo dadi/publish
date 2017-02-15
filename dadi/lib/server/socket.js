@@ -1,5 +1,6 @@
 'use strict'
 const scServer = require('socketcluster-server')
+const authentication = require(`${paths.lib.server}/socket_auth/authentication`)
 
 /**
  * Web Socket instance
@@ -30,6 +31,7 @@ Socket.prototype.addMiddleware = function () {
  */
 Socket.prototype.onConnection = function (socket) {
   console.log("Connection made")
+  authentication.attach(this.server, socket)
   this.registerSocketListeners(socket)
   return this
 }
@@ -41,7 +43,7 @@ Socket.prototype.onConnection = function (socket) {
  * @return {[type]}        [description]
  */
 Socket.prototype.registerSocketListeners = function (socket) {
-  socket.on('clientConnect', (data) => {
+  socket.on('login', (data) => {
     this.clientConnect(data, socket)
   })
   return this
@@ -68,15 +70,11 @@ Socket.prototype.onHandshake = function (req, next) {
  */
 Socket.prototype.onSubscribe = function (req, next) {
   console.log("User subscribes to room")
-  return next()
-}
-
-/**
- * Clear Deltas in current socket exchange
- * @param  {req} req socket request
- */
-Socket.prototype.clearDeltas = function (req) {
-  req.socket.exchange.deltas = []
+  if (req.socket.getAuthToken()) {
+    next()
+  } else {
+    next('Cannot subscribe to ' + req.channel + ' channel without being logged in')
+  }
 }
 
 /**
@@ -86,15 +84,22 @@ Socket.prototype.clearDeltas = function (req) {
  * @return {object} collaborators List of collaborators
  */
 Socket.prototype.getUsers = function (req) {
+  let payload = req.data
   let users = []
+  let user = payload.data.user
+  // console.log("CHANNEL", payload.data, "\n")
   let clients = req.socket.server.clients
-  Object.keys(clients).forEach((clientKey) => {
+  // console.log(Object.keys(clients))
+  Object.keys(clients).forEach(clientKey => {
     let client = clients[clientKey]
-    if (req.socket.server.clients) {
-      if (client.authToken && (req.channel === client.authToken.channel || (req.data && req.data.channel === client.authToken.channel))) {
+    if (client.authToken){
+      // console.log("CURRENT", client.channelSubscriptions)
+      if (client.channelSubscriptions[payload.data.channel]) {
+        // console.log("USER", client.authToken.identifier, "IS CONNECTED", client.channelSubscriptions)
         users.push(client.authToken)
       }
     }
+    // console.log("USER COUNT:", users.length)
   })
   return users
 }
@@ -112,44 +117,15 @@ Socket.prototype.onPublish = function (req, next) {
       case 'message':
         this.storeMessage(req.channel, req.data)
       break
-      // case 'delta':
-      //   this.storeDelta(req)
-      // break
       case 'userWillEnter':
-       req.socket.exchange.publish(req.channel, {type: 'userDidEnter', body: {users: this.getUsers(req)}})
+        req.socket.exchange.publish(req.channel, {type: 'userDidEnter', body: {users: this.getUsers(req)}})
       break
       case 'userWillLeave':
-       req.socket.exchange.publish(req.channel, {type: 'userDidLeave', body: {users: this.getUsers(req)}})
+        req.socket.exchange.publish(req.channel, {type: 'userDidLeave', body: {users: this.getUsers(req)}})
       break
     }
   }
   return next()
-}
-
-// Socket.prototype.storeDelta = function (req) {
-//   if (!req.socket.exchange.deltas) {
-//     req.socket.exchange.deltas = []
-//   }
-//   req.socket.exchange.deltas.push(req.data)
-// }
-
-/**
- * Store message
- * @param  {object} channel Current user channel data
- * @param  {object} data    Payload data
- */
-Socket.prototype.storeMessage = function (channel, data) {
-  // Unsupported currently
-  // let channelData = JSON.parse(channel)
-  // let messageEntry = {
-  //   collectionSlug: channelData.collection,
-  //   documentId: channelData.documentId,
-  //   message: data.data.value
-  // }
-  // let options = {
-  //   id: channelData.api,
-  //   collectionId: 'messages'
-  // }
 }
 
 /**
@@ -159,7 +135,7 @@ Socket.prototype.storeMessage = function (channel, data) {
  */
 Socket.prototype.clientConnect = function (data, socket) {
   if (data.user) {
-    console.log(`${data.user.user.name} connected`)
+    console.log(`${data.user.username} connected`)
     let authToken = socket.getAuthToken()
     if (!authToken) {
       socket.setAuthToken(data.user)
