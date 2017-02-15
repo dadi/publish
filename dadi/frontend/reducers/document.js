@@ -3,18 +3,10 @@
 import * as types from '../actions/actionTypes'
 
 const initialState = {
-  list: {
-    results: [],
-    metadata: {
-      limit: 20,
-      page: 1,
-      offset: 0,
-      totalPages: 1
-    }
-  },
-  data: {},
-  listIsLoading: true,
-  docIsLoading: true
+  list: null,
+  data: null,
+  listIsLoading: false,
+  docIsLoading: false
 }
 
 export default function document(state = initialState, action = {}) {

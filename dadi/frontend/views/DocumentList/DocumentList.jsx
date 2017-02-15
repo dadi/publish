@@ -5,18 +5,18 @@ import { bindActionCreators } from 'redux'
 /*
 * Actions
  */
-import * as apiActions from '../../actions/apiActions'
-import * as documentActions from '../../actions/documentActions'
+import * as apiActions from 'actions/apiActions'
+import * as documentActions from 'actions/documentActions'
 /*
 * Components
  */
-import Main from '../../components/Main/Main'
-import Nav from '../../components/Nav/Nav'
+import Main from 'components/Main/Main'
+import Nav from 'components/Nav/Nav'
 /*
 * Libs
  */
-import { connectHelper } from '../../lib/util'
-import APIBridge from '../../lib/api-bridge-client'
+import { connectHelper } from 'lib/util'
+import APIBridge from 'lib/api-bridge-client'
 
 class DocumentList extends Component {
   constructor (props) {
@@ -27,47 +27,53 @@ class DocumentList extends Component {
     return (
       <Main>
         <Nav apis={ state.api.apis } />
-        {state.document.listIsLoading ? (
+        {!state.document.list ? (
           <h3>Loader based on: {state.document.listIsLoading}</h3>
         ) : (
-          <table border="1">
-            {state.document.list.results.map(document => (
-              <tr>
-                <td><a href={ `/${this.props.collection}/document/edit/${document._id}` }>Edit</a></td>
-                {Object.keys(document).map(field => (
-                  <td>{document[field]}</td>
-                ))}
-              </tr>
+          <section class="Documents">
+            <table border="1">
+              {state.document.list.results.map(document => (
+                <tr>
+                  <td><a href={ `/${this.props.collection}/document/edit/${document._id}` }>Edit</a></td>
+                  {Object.keys(document).map(field => (
+                    <td>{document[field]}</td>
+                  ))}
+                </tr>
+              ))}
+            </table>
+            {Array(state.document.list.metadata.totalPages).fill().map((_, page) => (
+              <a href={ `/${this.props.collection}/documents/${page+1}` }>{page+1}</a>
             ))}
-          </table>
+          </section>
         )}
-        {Array(state.document.list.metadata.totalPages).fill().map((_, page) => (
-          <a href={ `/${this.props.collection}/documents/${page+1}` }>{page+1}</a>
-        ))}
       </Main>
     )
   }
-  shouldComponentUpdate(nextProps, nextState) {
-    const { state, actions, page, collection } = this.props
-    if (nextProps.page && nextProps.page !== page) {
-      // Set loading state to true, retaining current documents to avoid reflow
-      actions.setDocumentList(true, state.document.list)
-      this.getDocumentList(nextProps.page)
-    } else if (nextProps.collection && nextProps.collection !== collection) {
-      // Set loading state to true, retaining current documents to avoid reflow
-      actions.setDocumentList(true, state.document.list)
-      this.getDocumentList(nextProps.page, nextProps.collection)
-    }
-  }
-  componentWillMount () {
+
+  componentDidUpdate (previousProps) {
+    const { state, actions } = this.props
+    const previousState = previousProps.state
+    const { list, listIsLoading } = state.document
+    const newStatePath = state.routing.locationBeforeTransitions.pathname
+    const previousStatePath = previousState.routing.locationBeforeTransitions.pathname
+
+    // State check: reject when missing config, session, or apis
+    if (!state.app.config || !state.api.apis.length || !state.user.signedIn) return
+    // State check: reject when path matches and document list loaded
+    if (newStatePath === previousStatePath && list) return
+    // State check: reject when documents are still loading
+    if (listIsLoading) return
+
     this.getDocumentList()
   }
+
   componentWillUnmount () {
     const { actions } = this.props
-    actions.setDocumentList(true, null)
+    actions.setDocumentList(false, null)
   }
   getDocumentList (nextPage, nextCollection) {
     const { state, actions, collection, page } = this.props
+    actions.setDocumentList(true, null)
     if (!state.api.apis.length > 0) return
     return APIBridge(state.api.apis[0])
     .in(nextCollection || collection)
@@ -78,6 +84,7 @@ class DocumentList extends Component {
     .then(docs => {
       actions.setDocumentList(false, docs)
     }).catch((err) => {
+      actions.setDocumentList(false, null)
       // TODO: Graceful deal with failure
     })
   }

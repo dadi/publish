@@ -27,7 +27,7 @@ class DocumentEdit extends Component {
       <Main>
         <Nav apis={ state.api.apis } />
         <h1>Method: { method }</h1>
-        {state.document.docIsLoading ? (
+        {!state.document.data ? (
           <h3>Status: {state.document.docIsLoading}</h3>
         ) : (
           <table border="1">
@@ -46,9 +46,23 @@ class DocumentEdit extends Component {
       </Main>
     )
   }
-  componentWillMount () {
+  componentDidUpdate (previousProps) {
+    const { state, actions } = this.props
+    const previousState = previousProps.state
+    const { data, docIsLoading } = state.document
+    const newStatePath = state.routing.locationBeforeTransitions.pathname
+    const previousStatePath = previousState.routing.locationBeforeTransitions.pathname
+
+    // State check: reject when missing config, session, or apis
+    if (!state.app.config || !state.api.apis.length || !state.user.signedIn) return
+    // State check: reject when path matches and document list loaded
+    if (newStatePath === previousStatePath && data) return
+    // State check: reject when documents are still loading
+    if (docIsLoading) return
+
     this.getDocument()
   }
+
   componentWillUnmount () {
     const { actions } = this.props
     // Clear our documents and reset loading state
@@ -61,7 +75,7 @@ class DocumentEdit extends Component {
     .whereFieldIsEqualTo('_id', document_id)
     .find()
     .then(doc => {
-      actions.setDocument(false, doc.results[0])
+      actions.setDocument(false, doc.results[0] || {err: `No document with _id ${document_id}`})
     })
   }
 }

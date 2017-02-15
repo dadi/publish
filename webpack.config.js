@@ -26,22 +26,24 @@ module.exports = {
   },
 
   resolve: {
+    root: path.resolve(__dirname, 'dadi'),
     extensions: ['', '.jsx', '.js', '.json', '.scss'],
 
     modulesDirectories: [
-      path.resolve(__dirname, 'dadi/frontend/src/lib'),
-      path.resolve(__dirname, 'dadi/frontend/src/components'),
-      path.resolve(__dirname, 'dadi/frontend/src/views'),
-      path.resolve(__dirname, 'dadi/frontend/src/store'),
+      path.resolve(__dirname, 'dadi/frontend/lib'),
+      path.resolve(__dirname, 'dadi/frontend/components'),
+      path.resolve(__dirname, 'dadi/frontend/views'),
+      path.resolve(__dirname, 'dadi/frontend/store'),
       path.resolve(__dirname, 'node_modules'),
       'node_modules'
     ],
 
     alias: {
-      lib: path.resolve(__dirname, 'dadi/frontend/src/lib'),
-      containers: path.resolve(__dirname, 'dadi/frontend/src/containers'),
-      components: path.resolve(__dirname, 'dadi/frontend/src/components'),
-      views: path.resolve(__dirname, 'dadi/frontend/src/views'),
+      lib:  'frontend/lib',
+      containers:  'frontend/containers',
+      components:  'frontend/components',
+      views:  'frontend/views',
+      actions:  'frontend/actions',
       'react': 'preact-compat',
       'react-router': 'preact-router',
       'react-router-redux': 'preact-router-redux',
