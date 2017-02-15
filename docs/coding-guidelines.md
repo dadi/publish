@@ -33,7 +33,7 @@ Chaining indentation
 ```javascript
 // Wrong
 let chained = new constructor().foo()
-                                                  .bar()
+                               .bar()
 // Wrong
 let chained = new constructor().foo()
 .bar()
