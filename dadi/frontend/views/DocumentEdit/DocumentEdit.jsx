@@ -73,13 +73,14 @@ class DocumentEdit extends Component {
 
   getDocument () {
     const { state, actions, collection, document_id } = this.props
+    
     return APIBridge(state.api.apis[0])
-    .in(collection)
-    .whereFieldIsEqualTo('_id', document_id)
-    .find()
-    .then(doc => {
-      actions.setDocument(false, doc.results[0] || {err: `No document with _id ${document_id}`})
-    })
+      .in(collection)
+      .whereFieldIsEqualTo('_id', document_id)
+      .find()
+      .then(doc => {
+        actions.setDocument(false, doc.results[0] || {err: `No document with _id ${document_id}`})
+      })
   }
 }
 

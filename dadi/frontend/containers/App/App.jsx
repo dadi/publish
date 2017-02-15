@@ -105,8 +105,7 @@ class App extends Component {
     apisToProcess.forEach((api, apiIndex) => {
       return APIBridge(api).getCollections().then(({ collections }) => {
         collections.forEach(collection => {
-          let query = APIBridge(api, true).in(collection.slug)
-                                          .getConfig()
+          let query = APIBridge(api, true).in(collection.slug).getConfig()
 
           // Add query to bundler
           bundler.add(query)

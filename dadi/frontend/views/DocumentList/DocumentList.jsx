@@ -76,20 +76,23 @@ class DocumentList extends Component {
 
   getDocumentList (nextPage, nextCollection) {
     const { state, actions, collection, page } = this.props
+    
     actions.setDocumentList(true, null)
+
     if (!state.api.apis.length > 0) return
+
     return APIBridge(state.api.apis[0])
-    .in(nextCollection || collection)
-    .limitTo(20) // Config based on collection schema
-    .goToPage(nextPage || page)
-    .sortBy('createdAt', 'desc') // Configure based on user preferences
-    .find()
-    .then(docs => {
-      actions.setDocumentList(false, docs)
-    }).catch((err) => {
-      actions.setDocumentList(false, null)
-      // TODO: Graceful deal with failure
-    })
+      .in(nextCollection || collection)
+      .limitTo(20) // Config based on collection schema
+      .goToPage(nextPage || page)
+      .sortBy('createdAt', 'desc') // Configure based on user preferences
+      .find()
+      .then(docs => {
+        actions.setDocumentList(false, docs)
+      }).catch((err) => {
+        actions.setDocumentList(false, null)
+        // TODO: Graceful deal with failure
+      })
   }
 }
 
