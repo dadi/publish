@@ -62,7 +62,23 @@ Socket.prototype.isConnected = function () {
 
 Socket.prototype.setUser = function (data) {
   this.user = data
+
+  // WIP create user-only channel
+  // if (this.socket.getAuthToken()) {
+  //  this.subscribeToUserChannel() // Subscribe to single user channel
+  // } else {
+  //   this.queuedTasks.push(this.subscribeToUserChannel.bind(this))
+  // }
   return this
+}
+
+/*
+ * Subscribe to single user channel
+ */
+Socket.prototype.subscribeToUserChannel = function () {
+  if (this.socket.authToken) {
+    this.socket.subscribe(this.socket.authToken.username)
+  }
 }
 
 Socket.prototype.getUser = function () {
@@ -87,22 +103,19 @@ Socket.prototype.setRoom = function (room) {
 }
 
 Socket.prototype.leaveRoom = function () {
-  this.publishMessage('userWillLeave', {channel: this.room})
   this.socket.unsubscribe(this.room)
   return this
 }
 
 Socket.prototype.enterRoom = function () {
-  // if (this.socket.authToken) {
-    // console.log(this.socket.authToken, this.room)
-  // }
   if (this.room) {
-    console.log(`${this.user.username} is entering ${this.room}`)
     this.channel = this.socket.subscribe(this.room)
     this.channel.on('subscribeFail', this.onRoomSubscribeFail.bind(this))
     this.channel.on('unsubscribe', this.onRoomUnSubscribe.bind(this))
     this.channel.on('subscribe', this.onRoomSubscribe.bind(this))
-    this.publishMessage('userWillEnter', {channel: this.room})
+    if (this.socket.authToken) {
+      this.publishMessage('getUsersInRoom', {channel: this.room, user: this.socket.authToken.username})
+    }
   }
   return this
 }

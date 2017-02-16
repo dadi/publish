@@ -1,38 +1,36 @@
 'use strict'
 
-module.exports.attach = function (scServer, socket) {
-  let tokenExpiresInSeconds = 10 * 60
+const Auth = function () {}
 
-  let tokenRenewalIntervalInMilliseconds = Math.round(1000 * tokenExpiresInSeconds / 3)
 
-  // Keep renewing the token (if there is one) at a predefined interval to make sure that
-  // it doesn't expire while the connection is active.
-  // let renewAuthTokenInterval = setInterval(() => {
-  //   let currentToken = socket.getAuthToken()
-  //   if (currentToken) {
-  //     socket.setAuthToken(currentToken, {expiresIn: tokenExpiresInSeconds})
-  //     // socket.setAuthToken(currentToken, {expiresIn: tokenExpiresInSeconds})
-  //   }
-  // }, tokenRenewalIntervalInMilliseconds)
+Auth.prototype.attach = function (scServer, socket) {
+
   let currentToken = socket.getAuthToken()
   if (currentToken) {
     socket.setAuthToken(currentToken, {})
   }
 
-  // socket.once('disconnect', () => {
-  //   clearInterval(renewAuthTokenInterval)
-  // })
-
-  let validateLoginDetails = (loginDetails, respond) => {
-    // Validation required here
-    if (!loginDetails.user) {
+  let validateLoginAndAuth = (data, respond) => {
+    if (!data.user) {
       respond(null, 'Invalid user')
     } else {
       let token = {
-        username: loginDetails.user.user
+        username: data.user.identifier, //username
+        vendor: data.user.vendor
       }
+      socket.setAuthToken(token)
       respond()
     }
   }
-  socket.on('login', validateLoginDetails)
+
+  socket.on('login', validateLoginAndAuth)
+  socket.on('disconnect', data => {
+    // console.log("Disconnected")
+  })
 }
+
+module.exports = function () {
+  return new Auth()
+}
+
+module.exports.Auth = Auth

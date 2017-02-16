@@ -138,20 +138,10 @@ class App extends Component {
     let session = new Session()
 
     let socket = new Socket(state.app.config.server.port)
-      .on('message', msg => {
-        console.log('message', msg)
-      })
-      .on('userDidEnter', data => {
-        console.log("USERS ENTERED")
-        // console.log('New User', data.body)
+      .on('userListChange', data => {
         console.table(data.body.users)
       })
-      .on('userDidLeave', data => {
-        console.log("USERS LEFT", data.body)
-        console.table(data.body.users)
-      })
-      .setUser(Object.assign(state.user, {vendor: navigator.vendor, identifier: state.user.username + navigator.vendor})).setRoom(pathname)
-      console.log("PATH", pathname)
+      .setUser(Object.assign(state.user, {vendor: navigator.vendor, identifier: `${state.user.username}_${navigator.vendor}`})).setRoom(pathname)
 
     // Save reference to `socket` as a private variable
     this.socket = socket
