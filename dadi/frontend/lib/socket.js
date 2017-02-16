@@ -9,6 +9,7 @@ const Socket = function (port) {
   this.options = {
     port
   }
+  this.queuedTasks = []
   this.listeners = {}
   this.onConnectListeners = []
   this.socket = connect(this.options)
@@ -22,6 +23,7 @@ const Socket = function (port) {
  */
 Socket.prototype.registerListeners = function () {
   this.socket.on('connect', this.onConnect.bind(this))
+  this.socket.off('connect', this.onDisconnect.bind(this))
   this.socket.on('error', this.onError.bind(this))
   this.socket.on('disconnect', this.onDisconnect.bind(this))
 }
@@ -31,7 +33,14 @@ Socket.prototype.onConnect = function () {
   if (this.user) {
     this.user.channel = this.room
     if (!this.socket.getAuthToken()) {
-      this.socket.emit('clientConnect', {user: this.user})
+      this.socket.emit('login', {user: this.user},(err, failure) => {
+        if (!err) {
+          // Run all queued 
+          this.queuedTasks.forEach(task => {
+            task()
+          })
+        }
+      })
     }
   }
   this.onConnectListeners.forEach(connectListener => {
@@ -42,8 +51,8 @@ Socket.prototype.onConnect = function () {
 
 Socket.prototype.onDisconnect = function () {
   if (this.room) {
-    this.user.channel = null
-    this.leaveRoom()
+    // this.user.channel = null
+    // this.leaveRoom()
   }
 }
 
@@ -54,7 +63,22 @@ Socket.prototype.isConnected = function () {
 Socket.prototype.setUser = function (data) {
   this.user = data
 
+  // WIP create user-only channel
+  // if (this.socket.getAuthToken()) {
+  //  this.subscribeToUserChannel() // Subscribe to single user channel
+  // } else {
+  //   this.queuedTasks.push(this.subscribeToUserChannel.bind(this))
+  // }
   return this
+}
+
+/*
+ * Subscribe to single user channel
+ */
+Socket.prototype.subscribeToUserChannel = function () {
+  if (this.socket.authToken) {
+    this.socket.subscribe(this.socket.authToken.username)
+  }
 }
 
 Socket.prototype.getUser = function () {
@@ -68,25 +92,31 @@ Socket.prototype.onError = function (err) {
 // //Room
 
 Socket.prototype.setRoom = function (room) {
-  this.room = room
-  this.enterRoom()
+  if (this.socket.getAuthToken()) {
+    this.leaveRoom()
+    this.room = room
+    this.enterRoom()
+  } else {
+    this.queuedTasks.push(this.enterRoom.bind(this))
+  }
   return this
 }
 
 Socket.prototype.leaveRoom = function () {
-  this.socket.off('connect', this.onConnect)
-  this.publishMessage('userWillLeave', {channel: this.room})
   this.socket.unsubscribe(this.room)
   return this
 }
 
 Socket.prototype.enterRoom = function () {
-  // console.log(`${this.user.username} is entering ${this.room}`)
-  this.channel = this.socket.subscribe(this.room)
-  this.channel.on('subscribeFail', this.onRoomSubscribeFail.bind(this))
-  this.channel.on('unsubscribe', this.onRoomUnSubscribe.bind(this))
-  this.channel.on('subscribe', this.onRoomSubscribe.bind(this))
-  this.publishMessage('userWillEnter', {channel: this.room})
+  if (this.room) {
+    this.channel = this.socket.subscribe(this.room)
+    this.channel.on('subscribeFail', this.onRoomSubscribeFail.bind(this))
+    this.channel.on('unsubscribe', this.onRoomUnSubscribe.bind(this))
+    this.channel.on('subscribe', this.onRoomSubscribe.bind(this))
+    if (this.socket.authToken) {
+      this.publishMessage('getUsersInRoom', {channel: this.room, user: this.socket.authToken.username})
+    }
+  }
   return this
 }
 
@@ -112,19 +142,18 @@ Socket.prototype.publishMessage = function (type, data) {
 
 Socket.prototype.channelDidPublish = function () {
   //Channel publish was successful
-  // console.log("Channel did publish")
   return this
 }
 
 Socket.prototype.onRoomUnSubscribe = function () {
   if (this.channel) {
     this.channel.unwatch()
+    this.socket.unsubscribe(this.room)
   }
   return this
 }
 
 Socket.prototype.onRoomSubscribe = function () {
-  // console.log("On Room Subscribed")
   if (this.channel) {
     this.channel.watch(this.watchChannel.bind(this))
   }
@@ -136,14 +165,6 @@ Socket.prototype.onRoomSubscribeFail = function (err) {
   console.log("ROOM SUBSCRIBE FAIL", err)
   return this
 }
-
-// Socket.prototype.getRandomColour = function () {
-//   return [Math.floor(Math.random() * 256), Math.floor(Math.random() * 256), Math.floor(Math.random() * 256)]
-// }
-
-// Socket.prototype.scrollToUser = function () {
-
-// }
 
 module.exports = function (port) {
   return new Socket(port)
