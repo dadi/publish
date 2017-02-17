@@ -6,9 +6,9 @@ import { bindActionCreators } from 'redux'
 import * as userActions from 'actions/userActions'
 import * as apiActions from 'actions/apiActions'
 import * as appActions from 'actions/appActions'
-/*
- * Views
- */
+
+import Main from 'components/Main/Main'
+
 import Api from 'views/Api/Api'
 import Collection from 'views/Collection/Collection'
 import DocumentEdit from 'views/DocumentEdit/DocumentEdit'
@@ -16,15 +16,14 @@ import DocumentList from 'views/DocumentList/DocumentList'
 import Error from 'views/Error/Error'
 import Home from 'views/Home/Home'
 import MediaLibrary from 'views/MediaLibrary/MediaLibrary'
+import Nav from 'components/Nav/Nav'
 import PasswordReset from 'views/PasswordReset/PasswordReset'
 import RoleEdit from 'views/RoleEdit/RoleEdit'
 import RoleList from 'views/RoleList/RoleList'
 import UserProfile from 'views/UserProfile/UserProfile'
 import SignIn from 'views/SignIn/SignIn'
 import StyleGuide from 'views/StyleGuide/StyleGuide'
-/*
- * Libs
- */
+
 import { connectHelper } from 'lib/util'
 import Socket from 'lib/socket'
 import Session from 'lib/session'
@@ -66,28 +65,36 @@ class App extends Component {
   }
 
   render () {
-    const { history } = this.props
+    const { state, history } = this.props
+
     return (
-      <Router history={history}>
-        <Home path="/" authenticate />
-        <PasswordReset path="/reset" authenticate/>
-        <Api path="/apis/:api?" authenticate />
-        <Collection path="/apis/:api/collections/:collection?" authenticate />
-        <DocumentList path="/:collection/documents/:page?" authenticate />
-        <DocumentEdit path="/:collection/document/:method/:document_id?" authenticate />
-        <MediaLibrary path="/:collection/media/:document?" authenticate/>
-        <UserProfile path="/profile" authenticate />
-        <RoleList path="/roles" authenticate/>
-        <RoleEdit path="/role/:method/:role?" authenticate />
-        <SignIn path="/signin" />
-        <StyleGuide path="/styleguide" />
-        <Error type="404" default />
-      </Router>
+      <Main>
+        {state.api.apis &&
+          <Nav apis={ state.api.apis } />
+        }
+        
+        <Router history={history}>
+          <Home path="/" authenticate />
+          <PasswordReset path="/reset" authenticate/>
+          <Api path="/apis/:api?" authenticate />
+          <Collection path="/apis/:api/collections/:collection?" authenticate />
+          <DocumentList path="/:collection/documents/:page?" authenticate />
+          <DocumentEdit path="/:collection/document/:method/:document_id?" authenticate />
+          <MediaLibrary path="/:collection/media/:document?" authenticate/>
+          <UserProfile path="/profile" authenticate />
+          <RoleList path="/roles" authenticate/>
+          <RoleEdit path="/role/:method/:role?" authenticate />
+          <SignIn path="/signin" />
+          <StyleGuide path="/styleguide" />
+          <Error type="404" default />
+        </Router>
+      </Main>
     )
   }
 
   getApiCollections () {
     const { state, actions } = this.props
+
     actions.setApiFetchStatus('isFetching')
 
     let bundler = APIBridge.Bundler()
@@ -109,7 +116,10 @@ class App extends Component {
             return Object.assign({}, config, collections[index])
           })
 
-          const apiWithCollections = Object.assign({}, api, {collections: mergedCollections, hasCollections: true})
+          const apiWithCollections = Object.assign({}, api, {
+            collections: mergedCollections,
+            hasCollections: true
+          })
 
           actions.setApi(apiWithCollections)
         })
@@ -142,7 +152,10 @@ class App extends Component {
         // Table of connected users
         // console.table(data.body.users)
       })
-      .setUser(Object.assign(state.user, {vendor: navigator.vendor, identifier: `${state.user.username}_${navigator.vendor}`})).setRoom(pathname)
+      .setUser(Object.assign({}, state.user, {
+        vendor: navigator.vendor,
+        identifier: `${state.user.username}_${navigator.vendor}`
+      })).setRoom(pathname)
 
     // Save reference to `socket` as a private variable
     this.socket = socket

@@ -6,11 +6,13 @@ export default class CollectionNav extends Component {
 
   componentWillMount() {
     const {sort, collections} = this.props
+
     this.groups = this.groupCollections(sort, collections)
   }
 
   render() {
     const { sort, collections } = this.props
+
     return (
       <div class="CollectionNav">
         <h3>Collections</h3>
@@ -39,8 +41,10 @@ export default class CollectionNav extends Component {
       </div>
     )
   }
+
   groupCollections(sort, collections) {
     if (!collections.length) return []
+
     let grouping = sort.map(menu => {
       if (typeof menu === 'string') {
         return collections.find(collection => {
@@ -58,6 +62,7 @@ export default class CollectionNav extends Component {
     }).filter(menu => {
       return typeof menu !== 'undefined'
     })
+
     if (grouping.length) {
       return grouping
     } else {
@@ -67,6 +72,7 @@ export default class CollectionNav extends Component {
 
   shouldComponentUpdate(nextProps, nextState) {
     const { collections } = this.props
+
     if (collections === nextProps.collections || this.groups) {
       return false
     } else {

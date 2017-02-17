@@ -1,7 +1,16 @@
+'use strict'
+
+const fs = require('fs')
 const path = require('path')
+const postcss = require('postcss')
+const postcssCustomProperties = require("postcss-custom-properties")
 const webpack = require('webpack')
+const ExtractTextPlugin = require('extract-text-webpack-plugin')
+const WebpackOnBuildPlugin = require('on-build-webpack')
 
 const ENV = process.env.NODE_ENV || 'development'
+const PATH_CSS = 'main.css'
+const PATH_PUBLIC = 'public'
 
 module.exports = {
 
@@ -10,6 +19,16 @@ module.exports = {
     new webpack.optimize.DedupePlugin(),
     new webpack.DefinePlugin({
       'process.env': JSON.stringify({ NODE_ENV: ENV })
+    }),
+    new ExtractTextPlugin(PATH_CSS),
+    new WebpackOnBuildPlugin((stats) => {
+      let fullCssPath = path.resolve(__dirname, PATH_PUBLIC, PATH_CSS)
+      let css = fs.readFileSync(fullCssPath, 'utf8')
+      let processedCss = postcss().use(postcssCustomProperties({
+        preserve: true
+      })).process(css).css
+
+      fs.writeFileSync(fullCssPath, processedCss)
     })
   ]).concat(ENV === 'production' ? [
     new webpack.optimize.OccurenceOrderPlugin()
@@ -20,7 +39,7 @@ module.exports = {
   devtool: 'eval-cheap-module-source-map',
 
   output: {
-    path: path.resolve(__dirname, 'public'),
+    path: path.resolve(__dirname, PATH_PUBLIC),
     publicPath: '/',
     filename: 'bundle.js'
   },
@@ -81,8 +100,20 @@ module.exports = {
       },
       {
         test: /\.scss$/,
-        loader: "style-loader!css-loader!sass-loader"
+        loader: 'style-loader!css-loader!sass-loader'
+      },
+      {
+        test: /\.css$/,
+        include: [path.resolve(__dirname, 'dadi/frontend')],
+        loader: ExtractTextPlugin.extract('style-loader', 'css-loader?modules&importLoaders=1&localIdentName=[name]__[local]___[hash:base64:5]!postcss-loader')
       }
     ]
-  }
+  },
+
+  postcss: [
+    // require("postcss-custom-properties")({
+    //   preserve: true
+    // }),
+    require('autoprefixer-core')
+  ]
 }

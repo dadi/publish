@@ -6,10 +6,9 @@ import { connectHelper } from 'lib/util'
 class Error extends Component {
   render() {
     const { type } = this.props
+
     return (
-      <main>
-          <h1>Error: { type }</h1>
-      </main>
+      <h1>Error: { type }</h1>
     )
   }
 }

@@ -24,9 +24,9 @@ class DocumentEdit extends Component {
   
   render() {
     const { state, method, document } = this.props
+
     return (
-      <Main>
-        <Nav apis={ state.api.apis } />
+      <div>
         <h1>Method: { method }</h1>
         {!state.document.data ? (
           <h3>Status: {state.document.docIsLoading}</h3>
@@ -44,7 +44,7 @@ class DocumentEdit extends Component {
             </tr>
           </table>
         )}
-      </Main>
+      </div>
     )
   }
 
@@ -57,8 +57,10 @@ class DocumentEdit extends Component {
 
     // State check: reject when missing config, session, or apis
     if (!state.app.config || !state.api.apis.length || !state.user.signedIn) return
+
     // State check: reject when path matches and document list loaded
     if (newStatePath === previousStatePath && data) return
+
     // State check: reject when documents are still loading
     if (docIsLoading) return
 

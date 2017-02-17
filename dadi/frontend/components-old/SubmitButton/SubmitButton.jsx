@@ -2,8 +2,6 @@
 
 import { h, Component } from 'preact'
 
-import Styles from './SubmitButton.scss'
-
 export default class SubmitButton extends Component {
   render() {
     return (

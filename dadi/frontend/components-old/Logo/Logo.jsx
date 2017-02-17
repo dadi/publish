@@ -1,8 +1,5 @@
 import { h, Component } from 'preact'
 
-import Styles from './Logo.scss'
-
-
 export default class Logo extends Component {
   render() {
     return (
