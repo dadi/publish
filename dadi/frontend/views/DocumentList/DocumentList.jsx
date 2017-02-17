@@ -2,19 +2,9 @@ import { h, Component } from 'preact'
 import { connect } from 'preact-redux'
 import { bindActionCreators } from 'redux'
 
-/*
-* Actions
- */
 import * as apiActions from 'actions/apiActions'
 import * as documentActions from 'actions/documentActions'
-/*
-* Components
- */
-import Main from 'components/Main/Main'
-import Nav from 'components/Nav/Nav'
-/*
-* Libs
- */
+
 import { connectHelper } from 'lib/util'
 import APIBridge from 'lib/api-bridge-client'
 
@@ -26,9 +16,9 @@ class DocumentList extends Component {
 
   render() {
     const { state } = this.props
+
     return (
-      <Main>
-        <Nav apis={ state.api.apis } />
+      <div>
         {!state.document.list ? (
           <h3>Loader based on: {state.document.listIsLoading}</h3>
         ) : (
@@ -48,7 +38,7 @@ class DocumentList extends Component {
             ))}
           </section>
         )}
-      </Main>
+      </div>
     )
   }
 
@@ -61,8 +51,10 @@ class DocumentList extends Component {
 
     // State check: reject when missing config, session, or apis
     if (!state.app.config || !state.api.apis.length || !state.user.signedIn) return
+
     // State check: reject when path matches and document list loaded
     if (newStatePath === previousStatePath && list) return
+
     // State check: reject when documents are still loading
     if (listIsLoading) return
 
@@ -71,6 +63,7 @@ class DocumentList extends Component {
 
   componentWillUnmount () {
     const { actions } = this.props
+
     actions.setDocumentList(false, null)
   }
 

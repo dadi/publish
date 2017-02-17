@@ -3,9 +3,9 @@
 import { h, Component } from 'preact'
 
 // import Styles from './SignInForm.scss'
-import SubmitButton from 'components/SubmitButton/SubmitButton'
-import FormPassword from 'components/FormPassword/FormPassword'
-import FormTextInput from 'components/FormTextInput/FormTextInput'
+import SubmitButton from '../../components-old/SubmitButton/SubmitButton'
+import FormPassword from '../../components-old/FormPassword/FormPassword'
+import FormTextInput from '../../components-old/FormTextInput/FormTextInput'
 
 export default class SignInForm extends Component {
   render() {

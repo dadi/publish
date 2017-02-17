@@ -1,11 +1,13 @@
 import { h, Component } from 'preact'
 
-import CollectionNav from '../../components-old/CollectionNav/CollectionNav'
+import CollectionNav from 'components/CollectionNav/CollectionNav'
 
 export default class Nav extends Component {
 
   render() {
     const { apis } = this.props
+
+console.log('*** NAV PROPS:', this.props)
 
     return (
       <nav class="Nav">
@@ -15,9 +17,7 @@ export default class Nav extends Component {
           <li><a href="/">Home</a></li>
           <li><a href="/profile">Profile</a></li>
         </ul>
-        {apis && apis.length && apis[0].hasCollections &&
-          <CollectionNav sort={ apis[0].menu || []} collections={ apis[0].collections } />
-        }
+        <CollectionNav collections={ apis[0] ? apis[0].collections : [] } />
       </nav>
     )
   }

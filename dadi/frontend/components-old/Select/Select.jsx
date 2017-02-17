@@ -2,8 +2,6 @@
 
 import { h, Component } from 'preact'
 
-import Styles from './Select.scss'
-
 export default class Select extends Component {
   constructor(props) {
     super(props)

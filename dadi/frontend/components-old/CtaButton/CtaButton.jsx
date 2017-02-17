@@ -1,7 +1,5 @@
 import { h, Component } from 'preact'
 
-import Styles from './CtaButton.scss'
-
 export default class CtaButton extends Component {
   render() {
     const { type } = this.props

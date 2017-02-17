@@ -6,9 +6,10 @@ import { connectHelper } from 'lib/util'
 
 import * as userActions from 'actions/userActions'
 
-import Main from 'components/Main/Main'
-import SignInForm from 'components/SignInForm/SignInForm'
-import Debug from 'components/Debug/Debug'
+import SignInForm from '../../components-old/SignInForm/SignInForm'
+import Debug from '../../components-old/Debug/Debug'
+
+import styles from './SignIn.css'
 
 /*
 * Lib
@@ -24,6 +25,7 @@ class SignIn extends Component {
 
   componentWillUpdate() {
     const { state, actions } = this.props
+
     if (state.signedIn) {
       route('/profile')
     }
@@ -33,13 +35,14 @@ class SignIn extends Component {
     const { state, actions } = this.props
 
     return (
-      <Main>
+      <div className={styles.test}>
         <Debug val={state.signedIn}/>
         <Debug val={state.username}/>
         <SignInForm onSubmit={this.signIn} />
-      </Main>
+      </div>
     )
   }
+
   signIn (event) {
     event.preventDefault()
     // loginUsername and loginPassword should come from form fields
