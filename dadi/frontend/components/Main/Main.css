@@ -42,3 +42,6 @@
   --theme-font-size-large: 20px;
   --theme-colour-primary-shade-1: #777777;
 }
+
+@custom-media --breakpoint-medium (min-width: 600px);
+@custom-media --breakpoint-large (min-width: 1000px);

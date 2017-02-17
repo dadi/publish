@@ -6,3 +6,9 @@
   font-size: var(--theme-font-size-normal, 16px);
   outline: 0;
 }
+
+@media (--breakpoint-medium) {
+  .input {
+    /*color: pink;*/
+  }
+}

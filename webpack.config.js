@@ -3,7 +3,8 @@
 const fs = require('fs')
 const path = require('path')
 const postcss = require('postcss')
-const postcssCustomProperties = require("postcss-custom-properties")
+const postcssCustomProperties = require('postcss-custom-properties')
+const postcssCustomMedia = require('postcss-custom-media')
 const webpack = require('webpack')
 const ExtractTextPlugin = require('extract-text-webpack-plugin')
 const WebpackOnBuildPlugin = require('on-build-webpack')
@@ -28,7 +29,7 @@ module.exports = {
       let css = fs.readFileSync(fullCssPath, 'utf8')
       let processedCss = postcss().use(postcssCustomProperties({
         preserve: true
-      })).process(css).css
+      })).use(postcssCustomMedia()).process(css).css
 
       fs.writeFileSync(fullCssPath, processedCss)
     })
@@ -126,9 +127,6 @@ module.exports = {
   },
 
   postcss: [
-    // require("postcss-custom-properties")({
-    //   preserve: true
-    // }),
     require('autoprefixer')
   ]
 }
