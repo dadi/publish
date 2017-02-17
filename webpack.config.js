@@ -114,6 +114,6 @@ module.exports = {
     // require("postcss-custom-properties")({
     //   preserve: true
     // }),
-    require('autoprefixer-core')
+    require('autoprefixer')
   ]
 }
