@@ -6,6 +6,7 @@ export default class Nav extends Component {
 
   render() {
     const { apis } = this.props
+
     return (
       <nav class="Nav">
         <h2>Navigation</h2>
@@ -14,7 +15,9 @@ export default class Nav extends Component {
           <li><a href="/">Home</a></li>
           <li><a href="/profile">Profile</a></li>
         </ul>
-        <CollectionNav sort={apis[0] ? apis[0].menu : []} collections={ apis[0] ? apis[0].collections : [] } />
+        {apis.length && apis[0].hasCollections &&
+          <CollectionNav sort={ apis[0].menu || []} collections={ apis[0].collections } />
+        }
       </nav>
     )
   }

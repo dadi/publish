@@ -22,7 +22,8 @@
       },
       "menu": [
         {
-          "team": [
+          "title": "Team",
+          "collections": [
             "users"
           ]
         },

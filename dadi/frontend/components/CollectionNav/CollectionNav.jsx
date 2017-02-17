@@ -4,14 +4,19 @@ import { h, Component } from 'preact'
 
 export default class CollectionNav extends Component {
 
+  componentWillMount() {
+    const {sort, collections} = this.props
+    this.groups = this.groupCollections(sort, collections)
+  }
+
   render() {
     const { sort, collections } = this.props
     return (
       <div class="CollectionNav">
         <h3>Collections</h3>
-        {collections ? (
+        {this.groups ? (
           <ul class="CollectionList">
-            {this.groupCollections(sort, collections).map(collection => (
+            {this.groups.map(collection => (
               <li class="CollectionListItem">
                 {collection.name ? (
                   <a href={ `/${collection.slug}/documents` }>{ collection.name }</a>
@@ -19,7 +24,7 @@ export default class CollectionNav extends Component {
                   <div>
                     <p>{collection.title}</p>
                     <ul class="CollectionList">
-                      {collection[collection.handle].map(collection => (
+                      {collection.collections.map(collection => (
                         <li>
                           <a href={ `/${collection.slug}/documents` }>{ collection.name }</a>
                         </li>
@@ -37,39 +42,37 @@ export default class CollectionNav extends Component {
     )
   }
   groupCollections(sort, collections) {
+    if (!collections.length) return []
     let grouping = sort.map(menu => {
       if (typeof menu === 'string') {
-        return collections.filter(collection => {
+        return collections.find(collection => {
           return collection.slug === menu
-        })[0]
-      } else {
-        Object.keys(menu).map(key => {
-          menu.title = key
-          menu.handle = key
-          Object.assign(menu[key], 
-            menu[key].map(slug => {
-              return collections.filter(collection => {
-                return collection.slug === slug
-              })[0]
-            })
-          )
         })
-        return menu
+      } else {
+        return Object.assign({}, menu, 
+          {collections: menu.collections.map(slug => {
+            return collections.find(collection => {
+              return collection.slug === slug
+            })
+          })}
+        )
       }
     }).filter(menu => {
       return typeof menu !== 'undefined'
     })
     if (grouping.length) {
-      console.log(grouping)
       return grouping
     } else {
       return collections
     }
   }
+
   shouldComponentUpdate(nextProps, nextState) {
     const { collections } = this.props
-    if (collections === nextProps.collections) {
+    if (collections === nextProps.collections || this.groups) {
       return false
+    } else {
+      return true
     }
   }
 }
