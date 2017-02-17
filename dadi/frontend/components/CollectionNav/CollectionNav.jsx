@@ -14,7 +14,7 @@ export default class CollectionNav extends Component {
     return (
       <div class="CollectionNav">
         <h3>Collections</h3>
-        {this.groups ? (
+        {this.groups &&
           <ul class="CollectionList">
             {this.groups.map(collection => (
               <li class="CollectionListItem">
@@ -35,9 +35,7 @@ export default class CollectionNav extends Component {
               </li>
             ))}
           </ul>
-        ) : (
-          <h1 />
-        )}
+        }
       </div>
     )
   }
