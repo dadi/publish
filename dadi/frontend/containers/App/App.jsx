@@ -69,9 +69,7 @@ class App extends Component {
 
     return (
       <Main>
-        {state.api.apis &&
-          <Nav apis={ state.api.apis } />
-        }
+        <Nav apis={ state.api.apis } />
         
         <Router history={history}>
           <Home path="/" authenticate />

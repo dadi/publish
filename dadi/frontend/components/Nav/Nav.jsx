@@ -15,7 +15,7 @@ export default class Nav extends Component {
           <li><a href="/">Home</a></li>
           <li><a href="/profile">Profile</a></li>
         </ul>
-        {apis.length && apis[0].hasCollections &&
+        {apis && apis.length && apis[0].hasCollections &&
           <CollectionNav sort={ apis[0].menu || []} collections={ apis[0].collections } />
         }
       </nav>
