@@ -67,7 +67,8 @@
     "test-value": "^2.1.0",
     "underscore.string": "^3.3.4",
     "url": "^0.11.0",
-    "whatwg-fetch": "^2.0.1"
+    "whatwg-fetch": "^2.0.1",
+    "ws": "2.0.0"
   },
   "devDependencies": {
     "babel": "^6.5.2",
