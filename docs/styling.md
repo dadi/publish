@@ -10,7 +10,7 @@ Many attempts have been made to circumvent the fact that everything in CSS lives
 
 With CSS Modules, this modularity is enforced by a build tool, and it's guaranteed that any class within a CSS file will be unique across the codebase. This is done by dynamically transforming class names into unique strings.
 
-*Example (Button.css):*
+**Button.css**
 ```css
 /* This is what you write */
 .title {
@@ -22,27 +22,16 @@ With CSS Modules, this modularity is enforced by a build tool, and it's guarante
   color: tomato;
 }
 ```
-## 2. Writing styles
 
-To guarantee that components are truly modular and depend exclusively on themselves (and not on the environment in which they're placed), there are **no global styles**.
+### 1.1. Why not CSSinJS?
 
-### 2.1. Folder structure
+An alternative approach, which is particularly popular in the React community, is using [CSSinJS](https://github.com/cssinjs), which describes styles in the component file itself. But this does mean writing CSS declarations as JavaScript objects and stepping away from an established standard, which we want to avoid.
 
-Each component is styled using a single CSS file placed in the same directory as the JSX file that describes it.
+CSS Modules is still just plain CSS.
 
-*Example:*
-```
-components 
-│
-└───Button
-|    └───Button.css
-|    └───Button.jsx
-└───Nav
-    └───Nav.css
-    └───Nav.jsx    
-```
+## 2. Core principles
 
-### 2.2. Use classes
+### 2.1. Target class names
 
 To make sure styling is independent of the type of node being used and of any DOM structure, you should only **target elements by class name**.
 
@@ -78,9 +67,75 @@ Remember that the scope of the styles you write is limited to the CSS Module fil
 }
 ```
 
+### 2.2. Global constants, not styles
+
+To guarantee that components are truly modular and depend exclusively on themselves (and not on the environment in which they're placed), there are **no global styles**. This is achieved by the removal of a global namespace and by targeting elements only by class name, as mentioned in **2.1.**.
+
+However, there are merits to having global variables containing application-wide settings that are relevant to multiple components, holding information like theme colours or typography (e.g. global variables in Sass).
+
+#### 2.2.1. Don't: Composing CSS Modules
+
+In CSS Modules, this can be replicated by using [composable dependencies](https://github.com/css-modules/css-modules#dependencies), which allows a component to import functionality from another.
+
+```css
+/* We DON'T want to do this!V*/
+.button {
+  composes: primary-colour from "./../general/colours.css";
+}
+```
+
+This comes with two problems, though:
+
+1. The property used to import functionality (`composes`) isn't standard CSS, but rather a custom property implemented by CSS Modules. The whole idea of using CSS Modules over CSSinJS is to write plain, vanilla CSS — we don't want to lose that;
+
+2. The component will **break** if there isn't a file to import at that path. This compromises the principle of modularity, because suddenly our component depends on an external file being at a specific location for it to work. We lose the flexibility of being able to change its context.
+
+#### 2.2.2. Do: CSS Custom Properties
+
+A better way to do it is to leverage [CSS Custom Properties](https://www.w3.org/TR/css-variables-1/), a standard CSS spec for defining custom properties (or variables) that are interpreted by the browser itself. We can use this to define **global constants**, or variables that hold information that may or may not be relevant to multiple components.
+
+```css
+/* Theme.css */
+:root {
+  --theme-font: "Karla", Helvetica, sans-serif;
+  --theme-primary-colour: darksalmon;
+}
+
+/* Button.css */
+.title {
+  font-family: var(--theme-font, Arial);
+  color: var(--theme-primary-colour, blue);
+}
+```
+
+The big benefit of this approach, other than relying on standard CSS only, is that components don't break if variables don't exist. This enforces the [**robustness principle**](https://en.wikipedia.org/wiki/Robustness_principle) by Jon Postel:
+
+> Be conservative in what you do, be liberal in what you accept from others
+
+In other words, components will look for certain variables and use them if they exist, otherwise ignore them. Note that the `var()` keyword should **always contain a fallback** as the second argument, which will be used if the variable isn't defined.
+
+Custom properties should always be defined at the root level. In [supporting browsers](http://caniuse.com/#feat=css-variables), either CSS or JavaScript are able to affect the entire application by changing the value of a property on-the-fly. For older browsers, a static fallback is added as part of the build process.
+
+### 2.3. Folder structure
+
+Each component is styled using a single CSS file placed in the same directory as the JSX file that describes it.
+
+*Example:*
+```
+components 
+│
+└───Button
+|    └───Button.css
+|    └───Button.jsx
+└───Nav
+    └───Nav.css
+    └───Nav.jsx    
+```
+
 ## 3. Using styles
 
 To apply styles to your component, you first need to import the style sheet into your component's file. Each class is added as a property to the object being imported, which can be used to establish the connection between the DOM elements and their styling classes.
+
 **Button.jsx**
 ```js
 import styles from './Button'
