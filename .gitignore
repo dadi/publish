@@ -3,9 +3,12 @@ build
 log
 config/config.development.json
 config/config.production.json
-public/bundle.js
 .wallet
 npm-debug.log
 dadi/frontend/components/**/*.json
 dadi/frontend/containers/**/*.json
 dadi/frontend/views/**/*.json
+
+# Bundles
+public/bundle.js
+public/main.css

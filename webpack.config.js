@@ -9,6 +9,8 @@ const ExtractTextPlugin = require('extract-text-webpack-plugin')
 const WebpackOnBuildPlugin = require('on-build-webpack')
 
 const ENV = process.env.NODE_ENV || 'development'
+const ENABLE_SOURCE_MAP = (process.env.ENABLE_SOURCE_MAP !== false)
+
 const PATH_CSS = 'main.css'
 const PATH_PUBLIC = 'public'
 
@@ -48,7 +50,7 @@ module.exports = {
 
   entry:  path.resolve(__dirname, 'dadi/frontend/index.jsx'),
 
-  devtool: 'eval-cheap-module-source-map',
+  devtool: ((ENV === 'development') && ENABLE_SOURCE_MAP) ? 'eval-cheap-module-source-map' : null,
 
   output: {
     path: path.resolve(__dirname, PATH_PUBLIC),
