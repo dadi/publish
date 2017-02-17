@@ -31,7 +31,19 @@ module.exports = {
       fs.writeFileSync(fullCssPath, processedCss)
     })
   ]).concat(ENV === 'production' ? [
-    new webpack.optimize.OccurenceOrderPlugin()
+    new webpack.optimize.OccurenceOrderPlugin(),
+    new webpack.optimize.UglifyJsPlugin({
+      beautify: false,
+      mangle: {
+        screw_ie8: true,
+        keep_fnames: true
+      },
+      compress: {
+        screw_ie8: true,
+        warnings: false
+      },
+      comments: false
+    })
   ] : []),
 
   entry:  path.resolve(__dirname, 'dadi/frontend/index.jsx'),
@@ -88,6 +100,7 @@ module.exports = {
       {
         test: /\.jsx|js?$/,
         exclude: /node_modules/,
+        cacheDirectory: true,
         loader: 'babel-loader'
       },
       {

@@ -6,7 +6,7 @@
   "scripts": {
     "start": "NODE_ENV=production node index.js",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "NODE_ENV=production webpack --progress -p",
+    "build": "NODE_ENV=production webpack --progress",
     "prebuild": "mkdirp build",
     "init": "validate-commit-msg",
     "watch": "npm-run-all --parallel watch:server watch:build",
@@ -104,6 +104,7 @@
     "sass-loader": "^4.0.2",
     "socketcluster-client": "^5.1.1",
     "style-loader": "^0.13.1",
+    "uglify-js": "github:mishoo/UglifyJS2#harmony",
     "url-loader": "^0.5.7",
     "validate-commit-msg": "^2.11.1",
     "webpack": "^1.14.0"
