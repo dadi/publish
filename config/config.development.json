@@ -19,18 +19,15 @@
       "credentials": {
         "clientId": "testClient",
         "secret": "superSecret"
-      }
-    },
-    {
-      "name": "Publish ERROR API",
-      "host": "http://error.dev.dadi.technology",
-      "port": 3003,
-      "database": "publish",
-      "version": "1.0",
-      "credentials": {
-        "clientId": "testClient",
-        "secret": "superSecret"
-      }
+      },
+      "menu": [
+        {
+          "team": [
+            "users"
+          ]
+        },
+        "articles"
+      ]
     }
   ],
   "auth": {

@@ -5,7 +5,6 @@ import { connectHelper } from 'lib/util'
 /*
 * Components
  */
-import Logo from 'components/Logo/Logo'
 import Main from 'components/Main/Main'
 import Nav from 'components/Nav/Nav'
 /*
@@ -19,7 +18,7 @@ class Home extends Component {
     return (
       <Main>
         <Nav apis={ state.apis } />
-        <Logo />
+        <h3>Home</h3>
       </Main>
     )
   }

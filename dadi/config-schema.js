@@ -48,6 +48,11 @@ module.exports = {
       format: String,
       default: "1.0"
     },
+    menu: {
+      doc: "Collection menu ordering and grouping",
+      format: Array,
+      default: []
+    },
     credentials: {
       format: Object,
       clientId: {

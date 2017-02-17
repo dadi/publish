@@ -139,7 +139,8 @@ class App extends Component {
 
     let socket = new Socket(state.app.config.server.port)
       .on('userListChange', data => {
-        console.table(data.body.users)
+        // Table of connected users
+        // console.table(data.body.users)
       })
       .setUser(Object.assign(state.user, {vendor: navigator.vendor, identifier: `${state.user.username}_${navigator.vendor}`})).setRoom(pathname)
 

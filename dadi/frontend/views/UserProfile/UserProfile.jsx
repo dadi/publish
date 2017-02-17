@@ -2,27 +2,29 @@ import { h, Component } from 'preact'
 import { connect } from 'preact-redux'
 import { bindActionCreators } from 'redux'
 import { connectHelper } from 'lib/util'
-
-import * as userActions from 'actions/userActions'
-
+/*
+* Components
+ */
+import Main from 'components/Main/Main'
 import Nav from 'components/Nav/Nav'
+/*
+* Actions
+ */
+import * as apiActions from 'actions/apiActions'
 
 class UserProfile extends Component {
-
-  constructor(props) {
-    super(props)
-  }
-
   render() {
+    const { state } = this.props
     return (
-      <div>
-        User Profile
-      </div>
+      <Main>
+        <Nav apis={ state.apis } />
+        <h3>User Profile</h3>
+      </Main>
     )
   }
 }
 
 export default connectHelper(
-  state => state.user,
-  dispatch => bindActionCreators(userActions, dispatch)
+  state => state.api,
+  dispatch => bindActionCreators(apiActions, dispatch)
 )(UserProfile)

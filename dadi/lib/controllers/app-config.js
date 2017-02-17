@@ -9,7 +9,8 @@ const FRONTEND_WHITELIST = {
     host: true,
     port: true,
     version: true,
-    database: true
+    database: true,
+    menu: true
   },
   ui: true,
   server: {
