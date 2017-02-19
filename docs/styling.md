@@ -130,7 +130,7 @@ Custom properties should always be defined at the root level. In [supporting bro
 
 ### 2.3. Media queries
 
-e use [Custom Media Queries](https://www.w3.org/TR/2016/WD-mediaqueries-4-20160126/#custom-mq) to write media queries. The spec, defined in CSS Media Queries Level 4, allows us to store constants with the various breakpoints, similarly to global constants described in **2.2**, and use them to describe the responsive behaviour of components.
+We use [Custom Media Queries](https://www.w3.org/TR/2016/WD-mediaqueries-4-20160126/#custom-mq) to write media queries. The spec, defined in CSS Media Queries Level 4, allows us to store constants with the various breakpoints, similarly to global constants described in **2.2**, and use them to describe the responsive behaviour of components.
 
 Because browsers still haven't implemented the spec, Custom Media Queries are flattened to regular media queries at build time.
 
