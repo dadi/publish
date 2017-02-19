@@ -130,7 +130,9 @@ Custom properties should always be defined at the root level. In [supporting bro
 
 ### 2.3. Media queries
 
-Similarly to global constants described in **2.2**, we use [Custom Media Queries](https://www.w3.org/TR/2016/WD-mediaqueries-4-20160126/#custom-mq), defined in CSS Media Queries Level 4, to store constants with the various breakpoints and use them to describe the responsive behaviour of components. Because browsers still haven't implemented the spec, Custom Media Queries are flattened to regular media queries at build time.
+e use [Custom Media Queries](https://www.w3.org/TR/2016/WD-mediaqueries-4-20160126/#custom-mq) to write media queries. The spec, defined in CSS Media Queries Level 4, allows us to store constants with the various breakpoints, similarly to global constants described in **2.2**, and use them to describe the responsive behaviour of components.
+
+Because browsers still haven't implemented the spec, Custom Media Queries are flattened to regular media queries at build time.
 
 **Main.css**
 
@@ -157,6 +159,8 @@ Similarly to global constants described in **2.2**, we use [Custom Media Queries
 }
 
 ```
+
+For true modularity, components should define their responsive behaviour based on the conditions of the context they sit in and not the global state. This is the principle behind [element queries](https://tomhodgins.github.io/element-queries-spec/element-queries.html), which we should probably adopt in the future when (if) it becomes a standard.
 
 ### 2.4. Folder structure
 
