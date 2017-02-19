@@ -1,5 +1,17 @@
 # Styling
 
+- [1. Introduction](#1-introduction)
+  - [1.1. Why not CSSinJS?](#11-why-not-cssinjs)
+- [2. Core principles](#2-core-principles)
+  - [2.1. Target class names](#21-target-class-names)
+  - [2.2. Global constants, not styles](#22-global-constants-not-styles)
+  - [2.3. Media queries](#23-media-queries)
+  - [2.4. Folder structure](#24-folder-structure)
+- [3. Using styles](#3-using-styles)
+- [4. Other notes](#4-other-notes)
+
+---
+
 ## 1. Introduction
 
 In the spirit of keeping our UIs as a set of modular, self-contained components, we use [CSS Modules](https://github.com/css-modules/css-modules) to author style sheets. The core idea is that:
@@ -78,7 +90,7 @@ However, there are merits to having global variables containing application-wide
 In CSS Modules, this can be replicated by using [composable dependencies](https://github.com/css-modules/css-modules#dependencies), which allows a component to import functionality from another.
 
 ```css
-/* We DON'T want to do this!V*/
+/* We DON'T want to do this! */
 .button {
   composes: primary-colour from "./../general/colours.css";
 }
@@ -116,7 +128,37 @@ In other words, components will look for certain variables and use them if they 
 
 Custom properties should always be defined at the root level. In [supporting browsers](http://caniuse.com/#feat=css-variables), either CSS or JavaScript are able to affect the entire application by changing the value of a property on-the-fly. For older browsers, a static fallback is added as part of the build process.
 
-### 2.3. Folder structure
+### 2.3. Media queries
+
+Similarly to global constants described in **2.2**, we use [Custom Media Queries](https://www.w3.org/TR/2016/WD-mediaqueries-4-20160126/#custom-mq), defined in CSS Media Queries Level 4, to store constants with the various breakpoints and use them to describe the responsive behaviour of components. Because browsers still haven't implemented the spec, Custom Media Queries are flattened to regular media queries at build time.
+
+**Main.css**
+
+```css
+@custom-media --breakpoint-medium (min-width: 600px);
+@custom-media --breakpoint-large (min-width: 1000px); 
+```
+
+**Button.css**
+
+```css
+/* What you write */
+@media (--breakpoint-medium) {
+  .title {
+    color: olive;
+  }
+}
+
+/* What is rendered */
+@media (min-width: 600px) {
+  .title {
+    color: olive;
+  }
+}
+
+```
+
+### 2.4. Folder structure
 
 Each component is styled using a single CSS file placed in the same directory as the JSX file that describes it.
 
