@@ -2,10 +2,6 @@
 
 class Keys {
 
-  constructor () {
-
-  }
-
   get keys () {
     let codes = {
       'backspace': 8,
@@ -78,7 +74,6 @@ class Keys {
     for (var i = 48; i < 58; i++) codes[i - 48] = i
     // Function keys
     for (i = 1; i < 13; i++) codes['f'+i] = i + 111
-
     // Numpad keys
     for (i = 0; i < 10; i++) codes['numpad '+i] = i + 96
 
@@ -106,13 +101,16 @@ class Pattern {
       if (this.active < this.keys.length -1) {
         this.active++
         return true
+
       } else {
         this.callback({
           pattern: this.pattern,
           keys: this.keys
         })
+
         this.reset()
         return true
+
       }
     } else {
       this.reset()
@@ -135,6 +133,7 @@ class Pattern {
 export class Keyboard extends Keys {
   constructor () {
     super()
+
     this.shortcuts = []
     this.listen()
   }
@@ -163,6 +162,7 @@ export class Keyboard extends Keys {
     this.shortcuts.forEach(pattern => {
       pattern.reset()
     })
+
     event.preventDefault()
   }
 
@@ -175,7 +175,9 @@ export class Keyboard extends Keys {
   on (pattern) {
     let keys = this.find(pattern.toLowerCase().split('+'))
     let shortcut = new Pattern(pattern, keys)
+
     this.shortcuts.push(shortcut)
+
     return shortcut
   }
 
