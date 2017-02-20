@@ -104,7 +104,7 @@ class Pattern {
   next (keyCode) {
     if (this.match(keyCode, this.keys[this.active])) {
       if (this.active < this.keys.length -1) {
-        this.active ++
+        this.active++
         return true
       } else {
         this.callback({
@@ -140,9 +140,13 @@ export class Keyboard extends Keys {
   }
 
   listen () {
+    // Bind required for `this` context in window events
+    this.keydown = this.keydown.bind(this)
+    this.keyup = this.keyup.bind(this)
+
     if (window) {
-      window.addEventListener('keydown', this.keydown.bind(this))
-      window.addEventListener('keyup', this.keyup.bind(this))
+      window.addEventListener('keydown', this.keydown)
+      window.addEventListener('keyup', this.keyup)
     }
   }
 
@@ -155,6 +159,7 @@ export class Keyboard extends Keys {
   }
 
   keyup (event) {
+    // Reset all patterns
     this.shortcuts.forEach(pattern => {
       pattern.reset()
     })
@@ -172,5 +177,12 @@ export class Keyboard extends Keys {
     let shortcut = new Pattern(pattern, keys)
     this.shortcuts.push(shortcut)
     return shortcut
+  }
+
+  off () {
+    if (window) {
+      window.removeEventListener('keydown', this.keydown)
+      window.removeEventListener('keyup', this.keyup)
+    }
   }
 }

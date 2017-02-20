@@ -13,6 +13,7 @@ class DocumentList extends Component {
   
   constructor (props) {
     super(props)
+    this.keyboard = new Keyboard()
   }
 
   render() {
@@ -63,7 +64,7 @@ class DocumentList extends Component {
 
   componentDidMount () {
 
-    new Keyboard().on('space+a').do(cmd => {
+    this.keyboard.on('space+a').do(cmd => {
       console.log(cmd.pattern)
       // Trigger something
     })
@@ -71,7 +72,8 @@ class DocumentList extends Component {
 
   componentWillUnmount () {
     const { actions } = this.props
-
+    // Clear keyboard
+    this.keyboard.off()
     actions.setDocumentList(false, null)
   }
 
