@@ -6,6 +6,7 @@ import * as apiActions from 'actions/apiActions'
 import * as documentActions from 'actions/documentActions'
 
 import { connectHelper } from 'lib/util'
+import { Keyboard } from 'lib/keyboard'
 import APIBridge from 'lib/api-bridge-client'
 
 class DocumentList extends Component {
@@ -16,7 +17,6 @@ class DocumentList extends Component {
 
   render() {
     const { state } = this.props
-
     return (
       <div>
         {!state.document.list ? (
@@ -59,6 +59,14 @@ class DocumentList extends Component {
     if (listIsLoading) return
 
     this.getDocumentList()
+  }
+
+  componentDidMount () {
+
+    new Keyboard().on('space+a').do(cmd => {
+      console.log(cmd.pattern)
+      // Trigger something
+    })
   }
 
   componentWillUnmount () {
