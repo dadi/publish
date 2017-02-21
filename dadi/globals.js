@@ -18,7 +18,8 @@ const Globals = function () {
       models: path.resolve(`${lib}/models`),
       server: path.resolve(`${lib}/server`),
       router: path.resolve(`${lib}/router`),
-      helpers: path.resolve(`${lib}/helpers`)
+      helpers: path.resolve(`${lib}/helpers`),
+      watch: path.resolve(`${lib}/watch`)
     },
     wallet: path.resolve(`${base}/.wallet`)
   }
