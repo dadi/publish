@@ -6,9 +6,9 @@ import { connectHelper } from 'lib/util'
 
 import * as userActions from 'actions/userActions'
 
-import Button from '../../components/Button/Button'
-import FieldLabel from '../../components/FieldLabel/FieldLabel'
-import TextInput from '../../components/TextInput/TextInput'
+import Button from 'components/Button/Button'
+import FieldLabel from 'components/FieldLabel/FieldLabel'
+import TextInput from 'components/TextInput/TextInput'
 
 import Session from 'lib/session'
 
