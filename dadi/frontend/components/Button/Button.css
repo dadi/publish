@@ -1,0 +1,34 @@
+.button {
+  display: inline-block;
+  position: relative;
+  background-color: #fff;
+  color: #000000;
+  border-radius: 2px;
+  line-height: 1.25;
+  font-weight: bold;
+  font-family: var(--theme-font-family, sans-serif);
+  padding: 9px 16px;
+  text-align: center;
+  word-wrap: break-word;
+  margin: 0;
+  transition: background 0.1s;
+  outline: none;
+  cursor: pointer;
+  border: 0;
+  font-size: 15px;
+  text-decoration: none;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.button-system {
+  background-color: var(--theme-colour-system, #ffffff);
+  color: #000000;
+}
+
+.button-system:active,
+.button-system:focus,
+.button-system:hover {
+  background-color: var(--theme-colour-system-shade-1, #333333);
+  color: var(--theme-colour-system, #ffffff);
+}
