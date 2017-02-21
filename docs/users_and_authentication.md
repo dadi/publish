@@ -237,45 +237,67 @@ const compare = (plaintext, hash) => {
   return bcrypt.compare(plaintext, hash)
 }
 
-module.exports = (obj, type, data) => {
-  if (type === 'afterGet') {
-    // Without the existance of a `beforeGet` hook, this operation will lookup a user by username, then check for a matching hashed password using bcrypt password compare method
-    let params = url.parse(data.req.url, true).query
-    let filter = params.filter ? JSON.parse(params.filter) : null
-
-    if (filter && filter.username && filter.password) {
-      let query = {
-        apiVersion: "1.0",
-        username: filter.username   
-      }
-      return new Promise((resolve, reject) => {
-        model(data.collection).find(query, {limit: 1},(err, user) => {
-          if (user.results.length < 1) return obj
-          return compare(filter.password, user.results[0].password).then(match => {
-            if (match) {
-              delete user.results[0].password
-              return resolve(user)
-            }
-            return resolve(obj)
-          })
-        })
+const authenticate = (filter, data, obj) => {
+  /*
+    - Strip password from query and find user by username
+    - Compare filter password against DB password
+    - Return matching user with password removed
+    - This should be a `beforeGet`
+  */
+  let query = {
+    apiVersion: "1.0",
+    username: filter.username   
+  }
+  return new Promise((resolve, reject) => {
+    model(data.collection).find(query, {limit: 1},(err, user) => {
+      if (user.results.length < 1) return obj
+      return compare(filter.password, user.results[0].password).then(match => {
+        if (match) {
+          delete user.results[0].password
+          return resolve(user)
+        }
+        return resolve(obj)
+      }).catch(err => {
+        resolve(obj)
       })
-    } else {
-      return Object.assign(obj, {results: obj.results.map(doc => {
-        delete doc.password
-        return doc
-      })})
-    }
-  } else if (obj[data.options.from] && type === 'beforeCreate') {
-    return hash(obj[data.options.from]).then(hashed => {
-      obj[data.options.from] = hashed
-      return obj
     })
-    .catch(err => {
-      console.log(err)
-    })
-  } else {
-    return obj
+  })
+}
+
+module.exports = (obj, type, data) => {
+
+  switch (type) {
+    case 'afterGet':
+      // afterGet is responsible for auth check when both username and password are part of the filter
+      let params = url.parse(data.req.url, true).query
+      let filter = params.filter ? JSON.parse(params.filter) : null
+      // If both username and password exist, treat this as a login
+      if (filter && filter.username && filter.password) {
+        return authenticate(filter, data, obj)
+      } else {
+        // Standard user lookup
+        return Object.assign(obj, {results: obj.results.map(doc => {
+          delete doc.password
+          return doc
+        })})
+      }
+    break
+    case 'beforeCreate': case 'beforeUpdate':
+      if (obj[data.options.from]) {
+        // console.log(obj[data.options.from])
+        return hash(obj[data.options.from]).then(hashed => {
+          obj[data.options.from] = hashed
+          return obj
+        })
+        .catch(err => {
+          console.log(err)
+          return obj
+        })
+      } else {
+        return obj
+      }
+    break
+    default: return obj
   }
 }
 ```
