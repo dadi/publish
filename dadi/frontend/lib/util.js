@@ -33,3 +33,7 @@ let ID_PREFIX = 'c'
 export function getUniqueId () {
   return `${ID_PREFIX}-${lastId++}`
 }
+
+export function isValidJSON (string) {
+  return true
+}

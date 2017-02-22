@@ -5,9 +5,11 @@ import { bindActionCreators } from 'redux'
 import * as apiActions from 'actions/apiActions'
 import * as documentActions from 'actions/documentActions'
 
-import { connectHelper } from 'lib/util'
+import { connectHelper, isValidJSON } from 'lib/util'
 import { Keyboard } from 'lib/keyboard'
 import APIBridge from 'lib/api-bridge-client'
+
+import DocumentFilters from 'components/DocumentFilters/DocumentFilters'
 
 class DocumentList extends Component {
   
@@ -15,6 +17,7 @@ class DocumentList extends Component {
     super(props)
     this.keyboard = new Keyboard()
   }
+
 
   render() {
     const { state } = this.props
@@ -24,6 +27,7 @@ class DocumentList extends Component {
           <h3>Loader based on: {state.document.listIsLoading}</h3>
         ) : (
           <section class="Documents">
+            <DocumentFilters filter={this.props.filter}/>
             <table border="1">
               {state.document.list.results.map(document => (
                 <tr>
@@ -58,7 +62,6 @@ class DocumentList extends Component {
 
     // State check: reject when documents are still loading
     if (listIsLoading) return
-
     this.getDocumentList()
   }
 
@@ -74,28 +77,40 @@ class DocumentList extends Component {
     const { actions } = this.props
     // Clear keyboard
     this.keyboard.off()
-    actions.setDocumentList(false, null)
+    actions.setDocumentList(false)
   }
 
   getDocumentList (nextPage, nextCollection) {
     const { state, actions, collection, page } = this.props
     
-    actions.setDocumentList(true, null)
+    actions.setDocumentList(true)
 
     if (!state.api.apis.length > 0) return
 
-    return APIBridge(state.api.apis[0])
+    let query = APIBridge(state.api.apis[0])
       .in(nextCollection || collection)
       .limitTo(20) // Config based on collection schema
       .goToPage(nextPage || page)
       .sortBy('createdAt', 'desc') // Configure based on user preferences
-      .find()
-      .then(docs => {
-        actions.setDocumentList(false, docs)
-      }).catch((err) => {
-        actions.setDocumentList(false, null)
-        // TODO: Graceful deal with failure
+
+    if (this.props.filter && isValidJSON(this.props.filter)) {
+      let filters = JSON.parse(this.props.filter)
+      query.where(filters)
+    }
+
+    return query.find().then(docs => {
+      console.log('document load')
+      // Filter current collection
+      let currentCollection = state.api.apis[0].collections.find(stateCollection => {
+        return stateCollection.slug = collection
       })
+      // Update state with results
+      actions.setDocumentList(false, docs, currentCollection)
+
+    }).catch((err) => {
+      actions.setDocumentList(false)
+      // TODO: Graceful deal with failure
+    })
   }
 }
 
