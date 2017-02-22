@@ -20,6 +20,7 @@ class DocumentList extends Component {
 
   render() {
     const { state } = this.props
+    
     return (
       <div>
         {!state.document.list ? (
