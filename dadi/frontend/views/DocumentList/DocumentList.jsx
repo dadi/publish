@@ -12,13 +12,10 @@ import APIBridge from 'lib/api-bridge-client'
 import DocumentFilters from 'components/DocumentFilters/DocumentFilters'
 
 class DocumentList extends Component {
-  
   constructor (props) {
     super(props)
     this.keyboard = new Keyboard()
   }
-
-
   render() {
     const { state } = this.props
     return (
@@ -46,7 +43,6 @@ class DocumentList extends Component {
       </div>
     )
   }
-
   componentDidUpdate (previousProps) {
     const { state, actions } = this.props
     const previousState = previousProps.state
@@ -64,7 +60,6 @@ class DocumentList extends Component {
     if (listIsLoading) return
     this.getDocumentList()
   }
-
   componentDidMount () {
 
     this.keyboard.on('space+a').do(cmd => {
@@ -72,14 +67,12 @@ class DocumentList extends Component {
       // Trigger something
     })
   }
-
   componentWillUnmount () {
     const { actions } = this.props
     // Clear keyboard
     this.keyboard.off()
     actions.setDocumentList(false)
   }
-
   getDocumentList (nextPage, nextCollection) {
     const { state, actions, collection, page } = this.props
     

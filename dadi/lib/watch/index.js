@@ -7,7 +7,11 @@ const path = require('path')
 const Watch = function () {
   this.root = process.cwd()
 }
-
+/**
+ * Get Config
+ * @param  {Class} config existing base Config
+ * @return {config}        New Config
+ */
 Watch.prototype.getConfig = function (config) {
   let conf = convict(config.root())
   let env = config.get('env')
@@ -19,7 +23,10 @@ Watch.prototype.getConfig = function (config) {
   }
   return conf.validate({})
 }
-
+/**
+ * Start (WIP)
+ * @return {this} return Watch 
+ */
 Watch.prototype.start = function () {
   // Start watching directories for compile
   return this

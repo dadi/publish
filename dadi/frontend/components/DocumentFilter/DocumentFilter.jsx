@@ -18,7 +18,6 @@ export default class DocumentFilter extends Component {
       '$lte': 'Less than or Equal to'
     }
   }
-
   render() {
     const { key, value } = this.props
     return (
@@ -28,7 +27,6 @@ export default class DocumentFilter extends Component {
       </div>
     )
   }
-
   filterType (value) {
     if (typeof value === 'string') {
       return 'Equals'
@@ -36,7 +34,6 @@ export default class DocumentFilter extends Component {
       return this.filterTypes[Object.keys(value)[0]]
     }
   }
-
   filterValue (value) {
     if (typeof value === 'string') {
       return value
