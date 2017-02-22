@@ -21,6 +21,7 @@ export default class DocumentFilter extends Component {
 
   render() {
     const { key, value } = this.props
+    
     return (
       <div>
         <h3>Field: {key}</h3>

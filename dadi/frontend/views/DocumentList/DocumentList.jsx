@@ -18,9 +18,9 @@ class DocumentList extends Component {
     this.keyboard = new Keyboard()
   }
 
-
   render() {
     const { state } = this.props
+    
     return (
       <div>
         {!state.document.list ? (
