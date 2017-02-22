@@ -6,21 +6,18 @@ import { connectHelper } from 'lib/util'
 
 import * as userActions from 'actions/userActions'
 
-import SignInForm from '../../components-old/SignInForm/SignInForm'
-import Debug from '../../components-old/Debug/Debug'
+import Button from 'components/Button/Button'
+import FieldLabel from 'components/FieldLabel/FieldLabel'
+import TextInput from 'components/TextInput/TextInput'
+
+import Session from 'lib/session'
 
 import styles from './SignIn.css'
-
-/*
-* Lib
- */
-import Session from 'lib/session'
 
 class SignIn extends Component {
 
   constructor(props) {
     super(props)
-    this.signIn = this.signIn.bind(this)
   }
 
   componentWillUpdate() {
@@ -35,16 +32,35 @@ class SignIn extends Component {
     const { state, actions } = this.props
 
     return (
-      <div className={styles.test}>
-        <Debug val={state.signedIn}/>
-        <Debug val={state.username}/>
-        <SignInForm onSubmit={this.signIn} />
+      <div class={styles.wrapper}>
+        <div class={styles.overlay}>
+          <div class={styles.container}>
+            <img class={styles.logo} src="/images/publish.png"/>
+            
+            <div class={styles.inputs}>
+              <div class={styles.input}>
+                <FieldLabel label="Email">
+                  <TextInput placeholder="Your email address"/>
+                </FieldLabel>
+              </div>
+
+              <div class={styles.input}>
+                <FieldLabel label="Password">
+                  <TextInput type="password" placeholder="Your password"/>
+                </FieldLabel>
+              </div>
+            </div>
+
+            <Button accent="system" onClick={this.signIn.bind(this)}>Sign In</Button>
+          </div>
+        </div>
       </div>
     )
   }
 
   signIn (event) {
     event.preventDefault()
+
     // loginUsername and loginPassword should come from form fields
     // const { actions, state, loginUsername, loginPassword } = this.props
     const { actions, state } = this.props

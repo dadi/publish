@@ -9,9 +9,10 @@ export default class TextInput extends Component {
     return (
       <input
         class={styles.input}
-        type='text'
+        type={this.props.type || "text"}
         value={this.props.value}
         id={this.props.id}
+        placeholder={this.props.placeholder}
         /*onKeyUp={this._onKeyUp.bind(this)}*/ />
     )
   }
