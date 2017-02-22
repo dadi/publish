@@ -11,6 +11,7 @@ export default class DocumentFilters extends Component {
   render() {
     const { filter, collection } = this.props
     let filters = isValidJSON(filter) ? JSON.parse(this.props.filter) : null
+    
     return (
       <div class="DocumentFilters">
         {filters && Object.keys(filters).length &&
