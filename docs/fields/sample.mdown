@@ -14,6 +14,8 @@ Lorem Ipsum
 | limit           | null           | limit={ 20 }       | The maximum number or selectable options | true           |
 | searchable      | true           | searchable={ true }  | Can the user see a search input          | true           |
 
+## Example
+
 ```HTML
 <FieldSample limit={ 1 } searchable={ false }/>
 ```
