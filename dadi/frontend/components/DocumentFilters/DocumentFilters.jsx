@@ -17,10 +17,11 @@ export default class DocumentFilters extends Component {
         {filters && Object.keys(filters).length && collection && (
           <div>
             {Object.keys(filters).map(key => ( 
-              <DocumentFilter key={key} value={filters[key]} fields={collection.fields} />
+              <DocumentFilter field={key} value={filters[key]} fields={collection.fields} />
             ))}
           </div>
         )}
+        <hr />
         <DocumentFilter fields={collection.fields} />
         <button onClick={this.addFilter}>Add filter</button>
       </div>

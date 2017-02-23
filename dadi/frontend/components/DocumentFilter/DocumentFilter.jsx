@@ -2,6 +2,8 @@
 
 import { h, Component } from 'preact'
 
+import TextInput from 'components/TextInput/TextInput'
+
 export default class DocumentFilter extends Component {
 
   constructor (props) {
@@ -20,13 +22,12 @@ export default class DocumentFilter extends Component {
   }
 
   render() {
-    const { key, value, fields } = this.props
-    
+    const { field, value, fields } = this.props
     return (
       <div>
         <select>
           {Object.keys(fields).map(key => (
-            <option name={key}>{fields[key].label}</option>
+            <option selected={field === key} name={key}>{fields[key].label}</option>
           ))}
         </select>
         <select>
@@ -34,22 +35,11 @@ export default class DocumentFilter extends Component {
             <option name={key}>{this.filterTypes[key]}</option>
           ))}
         </select>
-        {key && value && (
-          <div>
-            <h3>Field: {key}</h3>
-            <p>{this.filterType(value)} {this.filterValue(value)}</p>
-          </div>
+        {field && value && (
+          <TextInput value={this.filterValue(value)} />
         )}
       </div>
     )
-  }
-
-  filterType (value) {
-    if (typeof value === 'string') {
-      return 'Equals'
-    } else {
-      return this.filterTypes[Object.keys(value)[0]]
-    }
   }
 
   filterValue (value) {
