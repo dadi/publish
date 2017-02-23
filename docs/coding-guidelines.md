@@ -110,12 +110,12 @@ The current logic is simple. We prefer single quotes in JS. In JSX, we use doubl
 
 // Wrong
 <Foo
-  name={ bar ? "Bar": "Baz"}
+  name={ bar ? "Bar" : "Baz"}
 />
 
 // Correct
 <Foo
-  name={ somebarthing ? 'Bar': 'Baz'}
+  name={ somebarthing ? 'Bar' : 'Baz'}
 />
 
 ```
