@@ -38,7 +38,7 @@ let chained = new constructor().foo()
 let chained = new constructor().foo()
 .bar()
 
-//Correct
+// Correct
 let chained = new constructor()
   .foo()
   .bar()
@@ -68,4 +68,26 @@ let data = {
 }
 
 return data
+```
+
+#### Constructor props
+
+- No spaces around props
+- Space at the end
+
+```html
+  // Wrong
+  <Field key={ key }/>
+
+  // Wrong
+  <Field key={key}/>
+
+  // Correct
+  <Field key={key} />
+
+  // Wrong
+  <Field/>
+
+  // Correct
+  <Field />
 ```
