@@ -13,14 +13,15 @@ export default class DocumentFilters extends Component {
     let filters = isValidJSON(filter) ? JSON.parse(this.props.filter) : null
     
     return (
-      <div class="DocumentFilters">
-        {filters && Object.keys(filters).length &&
+      <div>
+        {filters && Object.keys(filters).length && collection && (
           <div>
             {Object.keys(filters).map(key => ( 
-              <DocumentFilter key={key} value={filters[key]}/>
+              <DocumentFilter key={key} value={filters[key]} fields={collection.fields} />
             ))}
           </div>
-        }
+        )}
+        <DocumentFilter fields={collection.fields} />
         <button onClick={this.addFilter}>Add filter</button>
       </div>
     )

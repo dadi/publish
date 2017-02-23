@@ -19,14 +19,14 @@ class DocumentList extends Component {
   }
 
   render() {
-    const { state } = this.props
+    const { filter, state } = this.props
     return (
       <div>
         {!state.document.list ? (
           <h3>Loader based on: {state.document.listIsLoading}</h3>
         ) : (
           <section class="Documents">
-            <DocumentFilters filter={this.props.filter}/>
+            <DocumentFilters filter={filter} collection={state.document.collection}/>
             <table border="1">
               {state.document.list.results.map(document => (
                 <tr>
@@ -99,7 +99,7 @@ class DocumentList extends Component {
     return query.find().then(docs => {
       // Filter current collection
       let currentCollection = state.api.apis[0].collections.find(stateCollection => {
-        return stateCollection.slug = collection
+        return stateCollection.slug === collection
       })
       // Update state with results
       actions.setDocumentList(false, docs, currentCollection)

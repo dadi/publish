@@ -5,7 +5,7 @@ import * as types from 'actions/actionTypes'
 const initialState = {
   list: null,
   data: null,
-  currentCollection: null,
+  collection: null,
   listIsLoading: false,
   docIsLoading: false
 }
@@ -17,7 +17,7 @@ export default function document(state = initialState, action = {}) {
         ...state,
         listIsLoading: action.listIsLoading,
         list: action.documents || initialState.list,
-        currentCollection: action.currentCollection || initialState.currentCollection
+        collection: action.collection || initialState.collection
       }
     case types.SET_DOCUMENT:
       return {

@@ -1,11 +1,11 @@
 import * as types from 'actions/actionTypes'
 
-export function setDocumentList (listIsLoading, documents, documentCollection) {
+export function setDocumentList (listIsLoading, documents, collection) {
   return {
     type: types.SET_DOCUMENT_LIST,
     listIsLoading,
     documents,
-    documentCollection
+    collection
   }
 }
 

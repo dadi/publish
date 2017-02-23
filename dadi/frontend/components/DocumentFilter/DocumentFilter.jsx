@@ -20,12 +20,26 @@ export default class DocumentFilter extends Component {
   }
 
   render() {
-    const { key, value } = this.props
+    const { key, value, fields } = this.props
     
     return (
       <div>
-        <h3>Field: {key}</h3>
-        <p>{this.filterType(value)} {this.filterValue(value)}</p>
+        <select>
+          {Object.keys(fields).map(key => (
+            <option name={key}>{fields[key].label}</option>
+          ))}
+        </select>
+        <select>
+          {Object.keys(this.filterTypes).map(key => (
+            <option name={key}>{this.filterTypes[key]}</option>
+          ))}
+        </select>
+        {key && value && (
+          <div>
+            <h3>Field: {key}</h3>
+            <p>{this.filterType(value)} {this.filterValue(value)}</p>
+          </div>
+        )}
       </div>
     )
   }
