@@ -23,7 +23,7 @@ Fields
 
 We store the config schema in [dadi/config-schema.js](https://github.com/dadi/publish/blob/master/dadi/config-schema.js). 
 Fields can append the schema with field-specific values, for example an Image field 
-```
+```javascript
 Image: {
   doc: "Image field",
   accept: {
