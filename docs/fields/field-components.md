@@ -85,6 +85,6 @@ The field would look something like this:
 ```html
 <Image
   accept={ actions.config.Image.s3.accept }
-  signingUrlWithCredentials={ action.config.Image.s3.enabled } // 
+  signingUrlWithCredentials={ action.config.Image.s3.enabled } // Check for S3 credentials. If they exist, sign first
 />
 ```
