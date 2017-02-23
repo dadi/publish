@@ -40,3 +40,22 @@ export function isValidJSON (string) {
     replace(/"[^"\\\n\r]*"|true|false|null|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?/g, ']').
     replace(/(?:^|:|,)(?:\s*\[)+/g, ''))
 }
+
+const Style = function (styles) {
+  this.classes = []
+  this.styles = styles
+}
+
+Style.prototype.add = function (className) {
+  if ((typeof className === 'string') && this.styles[className]) {
+    this.classes.push(className)
+  }
+
+  return this
+}
+
+Style.prototype.getClasses = function () {
+  return this.classes.map(className => this.styles[className]).join(' ')
+}
+
+export { Style }

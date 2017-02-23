@@ -13,6 +13,7 @@ export default class TextInput extends Component {
         value={this.props.value}
         id={this.props.id}
         placeholder={this.props.placeholder}
+        required={this.props.required}
         /*onKeyUp={this._onKeyUp.bind(this)}*/ />
     )
   }

@@ -1,0 +1,13 @@
+/* Container */
+.container {
+  position: relative;
+}
+
+/* Options launcher */
+.options-launcher-system {
+  background-color: var(--theme-colour-system-shade-1, #d9a000);
+}
+
+.options-launcher-system:hover {
+  background-color: var(--theme-colour-system-shade-2, #c08d00);
+}

@@ -1,0 +1,17 @@
+.icon {
+  fill: currentColor;
+  width: 10px;
+  height: 10px;
+}
+
+.right {
+  transform: rotate(90deg);
+}
+
+.left {
+  transform: rotate(-90deg);
+}
+
+.down {
+  transform: rotate(180deg);
+}

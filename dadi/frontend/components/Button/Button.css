@@ -1,9 +1,9 @@
+/* Base button */
 .button {
   display: inline-block;
   position: relative;
   background-color: #fff;
-  color: #000000;
-  border-radius: 2px;
+  color: var(--theme-colour-primary, #000000);
   line-height: 1.25;
   font-weight: bold;
   font-family: var(--theme-font-family, sans-serif);
@@ -11,24 +11,51 @@
   text-align: center;
   word-wrap: break-word;
   margin: 0;
-  transition: background 0.1s;
+  transition: background-color 0.1s;
   outline: none;
   cursor: pointer;
   border: 0;
   font-size: 15px;
   text-decoration: none;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  border-radius: 2px;
 }
 
+.button-in-group-left {
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+.button-in-group-right {
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+}
+
+.button-in-group-middle {
+  border-radius: 0;
+}
+
+/* Accent: system */
 .button-system {
-  background-color: var(--theme-colour-system, #ffffff);
-  color: #000000;
+  background-color: var(--theme-colour-system, #ffbf0d);
+  color: var(--theme-colour-primary, #000000);
 }
 
 .button-system:active,
 .button-system:focus,
 .button-system:hover {
-  background-color: var(--theme-colour-system-shade-1, #333333);
-  color: var(--theme-colour-system, #ffffff);
+  background-color: var(--theme-colour-system-shade-1, #d9a000);
+  color: var(--theme-colour-system, #ffbf0d);
+}
+
+/* Accent: system (shade 1) */
+.button-system-shade-1 {
+  background-color: var(--theme-colour-system-shade-1, #d9a000);
+  color: var(--theme-colour-primary, #000000);
+}
+
+.button-system-shade-1:active,
+.button-system-shade-1:focus,
+.button-system-shade-1:hover {
+  background-color: var(--theme-colour-system-shade-2, #c08d00);
+  color: var(--theme-colour-system, #ffbf0d);
 }
