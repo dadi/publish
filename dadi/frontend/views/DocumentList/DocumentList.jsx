@@ -20,7 +20,6 @@ class DocumentList extends Component {
 
   render() {
     const { state } = this.props
-    
     return (
       <div>
         {!state.document.list ? (
@@ -56,10 +55,11 @@ class DocumentList extends Component {
 
     // State check: reject when missing config, session, or apis
     if (!state.app.config || !state.api.apis.length || !state.user.signedIn) return
+    // Fixed to checking first API, but will eventually need to check all
+    if (!state.api.apis[0].collections || !state.api.apis[0].collections.length > 0) return
 
     // State check: reject when path matches and document list loaded
     if (newStatePath === previousStatePath && list) return
-
     // State check: reject when documents are still loading
     if (listIsLoading) return
     this.getDocumentList()
@@ -77,15 +77,13 @@ class DocumentList extends Component {
     const { actions } = this.props
     // Clear keyboard
     this.keyboard.off()
-    actions.setDocumentList(false)
+    actions.setDocumentList(false, null, null)
   }
 
   getDocumentList (nextPage, nextCollection) {
     const { state, actions, collection, page } = this.props
     
-    actions.setDocumentList(true)
-
-    if (!state.api.apis.length > 0) return
+    actions.setDocumentList(true, null, null)
 
     let query = APIBridge(state.api.apis[0])
       .in(nextCollection || collection)
@@ -99,7 +97,6 @@ class DocumentList extends Component {
     }
 
     return query.find().then(docs => {
-      console.log('document load')
       // Filter current collection
       let currentCollection = state.api.apis[0].collections.find(stateCollection => {
         return stateCollection.slug = collection
@@ -108,7 +105,8 @@ class DocumentList extends Component {
       actions.setDocumentList(false, docs, currentCollection)
 
     }).catch((err) => {
-      actions.setDocumentList(false)
+      console.error("getDocumentList", err)
+      actions.setDocumentList(false, null, null)
       // TODO: Graceful deal with failure
     })
   }
