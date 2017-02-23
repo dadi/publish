@@ -17,17 +17,30 @@ export default class FieldLabel extends Component {
       child.attributes = child.attributes || {}
       child.attributes.id = child.attributes.id || this.id
 
+      // Inject 'required' to children
+      if (this.props.required) {
+        child.attributes.required = true
+      }
+
       return child
     })
   }  
 
   render() {
+    let comment
+
+    if (this.props.required) {
+      comment = 'Required'
+    } else if (this.props.optional) {
+      comment = 'Optional'
+    }
+
     return (
       <div class={styles.container}>
         <label for={this.id} class={styles.label}>{this.props.label}</label>
 
-        {this.props.comment &&
-          <sub class={styles.comment}>{this.props.comment}</sub>
+        {comment &&
+          <sub class={styles.comment}>{comment}</sub>
         }
 
         {this.renderChildren()}

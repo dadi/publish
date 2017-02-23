@@ -1,0 +1,15 @@
+.item {
+  border-radius: 4px;
+  font-family: var(--theme-font-family, sans-serif);
+  color: var(--theme-colour-primary, #000000);
+  padding: 10px;
+  cursor: pointer;
+  display: block;
+  width: 100%;
+  text-align: left;
+}
+
+.item:hover {
+  background-color: var(--theme-colour-data, #4A91FF);
+  color: var(--theme-colour-secondary, #ffffff);
+}

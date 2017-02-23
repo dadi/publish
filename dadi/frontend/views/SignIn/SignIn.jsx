@@ -35,23 +35,25 @@ class SignIn extends Component {
       <div class={styles.wrapper}>
         <div class={styles.overlay}>
           <div class={styles.container}>
-            <img class={styles.logo} src="/images/publish.png"/>
+            <img class={styles.logo} src="/images/publish.png" />
             
             <div class={styles.inputs}>
               <div class={styles.input}>
                 <FieldLabel label="Email">
-                  <TextInput placeholder="Your email address"/>
+                  <TextInput placeholder="Your email address" />
                 </FieldLabel>
               </div>
 
               <div class={styles.input}>
                 <FieldLabel label="Password">
-                  <TextInput type="password" placeholder="Your password"/>
+                  <TextInput type="password" placeholder="Your password" />
                 </FieldLabel>
               </div>
             </div>
 
-            <Button accent="system" onClick={this.signIn.bind(this)}>Sign In</Button>
+            <Button accent="system"
+              onClick={this.signIn.bind(this)}
+            >Sign In</Button>
           </div>
         </div>
       </div>
@@ -67,7 +69,7 @@ class SignIn extends Component {
     // Temp
     let loginUsername = 'arthurmingard'
     let loginPassword = 'publishpass'
-    new Session().createSession({username: loginUsername, password: loginPassword}).then((session) => {
+    new Session().createSession({username: loginUsername, password: loginPassword}).then(session => {
       if (session.signedIn) {
         actions.signIn(session.username, session.signedIn)
         route('/profile')

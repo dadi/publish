@@ -33,3 +33,22 @@ let ID_PREFIX = 'c'
 export function getUniqueId () {
   return `${ID_PREFIX}-${lastId++}`
 }
+
+const Style = function (styles) {
+  this.classes = []
+  this.styles = styles
+}
+
+Style.prototype.add = function (className) {
+  if ((typeof className === 'string') && this.styles[className]) {
+    this.classes.push(className)
+  }
+
+  return this
+}
+
+Style.prototype.getClasses = function () {
+  return this.classes.map(className => this.styles[className]).join(' ')
+}
+
+export { Style }
