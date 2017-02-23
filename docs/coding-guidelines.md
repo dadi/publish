@@ -91,3 +91,31 @@ return data
   // Correct
   <Field />
 ```
+
+#### Single and Double quotes
+
+The current logic is simple. We prefer single quotes in JS. In JSX, we use double quotes with static values and single quotes for logic.
+
+```html
+
+// Wrong
+<Foo
+  name='Bar'
+/>
+
+// Correct
+<Foo
+  name="Bar"
+/>
+
+// Wrong
+<Foo
+  name={ bar ? "Bar": "Baz"}
+/>
+
+// Correct
+<Foo
+  name={ somebarthing ? 'Bar': 'Baz'}
+/>
+
+```
