@@ -14,22 +14,8 @@ export default class TextInput extends Component {
         id={this.props.id}
         placeholder={this.props.placeholder}
         required={this.props.required}
-        /*onKeyUp={this._onKeyUp.bind(this)}*/ />
+        onChange={this.props.onChange}
+      />
     )
   }
-
-  // _onKeyUp(e) {
-  //   const context = this
-  //   const value = e.target.value
-  //   const delay = this.props.delay || config.ui.inputDelay
-
-  //   clearTimeout(this._timeout)
-  //   this._timeout = setTimeout(() => {
-  //     context._onUpdate(value)
-  //   }, delay)
-  // }
-
-  // _onUpdate(value) {
-  //   this.props.onUpdate && this.props.onUpdate(value)
-  // }
 }

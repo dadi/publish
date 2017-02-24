@@ -3,7 +3,7 @@ import { connect } from 'preact-redux'
 import { bindActionCreators } from 'redux'
 import { connectHelper } from 'lib/util'
 
-import FieldLabel from 'components/FieldLabel/FieldLabel'
+import Label from 'components/Label/Label'
 import Nav from 'components/Nav/Nav'
 import TextInput from 'components/TextInput/TextInput'
 
@@ -15,9 +15,9 @@ class Home extends Component {
 
     return (
       <div>
-        <FieldLabel label="Title" comment="Optional">
+        <Label label="Title" comment="Optional">
           <TextInput/>
-        </FieldLabel>
+        </Label>
       </div>
     )
   }
