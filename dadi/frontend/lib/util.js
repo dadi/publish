@@ -34,12 +34,20 @@ export function getUniqueId () {
   return `${ID_PREFIX}-${lastId++}`
 }
 
+// Object and Field validation
+
 export function isValidJSON (string) {
   if (!string) return
   return /^[\],:{}\s]*$/.test(string.replace(/\\["\\\/bfnrtu]/g, '@').
     replace(/"[^"\\\n\r]*"|true|false|null|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?/g, ']').
     replace(/(?:^|:|,)(?:\s*\[)+/g, ''))
 }
+
+export function isEmpty (subject) {
+  return subject === undefined || subject === null || (typeof subject === 'object' && subject.length < 1)
+}
+
+// Styles
 
 const Style = function (styles) {
   this.classes = []

@@ -24,7 +24,7 @@ import UserProfile from 'views/UserProfile/UserProfile'
 import SignIn from 'views/SignIn/SignIn'
 import StyleGuide from 'views/StyleGuide/StyleGuide'
 
-import { connectHelper } from 'lib/util'
+import { connectHelper, isEmpty } from 'lib/util'
 import Socket from 'lib/socket'
 import Session from 'lib/session'
 import getAppConfig from 'lib/app-config'

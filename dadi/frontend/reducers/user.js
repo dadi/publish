@@ -2,7 +2,7 @@
 import * as types from 'actions/actionTypes'
 
 const initialState = {
-  signedIn: false,
+  signedIn: null,
   username: null,
   users: []
 }
