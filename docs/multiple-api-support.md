@@ -11,7 +11,7 @@ If two connected apis have a duplicate collection names, the first collection wi
 This logic can be bypassed if either
 
 a) The two collections exist at different levels, or within different [Collection Groups](https://github.com/dadi/publish/blob/master/docs/collection-groups.md). *Example*: `/articles`, `/magazine/articles`, `/shopping/articles`
-b) A custom name for a collection exists in config
+b) A display name for a collection exists in config
 
 ```json
 "menu": [
