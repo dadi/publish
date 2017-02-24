@@ -80,7 +80,6 @@ class SignIn extends Component {
 
   signIn (event) {
     const { actions, state } = this.props
-
     new Session().createSession({
       username: this.state.email,
       password: this.state.password
