@@ -3,7 +3,7 @@ import * as types from 'actions/actionTypes'
 
 const initialState = {
   signedIn: null,
-  username: null,
+  email: null,
   users: []
 }
 
@@ -13,14 +13,14 @@ export default function user(state = initialState, action = {}) {
       return {
         ...state,
         signedIn: action.signedIn,
-        username: action.username
+        email: action.email
       }
 
     case types.SIGN_OUT:
       return {
         ...state,
         signedIn: false,
-        username: null,
+        email: null,
         name: null
       }
 

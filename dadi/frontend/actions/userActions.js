@@ -1,9 +1,9 @@
 import * as types from 'actions/actionTypes'
 
-export function signIn (username, signedIn) {
+export function signIn (email, signedIn) {
   return {
     type: types.SIGN_IN,
-    username,
+    email,
     signedIn
   }
 }
