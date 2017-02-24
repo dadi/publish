@@ -6,8 +6,9 @@ import { connectHelper, isEmpty } from 'lib/util'
 
 import * as userActions from 'actions/userActions'
 
+import Banner from 'components/Banner/Banner'
 import Button from 'components/Button/Button'
-import FieldLabel from 'components/FieldLabel/FieldLabel'
+import Label from 'components/Label/Label'
 import TextInput from 'components/TextInput/TextInput'
 
 import Session from 'lib/session'
@@ -18,6 +19,10 @@ class SignIn extends Component {
 
   constructor(props) {
     super(props)
+
+    this.state.email = ''
+    this.state.password = ''
+    this.state.error = false
   }
 
   shouldComponentUpdate(nextProps, nextState) {
@@ -33,7 +38,7 @@ class SignIn extends Component {
       route('/profile')
     }
   }
-  
+
   render() {
     const { state, actions } = this.props
 
@@ -42,18 +47,31 @@ class SignIn extends Component {
         <div class={styles.overlay}>
           <div class={styles.container}>
             <img class={styles.logo} src="/images/publish.png" />
+
+            {this.state.error &&
+              <Banner>Email not found or password incorrect.</Banner>
+            }
             
             <div class={styles.inputs}>
               <div class={styles.input}>
-                <FieldLabel label="Email">
-                  <TextInput placeholder="Your email address" />
-                </FieldLabel>
+                <Label label="Email">
+                  <TextInput
+                    placeholder="Your email address"
+                    onChange={this.handleInputChange.bind(this, 'email')}
+                    value={this.state.email}
+                  />
+                </Label>
               </div>
 
               <div class={styles.input}>
-                <FieldLabel label="Password">
-                  <TextInput type="password" placeholder="Your password" />
-                </FieldLabel>
+                <Label label="Password">
+                  <TextInput
+                    type="password"
+                    placeholder="Your password"
+                    onChange={this.handleInputChange.bind(this, 'password')}
+                    value={this.state.password}
+                  />
+                </Label>
               </div>
             </div>
 
@@ -66,22 +84,30 @@ class SignIn extends Component {
     )
   }
 
-  signIn (event) {
-    event.preventDefault()
-
-    // loginUsername and loginPassword should come from form fields
-    // const { actions, state, loginUsername, loginPassword } = this.props
+  signIn(event) {
     const { actions, state } = this.props
-    // Temp
-    let loginUsername = 'arthurmingard'
-    let loginPassword = 'publishpass'
-    new Session().createSession({username: loginUsername, password: loginPassword}).then(session => {
+    new Session().createSession({
+      username: this.state.email,
+      password: this.state.password
+    }).then(session => {
       if (session.signedIn) {
         actions.signIn(session.username, session.signedIn)
         route('/profile')
       } else {
         actions.signOut()
+
+        this.setState({
+          error: true
+        })
       }
+    })
+
+    event.preventDefault()
+  }
+
+  handleInputChange(name, event) {
+    this.setState({
+      [name]: event.target.value
     })
   }
 }

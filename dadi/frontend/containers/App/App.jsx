@@ -144,9 +144,7 @@ class App extends Component {
   initialiseSocket() {
     const { actions, state } = this.props
     const pathname = state.routing.locationBeforeTransitions.pathname
-
     let session = new Session()
-
     let socket = new Socket(state.app.config.server.port)
       .on('userListChange', data => {
         // Table of connected users

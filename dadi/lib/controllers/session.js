@@ -10,7 +10,7 @@ Session.prototype.authorise = function (username, password, next) {
   if (!authAPI.enabled) return next(null)
   return new Api(authAPI)
   .in(authAPI.collection)
-  .whereFieldIsEqualTo('username', username)
+  .whereFieldIsEqualTo('email', username)
   .whereFieldIsEqualTo('password', password)
   .find({extractResults: true}).then( user => {
     if (user.length > 0) {
