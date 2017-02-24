@@ -20,29 +20,25 @@ module.exports = {
         type: Boolean,
         default: false
       },
-      accessKey: {
-        doc: "AWS Access Key",
+      accessKeyId: {
+        doc: "AWS Access Key ID",
         format: String,
-        default: "",
-        env: "AWS_ACCESS_KEY"
+        default: ""
       },
-      secretKey: {
+      secretAccessKey: {
         doc: "AWS Secret Key",
         format: String,
-        default: "",
-        env: "AWS_SECRET_KEY"
+        default: ""
       },
       bucketName: {
         doc: "AWS Bucket Name",
         format: String,
-        default: "",
-        env: "AWS_S3_BUCKET"
+        default: ""
       },
       region: {
         doc: "AWS Region",
         format: String,
-        default: "",
-        env: "AWS_REGION"
+        default: ""
       }
     }
   }

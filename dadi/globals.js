@@ -5,6 +5,7 @@ const config = require('./config')
 
 const base = __dirname + '/../'
 const lib = __dirname + '/lib'
+const frontend = __dirname + '/frontend'
 
 /**
  * Set Global parameters
@@ -20,6 +21,10 @@ const Globals = function () {
       router: path.resolve(`${lib}/router`),
       helpers: path.resolve(`${lib}/helpers`),
       watch: path.resolve(`${lib}/watch`)
+    },
+    frontend: {
+      root: frontend,
+      components: path.resolve(`${frontend}/components`)
     },
     wallet: path.resolve(`${base}/.wallet`)
   }
