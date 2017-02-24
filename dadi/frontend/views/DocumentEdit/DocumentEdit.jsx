@@ -18,7 +18,7 @@ import * as apiActions from 'actions/apiActions'
 import * as documentActions from 'actions/documentActions'
 
 class DocumentEdit extends Component {
-  constructor (props) {
+  constructor(props) {
     super(props)
   }
   
@@ -48,7 +48,7 @@ class DocumentEdit extends Component {
     )
   }
 
-  componentDidUpdate (previousProps) {
+  componentDidUpdate(previousProps) {
     const { state, actions } = this.props
     const previousState = previousProps.state
     const { data, docIsLoading } = state.document
@@ -67,13 +67,13 @@ class DocumentEdit extends Component {
     this.getDocument()
   }
 
-  componentWillUnmount () {
+  componentWillUnmount() {
     const { actions } = this.props
     // Clear our documents and reset loading state
     actions.setDocument(false, null)
   }
 
-  getDocument () {
+  getDocument() {
     const { state, actions, collection, document_id } = this.props
     
     return APIBridge(state.api.apis[0])

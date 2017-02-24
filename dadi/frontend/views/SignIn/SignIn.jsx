@@ -6,8 +6,9 @@ import { connectHelper, isEmpty } from 'lib/util'
 
 import * as userActions from 'actions/userActions'
 
+import Banner from 'components/Banner/Banner'
 import Button from 'components/Button/Button'
-import FieldLabel from 'components/FieldLabel/FieldLabel'
+import Label from 'components/Label/Label'
 import TextInput from 'components/TextInput/TextInput'
 
 import Session from 'lib/session'
@@ -21,6 +22,7 @@ class SignIn extends Component {
 
     this.state.email = ''
     this.state.password = ''
+    this.state.error = false
   }
 
   shouldComponentUpdate(nextProps, nextState) {
@@ -45,27 +47,31 @@ class SignIn extends Component {
         <div class={styles.overlay}>
           <div class={styles.container}>
             <img class={styles.logo} src="/images/publish.png" />
+
+            {this.state.error &&
+              <Banner>Email not found or password incorrect.</Banner>
+            }
             
             <div class={styles.inputs}>
               <div class={styles.input}>
-                <FieldLabel label="Email">
+                <Label label="Email">
                   <TextInput
                     placeholder="Your email address"
                     onChange={this.handleInputChange.bind(this, 'email')}
                     value={this.state.email}
                   />
-                </FieldLabel>
+                </Label>
               </div>
 
               <div class={styles.input}>
-                <FieldLabel label="Password">
+                <Label label="Password">
                   <TextInput
                     type="password"
                     placeholder="Your password"
                     onChange={this.handleInputChange.bind(this, 'password')}
                     value={this.state.password}
                   />
-                </FieldLabel>
+                </Label>
               </div>
             </div>
 
@@ -78,19 +84,21 @@ class SignIn extends Component {
     )
   }
 
-  signIn (event) {
+  signIn(event) {
     const { actions, state } = this.props
     new Session().createSession({
-      username: this.state.email,
+      email: this.state.email,
       password: this.state.password
     }).then(session => {
       if (session.signedIn) {
-        actions.signIn(session.username, session.signedIn)
+        actions.signIn(session.email, session.signedIn)
         route('/profile')
       } else {
         actions.signOut()
 
-        console.log('*** WRONG INFO')
+        this.setState({
+          error: true
+        })
       }
     })
 
