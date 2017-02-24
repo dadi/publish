@@ -6,6 +6,7 @@ import { connectHelper, isEmpty } from 'lib/util'
 
 import * as userActions from 'actions/userActions'
 
+import Banner from 'components/Banner/Banner'
 import Button from 'components/Button/Button'
 import FieldLabel from 'components/FieldLabel/FieldLabel'
 import TextInput from 'components/TextInput/TextInput'
@@ -21,6 +22,7 @@ class SignIn extends Component {
 
     this.state.email = ''
     this.state.password = ''
+    this.state.error = false
   }
 
   shouldComponentUpdate(nextProps, nextState) {
@@ -45,6 +47,10 @@ class SignIn extends Component {
         <div class={styles.overlay}>
           <div class={styles.container}>
             <img class={styles.logo} src="/images/publish.png" />
+
+            {this.state.error &&
+              <Banner>Email not found or password incorrect.</Banner>
+            }
             
             <div class={styles.inputs}>
               <div class={styles.input}>
@@ -91,7 +97,9 @@ class SignIn extends Component {
       } else {
         actions.signOut()
 
-        console.log('*** WRONG INFO')
+        this.setState({
+          error: true
+        })
       }
     })
 
