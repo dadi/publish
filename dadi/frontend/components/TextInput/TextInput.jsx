@@ -14,7 +14,8 @@ export default class TextInput extends Component {
         id={this.props.id}
         placeholder={this.props.placeholder}
         required={this.props.required}
-        /*onKeyUp={this._onKeyUp.bind(this)}*/ />
+        onChange={this.props.onChange}
+      />
     )
   }
 

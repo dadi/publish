@@ -18,6 +18,9 @@ class SignIn extends Component {
 
   constructor(props) {
     super(props)
+
+    this.state.email = ''
+    this.state.password = ''
   }
 
   shouldComponentUpdate(nextProps, nextState) {
@@ -33,8 +36,9 @@ class SignIn extends Component {
       route('/profile')
     }
   }
-  
+
   render() {
+    console.log('** Render')
     const { state, actions } = this.props
 
     return (
@@ -46,13 +50,22 @@ class SignIn extends Component {
             <div class={styles.inputs}>
               <div class={styles.input}>
                 <FieldLabel label="Email">
-                  <TextInput placeholder="Your email address" />
+                  <TextInput
+                    placeholder="Your email address"
+                    onChange={this.handleInputChange.bind(this, 'email')}
+                    value={this.state.email}
+                  />
                 </FieldLabel>
               </div>
 
               <div class={styles.input}>
                 <FieldLabel label="Password">
-                  <TextInput type="password" placeholder="Your password" />
+                  <TextInput
+                    type="password"
+                    placeholder="Your password"
+                    onChange={this.handleInputChange.bind(this, 'password')}
+                    value={this.state.password}
+                  />
                 </FieldLabel>
               </div>
             </div>
@@ -67,21 +80,28 @@ class SignIn extends Component {
   }
 
   signIn (event) {
-    event.preventDefault()
-
-    // loginUsername and loginPassword should come from form fields
-    // const { actions, state, loginUsername, loginPassword } = this.props
     const { actions, state } = this.props
-    // Temp
-    let loginUsername = 'arthurmingard'
-    let loginPassword = 'publishpass'
-    new Session().createSession({username: loginUsername, password: loginPassword}).then(session => {
+
+    new Session().createSession({
+      username: this.state.email,
+      password: this.state.password
+    }).then(session => {
       if (session.signedIn) {
         actions.signIn(session.username, session.signedIn)
         route('/profile')
       } else {
         actions.signOut()
+
+        console.log('*** WRONG INFO')
       }
+    })
+
+    event.preventDefault()
+  }
+
+  handleInputChange(name, event) {
+    this.setState({
+      [name]: event.target.value
     })
   }
 }
