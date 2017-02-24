@@ -84,7 +84,7 @@ class SignIn extends Component {
     )
   }
 
-  signIn (event) {
+  signIn(event) {
     const { actions, state } = this.props
 
     new Session().createSession({

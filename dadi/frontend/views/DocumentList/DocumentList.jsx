@@ -13,7 +13,7 @@ import DocumentFilters from 'components/DocumentFilters/DocumentFilters'
 
 class DocumentList extends Component {
   
-  constructor (props) {
+  constructor(props) {
     super(props)
     this.keyboard = new Keyboard()
   }
@@ -46,7 +46,7 @@ class DocumentList extends Component {
     )
   }
 
-  componentDidUpdate (previousProps) {
+  componentDidUpdate(previousProps) {
     const { state, actions } = this.props
     const previousState = previousProps.state
     const { list, listIsLoading } = state.document
@@ -65,22 +65,21 @@ class DocumentList extends Component {
     this.getDocumentList()
   }
 
-  componentDidMount () {
-
+  componentDidMount() {
     this.keyboard.on('space+a').do(cmd => {
       console.log(cmd.pattern)
       // Trigger something
     })
   }
 
-  componentWillUnmount () {
+  componentWillUnmount() {
     const { actions } = this.props
     // Clear keyboard
     this.keyboard.off()
     actions.setDocumentList(false, null, null)
   }
 
-  getDocumentList (nextPage, nextCollection) {
+  getDocumentList(nextPage, nextCollection) {
     const { state, actions, collection, page } = this.props
     
     actions.setDocumentList(true, null, null)

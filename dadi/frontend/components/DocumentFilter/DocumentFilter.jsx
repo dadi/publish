@@ -6,8 +6,9 @@ import TextInput from 'components/TextInput/TextInput'
 
 export default class DocumentFilter extends Component {
 
-  constructor (props) {
+  constructor(props) {
     super(props)
+
     // Move to filter
     this.filterTypes = {
       '$eq': 'Equals',

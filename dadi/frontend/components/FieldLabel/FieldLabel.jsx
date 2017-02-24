@@ -6,7 +6,7 @@ import styles from './FieldLabel.css'
 import { getUniqueId } from 'lib/util'
 
 export default class FieldLabel extends Component {
-  componentWillMount () {
+  componentWillMount() {
     this.id = getUniqueId()
   }
 

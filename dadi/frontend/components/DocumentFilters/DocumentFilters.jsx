@@ -7,7 +7,6 @@ import { isValidJSON } from 'lib/util'
 import DocumentFilter from 'components/DocumentFilter/DocumentFilter'
 
 export default class DocumentFilters extends Component {
-
   render() {
     const { filter, collection } = this.props
     let filters = isValidJSON(filter) ? JSON.parse(this.props.filter) : null
