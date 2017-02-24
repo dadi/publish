@@ -132,7 +132,7 @@ class App extends Component {
 
     new Session().getSession().then((session) => {
       if (session.signedIn) {
-        actions.signIn(session.email, session.signedIn)
+        actions.signIn(session.username, session.signedIn)
       } else {
         // Trigger signout
         actions.signOut()
@@ -144,7 +144,6 @@ class App extends Component {
   initialiseSocket() {
     const { actions, state } = this.props
     const pathname = state.routing.locationBeforeTransitions.pathname
-
     let session = new Session()
     let socket = new Socket(state.app.config.server.port)
       .on('userListChange', data => {
@@ -153,7 +152,7 @@ class App extends Component {
       })
       .setUser(Object.assign({}, state.user, {
         vendor: navigator.vendor,
-        identifier: `${state.user.email}_${navigator.vendor}`
+        identifier: `${state.user.username}_${navigator.vendor}`
       })).setRoom(pathname)
 
     // Save reference to `socket` as a private variable
