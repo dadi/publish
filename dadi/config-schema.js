@@ -1,5 +1,6 @@
 module.exports = {
   app: {
+    availableInFrontend: true,
     name: {
       doc: "The applicaton name",
       format: String,
@@ -17,10 +18,12 @@ module.exports = {
     }
   },
   apis: {
+    availableInFrontend: true,
     doc: "Connected APIs",
     format: Array,
     default: [],
     _publishId: {
+      availableInFrontend: true,
       type: String,
       default: ''
     },
@@ -29,26 +32,32 @@ module.exports = {
       default: true
     },
     name: {
+      availableInFrontend: true,
       format: String,
       default: "No Name"
     },
     host: {
+      availableInFrontend: true,
       format: "ipaddress",
       default: "0.0.0.0"
     },
     port: {
+      availableInFrontend: true,
       format: "port",
       default: 3000
     },
     database: {
+      availableInFrontend: true,
       format: String,
       default: ""
     },
     version: {
+      availableInFrontend: true,
       format: String,
       default: "1.0"
     },
     menu: {
+      availableInFrontend: true,
       doc: "Collection menu ordering and grouping",
       format: Array,
       default: []
@@ -112,12 +121,15 @@ module.exports = {
     }
   },
   server: {
+    availableInFrontend: true,
     host: {
+      availableInFrontend: true,
       doc: "The IP address or interface to bind to",
       format: "ipaddress",
       default: "0.0.0.0"
     },
     port: {
+      availableInFrontend: true,
       doc: "The port to bind to",
       format: "port",
       default: 3001
@@ -159,6 +171,7 @@ module.exports = {
       env: "SSL_INTERMEDIATE_CERTIFICATE_PATHS"
     },
     authenticate: {
+      availableInFrontend: true,
       doc: "Enabled authentication layer",
       format: Boolean,
       default: true
@@ -174,16 +187,19 @@ module.exports = {
       }
     },
   TZ: {
+    availableInFrontend: true,
     doc: "Process Timezone",
     default: "Europe/London"
   },
   env: {
+    availableInFrontend: true,
     doc: "The applicaton environment.",
     format: ["production", "development", "test"],
     default: "development",
     env: "NODE_ENV"
   },
   ui: {
+    availableInFrontend: true,
     inputDelay: {
       doc: "Delay in ms to debounce inputs by",
       format: "integer",
