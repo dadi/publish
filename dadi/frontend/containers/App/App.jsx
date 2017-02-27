@@ -25,20 +25,23 @@ import UserProfile from 'views/UserProfile/UserProfile'
 import SignIn from 'views/SignIn/SignIn'
 import StyleGuide from 'views/StyleGuide/StyleGuide'
 
-import { connectHelper, isEmpty } from 'lib/util'
+import { connectHelper, debounce, isEmpty } from 'lib/util'
 import Socket from 'lib/socket'
 import Session from 'lib/session'
 import getAppConfig from 'lib/app-config'
 import APIBridge from 'lib/api-bridge-client'
 
 class App extends Component {
-
-  constructor(props) {
-    super(props)
-  }
-
   componentWillMount() {
     this.sessionStart()
+  }
+
+  componentDidMount() {
+    const { actions } = this.props
+
+    window.addEventListener('resize', debounce(() => {
+      actions.setScreenWidth(window.innerWidth)
+    }, 500))
   }
 
   componentDidUpdate(previousProps) {
@@ -71,7 +74,7 @@ class App extends Component {
     return (
       <Main>
         {state.user && state.user.signedIn &&
-          <Header />
+          <Header compact={state.app.breakpoint === null} />
         }
         
         <Router history={history}>
@@ -145,6 +148,7 @@ class App extends Component {
   initialiseSocket() {
     const { actions, state } = this.props
     const pathname = state.routing.locationBeforeTransitions.pathname
+
     let session = new Session()
     let socket = new Socket(state.app.config.server.port)
       .on('userListChange', data => {

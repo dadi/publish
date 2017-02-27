@@ -1,9 +1,13 @@
 .container {
-  display: inline-block;
+  display: block;
   position: relative;
 }
 
-.container:hover .reveal {
+.container-collapsed {
+  display: inline-block;
+}
+
+.container-collapsed:hover .children {
   display: block;
 }
 
@@ -19,7 +23,7 @@
   text-decoration: none;
 }
 
-.container:hover .nav-item {
+.container-collapsed:hover .nav-item {
   background-color: var(--theme-colour-background-shade-1, #FAFAFA);
   color: var(--theme-colour-primary, #000000);
 }
@@ -29,7 +33,7 @@
   color: var(--theme-colour-system, #ffbf0d);
 }
 
-.reveal {
+.container-collapsed .children {
   display: none;
   position: absolute;
   min-width: 180px;
