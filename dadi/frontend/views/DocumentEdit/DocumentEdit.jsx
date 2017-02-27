@@ -48,7 +48,7 @@ class DocumentEdit extends Component {
             </tr>
           </table>
         )}
-        <FieldImage />
+        <FieldImage config={ state.app.config }/>
       </div>
     )
   }
