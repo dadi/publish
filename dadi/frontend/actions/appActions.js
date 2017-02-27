@@ -6,3 +6,10 @@ export function setAppConfig(config) {
     config
   }
 }
+
+export function setScreenWidth(width) {
+  return {
+    type: types.SET_SCREEN_WIDTH,
+    width
+  }
+}
