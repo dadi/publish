@@ -23,25 +23,29 @@ export default class DropdownItem extends Component {
     // Should we render an achor?
     if (this.props.href) {
       return (
-        <a
-          class={styles.item}
-          href={this.props.href}
-          onClick={this.handleClick.bind(this)}
-        >
-          {this.props.children}
-        </a>
+        <li>
+          <a
+            class={styles.item}
+            href={this.props.href}
+            onClick={this.handleClick.bind(this)}
+          >
+            {this.props.children}
+          </a>
+        </li>
       )
     }
 
     // Otherwise, we'll render a button
     return (
-      <button 
-        class={styles.item}
-        type="button"
-        onClick={this.handleClick.bind(this)}
-      >
-        {this.props.children}
-      </button>
+      <li>
+        <button 
+          class={styles.item}
+          type="button"
+          onClick={this.handleClick.bind(this)}
+        >
+          {this.props.children}
+        </button>
+      </li>
     )
   }
 }

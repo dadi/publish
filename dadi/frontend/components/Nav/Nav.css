@@ -2,3 +2,8 @@
   border-top: 1px solid #293547;
   padding: 10px;
 }
+
+.children {
+  border-left: 3px solid #293547;
+  margin: 5px 10px;
+}

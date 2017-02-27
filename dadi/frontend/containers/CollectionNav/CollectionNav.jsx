@@ -10,6 +10,7 @@ import * as appActions from 'actions/appActions'
 import Dropdown from 'components/Dropdown/Dropdown'
 import DropdownItem from 'components/DropdownItem/DropdownItem'
 import Main from 'components/Main/Main'
+import Nav from 'components/Nav/Nav'
 import NavItem from 'components/NavItem/NavItem'
 
 import { connectHelper } from 'lib/util'
@@ -56,33 +57,10 @@ class App extends Component {
     }
 
     return (
-      <div>
-        {this.groups.map(item => {
-          let subItems = null
-
-          if (item.collections) {
-            let children = item.collections.map(collection => {
-              return (
-                <DropdownItem href={`/${collection.slug}/documents`}>{collection.name}</DropdownItem>
-              )
-            })
-
-            subItems = <Dropdown>{children}</Dropdown>
-          }
-
-          // (!) This needs to be revisited once we implement routes for groups
-          const href = item.slug ? `/${item.slug}/documents` : '#'
-
-          return (
-            <NavItem
-              href={href}
-              text={item.name || item.title}
-            >
-              {subItems}
-            </NavItem>
-          )
-        })}
-      </div>
+      <Nav
+        groups={this.groups}
+        compact={state.app.breakpoint === null}
+      />
     )
   }
 }
