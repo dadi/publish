@@ -75,7 +75,8 @@ class SignIn extends Component {
               </div>
             </div>
 
-            <Button accent="system"
+            <Button
+              accent="system"
               onClick={this.signIn.bind(this)}
             >Sign In</Button>
           </div>
