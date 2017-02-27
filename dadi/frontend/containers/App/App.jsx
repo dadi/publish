@@ -7,7 +7,9 @@ import * as userActions from 'actions/userActions'
 import * as apiActions from 'actions/apiActions'
 import * as appActions from 'actions/appActions'
 
+import Header from 'components/Header/Header'
 import Main from 'components/Main/Main'
+import Nav from 'components/Nav/Nav'
 
 import Api from 'views/Api/Api'
 import Collection from 'views/Collection/Collection'
@@ -16,7 +18,6 @@ import DocumentList from 'views/DocumentList/DocumentList'
 import Error from 'views/Error/Error'
 import Home from 'views/Home/Home'
 import MediaLibrary from 'views/MediaLibrary/MediaLibrary'
-import Nav from 'components/Nav/Nav'
 import PasswordReset from 'views/PasswordReset/PasswordReset'
 import RoleEdit from 'views/RoleEdit/RoleEdit'
 import RoleList from 'views/RoleList/RoleList'
@@ -36,7 +37,7 @@ class App extends Component {
     super(props)
   }
 
-  componentWillMount () {
+  componentWillMount() {
     this.sessionStart()
   }
 
@@ -64,13 +65,13 @@ class App extends Component {
     }
   }
 
-  render () {
+  render() {
     const { state, history } = this.props
 
     return (
       <Main>
         {state.user && state.user.signedIn &&
-          <Nav apis={ state.api.apis } />
+          <Header />
         }
         
         <Router history={history}>
@@ -92,7 +93,7 @@ class App extends Component {
     )
   }
 
-  getApiCollections () {
+  getApiCollections() {
     const { state, actions } = this.props
 
     actions.setApiFetchStatus('isFetching')
@@ -127,7 +128,7 @@ class App extends Component {
     })
   }
 
-  sessionStart () {
+  sessionStart() {
     const { actions, state } = this.props
 
     new Session().getSession().then((session) => {

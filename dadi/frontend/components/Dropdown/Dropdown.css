@@ -1,9 +1,5 @@
 /* Options list */
 .container {
-  position: absolute;
-  bottom: 100%;
-  bottom: calc(100% + 10px);
-  left: 0;
   background-color: var(--theme-colour-background-shade-1, #FAFAFA);
   border-radius: 4px;
   box-shadow: 7px 6px 25px rgba(0, 0, 0, 0.3);

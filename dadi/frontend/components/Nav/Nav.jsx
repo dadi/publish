@@ -1,22 +1,17 @@
 import { h, Component } from 'preact'
 
-import CollectionNav from 'components/CollectionNav/CollectionNav'
+import CollectionNav from 'containers/CollectionNav/CollectionNav'
+
+import { Style } from 'lib/util'
+import styles from './Nav.css'
 
 export default class Nav extends Component {
   render() {
     const { apis } = this.props
 
     return (
-      <nav class="Nav">
-        <h2>Navigation</h2>
-        <h3>General</h3>
-        <ul>
-          <li><a href="/">Home</a></li>
-          <li><a href="/profile">Profile</a></li>
-        </ul>
-        {apis && apis.length && apis[0].hasCollections &&
-          <CollectionNav sort={ apis[0].menu || []} collections={ apis[0].collections } />
-        }
+      <nav class={styles.nav}>
+        <CollectionNav />
       </nav>
     )
   }
