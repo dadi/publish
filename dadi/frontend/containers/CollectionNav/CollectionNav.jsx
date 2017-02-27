@@ -84,49 +84,6 @@ class App extends Component {
         })}
       </div>
     )
-
-    return (
-      <div class="CollectionNav">
-        <h3>Collections</h3>
-        {this.groups &&
-          <ul class="CollectionList">
-            {this.groups.map(collection => (
-              <li class="CollectionListItem">
-                {collection.name ? (
-                  <a href={ `/${collection.slug}/documents` }>{ collection.name }</a>
-                ) : (
-                  <div>
-                    <p>{collection.title}</p>
-                    <ul class="CollectionList">
-                      {collection.collections.map(collection => (
-                        <li>
-                          <a href={ `/${collection.slug}/documents` }>{ collection.name }</a>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
-              </li>
-            ))}
-          </ul>
-        }
-      </div>
-    )
-
-    return (
-      <div>
-        <NavItem text="Main"/>
-        <NavItem text="Test">
-          <Dropdown>
-            <DropdownItem>Hello world</DropdownItem>
-            <DropdownItem>Hello world</DropdownItem>
-            <DropdownItem>Hello world</DropdownItem>
-            <DropdownItem>Hello world</DropdownItem>
-          </Dropdown>
-        </NavItem>
-        <NavItem text="Magazine" active={true}/>
-      </div>
-    )
   }
 }
 
