@@ -2,7 +2,6 @@
 
 import { h, Component } from 'preact'
 import 'unfetch'
-import request from 'superagent'
 
 import Label from 'components/Label/Label'
 
@@ -70,7 +69,7 @@ export default class FieldImage extends Component {
     })
 
     if (config.FieldImage.s3.enabled) {
-      
+
       fetch('/fields/image/s3/sign', {
         credentials: 'same-origin',
         method: 'POST',
