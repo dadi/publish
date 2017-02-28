@@ -1,5 +1,5 @@
 import { h, Component } from 'preact'
-import { Router, route } from 'preact-router'
+import { Router, Layout, route } from 'preact-router'
 import { connect } from 'preact-redux'
 import { bindActionCreators } from 'redux'
 
@@ -8,8 +8,6 @@ import * as apiActions from 'actions/apiActions'
 import * as appActions from 'actions/appActions'
 
 import Header from 'components/Header/Header'
-import Main from 'components/Main/Main'
-import Nav from 'components/Nav/Nav'
 
 import Api from 'views/Api/Api'
 import Collection from 'views/Collection/Collection'
@@ -72,11 +70,10 @@ class App extends Component {
     const { state, history } = this.props
 
     return (
-      <Main>
+        <Layout>
         {state.user && state.user.signedIn &&
           <Header compact={state.app.breakpoint === null} />
         }
-        
         <Router history={history}>
           <Home path="/" authenticate />
           <PasswordReset path="/reset" authenticate/>
@@ -92,7 +89,7 @@ class App extends Component {
           <StyleGuide path="/styleguide" />
           <Error type="404" default />
         </Router>
-      </Main>
+      </Layout>
     )
   }
 

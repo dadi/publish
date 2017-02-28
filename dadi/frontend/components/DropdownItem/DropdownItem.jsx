@@ -7,7 +7,11 @@ import styles from './DropdownItem.css'
 
 export default class DropdownItem extends Component {
   handleClick(event) {
-    event.stopPropagation()
+
+    // Don't stop propagation for anchor node
+    if (!this.props.href) {
+      event.stopPropagation()
+    }
 
     // If there is an onClick event registered, fire it
     if (this.props.onClick) {
@@ -25,8 +29,8 @@ export default class DropdownItem extends Component {
       return (
         <li>
           <a
-            class={styles.item}
-            href={this.props.href}
+            class={styles.item} 
+            href={this.props.href} 
             onClick={this.handleClick.bind(this)}
           >
             {this.props.children}
@@ -39,8 +43,8 @@ export default class DropdownItem extends Component {
     return (
       <li>
         <button 
-          class={styles.item}
-          type="button"
+          class={styles.item} 
+          type="button" 
           onClick={this.handleClick.bind(this)}
         >
           {this.props.children}
