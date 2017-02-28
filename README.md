@@ -1,11 +1,8 @@
-# publish
-Publish provides beautiful editorial interfaces for the management of content within DADI API
-
-<img src="https://dadi.tech/assets/products/dadi-publish-full.png" alt="DADI Publish" height="65"/>
+<img src="http://stage.dadi.tech/assets/products/dadi-publish-full.png" alt="DADI Publish" height="65"/>
 
 ## Overview
 
-Publish provides beautiful editorial interfaces for the management of content within DADI API
+Publish provides beautiful editorial interfaces for the management of content within DADI API.
 
 It is part of DADI, a suite of components covering the full development stack, built for performance and scale.
 
