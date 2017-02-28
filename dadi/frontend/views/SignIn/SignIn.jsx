@@ -46,39 +46,41 @@ class SignIn extends Component {
       <div class={styles.wrapper}>
         <div class={styles.overlay}>
           <div class={styles.container}>
-            <img class={styles.logo} src="/images/publish.png" />
+            <form method="POST" action="/profile" onSubmit={this.signIn.bind(this)}>
+              <img class={styles.logo} src="/images/publish.png" />
 
-            {this.state.error &&
-              <Banner>Email not found or password incorrect.</Banner>
-            }
-            
-            <div class={styles.inputs}>
-              <div class={styles.input}>
-                <Label label="Email">
-                  <TextInput
-                    placeholder="Your email address"
-                    onChange={this.handleInputChange.bind(this, 'email')}
-                    value={this.state.email}
-                  />
-                </Label>
+              {this.state.error &&
+                <Banner>Email not found or password incorrect.</Banner>
+              }
+
+              <div class={styles.inputs}>
+                <div class={styles.input}>
+                  <Label label="Email">
+                    <TextInput
+                      placeholder="Your email address"
+                      onChange={this.handleInputChange.bind(this, 'email')}
+                      value={this.state.email}
+                    />
+                  </Label>
+                </div>
+
+                <div class={styles.input}>
+                  <Label label="Password">
+                    <TextInput
+                      type="password"
+                      placeholder="Your password"
+                      onChange={this.handleInputChange.bind(this, 'password')}
+                      value={this.state.password}
+                    />
+                  </Label>
+                </div>
               </div>
 
-              <div class={styles.input}>
-                <Label label="Password">
-                  <TextInput
-                    type="password"
-                    placeholder="Your password"
-                    onChange={this.handleInputChange.bind(this, 'password')}
-                    value={this.state.password}
-                  />
-                </Label>
-              </div>
-            </div>
-
-            <Button
-              accent="system"
-              onClick={this.signIn.bind(this)}
-            >Sign In</Button>
+              <Button
+                accent="system"
+                type="submit"
+              >Sign In</Button>
+            </form>
           </div>
         </div>
       </div>
@@ -87,6 +89,7 @@ class SignIn extends Component {
 
   signIn(event) {
     const { actions, state } = this.props
+
     new Session().createSession({
       username: this.state.email,
       password: this.state.password
