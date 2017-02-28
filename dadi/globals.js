@@ -1,6 +1,7 @@
 'use strict'
 
 const path = require('path')
+const config = require('./config')
 
 const base = path.join(__dirname, '/../')
 const lib = path.join(__dirname, '/lib')
@@ -9,9 +10,7 @@ const frontend = path.join(__dirname, '/frontend')
 /**
  * Set Global parameters
  */
-const Globals = function () {}
-
-Globals.prototype.set = function () {
+const Globals = function () {
   global.paths = {
     config: path.resolve(`${__dirname}/config`),
     lib: {
@@ -32,4 +31,8 @@ Globals.prototype.set = function () {
 }
 
 // exports
+module.exports = function () {
+  return new Globals()
+}
+
 module.exports.Globals = new Globals()
