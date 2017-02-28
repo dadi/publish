@@ -1,5 +1,6 @@
 'use strict'
 
+const nodeExternals = require('webpack-node-externals')
 const fs = require('fs')
 const path = require('path')
 const postcss = require('postcss')
@@ -16,6 +17,8 @@ const PATH_CSS = 'main.css'
 const PATH_PUBLIC = 'public'
 
 module.exports = {
+  target: 'node',  // webpack should compile node compatible code
+  externals: [nodeExternals()], // in order to ignore all modules in node_modules folder
   plugins: ([
     new webpack.NoErrorsPlugin(),
     new webpack.optimize.DedupePlugin(),

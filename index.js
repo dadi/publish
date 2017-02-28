@@ -6,9 +6,9 @@ const Publish = function () {}
 
 Publish.prototype.start = function (options) {
   app.start(options).then(() => {
-    console.log("App started successfully")
+    console.log('App started successfully')
   }).catch((err) => {
-    console.log("App failed to start", err)
+    console.log('App failed to start', err)
   })
 }
 

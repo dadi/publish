@@ -1,7 +1,5 @@
 'use strict'
 
-const globals = require('./globals')
-const config = require(GLOBAL.paths.config)
 const Server = require(GLOBAL.paths.lib.server)
 
 /*

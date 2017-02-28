@@ -1,6 +1,5 @@
 'use strict'
 
-const fs = require('fs')
 const convict = require('convict')
 const path = require('path')
 
@@ -16,7 +15,7 @@ const Watch = function () {
 Watch.prototype.getConfig = function (config) {
   let conf = convict(config.root())
   let env = config.get('env')
-  
+
   try {
     conf.loadFile(path.resolve(`${this.root}/config/config.${env}.json`))
   } catch (e) {
@@ -29,7 +28,7 @@ Watch.prototype.getConfig = function (config) {
 
 /**
  * Start (WIP)
- * @return {this} return Watch 
+ * @return {this} return Watch
  */
 Watch.prototype.start = function () {
   // Start watching directories for compile

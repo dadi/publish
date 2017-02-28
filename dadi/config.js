@@ -14,11 +14,10 @@ const schema = require('./config-schema')
  */
 const getAdditionalSchema = (dir, match) => {
   fs.readdirSync(dir).forEach((folder) => {
-    let sub = path.resolve(dir,folder)
+    let sub = path.resolve(dir, folder)
 
     if (fs.lstatSync(sub).isDirectory()) {
       getAdditionalSchema(sub, match)
-
     } else if (fs.lstatSync(sub).isFile()) {
       let file = path.parse(sub)
 
@@ -30,12 +29,12 @@ const getAdditionalSchema = (dir, match) => {
 }
 
 const getFrontendProps = (schema, prev) => {
-  return Object.assign(prev || {}, 
+  return Object.assign(prev || {},
     ...Object.keys(schema).filter(key => {
       return Object.getOwnPropertyDescriptor(schema[key], 'availableInFrontend')
     }).map(key => {
       let val = getFrontendProps(schema[key], {})
-      return {[`${key}`] : Object.keys(val).length > 0 ? val : true}
+      return {[`${key}`]: Object.keys(val).length > 0 ? val : true}
     })
   )
 }
@@ -53,7 +52,7 @@ conf.set('availableInFrontend', availableInFrontend)
 const env = conf.get('env')
 
 try {
-  conf.loadFile(path.resolve(__dirname + '/../config/config.' + env + '.json'))
+  conf.loadFile(path.resolve(path.join(__dirname, '/../config/config.' + env + '.json')))
 } catch (e) {
   console.log('Failed to load config, dropping to defaults.')
 }

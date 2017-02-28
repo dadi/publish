@@ -3,14 +3,14 @@
 const path = require('path')
 const config = require('./config')
 
-const base = __dirname + '/../'
-const lib = __dirname + '/lib'
-const frontend = __dirname + '/frontend'
+const base = path.join(__dirname, '/../')
+const lib = path.join(__dirname, '/lib')
+const frontend = path.join(__dirname, '/frontend')
 
 /**
  * Set Global parameters
  */
-const Globals = function () {  
+const Globals = function () {
   global.paths = {
     config: path.resolve(`${__dirname}/config`),
     lib: {

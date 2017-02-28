@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "NODE_ENV=development node index.js",
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "standard && env NODE_ENV=development mocha-webpack --colors --webpack-config webpack.config.test.js \"test/**/*.js\"",
     "build": "NODE_ENV=development webpack --progress",
     "prebuild": "mkdirp build",
     "init": "validate-commit-msg",
@@ -43,7 +43,6 @@
     "connect-flash": "^0.1.1",
     "convict": "^1.5.0",
     "cookie-session": "^2.0.0-alpha.2",
-    "fs": "0.0.1-security",
     "history": "^4.5.1",
     "http": "0.0.0",
     "md5": "^2.2.1",
@@ -70,7 +69,7 @@
   },
   "devDependencies": {
     "autoprefixer": "^6.7.3",
-    "babel": "^6.5.2",
+    "babel": "^6.23.0",
     "babel-core": "^6.14.0",
     "babel-eslint": "^6.1.2",
     "babel-loader": "^6.2.5",
@@ -84,7 +83,9 @@
     "extract-text-webpack-plugin": "^1.0.1",
     "file-loader": "^0.9.0",
     "font-awesome": "^4.7.0",
-    "node-sass": "^3.13.0",
+    "fs": "0.0.1-security",
+    "mocha": "^3.2.0",
+    "mocha-webpack": "^1.0.0-beta.1",
     "nodemon": "^1.11.0",
     "normalize.css": "^5.0.0",
     "npm-run-all": "^3.1.2",
@@ -100,16 +101,32 @@
     "proptypes": "^0.14.3",
     "redux": "^3.6.0",
     "redux-thunk": "^2.1.0",
-    "sass-loader": "^4.0.2",
     "socketcluster-client": "^5.1.1",
+    "standard": "^8.6.0",
     "style-loader": "^0.13.1",
     "uglify-js": "github:mishoo/UglifyJS2#harmony",
     "url-loader": "^0.5.7",
     "validate-commit-msg": "^2.11.1",
-    "webpack": "^1.14.0"
+    "webpack": "^1.14.0",
+    "webpack-node-externals": "^1.5.4"
+  },
+  "standard": {
+    "globals": [ "paths" ],
+    "fix": true,
+    "ignore": [
+      "build",
+      ".wallet",
+      "config",
+      "docs",
+      "public",
+      "test",
+      "dadi/frontend",
+      "dadi/lib/helpers"
+    ]
   },
   "directories": {
-    "doc": "docs"
+    "doc": "docs",
+    "test": "test"
   },
   "snyk": true
 }
