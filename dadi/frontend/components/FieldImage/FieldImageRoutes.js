@@ -4,7 +4,6 @@ const config = require(paths.config)
 const AWS = require('aws-sdk')
 
 const ImageFieldRoute = function (app) {
-
   if (config.get('FieldImage.s3.enabled')) {
     this.initAWS()
     this.S3 = this.initS3()
@@ -19,7 +18,6 @@ const ImageFieldRoute = function (app) {
 
       if (req.isAuthenticated()) {
         if (req.params && req.params.fileName) {
-
           return this.getSignedResponse(req.params.fileName, req.headers).then(resp => {
             res.write(JSON.stringify(Object.assign(response, resp)))
             res.end()
@@ -67,7 +65,6 @@ ImageFieldRoute.prototype.initS3 = function () {
 }
 
 ImageFieldRoute.prototype.getS3SignedUrl = function (fileName, headers) {
-
   return new Promise((resolve, reject) => {
     let obj = {
       Bucket: config.get('FieldImage.s3.bucketName'), 
@@ -76,7 +73,7 @@ ImageFieldRoute.prototype.getS3SignedUrl = function (fileName, headers) {
       ACL: 'public-read',
       ContentType: headers.contenttype
     }
-    
+
     return this.S3
     .getSignedUrl('putObject', obj, (err, url) => {
       return resolve({err, url})

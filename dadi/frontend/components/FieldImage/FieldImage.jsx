@@ -7,7 +7,7 @@ import Label from 'components/Label/Label'
 
 export default class FieldImage extends Component { 
 
-  constructor (props) {
+  constructor(props) {
     super(props)
 
     this.state.fileName = ''
@@ -34,7 +34,7 @@ export default class FieldImage extends Component {
     )
   }
 
-  uploadToS3 () {
+  uploadToS3() {
 
     let body = new FormData()
     body.append('file', this.state.file)
@@ -58,7 +58,7 @@ export default class FieldImage extends Component {
     })
   }
 
-  handleFileChange (event) {
+  handleFileChange(event) {
     event.preventDefault()
 
     const { config } = this.props
@@ -69,7 +69,6 @@ export default class FieldImage extends Component {
     })
 
     if (config.FieldImage.s3.enabled) {
-
       fetch('/fields/image/s3/sign', {
         credentials: 'same-origin',
         method: 'POST',
@@ -79,8 +78,8 @@ export default class FieldImage extends Component {
           'ContentType': this.state.file.type
         },
         body: JSON.stringify({fileName: event.target.files[0].name})
-      })
-      .then(response => {
+        
+      }).then(response => {
 
         return response.json().then(json => {
           if (json.err) return json.err // Trigger error
