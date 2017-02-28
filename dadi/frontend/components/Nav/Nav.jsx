@@ -1,22 +1,62 @@
 import { h, Component } from 'preact'
 
-import CollectionNav from 'components/CollectionNav/CollectionNav'
+import Dropdown from 'components/Dropdown/Dropdown'
+import DropdownItem from 'components/DropdownItem/DropdownItem'
+import NavItem from 'components/NavItem/NavItem'
+
+import CollectionNav from 'containers/CollectionNav/CollectionNav'
+
+import { Style } from 'lib/util'
+import styles from './Nav.css'
 
 export default class Nav extends Component {
   render() {
-    const { apis } = this.props
+    const { groups, compact } = this.props
 
     return (
-      <nav class="Nav">
-        <h2>Navigation</h2>
-        <h3>General</h3>
+      <nav class={styles.nav}>
         <ul>
-          <li><a href="/">Home</a></li>
-          <li><a href="/profile">Profile</a></li>
+          {groups.map(item => {
+            let subItems = null
+
+            if (item.collections) {
+              let children = item.collections.map(collection => {
+                if (compact) {
+                  return (
+                    <NavItem
+                      href={`/${collection.slug}/documents`}
+                      text={collection.name}
+                      compact={true}
+                    />
+                  )
+                }
+
+                return (
+                  <DropdownItem href={`/${collection.slug}/documents`}>{collection.name}</DropdownItem>
+                )
+              })
+
+              subItems = compact ?
+                <ul class={styles.children}>{children}</ul>
+                :
+                <Dropdown>{children}</Dropdown>
+
+            }
+
+            // (!) This needs to be revisited once we implement routes for groups
+            const href = item.slug ? `/${item.slug}/documents` : '#'
+
+            return (
+              <NavItem
+                href={href}
+                text={item.name || item.title}
+                compact={compact}
+              >
+                {subItems}
+              </NavItem>
+            )
+          })}
         </ul>
-        {apis && apis.length && apis[0].hasCollections &&
-          <CollectionNav sort={ apis[0].menu || []} collections={ apis[0].collections } />
-        }
       </nav>
     )
   }

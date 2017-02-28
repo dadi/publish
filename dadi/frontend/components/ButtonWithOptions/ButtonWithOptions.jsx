@@ -52,13 +52,15 @@ export default class ButtonWithOptions extends Component {
         </Button>
 
         {this.state.optionsExpanded &&
-          <Dropdown>
-            {Object.keys(this.props.options).map(option => {
-              return (
-                <DropdownItem>{option}</DropdownItem>
-              )
-            })}          
-          </Dropdown>
+          <div class={styles['options-container']}>
+            <Dropdown>
+              {Object.keys(this.props.options).map(option => {
+                return (
+                  <DropdownItem>{option}</DropdownItem>
+                )
+              })}
+            </Dropdown>
+          </div>
         }
         
       </div>

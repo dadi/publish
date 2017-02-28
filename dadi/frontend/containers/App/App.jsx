@@ -7,7 +7,9 @@ import * as userActions from 'actions/userActions'
 import * as apiActions from 'actions/apiActions'
 import * as appActions from 'actions/appActions'
 
+import Header from 'components/Header/Header'
 import Main from 'components/Main/Main'
+import Nav from 'components/Nav/Nav'
 
 import Api from 'views/Api/Api'
 import Collection from 'views/Collection/Collection'
@@ -16,7 +18,6 @@ import DocumentList from 'views/DocumentList/DocumentList'
 import Error from 'views/Error/Error'
 import Home from 'views/Home/Home'
 import MediaLibrary from 'views/MediaLibrary/MediaLibrary'
-import Nav from 'components/Nav/Nav'
 import PasswordReset from 'views/PasswordReset/PasswordReset'
 import RoleEdit from 'views/RoleEdit/RoleEdit'
 import RoleList from 'views/RoleList/RoleList'
@@ -24,20 +25,23 @@ import UserProfile from 'views/UserProfile/UserProfile'
 import SignIn from 'views/SignIn/SignIn'
 import StyleGuide from 'views/StyleGuide/StyleGuide'
 
-import { connectHelper, isEmpty } from 'lib/util'
+import { connectHelper, debounce, isEmpty } from 'lib/util'
 import Socket from 'lib/socket'
 import Session from 'lib/session'
 import getAppConfig from 'lib/app-config'
 import APIBridge from 'lib/api-bridge-client'
 
 class App extends Component {
-
-  constructor(props) {
-    super(props)
+  componentWillMount() {
+    this.sessionStart()
   }
 
-  componentWillMount () {
-    this.sessionStart()
+  componentDidMount() {
+    const { actions } = this.props
+
+    window.addEventListener('resize', debounce(() => {
+      actions.setScreenWidth(window.innerWidth)
+    }, 500))
   }
 
   componentDidUpdate(previousProps) {
@@ -64,13 +68,13 @@ class App extends Component {
     }
   }
 
-  render () {
+  render() {
     const { state, history } = this.props
 
     return (
       <Main>
         {state.user && state.user.signedIn &&
-          <Nav apis={ state.api.apis } />
+          <Header compact={state.app.breakpoint === null} />
         }
         
         <Router history={history}>
@@ -92,7 +96,7 @@ class App extends Component {
     )
   }
 
-  getApiCollections () {
+  getApiCollections() {
     const { state, actions } = this.props
 
     actions.setApiFetchStatus('isFetching')
@@ -127,7 +131,7 @@ class App extends Component {
     })
   }
 
-  sessionStart () {
+  sessionStart() {
     const { actions, state } = this.props
 
     new Session().getSession().then((session) => {
@@ -144,6 +148,7 @@ class App extends Component {
   initialiseSocket() {
     const { actions, state } = this.props
     const pathname = state.routing.locationBeforeTransitions.pathname
+
     let session = new Session()
     let socket = new Socket(state.app.config.server.port)
       .on('userListChange', data => {

@@ -2,6 +2,7 @@
 // App
 //
 export const SET_APP_CONFIG = 'SET_APP_CONFIG'
+export const SET_SCREEN_WIDTH = 'SET_SCREEN_WIDTH'
 
 //
 // User
