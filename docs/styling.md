@@ -8,7 +8,7 @@
   - [2.3. Media queries](#23-media-queries)
   - [2.4. Folder structure](#24-folder-structure)
 - [3. Using styles](#3-using-styles)
-  - [3.1. The `Style` class](#31-the-style-class)
+  - [3.1. The `Style` class](#31-the-style-class)
 - [4. Other notes](#4-other-notes)
 
 ---
