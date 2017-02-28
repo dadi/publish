@@ -2,17 +2,21 @@ import { h, Component } from 'preact'
 import { connect } from 'preact-redux'
 import { bindActionCreators } from 'redux'
 /*
-* Libs
+ * Libs
  */
 import { connectHelper } from 'lib/util'
 import APIBridge from 'lib/api-bridge-client'
 /*
-* Components
+ * Components
  */
 import Main from 'components/Main/Main'
 import Nav from 'components/Nav/Nav'
 /*
-* Actions
+ * Field components 
+ */
+import FieldImage from 'components/FieldImage/FieldImage'
+/*
+ * Actions
  */
 import * as apiActions from 'actions/apiActions'
 import * as documentActions from 'actions/documentActions'
@@ -44,6 +48,7 @@ class DocumentEdit extends Component {
             </tr>
           </table>
         )}
+        <FieldImage config={ state.app.config }/>
       </div>
     )
   }
