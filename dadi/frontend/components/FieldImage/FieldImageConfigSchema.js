@@ -1,32 +1,37 @@
 module.exports = {
-  Image: {
+  FieldImage: {
+    availableInFrontend: true,
     doc: "Image field",
     accept: {
+      availableInFrontend: true,
       doc: "File types",
       type: Array,
       default: ["image/*"]
     },
-    enabled: {
-      type: Boolean,
-      default: true
-    },
     local: {
-      type: Boolean,
-      default: true
+      doc: "Store Image locally",
+      availableInFrontend: true,
+      enabled: {
+        availableInFrontend: true,
+        type: Boolean,
+        default: true
+      },
     },
     s3: {
       doc: "Store Image in S3",
+      availableInFrontend: true,
       enabled: {
+        availableInFrontend: true,
         type: Boolean,
         default: false
       },
-      accessKey: {
-        doc: "AWS Access Key",
+      accessKeyId: {
+        doc: "AWS Access Key ID",
         format: String,
         default: "",
         env: "AWS_ACCESS_KEY"
       },
-      secretKey: {
+      secretAccessKey: {
         doc: "AWS Secret Key",
         format: String,
         default: "",

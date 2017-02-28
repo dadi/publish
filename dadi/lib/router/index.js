@@ -12,7 +12,6 @@ const flash = require('connect-flash')
 const passport = require('passport-restify')
 const LocalStrategy = require('passport-local')
 
-
 /**
  * @constructor
  * App Router
@@ -32,6 +31,7 @@ Router.prototype.addRoutes = function (app) {
   this.use()
   this.setHeaders() // Only run when no redirects
   this.getRoutes()
+  this.componentRoutes(path.resolve(`${paths.frontend.components}`), /Routes$/g)
   this.webRoutes()
 }
 
@@ -59,12 +59,36 @@ Router.prototype.webRoutes = function () {
 }
 
 /**
+ * Add component routes
+ * @param {restify} app Restify web server instance
+ */
+Router.prototype.componentRoutes = function (dir, match) {
+  // Fetch aditional component schema
+  fs.readdirSync(dir).forEach((folder) => {
+    let sub = path.resolve(dir,folder)
+
+    if (fs.lstatSync(sub).isDirectory()) {
+      this.componentRoutes(sub, match)
+
+    } else if (fs.lstatSync(sub).isFile()) {
+      let file = path.parse(sub)
+
+      if (file.ext === '.js' && file.name.match(match)) {
+        let controller = require(sub)
+        
+        controller(this.app)
+      }
+    }
+  })
+}
+
+/**
  * Set headers
  * @param {restify} app Restify web server instance
  */
 Router.prototype.setHeaders = function () {
   this.app.use((req, res, next) => {
-    //res.header('ETag', 'publish-etag')
+    res.header('ETag', 'publish-etag')
     res.header('Last-Modified', new Date())
     return next()
   })

@@ -29,10 +29,25 @@ const getAdditionalSchema = (dir, match) => {
   })
 }
 
+const getFrontendProps = (schema, prev) => {
+  return Object.assign(prev || {}, 
+    ...Object.keys(schema).filter(key => {
+      return Object.getOwnPropertyDescriptor(schema[key], 'availableInFrontend')
+    }).map(key => {
+      let val = getFrontendProps(schema[key], {})
+      return {[`${key}`] : Object.keys(val).length > 0 ? val : true}
+    })
+  )
+}
+
 // Fetch aditional component schema
 getAdditionalSchema(path.resolve(__dirname, './frontend/components'), /ConfigSchema$/g)
 
+let availableInFrontend = getFrontendProps(schema)
+
 const conf = convict(schema)
+
+conf.set('availableInFrontend', availableInFrontend)
 
 // Load environment dependent configuration
 const env = conf.get('env')

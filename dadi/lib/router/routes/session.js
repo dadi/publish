@@ -30,27 +30,31 @@ module.exports = function (app) {
 
   passport.serializeUser((user, done) => {
     if (!user) return done({err: "User not found"}, null)
+
     return done(null, user)
   })
 
   passport.deserializeUser((user, done) => {
     if (!user) return done({err: "No session"}, null)
+
     return done(null, user)
   })
 
   app.get({
-      name: 'session', // This allows us to reuse the auth request
-      path: '/session'
-    }, 
-    (req, res, next) => {
+    name: 'session', // This allows us to reuse the auth request
+    path: '/session'
+  }, 
+  (req, res, next) => {
+    res.header('Content-Type', 'application/json')
     if (req.isAuthenticated()) {
-        res.write(JSON.stringify(req.session.passport.user))
-        res.end()
-        return next()
-      // })
+      res.write(JSON.stringify(req.session.passport.user))
+      res.end()
+
+      return next()
     } else {
       res.write(JSON.stringify({success: false}))
       res.end()
+
       return next()
     }
   })
@@ -59,10 +63,12 @@ module.exports = function (app) {
   app.post('/session', (req, res, next) => {
     passport.authenticate('local', (err, user, info) => {
       if (err) { return next(err) }
+
       req.login(user, {}, (err) => {
         if (err) console.log("Err", err)
         res.write(JSON.stringify(user))
         res.end()
+
         return next()
       })
     })(req, res, next)
