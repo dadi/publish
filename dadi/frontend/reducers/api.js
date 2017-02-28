@@ -7,7 +7,7 @@ const initialState = {
   status: 'canFetch'
 }
 
-export default function api(state = initialState, action = {}) {
+export default function api (state = initialState, action = {}) {
   switch (action.type) {
     // Action: Set data for a specific API
     case types.SET_API:

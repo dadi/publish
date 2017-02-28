@@ -7,7 +7,7 @@ const initialState = {
   users: []
 }
 
-export default function user(state = initialState, action = {}) {
+export default function user (state = initialState, action = {}) {
   switch (action.type) {
     case types.SIGN_IN:
       return {

@@ -11,7 +11,7 @@ const ImageFieldRoute = function (app) {
     app.post({
       name: 'images3sign', // This allows us to reuse the auth request
       path: '/fields/image/s3/sign'
-    }, 
+    },
     (req, res, next) => {
       res.header('Content-Type', 'application/json')
       let response = {route: req.route.name}
@@ -25,11 +25,11 @@ const ImageFieldRoute = function (app) {
           })
         } else {
           // No fileName
-          res.write(JSON.stringify( Object.assign(response, {err: 'Missing fileName'}) ))
+          res.write(JSON.stringify(Object.assign(response, {err: 'Missing fileName'})))
         }
       } else {
         // No session
-        res.write(JSON.stringify( Object.assign(response, {authorised: false}) ))
+        res.write(JSON.stringify(Object.assign(response, {authorised: false})))
       }
 
       res.end()
@@ -51,7 +51,7 @@ ImageFieldRoute.prototype.getSignedResponse = function (fileName, headers) {
 // S3
 ImageFieldRoute.prototype.initAWS = function () {
   AWS.config.update({
-    accessKeyId: config.get('FieldImage.s3.accessKeyId'), 
+    accessKeyId: config.get('FieldImage.s3.accessKeyId'),
     secretAccessKey: config.get('FieldImage.s3.secretAccessKey')
   })
 
@@ -67,7 +67,7 @@ ImageFieldRoute.prototype.initS3 = function () {
 ImageFieldRoute.prototype.getS3SignedUrl = function (fileName, headers) {
   return new Promise((resolve, reject) => {
     let obj = {
-      Bucket: config.get('FieldImage.s3.bucketName'), 
+      Bucket: config.get('FieldImage.s3.bucketName'),
       Key: fileName,
       Expires: 600,
       ACL: 'public-read',

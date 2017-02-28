@@ -4,7 +4,7 @@ import { bindActionCreators } from 'redux'
 import { connectHelper } from 'lib/util'
 
 class RoleEdit extends Component {
-  render() {
+  render () {
     const { method, role } = this.props
 
     return (

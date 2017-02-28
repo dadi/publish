@@ -17,7 +17,7 @@ import styles from './SignIn.css'
 
 class SignIn extends Component {
 
-  constructor(props) {
+  constructor (props) {
     super(props)
 
     this.state.email = ''
@@ -25,12 +25,12 @@ class SignIn extends Component {
     this.state.error = false
   }
 
-  shouldComponentUpdate(nextProps, nextState) {
+  shouldComponentUpdate (nextProps, nextState) {
     // Do nothing if session check inconclusive
     return !isEmpty(nextProps.state.signedIn)
   }
 
-  componentWillUpdate() {
+  componentWillUpdate () {
     const { state, actions } = this.props
 
     if (state.signedIn) {
@@ -39,24 +39,24 @@ class SignIn extends Component {
     }
   }
 
-  render() {
+  render () {
     const { state, actions } = this.props
 
     return (
       <div class={styles.wrapper}>
         <div class={styles.overlay}>
           <div class={styles.container}>
-            <img class={styles.logo} src="/images/publish.png" />
+            <img class={styles.logo} src='/images/publish.png' />
 
             {this.state.error &&
               <Banner>Email not found or password incorrect.</Banner>
             }
-            
+
             <div class={styles.inputs}>
               <div class={styles.input}>
-                <Label label="Email">
+                <Label label='Email'>
                   <TextInput
-                    placeholder="Your email address"
+                    placeholder='Your email address'
                     onChange={this.handleInputChange.bind(this, 'email')}
                     value={this.state.email}
                   />
@@ -64,10 +64,10 @@ class SignIn extends Component {
               </div>
 
               <div class={styles.input}>
-                <Label label="Password">
+                <Label label='Password'>
                   <TextInput
-                    type="password"
-                    placeholder="Your password"
+                    type='password'
+                    placeholder='Your password'
                     onChange={this.handleInputChange.bind(this, 'password')}
                     value={this.state.password}
                   />
@@ -76,7 +76,7 @@ class SignIn extends Component {
             </div>
 
             <Button
-              accent="system"
+              accent='system'
               onClick={this.signIn.bind(this)}
             >Sign In</Button>
           </div>
@@ -85,7 +85,7 @@ class SignIn extends Component {
     )
   }
 
-  signIn(event) {
+  signIn (event) {
     const { actions, state } = this.props
     new Session().createSession({
       username: this.state.email,
@@ -106,7 +106,7 @@ class SignIn extends Component {
     event.preventDefault()
   }
 
-  handleInputChange(name, event) {
+  handleInputChange (name, event) {
     this.setState({
       [name]: event.target.value
     })

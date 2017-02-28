@@ -73,9 +73,9 @@ class Keys {
     // numbers
     for (var i = 48; i < 58; i++) codes[i - 48] = i
     // Function keys
-    for (i = 1; i < 13; i++) codes['f'+i] = i + 111
+    for (i = 1; i < 13; i++) codes['f' + i] = i + 111
     // Numpad keys
-    for (i = 0; i < 10; i++) codes['numpad '+i] = i + 96
+    for (i = 0; i < 10; i++) codes['numpad ' + i] = i + 96
 
     return codes
   }
@@ -98,10 +98,9 @@ class Pattern {
 
   next (keyCode) {
     if (this.match(keyCode, this.keys[this.active])) {
-      if (this.active < this.keys.length -1) {
+      if (this.active < this.keys.length - 1) {
         this.active++
         return true
-
       } else {
         this.callback({
           pattern: this.pattern,
@@ -110,7 +109,6 @@ class Pattern {
 
         this.reset()
         return true
-
       }
     } else {
       this.reset()

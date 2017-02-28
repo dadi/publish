@@ -12,25 +12,25 @@ import APIBridge from 'lib/api-bridge-client'
 import DocumentFilters from 'components/DocumentFilters/DocumentFilters'
 
 class DocumentList extends Component {
-  
-  constructor(props) {
+
+  constructor (props) {
     super(props)
     this.keyboard = new Keyboard()
   }
 
-  render() {
+  render () {
     const { filter, state } = this.props
     return (
       <div>
         {!state.document.list ? (
           <h3>Loader based on: {state.document.listIsLoading}</h3>
         ) : (
-          <section class="Documents">
-            <DocumentFilters filter={filter} collection={state.document.collection}/>
-            <table border="1">
+          <section class='Documents'>
+            <DocumentFilters filter={filter} collection={state.document.collection} />
+            <table border='1'>
               {state.document.list.results.map(document => (
                 <tr>
-                  <td><a href={ `/${this.props.collection}/document/edit/${document._id}` }>Edit</a></td>
+                  <td><a href={`/${this.props.collection}/document/edit/${document._id}`}>Edit</a></td>
                   {Object.keys(document).map(field => (
                     <td>{document[field]}</td>
                   ))}
@@ -38,7 +38,7 @@ class DocumentList extends Component {
               ))}
             </table>
             {Array(state.document.list.metadata.totalPages).fill().map((_, page) => (
-              <a href={ `/${this.props.collection}/documents/${page+1}` }>{page+1}</a>
+              <a href={`/${this.props.collection}/documents/${page + 1}`}>{page + 1}</a>
             ))}
           </section>
         )}
@@ -46,7 +46,7 @@ class DocumentList extends Component {
     )
   }
 
-  componentDidUpdate(previousProps) {
+  componentDidUpdate (previousProps) {
     const { state, actions } = this.props
     const previousState = previousProps.state
     const { list, listIsLoading } = state.document
@@ -65,23 +65,23 @@ class DocumentList extends Component {
     this.getDocumentList()
   }
 
-  componentDidMount() {
+  componentDidMount () {
     this.keyboard.on('space+a').do(cmd => {
       console.log(cmd.pattern)
       // Trigger something
     })
   }
 
-  componentWillUnmount() {
+  componentWillUnmount () {
     const { actions } = this.props
     // Clear keyboard
     this.keyboard.off()
     actions.setDocumentList(false, null, null)
   }
 
-  getDocumentList(nextPage, nextCollection) {
+  getDocumentList (nextPage, nextCollection) {
     const { state, actions, collection, page } = this.props
-    
+
     actions.setDocumentList(true, null, null)
 
     let query = APIBridge(state.api.apis[0])
@@ -102,9 +102,8 @@ class DocumentList extends Component {
       })
       // Update state with results
       actions.setDocumentList(false, docs, currentCollection)
-
     }).catch((err) => {
-      console.error("getDocumentList", err)
+      console.error('getDocumentList', err)
       actions.setDocumentList(false, null, null)
       // TODO: Graceful deal with failure
     })

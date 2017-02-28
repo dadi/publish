@@ -4,7 +4,7 @@ import { bindActionCreators } from 'redux'
 import { connectHelper } from 'lib/util'
 
 class PasswordReset extends Component {
-  render() {
+  render () {
     return (
       <h1>Password Reset</h1>
     )

@@ -19,7 +19,7 @@ const apiBridgeFetch = function (requestObject) {
 
 const buildAPIBridgeClient = function (api, preventFetch) {
   if (!api) {
-    throw "buildAPIBridgeClient: Missing API"
+    throw 'buildAPIBridgeClient: Missing API'
     return
   }
   const { _publishId, host, port, version, database } = api

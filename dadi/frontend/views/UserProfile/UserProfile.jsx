@@ -6,7 +6,7 @@ import { connectHelper } from 'lib/util'
 import * as apiActions from 'actions/apiActions'
 
 class UserProfile extends Component {
-  render() {
+  render () {
     const { state } = this.props
 
     return (

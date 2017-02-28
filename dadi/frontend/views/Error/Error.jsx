@@ -4,7 +4,7 @@ import { bindActionCreators } from 'redux'
 import { connectHelper } from 'lib/util'
 
 class Error extends Component {
-  render() {
+  render () {
     const { type } = this.props
 
     return (

@@ -16,14 +16,14 @@ import NavItem from 'components/NavItem/NavItem'
 import { connectHelper } from 'lib/util'
 
 class App extends Component {
-  groupCollections(sort, collections) {
+  groupCollections (sort, collections) {
     if (!collections.length) return []
 
     let grouping = sort.map(menu => {
       if (typeof menu === 'string') {
         return collections.find(collection => collection.slug === menu)
       } else {
-        return Object.assign({}, menu, 
+        return Object.assign({}, menu,
           {collections: menu.collections.map(slug => {
             return collections.find(collection => collection.slug === slug)
           })}
@@ -40,7 +40,7 @@ class App extends Component {
     }
   }
 
-  componentWillUpdate() {
+  componentWillUpdate () {
     const {state, actions} = this.props
     const apis = state.api.apis
 
@@ -49,7 +49,7 @@ class App extends Component {
     }
   }
 
-  render() {
+  render () {
     const { state, actions } = this.props
 
     if (!this.groups) {

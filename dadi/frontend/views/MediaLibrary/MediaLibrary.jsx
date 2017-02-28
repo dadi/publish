@@ -4,7 +4,7 @@ import { bindActionCreators } from 'redux'
 import { connectHelper } from 'lib/util'
 
 class MediaLibrary extends Component {
-  render() {
+  render () {
     return (
       <h1>Media Library</h1>
     )

@@ -11,13 +11,13 @@ import DropdownItem from 'components/DropdownItem/DropdownItem'
 import IconArrow from 'components/IconArrow/IconArrow'
 
 export default class ButtonWithOptions extends Component {
-  constructor(props) {
+  constructor (props) {
     super(props)
 
     this.optionsExpanded = false
   }
 
-  componentDidMount() {
+  componentDidMount () {
     document.body.addEventListener('click', event => {
       this.setState({
         optionsExpanded: false
@@ -25,7 +25,7 @@ export default class ButtonWithOptions extends Component {
     })
   }
 
-  render() {
+  render () {
     let launcherClass = new Style(styles)
 
     launcherClass.add('button')
@@ -37,7 +37,7 @@ export default class ButtonWithOptions extends Component {
       <div class={styles.container}>
         <Button
           accent={this.props.accent}
-          inGroup="left"
+          inGroup='left'
           onClick={this.props.onClick}
         >
           {this.props.children}
@@ -45,7 +45,7 @@ export default class ButtonWithOptions extends Component {
 
         <Button
           accent={`${this.props.accent}-shade-1`}
-          inGroup="right"
+          inGroup='right'
           onClick={this.toggleOptions.bind(this)}
         >
           <IconArrow direction={this.state.optionsExpanded ? 'down' : null} />
@@ -62,12 +62,12 @@ export default class ButtonWithOptions extends Component {
             </Dropdown>
           </div>
         }
-        
+
       </div>
     )
   }
 
-  toggleOptions(event) {
+  toggleOptions (event) {
     event.stopPropagation()
 
     this.setState({

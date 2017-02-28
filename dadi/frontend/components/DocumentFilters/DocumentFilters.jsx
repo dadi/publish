@@ -7,15 +7,15 @@ import { isValidJSON } from 'lib/util'
 import DocumentFilter from 'components/DocumentFilter/DocumentFilter'
 
 export default class DocumentFilters extends Component {
-  render() {
+  render () {
     const { filter, collection } = this.props
     let filters = isValidJSON(filter) ? JSON.parse(this.props.filter) : null
-    
+
     return (
       <div>
         {filters && Object.keys(filters).length && collection && (
           <div>
-            {Object.keys(filters).map(key => ( 
+            {Object.keys(filters).map(key => (
               <DocumentFilter field={key} value={filters[key]} fields={collection.fields} />
             ))}
           </div>
@@ -27,7 +27,7 @@ export default class DocumentFilters extends Component {
     )
   }
 
-  addFilter() {
+  addFilter () {
     console.log('new filter')
   }
 }

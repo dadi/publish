@@ -4,7 +4,7 @@ import { bindActionCreators } from 'redux'
 import { connectHelper } from 'lib/util'
 
 class RoleList extends Component {
-  render() {
+  render () {
     return (
       <h1>Role List</h1>
     )

@@ -12,7 +12,7 @@ import APIBridge from 'lib/api-bridge-client'
 import Main from 'components/Main/Main'
 import Nav from 'components/Nav/Nav'
 /*
- * Field components 
+ * Field components
  */
 import FieldImage from 'components/FieldImage/FieldImage'
 /*
@@ -22,11 +22,11 @@ import * as apiActions from 'actions/apiActions'
 import * as documentActions from 'actions/documentActions'
 
 class DocumentEdit extends Component {
-  constructor(props) {
+  constructor (props) {
     super(props)
   }
-  
-  render() {
+
+  render () {
     const { state, method, document } = this.props
 
     return (
@@ -35,7 +35,7 @@ class DocumentEdit extends Component {
         {!state.document.data ? (
           <h3>Status: {state.document.docIsLoading}</h3>
         ) : (
-          <table border="1">
+          <table border='1'>
             <tr>
               {Object.keys(state.document.data).map(field => (
                 <td>{field}</td>
@@ -48,12 +48,12 @@ class DocumentEdit extends Component {
             </tr>
           </table>
         )}
-        <FieldImage config={ state.app.config }/>
+        <FieldImage config={state.app.config} />
       </div>
     )
   }
 
-  componentDidUpdate(previousProps) {
+  componentDidUpdate (previousProps) {
     const { state, actions } = this.props
     const previousState = previousProps.state
     const { data, docIsLoading } = state.document
@@ -72,15 +72,15 @@ class DocumentEdit extends Component {
     this.getDocument()
   }
 
-  componentWillUnmount() {
+  componentWillUnmount () {
     const { actions } = this.props
     // Clear our documents and reset loading state
     actions.setDocument(false, null)
   }
 
-  getDocument() {
+  getDocument () {
     const { state, actions, collection, document_id } = this.props
-    
+
     return APIBridge(state.api.apis[0])
       .in(collection)
       .whereFieldIsEqualTo('_id', document_id)

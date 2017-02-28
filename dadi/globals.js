@@ -10,7 +10,7 @@ const frontend = __dirname + '/frontend'
 /**
  * Set Global parameters
  */
-const Globals = function () {  
+const Globals = function () {
   global.paths = {
     config: path.resolve(`${__dirname}/config`),
     lib: {

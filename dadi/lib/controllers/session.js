@@ -12,7 +12,7 @@ Session.prototype.authorise = function (username, password, next) {
   .in(authAPI.collection)
   .whereFieldIsEqualTo('email', username)
   .whereFieldIsEqualTo('password', password)
-  .find({extractResults: true}).then( user => {
+  .find({extractResults: true}).then(user => {
     if (user.length > 0) {
       return next(null, user[0])
     } else {
@@ -22,7 +22,7 @@ Session.prototype.authorise = function (username, password, next) {
   return next(null)
 }
 
-module.exports = function() {
+module.exports = function () {
   return new Session()
 }
 
