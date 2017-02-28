@@ -1,6 +1,6 @@
 'use strict'
 
-const globals = require('./globals')
+require('./globals').set()
 
 const Server = require(paths.lib.server)
 const Watch = require(paths.lib.watch)

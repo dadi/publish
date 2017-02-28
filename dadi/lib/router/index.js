@@ -1,16 +1,9 @@
 'use strict'
 
 const restify = require('restify')
-const restifyErrors = require('restify-errors')
 const serveStatic = require('serve-static-restify')
 const path = require('path')
 const fs = require('fs')
-
-const cookieParser = require('restify-cookies')
-const session = require('cookie-session')
-const flash = require('connect-flash')
-const passport = require('passport-restify')
-const LocalStrategy = require('passport-local')
 
 /**
  * @constructor
@@ -36,7 +29,6 @@ Router.prototype.addRoutes = function (app) {
 }
 
 Router.prototype.getRoutes = function () {
-
   fs.readdirSync(path.resolve(this.routesDir)).forEach((file) => {
     /* require module with its name (from filename), passing app */
     let controller = require(path.join(this.routesDir, file))
@@ -52,7 +44,7 @@ Router.prototype.getRoutes = function () {
  */
 Router.prototype.webRoutes = function () {
   this.app.pre(serveStatic(path.resolve(__dirname, '../../../public'), {'index': ['index.html'], 'dotfiles': 'ignore'}))
-  this.app.get(/.*/,restify.serveStatic({
+  this.app.get(/.*/, restify.serveStatic({
     directory: path.resolve(__dirname, '../../../public'),
     file: 'index.html'
   }))
@@ -65,17 +57,16 @@ Router.prototype.webRoutes = function () {
 Router.prototype.componentRoutes = function (dir, match) {
   // Fetch aditional component schema
   fs.readdirSync(dir).forEach((folder) => {
-    let sub = path.resolve(dir,folder)
+    let sub = path.resolve(dir, folder)
 
     if (fs.lstatSync(sub).isDirectory()) {
       this.componentRoutes(sub, match)
-
     } else if (fs.lstatSync(sub).isFile()) {
       let file = path.parse(sub)
 
       if (file.ext === '.js' && file.name.match(match)) {
         let controller = require(sub)
-        
+
         controller(this.app)
       }
     }
@@ -102,7 +93,7 @@ Router.prototype.use = function () {
   this.app.use(restify.gzipResponse())
   this.app.use(restify.requestLogger())
   this.app.use(restify.queryParser())
-  this.app.use(restify.bodyParser({mapParams: true})) // Changing to false throws issues with auth. Needs addressing 
+  this.app.use(restify.bodyParser({mapParams: true})) // Changing to false throws issues with auth. Needs addressing
 }
 
 /**

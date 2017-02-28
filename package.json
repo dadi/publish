@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "NODE_ENV=development node index.js",
-    "test": "standard && NODE_ENV=development mocha-webpack --colors --webpack-config webpack.config.test.js \"test/**/*.js\"",
+    "test": "standard && env NODE_ENV=development mocha-webpack --colors --webpack-config webpack.config.test.js \"test/**/*.js\"",
     "build": "NODE_ENV=development webpack --progress",
     "prebuild": "mkdirp build",
     "init": "validate-commit-msg",
@@ -111,13 +111,17 @@
     "webpack-node-externals": "^1.5.4"
   },
   "standard": {
+    "globals": [ "paths" ],
+    "fix": true,
     "ignore": [
       "build",
       ".wallet",
       "config",
       "docs",
       "public",
-      "test"
+      "test",
+      "dadi/frontend",
+      "dadi/lib/helpers"
     ]
   },
   "directories": {

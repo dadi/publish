@@ -2,9 +2,7 @@
 
 const Auth = function () {}
 
-
 Auth.prototype.attach = function (scServer, socket) {
-
   let currentToken = socket.getAuthToken()
   if (currentToken) {
     socket.setAuthToken(currentToken, {})
@@ -15,7 +13,7 @@ Auth.prototype.attach = function (scServer, socket) {
       respond(null, 'Invalid user')
     } else {
       let token = {
-        username: data.user.identifier, //username
+        username: data.user.identifier, // username
         vendor: data.user.vendor
       }
       socket.setAuthToken(token)

@@ -13,7 +13,6 @@ const Socket = function (app) {
   return this
 }
 
-
 /**
  * Add middleware so socket server instance
  * - PUBLISH_IN
@@ -44,21 +43,21 @@ Socket.prototype.onConnection = function (socket) {
  */
 Socket.prototype.onPublish = function (req, next) {
   if (req.data && req.data.type) {
-    switch(req.data.type) {
+    switch (req.data.type) {
       case 'getUsersInRoom':
-      let users = new Room().getUsers(req.channel, req.socket.server.clients)
+        let users = new Room().getUsers(req.channel, req.socket.server.clients)
 
           // Send to single user (WIP)
           // req.socket.exchange.publish(req.data.data.user, {type: 'userListChange', body: {users: users}})
 
-          req.socket.exchange.publish(req.channel, {type: 'userListChange', body: {users: users}})
-      break
+        req.socket.exchange.publish(req.channel, {type: 'userListChange', body: {users: users}})
+        break
     }
   }
   return next()
 }
 
-module.exports  = function (app) {
+module.exports = function (app) {
   return new Socket(app)
 }
 
