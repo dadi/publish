@@ -6,7 +6,7 @@ import NavItem from 'components/NavItem/NavItem'
 
 import CollectionNav from 'containers/CollectionNav/CollectionNav'
 
-import { Style } from 'lib/util'
+import Style from 'lib/Style'
 import styles from './Nav.css'
 
 export default class Nav extends Component {

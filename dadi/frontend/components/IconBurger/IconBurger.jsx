@@ -1,6 +1,6 @@
 import { h, Component } from 'preact'
 
-import { Style } from 'lib/util'
+import Style from 'lib/Style'
 import styles from './IconBurger.css'
 
 export default class IconBurger extends Component {

@@ -2,7 +2,7 @@
 
 import { h, Component } from 'preact'
 
-import { Style } from 'lib/util'
+import Style from 'lib/Style'
 import styles from './Banner.css'
 
 export default class Banner extends Component {
