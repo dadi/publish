@@ -8,6 +8,7 @@
   - [2.3. Media queries](#23-media-queries)
   - [2.4. Folder structure](#24-folder-structure)
 - [3. Using styles](#3-using-styles)
+  - [3.1. The `Style` class](#31-the-style-class)
 - [4. Other notes](#4-other-notes)
 
 ---
@@ -188,10 +189,69 @@ import styles from './Button'
 
 class Button extends Component {
   render () {
-    <button className={styles.title}>Click me</button>
+    return (
+      <button class={styles.title}>Click me</button>
+    )
   }
 }
 ```
+
+### 3.1. The `Style` class
+
+Sometimes, the component needs to decide which classes to add to a certain node based on a number of factors (such as props or state). In these situations, manually constructing the string that contains the list of classes can get messy.
+
+**Don't do this:**
+
+```js
+import styles from './Button'
+
+class Button extends Component {
+  render () {
+    let classes = styles.title + ' ' + styles['title-emphasis']
+    
+    if (this.props.hasFoo) {
+      classes += ' ' + styles.foo
+    }
+    
+    if (this.state.isBar) {
+      classes += ' ' + styles.bar
+    }
+    
+    return (
+      <button class={classes}>Click me</button>
+    )
+  }
+}
+```
+
+For this reason, we created a tiny helper class called `Style`, which you can find on `dadi/frontend/lib`. You tell which classes to use for each element, with a short and friendly syntax, and it takes care of constructing the string containing the list of classes for the element to consume. The above example would be re-written as:
+
+```js
+import styles from './Button'
+import Style from 'lib/Style'
+
+class Button extends Component {
+  render () {
+    // You construct a new instance of `Style` by passing it the style sheet
+    // and, optionally, any classes you want to initialise it with.
+    let buttonStyle = new Style(styles, 'title', 'title-emphasis')
+
+    // You add a class like this
+    if (this.props.hasFoo) {
+      buttonStyle.add('foo')
+    }
+    
+    // ... or add it only if a condition is met
+    buttonStyle.addIf('bar', this.state.isBar)
+    
+    // To attach the classes to the element, simply call the `.getClasses()` method
+    return (
+      <button class={buttonStyle.getClasses()}>Click me</button>
+    )
+  }
+}
+```
+
 
 ## 4. Other notes
 
