@@ -10,7 +10,7 @@ import { Style } from 'lib/util'
 import styles from './Nav.css'
 
 export default class Nav extends Component {
-  render () {
+  render() {
     const { groups, compact } = this.props
 
     return (
@@ -26,7 +26,7 @@ export default class Nav extends Component {
                     <NavItem
                       href={`/${collection.slug}/documents`}
                       text={collection.name}
-                      compact
+                      compact={true}
                     />
                   )
                 }
@@ -40,6 +40,7 @@ export default class Nav extends Component {
                 <ul class={styles.children}>{children}</ul>
                 :
                 <Dropdown>{children}</Dropdown>
+
             }
 
             // (!) This needs to be revisited once we implement routes for groups

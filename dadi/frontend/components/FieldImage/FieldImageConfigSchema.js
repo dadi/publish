@@ -1,24 +1,24 @@
 module.exports = {
   FieldImage: {
     availableInFrontend: true,
-    doc: 'Image field',
+    doc: "Image field",
     accept: {
       availableInFrontend: true,
-      doc: 'File types',
+      doc: "File types",
       type: Array,
-      default: ['image/*']
+      default: ["image/*"]
     },
     local: {
-      doc: 'Store Image locally',
+      doc: "Store Image locally",
       availableInFrontend: true,
       enabled: {
         availableInFrontend: true,
         type: Boolean,
         default: true
-      }
+      },
     },
     s3: {
-      doc: 'Store Image in S3',
+      doc: "Store Image in S3",
       availableInFrontend: true,
       enabled: {
         availableInFrontend: true,
@@ -26,28 +26,28 @@ module.exports = {
         default: false
       },
       accessKeyId: {
-        doc: 'AWS Access Key ID',
+        doc: "AWS Access Key ID",
         format: String,
-        default: '',
-        env: 'AWS_ACCESS_KEY'
+        default: "",
+        env: "AWS_ACCESS_KEY"
       },
       secretAccessKey: {
-        doc: 'AWS Secret Key',
+        doc: "AWS Secret Key",
         format: String,
-        default: '',
-        env: 'AWS_SECRET_KEY'
+        default: "",
+        env: "AWS_SECRET_KEY"
       },
       bucketName: {
-        doc: 'AWS Bucket Name',
+        doc: "AWS Bucket Name",
         format: String,
-        default: '',
-        env: 'AWS_S3_BUCKET'
+        default: "",
+        env: "AWS_S3_BUCKET"
       },
       region: {
-        doc: 'AWS Region',
+        doc: "AWS Region",
         format: String,
-        default: '',
-        env: 'AWS_REGION'
+        default: "",
+        env: "AWS_REGION"
       }
     }
   }

@@ -5,9 +5,9 @@ import 'unfetch'
 
 import Label from 'components/Label/Label'
 
-export default class FieldImage extends Component {
+export default class FieldImage extends Component { 
 
-  constructor (props) {
+  constructor(props) {
     super(props)
 
     this.state.fileName = ''
@@ -16,16 +16,16 @@ export default class FieldImage extends Component {
     this.state.error = ''
   }
 
-  render () {
+  render() {
     const { config } = this.props
 
     return (
-      <Label label='Image'>
+      <Label label="Image">
         <p>{this.state.signedUrl}</p>
         {config && config.FieldImage && (
-          <input
-            type='file'
-            accept={config.FieldImage.accept}
+          <input 
+            type="file" 
+            accept={ config.FieldImage.accept } 
             onChange={this.handleFileChange.bind(this)}
           />
         )}
@@ -34,7 +34,8 @@ export default class FieldImage extends Component {
     )
   }
 
-  uploadToS3 () {
+  uploadToS3() {
+
     let body = new FormData()
     body.append('file', this.state.file)
 
@@ -47,16 +48,17 @@ export default class FieldImage extends Component {
       }
     }
 
+
     fetch(this.state.signedUrl, options).then(res => {
       res.text().then(resp => {
         console.log(resp)
       })
     }).catch(err => {
-      console.log('ERR', err)
+      console.log("ERR", err)
     })
   }
 
-  handleFileChange (event) {
+  handleFileChange(event) {
     event.preventDefault()
 
     const { config } = this.props
@@ -76,12 +78,14 @@ export default class FieldImage extends Component {
           'ContentType': this.state.file.type
         },
         body: JSON.stringify({fileName: event.target.files[0].name})
-
+        
       }).then(response => {
+
         return response.json().then(json => {
           if (json.err) return json.err // Trigger error
 
           if (json.url) {
+
             // Store Signed URL
             this.setState({
               signedUrl: json.url

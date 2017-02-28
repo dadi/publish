@@ -32,7 +32,7 @@ const Server = function () {
     formatters: {
       'text/plain': (req, res, body) => {
         if (body instanceof Error) {
-          // catch our Error
+          //catch our Error
           log.error(body.stack)
           return body.message
         }
@@ -46,7 +46,7 @@ const Server = function () {
  * @return {Promise}  Add Listener
  */
 Server.prototype.start = function () {
-  return new Promise((resolve, reject) => {
+  return new Promise( (resolve, reject) => {
     // Inject API UUIDs in config
     config.set('apis', getApisBlockWithUUIDs(config.get('apis')))
 
@@ -78,6 +78,7 @@ Server.prototype.createServer = function () {
  * Set all listeners for Resify server instance
  */
 Server.prototype.addListeners = function () {
+
   // this.app.on('NotFound', router.notFound())
 
   this.app.on('listening', () => {
@@ -94,14 +95,16 @@ Server.prototype.addListeners = function () {
  * @return {Restify} Restify server instance
  */
 Server.prototype.appListen = function () {
-  return new Promise((resolve, reject) => {
+  return new Promise( (resolve, reject) => {
     return this.app.listen(Number(this.options.port), this.options.host, resolve)
   })
 }
 
-module.exports = function () {
+module.exports  = function () {
   return new Server()
 }
 
 module.exports.Server = Server
+
+
 

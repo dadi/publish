@@ -11,7 +11,7 @@ const Session = function () {}
  * Is User Logged in
  * @return {Boolean} Logged in status
  */
-Session.prototype.isLoggedIn = function () {
+Session.prototype.isLoggedIn = function() {
   return false
 }
 

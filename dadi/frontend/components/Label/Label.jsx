@@ -6,13 +6,13 @@ import styles from './Label.css'
 import { getUniqueId } from 'lib/util'
 
 export default class Label extends Component {
-  componentWillMount () {
+  componentWillMount() {
     this.id = getUniqueId()
   }
 
   // This will render all children and inject an `id` prop
   // with the generated unique id
-  renderChildren () {
+  renderChildren() {
     return this.props.children.map(child => {
       child.attributes = child.attributes || {}
       child.attributes.id = child.attributes.id || this.id
@@ -24,9 +24,9 @@ export default class Label extends Component {
 
       return child
     })
-  }
+  }  
 
-  render () {
+  render() {
     let comment
 
     if (this.props.required) {

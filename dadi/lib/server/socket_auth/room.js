@@ -2,22 +2,23 @@
 
 const Room = function () {}
 
-Room.prototype.getUsers = function (room, clients) {
+Room.prototype.getUsers = function(room, clients) {
   return Object.keys(clients).filter(key => {
     let client = clients[key]
-    if (client.authToken) {
-      if (client.channelSubscriptions[room]) {
+    if(client.authToken) {
+      if (client.channelSubscriptions[room]){
         return true
       }
     }
     // console.log(Object.keys(client), "HAS Subscriptions", client.channelSubscriptions)
   }).map(key => {
     let client = clients[key]
-    return {username: client.authToken.username, vendor: client.authToken.vendor}
+    return {username:client.authToken.username, vendor:client.authToken.vendor}
   })
 }
 
 Room.prototype.attach = function (scServer, socket) {
+
   let subscribe = (room, respond) => {
     // console.log(`subscribed to ${room}`)
     let users = this.getUsers(room, socket.server.clients)

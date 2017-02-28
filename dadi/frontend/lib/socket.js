@@ -29,13 +29,13 @@ Socket.prototype.registerListeners = function () {
 }
 
 Socket.prototype.onConnect = function () {
-  // Register connection with server debug
+  //Register connection with server debug
   if (this.user) {
     this.user.channel = this.room
     if (!this.socket.getAuthToken()) {
-      this.socket.emit('login', {user: this.user}, (err, failure) => {
+      this.socket.emit('login', {user: this.user},(err, failure) => {
         if (!err) {
-          // Run all queued
+          // Run all queued 
           this.queuedTasks.forEach(task => {
             task()
           })
@@ -141,7 +141,7 @@ Socket.prototype.publishMessage = function (type, data) {
 }
 
 Socket.prototype.channelDidPublish = function () {
-  // Channel publish was successful
+  //Channel publish was successful
   return this
 }
 
@@ -161,8 +161,8 @@ Socket.prototype.onRoomSubscribe = function () {
 }
 
 Socket.prototype.onRoomSubscribeFail = function (err) {
-  // Room subscription failer
-  console.log('ROOM SUBSCRIBE FAIL', err)
+  //Room subscription failer
+  console.log("ROOM SUBSCRIBE FAIL", err)
   return this
 }
 

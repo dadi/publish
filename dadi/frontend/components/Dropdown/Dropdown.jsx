@@ -6,7 +6,7 @@ import { Style } from 'lib/util'
 import styles from './Dropdown.css'
 
 export default class Dropdown extends Component {
-  render () {
+  render() {
     return (
       <ul class={styles.container}>
         {this.props.children}

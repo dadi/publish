@@ -10,7 +10,7 @@ const initialState = {
   docIsLoading: false
 }
 
-export default function document (state = initialState, action = {}) {
+export default function document(state = initialState, action = {}) {
   switch (action.type) {
     case types.SET_DOCUMENT_LIST:
       return {

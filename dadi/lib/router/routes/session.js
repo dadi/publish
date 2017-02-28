@@ -9,12 +9,13 @@ const LocalStrategy = require('passport-local')
 const SessionController = require(`${paths.lib.controllers}/session`)
 
 module.exports = function (app) {
+
   let sessionController = new SessionController()
 
   // Add session rules
   app.use(cookieParser.parse)
-  app.use(session({
-    key: 'dadi-publish',
+  app.use(session({ 
+    key: 'dadi-publish', 
     secret: 'keyboard cat',
     saveUninitialized: true,
     resave: true
@@ -28,13 +29,13 @@ module.exports = function (app) {
   passport.use(new LocalStrategy(sessionController.authorise))
 
   passport.serializeUser((user, done) => {
-    if (!user) return done({err: 'User not found'}, null)
+    if (!user) return done({err: "User not found"}, null)
 
     return done(null, user)
   })
 
   passport.deserializeUser((user, done) => {
-    if (!user) return done({err: 'No session'}, null)
+    if (!user) return done({err: "No session"}, null)
 
     return done(null, user)
   })
@@ -42,7 +43,7 @@ module.exports = function (app) {
   app.get({
     name: 'session', // This allows us to reuse the auth request
     path: '/session'
-  },
+  }, 
   (req, res, next) => {
     res.header('Content-Type', 'application/json')
     if (req.isAuthenticated()) {
@@ -64,7 +65,7 @@ module.exports = function (app) {
       if (err) { return next(err) }
 
       req.login(user, {}, (err) => {
-        if (err) console.log('Err', err)
+        if (err) console.log("Err", err)
         res.write(JSON.stringify(user))
         res.end()
 

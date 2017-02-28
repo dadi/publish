@@ -80,7 +80,7 @@ APIBridgeController.prototype.post = function (req, res, next) {
   return next()
 }
 
-module.exports = function () {
+module.exports = function() {
   return new APIBridgeController()
 }
 

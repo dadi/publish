@@ -6,7 +6,7 @@ import { Style } from 'lib/util'
 import styles from './Banner.css'
 
 export default class Banner extends Component {
-  render () {
+  render() {
     const accent = this.props.accent || 'error'
 
     let bannerClass = new Style(styles)

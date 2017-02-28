@@ -10,6 +10,7 @@ const assign = (subj, pre) => {
       return {[`${key}`]: config.has(keypath) ? config.get(keypath) : null}
     } else {
       if (Array.isArray(config.get(keypath))) {
+        
         let items = config.get(keypath).map((val, pos) => {
           keypath = pre ? `${pre}.${pos}.${key}` : `${key}.${pos}`
 
@@ -42,7 +43,7 @@ AppConfigController.prototype.get = function (req, res, next) {
   return next()
 }
 
-module.exports = function () {
+module.exports = function() {
   return new AppConfigController()
 }
 

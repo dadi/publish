@@ -6,7 +6,7 @@ import { Style } from 'lib/util'
 import styles from './NavItem.css'
 
 export default class NavItem extends Component {
-  render () {
+  render() {
     let containerClass = new Style(styles, 'container')
     let navItemClass = new Style(styles, 'nav-item')
 

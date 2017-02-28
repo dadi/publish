@@ -3,13 +3,13 @@
 import { connect } from 'preact-redux'
 import { bindActionCreators } from 'redux'
 
-export function bindActions (actions) {
+export function bindActions(actions) {
   return dispatch => ({
     ...bindActionCreators(actions, dispatch)
   })
 }
 
-export function connectHelper (stateMap, dispatchMap) {
+export function connectHelper(stateMap, dispatchMap) {
   return connect((state) => {
     return {
       state: stateMap(state)
@@ -30,29 +30,29 @@ let lastId = 0
 // generated on the client to avoid conflicts
 const ID_PREFIX = 'c'
 
-export function getUniqueId () {
+export function getUniqueId() {
   return `${ID_PREFIX}-${lastId++}`
 }
 
 // Object and Field validation
-export function isValidJSON (string) {
+export function isValidJSON(string) {
   if (!string) return
 
-  return /^[\],:{}\s]*$/.test(string.replace(/\\["\\\/bfnrtu]/g, '@')
-    .replace(/"[^"\\\n\r]*"|true|false|null|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?/g, ']')
-    .replace(/(?:^|:|,)(?:\s*\[)+/g, ''))
+  return /^[\],:{}\s]*$/.test(string.replace(/\\["\\\/bfnrtu]/g, '@').
+    replace(/"[^"\\\n\r]*"|true|false|null|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?/g, ']').
+    replace(/(?:^|:|,)(?:\s*\[)+/g, ''))
 }
 
-export function isEmpty (subject) {
+export function isEmpty(subject) {
   return subject === undefined || subject === null || (typeof subject === 'object' && subject.length < 1)
 }
 
-export function debounce (func, wait, immediate) {
+export function debounce(func, wait, immediate) {
   var timeout
 
-  return function () {
+  return function() {
     var context = this, args = arguments
-    var later = function () {
+    var later = function() {
       timeout = null
       if (!immediate) func.apply(context, args)
     }

@@ -7,7 +7,7 @@ import * as apiActions from 'actions/apiActions'
 
 class Api extends Component {
 
-  render ({ api }, { authenticate }) {
+  render({ api }, { authenticate }) {
     const { state } = this.props
 
     return (
@@ -53,7 +53,7 @@ class Api extends Component {
           <h1>Current API is {api}</h1>
         ) : (
           <h1 />
-        )}
+        )}      
       </div>
     )
   }

@@ -10,13 +10,13 @@ import TextInput from 'components/TextInput/TextInput'
 import * as apiActions from 'actions/apiActions'
 
 class Home extends Component {
-  render () {
+  render() {
     const { state } = this.props
 
     return (
       <div>
-        <Label label='Title' comment='Optional'>
-          <TextInput />
+        <Label label="Title" comment="Optional">
+          <TextInput/>
         </Label>
       </div>
     )

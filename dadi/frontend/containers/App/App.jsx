@@ -30,11 +30,11 @@ import getAppConfig from 'lib/app-config'
 import APIBridge from 'lib/api-bridge-client'
 
 class App extends Component {
-  componentWillMount () {
+  componentWillMount() {
     this.sessionStart()
   }
 
-  componentDidMount () {
+  componentDidMount() {
     const { actions } = this.props
 
     window.addEventListener('resize', debounce(() => {
@@ -42,7 +42,7 @@ class App extends Component {
     }, 500))
   }
 
-  componentDidUpdate (previousProps) {
+  componentDidUpdate(previousProps) {
     const { state, actions } = this.props
     const previousState = previousProps.state
     const previousPath = previousState.routing.locationBeforeTransitions.pathname
@@ -66,34 +66,34 @@ class App extends Component {
     }
   }
 
-  render () {
+  render() {
     const { state, history } = this.props
 
     return (
-      <Layout>
+        <Layout>
         {state.user && state.user.signedIn &&
           <Header compact={state.app.breakpoint === null} />
         }
         <Router history={history}>
-          <Home path='/' authenticate />
-          <PasswordReset path='/reset' authenticate />
-          <Api path='/apis/:api?' authenticate />
-          <Collection path='/apis/:api/collections/:collection?' authenticate />
-          <DocumentList path='/:collection/documents/:page?' authenticate />
-          <DocumentEdit path='/:collection/document/:method/:document_id?' authenticate />
-          <MediaLibrary path='/:collection/media/:document?' authenticate />
-          <UserProfile path='/profile' authenticate />
-          <RoleList path='/roles' authenticate />
-          <RoleEdit path='/role/:method/:role?' authenticate />
-          <SignIn path='/signin' />
-          <StyleGuide path='/styleguide' />
-          <Error type='404' default />
+          <Home path="/" authenticate />
+          <PasswordReset path="/reset" authenticate/>
+          <Api path="/apis/:api?" authenticate />
+          <Collection path="/apis/:api/collections/:collection?" authenticate />
+          <DocumentList path="/:collection/documents/:page?" authenticate />
+          <DocumentEdit path="/:collection/document/:method/:document_id?" authenticate />
+          <MediaLibrary path="/:collection/media/:document?" authenticate/>
+          <UserProfile path="/profile" authenticate />
+          <RoleList path="/roles" authenticate/>
+          <RoleEdit path="/role/:method/:role?" authenticate />
+          <SignIn path="/signin" />
+          <StyleGuide path="/styleguide" />
+          <Error type="404" default />
         </Router>
       </Layout>
     )
   }
 
-  getApiCollections () {
+  getApiCollections() {
     const { state, actions } = this.props
 
     actions.setApiFetchStatus('isFetching')
@@ -128,7 +128,7 @@ class App extends Component {
     })
   }
 
-  sessionStart () {
+  sessionStart() {
     const { actions, state } = this.props
 
     new Session().getSession().then((session) => {
@@ -142,7 +142,7 @@ class App extends Component {
     })
   }
 
-  initialiseSocket () {
+  initialiseSocket() {
     const { actions, state } = this.props
     const pathname = state.routing.locationBeforeTransitions.pathname
 

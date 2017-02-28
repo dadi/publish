@@ -19,8 +19,8 @@ const store = createStore(reducer)
 
 const history = syncHistoryWithStore(browserHistory, store)
 
-render((
+render ((
   <Provider store={store}>
-    <App history={history} />
+    <App history={history}/>
   </Provider>
 ), document.body)

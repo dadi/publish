@@ -6,7 +6,7 @@ import TextInput from 'components/TextInput/TextInput'
 
 export default class DocumentFilter extends Component {
 
-  constructor (props) {
+  constructor(props) {
     super(props)
 
     // Move to filter
@@ -22,7 +22,7 @@ export default class DocumentFilter extends Component {
     }
   }
 
-  render () {
+  render() {
     const { field, value, fields } = this.props
     return (
       <div>

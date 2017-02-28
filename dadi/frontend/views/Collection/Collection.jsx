@@ -6,7 +6,7 @@ import { connectHelper } from 'lib/util'
 import * as apiActions from 'actions/apiActions'
 
 class Collection extends Component {
-  render () {
+  render() {
     const { state, collection } = this.props
 
     if (!collection) {
@@ -17,7 +17,7 @@ class Collection extends Component {
 
     return (
       <h1>Current Collection is {collection}</h1>
-    )
+    )    
   }
 }
 

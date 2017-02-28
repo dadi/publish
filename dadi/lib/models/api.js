@@ -2,7 +2,7 @@
 
 const DadiAPI = require('@dadi/api-wrapper')
 
-const Api = function () {}
+const Api =  function () {}
 
 /**
  * Configure API
