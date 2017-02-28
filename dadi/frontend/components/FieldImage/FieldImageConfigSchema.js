@@ -8,15 +8,6 @@ module.exports = {
       type: Array,
       default: ["image/*"]
     },
-    local: {
-      doc: "Store Image locally",
-      availableInFrontend: true,
-      enabled: {
-        availableInFrontend: true,
-        type: Boolean,
-        default: true
-      },
-    },
     s3: {
       doc: "Store Image in S3",
       availableInFrontend: true,
