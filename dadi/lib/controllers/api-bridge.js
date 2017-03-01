@@ -3,12 +3,9 @@
 const config = require(paths.config)
 const passport = require('@dadi/passport')
 const request = require('request-promise')
-const slugify = require('underscore.string/slugify')
-const _ = require('underscore')
+const slugify = require(`${paths.lib.helpers}/string`).Slugify
 
-const APIBridgeController = function () {
-
-}
+const APIBridgeController = function () {}
 
 const _createPassport = function ({host, port, clientId, secret}) {
   return passport({
@@ -63,7 +60,7 @@ APIBridgeController.prototype.post = function (req, res, next) {
         return request({
           uri: requestObject.uri.href,
           method: requestObject.method,
-          body: !_.isUndefined(requestObject.body) ? requestObject.body : null
+          body: typeof requestObject.body !== 'undefined' ? requestObject.body : null
         }).then(response => JSON.parse(response))
       }))
     })
