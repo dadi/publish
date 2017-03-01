@@ -3,7 +3,7 @@ import { h, Component } from 'preact'
 import CollectionNav from 'containers/CollectionNav/CollectionNav'
 import IconBurger from 'components/IconBurger/IconBurger'
 
-import { Style } from 'lib/util'
+import Style from 'lib/Style'
 import styles from './Header.css'
 
 export default class Header extends Component {

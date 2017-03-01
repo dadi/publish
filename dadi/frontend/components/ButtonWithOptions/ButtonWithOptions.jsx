@@ -2,7 +2,7 @@
 
 import { h, Component } from 'preact'
 
-import { Style } from 'lib/util'
+import Style from 'lib/Style'
 import styles from './ButtonWithOptions.css'
 
 import Button from 'components/Button/Button'
@@ -11,6 +11,10 @@ import DropdownItem from 'components/DropdownItem/DropdownItem'
 import IconArrow from 'components/IconArrow/IconArrow'
 
 export default class ButtonWithOptions extends Component {
+  static defaultProps = {
+    type: 'button'
+  }
+
   constructor(props) {
     super(props)
 
@@ -26,11 +30,9 @@ export default class ButtonWithOptions extends Component {
   }
 
   render() {
-    let launcherClass = new Style(styles)
+    let launcherClass = new Style(styles, 'button', 'button-border-right')
 
-    launcherClass.add('button')
-      .add('button-border-right')
-      .add('options-launcher')
+    launcherClass.add('options-launcher')
       .add(`options-launcher-${this.props.accent}`)
 
     return (
@@ -39,6 +41,7 @@ export default class ButtonWithOptions extends Component {
           accent={this.props.accent}
           inGroup="left"
           onClick={this.props.onClick}
+          type={this.props.type}
         >
           {this.props.children}
         </Button>

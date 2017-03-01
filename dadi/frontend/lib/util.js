@@ -62,30 +62,3 @@ export function debounce(func, wait, immediate) {
     if (callNow) func.apply(context, args)
   }
 }
-
-// Styles
-const Style = function (styles, ...initClasses) {
-  this.classes = initClasses
-  this.styles = styles
-}
-
-Style.prototype.add = function (className) {
-  if ((typeof className === 'string') && this.styles[className]) {
-    this.classes.push(className)
-  }
-
-  return this
-}
-
-Style.prototype.addIf = function (className, condition) {
-  console.log('--> condition_', condition)
-  if (!condition) return this
-
-  return this.add(className)
-}
-
-Style.prototype.getClasses = function () {
-  return this.classes.map(className => this.styles[className]).join(' ')
-}
-
-export { Style }
