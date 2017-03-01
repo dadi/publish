@@ -13,7 +13,7 @@ const schema = require('./config-schema')
  * @return {undefined}
  */
 const getAdditionalSchema = (dir, match) => {
-  fs.readdirSync(dir).forEach((folder) => {
+  fs.readdirSync(dir).forEach(folder => {
     let sub = path.resolve(dir, folder)
 
     if (fs.lstatSync(sub).isDirectory()) {
@@ -22,7 +22,8 @@ const getAdditionalSchema = (dir, match) => {
       let file = path.parse(sub)
 
       if (file.ext === '.js' && file.name.match(match)) {
-        Object.assign(schema, require(sub))
+        let subSchema = require(sub)
+        Object.assign(schema, subSchema)
       }
     }
   })
@@ -40,7 +41,7 @@ const getFrontendProps = (schema, prev) => {
 }
 
 // Fetch aditional component schema
-getAdditionalSchema(path.resolve(__dirname, './frontend/components'), /ConfigSchema$/g)
+getAdditionalSchema(paths.frontend.components, /ConfigSchema$/g)
 
 let availableInFrontend = getFrontendProps(schema)
 

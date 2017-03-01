@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "NODE_ENV=development node index.js",
-    "test": "standard && env NODE_ENV=development mocha-webpack --colors --webpack-config webpack.config.test.js \"test/**/*.js\"",
+    "test": "standard && env NODE_ENV=development mocha --colors --webpack-config webpack.config.js \"test/**/*.js\"",
     "build": "NODE_ENV=development webpack --progress",
     "prebuild": "mkdirp build",
     "init": "validate-commit-msg",
@@ -84,7 +84,6 @@
     "font-awesome": "^4.7.0",
     "fs": "0.0.1-security",
     "mocha": "^3.2.0",
-    "mocha-webpack": "^1.0.0-beta.1",
     "nodemon": "^1.11.0",
     "normalize.css": "^5.0.0",
     "npm-run-all": "^3.1.2",
@@ -106,11 +105,12 @@
     "uglify-js": "github:mishoo/UglifyJS2#harmony",
     "url-loader": "^0.5.7",
     "validate-commit-msg": "^2.11.1",
-    "webpack": "^1.14.0",
-    "webpack-node-externals": "^1.5.4"
+    "webpack": "^1.14.0"
   },
   "standard": {
-    "globals": [ "paths" ],
+    "globals": [
+      "paths"
+    ],
     "fix": true,
     "ignore": [
       "build",

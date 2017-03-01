@@ -63,11 +63,6 @@ module.exports = {
     extensions: ['', '.jsx', '.js', '.json'],
 
     modulesDirectories: [
-      path.resolve(__dirname, 'dadi/frontend/lib'),
-      path.resolve(__dirname, 'dadi/frontend/components'),
-      path.resolve(__dirname, 'dadi/frontend/views'),
-      path.resolve(__dirname, 'dadi/frontend/store'),
-      path.resolve(__dirname, 'node_modules'),
       'node_modules'
     ],
 

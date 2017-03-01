@@ -1,3 +1,5 @@
+'use strict'
+
 module.exports = {
   FieldImage: {
     availableInFrontend: true,
