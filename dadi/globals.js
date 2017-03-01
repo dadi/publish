@@ -1,7 +1,6 @@
 'use strict'
 
 const path = require('path')
-const config = require('./config')
 
 const base = path.join(__dirname, '/../')
 const lib = path.join(__dirname, '/lib')

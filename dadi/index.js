@@ -1,6 +1,6 @@
 'use strict'
 
-const globals = require('./globals')
+const globals = require('./globals') // eslint-disable-line
 
 const Server = require(paths.lib.server)
 const Watch = require(paths.lib.watch)
