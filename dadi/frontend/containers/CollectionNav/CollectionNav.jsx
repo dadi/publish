@@ -50,7 +50,7 @@ class App extends Component {
   }
 
   render() {
-    const { state, actions } = this.props
+    const {state, actions} = this.props
 
     if (!this.groups) {
       return null
