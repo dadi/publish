@@ -9,6 +9,7 @@ export default class Banner extends Component {
   static defaultProps = {
     accent: 'error'
   }
+
   render() {
     let bannerClass = new Style(styles, 'banner')
 
