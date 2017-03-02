@@ -19,9 +19,7 @@ export default class Table extends Component {
     let body = []
     
     this.props.children.forEach(child => {
-      child.attributes = child.attributes || {}
-      child.attributes.fillBlanks = child.attributes.fillBlanks || this.props.fillBlanks
-      child.attributes.selectable = child.attributes.selectable || this.props.selectable
+      child.attributes = Object.assign({}, child.attributes, this.props)
 
       if (child.nodeName.name === 'TableHead') {
         head.push(child)
@@ -71,7 +69,7 @@ class TableRow extends Component {
 
 
     return (
-      <tr class={styles.row} {...this.props}>
+      <tr class={styles.row}>
         {select}
         {this.renderChildren()}
       </tr>
@@ -108,7 +106,7 @@ class TableHead extends Component {
       : null
 
     return (
-      <thead class={styles.head} {...this.props}>
+      <thead class={styles.head}>
         {select}
         {this.props.children}
       </thead>

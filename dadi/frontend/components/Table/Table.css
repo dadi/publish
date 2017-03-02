@@ -52,6 +52,7 @@
   overflow: hidden;
   word-wrap: break-word;
   vertical-align: middle;
+  width: 1%;
 }
 
 .row-cell-blank {
