@@ -1,13 +1,13 @@
 import * as types from 'actions/actionTypes'
 
-export function setApi (api) {
+export function setApi(api) {
   return {
     type: types.SET_API,
     api
   }
 }
 
-export function setApiList (apis) {
+export function setApiList(apis) {
   return {
     type: types.SET_API_LIST,
     apis,
@@ -15,7 +15,7 @@ export function setApiList (apis) {
   }
 }
 
-export function setApiFetchStatus (status) {
+export function setApiFetchStatus(status) {
   return {
     type: types.SET_API_FETCH_STATUS,
     status
