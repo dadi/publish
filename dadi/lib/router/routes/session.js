@@ -22,6 +22,7 @@ module.exports = function (app) {
   // Initialise passport session
   app.use(passport.initialize())
   app.use(passport.session())
+
   app.use(flash())
 
   // Passport Local stategy selected
@@ -75,12 +76,8 @@ module.exports = function (app) {
 
   app.post('/session/destroy', (req, res, next) => {
     req.logout()
-    req.session.destroy(err => {
-      if (err) { return next(err) }
-      // The response should indicate that the user is no longer authenticated.
-      res.write(JSON.stringify({authenticated: req.isAuthenticated()}))
-      res.end()
-      return next()
-    }) 
+    res.write(JSON.stringify({authenticated: req.isAuthenticated()}))
+    res.end()
+    return next()
   })
 }
