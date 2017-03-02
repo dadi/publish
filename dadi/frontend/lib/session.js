@@ -14,7 +14,7 @@ const Session = function () {}
  *
  * @return {object} The user object.
  */
-Session.prototype._buildUserObject = function (user) {
+Session.prototype.buildUserObject = function (user) {
   if (!user) return null
 
   return {
@@ -61,7 +61,7 @@ Session.prototype.createSession = function ({username, password}) {
     },
     body: JSON.stringify({username, password})
   }).then(response => {
-    return response.json().then(this._buildUserObject)
+    return response.json().then(this.buildUserObject)
   })
 }
 
@@ -90,7 +90,7 @@ Session.prototype.getSession = function () {
       'Content-Type': 'application/json'
     }
   }).then(response => {
-    return response.json().then(this._buildUserObject)
+    return response.json().then(this.buildUserObject)
   })
 }
 
