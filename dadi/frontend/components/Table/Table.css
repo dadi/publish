@@ -1,0 +1,68 @@
+.table {
+  display: inline-block;
+  font-size: 14px;
+  font-family: var(--theme-font-family, sans-serif);
+  border-collapse: collapse;
+  border-spacing: 0;
+  table-layout: auto;
+  overflow: hidden;
+  overflow-x: auto;
+  max-width: 100%;
+}
+
+.head {
+  background-color: var(--theme-colour-background, #FFFFFF);
+}
+
+.head-cell {
+  padding: 12px 0 10px 15px;
+  line-height: 20px;
+  text-align: left;
+  color: var(--theme-colour-primary, #000000);
+  vertical-align: middle;
+  font-weight: 700;
+}
+
+.row {
+  box-shadow: 0 0 1px rgba(0, 0, 0, 0.08) inset;
+  background-color: var(--theme-colour-background, #FFFFFF);
+}
+
+.row a {
+  color: inherit;
+  text-decoration: none;
+  border-bottom: 1px solid #eee;
+}
+
+.row:nth-child(even) {
+  background-color: var(--theme-colour-background-shade-1, #FAFAFA);
+}
+
+.row:hover {
+  background-color: #EBF5F9;
+}
+
+.row:hover a {
+  border-bottom-color: var(--theme-colour-data, #4A91FF);
+}
+
+.row-cell {
+  cursor: default;
+  padding: 15px;
+  overflow: hidden;
+  word-wrap: break-word;
+  vertical-align: middle;
+}
+
+.row-cell-blank {
+  color: var(--theme-colour-background-shade-2, #AAAAAA);
+}
+
+.select {
+  border-radius: 3px;
+}
+
+.row:hover .select,
+.head:hover .select {
+  box-shadow: 0 0 0 3px rgba(74, 145, 255, 0.3);
+}
