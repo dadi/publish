@@ -51,7 +51,7 @@ module.exports = function (app) {
 
       return next()
     } else {
-      res.write(JSON.stringify({success: false}))
+      res.write(JSON.stringify({noAuth: true}))
       res.end()
 
       return next()

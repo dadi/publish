@@ -15,7 +15,7 @@ const Session = function () {}
  * @return {object} The user object.
  */
 Session.prototype.buildUserObject = function (user) {
-  if (!user || !user.success) return null
+  if (!user || user.noAuth) return null
 
   return {
     email: user.email,
