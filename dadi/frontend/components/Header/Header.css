@@ -35,6 +35,7 @@
   text-decoration: none;
   color: #4A596F;
   margin-right: 10px;
+  cursor: pointer;
 }
 
 .signout:hover {

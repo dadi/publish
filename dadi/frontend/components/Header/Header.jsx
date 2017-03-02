@@ -48,7 +48,12 @@ export default class Header extends Component {
             </a>
 
             <div class={styles.controls}>
-              <a href="/signout" class={styles.signout}>Sign out</a>
+              <button
+                class={styles.signout}
+                onClick={this.props.onSignOut}
+              >
+                Sign out
+              </button>
               <a href="#" class={styles.user}>{`${user.firstName} ${user.lastName}`}</a>
             </div>
           </div>

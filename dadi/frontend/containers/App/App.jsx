@@ -89,6 +89,7 @@ class App extends Component {
           <Header
             compact={state.app.breakpoint === null}
             user={state.user.user}
+            onSignOut={this.sessionEnd.bind(this)}
           />
         }
 
@@ -165,13 +166,15 @@ class App extends Component {
 
   sessionEnd() {
     const {actions, state} = this.props
+    const session = new Session()
 
-    new Session().getSession().then(session => {
-      if (session) {
+    session.getSession().then(user => {
+      if (user) {
         session.destroy().then(success => {
           // (!) TO DO: Handle failure of session destroy
           if (success) {
-            actions.signOut() 
+            actions.signOut()
+            route('/signin')
           }
         })
       }
