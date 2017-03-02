@@ -1,5 +1,5 @@
 import { h, Component } from 'preact'
-import { Router, Layout, route } from 'preact-router'
+import { Router, route } from 'preact-router'
 import { connect } from 'preact-redux'
 import { bindActionCreators } from 'redux'
 
@@ -8,6 +8,7 @@ import * as apiActions from 'actions/apiActions'
 import * as appActions from 'actions/appActions'
 
 import Header from 'components/Header/Header'
+import Main from 'components/Main/Main'
 
 import Api from 'views/Api/Api'
 import Collection from 'views/Collection/Collection'
@@ -21,6 +22,7 @@ import RoleEdit from 'views/RoleEdit/RoleEdit'
 import RoleList from 'views/RoleList/RoleList'
 import UserProfile from 'views/UserProfile/UserProfile'
 import SignIn from 'views/SignIn/SignIn'
+import SignOut from 'views/SignOut/SignOut'
 import StyleGuide from 'views/StyleGuide/StyleGuide'
 
 import { connectHelper, debounce, isEmpty } from 'lib/util'
@@ -35,7 +37,7 @@ class App extends Component {
   }
 
   componentDidMount() {
-    const { actions } = this.props
+    const {actions} = this.props
 
     window.addEventListener('resize', debounce(() => {
       actions.setScreenWidth(window.innerWidth)
@@ -43,7 +45,7 @@ class App extends Component {
   }
 
   componentDidUpdate(previousProps) {
-    const { state, actions } = this.props
+    const {state, actions} = this.props
     const previousState = previousProps.state
     const previousPath = previousState.routing.locationBeforeTransitions.pathname
     const path = state.routing.locationBeforeTransitions.pathname
@@ -54,11 +56,16 @@ class App extends Component {
       this.getApiCollections()
     }
 
-    // State change: user is now signed in
-    if (!previousState.user.signedIn && state.user.signedIn) {
+    // State change: user has signed in
+    if (!previousState.user.user && state.user.user) {
       getAppConfig().then(config => {
         actions.setAppConfig(config)
       })
+    }
+
+    // State change: user has signed out
+    if (previousState.user.user && !state.user.user) {
+      route('/signin')
     }
 
     if (previousPath !== path && (this.socket && this.socket.getUser())) {
@@ -67,34 +74,48 @@ class App extends Component {
   }
 
   render() {
-    const { state, history } = this.props
+    const {state, history} = this.props
 
+    // Semantically, it makes sense that <Main/> renders a HTML5 <main> element, which
+    // should sit at the same level as <Header/>, which renders a HTML5 <header> element.
+    // Not super excited that they have to be wrapped in a <div>, but this is something
+    // we can revisit, potentially by replacing `preact-router` with `react-router`, which
+    // supports view composition. For now, I think this is a decent compromise.
+    //
+    // -- eb, 01/02/2017
     return (
-        <Layout>
-        {state.user && state.user.signedIn &&
-          <Header compact={state.app.breakpoint === null} />
+      <div>
+        {state.user.user &&
+          <Header
+            compact={state.app.breakpoint === null}
+            user={state.user.user}
+          />
         }
-        <Router history={history}>
-          <Home path="/" authenticate />
-          <PasswordReset path="/reset" authenticate/>
-          <Api path="/apis/:api?" authenticate />
-          <Collection path="/apis/:api/collections/:collection?" authenticate />
-          <DocumentList path="/:collection/documents/:page?" authenticate />
-          <DocumentEdit path="/:collection/document/:method/:document_id?" authenticate />
-          <MediaLibrary path="/:collection/media/:document?" authenticate/>
-          <UserProfile path="/profile" authenticate />
-          <RoleList path="/roles" authenticate/>
-          <RoleEdit path="/role/:method/:role?" authenticate />
-          <SignIn path="/signin" />
-          <StyleGuide path="/styleguide" />
-          <Error type="404" default />
-        </Router>
-      </Layout>
+
+        <Main>
+          <Router history={history}>
+            <Home path="/" authenticate />
+            <PasswordReset path="/reset" authenticate/>
+            <Api path="/apis/:api?" authenticate />
+            <Collection path="/apis/:api/collections/:collection?" authenticate />
+            <DocumentList path="/:collection/documents/:page?" authenticate />
+            <DocumentEdit path="/:collection/document/:method/:document_id?" authenticate />
+            <MediaLibrary path="/:collection/media/:document?" authenticate/>
+            <UserProfile path="/profile" authenticate />
+            <RoleList path="/roles" authenticate/>
+            <RoleEdit path="/role/:method/:role?" authenticate />
+            <SignIn path="/signin" />
+            <SignOut path="/signout" />
+            <StyleGuide path="/styleguide" />
+            <Error type="404" default />
+          </Router>
+        </Main>
+      </div>
     )
   }
 
   getApiCollections() {
-    const { state, actions } = this.props
+    const {state, actions} = this.props
 
     actions.setApiFetchStatus('isFetching')
 
@@ -103,7 +124,7 @@ class App extends Component {
     let processedApis = []
 
     apisToProcess.forEach((api, apiIndex) => {
-      return APIBridge(api).getCollections().then(({ collections }) => {
+      return APIBridge(api).getCollections().then(({collections}) => {
         collections.forEach(collection => {
           let query = APIBridge(api, true).in(collection.slug).getConfig()
 
@@ -129,11 +150,11 @@ class App extends Component {
   }
 
   sessionStart() {
-    const { actions, state } = this.props
+    const {actions, state} = this.props
 
-    new Session().getSession().then((session) => {
-      if (session.signedIn) {
-        actions.signIn(session.username, session.signedIn)
+    new Session().getSession().then(user => {
+      if (user) {
+        actions.signIn(user)
       } else {
         // Trigger signout
         actions.signOut()
@@ -142,8 +163,23 @@ class App extends Component {
     })
   }
 
+  sessionEnd() {
+    const {actions, state} = this.props
+
+    new Session().getSession().then(session => {
+      if (session) {
+        session.destroy().then(success => {
+          // (!) TO DO: Handle failure of session destroy
+          if (success) {
+            actions.signOut() 
+          }
+        })
+      }
+    })
+  }
+
   initialiseSocket() {
-    const { actions, state } = this.props
+    const {actions, state} = this.props
     const pathname = state.routing.locationBeforeTransitions.pathname
 
     let session = new Session()
