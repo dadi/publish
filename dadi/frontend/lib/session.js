@@ -71,10 +71,16 @@ Session.prototype.createSession = function ({username, password}) {
  * @return {object} The corresponding user object.
  */
 Session.prototype.destroy = function () {
-  // (!) TO DO: Replace this with logic that pings the app endpoint and
-  // resolves with `true` if the user has been successfully signed out or
-  // `false` otherwise.
-  return Promise.resolve(true)
+  return fetch(`/session/destroy`, {
+    method: 'POST',
+    credentials: 'same-origin',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+  }).then(response => {
+    console.log("DONE")
+    return response
+  })
 }
 
 /**
