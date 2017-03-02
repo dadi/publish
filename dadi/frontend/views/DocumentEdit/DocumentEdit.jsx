@@ -61,7 +61,7 @@ class DocumentEdit extends Component {
     const previousStatePath = previousState.routing.locationBeforeTransitions.pathname
 
     // State check: reject when missing config, session, or apis
-    if (!state.app.config || !state.api.apis.length || !state.user.signedIn) return
+    if (!state.app.config || !state.api.apis.length || !state.user) return
 
     // State check: reject when path matches and document list loaded
     if (newStatePath === previousStatePath && data) return
