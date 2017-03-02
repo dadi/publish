@@ -20,7 +20,7 @@ export default class Header extends Component {
   }
 
   render() {
-    const {compact} = this.props
+    const {compact, user} = this.props
     let contentStyle = new Style(styles, 'content')
 
     contentStyle.addIf('content-compact', compact)
@@ -43,7 +43,19 @@ export default class Header extends Component {
         
         <div class={contentStyle.getClasses()}>
           <div class={styles.masthead}>
-            <img class={styles.logo} src="/images/publish.png" />
+            <a href="/">
+              <img class={styles.logo} src="/images/publish.png" />
+            </a>
+
+            <div class={styles.controls}>
+              <button
+                class={styles.signout}
+                onClick={this.props.onSignOut}
+              >
+                Sign out
+              </button>
+              <a href="#" class={styles.user}>{`${user.firstName} ${user.lastName}`}</a>
+            </div>
           </div>
 
           <CollectionNav />

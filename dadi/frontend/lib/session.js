@@ -8,7 +8,26 @@ import 'unfetch'
 const Session = function () {}
 
 /**
+ * Builds a user object from the app endpoint response.
+ *
+ * @param {object} The response from the app endpoint.
+ *
+ * @return {object} The user object.
+ */
+Session.prototype.buildUserObject = function (user) {
+  if (!user) return null
+
+  return {
+    email: user.email,
+    firstName: user.first_name,
+    lastName: user.last_name,
+    username: user.username
+  }
+}
+
+/**
  * Is User Logged in
+ *
  * @return {Boolean} Logged in status
  */
 Session.prototype.isLoggedIn = function() {
@@ -17,13 +36,22 @@ Session.prototype.isLoggedIn = function() {
 
 /**
  * Login required check
- * @param  {event} e Page navigation event
- * @return {boolean}   Is login required
+ *
+ * @param {event} e Page navigation event
+ *
+ * @return {boolean} Is login required
  */
 Session.prototype.loginRequired = function (e) {
   return e.current.attributes.Sessionenticate || false
 }
 
+/**
+ * Issues a request to the app endpoint to create a session.
+ *
+ * @param {object} Object containing the username and password.
+ *
+ * @return {object} The corresponding user object.
+ */
 Session.prototype.createSession = function ({username, password}) {
   return fetch(`/session`, {
     method: 'POST',
@@ -33,15 +61,27 @@ Session.prototype.createSession = function ({username, password}) {
     },
     body: JSON.stringify({username, password})
   }).then(response => {
-    return response.json().then(json => {
-      return {
-        signedIn: json ? true : false,
-        username: json.username || null
-      }
-    })
+    return response.json().then(this.buildUserObject)
   })
 }
 
+/**
+ * Issues a request to the app endpoint to destroy the current session
+ *
+ * @return {object} The corresponding user object.
+ */
+Session.prototype.destroy = function () {
+  // (!) TO DO: Replace this with logic that pings the app endpoint and
+  // resolves with `true` if the user has been successfully signed out or
+  // `false` otherwise.
+  return Promise.resolve(true)
+}
+
+/**
+ * Retrieves the current active session from the app endpoint.
+ *
+ * @return {object} The corresponding user object.
+ */
 Session.prototype.getSession = function () {
   return fetch(`/session`, {
     method: 'GET',
@@ -50,12 +90,7 @@ Session.prototype.getSession = function () {
       'Content-Type': 'application/json'
     }
   }).then(response => {
-    return response.json().then(json => {
-      return {
-        signedIn: json._id ? true : false,
-        username: json.username
-      }
-    })
+    return response.json().then(this.buildUserObject)
   })
 }
 

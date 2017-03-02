@@ -16,7 +16,7 @@ class Home extends Component {
     return (
       <div>
         <Label label="Title" comment="Optional">
-          <TextInput/>
+          <TextInput />
         </Label>
       </div>
     )

@@ -1,14 +1,13 @@
 import * as types from 'actions/actionTypes'
 
-export function signIn (email, signedIn) {
+export function signIn(user) {
   return {
     type: types.SIGN_IN,
-    email,
-    signedIn
+    user
   }
 }
 
-export function signOut () {
+export function signOut() {
   return {
     type: types.SIGN_OUT
   }

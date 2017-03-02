@@ -88,14 +88,15 @@ class SignIn extends Component {
   }
 
   signIn(event) {
-    const { actions, state } = this.props
+    const {actions, state} = this.props
 
     new Session().createSession({
       username: this.state.email,
       password: this.state.password
-    }).then(session => {
-      if (session.signedIn) {
-        actions.signIn(session.username, session.signedIn)
+    }).then(user => {
+      if (user) {
+        actions.signIn(user)
+
         route('/profile')
       } else {
         actions.signOut()

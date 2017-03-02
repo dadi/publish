@@ -1,15 +1,21 @@
 import * as types from 'actions/actionTypes'
 
-export function setDocumentList (listIsLoading, documents, collection) {
+export function setDocumentLoadingStatus(isLoading) {
+  return {
+    type: types.SET_DOCUMENT_LOADING_STATUS,
+    isLoading
+  }
+}
+
+export function setDocumentList(documents, collection) {
   return {
     type: types.SET_DOCUMENT_LIST,
-    listIsLoading,
     documents,
     collection
   }
 }
 
-export function setDocument (docIsLoading, data) {
+export function setDocument(docIsLoading, data) {
   return {
     type: types.SET_DOCUMENT,
     docIsLoading,
