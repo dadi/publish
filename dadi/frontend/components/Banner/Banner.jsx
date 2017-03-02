@@ -6,13 +6,13 @@ import Style from 'lib/Style'
 import styles from './Banner.css'
 
 export default class Banner extends Component {
+  static defaultProps = {
+    accent: 'error'
+  }
   render() {
-    const accent = this.props.accent || 'error'
+    let bannerClass = new Style(styles, 'banner')
 
-    let bannerClass = new Style(styles)
-
-    bannerClass.add('banner')
-      .add(`banner-${accent}`)
+    bannerClass.add(`banner-${this.props.accent}`)
 
     return (
       <p class={bannerClass.getClasses()}>
