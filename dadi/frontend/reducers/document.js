@@ -20,7 +20,9 @@ export default function document(state = initialState, action = {}) {
         ...state,
         listIsLoading: false,
         list: null,
-        collection: null
+        collection: null,
+        sortBy: null,
+        sortOrder: null
       }
 
     // Action: set document list
