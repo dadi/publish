@@ -78,7 +78,6 @@ Session.prototype.destroy = function () {
       'Content-Type': 'application/json'
     },
   }).then(response => {
-    console.log("DONE")
     return response
   })
 }
