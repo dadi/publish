@@ -1,6 +1,6 @@
 'use strict'
 
-import 'unfetch'
+import 'fetch'
 
 module.exports = () => {
   return fetch('/config', {

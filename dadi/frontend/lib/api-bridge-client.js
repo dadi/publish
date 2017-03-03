@@ -1,6 +1,6 @@
 'use strict'
 
-import 'unfetch'
+import 'fetch'
 
 const APIWrapper = require('@dadi/api-wrapper-core')
 

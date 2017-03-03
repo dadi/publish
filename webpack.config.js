@@ -77,7 +77,8 @@ module.exports = {
       'react-router': 'preact-router',
       'react-router-redux': 'preact-router-redux',
       'react-redux': 'preact-redux',
-      'react-dom': 'preact-compat'
+      'react-dom': 'preact-compat',
+      'fetch': 'unfetch/polyfill'
     }
   },
 

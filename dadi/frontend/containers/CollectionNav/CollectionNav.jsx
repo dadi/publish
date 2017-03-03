@@ -1,5 +1,5 @@
 import { h, Component } from 'preact'
-import { Router, route } from 'preact-router'
+import { Router } from 'preact-router'
 import { connect } from 'preact-redux'
 import { bindActionCreators } from 'redux'
 
@@ -7,11 +7,7 @@ import * as userActions from 'actions/userActions'
 import * as apiActions from 'actions/apiActions'
 import * as appActions from 'actions/appActions'
 
-import Dropdown from 'components/Dropdown/Dropdown'
-import DropdownItem from 'components/DropdownItem/DropdownItem'
-import Main from 'components/Main/Main'
 import Nav from 'components/Nav/Nav'
-import NavItem from 'components/NavItem/NavItem'
 
 import { connectHelper } from 'lib/util'
 

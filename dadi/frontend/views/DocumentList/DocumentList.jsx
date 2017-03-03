@@ -56,6 +56,7 @@ class DocumentList extends Component {
             )
           }}
         >
+
           {documents.results.map(document => {
             return (
               <SyncTableRow
@@ -150,9 +151,8 @@ class DocumentList extends Component {
         sortOrder
       })
     }).catch((err) => {
-      console.error("getDocumentList", err)
-      
       actions.clearDocumentList()
+
       // TODO: Graceful deal with failure
     })
   }
