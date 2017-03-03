@@ -1,6 +1,6 @@
 'use strict'
 
-import 'unfetch'
+import 'fetch'
 
 /**
  * @constructor
@@ -15,7 +15,7 @@ const Session = function () {}
  * @return {object} The user object.
  */
 Session.prototype.buildUserObject = function (user) {
-  if (!user) return null
+  if (!user || user.noAuth) return null
 
   return {
     email: user.email,
@@ -77,9 +77,6 @@ Session.prototype.destroy = function () {
     headers: {
       'Content-Type': 'application/json'
     },
-  }).then(response => {
-    console.log("DONE")
-    return response
   })
 }
 

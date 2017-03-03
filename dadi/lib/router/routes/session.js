@@ -51,7 +51,7 @@ module.exports = function (app) {
 
       return next()
     } else {
-      res.write(JSON.stringify({success: false}))
+      res.write(JSON.stringify({noAuth: true}))
       res.end()
 
       return next()
@@ -75,12 +75,9 @@ module.exports = function (app) {
 
   app.post('/session/destroy', (req, res, next) => {
     req.logout()
-    req.session.destroy(err => {
-      if (err) { return next(err) }
-      // The response should indicate that the user is no longer authenticated.
-      res.write(JSON.stringify({authenticated: req.isAuthenticated()}))
-      res.end()
-      return next()
-    }) 
+    res.write(JSON.stringify({authenticated: req.isAuthenticated()}))
+    res.end()
+    
+    return next()
   })
 }
