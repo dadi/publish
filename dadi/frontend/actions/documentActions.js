@@ -7,11 +7,19 @@ export function setDocumentLoadingStatus(isLoading) {
   }
 }
 
-export function setDocumentList(documents, collection) {
+export function clearDocumentList() {
+  return {
+    type: types.CLEAR_DOCUMENT_LIST
+  }
+}
+
+export function setDocumentList({documents, collection, sortBy, sortOrder}) {
   return {
     type: types.SET_DOCUMENT_LIST,
     documents,
-    collection
+    collection,
+    sortBy,
+    sortOrder
   }
 }
 
@@ -22,5 +30,3 @@ export function setDocument(docIsLoading, data) {
     data
   }
 }
-
-
