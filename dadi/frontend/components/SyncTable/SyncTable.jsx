@@ -1,6 +1,6 @@
 'use strict'
 
-import { h, Component } from 'preact'
+import {h, Component} from 'preact'
 
 import Table, {
   TableHead,

@@ -1,4 +1,4 @@
-import { h, Component } from 'preact'
+import {h, Component} from 'preact'
 
 import CollectionNav from 'containers/CollectionNav/CollectionNav'
 import IconBurger from 'components/IconBurger/IconBurger'

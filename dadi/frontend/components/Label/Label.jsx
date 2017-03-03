@@ -1,9 +1,9 @@
 'use strict'
 
-import { h, Component } from 'preact'
+import {h, Component} from 'preact'
 
 import Style from 'lib/Style'
-import { getUniqueId } from 'lib/util'
+import {getUniqueId} from 'lib/util'
 
 import styles from './Label.css'
 

@@ -1,4 +1,4 @@
-import { h, Component } from 'preact'
+import {h, Component} from 'preact'
 
 import Dropdown from 'components/Dropdown/Dropdown'
 import DropdownItem from 'components/DropdownItem/DropdownItem'
@@ -11,7 +11,7 @@ import styles from './Nav.css'
 
 export default class Nav extends Component {
   render() {
-    const { groups, compact } = this.props
+    const {groups, compact} = this.props
 
     return (
       <nav class={styles.nav}>

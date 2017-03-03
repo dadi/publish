@@ -1,7 +1,7 @@
-import { h, Component } from 'preact'
-import { connect } from 'preact-redux'
-import { bindActionCreators } from 'redux'
-import { connectHelper } from 'lib/util'
+import {h, Component} from 'preact'
+import {connect} from 'preact-redux'
+import {bindActionCreators} from 'redux'
+import {connectHelper} from 'lib/util'
 
 import Label from 'components/Label/Label'
 import Nav from 'components/Nav/Nav'
@@ -11,7 +11,7 @@ import * as apiActions from 'actions/apiActions'
 
 class Home extends Component {
   render() {
-    const { state } = this.props
+    const {state} = this.props
 
     return (
       <div>

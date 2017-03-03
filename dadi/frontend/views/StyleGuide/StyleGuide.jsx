@@ -1,4 +1,4 @@
-// import { h, Component } from 'preact'
+// import {h, Component} from 'preact'
 // import { connect } from 'preact-redux'
 // import { bindActionCreators } from 'redux'
 // import { connectHelper } from 'lib/util'
