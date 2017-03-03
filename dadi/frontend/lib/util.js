@@ -21,6 +21,20 @@ export function connectHelper(stateMap, dispatchMap) {
   })
 }
 
+export function getURLSearchVariable(search, variable) {
+  const vars = search.substring(1).split('&')
+
+  for (let i = 0; i < vars.length; i++) {
+    let pair = vars[i].split('=')
+
+    if (pair[0] == variable) {
+      return pair[1]
+    }
+  }
+
+  return null
+}
+
 // Generates a unique ID for DOM elements
 let lastId = 0
 
