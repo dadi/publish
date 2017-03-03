@@ -43,12 +43,25 @@ class DocumentList extends Component {
       <section class="Documents">
         <DocumentFilters filter={filter} collection={collection} />
 
-        <SyncTable columns={tableColumns}>
+        <SyncTable
+          columns={tableColumns}
+          sortable={true}
+          sortBy={state.document.sortBy}
+          sortOrder={state.document.sortOrder}
+          sort={(value, sortBy, sortOrder) => {
+            return (
+              <a href={`/${collection.name}/documents?sort=${sortBy}&order=${sortOrder}`}>
+                {value}
+              </a>
+            )
+          }}
+        >
+
           {documents.results.map(document => {
             return (
               <SyncTableRow
                 data={document}
-                callback={(value, data, column, index) => {
+                renderCallback={(value, data, column, index) => {
                   if (index === 0) {
                     return (
                       <a href={`/${collection.name}/document/edit/${data._id}`}>{value}</a>
@@ -74,7 +87,9 @@ class DocumentList extends Component {
     const previousState = previousProps.state
     const {list, listIsLoading} = state.document
     const newStatePath = state.routing.locationBeforeTransitions.pathname
+    const newStateSearch = state.routing.locationBeforeTransitions.search
     const previousStatePath = previousState.routing.locationBeforeTransitions.pathname
+    const previousStateSearch = previousState.routing.locationBeforeTransitions.search
 
     // State check: reject when missing config, session, or apis
     if (!state.app.config || !state.api.apis.length || !state.user) return
@@ -83,7 +98,7 @@ class DocumentList extends Component {
     if (!state.api.apis[0].collections || !state.api.apis[0].collections.length > 0) return
 
     // State check: reject when path matches and document list loaded
-    if (newStatePath === previousStatePath && list) return
+    if (list && (newStatePath === previousStatePath) && (newStateSearch === previousStateSearch)) return
 
     // State check: reject when documents are still loading
     if (listIsLoading) return
@@ -103,11 +118,22 @@ class DocumentList extends Component {
 
     // Clear keyboard
     this.keyboard.off()
-    actions.setDocumentList(false, null, null)
+    actions.clearDocumentList()
   }
 
   getDocumentList(nextPage, nextCollection) {
-    const {state, actions, collection, page} = this.props
+    const {
+      actions,
+      collection,
+      filter,
+      order,
+      page,
+      sort,
+      state
+    } = this.props
+    const urlSearch = state.routing.locationBeforeTransitions.search
+    const sortBy = sort || 'createdAt'
+    const sortOrder = order || 'desc'
 
     // Set document loading status to 'Loading'
     actions.setDocumentLoadingStatus(true)
@@ -116,9 +142,9 @@ class DocumentList extends Component {
       .in(nextCollection || collection)
       .limitTo(20) // Config based on collection schema
       .goToPage(nextPage || page)
-      .sortBy('createdAt', 'desc') // Configure based on user preferences
+      .sortBy(sortBy, sortOrder)
 
-    if (this.props.filter && isValidJSON(this.props.filter)) {
+    if (filter && isValidJSON(filter)) {
       let filters = JSON.parse(this.props.filter)
 
       query.where(filters)
@@ -131,12 +157,15 @@ class DocumentList extends Component {
       })
 
       // Update state with results
-      actions.setDocumentList(docs, currentCollection)
+      actions.setDocumentList({
+        documents: docs,
+        collection: currentCollection,
+        sortBy,
+        sortOrder
+      })
     }).catch((err) => {
-      console.error("getDocumentList", err)
-      
-      // (!) TO DO: I'd rather have a clearDocumentList() action that abstracts this
-      actions.setDocumentList(null, null)
+      actions.clearDocumentList()
+
       // TODO: Graceful deal with failure
     })
   }

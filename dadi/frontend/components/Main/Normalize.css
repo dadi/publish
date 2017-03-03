@@ -63,3 +63,7 @@ html {
 *, *:before, *:after {
   box-sizing: inherit;
 }
+a {
+  text-decoration: none;
+  color: inherit;
+}

@@ -1,7 +1,7 @@
-import { h, Component } from 'preact'
-import { Router } from 'preact-router'
-import { connect } from 'preact-redux'
-import { bindActionCreators } from 'redux'
+import {h, Component} from 'preact'
+import {Router} from 'preact-router'
+import {connect} from 'preact-redux'
+import {bindActionCreators} from 'redux'
 
 import * as userActions from 'actions/userActions'
 import * as apiActions from 'actions/apiActions'

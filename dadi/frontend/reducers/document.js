@@ -7,22 +7,37 @@ const initialState = {
   data: null,
   collection: null,
   listIsLoading: false,
-  docIsLoading: false
+  docIsLoading: false,
+  sortBy: null,
+  sortOrder: null
 }
 
 export default function document(state = initialState, action = {}) {
   switch (action.type) {
+    // Action: clear document list
+    case types.CLEAR_DOCUMENT_LIST:
+      return {
+        ...state,
+        listIsLoading: false,
+        list: null,
+        collection: null,
+        sortBy: null,
+        sortOrder: null
+      }
+
     // Action: set document list
     case types.SET_DOCUMENT_LIST:
       return {
         ...state,
         listIsLoading: false,
-        list: action.documents || initialState.list,
-        collection: action.collection || initialState.collection
+        list: action.documents,
+        collection: action.collection,
+        sortBy: action.sortBy,
+        sortOrder: action.sortOrder
       }
 
     // Action: set document loading status
-    case types.SET_DOCUMENT_LIST:
+    case types.SET_DOCUMENT_LOADING_STATUS:
       return {
         ...state,
         listIsLoading: action.isLoading

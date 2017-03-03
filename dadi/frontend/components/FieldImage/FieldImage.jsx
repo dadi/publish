@@ -1,6 +1,6 @@
 'use strict'
 
-import { h, Component } from 'preact'
+import {h, Component} from 'preact'
 import 'fetch'
 
 import Label from 'components/Label/Label'

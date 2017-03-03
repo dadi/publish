@@ -1,6 +1,6 @@
-import { h, Component } from 'preact'
-import { connect } from 'preact-redux'
-import { bindActionCreators } from 'redux'
+import {h, Component} from 'preact'
+import {connect} from 'preact-redux'
+import {bindActionCreators} from 'redux'
 /*
  * Libs
  */
@@ -54,9 +54,9 @@ class DocumentEdit extends Component {
   }
 
   componentDidUpdate(previousProps) {
-    const { state, actions } = this.props
+    const {state, actions} = this.props
     const previousState = previousProps.state
-    const { data, docIsLoading } = state.document
+    const {data, docIsLoading} = state.document
     const newStatePath = state.routing.locationBeforeTransitions.pathname
     const previousStatePath = previousState.routing.locationBeforeTransitions.pathname
 
@@ -73,13 +73,13 @@ class DocumentEdit extends Component {
   }
 
   componentWillUnmount() {
-    const { actions } = this.props
+    const {actions} = this.props
     // Clear our documents and reset loading state
     actions.setDocument(false, null)
   }
 
   getDocument() {
-    const { state, actions, collection, document_id } = this.props
+    const {state, actions, collection, document_id} = this.props
     
     return APIBridge(state.api.apis[0])
       .in(collection)

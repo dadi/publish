@@ -1,14 +1,14 @@
-import { h, Component } from 'preact'
-import { connect } from 'preact-redux'
-import { bindActionCreators } from 'redux'
-import { connectHelper } from 'lib/util'
+import {h, Component} from 'preact'
+import {connect} from 'preact-redux'
+import {bindActionCreators} from 'redux'
+import {connectHelper} from 'lib/util'
 
 import * as apiActions from 'actions/apiActions'
 
 class Api extends Component {
 
-  render({ api }, { authenticate }) {
-    const { state } = this.props
+  render({api}, {authenticate}) {
+    const {state} = this.props
 
     return (
       <div>

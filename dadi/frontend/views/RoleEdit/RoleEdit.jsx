@@ -1,11 +1,11 @@
-import { h, Component } from 'preact'
-import { connect } from 'preact-redux'
-import { bindActionCreators } from 'redux'
-import { connectHelper } from 'lib/util'
+import {h, Component} from 'preact'
+import {connect} from 'preact-redux'
+import {bindActionCreators} from 'redux'
+import {connectHelper} from 'lib/util'
 
 class RoleEdit extends Component {
   render() {
-    const { method, role } = this.props
+    const {method, role} = this.props
 
     return (
       <div>

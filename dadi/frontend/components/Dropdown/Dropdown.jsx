@@ -1,6 +1,6 @@
 'use strict'
 
-import { h, Component } from 'preact'
+import {h, Component} from 'preact'
 
 import Style from 'lib/Style'
 import styles from './Dropdown.css'

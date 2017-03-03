@@ -1,13 +1,12 @@
 'use strict'
 
-import { h, Component } from 'preact'
+import {h, Component} from 'preact'
 
 import Style from 'lib/Style'
 import styles from './Button.css'
 
 import Dropdown from 'components/Dropdown/Dropdown'
 import DropdownItem from 'components/DropdownItem/DropdownItem'
-import IconArrow from 'components/IconArrow/IconArrow'
 
 export default class Button extends Component {
   static defaultProps = {

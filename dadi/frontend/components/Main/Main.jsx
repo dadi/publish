@@ -1,4 +1,4 @@
-import { h, Component } from 'preact'
+import {h, Component} from 'preact'
 
 import styles from './Main.css'
 import normalize from './Normalize.css'

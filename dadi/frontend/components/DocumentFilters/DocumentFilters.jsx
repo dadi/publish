@@ -1,8 +1,8 @@
 'use strict'
 
-import { h, Component } from 'preact'
+import {h, Component} from 'preact'
 
-import { isValidJSON } from 'lib/util'
+import {isValidJSON} from 'lib/util'
 
 import DocumentFilter from 'components/DocumentFilter/DocumentFilter'
 

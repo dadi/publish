@@ -1,8 +1,8 @@
-import { h, Component } from 'preact'
-import { connect } from 'preact-redux'
-import { route } from 'preact-router'
-import { bindActionCreators } from 'redux'
-import { connectHelper, isEmpty } from 'lib/util'
+import {h, Component} from 'preact'
+import {connect} from 'preact-redux'
+import {route} from 'preact-router'
+import {bindActionCreators} from 'redux'
+import {connectHelper, isEmpty} from 'lib/util'
 
 import * as userActions from 'actions/userActions'
 
@@ -25,13 +25,8 @@ class SignIn extends Component {
     this.state.error = false
   }
 
-  shouldComponentUpdate(nextProps, nextState) {
-    // Do nothing if session check inconclusive
-    return !isEmpty(nextProps.state.signedIn)
-  }
-
   componentWillUpdate() {
-    const { state, actions } = this.props
+    const {state, actions} = this.props
 
     if (state.signedIn) {
       // Redirect signed-in user
