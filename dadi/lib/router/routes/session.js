@@ -51,7 +51,7 @@ module.exports = function (app) {
 
       return next()
     } else {
-      res.write(JSON.stringify({success: false}))
+      res.write(JSON.stringify({noAuth: true}))
       res.end()
 
       return next()
@@ -71,5 +71,13 @@ module.exports = function (app) {
         return next()
       })
     })(req, res, next)
+  })
+
+  app.post('/session/destroy', (req, res, next) => {
+    req.logout()
+    res.write(JSON.stringify({authenticated: req.isAuthenticated()}))
+    res.end()
+    
+    return next()
   })
 }
