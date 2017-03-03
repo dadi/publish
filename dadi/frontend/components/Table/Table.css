@@ -1,3 +1,6 @@
+/*
+ * Table
+ */
 .table {
   display: inline-block;
   font-size: 14px;
@@ -10,18 +13,32 @@
   max-width: 100%;
 }
 
+/*
+ * Table cell (generic)
+ */
+.cell {
+  cursor: default;
+  padding: 15px;
+  overflow: hidden;
+  word-wrap: break-word;
+  vertical-align: middle;
+  width: 10%;
+}
+
+/*
+ * Table head
+ */
 .head {
   background-color: var(--theme-colour-background, #FFFFFF);
+  color: var(--theme-colour-primary, #000000);
+  font-size: 15px;
+  font-weight: 700;
+  text-align: left;
+  vertical-align: middle;
 }
 
 .head-cell {
   padding: 12px 0 10px 15px;
-  line-height: 20px;
-  text-align: left;
-  color: var(--theme-colour-primary, #000000);
-  vertical-align: middle;
-  font-size: 15px;
-  font-weight: 700;
 }
 
 .head-cell-label {
@@ -32,9 +49,13 @@
   margin-right: 5px;
 }
 
+/*
+ * Table row
+ */
 .row {
   box-shadow: 0 0 1px rgba(0, 0, 0, 0.08) inset;
   background-color: var(--theme-colour-background, #FFFFFF);
+  color: var(--theme-colour-primary, #000000);
 }
 
 .row a {
@@ -55,17 +76,21 @@
   border-bottom-color: var(--theme-colour-data, #4A91FF);
 }
 
-.row-cell {
-  cursor: default;
-  padding: 15px;
-  overflow: hidden;
-  word-wrap: break-word;
-  vertical-align: middle;
-  width: 1%;
-}
-
 .row-cell-blank {
   color: var(--theme-colour-background-shade-2, #AAAAAA);
+}
+
+.row-selected {
+  background-color: #79879b !important;
+  color: var(--theme-colour-secondary, #FFFFFF) !important;
+  font-weight: bold;
+}
+
+/*
+ * Select checkbox
+ */
+.select-cell {
+  width: 1%;
 }
 
 .select {
