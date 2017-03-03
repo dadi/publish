@@ -53,6 +53,7 @@
 }
 
 .toggle {
+  position: relative;
   display: block;
   background-image: linear-gradient(to top, #020406, #17273F);
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
@@ -60,17 +61,19 @@
   text-align: left;
   width: 100%;
   outline: 0;
+  cursor: pointer;
 }
 
 .toggle-icon {
+  position: absolute;
   display: inline-block;
   vertical-align: middle;
-  margin-right: 8px;
 }
 
 .toggle-label {
   display: inline-block;
   vertical-align: middle;
+  padding-left: 20px;
 }
 
 .content {

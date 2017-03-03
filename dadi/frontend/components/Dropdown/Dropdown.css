@@ -1,7 +1,23 @@
-/* Options list */
 .container {
   background-color: var(--theme-colour-background-shade-1, #FAFAFA);
   border-radius: 4px;
   box-shadow: 7px 6px 25px rgba(0, 0, 0, 0.3);
   padding: 10px;
+}
+
+.item {
+  border-radius: 4px;
+  font-family: var(--theme-font-family, sans-serif);
+  color: var(--theme-colour-primary, #000000);
+  padding: 10px;
+  cursor: pointer;
+  display: block;
+  width: 100%;
+  text-align: left;
+  text-decoration: none;
+}
+
+.item:hover {
+  background-color: var(--theme-colour-data, #4A91FF);
+  color: var(--theme-colour-secondary, #ffffff);
 }

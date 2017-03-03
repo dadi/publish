@@ -1,7 +1,6 @@
 import {h, Component} from 'preact'
 
-import Dropdown from 'components/Dropdown/Dropdown'
-import DropdownItem from 'components/DropdownItem/DropdownItem'
+import Dropdown, {DropdownItem} from 'components/Dropdown/Dropdown'
 import NavItem from 'components/NavItem/NavItem'
 
 import CollectionNav from 'containers/CollectionNav/CollectionNav'
@@ -10,8 +9,13 @@ import Style from 'lib/Style'
 import styles from './Nav.css'
 
 export default class Nav extends Component {
+  static defaultProps = {
+    groups: [],
+    mobile: false
+  }
+
   render() {
-    const {groups, compact} = this.props
+    const {groups, mobile} = this.props
 
     return (
       <nav class={styles.nav}>
@@ -21,22 +25,24 @@ export default class Nav extends Component {
 
             if (item.collections) {
               let children = item.collections.map(collection => {
-                if (compact) {
+                const link = `/${collection.slug}/documents`
+
+                if (mobile) {
                   return (
                     <NavItem
-                      href={`/${collection.slug}/documents`}
+                      href={link}
                       text={collection.name}
-                      compact={true}
+                      mobile={true}
                     />
                   )
                 }
 
                 return (
-                  <DropdownItem href={`/${collection.slug}/documents`}>{collection.name}</DropdownItem>
+                  <DropdownItem href={link}>{collection.name}</DropdownItem>
                 )
               })
 
-              subItems = compact ?
+              subItems = mobile ?
                 <ul class={styles.children}>{children}</ul>
                 :
                 <Dropdown>{children}</Dropdown>
@@ -50,7 +56,7 @@ export default class Nav extends Component {
               <NavItem
                 href={href}
                 text={item.name || item.title}
-                compact={compact}
+                mobile={mobile}
               >
                 {subItems}
               </NavItem>
