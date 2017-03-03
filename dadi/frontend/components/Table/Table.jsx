@@ -5,6 +5,8 @@ import { h, Component } from 'preact'
 import Style from 'lib/Style'
 import styles from './Table.css'
 
+import IconArrow from 'components/IconArrow/IconArrow'
+
 //
 // Table
 //
@@ -118,10 +120,26 @@ class TableHead extends Component {
 // Table head cell
 //
 class TableHeadCell extends Component {
+  static defaultProps = {
+    arrow: null,
+    link: null
+  }
+
   render() {
     return (
       <th class={styles['head-cell']}>
-        {this.props.children}
+        {this.props.arrow && ['up', 'down'].includes(this.props.arrow) &&
+          <IconArrow
+            class={styles['head-cell-arrow']}
+            width="10"
+            height="10"
+            direction={this.props.arrow}
+          />
+        }
+
+        <span class={styles['head-cell-label']}>
+          {this.props.children}
+        </span>
       </th>
     )
   }

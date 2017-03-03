@@ -20,7 +20,16 @@
   text-align: left;
   color: var(--theme-colour-primary, #000000);
   vertical-align: middle;
+  font-size: 15px;
   font-weight: 700;
+}
+
+.head-cell-label {
+  vertical-align: middle;
+}
+
+.head-cell-arrow {
+  margin-right: 5px;
 }
 
 .row {

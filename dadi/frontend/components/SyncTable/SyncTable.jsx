@@ -2,8 +2,6 @@
 
 import { h, Component } from 'preact'
 
-import Style from 'lib/Style'
-
 import Table, {
   TableHead,
   TableHeadCell,
@@ -16,7 +14,11 @@ import Table, {
 //
 export default class SyncTable extends Component {
   static defaultProps = {
-    columns: []
+    columns: [],
+    selectable: true,
+    sort: null,
+    sortBy: null,
+    sortOrder: null
   }
 
   renderChildren() {
@@ -30,12 +32,40 @@ export default class SyncTable extends Component {
   }
 
   render() {
+    const {
+      columns,
+      selectable,
+      sort,
+      sortBy,
+      sortOrder
+    } = this.props
+
     return (
-      <Table selectable={this.props.selectable}>
+      <Table selectable={selectable}>
         <TableHead>
-          {this.props.columns.map(column => {
+          {columns.map(column => {
+            let content = column.label
+            let arrow = null
+            let linkSortOrder = 'asc'
+
+            if (typeof sort === 'function') {
+              if (sortBy === column.id) {
+                if (sortOrder === 'desc') {
+                  arrow = 'down'
+                  linkSortOrder = 'asc'
+                } else {
+                  arrow = 'up'
+                  linkSortOrder = 'desc'
+                }
+
+                arrow = (sortOrder === 'desc') ? 'down' : 'up'
+              }
+
+              content = sort(content, column.id, linkSortOrder)
+            }
+
             return (
-              <TableHeadCell>{column.label}</TableHeadCell>
+              <TableHeadCell arrow={arrow}>{content}</TableHeadCell>
             )
           })}
         </TableHead>
@@ -51,16 +81,16 @@ export default class SyncTable extends Component {
 //
 class SyncTableRow extends Component {
   render() {
-    const {callback, columns, data} = this.props
+    const {columns, data, renderCallback} = this.props
 
     return (
       <TableRow {...this.props}>
         {columns.map((column, index) => {
           let value = data[column.id]
 
-          // If there's a callback, we run the value through it
-          if (typeof callback === 'function') {
-            value = callback(data[column.id], data, column, index)
+          // If there's a renderCallback, we run the value through it
+          if (typeof renderCallback === 'function') {
+            value = renderCallback(data[column.id], data, column, index)
           }
 
           return (
