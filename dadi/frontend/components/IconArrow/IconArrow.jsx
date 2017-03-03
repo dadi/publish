@@ -1,27 +1,81 @@
+'use strict'
+
 import { h, Component } from 'preact'
 
+import Style from 'lib/Style'
 import styles from './IconArrow.css'
 
-const DIRECTIONS = [
-  'left',
-  'right',
-  'down'
-]
-
 export default class IconArrow extends Component {
-  render() {
-    let classes = [styles.icon]
+  static defaultProps = {
+    direction: 'up',
+    width: 10,
+    height: 10
+  }
 
-    if (this.props.direction && DIRECTIONS.includes(this.props.direction)) {
-      classes.push(styles[this.props.direction])
+  render() {
+    const {direction} = this.props
+    const width = parseInt(this.props.width)
+    const height = parseInt(this.props.height)
+
+    let borderWidths
+    let borderColourPosition
+
+    switch (this.props.direction) {
+      case 'up':
+        borderWidths = [
+          0, width / 2, height, width / 2
+        ]
+        borderColourPosition = 2
+
+        break
+
+      case 'down':
+        borderWidths = [
+          height, width / 2, 0, width / 2
+        ]
+        borderColourPosition = 0
+
+        break
+
+      case 'left':
+        borderWidths = [
+          height / 2, width, height / 2, 0
+        ]
+        borderColourPosition = 1
+
+        break
+
+      case 'right':
+        borderWidths = [
+          width / 2, 0, width / 2, height
+        ]
+        borderColourPosition = 3
+
+        break
     }
 
+    const borderWidthsValue = borderWidths.map(width => {
+      return width + 'px'
+    }).join(' ')
+
+    const borderColourValue = [0, 1, 2, 3].map(index => {
+      if (index === borderColourPosition) {
+        return 'currentColor'
+      }
+
+      return 'transparent'
+    }).join(' ')
+
+    const inlineStyle = `border-width: ${borderWidthsValue};border-color: ${borderColourValue};`
+
+    let classes = [styles.icon]
+
+    if (this.props.class) {
+      classes.push(this.props.class)
+    }
+    
     return (
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 36.9 20.8" class={classes.join(' ')}>
-        <g>
-          <path d="M1.1,20.8c-1.1,0-1.4-0.7-0.7-1.5L17.5,0.4c0.5-0.5,1.4-0.5,1.9,0l17.1,18.9c0.7,0.8,0.4,1.5-0.7,1.5H1.1z"/>
-        </g>
-      </svg>
+      <span class={classes.join(' ')} style={inlineStyle} />
     )
   }
 }

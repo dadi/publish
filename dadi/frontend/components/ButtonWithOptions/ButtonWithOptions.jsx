@@ -51,7 +51,11 @@ export default class ButtonWithOptions extends Component {
           inGroup="right"
           onClick={this.toggleOptions.bind(this)}
         >
-          <IconArrow direction={this.state.optionsExpanded ? 'down' : null} />
+          <IconArrow
+            direction={this.state.optionsExpanded ? 'down' : null}
+            width="10"
+            height="10"
+          />
         </Button>
 
         {this.state.optionsExpanded &&
