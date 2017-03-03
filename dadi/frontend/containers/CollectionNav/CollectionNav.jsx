@@ -54,8 +54,8 @@ class App extends Component {
 
     return (
       <Nav
+        mobile={state.app.breakpoint === null}
         groups={this.groups}
-        compact={state.app.breakpoint === null}
       />
     )
   }

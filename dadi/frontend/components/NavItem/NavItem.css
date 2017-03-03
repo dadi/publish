@@ -3,12 +3,12 @@
   position: relative;
 }
 
-.container-collapsed {
+.container-desktop {
   display: inline-block;
 }
 
-.container-collapsed:hover .children {
-  display: block;
+.container-expanded {
+  color: red !important;
 }
 
 .nav-item {
@@ -23,7 +23,7 @@
   text-decoration: none;
 }
 
-.container-collapsed:hover .nav-item {
+.container-expanded .nav-item {
   background-color: var(--theme-colour-background-shade-1, #FAFAFA);
   color: var(--theme-colour-primary, #000000);
 }
@@ -33,10 +33,14 @@
   color: var(--theme-colour-system, #ffbf0d);
 }
 
-.container-collapsed .children {
+.container-desktop .children {
   display: none;
   position: absolute;
   min-width: 180px;
   top: 100%;
   top: calc(100% - 3px);
+}
+
+.container-expanded .children {
+  display: block;
 }

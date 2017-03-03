@@ -5,9 +5,6 @@ import {h, Component} from 'preact'
 import Style from 'lib/Style'
 import styles from './Button.css'
 
-import Dropdown from 'components/Dropdown/Dropdown'
-import DropdownItem from 'components/DropdownItem/DropdownItem'
-
 export default class Button extends Component {
   static defaultProps = {
     type: 'button'
