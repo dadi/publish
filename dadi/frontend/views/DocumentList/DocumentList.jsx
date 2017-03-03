@@ -5,7 +5,7 @@ import {bindActionCreators} from 'redux'
 import * as apiActions from 'actions/apiActions'
 import * as documentActions from 'actions/documentActions'
 
-import {connectHelper, isValidJSON, getURLSearchVariable} from 'lib/util'
+import {connectHelper, isValidJSON} from 'lib/util'
 import {Keyboard} from 'lib/keyboard'
 import APIBridge from 'lib/api-bridge-client'
 
@@ -87,13 +87,18 @@ class DocumentList extends Component {
     const previousState = previousProps.state
     const {list, listIsLoading} = state.document
     const newStatePath = state.routing.locationBeforeTransitions.pathname
+    const newStateSearch = state.routing.locationBeforeTransitions.search
     const previousStatePath = previousState.routing.locationBeforeTransitions.pathname
+    const previousStateSearch = previousState.routing.locationBeforeTransitions.search
 
     // State check: reject when missing config, session, or apis
     if (!state.app.config || !state.api.apis.length || !state.user) return
 
     // Fixed to checking first API, but will eventually need to check all
     if (!state.api.apis[0].collections || !state.api.apis[0].collections.length > 0) return
+
+    // State check: reject when path matches and document list loaded
+    if (list && (newStatePath === previousStatePath) && (newStateSearch === previousStateSearch)) return
 
     // State check: reject when documents are still loading
     if (listIsLoading) return
@@ -117,10 +122,18 @@ class DocumentList extends Component {
   }
 
   getDocumentList(nextPage, nextCollection) {
-    const {state, actions, collection, page} = this.props
+    const {
+      actions,
+      collection,
+      filter,
+      order,
+      page,
+      sort,
+      state
+    } = this.props
     const urlSearch = state.routing.locationBeforeTransitions.search
-    const sortBy = getURLSearchVariable(urlSearch, 'sort') || 'createdAt'
-    const sortOrder = getURLSearchVariable(urlSearch, 'order') || 'desc'
+    const sortBy = sort || 'createdAt'
+    const sortOrder = order || 'desc'
 
     // Set document loading status to 'Loading'
     actions.setDocumentLoadingStatus(true)
@@ -131,7 +144,7 @@ class DocumentList extends Component {
       .goToPage(nextPage || page)
       .sortBy(sortBy, sortOrder)
 
-    if (this.props.filter && isValidJSON(this.props.filter)) {
+    if (filter && isValidJSON(filter)) {
       let filters = JSON.parse(this.props.filter)
 
       query.where(filters)
