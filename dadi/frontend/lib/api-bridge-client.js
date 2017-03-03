@@ -1,6 +1,6 @@
 'use strict'
 
-import 'whatwg-fetch'
+import 'fetch'
 
 const APIWrapper = require('@dadi/api-wrapper-core')
 
