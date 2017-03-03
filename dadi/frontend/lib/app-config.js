@@ -1,6 +1,6 @@
 'use strict'
 
-import 'unfetch'
+import 'whatwg-fetch'
 
 module.exports = () => {
   return fetch('/config', {

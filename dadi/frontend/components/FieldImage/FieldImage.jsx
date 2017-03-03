@@ -1,7 +1,7 @@
 'use strict'
 
 import { h, Component } from 'preact'
-import 'unfetch'
+import 'whatwg-fetch'
 
 import Label from 'components/Label/Label'
 
