@@ -131,7 +131,6 @@ class DocumentList extends Component {
       sort,
       state
     } = this.props
-    const urlSearch = state.routing.locationBeforeTransitions.search
     const sortBy = sort || 'createdAt'
     const sortOrder = order || 'desc'
 
