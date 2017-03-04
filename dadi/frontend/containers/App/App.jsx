@@ -65,7 +65,7 @@ class App extends Component {
 
     // State change: user has signed out
     if (previousState.user.user && !state.user.user) {
-      route('/signin')
+      route('/sign-in')
     }
 
     if (previousPath !== path && (this.socket && this.socket.getUser())) {
@@ -105,7 +105,7 @@ class App extends Component {
             <UserProfile path="/profile" authenticate />
             <RoleList path="/roles" authenticate/>
             <RoleEdit path="/role/:method/:role?" authenticate />
-            <SignIn path="/signin" />
+            <SignIn path="/sign-in" />
             <SignOut path="/signout" />
             <StyleGuide path="/styleguide" />
             <Error type="404" default />
@@ -159,7 +159,7 @@ class App extends Component {
       } else {
         // Trigger signout
         actions.signOut()
-        route('/signin')
+        route('/sign-in')
       }
     })
   }
@@ -174,7 +174,7 @@ class App extends Component {
           // (!) TO DO: Handle failure of session destroy
           if (success) {
             actions.signOut()
-            route('/signin')
+            route('/sign-in')
           }
         })
       }
