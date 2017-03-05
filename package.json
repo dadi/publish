@@ -13,7 +13,8 @@
     "watch:build": "webpack --watch",
     "watch:server": "nodemon \"./index.js\" --watch \"./dadi\"",
     "snyk-protect": "snyk protect",
-    "prepublish": "npm run snyk-protect"
+    "prepublish": "npm run snyk-protect",
+    "create-component": "bash scripts/create-component/create-component.sh"
   },
   "repository": {
     "type": "git",
