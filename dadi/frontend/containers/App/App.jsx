@@ -75,10 +75,8 @@ class App extends Component {
 
   render() {
     const {state, history} = this.props
-    let routes
-    if (state.app && state.app.config) {
-      routes = this.groupRoutes()
-    }
+
+    let routes = state.app && state.app.config ? this.groupRoutes() : null
 
     // Semantically, it makes sense that <Main/> renders a HTML5 <main> element, which
     // should sit at the same level as <Header/>, which renders a HTML5 <header> element.
