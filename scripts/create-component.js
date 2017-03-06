@@ -1,7 +1,6 @@
 'use strict'
 
 const inquirer = require('inquirer')
-const validator = require('validator')
 const fs = require('fs')
 const path = require('path')
 const ui = new inquirer.ui.BottomBar()
@@ -140,7 +139,11 @@ CreateComponent.prototype.saveToFile = function() {
   }
   fs.writeFile(path.resolve(__dirname, `../dadi/frontend/${this.results.type}s/${this.results.name}.jsx`), fileContent, (err) => {
     if (err) throw err
+<<<<<<< HEAD
     console.log('It\'s saved!')
+=======
+    ui.log.write('Saved!')
+>>>>>>> 7cca401da8fe81e6f102ae549f9d70c19fd4d6fb
   })
 }
 
