@@ -38,7 +38,7 @@ class DocumentList extends Component {
         label: collection.fields[field].label
       }
     })
-    
+
     return (
       <section class="Documents">
         <DocumentFilters filter={filter} collection={collection} />
