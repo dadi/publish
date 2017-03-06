@@ -6,7 +6,7 @@
   "scripts": {
     "start": "NODE_ENV=development node index.js",
     "test": "standard && env NODE_ENV=development mocha --colors --webpack-config webpack.config.js \"test/**/*.js\"",
-    "build": "NODE_ENV=development webpack --progress",
+    "build": "webpack --progress",
     "prebuild": "mkdirp build",
     "init": "validate-commit-msg",
     "create-component": "node scripts/create-component.js",
