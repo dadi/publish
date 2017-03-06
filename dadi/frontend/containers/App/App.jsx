@@ -1,5 +1,5 @@
 import {h, Component} from 'preact'
-import {Router, Layout, Route, route} from 'preact-router'
+import {Router, route} from 'preact-router'
 import {connect} from 'preact-redux'
 import {bindActionCreators} from 'redux'
 
