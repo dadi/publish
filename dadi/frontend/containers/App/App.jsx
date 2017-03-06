@@ -129,16 +129,16 @@ class App extends Component {
 
   groupRoutes() {
     const {state} = this.props
-    const paths = []
-    state.app.config.apis[0].menu.forEach(item => {
-      if (typeof item === 'string') {
-        paths.push(':collection')
-      } else {
-        item.collections.map(collection => {
-          paths.push(`${slugify(item.title)}/:collection`)
-        })
-      }
-    })
+    const paths = [':collection']
+    if (state.app.config.apis[0].menu) {
+      state.app.config.apis[0].menu.forEach(item => {
+        if (typeof item !== 'string') {
+          item.collections.forEach(collection => {
+            paths.push(`${slugify(item.title)}/:collection`)
+          })
+        }
+      })
+    }
     return paths
   }
 
