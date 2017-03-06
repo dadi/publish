@@ -140,7 +140,7 @@ CreateComponent.prototype.saveToFile = function() {
   }
   fs.writeFile(path.resolve(__dirname, `../dadi/frontend/${this.results.type}s/${this.results.name}.jsx`), fileContent, (err) => {
     if (err) throw err
-    console.log('It\'s saved!')
+    ui.log.write('Saved!')
   })
 }
 
