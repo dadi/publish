@@ -93,16 +93,12 @@ class DocumentList extends Component {
 
     // State check: reject when missing config, session, or apis
     if (!state.app.config || !state.api.apis.length || !state.user) return
-
     // Fixed to checking first API, but will eventually need to check all
     if (!state.api.apis[0].collections || !state.api.apis[0].collections.length > 0) return
-
     // State check: reject when path matches and document list loaded
     if (list && (newStatePath === previousStatePath) && (newStateSearch === previousStateSearch)) return
-
     // State check: reject when documents are still loading
     if (listIsLoading) return
-
     this.getDocumentList()
   }
 

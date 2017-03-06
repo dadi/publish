@@ -94,33 +94,30 @@ class App extends Component {
             onSignOut={this.sessionEnd.bind(this)}
           />
         }
-
-        {state.app && state.app.config && routes &&
-          <Main>
-            <Router history={history}>
-              <Home path="/" authenticate />
-              <PasswordReset path="/reset" authenticate/>
-              <Api path="/apis/:api?" authenticate />
-              <Collection path="/apis/:api/collections/:collection?" authenticate />
-              {routes.map(path => (
-                <DocumentList path={`/${path}/documents/:page?`} authenticate />
-              ))}
-              {routes.map(path => (
-                <DocumentEdit path={`/${path}/document/:method/:document_id?`} authenticate />
-              ))}
-              {routes.map(path => (
-                <MediaLibrary path={`/${path}/media/:document?`} authenticate/>
-              ))}
-              <UserProfile path="/profile" authenticate />
-              <RoleList path="/roles" authenticate/>
-              <RoleEdit path="/role/:method/:role?" authenticate />
-              <SignIn path="/sign-in" />
-              <SignOut path="/signout" />
-              <StyleGuide path="/styleguide" />
-              <Error type="404" default />
-            </Router>
-          </Main>
-        }
+        <Main>
+          <Router history={history}>
+            <Home path="/" authenticate />
+            <PasswordReset path="/reset" authenticate/>
+            <Api path="/apis/:api?" authenticate />
+            <Collection path="/apis/:api/collections/:collection?" authenticate />
+            {routes && routes.map(path => (
+              <DocumentList path={`/${path}/documents/:page?`} authenticate />
+            ))}
+            {routes && routes.map(path => (
+              <DocumentEdit path={`/${path}/document/:method/:document_id?`} authenticate />
+            ))}
+            {routes && routes.map(path => (
+              <MediaLibrary path={`/${path}/media/:document?`} authenticate/>
+            ))}
+            <UserProfile path="/profile" authenticate />
+            <RoleList path="/roles" authenticate/>
+            <RoleEdit path="/role/:method/:role?" authenticate />
+            <SignIn path="/sign-in" />
+            <SignOut path="/sign-out" />
+            <StyleGuide path="/styleguide" />
+            <Error type="404" default />
+          </Router>
+        </Main>
       </div>
     )
   }
@@ -183,10 +180,6 @@ class App extends Component {
     new Session().getSession().then(user => {
       if (user) {
         actions.signIn(user)
-      } else {
-        // Trigger signout
-        actions.signOut()
-        route('/sign-in')
       }
     })
   }

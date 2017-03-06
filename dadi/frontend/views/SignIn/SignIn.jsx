@@ -83,6 +83,8 @@ class SignIn extends Component {
   }
 
   signIn(event) {
+    event.preventDefault()
+
     const {actions, state} = this.props
 
     new Session().createSession({
@@ -101,8 +103,6 @@ class SignIn extends Component {
         })
       }
     })
-
-    event.preventDefault()
   }
 
   handleInputChange(name, event) {
