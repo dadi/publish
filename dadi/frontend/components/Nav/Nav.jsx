@@ -1,4 +1,5 @@
 import {h, Component} from 'preact'
+import {slugify} from 'lib/util'
 
 import Dropdown, {DropdownItem} from 'components/Dropdown/Dropdown'
 import NavItem from 'components/NavItem/NavItem'
@@ -24,8 +25,9 @@ export default class Nav extends Component {
             let subItems = null
 
             if (item.collections) {
+              let slug = slugify(item.title)
               let children = item.collections.map(collection => {
-                const link = `/${collection.slug}/documents`
+                const link = `/${slug}/${collection.slug}/documents`
 
                 if (mobile) {
                   return (

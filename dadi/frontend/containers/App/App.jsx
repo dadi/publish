@@ -1,5 +1,5 @@
 import {h, Component} from 'preact'
-import {Router, route} from 'preact-router'
+import {Router, Layout, Route, route} from 'preact-router'
 import {connect} from 'preact-redux'
 import {bindActionCreators} from 'redux'
 
@@ -25,7 +25,7 @@ import SignIn from 'views/SignIn/SignIn'
 import SignOut from 'views/SignOut/SignOut'
 import StyleGuide from 'views/StyleGuide/StyleGuide'
 
-import {connectHelper, debounce, isEmpty} from 'lib/util'
+import {connectHelper, debounce, isEmpty, slugify} from 'lib/util'
 import Socket from 'lib/socket'
 import Session from 'lib/session'
 import getAppConfig from 'lib/app-config'
@@ -75,6 +75,10 @@ class App extends Component {
 
   render() {
     const {state, history} = this.props
+    let routes
+    if (state.app && state.app.config) {
+      routes = this.groupRoutes()
+    }
 
     // Semantically, it makes sense that <Main/> renders a HTML5 <main> element, which
     // should sit at the same level as <Header/>, which renders a HTML5 <header> element.
@@ -93,26 +97,49 @@ class App extends Component {
           />
         }
 
-        <Main>
-          <Router history={history}>
-            <Home path="/" authenticate />
-            <PasswordReset path="/reset" authenticate/>
-            <Api path="/apis/:api?" authenticate />
-            <Collection path="/apis/:api/collections/:collection?" authenticate />
-            <DocumentList path="/:collection/documents/:page?" authenticate />
-            <DocumentEdit path="/:collection/document/:method/:document_id?" authenticate />
-            <MediaLibrary path="/:collection/media/:document?" authenticate/>
-            <UserProfile path="/profile" authenticate />
-            <RoleList path="/roles" authenticate/>
-            <RoleEdit path="/role/:method/:role?" authenticate />
-            <SignIn path="/sign-in" />
-            <SignOut path="/signout" />
-            <StyleGuide path="/styleguide" />
-            <Error type="404" default />
-          </Router>
-        </Main>
+        {state.app && state.app.config && routes &&
+          <Main>
+            <Router history={history}>
+              <Home path="/" authenticate />
+              <PasswordReset path="/reset" authenticate/>
+              <Api path="/apis/:api?" authenticate />
+              <Collection path="/apis/:api/collections/:collection?" authenticate />
+              {routes.map(path => (
+                <DocumentList path={`/${path}/documents/:page?`} authenticate />
+              ))}
+              {routes.map(path => (
+                <DocumentEdit path={`/${path}/document/:method/:document_id?`} authenticate />
+              ))}
+              {routes.map(path => (
+                <MediaLibrary path={`/${path}/media/:document?`} authenticate/>
+              ))}
+              <UserProfile path="/profile" authenticate />
+              <RoleList path="/roles" authenticate/>
+              <RoleEdit path="/role/:method/:role?" authenticate />
+              <SignIn path="/sign-in" />
+              <SignOut path="/signout" />
+              <StyleGuide path="/styleguide" />
+              <Error type="404" default />
+            </Router>
+          </Main>
+        }
       </div>
     )
+  }
+
+  groupRoutes() {
+    const {state} = this.props
+    const paths = []
+    state.app.config.apis[0].menu.forEach(item => {
+      if (typeof item === 'string') {
+        paths.push(':collection')
+      } else {
+        item.collections.map(collection => {
+          paths.push(`${slugify(item.title)}/:collection`)
+        })
+      }
+    })
+    return paths
   }
 
   getApiCollections() {
