@@ -103,7 +103,6 @@
     "unfetch": "^2.1.1",
     "url-loader": "^0.5.7",
     "validate-commit-msg": "^2.11.1",
-    "validator": "^7.0.0",
     "webpack": "^1.14.0"
   },
   "standard": {

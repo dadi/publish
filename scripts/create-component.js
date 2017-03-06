@@ -1,7 +1,6 @@
 'use strict'
 
 const inquirer = require('inquirer')
-const validator = require('validator')
 const fs = require('fs')
 const path = require('path')
 const ui = new inquirer.ui.BottomBar()
