@@ -9,7 +9,7 @@ const webpack = require('webpack')
 const ExtractTextPlugin = require('extract-text-webpack-plugin')
 const WebpackOnBuildPlugin = require('on-build-webpack')
 
-const ENV = process.env.NODE_ENV || 'development'
+const ENV = process.env.NODE_ENV || 'production'
 const ENABLE_SOURCE_MAP = (process.env.ENABLE_SOURCE_MAP !== false)
 
 const PATH_CSS = 'main.css'
