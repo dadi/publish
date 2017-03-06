@@ -47,6 +47,17 @@ export function isEmpty(subject) {
   return subject === undefined || subject === null || (typeof subject === 'object' && subject.length < 1)
 }
 
+export function slugify(str) {
+  return str.toString()
+    .toLowerCase()
+    .replace(/\s+/g, '-')     // Replace spaces with -
+    .replace(/\/+/g, '-')     // Replace slashes with -
+    .replace(/[^\w-]+/g, '') // Remove all non-word chars
+    .replace(/--+/g, '-')   // Replace multiple - with single -
+    .replace(/^-+/, '')       // Trim - from start of text
+    .replace(/-+$/, '')       // Trim - from end of text
+}
+
 export function debounce(func, wait, immediate) {
   var timeout
 
