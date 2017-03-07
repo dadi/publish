@@ -1,12 +1,39 @@
 'use strict'
 
 import {h, Component} from 'preact'
+import proptypes from 'proptypes'
 
 import Style from 'lib/Style'
 import styles from './IconArrow.css'
 
+/**
+ * An arrow icon.
+ */
 export default class IconArrow extends Component {
+  static propTypes = {
+    /**
+     * Colour accent.
+     */
+    direction: proptypes.oneOf(['down', 'left', 'right', 'up']),
+
+    /**
+     * The height of the arrow.
+     */
+    height: proptypes.number,
+
+    /**
+     * The width of the arrow.
+     */
+    width: proptypes.number,
+
+    /**
+     * A list of classes to be added to the icon element.
+     */
+    class: proptypes.string
+  }
+
   static defaultProps = {
+    class: null,
     direction: 'up',
     width: 10,
     height: 10

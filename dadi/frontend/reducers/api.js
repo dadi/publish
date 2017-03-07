@@ -45,6 +45,10 @@ export default function api(state = initialState, action = {}) {
         apis: action.config.apis
       }
 
+    // Action: user signed out
+    case types.SIGN_OUT:
+      return initialState
+
     default:
       return state
   }

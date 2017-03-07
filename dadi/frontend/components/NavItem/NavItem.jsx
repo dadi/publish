@@ -1,11 +1,37 @@
 'use strict'
 
 import {h, Component} from 'preact'
+import proptypes from 'proptypes'
 
 import Style from 'lib/Style'
 import styles from './NavItem.css'
 
+/**
+ * An item of the main navigation component.
+ */
 export default class NavItem extends Component {
+  static propTypes = {
+    /**
+     * Whether the component corresponds to the currently active page.
+     */
+    active: proptypes.bool,
+
+    /**
+     * The link to be followed when the navigation item is clicked.
+     */
+    href: proptypes.string,
+
+    /**
+     * Whether the navigation item is part of a navigation component in mobile mode.
+     */
+    mobile: proptypes.bool
+  }
+
+  static defaultProps = {
+    active: false,
+    mobile: false
+  }
+
   constructor(props) {
     super(props)
 
