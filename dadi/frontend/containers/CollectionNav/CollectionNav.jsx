@@ -11,7 +11,7 @@ import Nav from 'components/Nav/Nav'
 
 import { connectHelper } from 'lib/util'
 
-class App extends Component {
+class CollectionNav extends Component {
   groupCollections(sort, collections) {
     if (!collections.length) return []
 
@@ -64,4 +64,4 @@ class App extends Component {
 export default connectHelper(
   state => state,
   dispatch => bindActionCreators({...userActions, ...apiActions, ...appActions}, dispatch)
-)(App)
+)(CollectionNav)
