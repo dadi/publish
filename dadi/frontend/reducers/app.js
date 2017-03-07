@@ -48,6 +48,10 @@ export default function app(state = initialState, action = {}) {
         breakpoint
       }
 
+    // Action: user signed out
+    case types.SIGN_OUT:
+      return initialState
+
     default:
       return state
   }
