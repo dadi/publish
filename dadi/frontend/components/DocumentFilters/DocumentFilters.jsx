@@ -1,7 +1,6 @@
 'use strict'
 
 import {h, Component} from 'preact'
-import {Router} from 'preact-router'
 
 import {isValidJSON} from 'lib/util'
 
@@ -51,7 +50,7 @@ export default class DocumentFilters extends Component {
   }
 
   updateUrlFilters(filter) {
-    const {router, updateUrlParams} = this.props
+    const {updateUrlParams} = this.props
     const {filters} = this.state
     this.setState(Object.assign(filters, filter))
     if (typeof updateUrlParams === 'function') {
