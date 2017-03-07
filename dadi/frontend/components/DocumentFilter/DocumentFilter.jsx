@@ -75,12 +75,14 @@ export default class DocumentFilter extends Component {
 
   onChange(elementId, event) {
     const {updateFilter} = this.props
-      
+
     this.setState({[elementId]: event.target.value})
     // {!} TO-DO add further evaluation in `Object.js`
-    if (!Object.keys(this.state).filter(key => {
+    let nullProps = Object.keys(this.state).filter(key => {
       return Object.is(this.state[key], null)
-    }).length && typeof updateFilter === 'function') {
+    })
+
+    if (!nullProps.length && typeof updateFilter === 'function') {
       updateFilter({[this.state.field]: {[this.state.type]: this.state.value}})
     }
   }
