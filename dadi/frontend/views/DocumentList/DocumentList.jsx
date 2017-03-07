@@ -76,7 +76,7 @@ class DocumentList extends Component {
         </SyncTable>
 
         {Array(documents.metadata.totalPages).fill().map((_, page) => (
-          <a href={ `/${this.props.collection}/documents/${page+1}` }>{page+1}</a>
+          <a href={`/${this.props.collection}/documents/${page+1}`}>{page+1}</a>
         ))}
       </section>
     )

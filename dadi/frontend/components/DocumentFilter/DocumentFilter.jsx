@@ -33,7 +33,7 @@ export default class DocumentFilter extends Component {
   }
 
   componentWillMount() {
-    const { field, value, fields } = this.props
+    const {field, value, fields} = this.props
 
     // Evaluate passed filter / store in state
     if (field && value) {
@@ -46,7 +46,7 @@ export default class DocumentFilter extends Component {
   }
 
   render() {
-    const { fields, value } = this.props
+    const {fields, value} = this.props
 
     return (
       <div>

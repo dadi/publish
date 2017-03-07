@@ -10,7 +10,7 @@ import Button from 'components/Button/Button'
 export default class DocumentFilters extends Component {
 
   componentWillMount() {
-    const { 
+    const {
       filter, 
       collection, 
       field, 
