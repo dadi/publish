@@ -3,7 +3,6 @@ import {Router} from 'preact-router'
 import {connect} from 'preact-redux'
 import {bindActionCreators} from 'redux'
 
-import * as userActions from 'actions/userActions'
 import * as apiActions from 'actions/apiActions'
 import * as appActions from 'actions/appActions'
 
@@ -63,5 +62,5 @@ class CollectionNav extends Component {
 
 export default connectHelper(
   state => state,
-  dispatch => bindActionCreators({...userActions, ...apiActions, ...appActions}, dispatch)
+  dispatch => bindActionCreators({...apiActions, ...appActions}, dispatch)
 )(CollectionNav)
