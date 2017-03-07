@@ -35,12 +35,20 @@ export default class DocumentFilters extends Component {
         {visible && filters && Object.keys(filters).length && collection && (
           <div>
             {Object.keys(filters).map(key => ( 
-              <DocumentFilter field={key} value={filters[key]} fields={collection.fields} updateFilter={this.updateUrlFilters.bind(this)} />
+              <DocumentFilter 
+                field={key} 
+                value={filters[key]} 
+                fields={collection.fields} 
+                updateFilter={this.updateUrlFilters.bind(this)} 
+                />
             ))}
           </div>
         )}
         {edit && (
-          <DocumentFilter fields={collection.fields} updateFilter={this.updateUrlFilters.bind(this)} />
+          <DocumentFilter 
+            fields={collection.fields} 
+            updateFilter={this.updateUrlFilters.bind(this)} 
+          />
         )}
         {visible && (
           <Button onClick={this.addFilter.bind(this)}>Add</Button>
@@ -53,7 +61,7 @@ export default class DocumentFilters extends Component {
     const {updateUrlParams} = this.props
     const {filters} = this.state
 
-    this.setState({filters: Object.assign(filters || {}, filter)})
+    this.setState({filters: Object.assign({}, filters, filter)})
 
     if (filters && typeof updateUrlParams === 'function') {
       updateUrlParams(filters)
