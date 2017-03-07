@@ -23,8 +23,6 @@ export default class IconCross extends Component {
   }
 
   static defaultProps = {
-    class: null,
-    direction: 'up',
     width: 10,
     height: 10
   }
