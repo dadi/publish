@@ -70,7 +70,7 @@ export default class SyncTableRow extends Component {
     /**
      * The order currently being used to sort the rows by `sortBy`.
      */
-    sortOrder: proptypes.oneof(['asc', 'desc']),
+    sortOrder: proptypes.oneOf(['asc', 'desc']),
 
     /**
      * The list of `SyncTableRow` elements to be rendered as rows.
