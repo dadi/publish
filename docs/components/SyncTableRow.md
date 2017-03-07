@@ -83,9 +83,4 @@ The name of the column currently being used to sort the rows.
 
 The order currently being used to sort the rows by `sortBy`.
 
-<<<<<<< HEAD
 - type: `enum('asc'|'desc')`
-=======
-- type: `custom`
->>>>>>> docs: add component documentation
-
