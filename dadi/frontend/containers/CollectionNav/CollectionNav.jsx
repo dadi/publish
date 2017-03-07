@@ -8,31 +8,52 @@ import * as appActions from 'actions/appActions'
 
 import Nav from 'components/Nav/Nav'
 
-import { connectHelper } from 'lib/util'
+import {connectHelper, slugify} from 'lib/util'
 
 class CollectionNav extends Component {
+  buildCollectionGroupItem(collection, group) {
+    if (!collection) return
+
+    let href = group ? `/${group}` : ''
+    href += `/${collection.slug}/documents`
+
+    return {
+      id: collection.slug,
+      label: collection.name,
+      href
+    }
+  }
+
   groupCollections(sort, collections) {
     if (!collections.length) return []
 
-    let grouping = sort.map(menu => {
+    const groupedItems = sort.map(menu => {
       if (typeof menu === 'string') {
-        return collections.find(collection => collection.slug === menu)
-      } else {
-        return Object.assign({}, menu, 
-          {collections: menu.collections.map(slug => {
-            return collections.find(collection => collection.slug === slug)
-          })}
-        )
-      }
-    }).filter(menu => {
-      return typeof menu !== 'undefined'
-    })
+        const collection = collections.find(collection => collection.slug === menu)
 
-    if (grouping.length) {
-      return grouping
-    } else {
-      return collections
+        return this.buildCollectionGroupItem(collection)
+      } else {
+        const groupSlug = slugify(menu.title)
+        const subItems = menu.collections.map(slug => {
+          const collection = collections.find(collection => collection.slug === slug)
+
+          return this.buildCollectionGroupItem(collection, groupSlug)
+        })
+
+        return {
+          id: groupSlug,
+          label: menu.title,
+          subItems: subItems,
+          href: subItems[0].href
+        }
+      }
+    }).filter(Boolean)
+
+    if (groupedItems.length) {
+      return groupedItems
     }
+
+    return collections.map(collection => this.buildCollectionGroupItem(collection))
   }
 
   componentWillUpdate() {
@@ -53,8 +74,9 @@ class CollectionNav extends Component {
 
     return (
       <Nav
+        currentRoute={state.routing.locationBeforeTransitions.pathname}
+        items={this.groups}
         mobile={state.app.breakpoint === null}
-        groups={this.groups}
       />
     )
   }
