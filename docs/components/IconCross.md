@@ -6,19 +6,6 @@ A cross icon.
 Props
 -----
 
-<<<<<<< HEAD
-=======
-### `class`
-
-- default value: `null`
-
-
-### `direction`
-
-- default value: `'up'`
-
-
->>>>>>> docs: add component documentation
 ### `height`
 
 The height of the arrow.
