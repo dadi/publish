@@ -52,7 +52,9 @@ export default class DocumentFilters extends Component {
   updateUrlFilters(filter) {
     const {updateUrlParams} = this.props
     const {filters} = this.state
+
     this.setState(Object.assign(filters, filter))
+    
     if (typeof updateUrlParams === 'function') {
       updateUrlParams(filters)
     }
