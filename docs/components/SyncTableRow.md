@@ -84,4 +84,3 @@ The name of the column currently being used to sort the rows.
 The order currently being used to sort the rows by `sortBy`.
 
 - type: `enum('asc'|'desc')`
-

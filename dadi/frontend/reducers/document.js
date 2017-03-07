@@ -51,6 +51,10 @@ export default function document(state = initialState, action = {}) {
         data: action.data || initialState.data
       }
 
+    // Action: user signed out
+    case types.SIGN_OUT:
+      return initialState
+
     default:
       return state
   }
