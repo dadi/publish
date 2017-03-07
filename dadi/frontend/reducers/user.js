@@ -7,17 +7,16 @@ const initialState = {
 
 export default function user(state = initialState, action = {}) {
   switch (action.type) {
+    // Action: user signed in
     case types.SIGN_IN:
       return {
         ...state,
         user: action.user
       }
 
+    // Action: user signed out
     case types.SIGN_OUT:
-      return {
-        ...state,
-        user: null
-      }
+      return initialState
 
     default:
       return state
