@@ -1,16 +1,32 @@
 'use strict'
 
 import {h, Component} from 'preact'
+import proptypes from 'proptypes'
 
 import Style from 'lib/Style'
 import styles from './Table.css'
 
-import IconArrow from 'components/IconArrow/IconArrow'
-
-//
-// Table
-//
+/**
+ * A simple table.
+ */
 export default class Table extends Component {
+  static propTypes = {
+    /**
+     * When `true`, any empty row cells will be filled with a text element saying *None*.
+     */
+    fillBlanks: proptypes.bool,
+
+    /**
+     * Whether rows are selectable. When `true`, check boxes will automatically be added to the table head and to each row.
+     */
+    selectable: proptypes.bool,
+
+    /**
+     * The contents of the table.
+     */
+    children: proptypes.node
+  }
+
   static defaultProps = {
     fillBlanks: true,
     selectable: true
@@ -122,146 +138,4 @@ export default class Table extends Component {
       </table>
     )
   }
-}
-
-//
-// Table row
-//
-class TableRow extends Component {
-  handleSelectClick(event) {
-    const {onSelect, tableIndex} = this.props
-
-    if (typeof onSelect === 'function') {
-      onSelect(tableIndex, event)
-    }
-  }
-
-  renderChildren() {
-    return this.props.children.map(child => {
-      child.attributes = child.attributes || {}
-      child.attributes.fillBlanks = child.attributes.fillBlanks || this.props.fillBlanks
-
-      return child
-    })
-  }
-
-  render() {
-    const {selected} = this.props
-
-    let rowStyle = new Style(styles, 'row')
-
-    rowStyle.addIf('row-selected', selected)
-
-    return (
-      <tr class={rowStyle.getClasses()}>
-        {this.props.selectable &&
-          <TableRowCell select={true}>
-            <input
-              checked={selected}
-              class={styles.select}
-              type="checkbox"
-              onClick={this.handleSelectClick.bind(this)}
-            />
-          </TableRowCell>
-        }
-        {this.renderChildren()}
-      </tr>
-    )
-  }
-}
-
-//
-// Table row cell
-//
-class TableRowCell extends Component {
-  render() {
-    let children = this.props.children
-    let cellStyle = new Style(styles, 'cell')
-
-    cellStyle.addIf('select-cell', this.props.select)
-    
-    if (!children.length && this.props.fillBlanks) {
-      children = <span class={styles['row-cell-blank']}>None</span>
-    }
-
-    return (
-      <td class={cellStyle.getClasses()}>
-        {children}
-      </td>
-    )
-  }
-}
-
-//
-// Table head
-//
-class TableHead extends Component {
-  handleSelectClick(event) {
-    const {onSelect} = this.props
-
-    if (typeof onSelect === 'function') {
-      onSelect(event)
-    }
-  }
-
-  render() {
-    const {allSelected} = this.props
-
-    return (
-      <thead class={styles.head}>
-        {this.props.selectable &&
-          <TableHeadCell select={true}>
-            <input
-              checked={allSelected}
-              class={styles.select}
-              type="checkbox"
-              onClick={this.handleSelectClick.bind(this)}
-            />
-          </TableHeadCell>
-        }
-        {this.props.children}
-      </thead>
-    )
-  }
-}
-
-//
-// Table head cell
-//
-class TableHeadCell extends Component {
-  static defaultProps = {
-    arrow: null,
-    link: null
-  }
-
-  render() {
-    const {arrow} = this.props
-    let cellStyle = new Style(styles, 'cell', 'head-cell')
-
-    cellStyle.addIf('select-cell', this.props.select)
-
-    return (
-      <th class={cellStyle.getClasses()}>
-        {arrow && ['up', 'down'].includes(arrow) &&
-          <IconArrow
-            class={styles['head-cell-arrow']}
-            width="10"
-            height="10"
-            direction={arrow}
-          />
-        }
-
-        <span class={styles['head-cell-label']}>
-          {this.props.children}
-        </span>
-      </th>
-    )
-  }
-}
-
-export {
-  TableHead,
-  TableHeadCell,
-  TableRow, 
-  TableRowCell
 }

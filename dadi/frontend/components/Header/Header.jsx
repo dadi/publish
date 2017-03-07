@@ -1,4 +1,5 @@
 import {h, Component} from 'preact'
+import proptypes from 'proptypes'
 
 import CollectionNav from 'containers/CollectionNav/CollectionNav'
 import IconBurger from 'components/IconBurger/IconBurger'
@@ -7,7 +8,31 @@ import IconCross from 'components/IconCross/IconCross'
 import Style from 'lib/Style'
 import styles from './Header.css'
 
+/**
+ * The application masthead.
+ */
 export default class Header extends Component {
+  static propTypes = {
+    /**
+     * Whether to render the header in compact/mobile mode.
+     */
+    compact: proptypes.bool,
+
+    /**
+     * An object containing information about the currently signed-in user.
+     */
+    user: proptypes.object,
+
+    /**
+     * Callback to be executed when the sign out button is clicked.
+     */
+    onSignOut: proptypes.func
+  }
+
+  static defaultProps = {
+    compact: false
+  }
+
   constructor(props) {
     super(props)
 

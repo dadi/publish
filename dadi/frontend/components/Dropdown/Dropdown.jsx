@@ -1,11 +1,22 @@
 'use strict'
 
 import {h, Component} from 'preact'
+import proptypes from 'proptypes'
 
 import Style from 'lib/Style'
 import styles from './Dropdown.css'
 
+/**
+ * A list of grouped links.
+ */
 export default class Dropdown extends Component {
+  static propTypes = {
+    /**
+     * The list of `DropdownItem` elements to be rendered.
+     */
+    children: proptypes.node
+  }
+
   render() {
     return (
       <ul class={styles.container}>
@@ -14,48 +25,3 @@ export default class Dropdown extends Component {
     )
   }
 }
-
-class DropdownItem extends Component {
-  handleClick(event) {
-    // If there is an onClick event registered, fire it
-    if (this.props.onClick) {
-      this.props.onClick(event)
-    }
-  }
-
-  constructor(props) {
-    super(props)
-  }
-
-  render() {
-    // Should we render an achor?
-    if (this.props.href) {
-      return (
-        <li>
-          <a
-            class={styles.item}
-            href={this.props.href}
-            onClick={this.handleClick.bind(this)}
-          >
-            {this.props.children}
-          </a>
-        </li>
-      )
-    }
-
-    // Otherwise, we'll render a button
-    return (
-      <li>
-        <button
-          class={styles.item}
-          type="button"
-          onClick={this.handleClick.bind(this)}
-        >
-          {this.props.children}
-        </button>
-      </li>
-    )
-  }
-}
-
-export {DropdownItem}
