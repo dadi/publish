@@ -53,9 +53,9 @@ export default class DocumentFilters extends Component {
     const {updateUrlParams} = this.props
     const {filters} = this.state
 
-    this.setState(Object.assign(filters, filter))
-    
-    if (typeof updateUrlParams === 'function') {
+    this.setState({filters: Object.assign(filters || {}, filter)})
+
+    if (filters && typeof updateUrlParams === 'function') {
       updateUrlParams(filters)
     }
   }

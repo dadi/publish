@@ -50,13 +50,13 @@ export default class DocumentFilter extends Component {
 
     return (
       <div>
-        <select id="field" onChange={this.onChange.bind(this, 'value')>
+        <select onChange={this.onChange.bind(this, 'field')}>
           <option disabled selected value>Select field</option>
           {Object.keys(fields).map(key => (
             <option selected={this.state.field === key} key={key} value={key}>{fields[key].label}</option>
           ))}
         </select>
-        <select id="type" onChange={this.onChange.bind(this, 'value')>
+        <select onChange={this.onChange.bind(this, 'type')}>
           <option disabled selected value>Select a type</option>
           {Object.keys(this.filterTypes).map(key => (
             <option selected={this.state.type === key} key={key} value={key}>{this.filterTypes[key]}</option>
@@ -80,7 +80,7 @@ export default class DocumentFilter extends Component {
     // {!} TO-DO add further evaluation in `Object.js`
     if (!Object.keys(this.state).filter(key => {
       return Object.is(this.state[key], null)
-    }).length && updateFilter) {
+    }).length && typeof updateFilter === 'function') {
       updateFilter({[this.state.field]: {[this.state.type]: this.state.value}})
     }
   }
