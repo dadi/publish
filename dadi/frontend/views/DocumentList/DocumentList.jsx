@@ -41,7 +41,11 @@ class DocumentList extends Component {
 
     return (
       <section class="Documents">
-        <DocumentFilters filter={filter} collection={collection} updateUrlParams={this.updateUrlParams.bind(this)} />
+        <DocumentFilters 
+          filter={filter} 
+          collection={collection} 
+          updateUrlParams={this.updateUrlParams.bind(this)} 
+        />
 
         <SyncTable
           columns={tableColumns}
