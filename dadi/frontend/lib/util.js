@@ -36,7 +36,7 @@ export function getUniqueId() {
 
 // Object and Field validation
 export function isValidJSON(string) {
-  if (!string) return
+  if (!string || typeof string !== 'string') return
 
   return /^[\],:{}\s]*$/.test(string.replace(/\\["\\\/bfnrtu]/g, '@').
     replace(/"[^"\\\n\r]*"|true|false|null|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?/g, ']').
