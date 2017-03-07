@@ -1,16 +1,60 @@
 'use strict'
 
 import {h, Component} from 'preact'
+import proptypes from 'proptypes'
 
 import Style from 'lib/Style'
 import styles from './ButtonWithOptions.css'
+
 
 import Button from 'components/Button/Button'
 import Dropdown from 'components/Dropdown/Dropdown'
 import DropdownItem from 'components/DropdownItem/DropdownItem'
 import IconArrow from 'components/IconArrow/IconArrow'
 
+/**
+ * A call-to-action button with a list of secondary options on a dropdown.
+ */
 export default class ButtonWithOptions extends Component {
+  static propTypes = {
+    /**
+     * Colour accent.
+     */
+    accent: proptypes.oneOf(['system']),
+
+    /**
+     * Callback to be executed when the main button is clicked.
+     */
+    onClick: proptypes.func,
+
+    /**
+     * Object containing the secondary options. Keys define the text of the option and values contain the click callbacks.
+     *
+     *  ```jsx
+     *  <ButtonWithOptions
+     *    onClick={this.mainCallback()}
+     *    options={{
+     *      'Save and continue': this.saveAndContinueCallback()
+     *      'Save and go back': this.saveAndGoBackeCallback()
+     *    }}
+     *  >
+     *    Save
+     *  </ButtonWithOptions>
+     *  ```
+     */
+    options: proptypes.object,
+
+    /**
+     * Type/function of the button
+     */
+    type: proptypes.oneOf(['button', 'submit']),
+
+    /**
+     * The text to be rendered inside the main button.
+     */
+    children: proptypes.node
+  }
+
   static defaultProps = {
     type: 'button'
   }

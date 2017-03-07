@@ -14,7 +14,8 @@
     "watch:build": "webpack --watch",
     "watch:server": "nodemon \"./index.js\" --watch \"./dadi\"",
     "snyk-protect": "snyk protect",
-    "prepublish": "npm run snyk-protect"
+    "prepublish": "npm run snyk-protect",
+    "build-docs": "react-docgen dadi/frontend/components | node scripts/build-docs/build-docs.js docs/components"
   },
   "repository": {
     "type": "git",
@@ -51,6 +52,7 @@
     "passport-restify": "^1.0.1",
     "passport-strategy": "^1.0.0",
     "path": "^0.12.7",
+    "react-docgen": "github:eduardoboucas/react-docgen",
     "request-promise": "^4.1.1",
     "restify": "^4.3.0",
     "restify-cookies": "^0.2.2",
@@ -77,6 +79,7 @@
     "file-loader": "^0.9.0",
     "fs": "0.0.1-security",
     "inquirer": "^3.0.6",
+    "mkdirp": "^0.5.1",
     "mocha": "^3.2.0",
     "nodemon": "^1.11.0",
     "normalize.css": "^5.0.0",
@@ -92,6 +95,7 @@
     "preact-router": "^2.4.1",
     "preact-router-redux": "^4.1.0",
     "proptypes": "^0.14.3",
+    "react-docgen": "github:eduardoboucas/react-docgen",
     "redux": "^3.6.0",
     "redux-thunk": "^2.1.0",
     "socketcluster-client": "^5.1.1",

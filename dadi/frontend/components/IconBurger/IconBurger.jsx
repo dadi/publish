@@ -1,9 +1,30 @@
 import {h, Component} from 'preact'
+import proptypes from 'proptypes'
 
 import Style from 'lib/Style'
 import styles from './IconBurger.css'
 
+/**
+ * A hamburger icon.
+ */
 export default class IconBurger extends Component {
+  static propTypes = {
+    /**
+     * The height of the arrow.
+     */
+    height: proptypes.number,
+
+    /**
+     * The width of the arrow.
+     */
+    width: proptypes.number
+  }
+
+  static defaultProps = {
+    width: 10,
+    height: 10
+  }
+
   render() {
     return (
       <svg

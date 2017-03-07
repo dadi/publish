@@ -1,9 +1,34 @@
+'use strict'
+
 import {h, Component} from 'preact'
+import proptypes from 'proptypes'
 
 import Style from 'lib/Style'
 import styles from './IconCross.css'
 
+/**
+ * A cross icon.
+ */
 export default class IconCross extends Component {
+  static propTypes = {
+    /**
+     * The height of the arrow.
+     */
+    height: proptypes.number,
+
+    /**
+     * The width of the arrow.
+     */
+    width: proptypes.number
+  }
+
+  static defaultProps = {
+    class: null,
+    direction: 'up',
+    width: 10,
+    height: 10
+  }
+
   render() {
     return (
       <svg
