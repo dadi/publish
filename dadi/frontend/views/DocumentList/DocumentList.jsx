@@ -42,7 +42,11 @@ class DocumentList extends Component {
 
     return (
       <section class="Documents">
-        <DocumentFilters filter={filter} collection={collection} />
+        <DocumentFilters 
+          filter={filter} 
+          collection={collection} 
+          updateUrlParams={this.updateUrlParams.bind(this)} 
+        />
 
         <SyncTable
           columns={tableColumns}
@@ -77,7 +81,7 @@ class DocumentList extends Component {
         </SyncTable>
 
         {Array(documents.metadata.totalPages).fill().map((_, page) => (
-          <a href={ `/${this.props.collection}/documents/${page+1}` }>{page+1}</a>
+          <a href={`/${this.props.collection}/documents/${page+1}`}>{page+1}</a>
         ))}
       </section>
     )
@@ -164,6 +168,10 @@ class DocumentList extends Component {
 
       // TODO: Graceful deal with failure
     })
+  }
+
+  updateUrlParams (filters) {
+    // {!} TO-DO update url filters
   }
 }
 

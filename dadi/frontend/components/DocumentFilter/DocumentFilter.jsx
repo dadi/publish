@@ -3,13 +3,18 @@
 import {h, Component} from 'preact'
 
 import TextInput from 'components/TextInput/TextInput'
+import Button from 'components/Button/Button'
 
 export default class DocumentFilter extends Component {
+
+  static defaultProps = {
+    callback: null
+  }
 
   constructor(props) {
     super(props)
 
-    // Move to filter
+    // {!} To do - reduce by filter type
     this.filterTypes = {
       '$eq': 'Equals',
       '$ne': 'Not Equal to',
@@ -20,27 +25,66 @@ export default class DocumentFilter extends Component {
       '$lt': 'Less than',
       '$lte': 'Less than or Equal to'
     }
+    this.state = {
+      field: null,
+      type: '$eq',
+      value: null
+    }
+  }
+
+  componentWillMount() {
+    const {field, value, fields} = this.props
+
+    // Evaluate passed filter / store in state
+    if (field && value) {
+      this.setState({
+        field: field,
+        type: (typeof value === 'string') ? '$eq' : Object.keys(value)[0],
+        value: this.filterValue(value)
+      })
+    }
   }
 
   render() {
-    const { field, value, fields } = this.props
+    const {fields, value} = this.props
+
     return (
       <div>
-        <select>
+        <select onChange={this.onChange.bind(this, 'field')}>
+          <option disabled selected value>Select field</option>
           {Object.keys(fields).map(key => (
-            <option selected={field === key} name={key}>{fields[key].label}</option>
+            <option selected={this.state.field === key} key={key} value={key}>{fields[key].label}</option>
           ))}
         </select>
-        <select>
+        <select onChange={this.onChange.bind(this, 'type')}>
+          <option disabled selected value>Select a type</option>
           {Object.keys(this.filterTypes).map(key => (
-            <option name={key}>{this.filterTypes[key]}</option>
+            <option selected={this.state.type === key} key={key} value={key}>{this.filterTypes[key]}</option>
           ))}
         </select>
-        {field && value && (
-          <TextInput value={this.filterValue(value)} />
+        {this.state.field && this.state.type && (
+          <TextInput 
+            value={this.state.value} 
+            onChange={this.onChange.bind(this, 'value')}
+          />
         )}
+        <Button>-</Button>
       </div>
     )
+  }
+
+  onChange(elementId, event) {
+    const {updateFilter} = this.props
+
+    this.setState({[elementId]: event.target.value})
+    // {!} TO-DO add further evaluation in `Object.js`
+    let nullProps = Object.keys(this.state).filter(key => {
+      return Object.is(this.state[key], null)
+    })
+
+    if (!nullProps.length && typeof updateFilter === 'function') {
+      updateFilter({[this.state.field]: {[this.state.type]: this.state.value}})
+    }
   }
 
   filterValue (value) {
