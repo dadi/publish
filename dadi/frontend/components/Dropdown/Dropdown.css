@@ -17,7 +17,8 @@
   text-decoration: none;
 }
 
-.item:hover {
+.item:hover,
+.item-active {
   background-color: var(--theme-colour-data, #4A91FF);
   color: var(--theme-colour-secondary, #ffffff);
 }

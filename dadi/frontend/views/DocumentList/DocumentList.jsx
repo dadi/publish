@@ -10,8 +10,7 @@ import {Keyboard} from 'lib/keyboard'
 import APIBridge from 'lib/api-bridge-client'
 
 import DocumentFilters from 'components/DocumentFilters/DocumentFilters'
-import SyncTable from 'components/SyncTable/SyncTable'
-import SyncTableRow from 'components/SyncTable/SyncTableRow'
+import SyncTable, {SyncTableRow} from 'components/SyncTable/SyncTable'
 
 class DocumentList extends Component {
   constructor(props) {
@@ -42,7 +41,11 @@ class DocumentList extends Component {
 
     return (
       <section class="Documents">
-        <DocumentFilters filter={filter} collection={collection} updateUrlParams={this.updateUrlParams.bind(this)} />
+        <DocumentFilters 
+          filter={filter} 
+          collection={collection} 
+          updateUrlParams={this.updateUrlParams.bind(this)} 
+        />
 
         <SyncTable
           columns={tableColumns}
@@ -77,7 +80,7 @@ class DocumentList extends Component {
         </SyncTable>
 
         {Array(documents.metadata.totalPages).fill().map((_, page) => (
-          <a href={ `/${this.props.collection}/documents/${page+1}` }>{page+1}</a>
+          <a href={`/${this.props.collection}/documents/${page+1}`}>{page+1}</a>
         ))}
       </section>
     )

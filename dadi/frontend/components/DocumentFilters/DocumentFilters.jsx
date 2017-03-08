@@ -1,7 +1,6 @@
 'use strict'
 
 import {h, Component} from 'preact'
-import {Router} from 'preact-router'
 
 import {isValidJSON} from 'lib/util'
 
@@ -11,7 +10,7 @@ import Button from 'components/Button/Button'
 export default class DocumentFilters extends Component {
 
   componentWillMount() {
-    const { 
+    const {
       filter, 
       collection, 
       field, 
@@ -36,12 +35,20 @@ export default class DocumentFilters extends Component {
         {visible && filters && Object.keys(filters).length && collection && (
           <div>
             {Object.keys(filters).map(key => ( 
-              <DocumentFilter field={key} value={filters[key]} fields={collection.fields} updateFilter={this.updateUrlFilters.bind(this)} />
+              <DocumentFilter 
+                field={key} 
+                value={filters[key]} 
+                fields={collection.fields} 
+                updateFilter={this.updateUrlFilters.bind(this)} 
+                />
             ))}
           </div>
         )}
         {edit && (
-          <DocumentFilter fields={collection.fields} updateFilter={this.updateUrlFilters.bind(this)} />
+          <DocumentFilter 
+            fields={collection.fields} 
+            updateFilter={this.updateUrlFilters.bind(this)} 
+          />
         )}
         {visible && (
           <Button onClick={this.addFilter.bind(this)}>Add</Button>
@@ -51,10 +58,12 @@ export default class DocumentFilters extends Component {
   }
 
   updateUrlFilters(filter) {
-    const {router, updateUrlParams} = this.props
+    const {updateUrlParams} = this.props
     const {filters} = this.state
-    this.setState(Object.assign(filters, filter))
-    if (typeof updateUrlParams === 'function') {
+
+    this.setState({filters: Object.assign({}, filters, filter)})
+
+    if (filters && typeof updateUrlParams === 'function') {
       updateUrlParams(filters)
     }
   }

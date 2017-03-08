@@ -101,8 +101,7 @@ export default class Table extends Component {
         selectable,
         tableIndex: index
       })
-
-      if (child.nodeName.name === 'TableHead') {
+      if (child.nodeName && child.nodeName.name === 'TableHead') {
         childAttributes.onSelect = this.handleHeadSelect.bind(this)
         childAttributes.allSelected = selectedRowsIndices.length === (this.props.children.length - 1)
 

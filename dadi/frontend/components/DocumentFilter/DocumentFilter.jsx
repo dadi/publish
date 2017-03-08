@@ -33,7 +33,7 @@ export default class DocumentFilter extends Component {
   }
 
   componentWillMount() {
-    const { field, value, fields } = this.props
+    const {field, value, fields} = this.props
 
     // Evaluate passed filter / store in state
     if (field && value) {
@@ -46,38 +46,43 @@ export default class DocumentFilter extends Component {
   }
 
   render() {
-    const { fields, value } = this.props
+    const {fields, value} = this.props
 
     return (
       <div>
-        <select id="field" onChange={this.onChange.bind(this)}>
+        <select onChange={this.onChange.bind(this, 'field')}>
           <option disabled selected value>Select field</option>
           {Object.keys(fields).map(key => (
             <option selected={this.state.field === key} key={key} value={key}>{fields[key].label}</option>
           ))}
         </select>
-        <select id="type" onChange={this.onChange.bind(this)}>
+        <select onChange={this.onChange.bind(this, 'type')}>
           <option disabled selected value>Select a type</option>
           {Object.keys(this.filterTypes).map(key => (
             <option selected={this.state.type === key} key={key} value={key}>{this.filterTypes[key]}</option>
           ))}
         </select>
         {this.state.field && this.state.type && (
-          <TextInput id="value" value={this.state.value} onChange={this.onChange.bind(this)} />
+          <TextInput 
+            value={this.state.value} 
+            onChange={this.onChange.bind(this, 'value')}
+          />
         )}
         <Button>-</Button>
       </div>
     )
   }
 
-  onChange(event) {
+  onChange(elementId, event) {
     const {updateFilter} = this.props
-    this.setState({[event.target.id]: event.target.value})
 
+    this.setState({[elementId]: event.target.value})
     // {!} TO-DO add further evaluation in `Object.js`
-    if (!Object.keys(this.state).filter(key => {
+    let nullProps = Object.keys(this.state).filter(key => {
       return Object.is(this.state[key], null)
-    }).length && updateFilter) {
+    })
+
+    if (!nullProps.length && typeof updateFilter === 'function') {
       updateFilter({[this.state.field]: {[this.state.type]: this.state.value}})
     }
   }

@@ -12,6 +12,11 @@ import styles from './Dropdown.css'
 export default class DropdownItem extends Component {
   static propTypes = {
     /**
+     * Whether the item is in an active state.
+     */
+    active: proptypes.bool,
+
+    /**
      * When present, the item is rendered as a `<a>` linking to the content of this prop. Otherwise, it will be rendered as a `<button>`
      */
     href: proptypes.string,
@@ -28,6 +33,7 @@ export default class DropdownItem extends Component {
   }
 
   static defaultProps = {
+    active: false,
     href: false
   }
 
@@ -43,12 +49,16 @@ export default class DropdownItem extends Component {
   }
 
   render() {
+    let itemStyle = new Style(styles, 'item')
+
+    itemStyle.addIf('item-active', this.props.active)
+
     // Should we render an achor?
     if (this.props.href) {
       return (
         <li>
           <a
-            class={styles.item}
+            class={itemStyle.getClasses()}
             href={this.props.href}
             onClick={this.handleClick.bind(this)}
           >
@@ -62,7 +72,7 @@ export default class DropdownItem extends Component {
     return (
       <li>
         <button
-          class={styles.item}
+          class={itemStyle.getClasses()}
           type="button"
           onClick={this.handleClick.bind(this)}
         >

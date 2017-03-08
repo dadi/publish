@@ -19,7 +19,7 @@ export default class Nav extends Component {
     /**
      * Grouped list of navigation elements to render.
      */
-    groups: proptypes.array,
+    items: proptypes.array,
 
     /**
      * Whether to render the navigation in mobile mode, with a collapsible drawer controlled by a hamburger button.
@@ -28,36 +28,45 @@ export default class Nav extends Component {
   }
 
   static defaultProps = {
-    groups: [],
+    items: [],
     mobile: false
   }
 
   render() {
-    const {groups, mobile} = this.props
+    const {currentRoute, items, mobile} = this.props
 
     return (
       <nav class={styles.nav}>
         <ul>
-          {groups.map(item => {
+          {items.map(item => {
+            let itemActive = item.href === currentRoute
             let subItems = null
 
-            if (item.collections) {
-              let slug = slugify(item.title)
-              let children = item.collections.map(collection => {
-                const link = `/${slug}/${collection.slug}/documents`
+            if (item.subItems) {
+              let children = item.subItems.map(subItem => {
+                let subItemActive = subItem.href === currentRoute
 
                 if (mobile) {
                   return (
                     <NavItem
-                      href={link}
-                      text={collection.name}
+                      href={subItem.href}
+                      text={subItem.label}
                       mobile={true}
                     />
                   )
                 }
 
+                if (subItemActive) {
+                  itemActive = true
+                }
+
                 return (
-                  <DropdownItem href={link}>{collection.name}</DropdownItem>
+                  <DropdownItem
+                    active={subItemActive}
+                    href={subItem.href}
+                  >
+                    {subItem.label}
+                  </DropdownItem>
                 )
               })
 
@@ -68,13 +77,11 @@ export default class Nav extends Component {
 
             }
 
-            // (!) This needs to be revisited once we implement routes for groups
-            const href = item.slug ? `/${item.slug}/documents` : '#'
-
             return (
               <NavItem
-                href={href}
-                text={item.name || item.title}
+                active={itemActive}
+                href={item.href}
+                text={item.label}
                 mobile={mobile}
               >
                 {subItems}
