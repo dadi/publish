@@ -10,7 +10,8 @@ import {Keyboard} from 'lib/keyboard'
 import APIBridge from 'lib/api-bridge-client'
 
 import DocumentFilters from 'components/DocumentFilters/DocumentFilters'
-import SyncTable, {SyncTableRow} from 'components/SyncTable/SyncTable'
+import SyncTable from 'components/SyncTable/SyncTable'
+import SyncTableRow from 'components/SyncTable/SyncTableRow'
 
 class DocumentList extends Component {
   constructor(props) {
@@ -60,7 +61,6 @@ class DocumentList extends Component {
             )
           }}
         >
-
           {documents.results.map(document => {
             return (
               <SyncTableRow
