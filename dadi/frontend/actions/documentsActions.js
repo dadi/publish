@@ -1,11 +1,9 @@
 import * as Types from 'actions/actionTypes'
 
-export function setDocumentList({documents, sortBy, sortOrder}, currentCollection) {
+export function setDocumentList(documents, currentCollection) {
   return {
     type: Types.SET_DOCUMENT_LIST,
     documents,
-    sortBy,
-    sortOrder,
     currentCollection
   }
 }

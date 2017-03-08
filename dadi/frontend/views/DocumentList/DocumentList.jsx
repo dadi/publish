@@ -22,7 +22,7 @@ class DocumentList extends Component {
   }
 
   render() {
-    const {collection, filter, state} = this.props
+    const {collection, filter, order, sort, state} = this.props
     const documents = state.documents
     const currentCollection = state.api.currentCollection
 
@@ -52,8 +52,8 @@ class DocumentList extends Component {
         <SyncTable
           columns={tableColumns}
           sortable={true}
-          sortBy={documents.sortBy}
-          sortOrder={documents.sortOrder}
+          sortBy={sort}
+          sortOrder={order}
           sort={(value, sortBy, sortOrder) => {
             return (
               <a href={`/${currentCollection.name}/documents?sort=${sortBy}&order=${sortOrder}`}>
@@ -161,11 +161,7 @@ class DocumentList extends Component {
       })
 
       // Update state with results
-      actions.setDocumentList({
-        documents: docs,
-        sortBy,
-        sortOrder
-      }, collection)
+      actions.setDocumentList(docs, collection)
     }).catch((err) => {
       actions.clearDocumentList()
 

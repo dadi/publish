@@ -5,9 +5,7 @@ import * as Constants from 'lib/constants'
 
 const initialState = {
   list: null,
-  status: Constants.STATUS_IDLE,
-  sortBy: null,
-  sortOrder: null
+  status: Constants.STATUS_IDLE
 }
 
 export default function document(state = initialState, action = {}) {
@@ -17,9 +15,7 @@ export default function document(state = initialState, action = {}) {
       return {
         ...state,
         status: Constants.STATUS_IDLE,
-        list: action.documents,
-        sortBy: action.sortBy,
-        sortOrder: action.sortOrder
+        list: action.documents
       }
 
     // Action: clear document list
