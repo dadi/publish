@@ -76,7 +76,7 @@ class App extends Component {
   render() {
     const {state, history} = this.props
 
-    let routes = state.app && state.app.config ? this.groupRoutes() : null
+    let hasRoutes = state.app && state.app.config ? this.hasRoutes() : null
 
     // Semantically, it makes sense that <Main/> renders a HTML5 <main> element, which
     // should sit at the same level as <Header/>, which renders a HTML5 <header> element.
@@ -100,15 +100,18 @@ class App extends Component {
             <PasswordReset path="/reset" authenticate/>
             <Api path="/apis/:api?" authenticate />
             <Collection path="/apis/:api/collections/:collection?" authenticate />
-            {routes && routes.map(path => (
-              <DocumentList path={`/${path}/documents/:page?`} authenticate />
-            ))}
-            {routes && routes.map(path => (
-              <DocumentEdit path={`/${path}/document/:method/:document_id?`} authenticate />
-            ))}
-            {routes && routes.map(path => (
-              <MediaLibrary path={`/${path}/media/:document?`} authenticate/>
-            ))}
+            {hasRoutes && (
+              <DocumentList path="/:group/:collection/documents/:page?" authenticate />
+            )}
+            {hasRoutes && (
+              <DocumentEdit path="/:group/:collection/document/:method/:document_id?" authenticate />
+            )}
+            {hasRoutes && (
+              <MediaLibrary path="/:group/:collection/media/:document?" authenticate/>
+            )}
+            <DocumentList path="/:collection/documents/:page?" authenticate />
+            <DocumentEdit path="/:collection/document/:method/:document_id?" authenticate />
+            <MediaLibrary path="/:collection/media/:document?" authenticate/>
             <UserProfile path="/profile" authenticate />
             <RoleList path="/roles" authenticate/>
             <RoleEdit path="/role/:method/:role?" authenticate />
@@ -122,21 +125,10 @@ class App extends Component {
     )
   }
 
-  groupRoutes() {
+  hasRoutes() {
     const {state} = this.props
-    const paths = [':collection']
     
-    if (state.app.config.apis[0].menu) {
-      state.app.config.apis[0].menu.forEach(item => {
-        if (typeof item !== 'string') {
-          item.collections.forEach(collection => {
-            paths.push(`${slugify(item.title)}/:collection`)
-          })
-        }
-      })
-    }
-
-    return paths
+    return typeof state.app.config.apis[0].menu !== 'undefined'
   }
 
   getApiCollections() {
