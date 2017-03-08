@@ -28,7 +28,7 @@ class SignIn extends Component {
   componentWillUpdate() {
     const {state, actions} = this.props
 
-    if (state.signedIn) {
+    if (state.user) {
       // Redirect signed-in user
       route('/profile')
     }
