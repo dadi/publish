@@ -47,8 +47,7 @@ export default function syncRouteWithStore(history, store, {
 
   const handleStoreChange = () => {
     const locationInStore = getLocationInStore(true)
-
-    if (Object.is(locationInStore, CURRENT_LOCATION || INITIAL_LOCATION)) {
+    if (!locationInStore || Object.is(locationInStore, CURRENT_LOCATION || INITIAL_LOCATION)) {
       return
     }
     IS_TIME_TRAVELING = true
