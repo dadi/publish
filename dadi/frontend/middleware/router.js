@@ -91,13 +91,6 @@ export default function syncRouteWithStore(history, store, {
         unsubscribed = true
         unsubscribeFromStore()
       }
-    },
-    // It also provides a way to destroy internal listeners
-    unsubscribe() {
-      if (adjustUrlOnReplay) {
-        unsubscribeFromStore()
-      }
-      unsubscribeFromHistory()
     }
   }
 }
