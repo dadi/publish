@@ -2,6 +2,14 @@
 
 We use [Redux](http://redux.js.org/docs/introduction/) to manage the global application state. We have 5 stores that hold the state of different parts of the application.
 
+- [1. App](#1-app)
+- [2. API](#2-api)
+- [3. Document](#3-document)
+- [4. Documents](#4-documents)
+- [5. User](#5-user)
+
+---
+
 ## 1. App
 
 Holds generic app-wide state
