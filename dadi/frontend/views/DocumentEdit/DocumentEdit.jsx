@@ -27,7 +27,7 @@ class DocumentEdit extends Component {
   }
   
   render() {
-    const { state, method, document } = this.props
+    const {state, method, document} = this.props
 
     return (
       <div>
@@ -57,8 +57,8 @@ class DocumentEdit extends Component {
     const {state, actions} = this.props
     const previousState = previousProps.state
     const {data, docIsLoading} = state.document
-    const newStatePath = state.routing.locationBeforeTransitions.pathname
-    const previousStatePath = previousState.routing.locationBeforeTransitions.pathname
+    const newStatePath = state.router.locationBeforeTransitions.pathname
+    const previousStatePath = previousState.router.locationBeforeTransitions.pathname
 
     // State check: reject when missing config, session, or apis
     if (!state.app.config || !state.api.apis.length || !state.user) return

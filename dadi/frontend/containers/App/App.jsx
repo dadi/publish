@@ -47,8 +47,8 @@ class App extends Component {
   componentDidUpdate(previousProps) {
     const {state, actions} = this.props
     const previousState = previousProps.state
-    const previousPath = previousState.routing.locationBeforeTransitions.pathname
-    const path = state.routing.locationBeforeTransitions.pathname
+    const previousPath = previousState.router.locationBeforeTransitions.pathname
+    const path = state.router.locationBeforeTransitions.pathname
 
     // State change: app config has been loaded
     if (!previousState.app.config && state.app.config) {
@@ -195,7 +195,7 @@ class App extends Component {
 
   initialiseSocket() {
     const {actions, state} = this.props
-    const pathname = state.routing.locationBeforeTransitions.pathname
+    const pathname = state.router.locationBeforeTransitions.pathname
 
     let session = new Session()
     let socket = new Socket(state.app.config.server.port)
