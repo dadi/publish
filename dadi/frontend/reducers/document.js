@@ -1,58 +1,40 @@
 'use strict'
 
-import * as types from 'actions/actionTypes'
+import * as Types from 'actions/actionTypes'
+import * as Constants from 'lib/constants'
 
 const initialState = {
-  list: null,
   data: null,
-  collection: null,
-  listIsLoading: false,
-  docIsLoading: false,
-  sortBy: null,
-  sortOrder: null
+  status: Constants.STATUS_IDLE
 }
 
 export default function document(state = initialState, action = {}) {
   switch (action.type) {
-    // Action: clear document list
-    case types.CLEAR_DOCUMENT_LIST:
-      return {
-        ...state,
-        listIsLoading: false,
-        list: null,
-        collection: null,
-        sortBy: null,
-        sortOrder: null
-      }
-
-    // Action: set document list
-    case types.SET_DOCUMENT_LIST:
-      return {
-        ...state,
-        listIsLoading: false,
-        list: action.documents,
-        collection: action.collection,
-        sortBy: action.sortBy,
-        sortOrder: action.sortOrder
-      }
-
-    // Action: set document loading status
-    case types.SET_DOCUMENT_LOADING_STATUS:
-      return {
-        ...state,
-        listIsLoading: action.isLoading
-      }
-
     // Action: set document
-    case types.SET_DOCUMENT:
+    case Types.SET_DOCUMENT:
       return {
         ...state,
-        docIsLoading: action.docIsLoading,
-        data: action.data || initialState.data
+        status: Constants.STATUS_IDLE,
+        data: action.document
+      }
+
+    // Action: clear document
+    case Types.CLEAR_DOCUMENT:
+      return {
+        ...state,
+        status: Constants.STATUS_IDLE,
+        data: null
+      }
+
+    // Action: set document status
+    case Types.SET_DOCUMENT_STATUS:
+      return {
+        ...state,
+        status: action.status
       }
 
     // Action: user signed out
-    case types.SIGN_OUT:
+    case Types.SIGN_OUT:
       return initialState
 
     default:

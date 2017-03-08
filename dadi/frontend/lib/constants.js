@@ -1,0 +1,2 @@
+export const STATUS_IDLE = 'STATUS_IDLE'
+export const STATUS_LOADING = 'STATUS_LOADING'

@@ -1,15 +1,15 @@
-import * as types from 'actions/actionTypes'
+import * as Types from 'actions/actionTypes'
 
 export function setApi(api) {
   return {
-    type: types.SET_API,
+    type: Types.SET_API,
     api
   }
 }
 
 export function setApiList(apis) {
   return {
-    type: types.SET_API_LIST,
+    type: Types.SET_API_LIST,
     apis,
     status: 'fetchComplete'
   }
@@ -17,7 +17,14 @@ export function setApiList(apis) {
 
 export function setApiFetchStatus(status) {
   return {
-    type: types.SET_API_FETCH_STATUS,
+    type: Types.SET_API_FETCH_STATUS,
     status
+  }
+}
+
+export function setCurrentCollection(collectionName) {
+  return {
+    type: Types.SET_API_CURRENT_COLLECTION,
+    collectionName
   }
 }

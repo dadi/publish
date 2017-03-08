@@ -4,7 +4,7 @@ import * as types from 'actions/actionTypes'
 
 const initialState = {
   apis: [],
-  status: 'canFetch'
+  currentCollection: null
 }
 
 export default function api(state = initialState, action = {}) {
@@ -48,6 +48,29 @@ export default function api(state = initialState, action = {}) {
     // Action: user signed out
     case types.SIGN_OUT:
       return initialState
+
+    // Actions: set document or set document list
+    case types.SET_DOCUMENT:
+    case types.SET_DOCUMENT_LIST:
+      if (!action.currentCollection) return state
+
+      let collectionSchema
+
+      // (!) TO DO: This will need to take the group into account
+      state.apis.some(api => {
+        return api.collections.some(collection => {
+          if (collection.name === action.currentCollection) {
+            collectionSchema = collection
+
+            return true
+          }
+        })
+      })
+
+      return {
+        ...state,
+        currentCollection: collectionSchema
+      }  
 
     default:
       return state

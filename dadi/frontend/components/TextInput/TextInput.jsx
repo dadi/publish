@@ -24,6 +24,11 @@ export default class TextInput extends Component {
     inLabel: proptypes.bool,
 
     /**
+     * Whether the field supports multiple lines, which results in it being rendered as a `<textarea>`.
+     */
+    multiline: proptypes.bool,
+
+    /**
      * Callback to be executed when the text is changed.
      */
     onChange: proptypes.func,
@@ -60,6 +65,7 @@ export default class TextInput extends Component {
 
   static defaultProps = {
     inLabel: false,
+    multiline: false,
     type: 'text'
   }
 

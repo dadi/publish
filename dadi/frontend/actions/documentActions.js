@@ -1,32 +1,22 @@
-import * as types from 'actions/actionTypes'
+import * as Types from 'actions/actionTypes'
 
-export function setDocumentLoadingStatus(isLoading) {
+export function setDocument(document, currentCollection) {
   return {
-    type: types.SET_DOCUMENT_LOADING_STATUS,
-    isLoading
+    type: Types.SET_DOCUMENT,
+    currentCollection,
+    document
   }
 }
 
-export function clearDocumentList() {
+export function setDocumentStatus(status) {
   return {
-    type: types.CLEAR_DOCUMENT_LIST
+    type: Types.SET_DOCUMENT_STATUS,
+    status
   }
 }
 
-export function setDocumentList({documents, collection, sortBy, sortOrder}) {
+export function clearDocument() {
   return {
-    type: types.SET_DOCUMENT_LIST,
-    documents,
-    collection,
-    sortBy,
-    sortOrder
-  }
-}
-
-export function setDocument(docIsLoading, data) {
-  return {
-    type: types.SET_DOCUMENT,
-    docIsLoading,
-    data
+    type: Types.CLEAR_DOCUMENT
   }
 }

@@ -60,7 +60,7 @@ class CollectionNav extends Component {
     const {state, actions} = this.props
     const apis = state.api.apis
 
-    if (apis.length && apis[0].collections) {
+    if (apis && apis.length && apis[0].collections) {
       this.groups = this.groupCollections(apis[0].menu || [], apis[0].collections)
     }
   }
