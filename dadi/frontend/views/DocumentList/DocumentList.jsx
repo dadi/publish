@@ -10,8 +10,7 @@ import {Keyboard} from 'lib/keyboard'
 import APIBridge from 'lib/api-bridge-client'
 
 import DocumentFilters from 'components/DocumentFilters/DocumentFilters'
-import SyncTable from 'components/SyncTable/SyncTable'
-import SyncTableRow from 'components/SyncTable/SyncTableRow'
+import SyncTable, {SyncTableRow} from 'components/SyncTable/SyncTable'
 
 class DocumentList extends Component {
   constructor(props) {
