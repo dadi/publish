@@ -38,14 +38,12 @@ export default function syncRouteWithStore(history, store, {
       }
     }
 
-
     // Update the store by calling action
     store.dispatch({
       type: types.LOCATION_CHANGE,
       payload: history.location
     })
   }
-
 
   const handleStoreChange = () => {
     const locationInStore = getLocationInStore(true)
@@ -58,8 +56,8 @@ export default function syncRouteWithStore(history, store, {
     IS_TIME_TRAVELING = false
   }
 
-    unsubscribeFromStore = store.subscribe(handleStoreChange)
-    handleStoreChange()
+  unsubscribeFromStore = store.subscribe(handleStoreChange)
+  handleStoreChange()
 
   // Set initial location to value in store
   INITIAL_LOCATION = getLocationInStore()
