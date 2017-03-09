@@ -77,7 +77,7 @@ module.exports = function (app) {
     req.logout()
     res.write(JSON.stringify({authenticated: req.isAuthenticated()}))
     res.end()
-    
+
     return next()
   })
 }
