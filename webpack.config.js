@@ -70,12 +70,12 @@ module.exports = {
       lib: 'frontend/lib',
       containers: 'frontend/containers',
       components: 'frontend/components',
+      middleware: 'frontend/middleware',
       views: 'frontend/views',
       actions: 'frontend/actions',
       reducers: 'frontend/reducers',
       'react': 'preact-compat',
       'react-router': 'preact-router',
-      'react-router-redux': 'preact-router-redux',
       'react-redux': 'preact-redux',
       'react-dom': 'preact-compat',
       'fetch': 'unfetch/polyfill'

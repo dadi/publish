@@ -74,7 +74,7 @@ class CollectionNav extends Component {
 
     return (
       <Nav
-        currentRoute={state.routing.locationBeforeTransitions.pathname}
+        currentRoute={state.router.locationBeforeTransitions.pathname}
         items={this.groups}
         mobile={state.app.breakpoint === null}
       />
