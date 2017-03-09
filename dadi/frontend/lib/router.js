@@ -16,7 +16,4 @@ export function router({path=window.location.pathname, params=null, update=false
   }
 
   route(`${path}${decodeURIComponent(newParams) || ''}`)
-  return {
-
-  }
 }

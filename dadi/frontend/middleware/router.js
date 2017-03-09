@@ -26,7 +26,6 @@ export default function syncRouteWithStore(history, store, {
   }
 
   const handleLocationChange = (location) => {
-    console.log("handleLocationChange")
     if (isTimeTraveling) {
       return
     }
@@ -52,11 +51,12 @@ export default function syncRouteWithStore(history, store, {
 
   const handleStoreChange = () => {
     const locationInStore = getLocationInStore(true)
+    
     if (!locationInStore || Object.is(locationInStore, currentLocation || initialLocation)) {
       return
     }
     isTimeTraveling = true
-    // history.push(locationInStore)
+    history.push(locationInStore)
     isTimeTraveling = false
   }
 
