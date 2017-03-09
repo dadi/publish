@@ -1,6 +1,6 @@
 'use strict'
 
-import * as types from 'actions/actionTypes'
+import * as Types from 'actions/actionTypes'
 
 const defaultSelectLocationState = state => state.router
 
@@ -8,7 +8,7 @@ export default function syncRouteWithStore(history, store, {
   selectLocationState = defaultSelectLocationState} = {}) {
 
   if (typeof selectLocationState(store.getState()) === 'undefined') {
-    throw new Error('state.routing missing')
+    throw new Error('state.router missing')
   }
 
   let currentLocation
@@ -40,7 +40,7 @@ export default function syncRouteWithStore(history, store, {
 
     // Update the store by calling action
     store.dispatch({
-      type: types.LOCATION_CHANGE,
+      type: Types.LOCATION_CHANGE,
       payload: history.location
     })
   }

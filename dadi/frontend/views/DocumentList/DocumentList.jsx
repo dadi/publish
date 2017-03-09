@@ -91,10 +91,10 @@ class DocumentList extends Component {
     const {state, actions} = this.props
     const previousState = previousProps.state
     const {list, status} = state.documents
-    const newStatePath = state.routing.locationBeforeTransitions.pathname
-    const newStateSearch = state.routing.locationBeforeTransitions.search
-    const previousStatePath = previousState.routing.locationBeforeTransitions.pathname
-    const previousStateSearch = previousState.routing.locationBeforeTransitions.search
+    const newStatePath = state.router.locationBeforeTransitions.pathname
+    const newStateSearch = state.router.locationBeforeTransitions.search
+    const previousStatePath = previousState.router.locationBeforeTransitions.pathname
+    const previousStateSearch = previousState.router.locationBeforeTransitions.search
 
     // State check: reject when missing config, session, or apis
     if (!state.app.config || !state.api.apis.length || !state.user) return
