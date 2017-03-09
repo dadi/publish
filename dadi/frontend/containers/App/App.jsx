@@ -105,13 +105,17 @@ class App extends Component {
               <DocumentList path="/:group/:collection/documents/:page?" authenticate />
             )}
             {hasRoutes && (
-              <DocumentEdit path="/:group/:collection/document/:method/:document_id?" authenticate />
+              <DocumentEdit path="/:group/:collection/document/:method/:documentId?" authenticate />
+            )}
+            {hasRoutes && (
+              <DocumentEdit path="/:group/:collection/document/:method/:documentId?/:section" authenticate />
             )}
             {hasRoutes && (
               <MediaLibrary path="/:group/:collection/media/:document?" authenticate/>
             )}
             <DocumentList path="/:collection/documents/:page?" authenticate />
-            <DocumentEdit path="/:collection/document/:method/:document_id?" authenticate />
+            <DocumentEdit path="/:collection/document/:method/:documentId?" authenticate />
+            <DocumentEdit path="/:collection/document/:method/:documentId?/:section" authenticate />
             <MediaLibrary path="/:collection/media/:document?" authenticate/>
             <UserProfile path="/profile" authenticate />
             <RoleList path="/roles" authenticate/>
@@ -134,8 +138,6 @@ class App extends Component {
 
   getApiCollections() {
     const {state, actions} = this.props
-
-    actions.setApiFetchStatus('isFetching')
 
     let bundler = APIBridge.Bundler()
     let apisToProcess = state.app.config.apis
