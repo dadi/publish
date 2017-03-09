@@ -171,8 +171,9 @@ class DocumentList extends Component {
 
   updateUrlParams (filters) {
     const {actions, state} = this.props
-    // Replace same with `filters`
     
+    // Replace same with `filters`
+    router({params: {filter: {email: 'am@dadi.co'}}, update: true})
   }
 }
 
