@@ -6,21 +6,21 @@ const path = require('path')
 const ui = new inquirer.ui.BottomBar()
 
 // Fetch reducers
-let files = fs.readdirSync(path.resolve(path.join(__dirname,'../dadi/frontend/reducers'))).map(file => {
+let files = fs.readdirSync(path.resolve(path.join(__dirname, '../dadi/frontend/reducers'))).map(file => {
   return path.parse(file)
 }).filter(file => {
   return file.name !== 'index'
 })
 
-let components = fs.readdirSync(path.resolve(path.join(__dirname,'../dadi/frontend/components'))).map(file => {
+let components = fs.readdirSync(path.resolve(path.join(__dirname, '../dadi/frontend/components'))).map(file => {
   return path.parse(file)
 })
 
-let views = fs.readdirSync(path.resolve(path.join(__dirname,'../dadi/frontend/views'))).map(file => {
+let views = fs.readdirSync(path.resolve(path.join(__dirname, '../dadi/frontend/views'))).map(file => {
   return path.parse(file)
 })
 
-let containers = fs.readdirSync(path.resolve(path.join(__dirname,'../dadi/frontend/containers'))).map(file => {
+let containers = fs.readdirSync(path.resolve(path.join(__dirname, '../dadi/frontend/containers'))).map(file => {
   return path.parse(file)
 })
 
@@ -31,16 +31,15 @@ const toCamelCase = (str) => {
     .replace(/^(.)/, $1 => { return $1.toUpperCase() })
 }
 
-const CreateComponent = function() {
-
+const CreateComponent = function () {
   this.results = {}
 
   let questions = {
-    type: { 
-      type: 'list', 
+    type: {
+      type: 'list',
       name: 'type',
       message: 'What type of template would you like to create?',
-      choices: ['Component','Container','View'],
+      choices: ['Component', 'Container', 'View'],
       filter: str => {
         return str.toLowerCase()
       },
@@ -54,8 +53,8 @@ const CreateComponent = function() {
         }
       }
     },
-    actions: { 
-      type: 'checkbox', 
+    actions: {
+      type: 'checkbox',
       name: 'actions',
       message: 'Which actions would you like to bind?',
       choices: Object.assign([], files.map(file => { return file.name })),
@@ -64,8 +63,8 @@ const CreateComponent = function() {
         this.query(questions.name)
       }
     },
-    name: { 
-      type: 'input', 
+    name: {
+      type: 'input',
       name: 'name',
       validate: this.validateName.bind(this),
       filter: str => {
@@ -76,8 +75,8 @@ const CreateComponent = function() {
         this.query(questions.save)
       }
     },
-    save: { 
-      type: 'confirm', 
+    save: {
+      type: 'confirm',
       name: 'save',
       message: 'Save file?',
       callback: (answer) => {
@@ -94,22 +93,22 @@ const CreateComponent = function() {
 CreateComponent.prototype.validateName = function (str) {
   let match
 
-  switch(this.results.type) {
+  switch (this.results.type) {
     case 'component':
       match = components.find(component => {
         return str === component.name
       })
-    break
+      break
     case 'container':
       match = containers.find(container => {
         return str === container.name
       })
-    break
+      break
     case 'view':
       match = views.find(view => {
         return str === view.name
       })
-    break
+      break
   }
   if (match) {
     ui.log.write(`${this.results.type} ${str} already exists!`)
@@ -119,23 +118,23 @@ CreateComponent.prototype.validateName = function (str) {
   return str.length > 0
 }
 
-CreateComponent.prototype.query = function(question) {
+CreateComponent.prototype.query = function (question) {
   this.Enquirer = inquirer
   this.Enquirer.prompt(question).then(question.callback)
 }
 
-CreateComponent.prototype.saveToFile = function() {
+CreateComponent.prototype.saveToFile = function () {
   let fileContent = ''
-  switch(this.results.type) {
+  switch (this.results.type) {
     case 'component':
       fileContent = this.component()
-    break
+      break
     case 'container':
       fileContent = this.container()
-    break
+      break
     case 'view':
       fileContent = this.view()
-    break
+      break
   }
   fs.writeFile(path.resolve(__dirname, `../dadi/frontend/${this.results.type}s/${this.results.name}.jsx`), fileContent, (err) => {
     if (err) throw err
@@ -200,10 +199,10 @@ CreateComponent.prototype.createActions = function () {
   if (this.results.actions.length === 1) {
     actions = `${this.results.actions[0]}Actions`
   } else if (this.results.actions.length > 1) {
-    actions = `{${this.results.actions.map( action => { return `...${action}Actions` } ).join(',')}}`
+    actions = `{${this.results.actions.map(action => { return `...${action}Actions` }).join(',')}}`
   }
 
-    return actions
+  return actions
 }
 
 CreateComponent.prototype.createImports = function () {
@@ -215,8 +214,10 @@ CreateComponent.prototype.createImports = function () {
 import * as ${this.results.actions[0]}Actions from 'actions/${this.results.actions[0]}Actions'`
   } else if (this.results.actions.length > 1) {
     imports = `
-  ${this.results.actions.map( action => { return `
-import * as ${action}Actions from 'actions/${action}Actions'` } ).join('')}`
+  ${this.results.actions.map(action => {
+    return `
+import * as ${action}Actions from 'actions/${action}Actions'`
+  }).join('')}`
   }
 
   return imports
@@ -257,7 +258,7 @@ export default connectHelper(
 `
 }
 
-module.exports = function() {
+module.exports = function () {
   return new CreateComponent()
 }
 

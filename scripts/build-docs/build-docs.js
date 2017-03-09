@@ -14,7 +14,7 @@ mkdirp(outputPath, err => {
   readInput(outputPath)
 })
 
-function readInput(outputPath) {
+function readInput (outputPath) {
   let json = ''
 
   process.stdin.setEncoding('utf8')
@@ -26,12 +26,12 @@ function readInput(outputPath) {
     }
   })
 
-  process.stdin.on('end', function() {
+  process.stdin.on('end', function () {
     buildDocs(JSON.parse(json), outputPath)
-  })  
+  })
 }
 
-function buildDocs(api, outputPath) {
+function buildDocs (api, outputPath) {
   // api is an object keyed by filepath. We use the file name as component name.
   for (var filepath in api) {
     const name = getComponentName(filepath)
@@ -43,7 +43,7 @@ function buildDocs(api, outputPath) {
   }
 }
 
-function getComponentName(filepath) {
+function getComponentName (filepath) {
   let name = path.basename(filepath)
   let ext
 
