@@ -8,6 +8,7 @@ import * as documentsActions from 'actions/documentsActions'
 import {connectHelper, isValidJSON} from 'lib/util'
 import * as Constants from 'lib/constants'
 import {Keyboard} from 'lib/keyboard'
+import {router} from 'lib/router'
 import APIBridge from 'lib/api-bridge-client'
 
 import DocumentFilters from 'components/DocumentFilters/DocumentFilters'
@@ -164,13 +165,14 @@ class DocumentList extends Component {
       actions.setDocumentList(docs, collection)
     }).catch((err) => {
       actions.clearDocumentList()
-
       // TODO: Graceful deal with failure
     })
   }
 
   updateUrlParams (filters) {
-    // {!} TO-DO update url filters
+    const {actions, state} = this.props
+    // Replace same with `filters`
+    router({params: {filter: {email: 'am@dadi.co'}}, update: true})
   }
 }
 
