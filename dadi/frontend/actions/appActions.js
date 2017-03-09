@@ -1,15 +1,15 @@
-import * as types from 'actions/actionTypes'
+import * as Types from 'actions/actionTypes'
 
 export function setAppConfig(config) {
   return {
-    type: types.SET_APP_CONFIG,
+    type: Types.SET_APP_CONFIG,
     config
   }
 }
 
 export function setScreenWidth(width) {
   return {
-    type: types.SET_SCREEN_WIDTH,
+    type: Types.SET_SCREEN_WIDTH,
     width
   }
 }

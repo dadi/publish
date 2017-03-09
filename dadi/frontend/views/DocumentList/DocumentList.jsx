@@ -3,9 +3,10 @@ import {connect} from 'preact-redux'
 import {bindActionCreators} from 'redux'
 
 import * as apiActions from 'actions/apiActions'
-import * as documentActions from 'actions/documentActions'
+import * as documentsActions from 'actions/documentsActions'
 
 import {connectHelper, isValidJSON} from 'lib/util'
+import * as Constants from 'lib/constants'
 import {Keyboard} from 'lib/keyboard'
 import APIBridge from 'lib/api-bridge-client'
 
@@ -21,23 +22,22 @@ class DocumentList extends Component {
   }
 
   render() {
-    const {filter, state} = this.props
-    
-    const collection = state.document.collection
-    const documents = state.document.list
+    const {collection, filter, order, sort, state} = this.props
+    const documents = state.documents
+    const currentCollection = state.api.currentCollection
 
-    if (!state.document.list) {
+    if (!documents.list || !currentCollection) {
       return (
         <p>Loading...</p>
       )
     }
 
     // We can change this to only display certain fields
-    const fieldsToDisplay = Object.keys(collection.fields)
+    const fieldsToDisplay = Object.keys(currentCollection.fields)
     const tableColumns = fieldsToDisplay.map(field => {
       return {
         id: field,
-        label: collection.fields[field].label
+        label: currentCollection.fields[field].label
       }
     })
 
@@ -45,31 +45,31 @@ class DocumentList extends Component {
       <section class="Documents">
         <DocumentFilters 
           filter={filter} 
-          collection={collection} 
+          collection={currentCollection}
           updateUrlParams={this.updateUrlParams.bind(this)} 
         />
 
         <SyncTable
           columns={tableColumns}
           sortable={true}
-          sortBy={state.document.sortBy}
-          sortOrder={state.document.sortOrder}
+          sortBy={sort}
+          sortOrder={order}
           sort={(value, sortBy, sortOrder) => {
             return (
-              <a href={`/${collection.name}/documents?sort=${sortBy}&order=${sortOrder}`}>
+              <a href={`/${currentCollection.name}/documents?sort=${sortBy}&order=${sortOrder}`}>
                 {value}
               </a>
             )
           }}
         >
-          {documents.results.map(document => {
+          {documents.list.results.map(document => {
             return (
               <SyncTableRow
                 data={document}
                 renderCallback={(value, data, column, index) => {
                   if (index === 0) {
                     return (
-                      <a href={`/${collection.name}/document/edit/${data._id}`}>{value}</a>
+                      <a href={`/${currentCollection.name}/document/edit/${data._id}`}>{value}</a>
                     )
                   }
 
@@ -80,8 +80,8 @@ class DocumentList extends Component {
           })}
         </SyncTable>
 
-        {Array(documents.metadata.totalPages).fill().map((_, page) => (
-          <a href={`/${this.props.collection}/documents/${page+1}`}>{page+1}</a>
+        {Array(documents.list.metadata.totalPages).fill().map((_, page) => (
+          <a href={`/${this.props.currentCollection}/documents/${page+1}`}>{page+1}</a>
         ))}
       </section>
     )
@@ -90,20 +90,24 @@ class DocumentList extends Component {
   componentDidUpdate(previousProps) {
     const {state, actions} = this.props
     const previousState = previousProps.state
-    const {list, listIsLoading} = state.document
-    const newStatePath = state.router.locationBeforeTransitions.pathname
-    const newStateSearch = state.router.locationBeforeTransitions.search
-    const previousStatePath = previousState.router.locationBeforeTransitions.pathname
-    const previousStateSearch = previousState.router.locationBeforeTransitions.search
+    const {list, status} = state.documents
+    const newStatePath = state.routing.locationBeforeTransitions.pathname
+    const newStateSearch = state.routing.locationBeforeTransitions.search
+    const previousStatePath = previousState.routing.locationBeforeTransitions.pathname
+    const previousStateSearch = previousState.routing.locationBeforeTransitions.search
 
     // State check: reject when missing config, session, or apis
     if (!state.app.config || !state.api.apis.length || !state.user) return
+
     // Fixed to checking first API, but will eventually need to check all
     if (!state.api.apis[0].collections || !state.api.apis[0].collections.length > 0) return
+
     // State check: reject when path matches and document list loaded
     if (list && (newStatePath === previousStatePath) && (newStateSearch === previousStateSearch)) return
+
     // State check: reject when documents are still loading
-    if (listIsLoading) return
+    if (status === Constants.STATUS_LOADING) return
+
     this.getDocumentList()
   }
 
@@ -136,7 +140,7 @@ class DocumentList extends Component {
     const sortOrder = order || 'desc'
 
     // Set document loading status to 'Loading'
-    actions.setDocumentLoadingStatus(true)
+    actions.setDocumentListStatus(Constants.STATUS_LOADING)
 
     let query = APIBridge(state.api.apis[0])
       .in(nextCollection || collection)
@@ -157,12 +161,7 @@ class DocumentList extends Component {
       })
 
       // Update state with results
-      actions.setDocumentList({
-        documents: docs,
-        collection: currentCollection,
-        sortBy,
-        sortOrder
-      })
+      actions.setDocumentList(docs, collection)
     }).catch((err) => {
       actions.clearDocumentList()
 
@@ -177,5 +176,5 @@ class DocumentList extends Component {
 
 export default connectHelper(
   state => state,
-  dispatch => bindActionCreators({...documentActions, ...apiActions}, dispatch)
+  dispatch => bindActionCreators({...documentsActions, ...apiActions}, dispatch)
 )(DocumentList)

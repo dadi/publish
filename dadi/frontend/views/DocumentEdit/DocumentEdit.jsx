@@ -1,23 +1,19 @@
 import {h, Component} from 'preact'
 import {connect} from 'preact-redux'
 import {bindActionCreators} from 'redux'
-/*
- * Libs
- */
-import { connectHelper } from 'lib/util'
+
+import Style from 'lib/Style'
+import styles from './DocumentEdit.css'
+
+import {connectHelper} from 'lib/util'
+import * as Constants from 'lib/constants'
 import APIBridge from 'lib/api-bridge-client'
-/*
- * Components
- */
+
 import Main from 'components/Main/Main'
 import Nav from 'components/Nav/Nav'
-/*
- * Field components 
- */
+
 import FieldImage from 'components/FieldImage/FieldImage'
-/*
- * Actions
- */
+
 import * as apiActions from 'actions/apiActions'
 import * as documentActions from 'actions/documentActions'
 
@@ -27,67 +23,67 @@ class DocumentEdit extends Component {
   }
   
   render() {
-    const {state, method, document} = this.props
+    const {collection, documentId, method, state} = this.props
+    const document = state.document
+
+    if (document.status === Constants.STATUS_LOADING) {
+      return (
+        <p>Loading...</p>
+      )
+    }
 
     return (
-      <div>
-        <h1>Method: { method }</h1>
-        {!state.document.data ? (
-          <h3>Status: {state.document.docIsLoading}</h3>
-        ) : (
-          <table border="1">
-            <tr>
-              {Object.keys(state.document.data).map(field => (
-                <td>{field}</td>
-              ))}
-            </tr>
-            <tr>
-              {Object.keys(state.document.data).map(field => (
-                <td>{state.document.data[field]}</td>
-              ))}
-            </tr>
-          </table>
-        )}
-        <FieldImage config={ state.app.config }/>
-      </div>
+      <section class={styles.content}>
+        <div class={styles.main}>
+          <p>Main</p>
+        </div>
+        <div class={styles.sidebar}>
+          <p>Side bar</p>
+        </div>
+      </section>
     )
   }
 
   componentDidUpdate(previousProps) {
-    const {state, actions} = this.props
-    const previousState = previousProps.state
-    const {data, docIsLoading} = state.document
-    const newStatePath = state.router.locationBeforeTransitions.pathname
-    const previousStatePath = previousState.router.locationBeforeTransitions.pathname
+    const {documentId, state} = this.props
+    const document = state.document
+    const documentIdHasChanged = documentId !== previousProps.documentId
 
-    // State check: reject when missing config, session, or apis
-    if (!state.app.config || !state.api.apis.length || !state.user) return
-
-    // State check: reject when path matches and document list loaded
-    if (newStatePath === previousStatePath && data) return
-
-    // State check: reject when documents are still loading
-    if (docIsLoading) return
-
-    this.getDocument()
+    // If we haven't already started fetching a document and there isn't a document already in
+    // the store or we need to get a new one because the id has changed, let's get a document
+    if ((document.status !== Constants.STATUS_LOADING) && (!document.data || documentIdHasChanged)) {
+      this.getDocument(documentId)
+    }
   }
 
   componentWillUnmount() {
     const {actions} = this.props
+
     // Clear our documents and reset loading state
-    actions.setDocument(false, null)
+    actions.setDocument(null)
   }
 
-  getDocument() {
-    const {state, actions, collection, document_id} = this.props
+  getDocument(documentId) {
+    const {actions, collection, state} = this.props
+
+    actions.setDocumentStatus(Constants.STATUS_LOADING)
     
     return APIBridge(state.api.apis[0])
       .in(collection)
-      .whereFieldIsEqualTo('_id', document_id)
+      .whereFieldIsEqualTo('_id', documentId)
       .find()
       .then(doc => {
-        actions.setDocument(false, doc.results[0] || {err: `No document with _id ${document_id}`})
+        actions.setDocument(doc.results[0], collection)
       })
+  }
+
+  groupFields(fields) {
+    let main = []
+    let sidebar = []
+
+    fields.forEach(field => {
+
+    })
   }
 }
 
