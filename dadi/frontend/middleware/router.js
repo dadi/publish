@@ -11,9 +11,9 @@ export default function syncRouteWithStore(history, store, {
     throw new Error('state.routing missing')
   }
 
-  let CURRENT_LOCATION
-  let INITIAL_LOCATION
-  let IS_TIME_TRAVELING
+  let currentLocation
+  let initialLocation
+  let isTimeTraveling
 
   let unsubscribeFromStore
   let unsubscribeFromHistory
@@ -21,18 +21,18 @@ export default function syncRouteWithStore(history, store, {
   // Get location in store
   const getLocationInStore = (fallbackToInitial) => {
     let locationState = selectLocationState(store.getState())
-    return locationState.locationBeforeTransitions || (fallbackToInitial ? INITIAL_LOCATION : undefined)
+    return locationState.locationBeforeTransitions || (fallbackToInitial ? initialLocation : undefined)
   }
 
   const handleLocationChange = (location) => {
-    if (IS_TIME_TRAVELING) {
+    if (isTimeTraveling) {
       return
     }
 
-    CURRENT_LOCATION = location
+    currentLocation = location
 
-    if (!INITIAL_LOCATION) {
-      INITIAL_LOCATION = location
+    if (!initialLocation) {
+      initialLocation = location
       if (getLocationInStore()) {
         return
       }
@@ -47,19 +47,19 @@ export default function syncRouteWithStore(history, store, {
 
   const handleStoreChange = () => {
     const locationInStore = getLocationInStore(true)
-    if (!locationInStore || Object.is(locationInStore, CURRENT_LOCATION || INITIAL_LOCATION)) {
+    if (!locationInStore || Object.is(locationInStore, currentLocation || initialLocation)) {
       return
     }
-    IS_TIME_TRAVELING = true
+    isTimeTraveling = true
     history.push(locationInStore)
-    IS_TIME_TRAVELING = false
+    isTimeTraveling = false
   }
 
   unsubscribeFromStore = store.subscribe(handleStoreChange)
   handleStoreChange()
 
   // Set initial location to value in store
-  INITIAL_LOCATION = getLocationInStore()
+  initialLocation = getLocationInStore()
 
   unsubscribeFromHistory = history.listen(handleLocationChange)
 
