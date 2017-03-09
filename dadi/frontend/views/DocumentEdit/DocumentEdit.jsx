@@ -21,15 +21,11 @@ import * as documentActions from 'actions/documentActions'
 class DocumentEdit extends Component {
   constructor(props) {
     super(props)
+    this.state.didRedirect = false
   }
 
   getUrlTo(group, collection, documentId, section) {
-    let url = group ? `/${group}` : ''
-
-    url += `/${collection}/document/edit/${documentId}`
-    url += section ? `/${section}` : ''
-
-    return url
+    return `${group ? `/${group}` : ''}/${collection}/document/edit/${documentId}${section ? `/${section}` : ''}`
   }
   
   render() {
@@ -37,36 +33,21 @@ class DocumentEdit extends Component {
       collection,
       documentId,
       group,
-      method,
       section,
+      method,
       state
     } = this.props
+
     const currentCollection = state.api.currentCollection
     const document = state.document
 
-    if ((document.status === Constants.STATUS_LOADING || !currentCollection)) {
+    if (document.status === Constants.STATUS_LOADING || !currentCollection) {
       return (
         <p>Loading...</p>
       )
     }
 
     const fields = this.groupFields(currentCollection.fields)
-
-    if (fields.sections) {
-      const currentSection = fields.sections.find(fieldSection => {
-        return fieldSection.slug === section
-      })
-
-      // If we have sections and we're tring to access the URL with no section OR we're
-      // trying to access an invalid section, we redirect to the first availabla section.
-      if (!currentSection) {
-        const firstSection = fields.sections[0]
-
-        route(this.getUrlTo(group, collection, documentId, firstSection.slug))
-
-        return null
-      }
-    }
 
     return (
       <div>
@@ -98,6 +79,33 @@ class DocumentEdit extends Component {
     )
   }
 
+  shouldComponentUpdate(nextProps, nextState) {
+    const {
+      section,
+      state,
+      group,
+      collection,
+      documentId
+    } = this.props
+
+    if (section) {
+      if (!state.api.currentCollection) return
+
+      const currentCollection = state.api.currentCollection
+      const fields = this.groupFields(currentCollection.fields)
+
+      const sectionMatch = fields.sections.find(fieldSection => {
+        return fieldSection.slug === section
+      })
+      if (!sectionMatch) {
+        const firstSection = fields.sections[0]
+
+        route(this.getUrlTo(group, collection, documentId, firstSection.slug))
+        return
+      }
+    }
+  }
+
   componentDidUpdate(previousProps) {
     const {documentId, state} = this.props
     const document = state.document
@@ -112,7 +120,6 @@ class DocumentEdit extends Component {
 
   componentWillUnmount() {
     const {actions} = this.props
-
     actions.clearDocument()
   }
 
