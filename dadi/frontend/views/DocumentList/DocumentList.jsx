@@ -22,7 +22,7 @@ class DocumentList extends Component {
   }
 
   render() {
-    const {collection, filter, order, sort, state} = this.props
+    const {collection, filter, group, order, sort, state} = this.props
     const documents = state.documents
     const currentCollection = state.api.currentCollection
 
@@ -31,6 +31,8 @@ class DocumentList extends Component {
         <p>Loading...</p>
       )
     }
+
+    const baseUrl = group ? `/${group}/${currentCollection.name}` : `/${currentCollection.name}`
 
     // We can change this to only display certain fields
     const fieldsToDisplay = Object.keys(currentCollection.fields)
@@ -56,7 +58,7 @@ class DocumentList extends Component {
           sortOrder={order}
           sort={(value, sortBy, sortOrder) => {
             return (
-              <a href={`/${currentCollection.name}/documents?sort=${sortBy}&order=${sortOrder}`}>
+              <a href={`${baseUrl}/documents?sort=${sortBy}&order=${sortOrder}`}>
                 {value}
               </a>
             )
@@ -69,7 +71,7 @@ class DocumentList extends Component {
                 renderCallback={(value, data, column, index) => {
                   if (index === 0) {
                     return (
-                      <a href={`/${currentCollection.name}/document/edit/${data._id}`}>{value}</a>
+                      <a href={`${baseUrl}/document/edit/${data._id}`}>{value}</a>
                     )
                   }
 
@@ -81,7 +83,7 @@ class DocumentList extends Component {
         </SyncTable>
 
         {Array(documents.list.metadata.totalPages).fill().map((_, page) => (
-          <a href={`/${this.props.currentCollection}/documents/${page+1}`}>{page+1}</a>
+          <a href={`${baseUrl}/documents/${page+1}`}>{page+1}</a>
         ))}
       </section>
     )

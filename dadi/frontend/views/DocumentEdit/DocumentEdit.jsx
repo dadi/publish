@@ -1,18 +1,19 @@
 import {h, Component} from 'preact'
 import {connect} from 'preact-redux'
+import {route} from 'preact-router'
 import {bindActionCreators} from 'redux'
 
 import Style from 'lib/Style'
 import styles from './DocumentEdit.css'
 
-import {connectHelper} from 'lib/util'
+import {connectHelper, slugify} from 'lib/util'
 import * as Constants from 'lib/constants'
 import APIBridge from 'lib/api-bridge-client'
 
+import FieldImage from 'components/FieldImage/FieldImage'
 import Main from 'components/Main/Main'
 import Nav from 'components/Nav/Nav'
-
-import FieldImage from 'components/FieldImage/FieldImage'
+import SubNavItem from 'components/SubNavItem/SubNavItem'
 
 import * as apiActions from 'actions/apiActions'
 import * as documentActions from 'actions/documentActions'
@@ -21,26 +22,79 @@ class DocumentEdit extends Component {
   constructor(props) {
     super(props)
   }
+
+  getUrlTo(group, collection, documentId, section) {
+    let url = group ? `/${group}` : ''
+
+    url += `/${collection}/document/edit/${documentId}`
+    url += section ? `/${section}` : ''
+
+    return url
+  }
   
   render() {
-    const {collection, documentId, method, state} = this.props
+    const {
+      collection,
+      documentId,
+      group,
+      method,
+      section,
+      state
+    } = this.props
+    const currentCollection = state.api.currentCollection
     const document = state.document
 
-    if (document.status === Constants.STATUS_LOADING) {
+    if ((document.status === Constants.STATUS_LOADING || !currentCollection)) {
       return (
         <p>Loading...</p>
       )
     }
 
+    const fields = this.groupFields(currentCollection.fields)
+
+    if (fields.sections) {
+      const currentSection = fields.sections.find(fieldSection => {
+        return fieldSection.slug === section
+      })
+
+      // If we have sections and we're tring to access the URL with no section OR we're
+      // trying to access an invalid section, we redirect to the first availabla section.
+      if (!currentSection) {
+        const firstSection = fields.sections[0]
+
+        route(this.getUrlTo(group, collection, documentId, firstSection.slug))
+
+        return null
+      }
+    }
+
     return (
-      <section class={styles.content}>
-        <div class={styles.main}>
-          <p>Main</p>
-        </div>
-        <div class={styles.sidebar}>
-          <p>Side bar</p>
-        </div>
-      </section>
+      <div>
+        {fields.sections &&
+          <section class={styles.navigation}>
+            {fields.sections.map(collectionSection => {
+
+              return (
+                <SubNavItem
+                  active={section === collectionSection.slug}
+                  href={this.getUrlTo(group, collection, documentId, collectionSection.slug)}
+                >
+                  {collectionSection.name}
+                </SubNavItem>
+              )
+            })}
+          </section>
+        }
+
+        <section class={styles.content}>
+          <div class={styles.main}>
+            <p>Main</p>
+          </div>
+          <div class={styles.sidebar}>
+            <p>Side bar</p>
+          </div>
+        </section>
+      </div>
     )
   }
 
@@ -59,8 +113,7 @@ class DocumentEdit extends Component {
   componentWillUnmount() {
     const {actions} = this.props
 
-    // Clear our documents and reset loading state
-    actions.setDocument(null)
+    actions.clearDocument()
   }
 
   getDocument(documentId) {
@@ -78,12 +131,37 @@ class DocumentEdit extends Component {
   }
 
   groupFields(fields) {
-    let main = []
-    let sidebar = []
+    let sections = {}
+    let sectionsArray = null
+    let other = []
 
-    fields.forEach(field => {
+    Object.keys(fields).forEach(fieldSlug => {
+      let field = fields[fieldSlug]
+      let section = field.publish && field.publish.section
 
+      if (section) {
+        sections[section] = sections[section] || []
+        sections[section].push(field)
+      } else {
+        other.push(field)
+      }
     })
+
+    // Converting sections to an array including slug
+    if (Object.keys(sections).length) {
+      sectionsArray = Object.keys(sections).map(sectionName => {
+        return {
+          slug: slugify(sectionName),
+          name: sectionName,
+          fields: sections[sectionName]
+        }
+      })
+    }
+
+    return {
+      sections: sectionsArray,
+      other
+    }
   }
 }
 
