@@ -4,12 +4,12 @@ import api from 'reducers/api'
 import app from 'reducers/app'
 import document from 'reducers/document'
 import user from 'reducers/user'
-import { routerReducer as routing } from 'preact-router-redux'
+import router from 'reducers/router'
 
 export {
   api,
   app,
   document,
   user,
-  routing
+  router
 }
