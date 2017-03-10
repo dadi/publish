@@ -14,7 +14,22 @@ export default class Button extends Component {
     /**
      * Colour accent.
      */
-    accent: proptypes.oneOf(['system']),
+    accent: proptypes.oneOf([
+      'destruct',
+      'inherit',
+      'save',
+      'system'
+    ]),
+
+    /**
+     * Classes to append to the button element.
+     */
+    className: proptypes.string,
+
+    /**
+     * Whether the button is disabled.
+     */
+    disabled: proptypes.bool,
 
     /**
      * Whether the button is part of a group of buttons, and which position this particular button takes in the group. This is used to collapse the border-radius accordingly.
@@ -39,6 +54,8 @@ export default class Button extends Component {
 
   static defaultProps = {
     accent: 'system',
+    className: '',
+    disabled: false,
     type: 'button'
   }
 
@@ -49,17 +66,29 @@ export default class Button extends Component {
   }
 
   render() {
+    const {
+      accent, 
+      className, 
+      children, 
+      disabled, 
+      inGroup, 
+      onClick, 
+      type
+    } = this.props
+
     let buttonClass = new Style(styles, 'button')
 
-    buttonClass.add(`button-${this.props.accent}`)
-      .add(`button-in-group-${this.props.inGroup}`)
+    buttonClass.add(`button-${accent}`)
+      .add(`button-in-group-${inGroup}`)
+      .addResolved(className)
 
     return (
       <button type="button"
         class={buttonClass.getClasses()}
-        onClick={this.props.onClick}
-        type={this.props.type}
-      >{this.props.children}</button>
+        disabled={disabled}
+        onClick={onClick}
+        type={type}
+      >{children}</button>
     )
   }
 }

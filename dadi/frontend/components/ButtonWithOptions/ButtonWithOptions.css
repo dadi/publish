@@ -1,20 +1,48 @@
 /* Container */
 .container {
+  display: inline-block;
   position: relative;
 }
 
-/* Options launcher */
-.options-launcher-system {
-  background-color: var(--theme-colour-system-shade-1, #d9a000);
+.launcher {
+  padding: 9px 10px;
 }
 
-.options-launcher-system:hover {
-  background-color: var(--theme-colour-system-shade-2, #c08d00);
+.launcher[disabled] {
+  background-color: var(--theme-colour-primary-shade-1, #777777) !important;
+  color: var(--theme-colour-secondary, #FFFFFF) !important;
+  cursor: not-allowed !important;
 }
 
-.options-container {
+.options {
   position: absolute;
   bottom: 100%;
   bottom: calc(100% + 10px);
   left: 0;
+}
+
+/* Accent: system */
+.launcher-system {
+  background-color: var(--theme-colour-system-shade-1, #d9a000);
+  color: var(--theme-colour-primary, #000000);
+}
+
+.container:active .launcher-system,
+.container:focus .launcher-system,
+.container:hover .launcher-system {
+  background-color: var(--theme-colour-system-shade-2, #c08d00);
+  color: var(--theme-colour-system, #ffbf0d);
+}
+
+/* Accent: save */
+.launcher-save {
+  background-color: var(--theme-colour-save-shade-1, #6ea338);
+  color: var(--theme-colour-secondary, #FFFFFF);
+}
+
+.container:active .launcher-save,
+.container:focus .launcher-save,
+.container:hover .launcher-save {
+  background-color: var(--theme-colour-save-shade-2, #58822d);
+  color: var(--theme-colour-secondary, #FFFFFF);
 }

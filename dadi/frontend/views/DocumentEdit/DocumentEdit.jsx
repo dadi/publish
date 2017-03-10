@@ -10,7 +10,11 @@ import {connectHelper, slugify} from 'lib/util'
 import * as Constants from 'lib/constants'
 import APIBridge from 'lib/api-bridge-client'
 
+import ActionBar from 'components/ActionBar/ActionBar'
+import Button from 'components/Button/Button'
+import ButtonWithOptions from 'components/ButtonWithOptions/ButtonWithOptions'
 import FieldImage from 'components/FieldImage/FieldImage'
+import FieldString from 'components/FieldString/FieldString'
 import Main from 'components/Main/Main'
 import Nav from 'components/Nav/Nav'
 import SubNavItem from 'components/SubNavItem/SubNavItem'
@@ -21,60 +25,97 @@ import * as documentActions from 'actions/documentActions'
 class DocumentEdit extends Component {
   constructor(props) {
     super(props)
-    this.state.didRedirect = false
+
+    this.state.hasTriedSubmitting = false
   }
 
-  getUrlTo(group, collection, documentId, section) {
-    return `${group ? `/${group}` : ''}/${collection}/document/edit/${documentId}${section ? `/${section}` : ''}`
-  }
-  
   render() {
     const {
       collection,
       documentId,
       group,
-      section,
       method,
       state
     } = this.props
-
+    const activeSection = this.props.section
     const currentCollection = state.api.currentCollection
     const document = state.document
 
-    if (document.status === Constants.STATUS_LOADING || !currentCollection) {
+    if (document.remoteStatus === Constants.STATUS_LOADING || !currentCollection) {
       return (
         <p>Loading...</p>
       )
     }
 
     const fields = this.groupFields(currentCollection.fields)
+    const sections = fields.sections || fields.other
+    const fieldsToRender = this.currentSection ? this.currentSection.fields : fields.other
+    const hasValidationErrors = Object.keys(document.validationErrors).filter(field => {
+      return document.validationErrors[field]
+    }).length
 
     return (
-      <div>
+      <div class={styles.container}>
         {fields.sections &&
-          <section class={styles.navigation}>
+          <div class={styles.navigation}>
             {fields.sections.map(collectionSection => {
-
               return (
                 <SubNavItem
-                  active={section === collectionSection.slug}
+                  active={activeSection === collectionSection.slug}
+                  error={collectionSection.hasErrors}
                   href={this.getUrlTo(group, collection, documentId, collectionSection.slug)}
                 >
                   {collectionSection.name}
                 </SubNavItem>
               )
             })}
-          </section>
+          </div>
         }
 
-        <section class={styles.content}>
-          <div class={styles.main}>
-            <p>Main</p>
-          </div>
-          <div class={styles.sidebar}>
-            <p>Side bar</p>
-          </div>
-        </section>
+        {sections.map(section => {
+          let sectionClass = new Style(styles, 'section')
+
+          sectionClass.addIf('section-active', section.slug === activeSection)
+
+          return (
+            <section class={sectionClass.getClasses()}>
+              <div class={styles.main}>
+                {section.fields.filter(field => {
+                  const position = field.publish && field.publish.position
+
+                  return !position || position === 'main'
+                }).map(field => this.renderField(field))}
+              </div>
+              <div class={styles.sidebar}>
+                {section.fields.filter(field => {
+                  const position = field.publish && field.publish.position
+
+                  return position === 'sidebar'
+                }).map(field => this.renderField(field))}
+              </div>
+            </section>
+          )
+        })}
+
+        <ActionBar>
+          <Button
+            accent="destruct"
+          >
+            Delete
+          </Button>
+          <ButtonWithOptions
+            accent="save"
+            disabled={hasValidationErrors}
+            onClick={this.handleSave.bind(this)}
+            options={{
+              'Save and create new': (() => {}),
+              'Save and go back': (() => {}),
+              'Save and duplicate': (() => {})
+            }}
+          >
+            Save and continue
+          </ButtonWithOptions>
+        </ActionBar>
       </div>
     )
   }
@@ -88,20 +129,23 @@ class DocumentEdit extends Component {
       documentId
     } = this.props
 
-    if (section) {
-      if (!state.api.currentCollection) return
+    const currentCollection = state.api.currentCollection
 
-      const currentCollection = state.api.currentCollection
+    if (currentCollection) {
       const fields = this.groupFields(currentCollection.fields)
 
-      const sectionMatch = fields.sections.find(fieldSection => {
-        return fieldSection.slug === section
-      })
-      if (!sectionMatch) {
-        const firstSection = fields.sections[0]
+      if (section || fields.sections) {
+        const sectionMatch = fields.sections.find(fieldSection => {
+          return fieldSection.slug === section
+        })
 
-        route(this.getUrlTo(group, collection, documentId, firstSection.slug))
-        return
+        if (!sectionMatch) {
+          const firstSection = fields.sections[0]
+
+          route(this.getUrlTo(group, collection, documentId, firstSection.slug))
+
+          return false
+        }
       }
     }
   }
@@ -113,37 +157,75 @@ class DocumentEdit extends Component {
 
     // If we haven't already started fetching a document and there isn't a document already in
     // the store or we need to get a new one because the id has changed, let's get a document
-    if ((document.status !== Constants.STATUS_LOADING) && (!document.data || documentIdHasChanged)) {
+    if ((document.remoteStatus !== Constants.STATUS_LOADING) && (!document.remote || documentIdHasChanged)) {
       this.getDocument(documentId)
     }
   }
 
   componentWillUnmount() {
     const {actions} = this.props
-    actions.clearDocument()
+
+    actions.clearRemoteDocument()
   }
 
+  // Handles the callback that fires whenever a field changes and the new value is ready
+  // to be sent to the store
+  handleFieldChange(fieldName, value) {
+    const {actions} = this.props
+
+    actions.updateLocalDocument({
+      [fieldName]: value
+    })
+  }
+
+  // Handles the callback that fires whenever there's a new validation error in a field or
+  // when a validation error has been cleared
+  handleFieldError(fieldName, hasError, value) {
+    const {actions} = this.props
+
+    actions.setFieldErrorStatus(fieldName, value, hasError)
+  }
+
+  // Handles the save operation
+  handleSave() {
+    console.log('----> saving')
+    this.setState({
+      hasTriedSubmitting: true
+    })
+  }
+
+  // Fetches a document from the remote API
   getDocument(documentId) {
     const {actions, collection, state} = this.props
 
-    actions.setDocumentStatus(Constants.STATUS_LOADING)
+    actions.setRemoteDocumentStatus(Constants.STATUS_LOADING)
     
     return APIBridge(state.api.apis[0])
       .in(collection)
       .whereFieldIsEqualTo('_id', documentId)
       .find()
       .then(doc => {
-        actions.setDocument(doc.results[0], collection)
+        actions.setRemoteDocument(doc.results[0], collection)
       })
   }
 
+  // Constructs a URL for the given document based on the group, collection and section
+  getUrlTo(group, collection, documentId, section) {
+    return `${group ? `/${group}` : ''}/${collection}/document/edit/${documentId}${section ? `/${section}` : ''}`
+  }
+
+  // Groups fields by section
   groupFields(fields) {
+    const document = this.props.state.document
+
     let sections = {}
     let sectionsArray = null
     let other = []
 
     Object.keys(fields).forEach(fieldSlug => {
-      let field = fields[fieldSlug]
+      let field = Object.assign({}, fields[fieldSlug], {
+        _id: fieldSlug
+      })
       let section = field.publish && field.publish.section
 
       if (section) {
@@ -157,11 +239,17 @@ class DocumentEdit extends Component {
     // Converting sections to an array including slug
     if (Object.keys(sections).length) {
       sectionsArray = Object.keys(sections).map(sectionName => {
-        return {
-          slug: slugify(sectionName),
+        const fields = sections[sectionName]
+        const sectionHasErrors = fields.some(field => document.validationErrors[field._id])
+
+        let section = {
+          fields,
+          hasErrors: sectionHasErrors,
           name: sectionName,
-          fields: sections[sectionName]
+          slug: slugify(sectionName)
         }
+
+        return section
       })
     }
 
@@ -169,6 +257,29 @@ class DocumentEdit extends Component {
       sections: sectionsArray,
       other
     }
+  }
+
+  // Renders a field, deciding which component to use based on the field type
+  renderField(field) {
+    const {document} = this.props.state
+    const hasError = document.validationErrors[field._id]
+    const {hasTriedSubmitting} = this.state
+
+    switch (field.type) {
+      case 'String':
+        return (
+          <FieldString
+            error={hasError}
+            forceValidation={hasTriedSubmitting}
+            onChange={this.handleFieldChange.bind(this)}
+            onError={this.handleFieldError.bind(this)}
+            value={document.local[field._id]}
+            schema={field}
+          />
+        )
+    }
+
+    return null
   }
 }
 

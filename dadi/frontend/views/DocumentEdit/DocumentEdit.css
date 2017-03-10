@@ -1,6 +1,14 @@
-.content {
-  display: flex;
+.container {
+  margin-bottom: 80px;
+}
+
+.section {
+  display: none;
   flex-wrap: wrap;
+}
+
+.section-active {
+  display: flex;
 }
 
 .navigation {
@@ -8,11 +16,27 @@
 }
 
 .main {
-  width: 66.6666%;
-  width: calc(2 * (100% / 3));
+  width: 100%;
+  padding: 10px;
+}
+
+@media (--breakpoint-medium) {
+  .main {
+    width: 66.6666%;
+    width: calc(2 * (100% / 3));
+    padding: 10px 10px 10px 20px;  
+  }
 }
 
 .sidebar {
-  width: 33.3333%;
-  width: calc(100% / 3);
+  width: 100%;
+  padding: 10px;
+}
+
+@media (--breakpoint-medium) {
+  .sidebar {
+    width: 33.3333%;
+    width: calc(100% / 3);
+    padding: 10px 20px 10px 10px;
+  }
 }

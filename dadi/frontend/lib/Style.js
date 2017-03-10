@@ -2,8 +2,10 @@
  * @constructor
  */
 const Style = function (styles, ...initClasses) {
-  this.classes = initClasses
   this.styles = styles
+  this.classes = initClasses
+    .filter(className => styles[className])
+    .map(className => styles[className])
 }
 
 /**
@@ -15,7 +17,7 @@ const Style = function (styles, ...initClasses) {
  */
 Style.prototype.add = function (className) {
   if ((typeof className === 'string') && this.styles[className]) {
-    this.classes.push(className)
+    this.classes.push(this.styles[className])
   }
 
   return this
@@ -37,13 +39,26 @@ Style.prototype.addIf = function (className, condition) {
 }
 
 /**
+ * Adds the given resolved class name to the list of classes.
+ *
+ * @param {string} className - Name of the class to add.
+ *
+ * @return {Style} The Style instance.
+ */
+Style.prototype.addResolved = function (className) {
+  this.classes.push(className)
+
+  return this
+}
+
+/**
  * Returns a space-separated string with all the resolved
  * class names.
  *
  * @return {string} The rendered class names.
  */
 Style.prototype.getClasses = function () {
-  return this.classes.map(className => this.styles[className]).join(' ')
+  return this.classes.join(' ')
 }
 
 export default Style

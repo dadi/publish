@@ -43,7 +43,7 @@ export default function api(state = initialState, action = {}) {
       return initialState
 
     // Actions: set document or set document list
-    case types.SET_DOCUMENT:
+    case types.SET_REMOTE_DOCUMENT:
     case types.SET_DOCUMENT_LIST:
       if (!action.currentCollection) return state
 
