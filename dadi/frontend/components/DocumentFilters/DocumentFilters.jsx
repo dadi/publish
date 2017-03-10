@@ -9,24 +9,26 @@ import Button from 'components/Button/Button'
 
 export default class DocumentFilters extends Component {
 
-  componentWillMount() {
+  constructor(props) {
+    super(props)
+
     const {
       filter, 
       collection, 
       field, 
       value, 
       fields
-    } = this.props
+    } = props
 
     // Evaluate passed filter / store in state
     let filters = (isValidJSON(filter) ? objectToArray(JSON.parse(filter), 'field') : []).map(this.deconstructFilters)
 
-    this.setState({
+
+    this.state = {
       visible: filter || false,
       filters: filters
-    })
+    }
   }
-  
   render() {
     const {visible, filters} = this.state
     const {collection} = this.props
