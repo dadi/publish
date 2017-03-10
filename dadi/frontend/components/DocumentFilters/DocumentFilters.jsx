@@ -20,11 +20,13 @@ export default class DocumentFilters extends Component {
 
     // Evaluate passed filter / store in state
     let filters = (isValidJSON(filter) ? objectToArray(JSON.parse(filter), 'field') : []).map(this.deconstructFilters)
-    this.state = {
+
+    this.setState({
       visible: filter || false,
       filters: filters
-    }
+    })
   }
+  
   render() {
     const {visible, filters} = this.state
     const {collection} = this.props
@@ -59,7 +61,7 @@ export default class DocumentFilters extends Component {
       return Object.assign(filter, {type: '$eq'})
     } else {
       let type = Object.keys(filter.value)[0]
-      
+
       return Object.assign(filter, {type: type, value: filter.value[type]})
     }
   }
