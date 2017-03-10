@@ -66,6 +66,19 @@ export function urlHelper() {
   }
 }
 
+export function objectToArray(obj, keyField) {
+  return Object.keys(obj).map(key => {
+    return Object.assign({}, {[keyField || 'key']: key, value: obj[key]})
+  })
+}
+
+export function arrayToObject(arr, keyField) {
+  if (!arr.length) return null
+  return Object.assign({}, ...arr.map(obj => {
+    return {[obj[keyField] || 'key']: obj.value}
+  }))
+}
+
 // Object and Field validation
 export function isValidJSON(string) {
   if (!string || typeof string !== 'string') return
