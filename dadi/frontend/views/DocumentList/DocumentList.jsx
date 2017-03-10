@@ -165,15 +165,15 @@ class DocumentList extends Component {
       actions.setDocumentList(docs, collection)
     }).catch((err) => {
       actions.clearDocumentList()
-      // TODO: Graceful deal with failure
+      // {!} TODO: Graceful deal with failure
     })
   }
 
   updateUrlParams (filters) {
     const {actions, state} = this.props
     
-    // Replace same with `filters`
-    router({params: {filter: {email: 'am@dadi.co'}}, update: true})
+    // Replace existing filters
+    router({params: {filter: filters}, update: true})
   }
 }
 
