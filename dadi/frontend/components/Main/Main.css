@@ -41,7 +41,7 @@
   background-color: var(--theme-colour-background-shade-1, #FAFAFA);
   background-image: url(/images/bg.png);
   background-repeat: no-repeat;
-  background-position: 50%;
+  /*background-position: 50%;*/
   background-size: cover;
   border-bottom: 1px solid transparent;
 }
@@ -63,6 +63,10 @@
   --theme-colour-system-shade-3: #a67a00;
   --theme-colour-data: #4A91FF;
   --theme-colour-error: #E5462C;
+  --theme-colour-error-shade-1: #982613;
+  --theme-colour-save: #88c24c;
+  --theme-colour-save-shade-1: #6ea338;
+  --theme-colour-save-shade-2: #58822d;
 }
 
 @custom-media --breakpoint-medium (min-width: 600px);

@@ -26,7 +26,7 @@ class DocumentList extends Component {
     const documents = state.documents
     const currentCollection = state.api.currentCollection
 
-    if (!documents.list || !currentCollection) {
+    if (!documents.list || documents.status === Constants.STATUS_LOADING || !currentCollection) {
       return (
         <p>Loading...</p>
       )

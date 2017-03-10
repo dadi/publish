@@ -8,7 +8,7 @@ import styles from './ButtonWithOptions.css'
 
 import Button from 'components/Button/Button'
 import Dropdown from 'components/Dropdown/Dropdown'
-import DropdownItem from 'components/DropdownItem/DropdownItem'
+import DropdownItem from 'components/Dropdown/DropdownItem'
 import IconArrow from 'components/IconArrow/IconArrow'
 
 /**
@@ -20,6 +20,11 @@ export default class ButtonWithOptions extends Component {
      * Colour accent.
      */
     accent: proptypes.oneOf(['system']),
+
+    /**
+     * Whether the button is disabled.
+     */
+    disabled: proptypes.bool,
 
     /**
      * Callback to be executed when the main button is clicked.
@@ -73,38 +78,50 @@ export default class ButtonWithOptions extends Component {
   }
 
   render() {
-    let launcherClass = new Style(styles, 'button', 'button-border-right')
+    const {
+      accent,
+      children,
+      disabled,
+      onClick,
+      options,
+      type
+    } = this.props
 
-    launcherClass.add('options-launcher')
-      .add(`options-launcher-${this.props.accent}`)
+    let launcherStyle = new Style(styles, 'launcher')
+
+    launcherStyle.add(`launcher-${accent}`)
+      .addIf('launcher-disabled', disabled)
 
     return (
       <div class={styles.container}>
         <Button
-          accent={this.props.accent}
+          accent={accent}
+          disabled={disabled}
           inGroup="left"
-          onClick={this.props.onClick}
-          type={this.props.type}
+          onClick={onClick}
+          type={type}
         >
-          {this.props.children}
+          {children}
         </Button>
 
         <Button
-          accent={`${this.props.accent}-shade-1`}
+          accent="inherit"
+          disabled={disabled}
+          className={launcherStyle.getClasses()}
           inGroup="right"
           onClick={this.toggleOptions.bind(this)}
         >
           <IconArrow
-            direction={this.state.optionsExpanded ? 'down' : null}
-            width="10"
-            height="10"
+            direction={this.state.optionsExpanded ? 'down' : 'up'}
+            width={10}
+            height={6}
           />
         </Button>
 
         {this.state.optionsExpanded &&
-          <div class={styles['options-container']}>
-            <Dropdown>
-              {Object.keys(this.props.options).map(option => {
+          <div class={styles.options}>
+            <Dropdown tooltip="right">
+              {Object.keys(options).map(option => {
                 return (
                   <DropdownItem>{option}</DropdownItem>
                 )

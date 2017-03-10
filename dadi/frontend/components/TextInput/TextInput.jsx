@@ -24,14 +24,14 @@ export default class TextInput extends Component {
     inLabel: proptypes.bool,
 
     /**
-     * Whether the field supports multiple lines, which results in it being rendered as a `<textarea>`.
-     */
-    multiline: proptypes.bool,
-
-    /**
-     * Callback to be executed when the text is changed.
+     * Callback to be executed when the text is changed (onChange event).
      */
     onChange: proptypes.func,
+
+    /**
+     * Callback to be executed when a key is pressed (onKeyUp event).
+     */
+    onKeyUp: proptypes.func,
 
     /**
      * Placeholder for the input field.
@@ -50,6 +50,7 @@ export default class TextInput extends Component {
      */
     type: proptypes.oneOf([
       'email',
+      'multiline',
       'number',
       'password',
       'tel',
@@ -69,12 +70,44 @@ export default class TextInput extends Component {
     type: 'text'
   }
 
+  constructor(props) {
+    super(props)
+
+    this.state.value = props.value || ''
+  }
+
   render() {
-    const {id, inLabel, onChange, placeholder, required, type, value} = this.props
+    const {
+      id,
+      inLabel,
+      placeholder,
+      required,
+      type,
+      value
+    } = this.props
+
     let inputStyle = new Style(styles, 'input')
 
     inputStyle.addIf('input-in-label', inLabel)
 
+    // If type is `multiline`, we render a `<textarea>`
+    if (type === 'multiline') {
+      return (
+        <textarea
+          class={inputStyle.getClasses()}
+          id={id}
+          placeholder={placeholder}
+          required={required}
+          rows={10}
+          onChange={this.handleChange.bind(this)}
+          onKeyUp={this.handleChange.bind(this)}
+        >
+          {value}
+        </textarea>
+      )
+    }
+
+    // Otherwise, we render an `<input>`
     return (
       <input
         class={inputStyle.getClasses()}
@@ -83,8 +116,23 @@ export default class TextInput extends Component {
         id={id}
         placeholder={placeholder}
         required={required}
-        onChange={onChange}
+        onChange={this.handleChange.bind(this)}
+        onKeyUp={this.handleChange.bind(this)}
       />
     )
+  }
+
+  handleChange(event) {
+    const {onChange, onKeyUp} = this.props
+
+    if (event.type === 'change' && typeof onChange === 'function') {
+      onChange.call(this, event)
+    }
+
+    if (event.type === 'keyup' && typeof onKeyUp === 'function') {
+      onKeyUp.call(this, event)
+    }
+
+    return true
   }
 }

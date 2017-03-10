@@ -20,6 +20,11 @@
   border-radius: 2px;
 }
 
+.button-inherit {
+  background-color: inherit;
+  color: inherit;
+}
+
 .button-in-group-left {
   border-top-right-radius: 0;
   border-bottom-right-radius: 0;
@@ -47,15 +52,34 @@
   color: var(--theme-colour-system, #ffbf0d);
 }
 
-/* Accent: system (shade 1) */
-.button-system-shade-1 {
-  background-color: var(--theme-colour-system-shade-1, #d9a000);
-  color: var(--theme-colour-primary, #000000);
+/* Accent: destruct */
+.button-destruct {
+  background-color: var(--theme-colour-error, #ffbf0d);
+  color: var(--theme-colour-secondary, #FFFFFF);
 }
 
-.button-system-shade-1:active,
-.button-system-shade-1:focus,
-.button-system-shade-1:hover {
-  background-color: var(--theme-colour-system-shade-2, #c08d00);
-  color: var(--theme-colour-system, #ffbf0d);
+.button-destruct:active,
+.button-destruct:focus,
+.button-destruct:hover {
+  background-color: var(--theme-colour-error-shade-1, #d9a000);
+  color: var(--theme-colour-secondary, #FFFFFF);
+}
+
+/* Accent: save */
+.button-save {
+  background-color: var(--theme-colour-save, #88c24c);
+  color: var(--theme-colour-secondary, #FFFFFF);
+}
+
+.button-save:active,
+.button-save:focus,
+.button-save:hover {
+  background-color: var(--theme-colour-save-shade-1, #6ea338);
+  color: var(--theme-colour-secondary, #FFFFFF);
+}
+
+.button[disabled]:not(.button-inherit) {
+  background-color: var(--theme-colour-background-shade-2, #AAAAAA) !important;
+  color: var(--theme-colour-secondary, #FFFFFF) !important;
+  cursor: not-allowed !important;
 }

@@ -17,13 +17,8 @@
   color: var(--theme-colour-primary, #000000);
 }
 
-.sub-nav-item-active {
-  background-color: var(--theme-colour-data, #4A91FF);
-  color: var(--theme-colour-secondary, #ffffff);
-}
-
 .sub-nav-item-error {
-  color: var(--theme-colour-error, #E5462C) !important;
+  color: var(--theme-colour-error, #E5462C);
 }
 
 .sub-nav-item-error:after {
@@ -35,4 +30,9 @@
   height: 6px;
   border-radius: 50%;
   background-color: var(--theme-colour-error, #E5462C);
+}
+
+.sub-nav-item-active {
+  background-color: var(--theme-colour-data, #4A91FF);
+  color: var(--theme-colour-secondary, #ffffff);
 }

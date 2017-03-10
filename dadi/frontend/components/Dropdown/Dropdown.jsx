@@ -14,12 +14,28 @@ export default class Dropdown extends Component {
     /**
      * The list of `DropdownItem` elements to be rendered.
      */
-    children: proptypes.node
+    children: proptypes.node,
+
+    /**
+     * If present, renders a tooltip on the bottom of the container.
+     */
+    tooltip: proptypes.oneOf(['left', 'right'])
+  }
+
+  static defaultProps = {
+    tooltip: null
   }
 
   render() {
+    const {tooltip} = this.props
+
+    let containerClass = new Style(styles, 'container')
+
+    containerClass.addIf(`container-tooltip`, tooltip)
+      .addIf(`container-tooltip-${tooltip}`, tooltip)
+
     return (
-      <ul class={styles.container}>
+      <ul class={containerClass.getClasses()}>
         {this.props.children}
       </ul>
     )
