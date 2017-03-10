@@ -1,8 +1,9 @@
 import * as Types from 'actions/actionTypes'
 
-export function locationChange(payload) {
+export function locationChange(locationBeforeTransitions, params) {
   return {
     type: Types.LOCATION_CHANGE,
-    payload
+    locationBeforeTransitions,
+    params
   }
 }
