@@ -21,8 +21,10 @@ router({params: {foo: "bar", update: true}})
 
 // Clear all parameters in the current route (not that useful)
 router()
-The other minor change is that now state.router has an extra parameter, params. This stores an Object of the query parameters:
+```
 
+The other minor change is that now state.router has an extra parameter, params. This stores an Object of the query parameters:
+```javascript
 {
   foo: "bar",
   filters: {
