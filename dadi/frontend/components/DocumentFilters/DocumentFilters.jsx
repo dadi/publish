@@ -55,9 +55,11 @@ export default class DocumentFilters extends Component {
 
   deconstructFilters(filter) {
     // If there is no filter type and the field value is a string, add a type
-    if (typeof filter.value === 'string') return Object.assign(filter, {type: '$eq'})
-    else {
+    if (typeof filter.value === 'string') {
+      return Object.assign(filter, {type: '$eq'})
+    } else {
       let type = Object.keys(filter.value)[0]
+      
       return Object.assign(filter, {type: type, value: filter.value[type]})
     }
   }
