@@ -6,7 +6,7 @@ import {bindActionCreators} from 'redux'
 import Style from 'lib/Style'
 import styles from './DocumentEdit.css'
 
-import {connectHelper, slugify} from 'lib/util'
+import {connectHelper, setPageTitle, slugify} from 'lib/util'
 import * as Constants from 'lib/constants'
 import APIBridge from 'lib/api-bridge-client'
 
@@ -37,19 +37,23 @@ class DocumentEdit extends Component {
       method,
       state
     } = this.props
-    const activeSection = this.props.section
+
     const currentCollection = state.api.currentCollection
     const document = state.document
 
-    if (document.remoteStatus === Constants.STATUS_LOADING || !currentCollection) {
+    if (document.remoteStatus === Constants.STATUS_LOADING || !currentCollection || !document.local) {
       return (
         <p>Loading...</p>
       )
     }
 
     const fields = this.groupFields(currentCollection.fields)
-    const sections = fields.sections || fields.other
-    const fieldsToRender = this.currentSection ? this.currentSection.fields : fields.other
+    const sections = fields.sections || [{
+      slug: 'other',
+      fields: fields.other
+    }]
+    const activeSection = this.props.section || sections[0].slug
+
     const hasValidationErrors = Object.keys(document.validationErrors).filter(field => {
       return document.validationErrors[field]
     }).length
@@ -134,7 +138,7 @@ class DocumentEdit extends Component {
     if (currentCollection) {
       const fields = this.groupFields(currentCollection.fields)
 
-      if (section || fields.sections) {
+      if (section) {
         const sectionMatch = fields.sections.find(fieldSection => {
           return fieldSection.slug === section
         })
@@ -188,7 +192,6 @@ class DocumentEdit extends Component {
 
   // Handles the save operation
   handleSave() {
-    console.log('----> saving')
     this.setState({
       hasTriedSubmitting: true
     })
@@ -204,8 +207,19 @@ class DocumentEdit extends Component {
       .in(collection)
       .whereFieldIsEqualTo('_id', documentId)
       .find()
-      .then(doc => {
-        actions.setRemoteDocument(doc.results[0], collection)
+      .then(response => {
+        const document = response.results[0]
+
+        actions.setRemoteDocument(document, collection)
+
+        // This is something to revisit. We don't have the concept of a primary field,
+        // which we would use for, among other things, set the title of the page when
+        // editing a document. For now, and to be consistent with how we're linking to
+        // documents in the document list view, we take the contents of the first field
+        // (which technically is the second, since the first one is always _id).
+        const firstField = Object.keys(document)[1]
+
+        setPageTitle(document[firstField])
       })
   }
 
