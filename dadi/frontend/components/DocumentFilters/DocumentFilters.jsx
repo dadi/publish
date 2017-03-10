@@ -21,13 +21,12 @@ export default class DocumentFilters extends Component {
     // Evaluate passed filter / store in state
     let filters = (isValidJSON(filter) ? objectToArray(JSON.parse(filter), 'field') : []).map(this.deconstructFilters)
     this.state = {
-      edit: false,
       visible: filter || false,
       filters: filters
     }
   }
   render() {
-    const {visible, filters, edit} = this.state
+    const {visible, filters} = this.state
     const {collection} = this.props
 
     return (
@@ -101,9 +100,8 @@ export default class DocumentFilters extends Component {
   addFilter() {
     const {filters} = this.state
 
-    // Edit mode and add blank filter
+    // Add blank filter
     this.setState({
-      edit: true,
       filters: [...filters, {
         field: null,
         value: null,
