@@ -32,6 +32,7 @@ import getAppConfig from 'lib/app-config'
 import APIBridge from 'lib/api-bridge-client'
 
 class App extends Component {
+
   componentWillMount() {
     this.sessionStart()
   }
@@ -62,7 +63,6 @@ class App extends Component {
         actions.setAppConfig(config)
       })
     }
-
     // State change: user has signed out
     if (previousState.user.user && !state.user.user) {
       route('/sign-in')
@@ -75,6 +75,7 @@ class App extends Component {
 
   render() {
     const {state, history} = this.props
+
 
     let hasRoutes = state.app && state.app.config ? this.hasRoutes() : null
 
@@ -172,6 +173,9 @@ class App extends Component {
     new Session().getSession().then(user => {
       if (user) {
         actions.signIn(user)
+      } else {
+        actions.signOut()
+        route('/sign-in')
       }
     })
   }
