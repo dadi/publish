@@ -8,7 +8,7 @@ import * as documentsActions from 'actions/documentsActions'
 import {connectHelper, isValidJSON} from 'lib/util'
 import * as Constants from 'lib/constants'
 import {Keyboard} from 'lib/keyboard'
-import {router} from 'lib/router'
+import {router, createRoute} from 'lib/router'
 import APIBridge from 'lib/api-bridge-client'
 
 import DocumentFilters from 'components/DocumentFilters/DocumentFilters'
@@ -57,9 +57,10 @@ class DocumentList extends Component {
           sortOrder={order}
           sort={(value, sortBy, sortOrder) => {
             return (
-              <a href={`/${currentCollection.name}/documents?sort=${sortBy}&order=${sortOrder}`}>
-                {value}
-              </a>
+              <a href={createRoute({
+                params: {sort: sortBy, order: sortOrder}, 
+                update: true
+              })}>{value}</a>
             )
           }}
         >
@@ -82,7 +83,10 @@ class DocumentList extends Component {
         </SyncTable>
 
         {Array(documents.list.metadata.totalPages).fill().map((_, page) => (
-          <a href={`/${this.props.currentCollection}/documents/${page+1}`}>{page+1}</a>
+          <a href={createRoute({
+            path: `/${currentCollection.name}/documents/${page+1}`,
+            update: true
+          })}>{page+1}</a>
         ))}
       </section>
     )
