@@ -51,7 +51,7 @@ module.exports = function (app) {
 
       return next()
     } else {
-      res.write(JSON.stringify({noAuth: true}))
+      res.write(JSON.stringify({err: 'AUTH_FAILED'}))
       res.end()
 
       return next()
@@ -68,8 +68,7 @@ module.exports = function (app) {
         return next() 
       }
       req.login(user, {}, (err) => {
-        if (err) console.log('Err', err)
-        res.write(JSON.stringify(user))
+        res.write(JSON.stringify({err: 'AUTH_FAILED'}))
         res.end()
 
         return next()

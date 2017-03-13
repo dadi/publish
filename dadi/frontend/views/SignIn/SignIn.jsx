@@ -82,6 +82,10 @@ class SignIn extends Component {
     )
   }
 
+  errors() {
+
+  }
+
   signIn(event) {
     event.preventDefault()
 
@@ -91,16 +95,15 @@ class SignIn extends Component {
       username: this.state.email,
       password: this.state.password
     }).then(user => {
-      if (user && !user.noAuth) {
+      if (user && !user.err) {
         actions.signIn(user)
 
         route('/profile')
       } else {
         actions.signOut()
-
         this.setState({
           error: true,
-          message: (user && user.message) ? user.message : 'Email not found or password incorrect.'
+          message: user.err ? Session.errors[user.err] : null // Move to lang when ready
         })
       }
     })
