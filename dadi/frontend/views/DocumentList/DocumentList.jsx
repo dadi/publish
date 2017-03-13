@@ -8,7 +8,7 @@ import * as documentsActions from 'actions/documentsActions'
 import {connectHelper, isValidJSON} from 'lib/util'
 import * as Constants from 'lib/constants'
 import {Keyboard} from 'lib/keyboard'
-import {router, createRoute} from 'lib/router'
+import {router, createRoute, buildUrl} from 'lib/router'
 import APIBridge from 'lib/api-bridge-client'
 
 import DocumentFilters from 'components/DocumentFilters/DocumentFilters'
@@ -32,8 +32,6 @@ class DocumentList extends Component {
         <p>Loading...</p>
       )
     }
-
-    const baseUrl = group ? `/${group}/${currentCollection.name}` : `/${currentCollection.name}`
 
     // We can change this to only display certain fields
     const fieldsToDisplay = Object.keys(currentCollection.fields)
@@ -73,7 +71,7 @@ class DocumentList extends Component {
                 renderCallback={(value, data, column, index) => {
                   if (index === 0) {
                     return (
-                      <a href={`${baseUrl}/document/edit/${data._id}`}>{value}</a>
+                      <a href={buildUrl(group, currentCollection.name, 'document/edit', data._id)}>{value}</a>
                     )
                   }
 
@@ -86,7 +84,7 @@ class DocumentList extends Component {
 
         {Array(documents.list.metadata.totalPages).fill().map((_, page) => (
           <a href={createRoute({
-            path: `/${currentCollection.name}/documents/${page+1}`,
+            path: [group, currentCollection.name, 'documents', page+1],
             update: true
           })}>{page+1}</a>
         ))}
@@ -143,6 +141,7 @@ class DocumentList extends Component {
       sort,
       state
     } = this.props
+
     const sortBy = sort || 'createdAt'
     const sortOrder = order || 'desc'
 

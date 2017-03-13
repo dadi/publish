@@ -3,6 +3,8 @@ import {Router} from 'preact-router'
 import {connect} from 'preact-redux'
 import {bindActionCreators} from 'redux'
 
+import {buildUrl} from 'lib/router'
+
 import * as apiActions from 'actions/apiActions'
 import * as appActions from 'actions/appActions'
 
@@ -11,18 +13,6 @@ import Nav from 'components/Nav/Nav'
 import {connectHelper, slugify} from 'lib/util'
 
 class CollectionNav extends Component {
-  buildCollectionGroupItem(collection, group) {
-    if (!collection) return
-
-    let href = group ? `/${group}` : ''
-    href += `/${collection.slug}/documents`
-
-    return {
-      id: collection.slug,
-      label: collection.name,
-      href
-    }
-  }
 
   groupCollections(sort, collections) {
     if (!collections.length) return []
@@ -30,14 +20,21 @@ class CollectionNav extends Component {
     const groupedItems = sort.map(menu => {
       if (typeof menu === 'string') {
         const collection = collections.find(collection => collection.slug === menu)
-
-        return this.buildCollectionGroupItem(collection)
+        return {
+          id: collection.slug,
+          label: collection.name,
+          href: buildUrl(collection.slug, 'documents')
+        }
       } else {
         const groupSlug = slugify(menu.title)
         const subItems = menu.collections.map(slug => {
           const collection = collections.find(collection => collection.slug === slug)
 
-          return this.buildCollectionGroupItem(collection, groupSlug)
+          return {
+            id: collection.slug,
+            label: collection.name,
+            href: buildUrl(groupSlug, collection.slug, 'documents')
+          }
         })
 
         return {
@@ -53,7 +50,7 @@ class CollectionNav extends Component {
       return groupedItems
     }
 
-    return collections.map(collection => this.buildCollectionGroupItem(collection))
+    return collections.map(collection => buildUrl(collection.slug, 'documents'))
   }
 
   componentWillUpdate() {
