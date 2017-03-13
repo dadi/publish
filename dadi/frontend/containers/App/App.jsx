@@ -7,6 +7,8 @@ import * as userActions from 'actions/userActions'
 import * as apiActions from 'actions/apiActions'
 import * as appActions from 'actions/appActions'
 
+import LoadingBar from 'containers/LoadingBar/LoadingBar'
+
 import Header from 'components/Header/Header'
 import Main from 'components/Main/Main'
 
@@ -88,6 +90,7 @@ class App extends Component {
 
     return (
       <Main>
+        <LoadingBar />
         {state.user.user &&
           <Header
             compact={state.app.breakpoint === null}
