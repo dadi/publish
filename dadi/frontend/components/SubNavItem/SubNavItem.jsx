@@ -41,10 +41,6 @@ export default class SubNavItem extends Component {
     super(props)
   }
 
-  static defaultProps = {
-    mobile: false
-  }
-
   render() {
     const {active, error, href} = this.props
 
