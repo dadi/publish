@@ -27,7 +27,7 @@ export default class DocumentFilter extends Component {
     const {field, fields, type, value} = this.props
     
     return (
-      <form>
+      <form onSubmit={this.triggerUpdate.bind(this)}>
         <select onChange={this.onChange.bind(this, 'field')}>
           <option disabled selected value>Select field</option>
           {Object.keys(fields).map(key => (
@@ -41,14 +41,24 @@ export default class DocumentFilter extends Component {
           ))}
         </select>
         {field && type && (
-          <TextInput 
-            value={value} 
+          <TextInput
+            placeholder="Search value"
             onChange={this.onChange.bind(this, 'value')}
+            value={value}
           />
         )}
-        <Button>-</Button>
+        <Button onClick={this.remove.bind(this)}>Remove</Button>
       </form>
     )
+  }
+
+  triggerUpdate (event) {
+    event.preventDefault()
+  }
+
+  remove() {
+    const {removeFilter, index} = this.props
+    removeFilter(index)
   }
 
   onChange(elementId, event) {

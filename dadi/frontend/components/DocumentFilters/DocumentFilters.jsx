@@ -45,8 +45,9 @@ export default class DocumentFilters extends Component {
                 type={filter.type} 
                 value={filter.value} 
                 fields={collection.fields} 
-                updateFilter={this.updateUrlFilters.bind(this)} 
-                />
+                updateFilter={this.updateFilter.bind(this)}
+                removeFilter={this.removeFilter.bind(this)}
+              />
             ))}
           </div>
         )}
@@ -74,8 +75,16 @@ export default class DocumentFilters extends Component {
     })
   }
 
-  updateUrlFilters(filterProp, index) {
-    const {updateUrlParams} = this.props
+  removeFilter(index) {
+    const {filters} = this.state
+    const newFilters = [...filters]
+
+    newFilters.splice(index, 1)
+    this.setState({filters: newFilters})
+    this.updateUrl()
+  }
+
+  updateFilter(filterProp, index) {
     const {filters} = this.state
     const filter = Object.assign({}, filters[index], filterProp)
     const newFilters = [...filters]
@@ -83,8 +92,15 @@ export default class DocumentFilters extends Component {
     Object.assign(newFilters[index], filter)
     this.setState({filters: newFilters})
 
+    this.updateUrl()
+  }
+
+  updateUrl() {
     // Remove filters with null values
-    let validFilters = this.state.filters.filter(entry => {
+    const {filters} = this.state
+    const {updateUrlParams} = this.props
+
+    let validFilters = filters.filter(entry => {
       let isValid = Object.keys(entry).filter(key => {
         return Object.is(entry[key], null)
       })
