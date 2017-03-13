@@ -154,7 +154,7 @@ class DocumentList extends Component {
     actions.clearDocumentList()
   }
 
-  getDocumentList(nextPage, nextCollection) {
+  getDocumentList() {
     const {
       actions,
       collection,
@@ -172,9 +172,9 @@ class DocumentList extends Component {
     actions.setDocumentListStatus(Constants.STATUS_LOADING)
 
     let query = APIBridge(state.api.apis[0])
-      .in(nextCollection || collection)
+      .in(collection)
       .limitTo(20) // Config based on collection schema
-      .goToPage(nextPage || page)
+      .goToPage(page)
       .sortBy(sortBy, sortOrder)
 
     if (filter && isValidJSON(filter)) {
