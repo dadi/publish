@@ -82,10 +82,6 @@ class SignIn extends Component {
     )
   }
 
-  errors() {
-
-  }
-
   signIn(event) {
     event.preventDefault()
 
