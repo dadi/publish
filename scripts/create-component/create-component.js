@@ -177,7 +177,7 @@ CreateComponent.prototype.view = function () {
   let imports = this.createImports()
   let state = this.createState()
 
-  return `use strict'
+  return `'use strict'
 
 import {h, Component} from 'preact'
 import {connect} from 'preact-redux'
@@ -241,7 +241,7 @@ CreateComponent.prototype.container = function () {
   let imports = this.createImports()
   let state = this.createState()
 
-  return `use strict'
+  return `'use strict'
 
 import {h, Component} from 'preact'
 import {connect} from 'preact-redux'
