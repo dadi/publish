@@ -86,8 +86,13 @@ class App extends Component {
     // supports view composition. For now, I think this is a decent compromise.
     //
     // -- eb, 01/02/2017
+    
+    // Moved Header inside <Main>
+    // Why? Because when navigating, page position jumps to the top of <Main>
+    // -- am, 13/03/2017
+    
     return (
-      <div>
+      <Main>
         {state.user.user &&
           <Header
             compact={state.app.breakpoint === null}
@@ -95,34 +100,32 @@ class App extends Component {
             onSignOut={this.sessionEnd.bind(this)}
           />
         }
-        <Main>
-          <Router history={history}>
-            <Home path="/" authenticate />
-            <PasswordReset path="/reset" authenticate/>
-            <Api path="/apis/:api?" authenticate />
-            <Collection path="/apis/:api/collections/:collection?" authenticate />
-            {hasRoutes && (
-              <DocumentList path="/:group/:collection/documents/:page?" authenticate />
-            )}
-            {hasRoutes && (
-              <DocumentEdit path="/:group/:collection/document/:method/:documentId?/:section?" authenticate />
-            )}
-            {hasRoutes && (
-              <MediaLibrary path="/:group/:collection/media/:document?" authenticate/>
-            )}
-            <DocumentList path="/:collection/documents/:page?" authenticate />
-            <DocumentEdit path="/:collection/document/:method/:documentId?/:section?" authenticate />
-            <MediaLibrary path="/:collection/media/:document?" authenticate/>
-            <UserProfile path="/profile" authenticate />
-            <RoleList path="/roles" authenticate/>
-            <RoleEdit path="/role/:method/:role?" authenticate />
-            <SignIn path="/sign-in" />
-            <SignOut path="/sign-out" />
-            <StyleGuide path="/styleguide" />
-            <Error type="404" default />
-          </Router>
-        </Main>
-      </div>
+        <Router history={history}>
+          <Home path="/" authenticate />
+          <PasswordReset path="/reset" authenticate/>
+          <Api path="/apis/:api?" authenticate />
+          <Collection path="/apis/:api/collections/:collection?" authenticate />
+          {hasRoutes && (
+            <DocumentList path="/:group/:collection/documents/:page?" authenticate />
+          )}
+          {hasRoutes && (
+            <DocumentEdit path="/:group/:collection/document/:method/:documentId?/:section?" authenticate />
+          )}
+          {hasRoutes && (
+            <MediaLibrary path="/:group/:collection/media/:document?" authenticate/>
+          )}
+          <DocumentList path="/:collection/documents/:page?" authenticate />
+          <DocumentEdit path="/:collection/document/:method/:documentId?/:section?" authenticate />
+          <MediaLibrary path="/:collection/media/:document?" authenticate/>
+          <UserProfile path="/profile" authenticate />
+          <RoleList path="/roles" authenticate/>
+          <RoleEdit path="/role/:method/:role?" authenticate />
+          <SignIn path="/sign-in" />
+          <SignOut path="/sign-out" />
+          <StyleGuide path="/styleguide" />
+          <Error type="404" default />
+        </Router>
+      </Main>
     )
   }
 
