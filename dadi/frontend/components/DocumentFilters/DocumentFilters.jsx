@@ -1,60 +1,73 @@
 'use strict'
 
 import {h, Component} from 'preact'
+import proptypes from 'proptypes'
+
+import Style from 'lib/Style'
+import styles from './DocumentFilters.css'
 
 import {isValidJSON, objectToArray, arrayToObject} from 'lib/util'
 
 import DocumentFilter from 'components/DocumentFilter/DocumentFilter'
 import Button from 'components/Button/Button'
 
+/**
+ * A list of document filters.
+ */
 export default class DocumentFilters extends Component {
+  static propTypes = {
+    /**
+     * The schema of the collection being filtered.
+     */
+    collection: proptypes.object,
+
+    /**
+     * The JSON-stringified object of filters currently applied.
+     */
+    filter: proptypes.string
+  }
 
   constructor(props) {
     super(props)
 
-    const {
-      filter, 
-      collection, 
-      field, 
-      value, 
-      fields
-    } = props
+    const {filter} = props
 
     // Evaluate passed filter / store in state
-    let filters = (isValidJSON(filter) ? objectToArray(JSON.parse(filter), 'field') : []).map(this.deconstructFilters)
+    const filters = (isValidJSON(filter) ? objectToArray(JSON.parse(filter), 'field') : []).map(this.deconstructFilters)
 
-
+    // The list of applied filters
     this.state = {
-      visible: filter || false,
       filters: filters
     }
   }
+
   render() {
-    const {visible, filters} = this.state
+    const {filters} = this.state
     const {collection} = this.props
 
     return (
-      <div>
-        <Button onClick={this.toggleFilters.bind(this)}>Filters</Button>
-        {visible && filters && collection && (
-          <div>
-            {filters.map((filter, index) => ( 
-              <DocumentFilter 
-                index={index}
-                field={filter.field} 
-                type={filter.type} 
-                value={filter.value} 
-                fields={collection.fields} 
-                updateFilter={this.updateFilter.bind(this)}
-                removeFilter={this.removeFilter.bind(this)}
-              />
-            ))}
-          </div>
-        )}
-        {visible && (
-          <Button onClick={this.addFilter.bind(this)}>Add</Button>
-        )}
-      </div>
+      <form class={styles.filters}>
+        {filters && collection && filters.map((filter, index) => (
+          <DocumentFilter
+            index={index}
+            field={filter.field}
+            type={filter.type}
+            value={filter.value}
+            fields={collection.fields}
+            onUpdate={this.updateFilter.bind(this)}
+            onRemove={this.removeFilter.bind(this)}
+          />
+        ))}
+
+        <div class={styles.controls}>
+          <Button
+            className={styles['add-button']}
+            onClick={this.addFilter.bind(this)}
+          >
+            +
+          </Button>
+        </div>
+      </form>
     )
   }
 
@@ -63,7 +76,7 @@ export default class DocumentFilters extends Component {
     if (typeof filter.value === 'string') {
       return Object.assign(filter, {type: '$eq'})
     } else {
-      let type = Object.keys(filter.value)[0]
+      const type = Object.keys(filter.value)[0]
 
       return Object.assign(filter, {type: type, value: filter.value[type]})
     }
@@ -79,7 +92,11 @@ export default class DocumentFilters extends Component {
     const {filters} = this.state
     const newFilters = [...filters]
 
+    console.log('---> remove:', index)
+
     newFilters.splice(index, 1)
+
+    console.log('----> f:', newFilters)
     this.setState({filters: newFilters})
     this.updateUrl()
   }
@@ -104,19 +121,15 @@ export default class DocumentFilters extends Component {
       let isValid = Object.keys(entry).filter(key => {
         return Object.is(entry[key], null)
       })
+
       return isValid.length < 1
     })
-    let constructedFilters = this.constructFilters(validFilters)
-    let filterObj = arrayToObject(constructedFilters, 'field')
+    const constructedFilters = this.constructFilters(validFilters)
+    const filterObj = arrayToObject(constructedFilters, 'field')
+
     if (filterObj) {
       updateUrlParams(filterObj)
     }
-  }
-
-  toggleFilters() {
-    this.setState({
-      visible: !this.state.visible
-    })
   }
 
   addFilter() {

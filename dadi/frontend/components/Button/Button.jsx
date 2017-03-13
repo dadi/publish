@@ -15,8 +15,10 @@ export default class Button extends Component {
      * Colour accent.
      */
     accent: proptypes.oneOf([
+      'data',
       'destruct',
       'inherit',
+      'neutral',
       'save',
       'system'
     ]),
@@ -53,7 +55,7 @@ export default class Button extends Component {
   }
 
   static defaultProps = {
-    accent: 'system',
+    accent: 'neutral',
     className: '',
     disabled: false,
     type: 'button'

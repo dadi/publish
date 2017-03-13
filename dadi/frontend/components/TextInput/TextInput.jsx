@@ -12,6 +12,11 @@ import styles from './TextInput.css'
 export default class TextInput extends Component {
   static propTypes = {
     /**
+     * Classes to append to the button element.
+     */
+    className: proptypes.string,
+
+    /**
      * DOM ID for the input field.
      */
     id: proptypes.string,
@@ -78,6 +83,7 @@ export default class TextInput extends Component {
 
   render() {
     const {
+      className,
       id,
       inLabel,
       placeholder,
@@ -89,6 +95,7 @@ export default class TextInput extends Component {
     let inputStyle = new Style(styles, 'input')
 
     inputStyle.addIf('input-in-label', inLabel)
+    inputStyle.addResolved(className)
 
     // If type is `multiline`, we render a `<textarea>`
     if (type === 'multiline') {

@@ -11,7 +11,9 @@ import {Keyboard} from 'lib/keyboard'
 import {router, createRoute} from 'lib/router'
 import APIBridge from 'lib/api-bridge-client'
 
+import Button from 'components/Button/Button'
 import DocumentFilters from 'components/DocumentFilters/DocumentFilters'
+import ListController from 'components/ListController/ListController'
 import SyncTable from 'components/SyncTable/SyncTable'
 import SyncTableRow from 'components/SyncTable/SyncTableRow'
 
@@ -20,10 +22,19 @@ class DocumentList extends Component {
     super(props)
 
     this.keyboard = new Keyboard()
+    this.state.filtersVisible = false
   }
 
   render() {
-    const {collection, filter, group, order, sort, state} = this.props
+    const {
+      collection,
+      filter,
+      group,
+      order,
+      sort,
+      state
+    } = this.props
+    const {filtersVisible} = this.state
     const documents = state.documents
     const currentCollection = state.api.currentCollection
 
@@ -46,11 +57,23 @@ class DocumentList extends Component {
 
     return (
       <section class="Documents">
-        <DocumentFilters 
-          filter={filter} 
-          collection={currentCollection}
-          updateUrlParams={this.updateUrlParams.bind(this)} 
-        />
+        <ListController
+          search={`Search in ${currentCollection.name}...`}
+        >
+          <Button
+            accent="data"
+            onClick={this.toggleFiltersVisibility.bind(this)}
+          >Filters</Button>
+          <Button accent="save">Create new</Button>
+        </ListController>
+
+        <div style={!filtersVisible && "display: none;"}>
+          <DocumentFilters
+            filter={filter}
+            collection={currentCollection}
+            updateUrlParams={this.updateUrlParams.bind(this)}
+          />
+        </div>
 
         <SyncTable
           columns={tableColumns}
@@ -180,6 +203,12 @@ class DocumentList extends Component {
     
     // Replace existing filters
     router({params: {filter: filters}, update: true})
+  }
+
+  toggleFiltersVisibility() {
+    this.setState({
+      filtersVisible: !this.state.filtersVisible
+    })
   }
 }
 
