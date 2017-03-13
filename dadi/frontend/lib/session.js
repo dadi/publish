@@ -16,7 +16,7 @@ const Session = function () {}
  */
 Session.prototype.buildUserObject = function (user) {
   if (!user) return null
-  if (user.noAuth) return user
+  if (user.err) return user
 
   return {
     email: user.email,
@@ -102,4 +102,10 @@ module.exports = function () {
   return new Session()
 }
 
-module.Session = Session
+module.exports.errors = {
+  AUTH_FAILED: 'Email not found or password incorrect.',
+  MISSING_AUTH_API: 'Authentication API unreachable.',
+  undefined: 'Unknown error'
+}
+
+module.exports.Session = Session

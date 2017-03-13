@@ -21,7 +21,7 @@ Session.prototype.authorise = function (username, password, next) {
         return next(null)
       }
     }).catch(err => {
-      return next(null, {message: 'Authentication API unreachable', noAuth: true, err})
+      return next(null, {err: 'MISSING_AUTH_API'})
     })
 }
 
