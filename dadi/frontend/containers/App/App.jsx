@@ -90,7 +90,7 @@ class App extends Component {
     // Moved Header inside <Main>
     // Why? Because when navigating, page position jumps to the top of <Main>
     // -- am, 13/03/2017
-    
+
     return (
       <Main>
         {state.user.user &&
@@ -105,18 +105,12 @@ class App extends Component {
           <PasswordReset path="/reset" authenticate/>
           <Api path="/apis/:api?" authenticate />
           <Collection path="/apis/:api/collections/:collection?" authenticate />
-          {hasRoutes && (
-            <DocumentList path="/:group/:collection/documents/:page?" authenticate />
-          )}
-          {hasRoutes && (
-            <DocumentEdit path="/:group/:collection/document/:method/:documentId?/:section?" authenticate />
-          )}
-          {hasRoutes && (
-            <MediaLibrary path="/:group/:collection/media/:document?" authenticate/>
-          )}
-          <DocumentList path="/:collection/documents/:page?" authenticate />
+          {hasRoutes && ( <DocumentEdit path="/:group/:collection/document/:method/:documentId?/:section?" authenticate /> )}
           <DocumentEdit path="/:collection/document/:method/:documentId?/:section?" authenticate />
+          <DocumentList path="/:collection/documents/:page?" authenticate />
+          {hasRoutes && ( <DocumentList path="/:group/:collection/documents/:page?" authenticate /> )}
           <MediaLibrary path="/:collection/media/:document?" authenticate/>
+          {hasRoutes && ( <MediaLibrary path="/:group/:collection/media/:document?" authenticate/> )}
           <UserProfile path="/profile" authenticate />
           <RoleList path="/roles" authenticate/>
           <RoleEdit path="/role/:method/:role?" authenticate />
