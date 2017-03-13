@@ -62,7 +62,11 @@ module.exports = function (app) {
   app.post('/session', (req, res, next) => {
     passport.authenticate('local', (err, user, info) => {
       if (err) { return next(err) }
-
+      if (user.err) {
+        res.write(JSON.stringify(user))
+        res.end()
+        return next() 
+      }
       req.login(user, {}, (err) => {
         if (err) console.log('Err', err)
         res.write(JSON.stringify(user))

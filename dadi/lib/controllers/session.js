@@ -7,7 +7,9 @@ const Session = function () {}
 
 Session.prototype.authorise = function (username, password, next) {
   let authAPI = config.get('auth')
+  
   if (!authAPI.enabled) return next(null)
+
   return new Api(authAPI)
     .in(authAPI.collection)
     .whereFieldIsEqualTo('email', username)
@@ -18,6 +20,8 @@ Session.prototype.authorise = function (username, password, next) {
       } else {
         return next(null)
       }
+    }).catch(err => {
+      return next(null, {message: 'Authentication API unreachable', noAuth: true, err})
     })
 }
 

@@ -171,7 +171,7 @@ class App extends Component {
     const {actions, state} = this.props
 
     new Session().getSession().then(user => {
-      if (user) {
+      if (user && !user.noAuth) {
         actions.signIn(user)
       } else {
         actions.signOut()

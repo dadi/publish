@@ -45,7 +45,7 @@ class SignIn extends Component {
               <img class={styles.logo} src="/images/publish.png" />
 
               {this.state.error &&
-                <Banner>Email not found or password incorrect.</Banner>
+                <Banner>{this.state.message}</Banner>
               }
 
               <div class={styles.inputs}>
@@ -91,7 +91,7 @@ class SignIn extends Component {
       username: this.state.email,
       password: this.state.password
     }).then(user => {
-      if (user) {
+      if (user && !user.noAuth) {
         actions.signIn(user)
 
         route('/profile')
@@ -99,7 +99,8 @@ class SignIn extends Component {
         actions.signOut()
 
         this.setState({
-          error: true
+          error: true,
+          message: (user && user.message) ? user.message : 'Email not found or password incorrect.'
         })
       }
     })
