@@ -62,7 +62,7 @@ class DocumentList extends Component {
         >
           <Button
             accent="data"
-            onClick={this.toggleFiltersVisibility.bind(this)}
+            onClick={this.handleFiltersToggle.bind(this)}
           >Filters</Button>
           <Button accent="save">Create new</Button>
         </ListController>
@@ -205,7 +205,7 @@ class DocumentList extends Component {
     router({params: {filter: filters}, update: true})
   }
 
-  toggleFiltersVisibility() {
+  handleFiltersToggle() {
     this.setState({
       filtersVisible: !this.state.filtersVisible
     })
