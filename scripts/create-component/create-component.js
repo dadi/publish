@@ -186,8 +186,7 @@ import {connectHelper} from 'lib/util'${imports}
 
 class ${this.results.name} extends Component {
   render() {
-    const { type } = this.props
-
+    
     return (
       <p>${this.results.name}</p>
     )
@@ -250,7 +249,6 @@ import {connectHelper} from 'lib/util'${imports}
 
 class ${this.results.name} extends Component {
   render() {
-    const { type } = this.props
 
     return (
       <p>${this.results.name}</p>
