@@ -92,11 +92,8 @@ export default class DocumentFilters extends Component {
     const {filters} = this.state
     const newFilters = [...filters]
 
-    console.log('---> remove:', index)
-
     newFilters.splice(index, 1)
 
-    console.log('----> f:', newFilters)
     this.setState({filters: newFilters})
     this.updateUrl()
   }
