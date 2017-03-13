@@ -68,7 +68,11 @@ module.exports = function (app) {
         return next() 
       }
       req.login(user, {}, (err) => {
-        res.write(JSON.stringify({err: 'AUTH_FAILED'}))
+        if (err) {
+          res.write(JSON.stringify({err: 'AUTH_FAILED'}))
+        } else {
+          res.write(JSON.stringify(user))
+        }
         res.end()
 
         return next()
