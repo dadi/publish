@@ -18,7 +18,6 @@ class LoadingBar extends Component {
   render() {
     const {state} = this.props
 
-    // const isLoading = 
     let statesWithLoadingStatus = Object.keys(state).filter(key => {
       return Object.keys(state[key]).filter(field => {
         return Object.is(state[key][field], Constants.STATUS_LOADING)
