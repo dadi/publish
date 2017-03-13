@@ -23,15 +23,17 @@ class DocumentList extends Component {
   }
 
   render() {
-    const {collection, filter, order, sort, state} = this.props
+    const {collection, filter, group, order, sort, state} = this.props
     const documents = state.documents
     const currentCollection = state.api.currentCollection
 
-    if (!documents.list || !currentCollection) {
+    if (!documents.list || documents.status === Constants.STATUS_LOADING || !currentCollection) {
       return (
         <p>Loading...</p>
       )
     }
+
+    const baseUrl = group ? `/${group}/${currentCollection.name}` : `/${currentCollection.name}`
 
     // We can change this to only display certain fields
     const fieldsToDisplay = Object.keys(currentCollection.fields)
@@ -71,7 +73,7 @@ class DocumentList extends Component {
                 renderCallback={(value, data, column, index) => {
                   if (index === 0) {
                     return (
-                      <a href={`/${currentCollection.name}/document/edit/${data._id}`}>{value}</a>
+                      <a href={`${baseUrl}/document/edit/${data._id}`}>{value}</a>
                     )
                   }
 

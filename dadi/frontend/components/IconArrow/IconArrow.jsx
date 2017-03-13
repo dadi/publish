@@ -47,7 +47,7 @@ export default class IconArrow extends Component {
     let borderWidths
     let borderColourPosition
 
-    switch (this.props.direction) {
+    switch (direction) {
       case 'up':
         borderWidths = [
           0, width / 2, height, width / 2

@@ -14,14 +14,24 @@ import styles from './Label.css'
 export default class Label extends Component {
   static propTypes = {
     /**
-     * When `true`, renders the text *Optional* on the top-right corner of the label.
+     * The text to be rendered on the top-right corner of the label
      */
-    optional: proptypes.bool,
+    comment: proptypes.string,
 
     /**
-     * When `true`, renders the text *Required* on the top-right corner of the label (takes precedence over *Optional*).
+     * Whether there's an error in the label field.
      */
-    required: proptypes.bool,
+    error: proptypes.bool,
+
+    /**
+     * An error message to display on the label.
+     */
+    errorMessage: proptypes.string,
+
+    /**
+     * The text to be rendered inside the label.
+     */
+    label: proptypes.string,
 
     /**
      * The input element to be rendered inside the label.
@@ -30,14 +40,14 @@ export default class Label extends Component {
   }
 
   static defaultProps = {
+    error: false,
+    errorMessage: null,
     optional: false,
     required: false
   }
 
   constructor(props) {
     super(props)
-
-    this.state.error = false
   }
 
   componentWillMount() {
@@ -47,15 +57,22 @@ export default class Label extends Component {
   // This will render all children and inject an `id` prop
   // with the generated unique id
   renderChildren() {
-    return this.props.children.map(child => {
+    const {children, error, required} = this.props
+
+    return children.map(child => {
       child.attributes = child.attributes || {}
       child.attributes.id = child.attributes.id || this.id
 
       // Inject 'inLabel' to children
       child.attributes.inLabel = true
 
+      // Inject 'error' to children
+      if (error) {
+        child.attributes.error = true
+      }
+
       // Inject 'required' to children
-      if (this.props.required) {
+      if (required) {
         child.attributes.required = true
       }
 
@@ -64,16 +81,12 @@ export default class Label extends Component {
   }  
 
   render() {
-    let comment
+    const {comment, error, errorMessage} = this.props
+
     let labelStyle = new Style(styles, 'container')
 
-    labelStyle.addIf('container-error', this.state.error)
-
-    if (this.props.required) {
-      comment = 'Required'
-    } else if (this.props.optional) {
-      comment = 'Optional'
-    }
+    labelStyle.addIf('container-error', error)
+    labelStyle.addIf('container-error-message', errorMessage)
 
     return (
       <div class={labelStyle.getClasses()}>
@@ -86,6 +99,10 @@ export default class Label extends Component {
 
         {comment &&
           <sub class={styles.comment}>{comment}</sub>
+        }
+
+        {errorMessage &&
+          <p class={styles['error-message']}>{errorMessage}</p>
         }
 
         {this.renderChildren()}

@@ -3,6 +3,28 @@
   border-radius: 4px;
   box-shadow: 7px 6px 25px rgba(0, 0, 0, 0.3);
   padding: 10px;
+  position: relative;
+}
+
+.container-tooltip:before {
+  bottom: -20px;
+  border: solid transparent;
+  content: ' ';
+  height: 0;
+  width: 0;
+  position: absolute;
+  pointer-events: none;
+  border-color: rgba(136,183,213,0);
+  border-top-color: #e4e4e4;
+  border-width: 10px;
+}
+
+.container-tooltip-left:before {
+  left: 20px;
+}
+
+.container-tooltip-right:before {
+  right: 20px;
 }
 
 .item {
