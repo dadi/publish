@@ -3,13 +3,15 @@
 import {route} from 'preact-router'
 import {urlHelper} from 'lib/util'
 
-export function router({path, params, update}) {
+export function router ({path, params, update}) {
   let newRoute = createRoute(...arguments)
   route(newRoute)
 }
 
-export function createRoute({path=window.location.pathname, params=null, update=false}) {
+export function createRoute ({path=window.location.pathname, params=null, update=false}) {
   let newParams
+
+  let fullPath = typeof path === 'object' ? buildUrl(...path) : path
 
   if (update && window.location.search) {
     // Retain existing params
@@ -22,8 +24,14 @@ export function createRoute({path=window.location.pathname, params=null, update=
   }
   if (newParams) {
     let encodedParams = urlHelper().paramsToString(newParams)
-    return `${path}${encodedParams}`
+    return `${fullPath}${encodedParams}`
   } else {
-    return `${path}`
+    return `${fullPath}`
   }
+}
+
+export function buildUrl (...parts) {
+  return '/' + parts.filter(part => {
+    return (typeof part === 'string' || typeof part === 'number') && part !== ''
+  }).join('/')
 }
