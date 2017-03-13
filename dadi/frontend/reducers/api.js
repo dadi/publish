@@ -31,13 +31,6 @@ export default function api(state = initialState, action = {}) {
         apis: action.apis
       }
 
-    // Action: Set API fetch status
-    case types.SET_API_FETCH_STATUS:
-      return {
-        ...state,
-        status: action.status
-      }
-
     // Action: Set app config
     case types.SET_APP_CONFIG:
       return {
@@ -50,7 +43,7 @@ export default function api(state = initialState, action = {}) {
       return initialState
 
     // Actions: set document or set document list
-    case types.SET_DOCUMENT:
+    case types.SET_REMOTE_DOCUMENT:
     case types.SET_DOCUMENT_LIST:
       if (!action.currentCollection) return state
 
@@ -58,7 +51,7 @@ export default function api(state = initialState, action = {}) {
 
       // (!) TO DO: This will need to take the group into account
       state.apis.some(api => {
-        return api.collections.some(collection => {
+        return api.collections && api.collections.some(collection => {
           if (collection.name === action.currentCollection) {
             collectionSchema = collection
 
