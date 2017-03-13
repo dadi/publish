@@ -3,6 +3,7 @@ import {connect} from 'preact-redux'
 import {route} from 'preact-router'
 import {bindActionCreators} from 'redux'
 
+import {buildUrl} from 'lib/router'
 import Style from 'lib/Style'
 import styles from './DocumentEdit.css'
 
@@ -67,7 +68,7 @@ class DocumentEdit extends Component {
                 <SubNavItem
                   active={activeSection === collectionSection.slug}
                   error={collectionSection.hasErrors}
-                  href={this.getUrlTo(group, collection, documentId, collectionSection.slug)}
+                  href={buildUrl(group, collection, 'document/edit', documentId, collectionSection.slug)}
                 >
                   {collectionSection.name}
                 </SubNavItem>
@@ -145,8 +146,7 @@ class DocumentEdit extends Component {
 
         if (!sectionMatch) {
           const firstSection = fields.sections[0]
-
-          route(this.getUrlTo(group, collection, documentId, firstSection.slug))
+          route(buildUrl(group, collection, 'document/edit', documentId, firstSection.slug))
 
           return false
         }
@@ -208,6 +208,8 @@ class DocumentEdit extends Component {
       .whereFieldIsEqualTo('_id', documentId)
       .find()
       .then(response => {
+        if (!response.results.length) return
+          
         const document = response.results[0]
 
         actions.setRemoteDocument(document, collection)
@@ -221,11 +223,6 @@ class DocumentEdit extends Component {
 
         setPageTitle(document[firstField])
       })
-  }
-
-  // Constructs a URL for the given document based on the group, collection and section
-  getUrlTo(group, collection, documentId, section) {
-    return `${group ? `/${group}` : ''}/${collection}/document/edit/${documentId}${section ? `/${section}` : ''}`
   }
 
   // Groups fields by section

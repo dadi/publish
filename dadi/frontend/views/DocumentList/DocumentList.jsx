@@ -33,8 +33,6 @@ class DocumentList extends Component {
       )
     }
 
-    const baseUrl = group ? `/${group}/${currentCollection.name}` : `/${currentCollection.name}`
-
     // We can change this to only display certain fields
     const fieldsToDisplay = Object.keys(currentCollection.fields)
     const tableColumns = fieldsToDisplay.map(field => {
@@ -143,6 +141,7 @@ class DocumentList extends Component {
       sort,
       state
     } = this.props
+
     const sortBy = sort || 'createdAt'
     const sortOrder = order || 'desc'
 
