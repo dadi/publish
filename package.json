@@ -126,7 +126,7 @@
   },
   "pre-commit": [
     "build-docs"
-  ]
+  ],
   "directories": {
     "doc": "docs",
     "test": "test"
