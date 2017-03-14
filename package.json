@@ -15,7 +15,7 @@
     "watch:server": "nodemon \"./index.js\" --watch \"./app\"",
     "snyk-protect": "snyk protect",
     "prepublish": "npm run snyk-protect",
-    "build-docs": "react-docgen frontend/components | node scripts/build-docs/build-docs.js docs/components"
+    "build-docs": "react-docgen frontend/components.*(?!ConfigSchema)\.js | node scripts/build-docs/build-docs.js docs/components"
   },
   "repository": {
     "type": "git",
