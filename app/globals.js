@@ -4,7 +4,7 @@ const path = require('path')
 
 const base = path.join(__dirname, '/../')
 const lib = path.join(__dirname, '/lib')
-const frontend = path.join(__dirname, '/frontend')
+const frontend = path.join(__dirname, '/../frontend')
 
 /**
  * Set Global parameters

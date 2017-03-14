@@ -12,10 +12,10 @@
     "create-component": "node scripts/create-component/create-component.js",
     "watch": "NODE_ENV=production npm-run-all --parallel watch:server watch:build",
     "watch:build": "webpack --watch",
-    "watch:server": "nodemon \"./index.js\" --watch \"./dadi\"",
+    "watch:server": "nodemon \"./index.js\" --watch \"./app\"",
     "snyk-protect": "snyk protect",
     "prepublish": "npm run snyk-protect",
-    "build-docs": "react-docgen dadi/frontend/components | node scripts/build-docs/build-docs.js docs/components"
+    "build-docs": "react-docgen frontend/components | node scripts/build-docs/build-docs.js docs/components"
   },
   "repository": {
     "type": "git",
@@ -121,7 +121,7 @@
       "docs",
       "public",
       "test",
-      "dadi/frontend"
+      "frontend"
     ]
   },
   "pre-commit": [

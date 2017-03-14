@@ -1,7 +1,7 @@
 const assert = require('assert')
 
-const globals = require(`${__dirname}/../dadi/globals`) // Always required
-const config = require(`${__dirname}/../dadi/config`)
+const globals = require(`${__dirname}/../app/globals`) // Always required
+const config = require(`${__dirname}/../app/config`)
 
 describe('Config', function() {
   // Temporary

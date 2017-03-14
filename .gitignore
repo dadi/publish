@@ -9,9 +9,9 @@ config/config.production.json
 .wallet
 .tmp
 npm-debug.log
-dadi/frontend/components/**/*.json
-dadi/frontend/containers/**/*.json
-dadi/frontend/views/**/*.json
+frontend/components/**/*.json
+frontend/containers/**/*.json
+frontend/views/**/*.json
 
 # Bundles
 public/bundle.js

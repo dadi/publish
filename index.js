@@ -1,6 +1,6 @@
 'use strict'
 
-const app = require('./dadi')
+const app = require('./app')
 
 const Publish = function () {}
 

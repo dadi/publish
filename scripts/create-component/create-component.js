@@ -7,21 +7,21 @@ const path = require('path')
 const ui = new inquirer.ui.BottomBar()
 
 // Fetch reducers
-let files = fs.readdirSync(path.resolve(path.join(__dirname, '../../dadi/frontend/reducers'))).map(file => {
+let files = fs.readdirSync(path.resolve(path.join(__dirname, '../../frontend/reducers'))).map(file => {
   return path.parse(file)
 }).filter(file => {
   return file.name !== 'index'
 })
 
-let components = fs.readdirSync(path.resolve(path.join(__dirname, '../../dadi/frontend/components'))).map(file => {
+let components = fs.readdirSync(path.resolve(path.join(__dirname, '../../frontend/components'))).map(file => {
   return path.parse(file)
 })
 
-let views = fs.readdirSync(path.resolve(path.join(__dirname, '../../dadi/frontend/views'))).map(file => {
+let views = fs.readdirSync(path.resolve(path.join(__dirname, '../../frontend/views'))).map(file => {
   return path.parse(file)
 })
 
-let containers = fs.readdirSync(path.resolve(path.join(__dirname, '../../dadi/frontend/containers'))).map(file => {
+let containers = fs.readdirSync(path.resolve(path.join(__dirname, '../../frontend/containers'))).map(file => {
   return path.parse(file)
 })
 
@@ -137,7 +137,7 @@ CreateComponent.prototype.saveToFile = function () {
       fileContent = this.view()
       break
   }
-  let writePath = path.resolve(__dirname, `../../dadi/frontend/${this.results.type}s/${this.results.name}`)
+  let writePath = path.resolve(__dirname, `../../frontend/${this.results.type}s/${this.results.name}`)
   mkdirp(writePath, err => {
     if (err) {
       return console.log('ERROR! Couldn\'t create output path.')

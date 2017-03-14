@@ -50,7 +50,7 @@ module.exports = {
     })
   ] : []),
 
-  entry: path.resolve(__dirname, 'dadi/frontend/index.jsx'),
+  entry: path.resolve(__dirname, 'frontend/index.jsx'),
 
   devtool: ((ENV === 'development') && ENABLE_SOURCE_MAP) ? 'eval-cheap-module-source-map' : null,
 
@@ -61,7 +61,7 @@ module.exports = {
   },
 
   resolve: {
-    root: path.resolve(__dirname, 'dadi'),
+    root: path.resolve(__dirname),
     extensions: ['', '.jsx', '.js', '.json'],
 
     modulesDirectories: [
@@ -113,7 +113,7 @@ module.exports = {
       },
       {
         test: /\.css$/,
-        include: [path.resolve(__dirname, 'dadi/frontend')],
+        include: [path.resolve(__dirname, 'frontend')],
         loader: ExtractTextPlugin.extract('style-loader', 'css-loader?modules&importLoaders=1&localIdentName=[name]__[local]___[hash:base64:5]!postcss-loader')
       }
     ]
