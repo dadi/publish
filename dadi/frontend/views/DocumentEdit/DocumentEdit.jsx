@@ -43,9 +43,7 @@ class DocumentEdit extends Component {
     const document = state.document
 
     if (document.remoteStatus === Constants.STATUS_LOADING || !currentCollection || !document.local) {
-      return (
-        <p>Loading...</p>
-      )
+      return null
     }
 
     const fields = this.groupFields(currentCollection.fields)

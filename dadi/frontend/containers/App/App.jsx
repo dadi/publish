@@ -6,8 +6,10 @@ import {bindActionCreators} from 'redux'
 import * as userActions from 'actions/userActions'
 import * as apiActions from 'actions/apiActions'
 import * as appActions from 'actions/appActions'
+import * as Constants from 'lib/constants'
 
 import Header from 'components/Header/Header'
+import LoadingBar from 'components/LoadingBar/LoadingBar'
 import Main from 'components/Main/Main'
 
 import DocumentEdit from 'views/DocumentEdit/DocumentEdit'
@@ -27,8 +29,11 @@ import getAppConfig from 'lib/app-config'
 import APIBridge from 'lib/api-bridge-client'
 
 class App extends Component {
-
   componentWillMount() {
+    const {actions} = this.props
+
+    APIBridge.registerProgressCallback(actions.registerNetworkCall)
+
     this.sessionStart()
   }
 
@@ -46,16 +51,18 @@ class App extends Component {
     const previousPath = previousState.router.locationBeforeTransitions.pathname
     const path = state.router.locationBeforeTransitions.pathname
 
-    // State change: app config has been loaded
-    if (!previousState.app.config && state.app.config) {
-      this.initialiseSocket()
-      this.getApiCollections()
-    }
-
     // State change: user has signed in
     if (!previousState.user.user && state.user.user) {
+      const {actions} = this.props
+
       getAppConfig().then(config => {
         actions.setAppConfig(config)
+
+        // Start socket logic
+        this.initialiseSocket(config)
+
+        // Load api collections
+        this.getApiCollections(config)
       })
     }
     // State change: user has signed out
@@ -70,9 +77,8 @@ class App extends Component {
 
   render() {
     const {state, history} = this.props
-
-
-    let hasRoutes = state.app && state.app.config ? this.hasRoutes() : null
+    const hasRoutes = state.app && state.app.config ? this.hasRoutes() : null
+    const isFetchingData = state.app.status === Constants.STATUS_LOADING
 
     // Semantically, it makes sense that <Main/> renders a HTML5 <main> element, which
     // should sit at the same level as <Header/>, which renders a HTML5 <header> element.
@@ -88,6 +94,8 @@ class App extends Component {
 
     return (
       <Main>
+        <LoadingBar loading={isFetchingData} />
+
         {state.user.user &&
           <Header
             compact={state.app.breakpoint === null}
@@ -95,6 +103,7 @@ class App extends Component {
             onSignOut={this.sessionEnd.bind(this)}
           />
         }
+
         <Router history={history}>
           <Home path="/" authenticate />
           <PasswordReset path="/reset" authenticate/>
@@ -119,11 +128,13 @@ class App extends Component {
     return typeof state.app.config.apis[0].menu !== 'undefined'
   }
 
-  getApiCollections() {
-    const {state, actions} = this.props
+  getApiCollections(config) {
+    const {actions, state} = this.props
+
+    actions.setApiStatus(Constants.STATUS_LOADING)
 
     let bundler = APIBridge.Bundler()
-    let apisToProcess = state.app.config.apis
+    let apisToProcess = config.apis
     let processedApis = []
 
     apisToProcess.forEach((api, apiIndex) => {
@@ -182,12 +193,12 @@ class App extends Component {
     })
   }
 
-  initialiseSocket() {
+  initialiseSocket(config) {
     const {actions, state} = this.props
     const pathname = state.router.locationBeforeTransitions.pathname
 
-    let session = new Session()
-    let socket = new Socket(state.app.config.server.port)
+    const session = new Session()
+    const socket = new Socket(config.server.port)
       .on('userListChange', data => {
         // Table of connected users
         console.table(data.body.users)
