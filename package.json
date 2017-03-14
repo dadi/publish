@@ -10,7 +10,7 @@
     "prebuild": "mkdirp build",
     "init": "validate-commit-msg",
     "create-component": "node scripts/create-component/create-component.js",
-    "watch": "NODE_ENV=development npm-run-all --parallel watch:server watch:build",
+    "watch": "NODE_ENV=production npm-run-all --parallel watch:server watch:build",
     "watch:build": "webpack --watch",
     "watch:server": "nodemon \"./index.js\" --watch \"./dadi\"",
     "snyk-protect": "snyk protect",
@@ -89,6 +89,7 @@
     "postcss-custom-media": "^5.0.1",
     "postcss-custom-properties": "^5.0.2",
     "postcss-loader": "^1.3.0",
+    "pre-commit": "^1.2.2",
     "preact": "^6.4.0",
     "preact-compat": "^3.0.0",
     "preact-redux": "^1.2.0",
@@ -123,6 +124,9 @@
       "dadi/frontend"
     ]
   },
+  "pre-commit": [
+    "build-docs"
+  ]
   "directories": {
     "doc": "docs",
     "test": "test"
