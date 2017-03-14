@@ -54,8 +54,8 @@ export default class DocumentFilters extends Component {
             type={filter.type}
             value={filter.value}
             fields={collection.fields}
-            onUpdate={this.updateFilter.bind(this)}
-            onRemove={this.removeFilter.bind(this)}
+            onUpdate={this.handleUpdateFilter.bind(this)}
+            onRemove={this.handleRemoveFilter.bind(this)}
           />
         ))}
 
@@ -88,17 +88,17 @@ export default class DocumentFilters extends Component {
     })
   }
 
-  removeFilter(index) {
+  handleRemoveFilter(index) {
     const {filters} = this.state
     const newFilters = [...filters]
 
     newFilters.splice(index, 1)
 
     this.setState({filters: newFilters})
-    this.updateUrl()
+    this.updateUrl(true)
   }
 
-  updateFilter(filterProp, index) {
+  handleUpdateFilter(filterProp, index) {
     const {filters} = this.state
     const filter = Object.assign({}, filters[index], filterProp)
     const newFilters = [...filters]
@@ -109,7 +109,7 @@ export default class DocumentFilters extends Component {
     this.updateUrl()
   }
 
-  updateUrl() {
+  updateUrl(clear) {
     // Remove filters with null values
     const {filters} = this.state
     const {updateUrlParams} = this.props
@@ -124,7 +124,7 @@ export default class DocumentFilters extends Component {
     const constructedFilters = this.constructFilters(validFilters)
     const filterObj = arrayToObject(constructedFilters, 'field')
 
-    if (filterObj) {
+    if (filterObj || clear) {
       updateUrlParams(filterObj)
     }
   }

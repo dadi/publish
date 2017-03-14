@@ -16,16 +16,19 @@ export function createRoute ({path=window.location.pathname, params=null, update
   if (update && window.location.search) {
     // Retain existing params
     newParams = urlHelper().paramsToObject(window.location.search)
-
   }
+
   if (params) {
     // Append new params to newParams object
     newParams = Object.assign({}, newParams, params)
   }
-  if (newParams) {
+
+  if (newParams && Object.keys(newParams).length) {
     let encodedParams = urlHelper().paramsToString(newParams)
-    return `${fullPath}${encodedParams}`
+    // console.log(`${fullPath}${encodedParams}`)
+    return `${fullPath}${encodedParams ? `?${encodedParams}` : ''}`
   } else {
+    // console.log(`${fullPath}`)
     return `${fullPath}`
   }
 }

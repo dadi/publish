@@ -51,7 +51,7 @@ export function urlHelper () {
       return params
     },
     paramsToString (params) {
-      return '?' + Object.keys(params).map(key => {
+      return Object.keys(params).map(key => {
         if (typeof params[key] === 'object') {
           try {
             return key + "=" + JSON.stringify(params[key])
@@ -67,6 +67,7 @@ export function urlHelper () {
 }
 
 export function objectToArray (obj, keyField) {
+  if (!obj) return []
   return Object.keys(obj).map(key => {
     return Object.assign({}, {[keyField || 'key']: key, value: obj[key]})
   })
