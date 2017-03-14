@@ -11,5 +11,5 @@ Props
 
 The list of controls to be rendered on the right-hand side of the bar.
 
-- type: node
+- type: `node`
 

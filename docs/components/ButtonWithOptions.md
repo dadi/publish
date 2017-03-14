@@ -10,28 +10,28 @@ Props
 
 Colour accent.
 
-- type: enum('system')
+- type: `enum('system')`
 
 
 ### `children`
 
 The text to be rendered inside the main button.
 
-- type: node
+- type: `node`
 
 
 ### `disabled`
 
 Whether the button is disabled.
 
-- type: bool
+- type: `bool`
 
 
 ### `onClick`
 
 Callback to be executed when the main button is clicked.
 
-- type: func
+- type: `func`
 
 
 ### `options`
@@ -50,13 +50,13 @@ Object containing the secondary options. Keys define the text of the option and 
  </ButtonWithOptions>
  ```
 
-- type: object
+- type: `object`
 
 
 ### `type`
 
 Type/function of the button
 
-- type: enum('button'|'submit')
+- type: `enum('button'|'submit')`
 - default value: `'button'`
 

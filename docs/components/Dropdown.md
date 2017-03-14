@@ -10,13 +10,13 @@ Props
 
 The list of `DropdownItem` elements to be rendered.
 
-- type: node
+- type: `node`
 
 
 ### `tooltip`
 
 If present, renders a tooltip on the bottom of the container.
 
-- type: enum('left'|'right')
+- type: `enum('left'|'right')`
 - default value: `null`
 

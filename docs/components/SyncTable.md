@@ -10,7 +10,7 @@ Props
 
 The list of `SyncTableRow` elements to be rendered as rows.
 
-- type: node
+- type: `node`
 
 
 ### `columns`
@@ -26,7 +26,7 @@ An array of objects containing the id and label of the columns to be displayed i
   ]
   ```
 
-- type: array
+- type: `array`
 - default value: `[]`
 
 
@@ -34,7 +34,7 @@ An array of objects containing the id and label of the columns to be displayed i
 
 Whether rows are selectable. When `true`, check boxes will automatically be added to the table head and to each row.
 
-- type: bool
+- type: `bool`
 - default value: `true`
 
 
@@ -59,7 +59,7 @@ The callback receives as arguments the column label, the column id and the sort 
   >
  ````
 
-- type: func
+- type: `func`
 - default value: `null`
 
 
@@ -67,7 +67,7 @@ The callback receives as arguments the column label, the column id and the sort 
 
 The name of the column currently being used to sort the rows.
 
-- type: string
+- type: `string`
 - default value: `null`
 
 
@@ -75,6 +75,6 @@ The name of the column currently being used to sort the rows.
 
 The order currently being used to sort the rows by `sortBy`.
 
-- type: enum('asc'|'desc')
+- type: `enum('asc'|'desc')`
 - default value: `null`
 

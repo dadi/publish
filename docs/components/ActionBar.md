@@ -10,5 +10,5 @@ Props
 
 The elements to be rendered inside the bar.
 
-- type: node
+- type: `node`
 

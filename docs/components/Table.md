@@ -10,14 +10,14 @@ Props
 
 The contents of the table.
 
-- type: node
+- type: `node`
 
 
 ### `fillBlanks`
 
 When `true`, any empty row cells will be filled with a text element saying *None*.
 
-- type: bool
+- type: `bool`
 - default value: `true`
 
 
@@ -25,6 +25,6 @@ When `true`, any empty row cells will be filled with a text element saying *None
 
 Whether rows are selectable. When `true`, check boxes will automatically be added to the table head and to each row.
 
-- type: bool
+- type: `bool`
 - default value: `true`
 

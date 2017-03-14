@@ -10,7 +10,7 @@ Props
 
 Whether the field contains a validation error.
 
-- type: bool
+- type: `bool`
 - default value: `false`
 
 
@@ -19,7 +19,7 @@ Whether the field contains a validation error.
 If true, validation will be executed immediately and not only when the
 content of the field has changed.
 
-- type: bool
+- type: `bool`
 - default value: `false`
 
 
@@ -27,27 +27,27 @@ content of the field has changed.
 
 Callback to be executed when there is a change in the value of the field.
 
-- type: func
+- type: `func`
 
 
 ### `onError`
 
 Callback to be executed when there is a new validation error in the field.
 
-- type: func
+- type: `func`
 
 
 ### `schema`
 
 The field schema.
 
-- type: object
+- type: `object`
 
 
 ### `value`
 
 The field value.
 
-- type: string
+- type: `string`
 - default value: `''`
 

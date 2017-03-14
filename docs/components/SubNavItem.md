@@ -10,7 +10,7 @@ Props
 
 Whether the component corresponds to the currently active page.
 
-- type: bool
+- type: `bool`
 - default value: `false`
 
 
@@ -18,14 +18,14 @@ Whether the component corresponds to the currently active page.
 
 The text to be rendered inside the navigation item.
 
-- type: node
+- type: `node`
 
 
 ### `error`
 
 Whether the navigation item contains an error.
 
-- type: bool
+- type: `bool`
 - default value: `false`
 
 
@@ -33,5 +33,5 @@ Whether the navigation item contains an error.
 
 The link to be followed when the navigation item is clicked.
 
-- type: string
+- type: `string`
 

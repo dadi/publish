@@ -10,7 +10,7 @@ Props
 
 Whether to include a sorting arrow next to the table head cell label. If present, it should be a string containing the direction of the arrow.
 
-- type: enum('down'|'up')
+- type: `enum('down'|'up')`
 - default value: `null`
 
 
@@ -18,5 +18,5 @@ Whether to include a sorting arrow next to the table head cell label. If present
 
 The text content of the table head cell.
 
-- type: node
+- type: `node`
 

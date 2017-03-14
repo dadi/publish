@@ -10,12 +10,12 @@ Props
 
 The schema of the collection being filtered.
 
-- type: object
+- type: `object`
 
 
 ### `filter`
 
 The JSON-stringified object of filters currently applied.
 
-- type: string
+- type: `string`
 

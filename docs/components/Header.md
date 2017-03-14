@@ -10,7 +10,7 @@ Props
 
 Whether to render the header in compact/mobile mode.
 
-- type: bool
+- type: `bool`
 - default value: `false`
 
 
@@ -18,12 +18,12 @@ Whether to render the header in compact/mobile mode.
 
 Callback to be executed when the sign out button is clicked.
 
-- type: func
+- type: `func`
 
 
 ### `user`
 
 An object containing information about the currently signed-in user.
 
-- type: object
+- type: `object`
 

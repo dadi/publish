@@ -10,14 +10,14 @@ Props
 
 Classes to append to the button element.
 
-- type: string
+- type: `string`
 
 
 ### `id`
 
 DOM ID for the input field.
 
-- type: string
+- type: `string`
 
 
 ### `inLabel`
@@ -26,7 +26,7 @@ Whether the field is part of a `<Label/>` component. This makes it inherit certa
 
 **NOTE:** This prop is automatically passed down by `<Label/>`.
 
-- type: bool
+- type: `bool`
 - default value: `false`
 
 
@@ -39,21 +39,21 @@ Whether the field is part of a `<Label/>` component. This makes it inherit certa
 
 Callback to be executed when the text is changed (onChange event).
 
-- type: func
+- type: `func`
 
 
 ### `onKeyUp`
 
 Callback to be executed when a key is pressed (onKeyUp event).
 
-- type: func
+- type: `func`
 
 
 ### `placeholder`
 
 Placeholder for the input field.
 
-- type: string
+- type: `string`
 
 
 ### `required`
@@ -62,14 +62,14 @@ Whether the field is required.
 
 **NOTE:** This prop is automatically passed down by `<Label/>`.
 
-- type: bool
+- type: `bool`
 
 
 ### `type`
 
 Type/function of the input field.
 
-- type: enum('email'|'multiline'|'number'|'password'|'tel'|'text'|'url')
+- type: `enum('email'|'multiline'|'number'|'password'|'tel'|'text'|'url')`
 - default value: `'text'`
 
 
@@ -77,5 +77,5 @@ Type/function of the input field.
 
 Current value of the input field.
 
-- type: string
+- type: `string`
 
