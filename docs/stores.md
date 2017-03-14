@@ -34,7 +34,8 @@ Holds the current active document (for document edit view)
 
 | Property | Type     | Description                                                                    | Initial state |
 |----------|----------|--------------------------------------------------------------------------------|---------------|
-| `data`   | Object   | The object representing the fields and values of the document                  | `null`        |
+| `remote` | Object   | The object representing the state of the document in the remote API            | `null`        |
+| `local`  | Object   | The object representing the state of the document as it's being edited         | `null`        |
 | `status` | Constant | The status of the document, representing whether it's idle, loading or erroing | `STATUS_IDLE` |
 
 ## 4. Documents
