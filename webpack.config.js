@@ -8,6 +8,7 @@ const postcssCustomMedia = require('postcss-custom-media')
 const webpack = require('webpack')
 const ExtractTextPlugin = require('extract-text-webpack-plugin')
 const WebpackOnBuildPlugin = require('on-build-webpack')
+const BabiliPlugin = require('babili-webpack-plugin')
 
 const ENV = process.env.NODE_ENV || 'production'
 const ENABLE_SOURCE_MAP = (process.env.ENABLE_SOURCE_MAP !== false)
@@ -34,18 +35,19 @@ module.exports = {
     })
   ]).concat(ENV === 'production' ? [
     new webpack.optimize.OccurenceOrderPlugin(),
-    new webpack.optimize.UglifyJsPlugin({
-      beautify: false,
-      mangle: {
-        screw_ie8: true,
-        keep_fnames: true
-      },
-      compress: {
-        screw_ie8: true,
-        warnings: false
-      },
-      comments: false
-    })
+    new BabiliPlugin()
+    // new webpack.optimize.UglifyJsPlugin({
+    //   beautify: false,
+    //   mangle: {
+    //     screw_ie8: true,
+    //     keep_fnames: true
+    //   },
+    //   compress: {
+    //     screw_ie8: true,
+    //     warnings: false
+    //   },
+    //   comments: false
+    // })
   ] : []),
 
   entry: path.resolve(__dirname, 'dadi/frontend/index.jsx'),
