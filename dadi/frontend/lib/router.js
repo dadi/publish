@@ -25,10 +25,8 @@ export function createRoute ({path=window.location.pathname, params=null, update
 
   if (newParams && Object.keys(newParams).length) {
     let encodedParams = urlHelper().paramsToString(newParams)
-    // console.log(`${fullPath}${encodedParams}`)
     return `${fullPath}${encodedParams ? `?${encodedParams}` : ''}`
   } else {
-    // console.log(`${fullPath}`)
     return `${fullPath}`
   }
 }
