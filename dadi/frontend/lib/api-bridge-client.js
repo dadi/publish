@@ -1,8 +1,11 @@
 'use strict'
 
 import 'fetch'
+import * as Constants from 'lib/constants'
 
 const APIWrapper = require('@dadi/api-wrapper-core')
+
+let onUpdate = null
 
 const apiBridgeFetch = function (requestObject) {
   return fetch('/api', {
@@ -17,16 +20,20 @@ const apiBridgeFetch = function (requestObject) {
   })
 }
 
-const buildAPIBridgeClient = function (api, preventFetch) {
+const buildAPIBridgeClient = function (api, inBundle) {
   if (!api) {
-    throw "buildAPIBridgeClient: Missing API"
-    return
+    throw 'buildAPIBridgeClient: Missing API'
   }
+
   const { _publishId, host, port, version, database } = api
 
   const APIBridgeClient = function () {
     this._publishId = _publishId
-    this.preventFetch = preventFetch
+    this.inBundle = inBundle
+
+    if (onUpdate) {
+      this.onUpdate = onUpdate
+    }
   }
 
   APIBridgeClient.prototype = new APIWrapper({
@@ -59,19 +66,45 @@ const buildAPIBridgeClient = function (api, preventFetch) {
   APIBridgeClient.prototype.serveQuery = function (query) {
     let queryWithIndex = Object.assign({}, query, {_publishId: this._publishId})
 
-    if (preventFetch) return queryWithIndex
+    if (this.inBundle) return queryWithIndex
 
-    return apiBridgeFetch(queryWithIndex)
+    if (typeof this.onUpdate === 'function') {
+      this.onUpdate.call(this, Constants.STATUS_LOADING)
+    }
+
+    return apiBridgeFetch(queryWithIndex).then(response => {
+      if (typeof this.onUpdate === 'function') {
+        const onComplete = this.onUpdate.bind(this, Constants.STATUS_COMPLETE)
+
+        this.onUpdate.call(this, Constants.STATUS_IDLE, onComplete)
+      }
+
+      return response
+    }).catch(err => {
+      if (typeof this.onUpdate === 'function') {
+        this.onUpdate.call(this, Constants.STATUS_FAILED)
+      }
+
+      return Promise.reject(err)
+    })
   }
 
   return new APIBridgeClient()
 }
 
-module.exports = (api, preventFetch) => buildAPIBridgeClient(api, preventFetch)
+module.exports = (api, inBundle) => buildAPIBridgeClient(api, inBundle)
+
+module.exports.registerProgressCallback = callback => {
+  onUpdate = callback
+}
 
 module.exports.Bundler = () => {
   const APIBridgeBundler = function (api) {
     this.queries = []
+
+    if (onUpdate) {
+      this.onUpdate = onUpdate
+    }
   }
 
   APIBridgeBundler.prototype.add = function (query) {
@@ -79,7 +112,25 @@ module.exports.Bundler = () => {
   }
 
   APIBridgeBundler.prototype.run = function () {
-    return apiBridgeFetch(this.queries)
+    if (typeof this.onUpdate === 'function') {
+      this.onUpdate.call(this, Constants.STATUS_LOADING)
+    }
+
+    return apiBridgeFetch(this.queries).then(response => {
+      if (typeof this.onUpdate === 'function') {
+        const onComplete = this.onUpdate.bind(this, Constants.STATUS_COMPLETE)
+
+        this.onUpdate.call(this, Constants.STATUS_IDLE, onComplete)
+      }
+
+      return response
+    }).catch(err => {
+      if (typeof this.onUpdate === 'function') {
+        this.onUpdate.call(this, Constants.STATUS_FAILED)
+      }
+
+      return Promise.reject(err)
+    })
   }
 
   return new APIBridgeBundler()

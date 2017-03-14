@@ -3,6 +3,8 @@
 //
 export const SET_APP_CONFIG = 'SET_APP_CONFIG'
 export const SET_SCREEN_WIDTH = 'SET_SCREEN_WIDTH'
+export const SET_APP_STATUS = 'SET_APP_STATUS'
+export const REGISTER_NETWORK_CALL = 'REGISTER_NETWORK_CALL'
 
 //
 // User
@@ -14,8 +16,7 @@ export const SIGN_OUT = 'SIGN_OUT'
 // Api
 //
 export const SET_API = 'SET_API'
-export const SET_API_LIST = 'SET_API_LIST'
-export const SET_API_FETCH_STATUS = 'SET_API_FETCH_STATUS'
+export const SET_API_STATUS = 'SET_API_STATUS'
 export const SET_API_CURRENT_COLLECTION = 'SET_API_CURRENT_COLLECTION'
 
 //

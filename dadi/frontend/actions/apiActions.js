@@ -7,17 +7,9 @@ export function setApi(api) {
   }
 }
 
-export function setApiList(apis) {
+export function setApiStatus(status) {
   return {
-    type: Types.SET_API_LIST,
-    apis,
-    status: 'fetchComplete'
-  }
-}
-
-export function setApiFetchStatus(status) {
-  return {
-    type: Types.SET_API_FETCH_STATUS,
+    type: Types.SET_API_STATUS,
     status
   }
 }
