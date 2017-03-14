@@ -10,20 +10,15 @@ import * as appActions from 'actions/appActions'
 import Header from 'components/Header/Header'
 import Main from 'components/Main/Main'
 
-import Api from 'views/Api/Api'
-import Collection from 'views/Collection/Collection'
 import DocumentEdit from 'views/DocumentEdit/DocumentEdit'
 import DocumentList from 'views/DocumentList/DocumentList'
 import Error from 'views/Error/Error'
 import Home from 'views/Home/Home'
 import MediaLibrary from 'views/MediaLibrary/MediaLibrary'
 import PasswordReset from 'views/PasswordReset/PasswordReset'
-import RoleEdit from 'views/RoleEdit/RoleEdit'
-import RoleList from 'views/RoleList/RoleList'
 import UserProfile from 'views/UserProfile/UserProfile'
 import SignIn from 'views/SignIn/SignIn'
 import SignOut from 'views/SignOut/SignOut'
-import StyleGuide from 'views/StyleGuide/StyleGuide'
 
 import {connectHelper, debounce, isEmpty, slugify} from 'lib/util'
 import Socket from 'lib/socket'
@@ -103,8 +98,6 @@ class App extends Component {
         <Router history={history}>
           <Home path="/" authenticate />
           <PasswordReset path="/reset" authenticate/>
-          <Api path="/apis/:api?" authenticate />
-          <Collection path="/apis/:api/collections/:collection?" authenticate />
           {hasRoutes && ( <DocumentEdit path="/:group/:collection/document/:method/:documentId?/:section?" authenticate /> )}
           <DocumentEdit path="/:collection/document/:method/:documentId?/:section?" authenticate />
           <DocumentList path="/:collection/documents/:page?" authenticate />
@@ -112,11 +105,8 @@ class App extends Component {
           <MediaLibrary path="/:collection/media/:document?" authenticate/>
           {hasRoutes && ( <MediaLibrary path="/:group/:collection/media/:document?" authenticate/> )}
           <UserProfile path="/profile" authenticate />
-          <RoleList path="/roles" authenticate/>
-          <RoleEdit path="/role/:method/:role?" authenticate />
           <SignIn path="/sign-in" />
           <SignOut path="/sign-out" />
-          <StyleGuide path="/styleguide" />
           <Error type="404" default />
         </Router>
       </Main>
