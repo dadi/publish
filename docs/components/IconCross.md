@@ -10,7 +10,7 @@ Props
 
 The height of the arrow.
 
-- type: `number`
+- type: number
 - default value: `10`
 
 
@@ -18,6 +18,6 @@ The height of the arrow.
 
 The width of the arrow.
 
-- type: `number`
+- type: number
 - default value: `10`
 

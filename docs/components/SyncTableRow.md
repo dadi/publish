@@ -10,7 +10,7 @@ Props
 
 The list of `SyncTableRow` elements to be rendered as rows.
 
-- type: `node`
+- type: node
 
 
 ### `columns`
@@ -28,14 +28,14 @@ An array of objects containing the id and label of the columns to be displayed i
 
 **NOTE:** This prop is automatically passed down by `<SyncTable/>`.
 
-- type: `array`
+- type: array
 
 
 ### `data`
 
 The object to be rendered as row. Only properties that exist in `columns` will be rendered.
 
-- type: `object`
+- type: object
 
 
 ### `renderCallback`
@@ -60,7 +60,7 @@ In the example below, `renderCallback` is used to wrap the first cell of every r
  /> 
  ````
 
-- type: `func`
+- type: func
 
 
 ### `selectable`
@@ -69,18 +69,19 @@ Whether rows are selectable. When `true`, check boxes will automatically be adde
 
 **NOTE:** This prop is automatically passed down by `<SyncTable/>`.
 
-- type: `bool`
+- type: bool
 
 
 ### `sortBy`
 
 The name of the column currently being used to sort the rows.
 
-- type: `string`
+- type: string
 
 
 ### `sortOrder`
 
 The order currently being used to sort the rows by `sortBy`.
 
-- type: `enum('asc'|'desc')`
+- type: enum('asc'|'desc')
+

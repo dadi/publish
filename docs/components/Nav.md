@@ -6,11 +6,11 @@ The main navigation component.
 Props
 -----
 
-### `groups`
+### `items`
 
 Grouped list of navigation elements to render.
 
-- type: `array`
+- type: array
 - default value: `[]`
 
 
@@ -18,6 +18,6 @@ Grouped list of navigation elements to render.
 
 Whether to render the navigation in mobile mode, with a collapsible drawer controlled by a hamburger button.
 
-- type: `bool`
+- type: bool
 - default value: `false`
 

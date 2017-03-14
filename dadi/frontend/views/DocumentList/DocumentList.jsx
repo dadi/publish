@@ -13,6 +13,7 @@ import APIBridge from 'lib/api-bridge-client'
 
 import Button from 'components/Button/Button'
 import DocumentFilters from 'components/DocumentFilters/DocumentFilters'
+import DocumentSearch from 'components/DocumentSearch/DocumentSearch'
 import ListController from 'components/ListController/ListController'
 import SyncTable from 'components/SyncTable/SyncTable'
 import SyncTableRow from 'components/SyncTable/SyncTableRow'
@@ -55,9 +56,8 @@ class DocumentList extends Component {
 
     return (
       <section class="Documents">
-        <ListController
-          search={`Search in ${currentCollection.name}...`}
-        >
+        <ListController>
+          <DocumentSearch collection={currentCollection} />
           <Button
             accent="data"
             onClick={this.handleFiltersToggle.bind(this)}

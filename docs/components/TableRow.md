@@ -10,7 +10,7 @@ Props
 
 The contents of the table row.
 
-- type: `node`
+- type: node
 
 
 ### `fillBlanks`
@@ -19,7 +19,7 @@ When `true`, any empty row cells will be filled with a text element saying *None
 
 **NOTE:** This prop is automatically passed down by `<Table/>`.
 
-- type: `bool`
+- type: bool
 - default value: `false`
 
 
@@ -27,7 +27,7 @@ When `true`, any empty row cells will be filled with a text element saying *None
 
 A callback function to be executed when the selection checkbox is clicked.
 
-- type: `func`
+- type: func
 - default value: `null`
 
 
@@ -35,6 +35,6 @@ A callback function to be executed when the selection checkbox is clicked.
 
 Whether the row is currently selected.
 
-- type: `bool`
+- type: bool
 - default value: `false`
 

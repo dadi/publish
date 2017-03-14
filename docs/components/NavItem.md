@@ -10,7 +10,7 @@ Props
 
 Whether the component corresponds to the currently active page.
 
-- type: `bool`
+- type: bool
 - default value: `false`
 
 
@@ -18,13 +18,13 @@ Whether the component corresponds to the currently active page.
 
 The link to be followed when the navigation item is clicked.
 
-- type: `string`
+- type: string
 
 
 ### `mobile`
 
 Whether the navigation item is part of a navigation component in mobile mode.
 
-- type: `bool`
+- type: bool
 - default value: `false`
 

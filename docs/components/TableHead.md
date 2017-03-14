@@ -10,7 +10,7 @@ Props
 
 Whether all the rows in the table are currently selected.
 
-- type: `bool`
+- type: bool
 - default value: `false`
 
 
@@ -18,13 +18,13 @@ Whether all the rows in the table are currently selected.
 
 The contents of the table head.
 
-- type: `node`
+- type: node
 
 
 ### `selectable`
 
 Whether rows are selectable. When `true`, check boxes will automatically be added to the table head and to each row.
 
-- type: `bool`
+- type: bool
 - default value: `false`
 

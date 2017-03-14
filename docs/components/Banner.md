@@ -10,7 +10,7 @@ Props
 
 Colour accent.
 
-- type: `enum('error')`
+- type: enum('error')
 - default value: `'error'`
 
 
@@ -18,5 +18,5 @@ Colour accent.
 
 The text to be rendered.
 
-- type: `node`
+- type: node
 

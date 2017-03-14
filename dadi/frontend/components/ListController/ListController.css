@@ -6,17 +6,6 @@
   padding: 15px 20px;
 }
 
-.search {
-  border: 1px solid #dddddd;
-  border-radius: 2px;
-  box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.02);
-  min-width: 300px;
-  max-width: 100%;
-  height: 36px;
-  color: rgba(0, 0, 0, 0.5);
-  padding: 5px 10px;
-}
-
 .control {
   display: inline-block;
 }

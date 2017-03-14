@@ -10,7 +10,7 @@ Props
 
 A list of classes to be added to the icon element.
 
-- type: `string`
+- type: string
 - default value: `null`
 
 
@@ -18,7 +18,7 @@ A list of classes to be added to the icon element.
 
 Colour accent.
 
-- type: `enum('down'|'left'|'right'|'up')`
+- type: enum('down'|'left'|'right'|'up')
 - default value: `'up'`
 
 
@@ -26,7 +26,7 @@ Colour accent.
 
 The height of the arrow.
 
-- type: `number`
+- type: number
 - default value: `10`
 
 
@@ -34,6 +34,6 @@ The height of the arrow.
 
 The width of the arrow.
 
-- type: `number`
+- type: number
 - default value: `10`
 
