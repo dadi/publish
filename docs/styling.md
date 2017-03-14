@@ -224,7 +224,7 @@ class Button extends Component {
 }
 ```
 
-For this reason, we created a tiny helper class called `Style`, which you can find on `dadi/frontend/lib`. You tell which classes to use for each element, with a short and friendly syntax, and it takes care of constructing the string containing the list of classes for the element to consume. The above example would be re-written as:
+For this reason, we created a tiny helper class called `Style`, which you can find on `frontend/lib`. You tell which classes to use for each element, with a short and friendly syntax, and it takes care of constructing the string containing the list of classes for the element to consume. The above example would be re-written as:
 
 ```js
 import styles from './Button'
