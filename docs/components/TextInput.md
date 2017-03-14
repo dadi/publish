@@ -6,6 +6,13 @@ A text input field.
 Props
 -----
 
+### `className`
+
+Classes to append to the button element.
+
+- type: `string`
+
+
 ### `id`
 
 DOM ID for the input field.
@@ -23,9 +30,21 @@ Whether the field is part of a `<Label/>` component. This makes it inherit certa
 - default value: `false`
 
 
+### `multiline`
+
+- default value: `false`
+
+
 ### `onChange`
 
-Callback to be executed when the text is changed.
+Callback to be executed when the text is changed (onChange event).
+
+- type: `func`
+
+
+### `onKeyUp`
+
+Callback to be executed when a key is pressed (onKeyUp event).
 
 - type: `func`
 
@@ -50,7 +69,7 @@ Whether the field is required.
 
 Type/function of the input field.
 
-- type: `enum('email'|'number'|'password'|'tel'|'text'|'url')`
+- type: `enum('email'|'multiline'|'number'|'password'|'tel'|'text'|'url')`
 - default value: `'text'`
 
 

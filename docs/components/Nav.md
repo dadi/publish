@@ -6,7 +6,7 @@ The main navigation component.
 Props
 -----
 
-### `groups`
+### `items`
 
 Grouped list of navigation elements to render.
 

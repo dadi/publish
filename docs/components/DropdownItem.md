@@ -6,6 +6,14 @@ A `Dropdown` item.
 Props
 -----
 
+### `active`
+
+Whether the item is in an active state.
+
+- type: `bool`
+- default value: `false`
+
+
 ### `children`
 
 The list of `DropdownItem` elements to be rendered.

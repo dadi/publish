@@ -10,8 +10,8 @@ Props
 
 Colour accent.
 
-- type: `enum('system')`
-- default value: `'system'`
+- type: `enum('data'|'destruct'|'inherit'|'neutral'|'save'|'system')`
+- default value: `'neutral'`
 
 
 ### `children`
@@ -19,6 +19,22 @@ Colour accent.
 The text to be rendered inside the button.
 
 - type: `node`
+
+
+### `className`
+
+Classes to append to the button element.
+
+- type: `string`
+- default value: `''`
+
+
+### `disabled`
+
+Whether the button is disabled.
+
+- type: `bool`
+- default value: `false`
 
 
 ### `inGroup`

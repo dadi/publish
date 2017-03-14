@@ -77,3 +77,4 @@ The order currently being used to sort the rows by `sortBy`.
 
 - type: `enum('asc'|'desc')`
 - default value: `null`
+

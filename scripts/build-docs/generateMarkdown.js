@@ -18,7 +18,7 @@ function generateDesciption (description) {
 }
 
 function generatePropType (type) {
-  var values = ''
+  var values
   if (Array.isArray(type.value)) {
     values = '(' +
       type.value.map(function (typeValue) {
@@ -29,7 +29,7 @@ function generatePropType (type) {
     values = type.value
   }
 
-  return `- type: ${type.name}${values}\n`
+  return `- type: \`${type.name}${typeof values !== 'undefined' ? values : ''}\`\n`
 }
 
 function generatePropDefaultValue (value) {

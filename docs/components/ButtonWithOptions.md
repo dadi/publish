@@ -20,6 +20,13 @@ The text to be rendered inside the main button.
 - type: `node`
 
 
+### `disabled`
+
+Whether the button is disabled.
+
+- type: `bool`
+
+
 ### `onClick`
 
 Callback to be executed when the main button is clicked.
