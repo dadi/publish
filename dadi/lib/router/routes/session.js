@@ -65,7 +65,7 @@ module.exports = function (app) {
       if (user.err) {
         res.write(JSON.stringify(user))
         res.end()
-        return next() 
+        return next()
       }
       req.login(user, {}, (err) => {
         if (err) {

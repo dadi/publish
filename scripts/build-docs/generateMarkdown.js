@@ -29,7 +29,7 @@ function generatePropType (type) {
     values = type.value
   }
 
-  return `- type: \`${type.name}${values ? values : ''}\`\n`
+  return `- type: \`${type.name}${typeof values !== 'undefined' ? values : ''}\`\n`
 }
 
 function generatePropDefaultValue (value) {

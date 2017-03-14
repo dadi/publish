@@ -7,7 +7,7 @@ const Session = function () {}
 
 Session.prototype.authorise = function (username, password, next) {
   let authAPI = config.get('auth')
-  
+
   if (!authAPI.enabled) return next(null)
 
   return new Api(authAPI)
@@ -21,7 +21,7 @@ Session.prototype.authorise = function (username, password, next) {
         return next(null)
       }
     }).catch(err => {
-      return next(null, {err: 'MISSING_AUTH_API'})
+      return next(null, {err: 'MISSING_AUTH_API', value: err})
     })
 }
 
