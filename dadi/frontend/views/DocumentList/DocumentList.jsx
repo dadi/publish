@@ -39,9 +39,7 @@ class DocumentList extends Component {
     const currentCollection = state.api.currentCollection
 
     if (!documents.list || documents.status === Constants.STATUS_LOADING || !currentCollection) {
-      return (
-        <p>Loading...</p>
-      )
+      return null
     }
 
     // We can change this to only display certain fields
@@ -185,13 +183,13 @@ class DocumentList extends Component {
 
     return query.find().then(docs => {
       // Filter current collection
-      let currentCollection = state.api.apis[0].collections.find(stateCollection => {
+      const currentCollection = state.api.apis[0].collections.find(stateCollection => {
         return stateCollection.slug === collection
       })
 
       // Update state with results
       actions.setDocumentList(docs, collection)
-    }).catch((err) => {
+    }).catch(err => {
       console.log(err)
       actions.clearDocumentList()
       // {!} TODO: Graceful deal with failure

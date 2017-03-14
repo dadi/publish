@@ -13,3 +13,11 @@ export function setScreenWidth(width) {
     width
   }
 }
+
+export function registerNetworkCall(status, onComplete) {
+  return {
+    type: Types.REGISTER_NETWORK_CALL,
+    status,
+    onComplete
+  }
+}

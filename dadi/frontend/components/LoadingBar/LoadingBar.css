@@ -1,0 +1,21 @@
+.bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  z-index: 3000;
+  background-color: var(--theme-colour-data, #4A91FF);
+  transition: transform 0.2s linear, opacity 0.2s ease-out;
+}
+
+.tip {
+  display: block;
+  position: absolute;
+  right: 0px;
+  width: 100px;
+  height: 100%;
+  box-shadow: 0 0 10px var(--theme-colour-data, #4A91FF), 0 0 5px var(--theme-colour-data, #4A91FF);
+  opacity: 1.0;
+  transform: rotate(3deg) translate(0px, -4px);
+}
