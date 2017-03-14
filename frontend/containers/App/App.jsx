@@ -93,7 +93,7 @@ class App extends Component {
     // -- am, 13/03/2017
 
     return (
-      <Main>
+      <div>
         <LoadingBar loading={isFetchingData} />
 
         {state.user.user &&
@@ -104,21 +104,23 @@ class App extends Component {
           />
         }
 
-        <Router history={history}>
-          <Home path="/" authenticate />
-          <PasswordReset path="/reset" authenticate/>
-          {hasRoutes && ( <DocumentEdit path="/:group/:collection/document/:method/:documentId?/:section?" authenticate /> )}
-          <DocumentEdit path="/:collection/document/:method/:documentId?/:section?" authenticate />
-          <DocumentList path="/:collection/documents/:page?" authenticate />
-          {hasRoutes && ( <DocumentList path="/:group/:collection/documents/:page?" authenticate /> )}
-          <MediaLibrary path="/:collection/media/:document?" authenticate/>
-          {hasRoutes && ( <MediaLibrary path="/:group/:collection/media/:document?" authenticate/> )}
-          <UserProfile path="/profile" authenticate />
-          <SignIn path="/sign-in" />
-          <SignOut path="/sign-out" />
-          <Error type="404" default />
-        </Router>
-      </Main>
+        <Main>
+          <Router history={history}>
+            <Home path="/" authenticate />
+            <PasswordReset path="/reset" authenticate/>
+            {hasRoutes && ( <DocumentEdit path="/:group/:collection/document/:method/:documentId?/:section?" authenticate /> )}
+            <DocumentEdit path="/:collection/document/:method/:documentId?/:section?" authenticate />
+            <DocumentList path="/:collection/documents/:page?" authenticate />
+            {hasRoutes && ( <DocumentList path="/:group/:collection/documents/:page?" authenticate /> )}
+            <MediaLibrary path="/:collection/media/:document?" authenticate/>
+            {hasRoutes && ( <MediaLibrary path="/:group/:collection/media/:document?" authenticate/> )}
+            <UserProfile path="/profile" authenticate />
+            <SignIn path="/sign-in" />
+            <SignOut path="/sign-out" />
+            <Error type="404" default />
+          </Router>
+        </Main>
+      </div>
     )
   }
 
