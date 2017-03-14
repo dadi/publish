@@ -47,17 +47,19 @@ export default class TableHead extends Component {
 
     return (
       <thead class={styles.head}>
-        {selectable &&
-          <TableHeadCell select={true}>
-            <input
-              checked={allSelected}
-              class={styles.select}
-              type="checkbox"
-              onClick={this.handleSelectClick.bind(this)}
-            />
-          </TableHeadCell>
-        }
-        {this.props.children}
+        <tr>
+          {selectable &&
+            <TableHeadCell select={true}>
+              <input
+                checked={allSelected}
+                class={styles.select}
+                type="checkbox"
+                onClick={this.handleSelectClick.bind(this)}
+              />
+            </TableHeadCell>
+          }
+          {this.props.children}
+        </tr>
       </thead>
     )
   }

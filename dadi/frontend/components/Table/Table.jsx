@@ -131,10 +131,7 @@ export default class Table extends Component {
     return (
       <table class={styles.table}>
         {children.head}
-
-        <tbody>
-          {children.body}
-        </tbody>
+        <tbody>{children.body}</tbody>
       </table>
     )
   }

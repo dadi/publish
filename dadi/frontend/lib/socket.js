@@ -1,6 +1,6 @@
 'use strict'
 
-import {SocketCluster, connect} from 'socketcluster-client'
+import {connect} from 'socketcluster-client'
 
 /**
  * @constructor
@@ -23,9 +23,7 @@ const Socket = function (port) {
  */
 Socket.prototype.registerListeners = function () {
   this.socket.on('connect', this.onConnect.bind(this))
-  this.socket.off('connect', this.onDisconnect.bind(this))
   this.socket.on('error', this.onError.bind(this))
-  this.socket.on('disconnect', this.onDisconnect.bind(this))
 }
 
 Socket.prototype.onConnect = function () {
@@ -49,26 +47,12 @@ Socket.prototype.onConnect = function () {
   return this
 }
 
-Socket.prototype.onDisconnect = function () {
-  if (this.room) {
-    // this.user.channel = null
-    // this.leaveRoom()
-  }
-}
-
 Socket.prototype.isConnected = function () {
   return this.socket
 }
 
 Socket.prototype.setUser = function (data) {
   this.user = data
-
-  // WIP create user-only channel
-  // if (this.socket.getAuthToken()) {
-  //  this.subscribeToUserChannel() // Subscribe to single user channel
-  // } else {
-  //   this.queuedTasks.push(this.subscribeToUserChannel.bind(this))
-  // }
   return this
 }
 
