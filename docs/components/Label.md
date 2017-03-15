@@ -15,9 +15,18 @@ The input element to be rendered inside the label.
 
 ### `comment`
 
-The text to be rendered on the top-right corner of the label
+The text to be rendered on the top-right corner of the label.
 
 - type: `string`
+
+
+### `compact`
+
+Whether the label is in compact mode, which will render the label text
+and the children on the same line.
+
+- type: `bool`
+- default value: `false`
 
 
 ### `error`
