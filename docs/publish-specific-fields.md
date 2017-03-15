@@ -13,7 +13,7 @@ Currently, the supported fields are:
 | `multiple`  | Defines whether the field allows multiple values. When used with the String field and `options` is defined, a multi-select dropdown is rendered | `true`                | `false` |
 | `limit`     | Defines the maximum number of values allowed in the field. Overrides `multiple` | `10`                | `1` |
 
-*Example field definition:*
+*Example: A `String` type rendered in the main body as a textarea:*
 
 ```json
 "synopsis": {
@@ -29,6 +29,35 @@ Currently, the supported fields are:
     "section": "Article",
     "position": "main",
     "multiline": true
+  }
+}
+```
+
+*Example: A `String` type rendered in the sidebar with a fixed set of values available:*
+
+```json
+"country": {
+  "type": "String",
+  "label": "Country",
+  "default": "pt",
+  "message": "can't be empty",
+  "display": {
+    "index": true,
+    "edit": true
+  },
+  "publish": {
+    "section": "Article",
+    "position": "sidebar",
+    "options": [
+      {
+        "value": "uk",
+        "label": "United Kingdom"
+      },
+      {
+        "value": "pt",
+        "label": "Portugal"
+      }
+    ]
   }
 }
 ```
