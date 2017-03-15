@@ -116,26 +116,38 @@ export default class FieldString extends Component {
           class={dropdownStyle.getClasses()}
           onChange={this.handleOnChange.bind(this)}
           multiple={multiple}
+          ref={multiple && this.selectDropdownOptions.bind(this)}
+          value={selectedValue}
         >
-          <option
-            class={styles['dropdown-option']}
-            disabled
-            selected={selectedValue === null}
-            style={multiple ? 'display: none;' : ''}
-          >Please select</option>
+          {!multiple &&
+            <option
+              class={styles['dropdown-option']}
+              disabled
+              selected={selectedValue === null}
+            >Please select</option>
+          }
 
           {options.map(option => {
             return (
               <option
                 class={styles['dropdown-option']}
                 value={option.value}
-                selected={option.value === selectedValue}
               >{option.label}</option>
             )
           })}
         </select>
       </Label>
     )
+  }
+
+  selectDropdownOptions(input) {
+    const {value} = this.props
+
+    for (let i = 0; i < input.options.length; i++) {
+      if (value.includes(input.options[i].value)) {
+        input.options[i].selected = true
+      }
+    }
   }
 
   render() {
