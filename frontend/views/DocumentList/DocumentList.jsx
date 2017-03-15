@@ -191,7 +191,7 @@ class DocumentList extends Component {
       actions.setDocumentList(docs, collection)
     }).catch(err => {
       console.log(err)
-      actions.clearDocumentList()
+      //actions.clearDocumentList()
       // {!} TODO: Graceful deal with failure
     })
   }
