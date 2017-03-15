@@ -14,9 +14,15 @@ import styles from './Label.css'
 export default class Label extends Component {
   static propTypes = {
     /**
-     * The text to be rendered on the top-right corner of the label
+     * The text to be rendered on the top-right corner of the label.
      */
     comment: proptypes.string,
+
+    /**
+     * Whether the label is in compact mode, which will render the label text
+     * and the children on the same line.
+     */
+    compact: proptypes.bool,
 
     /**
      * Whether there's an error in the label field.
@@ -40,6 +46,7 @@ export default class Label extends Component {
   }
 
   static defaultProps = {
+    compact: false,
     error: false,
     errorMessage: null,
     optional: false,
@@ -81,15 +88,19 @@ export default class Label extends Component {
   }  
 
   render() {
-    const {comment, error, errorMessage} = this.props
+    const {comment, compact, error, errorMessage} = this.props
 
     let labelStyle = new Style(styles, 'container')
 
+    labelStyle.addIf('container-compact', compact)
+    labelStyle.addIf('container-with-comment', comment)
     labelStyle.addIf('container-error', error)
     labelStyle.addIf('container-error-message', errorMessage)
 
     return (
       <div class={labelStyle.getClasses()}>
+        {this.renderChildren()}
+
         <label
           for={this.id}
           class={styles.label}
@@ -104,8 +115,6 @@ export default class Label extends Component {
         {errorMessage &&
           <p class={styles['error-message']}>{errorMessage}</p>
         }
-
-        {this.renderChildren()}
       </div>
     )
   }
