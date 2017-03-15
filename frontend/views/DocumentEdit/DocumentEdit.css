@@ -1,5 +1,5 @@
 .container {
-  margin: 20px 0 80px 0;
+  padding: 20px 0 80px 0;
 }
 
 .section {
@@ -21,7 +21,7 @@
 }
 
 @media (--breakpoint-medium) {
-  .main {
+  .main:not(.main-full) {
     width: 66.6666%;
     width: calc(2 * (100% / 3));
     padding: 10px 10px 10px 20px;  
@@ -39,4 +39,8 @@
     width: calc(100% / 3);
     padding: 10px 20px 10px 10px;
   }
+}
+
+.field {
+  margin-bottom: 20px;
 }

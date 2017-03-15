@@ -14,6 +14,7 @@ import APIBridge from 'lib/api-bridge-client'
 import ActionBar from 'components/ActionBar/ActionBar'
 import Button from 'components/Button/Button'
 import ButtonWithOptions from 'components/ButtonWithOptions/ButtonWithOptions'
+import FieldBoolean from 'components/FieldBoolean/FieldBoolean'
 import FieldImage from 'components/FieldImage/FieldImage'
 import FieldString from 'components/FieldString/FieldString'
 import Main from 'components/Main/Main'
@@ -80,22 +81,35 @@ class DocumentEdit extends Component {
 
           sectionClass.addIf('section-active', section.slug === activeSection)
 
+          const mainBodyFields = section.fields.filter(field => {
+            const position = field.publish && field.publish.position
+
+            return !position || position === 'main'
+          })
+
+          const sideBarFields = section.fields.filter(field => {
+            const position = field.publish && field.publish.position
+
+            return position === 'sidebar'
+          })
+
+          const mainBodyStyle = new Style(styles, 'main')
+
+          // If there are no fields in the side bar, the main body can use
+          // the full width of the page.
+          mainBodyStyle.addIf('main-full', !sideBarFields.length)
+
           return (
             <section class={sectionClass.getClasses()}>
-              <div class={styles.main}>
-                {section.fields.filter(field => {
-                  const position = field.publish && field.publish.position
-
-                  return !position || position === 'main'
-                }).map(field => this.renderField(field))}
+              <div class={mainBodyStyle.getClasses()}>
+                {mainBodyFields.map(field => this.renderField(field))}
               </div>
-              <div class={styles.sidebar}>
-                {section.fields.filter(field => {
-                  const position = field.publish && field.publish.position
 
-                  return position === 'sidebar'
-                }).map(field => this.renderField(field))}
-              </div>
+              {sideBarFields.length &&
+                <div class={styles.sidebar}>
+                  {sideBarFields.map(field => this.renderField(field))}
+                </div>
+              }
             </section>
           )
         })}
@@ -274,9 +288,25 @@ class DocumentEdit extends Component {
     const hasError = document.validationErrors[field._id]
     const {hasTriedSubmitting} = this.state
 
+    let fieldElement = null
+
     switch (field.type) {
+      case 'Boolean':
+        fieldElement = (
+          <FieldBoolean
+            error={hasError}
+            forceValidation={hasTriedSubmitting}
+            onChange={this.handleFieldChange.bind(this)}
+            onError={this.handleFieldError.bind(this)}
+            value={document.local[field._id]}
+            schema={field}
+          />
+        )
+
+        break
+
       case 'String':
-        return (
+        fieldElement = (
           <FieldString
             error={hasError}
             forceValidation={hasTriedSubmitting}
@@ -286,9 +316,11 @@ class DocumentEdit extends Component {
             schema={field}
           />
         )
+
+        break
     }
 
-    return null
+    return fieldElement ? <div class={styles.field}>{fieldElement}</div> : null
   }
 }
 
