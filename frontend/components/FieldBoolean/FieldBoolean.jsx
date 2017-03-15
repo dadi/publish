@@ -7,7 +7,7 @@ import Checkbox from 'components/Checkbox/Checkbox'
 import Label from 'components/Label/Label'
 
 /**
- * Component for API fields of type String
+ * Component for API fields of type Boolean.
  */
 export default class FieldBoolean extends Component {
   static propTypes = {
