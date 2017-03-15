@@ -1,7 +1,7 @@
 `FieldBoolean`
 ==============
 
-Component for API fields of type String
+Component for API fields of type Boolean.
 
 Props
 -----
