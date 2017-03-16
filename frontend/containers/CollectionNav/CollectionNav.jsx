@@ -3,62 +3,130 @@ import {Router} from 'preact-router'
 import {connect} from 'preact-redux'
 import {bindActionCreators} from 'redux'
 
-import {buildUrl} from 'lib/router'
-
 import * as apiActions from 'actions/apiActions'
 import * as appActions from 'actions/appActions'
 
 import Nav from 'components/Nav/Nav'
 
+import {buildCollectionMap} from 'lib/app-config'
+import {buildUrl} from 'lib/router'
 import {connectHelper, slugify} from 'lib/util'
 
 class CollectionNav extends Component {
+  buildCollectionMap(apis) {
+    let groups = {}
+    let ungrouped = {}
 
-  groupCollections(sort, collections) {
-    if (!collections.length) return []
+    apis.forEach(api => {
+      let apiCollections = {}
+      let displayNames = {}
 
-    const groupedItems = sort.map(menu => {
-      if (typeof menu === 'string') {
-        const collection = collections.find(collection => collection.slug === menu)
-        return {
-          id: collection.slug,
-          label: collection.name,
-          href: buildUrl(collection.slug, 'documents')
-        }
-      } else {
-        const groupSlug = slugify(menu.title)
-        const subItems = menu.collections.map(slug => {
-          const collection = collections.find(collection => collection.slug === slug)
-
-          return {
-            id: collection.slug,
-            label: collection.name,
-            href: buildUrl(groupSlug, collection.slug, 'documents')
+      api.collections.forEach(collection => {
+        // We start by adding all the collections that are referenced in the menu
+        // object.
+        (api.menu || []).forEach(menuEntry => {
+          if (menuEntry === collection.name) {
+            apiCollections[collection.name] = null
+          } else if (menuEntry.collections && menuEntry.collections.includes(collection.name)) {
+            apiCollections[collection.name] = menuEntry.title
           }
         })
 
-        return {
-          id: groupSlug,
-          label: menu.title,
-          subItems: subItems,
-          href: subItems[0].href
+        // Then we loop through all collections and add any that is missing from the
+        // menu.
+        api.collections.forEach(collection => {
+          apiCollections[collection.name] = apiCollections[collection.name] || null
+        })
+
+        const displayName = (collection.settings && collection.settings.description) || collection.name
+
+        displayNames[collection.name] = displayName
+      })
+
+      // We then merge the collections map for this API with the global map.
+      Object.keys(apiCollections).forEach(collection => {
+        const mapValue = apiCollections[collection]
+
+        // Is it part of a group?
+        if (mapValue) {
+          // Create group and collection levels (if they don't exist).
+          groups[mapValue] = groups[mapValue] || {}
+          groups[mapValue][collection] = groups[mapValue][collection] || []
+
+          // Increment the number of matches at the given group+collection.
+          groups[mapValue][collection].push(displayNames[collection])
+        } else {
+          ungrouped[collection] = ungrouped[collection] || []
+          ungrouped[collection].push(displayNames[collection])
         }
-      }
-    }).filter(Boolean)
+      })
+    })
 
-    if (groupedItems.length) {
-      return groupedItems
+    return {
+      groups,
+      ungrouped
     }
+  }
 
-    return collections.map(collection => buildUrl(collection.slug, 'documents'))
+  buildGroups(collectionMap) {
+    const grouped = Object.keys(collectionMap.groups).map(groupTitle => {
+      const group = collectionMap.groups[groupTitle]
+      const groupSlug = slugify(groupTitle)
+
+      let subItems = []
+
+      Object.keys(group).forEach(collection => {
+        group[collection].forEach((displayName, i) => {
+          const collectionSlug = collection + ((i > 0) ? `-${i + 1}` : '')
+
+          subItems.push({
+            id: collectionSlug,
+            label: displayName,
+            href: buildUrl(groupSlug, collectionSlug, 'documents')
+          })
+        })
+      })
+
+      return {
+        id: groupSlug,
+        label: groupTitle,
+        subItems,
+        href: subItems[0].href
+      }
+    })
+
+    let ungrouped = []
+
+    Object.keys(collectionMap.ungrouped).forEach(collection => {
+      const numberOfInstances = collectionMap.ungrouped[collection]
+
+      collectionMap.ungrouped[collection].forEach((displayName, i) => {
+        const collectionSlug = collection + ((i > 0) ? `-${i + 1}` : '')
+
+        ungrouped.push({
+          id: collectionSlug,
+          label: displayName,
+          href: buildUrl(null, collectionSlug, 'documents')
+        })
+      })
+    })
+
+    return grouped.concat(ungrouped)
   }
 
   componentWillUpdate() {
     const {state, actions} = this.props
     const apis = state.api.apis
+    
+    if (apis && apis.length) {
+      // Counting the number of APIs without collections
+      const apisWithoutCollections = apis.filter(api => !api.collections || !api.collections.length)
+      
+      if (apisWithoutCollections.length === 0) {
+        const collectionMap = this.buildCollectionMap(apis)
 
-    if (apis && apis.length && apis[0].collections) {
-      this.groups = this.groupCollections(apis[0].menu || [], apis[0].collections)
+        this.groups = this.buildGroups(collectionMap)
+      }
     }
   }
 

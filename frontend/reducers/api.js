@@ -5,7 +5,6 @@ import * as Constants from 'lib/constants'
 
 const initialState = {
   apis: [],
-  currentCollection: null,
   status: Constants.STATUS_IDLE
 }
 
@@ -50,29 +49,6 @@ export default function api(state = initialState, action = {}) {
     // Action: user signed out
     case Types.SIGN_OUT:
       return initialState
-
-    // Actions: set document or set document list
-    case Types.SET_REMOTE_DOCUMENT:
-    case Types.SET_DOCUMENT_LIST:
-      if (!action.currentCollection) return state
-
-      let collectionSchema
-
-      // (!) TO DO: This will need to take the group into account
-      state.apis.some(api => {
-        return api.collections && api.collections.some(collection => {
-          if (collection.name === action.currentCollection) {
-            collectionSchema = collection
-
-            return true
-          }
-        })
-      })
-
-      return {
-        ...state,
-        currentCollection: collectionSchema
-      }  
 
     default:
       return state

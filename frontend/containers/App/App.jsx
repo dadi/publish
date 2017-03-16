@@ -25,7 +25,7 @@ import SignOut from 'views/SignOut/SignOut'
 import {connectHelper, debounce, isEmpty, slugify} from 'lib/util'
 import Socket from 'lib/socket'
 import Session from 'lib/session'
-import getAppConfig from 'lib/app-config'
+import {getAppConfig, getCurrentApi} from 'lib/app-config'
 import APIBridge from 'lib/api-bridge-client'
 
 class App extends Component {
@@ -65,6 +65,7 @@ class App extends Component {
         this.getApiCollections(config)
       })
     }
+
     // State change: user has signed out
     if (previousState.user.user && !state.user.user) {
       route('/sign-in')
@@ -76,7 +77,7 @@ class App extends Component {
   }
 
   render() {
-    const {state, history} = this.props
+    const {history, state} = this.props
     const hasRoutes = state.app && state.app.config ? this.hasRoutes() : null
     const isFetchingData = state.app.status === Constants.STATUS_LOADING
 
@@ -87,10 +88,6 @@ class App extends Component {
     // supports view composition. For now, I think this is a decent compromise.
     //
     // -- eb, 01/02/2017
-    
-    // Moved Header inside <Main>
-    // Why? Because when navigating, page position jumps to the top of <Main>
-    // -- am, 13/03/2017
 
     return (
       <div>
@@ -126,8 +123,11 @@ class App extends Component {
 
   hasRoutes() {
     const {state} = this.props
+    const foundMenus = state.app.config.apis.some(api => {
+      return typeof api.menu !== 'undefined'
+    })
     
-    return typeof state.app.config.apis[0].menu !== 'undefined'
+    return state
   }
 
   getApiCollections(config) {
@@ -135,14 +135,15 @@ class App extends Component {
 
     actions.setApiStatus(Constants.STATUS_LOADING)
 
-    let bundler = APIBridge.Bundler()
     let apisToProcess = config.apis
     let processedApis = []
 
     apisToProcess.forEach((api, apiIndex) => {
+      let bundler = APIBridge.Bundler()
+
       return APIBridge(api).getCollections().then(({collections}) => {
         collections.forEach(collection => {
-          let query = APIBridge(api, true).in(collection.slug).getConfig()
+          const query = APIBridge(api, true).in(collection.slug).getConfig()
 
           // Add query to bundler
           bundler.add(query)
@@ -150,7 +151,7 @@ class App extends Component {
 
         // Run all queries in bundler
         bundler.run().then(collectionConfigs => {
-          let mergedCollections = collectionConfigs.map((config, index) => {
+          const mergedCollections = collectionConfigs.map((config, index) => {
             return Object.assign({}, config, collections[index])
           })
 
