@@ -14,7 +14,6 @@ import {getCurrentApi, getCurrentCollection} from 'lib/app-config'
 
 import Button from 'components/Button/Button'
 import DocumentFilters from 'components/DocumentFilters/DocumentFilters'
-import DocumentSearch from 'components/DocumentSearch/DocumentSearch'
 import ListController from 'components/ListController/ListController'
 import SyncTable from 'components/SyncTable/SyncTable'
 import SyncTableRow from 'components/SyncTable/SyncTableRow'
@@ -55,8 +54,10 @@ class DocumentList extends Component {
 
     return (
       <section class="Documents">
-        <ListController>
-          <DocumentSearch collection={currentCollection} />
+        <ListController
+          collection={currentCollection}
+          search={true}
+        >
           <Button
             accent="data"
             onClick={this.handleFiltersToggle.bind(this)}
