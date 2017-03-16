@@ -13,3 +13,17 @@ The list of controls to be rendered on the right-hand side of the bar.
 
 - type: `node`
 
+
+### `collection`
+
+The collection being affected by the list controller.
+
+- type: `object`
+
+
+### `search`
+
+Whether to render a search bar.
+
+- type: `bool`
+

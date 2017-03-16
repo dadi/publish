@@ -35,6 +35,10 @@
        url('/fonts/karla-v5-latin-700italic.woff') format('woff'); /* Chrome 6+, Firefox 3.6+, IE 9+, Safari 5.1+ */
 }
 
+:root strong {
+  font-weight: bold;
+}
+
 .main {
   min-height: 100%;
   min-height: 100vh;

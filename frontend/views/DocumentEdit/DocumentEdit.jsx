@@ -12,7 +12,6 @@ import * as Constants from 'lib/constants'
 import APIBridge from 'lib/api-bridge-client'
 import {getCurrentApi, getCurrentCollection} from 'lib/app-config'
 
-import ActionBar from 'components/ActionBar/ActionBar'
 import Button from 'components/Button/Button'
 import ButtonWithOptions from 'components/ButtonWithOptions/ButtonWithOptions'
 import FieldBoolean from 'components/FieldBoolean/FieldBoolean'
@@ -21,6 +20,7 @@ import FieldString from 'components/FieldString/FieldString'
 import Main from 'components/Main/Main'
 import Nav from 'components/Nav/Nav'
 import SubNavItem from 'components/SubNavItem/SubNavItem'
+import Toolbar from 'components/Toolbar/Toolbar'
 
 import * as apiActions from 'actions/apiActions'
 import * as documentActions from 'actions/documentActions'
@@ -115,25 +115,28 @@ class DocumentEdit extends Component {
           )
         })}
 
-        <ActionBar>
-          <Button
-            accent="destruct"
-          >
-            Delete
-          </Button>
-          <ButtonWithOptions
-            accent="save"
-            disabled={hasValidationErrors}
-            onClick={this.handleSave.bind(this)}
-            options={{
-              'Save and create new': (() => {}),
-              'Save and go back': (() => {}),
-              'Save and duplicate': (() => {})
-            }}
-          >
-            Save and continue
-          </ButtonWithOptions>
-        </ActionBar>
+        <Toolbar>
+          <div>
+            <Button
+              accent="destruct"
+            >Delete</Button>
+          </div>
+
+          <div>
+            <ButtonWithOptions
+              accent="save"
+              disabled={hasValidationErrors}
+              onClick={this.handleSave.bind(this)}
+              options={{
+                'Save and create new': (() => {}),
+                'Save and go back': (() => {}),
+                'Save and duplicate': (() => {})
+              }}
+            >
+              Save and continue
+            </ButtonWithOptions>
+          </div>
+        </Toolbar>
       </div>
     )
   }
