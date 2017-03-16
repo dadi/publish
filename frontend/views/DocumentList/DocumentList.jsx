@@ -1,6 +1,10 @@
 import {h, Component} from 'preact'
 import {connect} from 'preact-redux'
+import {route} from 'preact-router'
 import {bindActionCreators} from 'redux'
+
+import Style from 'lib/Style'
+import styles from './DocumentList.css'
 
 import * as apiActions from 'actions/apiActions'
 import * as documentsActions from 'actions/documentsActions'
@@ -15,8 +19,11 @@ import {getCurrentApi, getCurrentCollection} from 'lib/app-config'
 import Button from 'components/Button/Button'
 import DocumentFilters from 'components/DocumentFilters/DocumentFilters'
 import ListController from 'components/ListController/ListController'
+import Paginator from 'components/Paginator/Paginator'
 import SyncTable from 'components/SyncTable/SyncTable'
 import SyncTableRow from 'components/SyncTable/SyncTableRow'
+import Toolbar from 'components/Toolbar/Toolbar'
+import ToolbarTextInput from 'components/Toolbar/ToolbarTextInput'
 
 class DocumentList extends Component {
   constructor(props) {
@@ -51,67 +58,91 @@ class DocumentList extends Component {
         label: currentCollection.fields[field].label
       }
     })
+    const {metadata} = documents.list
 
     return (
-      <section class="Documents">
-        <ListController
-          collection={currentCollection}
-          search={true}
-        >
-          <Button
-            accent="data"
-            onClick={this.handleFiltersToggle.bind(this)}
-          >Filters</Button>
-          <Button accent="save">Create new</Button>
-        </ListController>
-
-        <div style={!filtersVisible && "display: none;"}>
-          <DocumentFilters
-            filter={filter}
+      <div class={styles.container}>
+        <section class="Documents">
+          <ListController
             collection={currentCollection}
-            updateUrlParams={this.updateUrlParams.bind(this)}
-          />
-        </div>
+            search={true}
+          >
+            <Button
+              accent="data"
+              onClick={this.handleFiltersToggle.bind(this)}
+            >Filters</Button>
+            <Button accent="save">Create new</Button>
+          </ListController>
 
-        <SyncTable
-          columns={tableColumns}
-          sortable={true}
-          sortBy={sort}
-          sortOrder={order}
-          sort={(value, sortBy, sortOrder) => {
-            return (
-              <a href={createRoute({
-                params: {sort: sortBy, order: sortOrder}, 
-                update: true
-              })}>{value}</a>
-            )
-          }}
-        >
-          {documents.list.results.map(document => {
-            return (
-              <SyncTableRow
-                data={document}
-                renderCallback={(value, data, column, index) => {
-                  if (index === 0) {
-                    return (
-                      <a href={buildUrl(group, collection, 'document/edit', data._id)}>{value}</a>
-                    )
-                  }
+          <div style={!filtersVisible && "display: none;"}>
+            <DocumentFilters
+              filter={filter}
+              collection={currentCollection}
+              updateUrlParams={this.updateUrlParams.bind(this)}
+            />
+          </div>
 
-                  return value
-                }}
-              />
-            )
-          })}
-        </SyncTable>
+          <SyncTable
+            columns={tableColumns}
+            sortable={true}
+            sortBy={sort}
+            sortOrder={order}
+            sort={(value, sortBy, sortOrder) => {
+              return (
+                <a href={createRoute({
+                  params: {sort: sortBy, order: sortOrder},
+                  update: true
+                })}>{value}</a>
+              )
+            }}
+          >
+            {documents.list.results.map(document => {
+              return (
+                <SyncTableRow
+                  data={document}
+                  renderCallback={(value, data, column, index) => {
+                    if (index === 0) {
+                      return (
+                        <a href={buildUrl(group, collection, 'document/edit', data._id)}>{value}</a>
+                      )
+                    }
 
-        {Array(documents.list.metadata.totalPages).fill().map((_, page) => (
-          <a href={createRoute({
-            path: [group, currentCollection.name, 'documents', page+1],
-            update: true
-          })}>{page+1}</a>
-        ))}
-      </section>
+                    return value
+                  }}
+                />
+              )
+            })}
+          </SyncTable>
+        </section>
+
+        <Toolbar>
+          <div>
+            <ToolbarTextInput
+              onChange={this.handleGoToPage.bind(this)}
+              size="small"
+              placeholder="Go to page"
+            />
+
+            <span style="margin-left: 15px;">
+              Showing <strong>{`${metadata.offset + 1}-${Math.min(metadata.offset + metadata.limit, metadata.totalCount)} `}</strong>
+              of <strong>{metadata.totalCount}</strong>
+            </span>
+          </div>
+
+          <div>
+            <Paginator
+              currentPage={metadata.page}
+              linkCallback={page => buildUrl(group, collection, 'documents', page)}
+              maxPages={8}
+              totalPages={metadata.totalPages}
+            />
+          </div>
+
+          <div>
+            <p>Something</p>
+          </div>
+        </Toolbar>
+      </div>
     )
   }
 
@@ -172,13 +203,14 @@ class DocumentList extends Component {
     const sortOrder = order || 'desc'
     const currentApi = getCurrentApi(state.api.apis, group, collection)
     const currentCollection = getCurrentCollection(state.api.apis, group, collection)
+    const count = currentCollection.settings && currentCollection.settings.count || 20
 
     // Set document loading status to 'Loading'
     actions.setDocumentListStatus(Constants.STATUS_LOADING)
 
     let query = APIBridge(currentApi)
       .in(currentCollection.name)
-      .limitTo(20) // Config based on collection schema
+      .limitTo(count)
       .goToPage(page)
       .sortBy(sortBy, sortOrder)
 
@@ -209,6 +241,22 @@ class DocumentList extends Component {
     this.setState({
       filtersVisible: !this.state.filtersVisible
     })
+  }
+
+  handleGoToPage(event) {
+    const {collection, group, state} = this.props
+    const {documents} = state
+    const inputValue = event.target.value
+    const parsedValue = parseInt(inputValue)
+
+    // If the input is not a valid positive integer number, we return.
+    if ((parsedValue.toString() !== inputValue) || (parsedValue <= 0)) return
+
+    // If the number inserted is outside the range of the pages available,
+    // we return.
+    if (parsedValue > documents.list.metadata.totalPages) return
+
+    route(buildUrl(group, collection, 'documents', parsedValue))
   }
 }
 
