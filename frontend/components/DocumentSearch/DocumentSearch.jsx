@@ -21,8 +21,15 @@ export default class DocumentSearch extends Component {
     collection: proptypes.object
   }
 
+  constructor(props) {
+    super(props)
+
+    this.state.value = ''
+  }
+
   render() {
     const {className, collection} = this.props
+    const {value} = this.state
 
     return (
       <TextInput
@@ -30,11 +37,16 @@ export default class DocumentSearch extends Component {
         onChange={this.handleSearchChange.bind(this)}
         placeholder={`Search in ${collection.name}...`}
         type="search"
+        value={value}
       />
     )
   }
 
   handleSearchChange(event) {
-    console.log(event.target.value)
+    this.setState({
+      value: event.target.value
+    })
+
+    console.log('* Search:', event.target.value)
   }
 }

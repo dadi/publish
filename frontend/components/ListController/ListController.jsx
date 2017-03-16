@@ -30,6 +30,12 @@ export default class ListController extends Component {
     search: proptypes.bool
   }
 
+  constructor(props) {
+    super(props)
+
+    this.state.searchValue = ''
+  }
+
   render() {
     const {children, collection, search} = this.props
 
@@ -40,6 +46,7 @@ export default class ListController extends Component {
             <DocumentSearch
               className={styles.search}
               collection={collection}
+              value={this.state.searchValue}
             />
           }
         </div>
