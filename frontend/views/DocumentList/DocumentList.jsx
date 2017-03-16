@@ -138,9 +138,7 @@ class DocumentList extends Component {
             />
           </div>
 
-          <div>
-            <p>Something</p>
-          </div>
+          <div></div>
         </Toolbar>
       </div>
     )
