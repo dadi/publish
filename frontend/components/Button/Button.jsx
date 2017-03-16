@@ -34,6 +34,12 @@ export default class Button extends Component {
     disabled: proptypes.bool,
 
     /**
+     * When present, the button will be rendered as an `a` element with the given
+     * href.
+     */
+    href: proptypes.string,
+
+    /**
      * Whether the button is part of a group of buttons, and which position this particular button takes in the group. This is used to collapse the border-radius accordingly.
      */
     inGroup: proptypes.oneOf(['left', 'middle', 'right']),
@@ -44,9 +50,10 @@ export default class Button extends Component {
     onClick: proptypes.func,
 
     /**
-     * Type/function of the button
+     * Type/function of the button. When set to `mock`, a static element will be
+     * rendered (as a `span`).
      */
-    type: proptypes.oneOf(['button', 'submit']),
+    type: proptypes.oneOf(['button', 'mock', 'submit']),
 
     /**
      * The text to be rendered inside the button.
@@ -72,21 +79,37 @@ export default class Button extends Component {
       accent, 
       className, 
       children, 
-      disabled, 
+      disabled,
+      href,
       inGroup, 
       onClick, 
       type
     } = this.props
+    const buttonStyle = new Style(styles, 'button')
 
-    let buttonClass = new Style(styles, 'button')
-
-    buttonClass.add(`button-${accent}`)
+    buttonStyle.add(`button-${accent}`)
       .add(`button-in-group-${inGroup}`)
+      .addIf('button-mock', type === 'mock')
       .addResolved(className)
+
+    if (type === 'mock') {
+      return (
+        <span class={buttonStyle.getClasses()}>{children}</span>
+      )
+    }
+
+    if (href) {
+      return (
+        <a
+          class={buttonStyle.getClasses()}
+          href={href}
+        >{children}</a>
+      )
+    }
 
     return (
       <button type="button"
-        class={buttonClass.getClasses()}
+        class={buttonStyle.getClasses()}
         disabled={disabled}
         onClick={onClick}
         type={type}
