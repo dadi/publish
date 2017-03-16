@@ -82,6 +82,7 @@ export default class LoadingBar extends Component {
     })
 
     clearInterval(this.intervalVisible)
+    clearInterval(this.intervalBump)
 
     this.intervalVisible = setTimeout(() => {
       this.setState({

@@ -73,45 +73,131 @@ export default class FieldString extends Component {
     }
   }
 
-  render() {
+  renderAsFreeInput() {
     const {error, value, schema} = this.props
     const publishBlock = schema.publish || {}
     const type = publishBlock.multiline ? 'multiline' : 'text'
 
     return (
-      <div class={styles.field}>
-        <Label
-          error={error}
-          errorMessage={typeof error === 'string' ? error : null}
-          label={schema.label}
-          comment={schema.required ? 'Required' : 'Optional'}
-        >
-          <TextInput
-            onChange={this.handleOnChange.bind(this)}
-            onKeyUp={this.handleOnKeyUp.bind(this)}
-            type={type}
-            value={value}
-          />
-        </Label>
-      </div>
+      <Label
+        error={error}
+        errorMessage={typeof error === 'string' ? error : null}
+        label={schema.label}
+        comment={schema.required ? 'Required' : 'Optional'}
+      >
+        <TextInput
+          onChange={this.handleOnChange.bind(this)}
+          onKeyUp={this.handleOnKeyUp.bind(this)}
+          type={type}
+          value={value}
+        />
+      </Label>
     )
+  }
+
+  renderAsDropdown() {
+    const {error, value, schema} = this.props
+    const publishBlock = schema.publish || {}
+    const options = publishBlock.options
+    const selectedValue = value || schema.default || null
+    const multiple = publishBlock.multiple === true
+    const dropdownStyle = new Style(styles, 'dropdown')
+
+    dropdownStyle.addIf('dropdown-error', error)
+
+    return (
+      <Label
+        error={error}
+        errorMessage={typeof error === 'string' ? error : null}
+        label={schema.label}
+        comment={schema.required ? 'Required' : 'Optional'}
+      >
+        <select
+          class={dropdownStyle.getClasses()}
+          onChange={this.handleOnChange.bind(this)}
+          multiple={multiple}
+          ref={multiple && this.selectDropdownOptions.bind(this)}
+          value={selectedValue}
+        >
+          {!multiple &&
+            <option
+              class={styles['dropdown-option']}
+              disabled
+              selected={selectedValue === null}
+            >Please select</option>
+          }
+
+          {options.map(option => {
+            return (
+              <option
+                class={styles['dropdown-option']}
+                value={option.value}
+              >{option.label}</option>
+            )
+          })}
+        </select>
+      </Label>
+    )
+  }
+
+  selectDropdownOptions(input) {
+    const {value} = this.props
+
+    for (let i = 0; i < input.options.length; i++) {
+      if (value.includes(input.options[i].value)) {
+        input.options[i].selected = true
+      }
+    }
+  }
+
+  render() {
+    const {schema} = this.props
+    const publishBlock = schema.publish || {}
+
+    if (publishBlock.options) {
+      return this.renderAsDropdown()
+    }
+
+    return this.renderAsFreeInput()
+  }
+
+  getValueOfInput(input) {
+    switch (input.nodeName.toUpperCase()) {
+      case 'SELECT':
+        const options = Array.prototype.slice.call(input.options)
+        const value = options.filter(option => option.selected).map(option => option.value)
+
+        // If this isn't a multiple value select, we want to return the selected
+        // value as a single element and not wrapped in a one-element array.
+        if (!input.attributes.multiple) {
+          return value[0]
+        }
+
+        return value
+
+      default:
+        return input.value
+    }
   }
 
   handleOnChange(event) {
     const {onChange, schema} = this.props
+    const value = this.getValueOfInput(event.target)
 
     if (typeof onChange === 'function') {
-      onChange.call(this, schema._id, event.target.value)
+      onChange.call(this, schema._id, value)
     }
   }
 
   handleOnKeyUp(event) {
-    this.validate(event.target.value)
+    const value = this.getValueOfInput(event.target)
+
+    this.validate(value)
   }
 
-  validate(value) {
-    const {error, onError, schema} = this.props
-    const validation = schema && schema.validation
+  findValidationErrorsInString(value) {
+    const {error, schema} = this.props
+    const validation = (schema && schema.validation) || {}
     const valueLength = typeof value === 'string' ? value.length : 0
 
     let validationMessage = typeof schema.message === 'string' && schema.message.length ? schema.message : null
@@ -125,27 +211,21 @@ export default class FieldString extends Component {
       validationMessage = 'This field ' + validationMessage
     }
 
-    let hasErrorsAfterValidation = false
-
-    // If the field is required, we add a minLength validation rule,
-    // if there isn't one already.
-    if (schema.required && !validation.minLength) {
-      validation.minLength = 1
-    }
+    let hasValidationErrors = false
 
     if (validation) {
       Object.keys(validation).forEach(validationRule => {
         switch (validationRule) {
           case 'minLength':
             if (valueLength < validation.minLength) {
-              hasErrorsAfterValidation = validationMessage && !schema.required ? validationMessage : true
+              hasValidationErrors = validationMessage || true
             }
 
             break
 
           case 'maxLength':
             if (valueLength > validation.maxLength) {
-              hasErrorsAfterValidation = validationMessage || true
+              hasValidationErrors = validationMessage || true
             }
 
             break
@@ -154,7 +234,7 @@ export default class FieldString extends Component {
             const regex = new RegExp(validation.regex.pattern, validation.regex.flags)
 
             if (!regex.test(value)) {
-              hasErrorsAfterValidation = validationMessage || true
+              hasValidationErrors = validationMessage || true
             }
 
             break
@@ -162,8 +242,43 @@ export default class FieldString extends Component {
       })
     }
 
+    return hasValidationErrors
+  }
+
+  validate(value) {
+    const {onError, schema} = this.props
+
+    let hasValidationErrors = false
+
+    // Are we dealing with multiple values?
+    if (value instanceof Array) {
+      // If the field is required and we don't have any values selected,
+      // there's a validation error.
+      hasValidationErrors = schema.required && (value.length === 0)
+
+      // If there are no errors so far, we proceed to validate each value
+      // in the array as an individual string to check for other validation
+      // parameters.
+      if (!hasValidationErrors) {
+        const individualValidationErrors = value.filter(valueString => {
+          return this.findValidationErrorsInString(valueString)
+        })
+
+        hasValidationErrors = individualValidationErrors[0] || false
+      }
+    } else {
+      const trimmedValue = typeof value === 'string' ? value.trim() : ''
+
+      // If the field is required and its value is empty, there's a validation
+      // error.
+      hasValidationErrors = schema.required && (trimmedValue.length === 0)
+
+      // We then proceed to validate the value for other validation parameters.
+      hasValidationErrors = hasValidationErrors || this.findValidationErrorsInString(trimmedValue)
+    }
+
     if (typeof onError === 'function') {
-      onError.call(this, schema._id, hasErrorsAfterValidation, value)
+      onError.call(this, schema._id, hasValidationErrors, value)
     }
   }
 }

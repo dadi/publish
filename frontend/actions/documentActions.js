@@ -1,9 +1,8 @@
 import * as Types from 'actions/actionTypes'
 
-export function setRemoteDocument(document, currentCollection) {
+export function setRemoteDocument(document) {
   return {
     type: Types.SET_REMOTE_DOCUMENT,
-    currentCollection,
     document
   }
 }

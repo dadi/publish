@@ -39,7 +39,11 @@
   text-decoration: none;
 }
 
-.item:hover,
+.item:hover {
+  background-color: var(--theme-colour-background-shade-3, #EEEEEE);
+  color: var(--theme-colour-primary, #000000);
+}
+
 .item-active {
   background-color: var(--theme-colour-data, #4A91FF);
   color: var(--theme-colour-secondary, #ffffff);

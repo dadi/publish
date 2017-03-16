@@ -10,6 +10,7 @@ import * as Constants from 'lib/constants'
 import {Keyboard} from 'lib/keyboard'
 import {router, createRoute, buildUrl} from 'lib/router'
 import APIBridge from 'lib/api-bridge-client'
+import {getCurrentApi, getCurrentCollection} from 'lib/app-config'
 
 import Button from 'components/Button/Button'
 import DocumentFilters from 'components/DocumentFilters/DocumentFilters'
@@ -37,7 +38,7 @@ class DocumentList extends Component {
     } = this.props
     const {filtersVisible} = this.state
     const documents = state.documents
-    const currentCollection = state.api.currentCollection
+    const currentCollection = getCurrentCollection(state.api.apis, group, collection)
 
     if (!documents.list || documents.status === Constants.STATUS_LOADING || !currentCollection) {
       return null
@@ -92,7 +93,7 @@ class DocumentList extends Component {
                 renderCallback={(value, data, column, index) => {
                   if (index === 0) {
                     return (
-                      <a href={buildUrl(group, currentCollection.name, 'document/edit', data._id)}>{value}</a>
+                      <a href={buildUrl(group, collection, 'document/edit', data._id)}>{value}</a>
                     )
                   }
 
@@ -125,8 +126,10 @@ class DocumentList extends Component {
     // State check: reject when missing config, session, or apis
     if (!state.app.config || !state.api.apis.length || !state.user) return
 
-    // Fixed to checking first API, but will eventually need to check all
-    if (!state.api.apis[0].collections || !state.api.apis[0].collections.length > 0) return
+    // State check: reject when there are still APIs without collections
+    const apisWithoutCollections = state.api.apis.filter(api => !api.collections).length
+
+    if (apisWithoutCollections) return
 
     // State check: reject when path matches and document list loaded
     if (list && (newStatePath === previousStatePath) && (newStateSearch === previousStateSearch)) return
@@ -157,6 +160,7 @@ class DocumentList extends Component {
       actions,
       collection,
       filter,
+      group,
       order,
       page,
       sort,
@@ -165,12 +169,14 @@ class DocumentList extends Component {
 
     const sortBy = sort || 'createdAt'
     const sortOrder = order || 'desc'
+    const currentApi = getCurrentApi(state.api.apis, group, collection)
+    const currentCollection = getCurrentCollection(state.api.apis, group, collection)
 
     // Set document loading status to 'Loading'
     actions.setDocumentListStatus(Constants.STATUS_LOADING)
 
-    let query = APIBridge(state.api.apis[0])
-      .in(collection)
+    let query = APIBridge(currentApi)
+      .in(currentCollection.name)
       .limitTo(20) // Config based on collection schema
       .goToPage(page)
       .sortBy(sortBy, sortOrder)
@@ -182,16 +188,11 @@ class DocumentList extends Component {
     }
 
     return query.find().then(docs => {
-      // Filter current collection
-      const currentCollection = state.api.apis[0].collections.find(stateCollection => {
-        return stateCollection.slug === collection
-      })
-
       // Update state with results
-      actions.setDocumentList(docs, collection)
+      actions.setDocumentList(docs)
     }).catch(err => {
       console.log(err)
-      actions.clearDocumentList()
+      //actions.clearDocumentList()
       // {!} TODO: Graceful deal with failure
     })
   }
