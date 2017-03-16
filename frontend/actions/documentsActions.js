@@ -1,10 +1,9 @@
 import * as Types from 'actions/actionTypes'
 
-export function setDocumentList(documents, currentCollection) {
+export function setDocumentList(documents) {
   return {
     type: Types.SET_DOCUMENT_LIST,
-    documents,
-    currentCollection
+    documents
   }
 }
 

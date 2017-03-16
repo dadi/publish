@@ -10,6 +10,7 @@ import styles from './DocumentEdit.css'
 import {connectHelper, setPageTitle, slugify} from 'lib/util'
 import * as Constants from 'lib/constants'
 import APIBridge from 'lib/api-bridge-client'
+import {getCurrentApi, getCurrentCollection} from 'lib/app-config'
 
 import ActionBar from 'components/ActionBar/ActionBar'
 import Button from 'components/Button/Button'
@@ -40,7 +41,7 @@ class DocumentEdit extends Component {
       state
     } = this.props
 
-    const currentCollection = state.api.currentCollection
+    const currentCollection = getCurrentCollection(state.api.apis, group, collection)
     const document = state.document
 
     if (document.remoteStatus === Constants.STATUS_LOADING || !currentCollection || !document.local) {
@@ -146,7 +147,7 @@ class DocumentEdit extends Component {
       documentId
     } = this.props
 
-    const currentCollection = state.api.currentCollection
+    const currentCollection = getCurrentCollection(state.api.apis, group, collection)
 
     if (currentCollection) {
       const fields = this.groupFields(currentCollection.fields)
@@ -158,7 +159,7 @@ class DocumentEdit extends Component {
 
         if (!sectionMatch) {
           const firstSection = fields.sections[0]
-          route(buildUrl(group, collection, 'document/edit', documentId, firstSection.slug))
+          route(buildUrl(group, currentCollection.name, 'document/edit', documentId, firstSection.slug))
 
           return false
         }
@@ -171,9 +172,16 @@ class DocumentEdit extends Component {
     const document = state.document
     const documentIdHasChanged = documentId !== previousProps.documentId
 
-    // If we haven't already started fetching a document and there isn't a document already in
-    // the store or we need to get a new one because the id has changed, let's get a document
-    if ((document.remoteStatus !== Constants.STATUS_LOADING) && (!document.remote || documentIdHasChanged)) {
+    // We fetch a new document if:
+    //
+    // - We're not already in the process of fetching one AND
+    // - There is no document in the store OR the document id has changed AND
+    // - All APIs have collections
+    const notLoading = document.remoteStatus !== Constants.STATUS_LOADING
+    const needsFetch = !document.remote || documentIdHasChanged
+    const allApisHaveCollections = state.api.apis.filter(api => !api.collections).length === 0
+
+    if (notLoading && needsFetch && allApisHaveCollections) {
       this.getDocument(documentId)
     }
   }
@@ -211,20 +219,22 @@ class DocumentEdit extends Component {
 
   // Fetches a document from the remote API
   getDocument(documentId) {
-    const {actions, collection, state} = this.props
+    const {actions, collection, group, state} = this.props
+    const currentApi = getCurrentApi(state.api.apis, group, collection)
+    const currentCollection = getCurrentCollection(state.api.apis, group, collection)
 
     actions.setRemoteDocumentStatus(Constants.STATUS_LOADING)
-    
-    return APIBridge(state.api.apis[0])
-      .in(collection)
+
+    return APIBridge(currentApi)
+      .in(currentCollection.name)
       .whereFieldIsEqualTo('_id', documentId)
       .find()
       .then(response => {
         if (!response.results.length) return
-          
+
         const document = response.results[0]
 
-        actions.setRemoteDocument(document, collection)
+        actions.setRemoteDocument(document)
 
         // This is something to revisit. We don't have the concept of a primary field,
         // which we would use for, among other things, set the title of the page when
