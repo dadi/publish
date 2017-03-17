@@ -25,11 +25,7 @@ class DocumentList extends Component {
     /**
      * The global actions object.
      */
-<<<<<<< HEAD
     actions: proptypes.object,
-=======
-    action: proptypes.object,
->>>>>>> refactor: make document list view use containers
 
     /**
      * The name of the collection currently being listed.
