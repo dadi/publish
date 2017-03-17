@@ -12,8 +12,8 @@ import Header from 'components/Header/Header'
 import LoadingBar from 'components/LoadingBar/LoadingBar'
 import Main from 'components/Main/Main'
 
-import DocumentEdit from 'views/DocumentEdit/DocumentEdit'
-import DocumentList from 'views/DocumentList/DocumentList'
+import DocumentEditView from 'views/DocumentEditView/DocumentEditView'
+import DocumentListView from 'views/DocumentListView/DocumentListView'
 import Error from 'views/Error/Error'
 import Home from 'views/Home/Home'
 import MediaLibrary from 'views/MediaLibrary/MediaLibrary'
@@ -105,10 +105,10 @@ class App extends Component {
           <Router history={history}>
             <Home path="/" authenticate />
             <PasswordReset path="/reset" authenticate/>
-            {hasRoutes && ( <DocumentEdit path="/:group/:collection/document/:method/:documentId?/:section?" authenticate /> )}
-            <DocumentEdit path="/:collection/document/:method/:documentId?/:section?" authenticate />
-            <DocumentList path="/:collection/documents/:page?" authenticate />
-            {hasRoutes && ( <DocumentList path="/:group/:collection/documents/:page?" authenticate /> )}
+            {hasRoutes && ( <DocumentEditView path="/:group/:collection/document/:method/:documentId?/:section?" authenticate /> )}
+            <DocumentEditView path="/:collection/document/:method/:documentId?/:section?" authenticate />
+            <DocumentListView path="/:collection/documents/:page?" authenticate />
+            {hasRoutes && ( <DocumentListView path="/:group/:collection/documents/:page?" authenticate /> )}
             <MediaLibrary path="/:collection/media/:document?" authenticate/>
             {hasRoutes && ( <MediaLibrary path="/:group/:collection/media/:document?" authenticate/> )}
             <UserProfile path="/profile" authenticate />

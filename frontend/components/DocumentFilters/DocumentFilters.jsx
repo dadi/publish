@@ -46,7 +46,7 @@ export default class DocumentFilters extends Component {
     const {collection} = this.props
 
     return (
-      <form class={styles.filters}>
+      <form class={styles.filters} onSubmit={e => e.preventDefault()}>
         {filters && collection && filters.map((filter, index) => (
           <DocumentFilter
             index={index}
