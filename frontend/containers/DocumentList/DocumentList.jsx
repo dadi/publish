@@ -25,7 +25,11 @@ class DocumentList extends Component {
     /**
      * The global actions object.
      */
+<<<<<<< HEAD
     actions: proptypes.object,
+=======
+    action: proptypes.object,
+>>>>>>> refactor: make document list view use containers
 
     /**
      * The name of the collection currently being listed.
@@ -73,8 +77,15 @@ class DocumentList extends Component {
   }
 
   componentDidUpdate(previousProps) {
+    const previousState = previousProps.state
+    const previousStatePath = previousState.router.locationBeforeTransitions.pathname
+    const previousStateSearch = previousState.router.locationBeforeTransitions.search
+
     const {actions, state} = this.props
     const {list, status} = state.documents
+
+    const newStatePath = state.router.locationBeforeTransitions.pathname
+    const newStateSearch = state.router.locationBeforeTransitions.search
 
     // State check: reject when missing config, session, or apis
     if (!state.app.config || !state.api.apis.length || !state.user) return
@@ -85,7 +96,9 @@ class DocumentList extends Component {
     if (apisWithoutCollections) return
 
     // State check: reject when path matches and document list loaded
-    if (list && (typeof state.router.locationBeforeTransitions.key === 'undefined' || history.state.key === state.router.locationBeforeTransitions.key)) return
+    const pathKey = state.router.locationBeforeTransitions.key
+
+    if (list && (typeof pathKey === 'undefined' || history.state.key === pathKey)) return
 
     // State check: reject when documents are still loading
     if (status === Constants.STATUS_LOADING) return
