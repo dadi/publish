@@ -106,7 +106,7 @@ class DocumentEdit extends Component {
                 {mainBodyFields.map(field => this.renderField(field))}
               </div>
 
-              {sideBarFields.length &&
+              {(sideBarFields.length > 0) &&
                 <div class={styles.sidebar}>
                   {sideBarFields.map(field => this.renderField(field))}
                 </div>
