@@ -26,7 +26,6 @@ Holds state about APIs and collections.
 | Property            | Type   | Description                                                                            | Initial state |
 |---------------------|--------|----------------------------------------------------------------------------------------|---------------|
 | `apis`              | Array  | List of all available APIs, including the schema for all their collections.            | `[]`          |
-| `currentCollection` | Object | Collection schema for the currently active collection (as determined by the URL route) | `null`        |
 
 ## 3. Document
 
