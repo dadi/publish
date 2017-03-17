@@ -85,7 +85,7 @@ class DocumentList extends Component {
     if (apisWithoutCollections) return
 
     // State check: reject when path matches and document list loaded
-    if (list && history.state.key === this.props.state.router.locationBeforeTransitions.key) return
+    if (list && (typeof state.router.locationBeforeTransitions.key === 'undefined' || history.state.key === state.router.locationBeforeTransitions.key)) return
 
     // State check: reject when documents are still loading
     if (status === Constants.STATUS_LOADING) return

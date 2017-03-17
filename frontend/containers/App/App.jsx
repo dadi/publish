@@ -204,7 +204,7 @@ class App extends Component {
     const socket = new Socket(config.server.port)
       .on('userListChange', data => {
         // Table of connected users
-        console.table(data.body.users)
+        // console.table(data.body.users)
       })
       .setUser(Object.assign({}, state.user, {
         vendor: navigator.vendor,
