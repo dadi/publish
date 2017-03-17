@@ -108,7 +108,6 @@ export default class Paginator extends Component {
     let items = []
 
     for (let i = Math.max(1, (currentPage - previousPages)); i <= (currentPage + nextPages); i++) {
-      console.log(i)
       items.push(this.renderPageNumber(i))
     }
 
@@ -119,7 +118,7 @@ export default class Paginator extends Component {
     // If there's less than two pages to show, there's really no point in showing
     // the page numbers.
     if (items.length < 2) return null
-      console.log("BUILD")
+      
     return (
       <div>
         {items}
