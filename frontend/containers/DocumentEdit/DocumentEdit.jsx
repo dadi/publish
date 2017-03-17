@@ -1,15 +1,19 @@
+'use strict'
+
 import {h, Component} from 'preact'
+import proptypes from 'proptypes'
 import {connect} from 'preact-redux'
-import {route} from 'preact-router'
 import {bindActionCreators} from 'redux'
 
-import {buildUrl} from 'lib/router'
 import Style from 'lib/Style'
 import styles from './DocumentEdit.css'
 
-import {connectHelper, setPageTitle, slugify} from 'lib/util'
 import * as Constants from 'lib/constants'
+import * as documentActions from 'actions/documentActions'
+
 import APIBridge from 'lib/api-bridge-client'
+import {buildUrl, createRoute} from 'lib/router'
+import {connectHelper, setPageTitle, slugify} from 'lib/util'
 import {getCurrentApi, getCurrentCollection} from 'lib/app-config'
 
 import Button from 'components/Button/Button'
@@ -17,19 +21,105 @@ import ButtonWithOptions from 'components/ButtonWithOptions/ButtonWithOptions'
 import FieldBoolean from 'components/FieldBoolean/FieldBoolean'
 import FieldImage from 'components/FieldImage/FieldImage'
 import FieldString from 'components/FieldString/FieldString'
-import Main from 'components/Main/Main'
-import Nav from 'components/Nav/Nav'
 import SubNavItem from 'components/SubNavItem/SubNavItem'
 import Toolbar from 'components/Toolbar/Toolbar'
 
-import * as apiActions from 'actions/apiActions'
-import * as documentActions from 'actions/documentActions'
-
+/**
+ * The interface for editing a document.
+ */
 class DocumentEdit extends Component {
+  static propTypes = {
+    /**
+     * The global actions object.
+     */
+    actions: proptypes.object,
+
+    /**
+     * The name of the collection currently being listed.
+     */
+    collection: proptypes.string,
+
+    /**
+     * The ID of the document being edited.
+     */
+    documentId: proptypes.string,
+
+    /**
+     * The name of the group where the current collection belongs (if any).
+     */
+    group: proptypes.string,
+
+    /**
+     * The current active section (if any).
+     */
+    section: proptypes.string,
+
+    /**
+     * The global state object.
+     */
+    state: proptypes.object
+  }
+
   constructor(props) {
     super(props)
 
     this.state.hasTriedSubmitting = false
+  }
+
+  shouldComponentUpdate(nextProps, nextState) {
+    const {
+      actions,
+      collection,
+      documentId,
+      group,
+      section,
+      state
+    } = this.props
+
+    const currentCollection = getCurrentCollection(state.api.apis, group, collection)
+
+    if (currentCollection) {
+      const fields = this.groupFields(currentCollection.fields)
+
+      if (section) {
+        const sectionMatch = fields.sections.find(fieldSection => {
+          return fieldSection.slug === section
+        })
+
+        if (!sectionMatch) {
+          const firstSection = fields.sections[0]
+
+          route(buildUrl(group, currentCollection.name, 'document/edit', documentId, firstSection.slug))
+
+          return false
+        }
+      }
+    }
+  }
+
+  componentDidUpdate(previousProps) {
+    const {documentId, state} = this.props
+    const document = state.document
+    const documentIdHasChanged = documentId !== previousProps.documentId
+
+    // We fetch a new document if:
+    //
+    // - We're not already in the process of fetching one AND
+    // - There is no document in the store OR the document id has changed AND
+    // - All APIs have collections
+    const notLoading = document.remoteStatus !== Constants.STATUS_LOADING
+    const needsFetch = !document.remote || documentIdHasChanged
+    const allApisHaveCollections = state.api.apis.filter(api => !api.collections).length === 0
+
+    if (notLoading && needsFetch && allApisHaveCollections) {
+      this.fetchDocument(documentId)
+    }
+  }
+
+  componentWillUnmount() {
+    const {actions} = this.props
+
+    actions.clearRemoteDocument()
   }
 
   render() {
@@ -37,7 +127,6 @@ class DocumentEdit extends Component {
       collection,
       documentId,
       group,
-      method,
       state
     } = this.props
 
@@ -141,87 +230,8 @@ class DocumentEdit extends Component {
     )
   }
 
-  shouldComponentUpdate(nextProps, nextState) {
-    const {
-      section,
-      state,
-      group,
-      collection,
-      documentId
-    } = this.props
-
-    const currentCollection = getCurrentCollection(state.api.apis, group, collection)
-
-    if (currentCollection) {
-      const fields = this.groupFields(currentCollection.fields)
-
-      if (section) {
-        const sectionMatch = fields.sections.find(fieldSection => {
-          return fieldSection.slug === section
-        })
-
-        if (!sectionMatch) {
-          const firstSection = fields.sections[0]
-          route(buildUrl(group, currentCollection.name, 'document/edit', documentId, firstSection.slug))
-
-          return false
-        }
-      }
-    }
-  }
-
-  componentDidUpdate(previousProps) {
-    const {documentId, state} = this.props
-    const document = state.document
-    const documentIdHasChanged = documentId !== previousProps.documentId
-
-    // We fetch a new document if:
-    //
-    // - We're not already in the process of fetching one AND
-    // - There is no document in the store OR the document id has changed AND
-    // - All APIs have collections
-    const notLoading = document.remoteStatus !== Constants.STATUS_LOADING
-    const needsFetch = !document.remote || documentIdHasChanged
-    const allApisHaveCollections = state.api.apis.filter(api => !api.collections).length === 0
-
-    if (notLoading && needsFetch && allApisHaveCollections) {
-      this.getDocument(documentId)
-    }
-  }
-
-  componentWillUnmount() {
-    const {actions} = this.props
-
-    actions.clearRemoteDocument()
-  }
-
-  // Handles the callback that fires whenever a field changes and the new value is ready
-  // to be sent to the store
-  handleFieldChange(fieldName, value) {
-    const {actions} = this.props
-
-    actions.updateLocalDocument({
-      [fieldName]: value
-    })
-  }
-
-  // Handles the callback that fires whenever there's a new validation error in a field or
-  // when a validation error has been cleared
-  handleFieldError(fieldName, hasError, value) {
-    const {actions} = this.props
-
-    actions.setFieldErrorStatus(fieldName, value, hasError)
-  }
-
-  // Handles the save operation
-  handleSave() {
-    this.setState({
-      hasTriedSubmitting: true
-    })
-  }
-
   // Fetches a document from the remote API
-  getDocument(documentId) {
+  fetchDocument(documentId) {
     const {actions, collection, group, state} = this.props
     const currentApi = getCurrentApi(state.api.apis, group, collection)
     const currentCollection = getCurrentCollection(state.api.apis, group, collection)
@@ -335,9 +345,34 @@ class DocumentEdit extends Component {
 
     return fieldElement ? <div class={styles.field}>{fieldElement}</div> : null
   }
+
+  // Handles the save operation
+  handleSave() {
+    this.setState({
+      hasTriedSubmitting: true
+    })
+  }
+
+  // Handles the callback that fires whenever a field changes and the new value is ready
+  // to be sent to the store
+  handleFieldChange(fieldName, value) {
+    const {actions} = this.props
+
+    actions.updateLocalDocument({
+      [fieldName]: value
+    })
+  }
+
+  // Handles the callback that fires whenever there's a new validation error in a field or
+  // when a validation error has been cleared
+  handleFieldError(fieldName, hasError, value) {
+    const {actions} = this.props
+
+    actions.setFieldErrorStatus(fieldName, value, hasError)
+  }
 }
 
 export default connectHelper(
   state => state,
-  dispatch => bindActionCreators({...documentActions, ...apiActions}, dispatch)
+  dispatch => bindActionCreators({...documentActions}, dispatch)
 )(DocumentEdit)

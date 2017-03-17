@@ -25,7 +25,7 @@ class DocumentList extends Component {
     /**
      * The global actions object.
      */
-    action: proptypes.object,
+    actions: proptypes.object,
 
     /**
      * The name of the collection currently being listed.
