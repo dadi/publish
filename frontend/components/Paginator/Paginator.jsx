@@ -3,6 +3,7 @@
 import {h, Component} from 'preact'
 import proptypes from 'proptypes'
 
+import {createRoute} from 'lib/router'
 import Style from 'lib/Style'
 import styles from './Paginator.css'
 
@@ -62,7 +63,10 @@ export default class Paginator extends Component {
 
     return (
       <Button
-        href={href}
+        href={createRoute({
+          path: href,
+          update: true
+        })}
         className={styles.page}
       >{pageNumber}</Button>
     )    
@@ -122,14 +126,20 @@ export default class Paginator extends Component {
         {nextLast && (currentPage < totalPages) &&
           <Button
             className={nextLastStyle.getClasses()}
-            href={nextUrl}
+            href={createRoute({
+              path: nextUrl,
+              update: true
+            })}
           >Next</Button>
         }
 
         {nextLast && (currentPage < (totalPages - 1)) &&
           <Button
             className={nextLastStyle.getClasses()}
-            href={lastUrl}
+            href={createRoute({
+              path: lastUrl,
+              update: true
+            })}
           >Last</Button>
         }
       </div>
