@@ -143,6 +143,8 @@ export default class FieldString extends Component {
   selectDropdownOptions(input) {
     const {value} = this.props
 
+    if (!input || !input.options) return
+
     for (let i = 0; i < input.options.length; i++) {
       if (value.includes(input.options[i].value)) {
         input.options[i].selected = true
