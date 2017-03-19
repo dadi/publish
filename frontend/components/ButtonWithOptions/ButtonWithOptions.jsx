@@ -66,7 +66,7 @@ export default class ButtonWithOptions extends Component {
   constructor(props) {
     super(props)
 
-    this.optionsExpanded = false
+    this.state.optionsExpanded = false
   }
 
   componentDidMount() {
@@ -123,7 +123,7 @@ export default class ButtonWithOptions extends Component {
             <Dropdown tooltip="right">
               {Object.keys(options).map(option => {
                 return (
-                  <DropdownItem>{option}</DropdownItem>
+                  <DropdownItem onClick={options[option]}>{option}</DropdownItem>
                 )
               })}
             </Dropdown>

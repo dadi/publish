@@ -17,19 +17,29 @@ export default class Checkbox extends Component {
     id: proptypes.string,
 
     /**
+     * A callback function to be fired whenever the value changes.
+     */
+    onChange: proptypes.func,
+
+    /**
      * The value of the checkbox, determining whether it's checked or not.
      */
     value: proptypes.bool
   }
 
   render() {
-    const {id, value} = this.props
+    const {
+      id,
+      onChange,
+      value
+    } = this.props
 
     return (
       <input
         checked={value}
         class={styles.checkbox}
         id={id}
+        onChange={onChange}
         type="checkbox"
       />
     )
