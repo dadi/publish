@@ -14,6 +14,8 @@ import {connectHelper} from 'lib/util'
 import {getCurrentApi, getCurrentCollection} from 'lib/app-config'
 
 import DocumentListToolbar from 'components/DocumentListToolbar/DocumentListToolbar'
+import FieldBooleanListView from 'components/FieldBoolean/FieldBooleanListView'
+import FieldStringListView from 'components/FieldString/FieldStringListView'
 import SyncTable from 'components/SyncTable/SyncTable'
 import SyncTableRow from 'components/SyncTable/SyncTableRow'
 
@@ -41,6 +43,12 @@ class DocumentList extends Component {
      * The name of the group where the current collection belongs (if any).
      */
     group: proptypes.string,
+
+    /**
+     * A callback to be fired if the container wants to attempt changing the
+     * page title.
+     */
+    onPageTitle: proptypes.func,
 
     /**
      * Whether to show the document list toolbar.
@@ -104,6 +112,7 @@ class DocumentList extends Component {
     const {
       collection,
       group,
+      onPageTitle,
       order,
       showToolbar,
       sort,
@@ -123,6 +132,11 @@ class DocumentList extends Component {
         label: currentCollection.fields[field].label
       }
     })
+
+    // Setting page title
+    if (typeof onPageTitle === 'function') {
+      onPageTitle.call(this, currentCollection.settings.description || currentCollection.name)
+    }
 
     return (
       <div>
@@ -145,13 +159,16 @@ class DocumentList extends Component {
               <SyncTableRow
                 data={document}
                 renderCallback={(value, data, column, index) => {
+                  const fieldSchema = currentCollection.fields[column.id]
+                  const renderedValue = this.renderField(column.id, fieldSchema, value)
+
                   if (index === 0) {
                     return (
-                      <a href={buildUrl(group, collection, 'document/edit', data._id)}>{value}</a>
+                      <a href={buildUrl(group, collection, 'document/edit', data._id)}>{renderedValue}</a>
                     )
                   }
 
-                  return value
+                  return renderedValue
                 }}
               />
             )
@@ -173,6 +190,28 @@ class DocumentList extends Component {
     const {actions} = this.props
 
     actions.clearDocumentList()
+  }
+
+  renderField(fieldName, schema, value) {
+    switch (schema.type) {
+      case 'Boolean':
+        return (
+          <FieldBooleanListView
+            schema={schema}
+            value={value}
+          />
+        )
+
+      case 'String':
+        return (
+          <FieldStringListView
+            schema={schema}
+            value={value}
+          />
+        )
+    }
+
+    return value
   }
 
   fetchDocuments() {

@@ -72,7 +72,10 @@ class DocumentListController extends Component {
             accent="data"
             onClick={onFiltersToggle}
           >Filters</Button>
-          <Button accent="save">Create new</Button>
+          <Button
+            accent="save"
+            href={buildUrl(group, collection, 'document', 'new')}
+          >Create new</Button>
         </ListController>
 
         <div style={!filtersVisible && "display: none;"}>
