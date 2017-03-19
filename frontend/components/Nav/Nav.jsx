@@ -33,18 +33,22 @@ export default class Nav extends Component {
   }
 
   render() {
-    const {currentRoute, items, mobile} = this.props
+    const {
+      currentRoute,
+      items,
+      mobile
+    } = this.props
 
     return (
       <nav class={styles.nav}>
         <ul>
           {items.map(item => {
-            let itemActive = item.href === currentRoute
+            let itemActive = currentRoute.indexOf(item.id) === 1
             let subItems = null
 
             if (item.subItems) {
               let children = item.subItems.map(subItem => {
-                let subItemActive = subItem.href === currentRoute
+                let subItemActive = currentRoute.indexOf(subItem.id) === 1
 
                 if (mobile) {
                   return (
