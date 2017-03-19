@@ -9,6 +9,8 @@ import {route} from 'preact-router'
 import Style from 'lib/Style'
 import styles from './DocumentListToolbar.css'
 
+import Button from 'components/Button/Button'
+import Checkbox from 'components/Checkbox/Checkbox'
 import Paginator from 'components/Paginator/Paginator'
 import Toolbar from 'components/Toolbar/Toolbar'
 import ToolbarTextInput from 'components/Toolbar/ToolbarTextInput'
@@ -32,19 +34,34 @@ export default class DocumentListToolbar extends Component {
      * The object containing metadata about the current query, as defined
      * in DADI API.
      */
-    metadata: proptypes.object
+    metadata: proptypes.object,
+
+    /**
+     * A callback to be fired when the "Apply" button on the bulk actions
+     * control is clicked.
+     */
+    onBulkAction: proptypes.func
+  }
+
+  constructor(props) {
+    super(props)
+
+    this.BULK_ACTIONS_PLACEHOLDER = 'BULK_ACTIONS_PLACEHOLDER'
+    this.state.bulkActionSelected = this.BULK_ACTIONS_PLACEHOLDER
   }
 
   render() {
     const {
       collection,
       group,
-      metadata
+      metadata,
+      onBulkAction
     } = this.props
+    const {bulkActionSelected} = this.state
 
     return (
       <Toolbar>
-        <div>
+        <div class={styles.section}>
           <ToolbarTextInput
             onChange={this.handleGoToPage.bind(this)}
             size="small"
@@ -57,7 +74,7 @@ export default class DocumentListToolbar extends Component {
           </span>
         </div>
 
-        <div>
+        <div class={styles.section}>
           <Paginator
             currentPage={metadata.page}
             linkCallback={page => buildUrl(group, collection, 'documents', page)}
@@ -66,7 +83,25 @@ export default class DocumentListToolbar extends Component {
           />
         </div>
 
-        <div></div>
+        <div class={styles.section}>
+          <select
+            class={styles.actions}
+            onChange={this.handleBulkActionSelect.bind(this)}
+            value={bulkActionSelected}
+          >
+            <option disabled value={this.BULK_ACTIONS_PLACEHOLDER}>With selected...</option>
+            <option value="delete">Delete</option>
+          </select>
+
+          <Button
+            accent="data"
+            className={styles['actions-button']}
+            disabled={bulkActionSelected === this.BULK_ACTIONS_PLACEHOLDER}
+            onClick={this.handleBulkActionApply.bind(this)}
+            size="small"
+          >Apply</Button>
+
+        </div>
       </Toolbar>
     )
   }
@@ -84,5 +119,20 @@ export default class DocumentListToolbar extends Component {
     if (parsedValue > metadata.totalPages) return
 
     route(buildUrl(group, collection, 'documents', parsedValue))
+  }
+
+  handleBulkActionSelect(event) {
+    this.setState({
+      bulkActionSelected: event.target.value
+    })
+  }
+
+  handleBulkActionApply(event) {
+    const {onBulkAction} = this.props
+    const {bulkActionSelected} = this.state
+
+    if ((typeof onBulkAction === 'function') && bulkActionSelected && (bulkActionSelected !== this.BULK_ACTIONS_PLACEHOLDER)) {
+      onBulkAction.call(this, bulkActionSelected)
+    }
   }
 }
