@@ -16,7 +16,15 @@ const apiBridgeFetch = function (requestObject) {
     credentials: 'same-origin',
     body: JSON.stringify(requestObject)
   }).then(response => {
-    return response.json()
+    if (response.status === 200) {
+      return response.json()
+    }
+
+    return response.json().then(response => {
+      const error = response.error || ''
+
+      return Promise.reject(JSON.parse(error))
+    })
   })
 }
 
@@ -43,24 +51,30 @@ const buildAPIBridgeClient = function (api, inBundle) {
     database
   })
 
+  APIBridgeClient.prototype._create = APIBridgeClient.prototype.create
   APIBridgeClient.prototype._find = APIBridgeClient.prototype.find
   APIBridgeClient.prototype._getCollections = APIBridgeClient.prototype.getCollections
-  APIBridgeClient.prototype._getStatus = APIBridgeClient.prototype.getStatus
   APIBridgeClient.prototype._getConfig = APIBridgeClient.prototype.getConfig
+  APIBridgeClient.prototype._getStatus = APIBridgeClient.prototype.getStatus
+  APIBridgeClient.prototype._update = APIBridgeClient.prototype.update
+
+  APIBridgeClient.prototype.create = function (document) {
+    return this.serveQuery(this._create(document))
+  }
 
   APIBridgeClient.prototype.find = function () {
-    return this.serveQuery(this._find(arguments))
+    return this.serveQuery(this._find(Array.prototype.slice.call(arguments)))
   }
 
   APIBridgeClient.prototype.getCollections = function () {
-    return this.serveQuery(this._getCollections(arguments))
+    return this.serveQuery(this._getCollections())
   }
   APIBridgeClient.prototype.getStatus = function () {
-    return this.serveQuery(this._getStatus(arguments))
+    return this.serveQuery(this._getStatus())
   }
 
   APIBridgeClient.prototype.getConfig = function () {
-    return this.serveQuery(this._getConfig(arguments))
+    return this.serveQuery(this._getConfig())
   }
 
   APIBridgeClient.prototype.serveQuery = function (query) {
@@ -87,6 +101,10 @@ const buildAPIBridgeClient = function (api, inBundle) {
 
       return Promise.reject(err)
     })
+  }
+
+  APIBridgeClient.prototype.update = function (document) {
+    return this.serveQuery(this._update(document))
   }
 
   return new APIBridgeClient()
