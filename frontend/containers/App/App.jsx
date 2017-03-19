@@ -12,6 +12,7 @@ import Header from 'components/Header/Header'
 import LoadingBar from 'components/LoadingBar/LoadingBar'
 import Main from 'components/Main/Main'
 
+import DocumentCreateView from 'views/DocumentCreateView/DocumentCreateView'
 import DocumentEditView from 'views/DocumentEditView/DocumentEditView'
 import DocumentListView from 'views/DocumentListView/DocumentListView'
 import Error from 'views/Error/Error'
@@ -105,8 +106,10 @@ class App extends Component {
           <Router history={history}>
             <Home path="/" authenticate />
             <PasswordReset path="/reset" authenticate/>
-            {hasRoutes && ( <DocumentEditView path="/:group/:collection/document/:method/:documentId?/:section?" authenticate /> )}
-            <DocumentEditView path="/:collection/document/:method/:documentId?/:section?" authenticate />
+            {hasRoutes && ( <DocumentEditView path="/:group/:collection/document/edit/:documentId?/:section?" authenticate /> )}
+            <DocumentEditView path="/:collection/document/edit/:documentId?/:section?" authenticate />
+            {hasRoutes && ( <DocumentCreateView path="/:group/:collection/document/new/:section?" authenticate /> )}
+            <DocumentCreateView path="/:collection/document/new/:section?" authenticate />
             <DocumentListView path="/:collection/documents/:page?" authenticate />
             {hasRoutes && ( <DocumentListView path="/:group/:collection/documents/:page?" authenticate /> )}
             <MediaLibrary path="/:collection/media/:document?" authenticate/>
