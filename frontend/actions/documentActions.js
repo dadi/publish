@@ -1,5 +1,11 @@
 import * as Types from 'actions/actionTypes'
 
+export function startNewDocument() {
+  return {
+    type: Types.START_NEW_DOCUMENT
+  }
+}
+
 export function setRemoteDocument(document) {
   return {
     type: Types.SET_REMOTE_DOCUMENT,
@@ -26,6 +32,13 @@ export function setFieldErrorStatus(field, value, error) {
     field,
     value,
     error
+  }
+}
+
+export function setErrorsFromRemoteApi(errors) {
+  return {
+    type: Types.SET_ERRORS_FROM_REMOTE_API,
+    errors
   }
 }
 
