@@ -27,3 +27,11 @@ in DADI API.
 
 - type: `object`
 
+
+### `onBulkAction`
+
+A callback to be fired when the "Apply" button on the bulk actions
+control is clicked.
+
+- type: `func`
+

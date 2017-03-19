@@ -59,6 +59,14 @@ Callback to be executed when the button is clicked.
 - type: `func`
 
 
+### `size`
+
+The size variation of the button.
+
+- type: `enum('normal'|'small')`
+- default value: `'normal'`
+
+
 ### `type`
 
 Type/function of the button. When set to `mock`, a static element will be
