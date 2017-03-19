@@ -61,7 +61,7 @@ APIBridgeController.prototype.post = function (req, res, next) {
           uri: requestObject.uri.href,
           method: requestObject.method,
           headers: {
-            'content-type': 'application/json',
+            'content-type': 'application/json'
           }
         }
 
