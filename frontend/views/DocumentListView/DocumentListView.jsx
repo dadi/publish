@@ -49,6 +49,7 @@ export default class DocumentListView extends Component {
 
           <DocumentList
             collection={collection}
+            filter={filter}
             group={group}
             onPageTitle={this.handlePageTitle}
             order={order}
