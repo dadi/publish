@@ -176,7 +176,7 @@ class DocumentEdit extends Component {
     // If we're editing an existing document, we also allow users to duplicate
     // the document.
     if (method === 'edit') {
-      saveOptions['Save and duplicate'] = this.handleSave.bind(this, 'saveAndDuplicate')
+      saveOptions['Save as duplicate'] = this.handleSave.bind(this, 'saveAsDuplicate')
     }
 
     return (
@@ -494,8 +494,8 @@ class DocumentEdit extends Component {
           alert(`The document has been ${documentId ? 'updated' : 'created'} successfully.`)
         })
 
-      // Save and duplicate
-      case 'saveAndDuplicate':
+      // Save as duplicate
+      case 'saveAsDuplicate':
         return this.saveDocument().then(newDocumentId => {
           route(buildUrl(group, collection, 'document', 'edit', newDocumentId, section))
 

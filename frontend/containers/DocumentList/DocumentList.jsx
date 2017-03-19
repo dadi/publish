@@ -10,7 +10,7 @@ import * as documentsActions from 'actions/documentsActions'
 
 import APIBridge from 'lib/api-bridge-client'
 import {buildUrl, createRoute} from 'lib/router'
-import {connectHelper} from 'lib/util'
+import {connectHelper, isValidJSON} from 'lib/util'
 import {getCurrentApi, getCurrentCollection} from 'lib/app-config'
 
 import DocumentListToolbar from 'components/DocumentListToolbar/DocumentListToolbar'
@@ -182,6 +182,7 @@ class DocumentList extends Component {
             collection={collection}
             group={group}
             metadata={documents.list.metadata}
+            onBulkAction={this.handleBulkAction.bind(this)}
           />
         }
       </div>
@@ -257,6 +258,10 @@ class DocumentList extends Component {
       //actions.clearDocumentList()
       // {!} TODO: Graceful deal with failure
     })
+  }
+
+  handleBulkAction(action) {
+    console.log('(*) Action:', action)
   }
 }
 
