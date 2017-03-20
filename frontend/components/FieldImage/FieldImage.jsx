@@ -17,7 +17,7 @@ export default class FieldImage extends Component {
   }
 
   render() {
-    const { config } = this.props
+    const {config} = this.props
 
     return (
       <Label label="Image">

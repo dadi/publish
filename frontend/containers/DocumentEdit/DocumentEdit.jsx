@@ -385,7 +385,7 @@ class DocumentEdit extends Component {
 
   // Renders a field, deciding which component to use based on the field type
   renderField(field) {
-    const {document} = this.props.state
+    const {document, app} = this.props.state
     const hasError = document.validationErrors[field._id]
     const {hasTriedSubmitting} = this.state
 
@@ -396,9 +396,16 @@ class DocumentEdit extends Component {
     // easily revisit.
     const error = typeof hasError === 'string' ? 'This field ' + hasError : hasError
 
+    if (field.publish) {
+      // console.log(field.publish)
+    }
+    const fieldType = field.publish && field.publish.subType ? field.publish.subType : field.type
+
+    // console.log(fieldType)
+
     let fieldElement = null
 
-    switch (field.type) {
+    switch (fieldType) {
       case 'Boolean':
         fieldElement = (
           <FieldBoolean
@@ -426,6 +433,19 @@ class DocumentEdit extends Component {
         )
 
         break
+
+        case 'Image':
+          fieldElement = (
+            <FieldImage
+              error={error}
+              config={app.config}
+              onError={this.handleFieldError.bind(this)}
+              value={document.local[field._id]}
+              schema={field}
+            />
+          )
+
+          break
     }
 
     return fieldElement ? <div class={styles.field}>{fieldElement}</div> : null
@@ -508,5 +528,5 @@ class DocumentEdit extends Component {
 
 export default connectHelper(
   state => state,
-  dispatch => bindActionCreators({...documentActions}, dispatch)
+  dispatch => bindActionCreators(documentActions, dispatch)
 )(DocumentEdit)
