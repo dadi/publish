@@ -94,7 +94,7 @@ class App extends Component {
     // -- eb, 01/02/2017
 
     return (
-      <div style={styles.container}>
+      <div class={styles.container}>
         <LoadingBar loading={isFetchingData} />
 
         {state.user.user &&
