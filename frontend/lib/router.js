@@ -32,7 +32,7 @@ export function createRoute ({path=window.location.pathname, params=null, update
 }
 
 export function buildUrl (...parts) {
-  return '/' + parts.filter(part => {
+  return (/^(http|https)/.test(parts[0]) ? '' : '/') + parts.filter(part => {
     return (typeof part === 'string' || typeof part === 'number') && part !== ''
   }).join('/')
 }

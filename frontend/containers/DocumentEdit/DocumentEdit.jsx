@@ -438,7 +438,7 @@ class DocumentEdit extends Component {
           fieldElement = (
             <FieldImage
               error={error}
-              config={app.config}
+              config={app.config.FieldImage}
               onError={this.handleFieldError.bind(this)}
               value={document.local[field._id]}
               schema={field}

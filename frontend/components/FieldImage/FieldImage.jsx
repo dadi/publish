@@ -3,6 +3,8 @@
 import {h, Component} from 'preact'
 import 'fetch'
 
+import {buildUrl} from 'lib/router'
+
 import Label from 'components/Label/Label'
 
 export default class FieldImage extends Component { 
@@ -10,33 +12,42 @@ export default class FieldImage extends Component {
   constructor(props) {
     super(props)
 
-    this.state.fileName = ''
-    this.state.signedUrl = ''
-    this.state.file = null
-    this.state.error = ''
+    this.state = {
+      imageUrl: null,
+      fileName: null,
+      signedUrl: null,
+      file: null,
+      error: null
+    }
   }
 
   render() {
     const {config} = this.props
+    const {imageUrl, error} = this.state
+    console.log(config)
 
     return (
       <Label label="Image">
-        <p>{this.state.signedUrl}</p>
-        {config && config.FieldImage && (
+        {imageUrl && (
+          <img src={imageUrl} />
+        )}
+        {config && (
           <input 
             type="file" 
-            accept={ config.FieldImage.accept } 
+            accept={config.accept} 
             onChange={this.handleFileChange.bind(this)}
           />
         )}
-        <pre>{this.state.error}</pre>
+        <pre>{error}</pre>
       </Label>
     )
   }
 
   uploadToS3() {
+    const {config} = this.props
 
     let body = new FormData()
+
     body.append('file', this.state.file)
 
     let options = {
@@ -51,7 +62,9 @@ export default class FieldImage extends Component {
 
     fetch(this.state.signedUrl, options).then(res => {
       res.text().then(resp => {
-        console.log(resp)
+        this.setState({
+          imageUrl: buildUrl(`${config.cdn.host}:${config.cdn.port || 80}`, config.cdn.path, this.state.fileName)
+        })
       })
     }).catch(err => {
       console.log("ERR", err)
@@ -61,14 +74,14 @@ export default class FieldImage extends Component {
   handleFileChange(event) {
     event.preventDefault()
 
-    const { config } = this.props
+    const {config} = this.props
 
     this.setState({
       fileName: event.target.files[0].name,
       file: event.target.files[0]
     })
 
-    if (config.FieldImage.s3.enabled) {
+    if (config.s3.enabled) {
       fetch('/fields/image/s3/sign', {
         credentials: 'same-origin',
         method: 'POST',

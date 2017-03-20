@@ -10,6 +10,30 @@ module.exports = {
       type: Array,
       default: ["image/*"]
     },
+    cdn: {
+      doc: "DADI CDN",
+      availableInFrontend: true,
+      enabled: {
+        availableInFrontend: true,
+        type: Boolean,
+        default: false
+      },
+      host: {
+        availableInFrontend: true,
+        format: 'url',
+        default: '0.0.0.0'
+      },
+      path: {
+        availableInFrontend: true,
+        format: String,
+        default: ''
+      },
+      port: {
+        availableInFrontend: true,
+        format: 'port',
+        default: 3000
+      }
+    },
     s3: {
       doc: "Store Image in S3",
       availableInFrontend: true,
