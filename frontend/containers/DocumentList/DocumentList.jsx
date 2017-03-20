@@ -17,7 +17,6 @@ import DocumentListToolbar from 'components/DocumentListToolbar/DocumentListTool
 import FieldBooleanListView from 'components/FieldBoolean/FieldBooleanListView'
 import FieldStringListView from 'components/FieldString/FieldStringListView'
 import SyncTable from 'components/SyncTable/SyncTable'
-import SyncTableRow from 'components/SyncTable/SyncTableRow'
 
 /**
  * A table view with a list of documents.
@@ -80,6 +79,12 @@ class DocumentList extends Component {
     showToolbar: true
   }
 
+  constructor(props) {
+    super(props)
+
+    this.state.selectedRows = {}
+  }
+
   componentDidUpdate(previousProps) {
     const previousState = previousProps.state
     const previousStatePath = previousState.router.locationBeforeTransitions.pathname
@@ -120,6 +125,7 @@ class DocumentList extends Component {
       sort,
       state
     } = this.props
+    const {selectedRows} = this.state
     const currentCollection = getCurrentCollection(state.api.apis, group, collection)
     const documents = state.documents
 
@@ -134,6 +140,7 @@ class DocumentList extends Component {
         label: currentCollection.fields[field].label
       }
     })
+    const selectedDocuments = this.getSelectedDocuments()
 
     // Setting page title
     if (typeof onPageTitle === 'function') {
@@ -144,10 +151,21 @@ class DocumentList extends Component {
       <div>
         <SyncTable
           columns={tableColumns}
-          sortable={true}
-          sortBy={sort}
-          sortOrder={order}
-          sort={(value, sortBy, sortOrder) => {
+          data={documents.list.results}
+          onRender={(value, data, column, index) => {
+            const fieldSchema = currentCollection.fields[column.id]
+            const renderedValue = this.renderField(column.id, fieldSchema, value)
+
+            if (index === 0) {
+              return (
+                <a href={buildUrl(group, collection, 'document/edit', data._id)}>{renderedValue}</a>
+              )
+            }
+
+            return renderedValue
+          }}
+          onSelect={this.handleRowSelect.bind(this)}
+          onSort={(value, sortBy, sortOrder) => {
             return (
               <a href={createRoute({
                 params: {sort: sortBy, order: sortOrder},
@@ -155,27 +173,11 @@ class DocumentList extends Component {
               })}>{value}</a>
             )
           }}
-        >
-          {documents.list.results.map(document => {
-            return (
-              <SyncTableRow
-                data={document}
-                renderCallback={(value, data, column, index) => {
-                  const fieldSchema = currentCollection.fields[column.id]
-                  const renderedValue = this.renderField(column.id, fieldSchema, value)
-
-                  if (index === 0) {
-                    return (
-                      <a href={buildUrl(group, collection, 'document/edit', data._id)}>{renderedValue}</a>
-                    )
-                  }
-
-                  return renderedValue
-                }}
-              />
-            )
-          })}
-        </SyncTable>
+          selectedRows={selectedRows}
+          sortable={true}
+          sortBy={sort}
+          sortOrder={order}
+        />
         
         {showToolbar && 
           <DocumentListToolbar
@@ -183,6 +185,7 @@ class DocumentList extends Component {
             group={group}
             metadata={documents.list.metadata}
             onBulkAction={this.handleBulkAction.bind(this)}
+            selectedDocuments={selectedDocuments}
           />
         }
       </div>
@@ -260,8 +263,25 @@ class DocumentList extends Component {
     })
   }
 
+  getSelectedDocuments() {
+    const {state} = this.props
+    const {selectedRows} = this.state
+    const documents = state.documents.list.results
+    const selectedDocuments = Object.keys(selectedRows).filter(index => {
+      return Boolean(selectedRows[index])
+    }).map(index => documents[index]._id)
+
+    return selectedDocuments
+  }
+
   handleBulkAction(action) {
-    console.log('(*) Action:', action)
+    console.log('(*) Selected documents:', this.getSelectedDocuments())
+  }
+
+  handleRowSelect(selectedRows) {
+    this.setState({
+      selectedRows: selectedRows
+    })
   }
 }
 

@@ -46,7 +46,7 @@ export default class TableRow extends Component {
     const {onSelect, tableIndex} = this.props
 
     if (typeof onSelect === 'function') {
-      onSelect(tableIndex, event)
+      onSelect.call(this, tableIndex, event)
     }
   }
 

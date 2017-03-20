@@ -14,9 +14,20 @@ import styles from './Table.css'
 export default class Table extends Component {
   static propTypes = {
     /**
+     * The contents of the table.
+     */
+    children: proptypes.node,
+
+    /**
      * When `true`, any empty row cells will be filled with a text element saying *None*.
      */
     fillBlanks: proptypes.bool,
+
+    /**
+     * A callback function that is fired whenever rows are selected. The function
+     * will be called with an array of selected indices as the argument.
+     */
+    onSelect: proptypes.func,
 
     /**
      * Whether rows are selectable. When `true`, check boxes will automatically be added to the table head and to each row.
@@ -24,13 +35,14 @@ export default class Table extends Component {
     selectable: proptypes.bool,
 
     /**
-     * The contents of the table.
+     * A hash map of the indices of the currently selected rows.
      */
-    children: proptypes.node
+    selectedRows: proptypes.obj
   }
 
   static defaultProps = {
     fillBlanks: true,
+    selectedRows: {},
     selectable: true
   }
 
@@ -38,27 +50,27 @@ export default class Table extends Component {
     super(props)
 
     this.keyboard = new Keyboard()
-    this.state.selectedRows = {}
   }
 
   handleHeadSelect(event) {
+    const {children, onSelect} = this.props
     const selected = event.target.checked
 
     let newSelectedRows = {}
 
     if (selected) {
-      for (let i = 1; i < this.props.children.length; i++) {
+      for (let i = 0; i < children.length; i++) {
         newSelectedRows[i] = true
       }
     }
 
-    this.setState({
-      selectedRows: newSelectedRows
-    })
+    if (typeof onSelect === 'function') {
+      onSelect.call(this, newSelectedRows)
+    }
   }
 
   handleRowSelect(index, event) {
-    const {selectedRows} = this.state
+    const {onSelect, selectedRows} = this.props
     const selected = event.target.checked
     const isRangeSelection = event.shiftKey
     const selectedRowsIndices = Object.keys(selectedRows)
@@ -85,35 +97,48 @@ export default class Table extends Component {
       }
     }
 
-    this.setState({
-      selectedRows: newSelectedRows
-    })
+    if (typeof onSelect === 'function') {
+      onSelect.call(this, newSelectedRows)
+    }
   }
 
   groupChildren() {
-    const {fillBlanks, selectable} = this.props
-    const {selectedRows} = this.state
+    const {
+      children,
+      fillBlanks,
+      selectable,
+      selectedRows
+    } = this.props
     const selectedRowsIndices = Object.keys(selectedRows).filter(index => selectedRows[index])
 
     let head = []
     let body = []
-    
-    this.props.children.forEach((child, index) => {
+
+    // Right at the start, we check to see if the table has a head. This will
+    // influence the indices being passed down to the children, since we want
+    // the first row to always have the index 0.
+    const tableHasHead = this.props.children.find(child => {
+      return child.nodeName && child.nodeName.name === 'TableHead'
+    })
+
+    children.forEach((child, index) => {
       let childAttributes = Object.assign({}, child.attributes, {
         fillBlanks,
-        selectable,
-        tableIndex: index
+        selectable
       })
 
       if (child.nodeName && child.nodeName.name === 'TableHead') {
         childAttributes.onSelect = this.handleHeadSelect.bind(this)
-        childAttributes.allSelected = selectedRowsIndices.length === (this.props.children.length - 1)
+        childAttributes.allSelected = selectedRowsIndices.length === children.length
 
         child.attributes = childAttributes
 
         head.push(child)
       } else {
-        childAttributes.selected = selectedRows[index] === true
+        const rowIndex = tableHasHead ? index - 1 : index
+
+        childAttributes.tableIndex = rowIndex
+        childAttributes.selected = selectedRows[rowIndex] === true
         childAttributes.onSelect = this.handleRowSelect.bind(this)
 
         child.attributes = childAttributes
