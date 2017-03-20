@@ -8,7 +8,6 @@ import * as appActions from 'actions/appActions'
 
 import Nav from 'components/Nav/Nav'
 
-import {buildCollectionMap} from 'lib/app-config'
 import {buildUrl} from 'lib/router'
 import {connectHelper, slugify} from 'lib/util'
 
@@ -119,8 +118,7 @@ class CollectionNav extends Component {
     const apis = state.api.apis
     
     if (apis && apis.length) {
-      // Counting the number of APIs without collections
-      const apisWithoutCollections = apis.filter(api => !api.collections || !api.collections.length)
+      const apisWithoutCollections = apis.filter(api => !api.hasCollections)
       
       if (apisWithoutCollections.length === 0) {
         const collectionMap = this.buildCollectionMap(apis)

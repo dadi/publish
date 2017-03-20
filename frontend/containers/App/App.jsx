@@ -153,6 +153,8 @@ class App extends Component {
         bundler.run().then(collectionConfigs => {
           const mergedCollections = collectionConfigs.map((config, index) => {
             return Object.assign({}, config, collections[index])
+          }).filter(collection => {
+            return !(collection.settings.publish && collection.settings.publish.hidden)
           })
 
           const apiWithCollections = Object.assign({}, api, {
