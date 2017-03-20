@@ -79,7 +79,7 @@ class CollectionNav extends Component {
           const collectionSlug = collection + ((i > 0) ? `-${i + 1}` : '')
 
           subItems.push({
-            id: collectionSlug,
+            id: `${groupSlug}/${collectionSlug}`,
             label: displayName,
             href: buildUrl(groupSlug, collectionSlug, 'documents')
           })

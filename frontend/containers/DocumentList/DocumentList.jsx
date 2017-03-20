@@ -10,10 +10,12 @@ import * as documentsActions from 'actions/documentsActions'
 
 import APIBridge from 'lib/api-bridge-client'
 import {buildUrl, createRoute} from 'lib/router'
-import {connectHelper} from 'lib/util'
+import {connectHelper, isValidJSON} from 'lib/util'
 import {getCurrentApi, getCurrentCollection} from 'lib/app-config'
 
 import DocumentListToolbar from 'components/DocumentListToolbar/DocumentListToolbar'
+import FieldBooleanListView from 'components/FieldBoolean/FieldBooleanListView'
+import FieldStringListView from 'components/FieldString/FieldStringListView'
 import SyncTable from 'components/SyncTable/SyncTable'
 import SyncTableRow from 'components/SyncTable/SyncTableRow'
 
@@ -41,6 +43,12 @@ class DocumentList extends Component {
      * The name of the group where the current collection belongs (if any).
      */
     group: proptypes.string,
+
+    /**
+     * A callback to be fired if the container wants to attempt changing the
+     * page title.
+     */
+    onPageTitle: proptypes.func,
 
     /**
      * Whether to show the document list toolbar.
@@ -73,8 +81,15 @@ class DocumentList extends Component {
   }
 
   componentDidUpdate(previousProps) {
+    const previousState = previousProps.state
+    const previousStatePath = previousState.router.locationBeforeTransitions.pathname
+    const previousStateSearch = previousState.router.locationBeforeTransitions.search
+
     const {actions, state} = this.props
     const {list, status} = state.documents
+
+    const newStatePath = state.router.locationBeforeTransitions.pathname
+    const newStateSearch = state.router.locationBeforeTransitions.search
 
     // State check: reject when missing config, session, or apis
     if (!state.app.config || !state.api.apis.length || !state.user) return
@@ -85,7 +100,9 @@ class DocumentList extends Component {
     if (apisWithoutCollections) return
 
     // State check: reject when path matches and document list loaded
-    if (list && (typeof state.router.locationBeforeTransitions.key === 'undefined' || history.state.key === state.router.locationBeforeTransitions.key)) return
+    const pathKey = state.router.locationBeforeTransitions.key
+
+    if (list && (typeof pathKey === 'undefined' || history.state.key === pathKey)) return
 
     // State check: reject when documents are still loading
     if (status === Constants.STATUS_LOADING) return
@@ -97,6 +114,7 @@ class DocumentList extends Component {
     const {
       collection,
       group,
+      onPageTitle,
       order,
       showToolbar,
       sort,
@@ -116,6 +134,11 @@ class DocumentList extends Component {
         label: currentCollection.fields[field].label
       }
     })
+
+    // Setting page title
+    if (typeof onPageTitle === 'function') {
+      onPageTitle.call(this, currentCollection.settings.description || currentCollection.name)
+    }
 
     return (
       <div>
@@ -138,13 +161,16 @@ class DocumentList extends Component {
               <SyncTableRow
                 data={document}
                 renderCallback={(value, data, column, index) => {
+                  const fieldSchema = currentCollection.fields[column.id]
+                  const renderedValue = this.renderField(column.id, fieldSchema, value)
+
                   if (index === 0) {
                     return (
-                      <a href={buildUrl(group, collection, 'document/edit', data._id)}>{value}</a>
+                      <a href={buildUrl(group, collection, 'document/edit', data._id)}>{renderedValue}</a>
                     )
                   }
 
-                  return value
+                  return renderedValue
                 }}
               />
             )
@@ -156,6 +182,7 @@ class DocumentList extends Component {
             collection={collection}
             group={group}
             metadata={documents.list.metadata}
+            onBulkAction={this.handleBulkAction.bind(this)}
           />
         }
       </div>
@@ -166,6 +193,28 @@ class DocumentList extends Component {
     const {actions} = this.props
 
     actions.clearDocumentList()
+  }
+
+  renderField(fieldName, schema, value) {
+    switch (schema.type) {
+      case 'Boolean':
+        return (
+          <FieldBooleanListView
+            schema={schema}
+            value={value}
+          />
+        )
+
+      case 'String':
+        return (
+          <FieldStringListView
+            schema={schema}
+            value={value}
+          />
+        )
+    }
+
+    return value
   }
 
   fetchDocuments() {
@@ -209,6 +258,10 @@ class DocumentList extends Component {
       //actions.clearDocumentList()
       // {!} TODO: Graceful deal with failure
     })
+  }
+
+  handleBulkAction(action) {
+    console.log('(*) Action:', action)
   }
 }
 

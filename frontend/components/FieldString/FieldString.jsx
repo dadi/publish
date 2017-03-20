@@ -65,10 +65,10 @@ export default class FieldString extends Component {
     }
   }
 
-  componentDidUpdate() {
+  componentDidUpdate(prevProps, prevState) {
     const {forceValidation, value} = this.props
 
-    if (forceValidation) {
+    if (!prevProps.forceValidation && forceValidation) {
       this.validate(value)
     }
   }
@@ -202,16 +202,7 @@ export default class FieldString extends Component {
     const validation = (schema && schema.validation) || {}
     const valueLength = typeof value === 'string' ? value.length : 0
 
-    let validationMessage = typeof schema.message === 'string' && schema.message.length ? schema.message : null
-
-    // As per API docs, validation messages are in the format "must be xxx", which
-    // assumes that something (probably the name of the field) will be prepended to
-    // the string to form a final error message. For this reason, we're prepending
-    // the validation message with "This field", but this is something that we can
-    // easily revisit.
-    if (validationMessage) {
-      validationMessage = 'This field ' + validationMessage
-    }
+    const validationMessage = typeof schema.message === 'string' && schema.message.length ? schema.message : null
 
     let hasValidationErrors = false
 

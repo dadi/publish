@@ -12,6 +12,11 @@ import Label from 'components/Label/Label'
 export default class FieldBoolean extends Component {
   static propTypes = {
     /**
+     * A callback function to be fired whenever the value changes.
+     */
+    onChange: proptypes.func,
+
+    /**
      * The field value.
      */
     value: proptypes.bool,
@@ -27,15 +32,37 @@ export default class FieldBoolean extends Component {
   }
 
   render() {
-    const {value, schema} = this.props
+    const {onChange, value, schema} = this.props
 
     return (
       <Label
         compact={true}
         label={schema.label}
       >
-        <Checkbox value={value} />
+        <Checkbox
+          onChange={this.handleOnChange.bind(this)}
+          value={value}
+        />
       </Label>
     )
+  }
+
+  componentDidMount() {
+    const {onChange, schema, value} = this.props
+
+    // Because Boolean fields don't have an "unset" state, we need to register
+    // the state of the field as soon as it's mounted, and not just when its
+    // value changes.
+    if (typeof onChange === 'function') {
+      onChange.call(this, schema._id, value)
+    }
+  }
+
+  handleOnChange(event) {
+    const {onChange, schema} = this.props
+
+    if (typeof onChange === 'function') {
+      onChange.call(this, schema._id, event.target.checked)
+    }
   }
 }

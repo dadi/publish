@@ -57,11 +57,19 @@ APIBridgeController.prototype.post = function (req, res, next) {
         clientId: apiConfig.credentials.clientId,
         secret: apiConfig.credentials.secret
       }).then(request => {
-        return request({
+        let payload = {
           uri: requestObject.uri.href,
           method: requestObject.method,
-          body: typeof requestObject.body !== 'undefined' ? requestObject.body : null
-        }).then(response => JSON.parse(response))
+          headers: {
+            'content-type': 'application/json'
+          }
+        }
+
+        if (typeof requestObject.body !== 'undefined') {
+          payload.body = JSON.stringify(requestObject.body)
+        }
+
+        return request(payload).then(response => JSON.parse(response))
       }))
     })
 
@@ -69,9 +77,15 @@ APIBridgeController.prototype.post = function (req, res, next) {
       let output = multiple ? response : response[0]
 
       res.end(JSON.stringify(output))
+    }).catch(err => {
+      console.log('(*) API Bridge error:', err)
+
+      res.statusCode = 500
+      res.end(JSON.stringify(err))
     })
   } catch (err) {
-    console.log('** ERR:', err)
+    res.statusCode = 500
+    res.end(JSON.stringify(err))
   }
 
   return next()

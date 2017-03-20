@@ -50,6 +50,11 @@ export default class Button extends Component {
     onClick: proptypes.func,
 
     /**
+     * The size variation of the button.
+     */
+    size: proptypes.oneOf(['normal', 'small']),
+
+    /**
      * Type/function of the button. When set to `mock`, a static element will be
      * rendered (as a `span`).
      */
@@ -65,6 +70,7 @@ export default class Button extends Component {
     accent: 'neutral',
     className: '',
     disabled: false,
+    size: 'normal',
     type: 'button'
   }
 
@@ -82,7 +88,8 @@ export default class Button extends Component {
       disabled,
       href,
       inGroup, 
-      onClick, 
+      onClick,
+      size,
       type
     } = this.props
     const buttonStyle = new Style(styles, 'button')
@@ -90,6 +97,7 @@ export default class Button extends Component {
     buttonStyle.add(`button-${accent}`)
       .add(`button-in-group-${inGroup}`)
       .addIf('button-mock', type === 'mock')
+      .addIf(`button-${size}`, size !== 'normal')
       .addResolved(className)
 
     if (type === 'mock') {

@@ -5,8 +5,7 @@ import {h, Component} from 'preact'
 import Style from 'lib/Style'
 import styles from './DocumentListView.css'
 
-import {Keyboard} from 'lib/keyboard'
-import {isValidJSON} from 'lib/util'
+import {isValidJSON, setPageTitle} from 'lib/util'
 
 import DocumentListController from 'containers/DocumentListController/DocumentListController'
 import DocumentList from 'containers/DocumentList/DocumentList'
@@ -14,8 +13,6 @@ import DocumentList from 'containers/DocumentList/DocumentList'
 export default class DocumentListView extends Component {
   constructor(props) {
     super(props)
-
-    this.keyboard = new Keyboard()
 
     // If we have a valid filter when we mount the component for the first time,
     // then we start with the filters visible by default. Otherwise, they're
@@ -52,7 +49,9 @@ export default class DocumentListView extends Component {
 
           <DocumentList
             collection={collection}
+            filter={filter}
             group={group}
+            onPageTitle={this.handlePageTitle}
             order={order}
             page={page}
             sort={sort}
@@ -62,16 +61,14 @@ export default class DocumentListView extends Component {
     )
   }
 
-  // (!) This should probably move to <Table>
-  componentDidMount() {
-    this.keyboard.on('space+a').do(cmd => {
-      console.log(cmd.pattern)
-      // Trigger something
-    })
-  }
+  handlePageTitle(title) {
+    // We could have containers calling `setPageTitle()` directly, but it should
+    // be up to the views to control the page title, otherwise we'd risk having
+    // multiple containers wanting to set their own titles. Instead, containers
+    // have a `onPageTitle` callback that they fire whenever they want to set
+    // the title of the page. It's then up to the parent view to decide which
+    // of those callbacks will set the title.
 
-  componentWillUnmount() {
-    // Clear keyboard
-    this.keyboard.off()
+    setPageTitle(title)
   }
 }

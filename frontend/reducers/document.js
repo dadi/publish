@@ -12,7 +12,7 @@ const initialState = {
 
 export default function document(state = initialState, action = {}) {
   switch (action.type) {
-    // Action: set document
+    // Action: set remote document
     case Types.SET_REMOTE_DOCUMENT:
       return {
         ...state,
@@ -21,11 +21,11 @@ export default function document(state = initialState, action = {}) {
         local: Object.assign({}, action.document)
       }
 
-    // Action: clear document
+    // Action: clear remote document
     case Types.CLEAR_REMOTE_DOCUMENT:
       return initialState
 
-    // Action: set document status
+    // Action: set remote document status
     case Types.SET_REMOTE_DOCUMENT_STATUS:
       return {
         ...state,
@@ -57,6 +57,24 @@ export default function document(state = initialState, action = {}) {
         }
       }
 
+    // Action: set errors from remote API
+    case Types.SET_ERRORS_FROM_REMOTE_API:
+      let newValidationErrors = {}
+
+      action.errors.forEach(error => {
+        newValidationErrors[error.field] = error.message || true
+      })
+
+      console.log('** New validation errors:', newValidationErrors)
+
+      return {
+        ...state,
+        validationErrors: {
+          ...state.validationErrors,
+          ...newValidationErrors
+        }
+      }
+
     // Action: set field error status
     case Types.UPDATE_LOCAL_DOCUMENT:
       return {
@@ -65,6 +83,15 @@ export default function document(state = initialState, action = {}) {
           ...state.local,
           ...action.data
         }
+      }
+
+    // Action: start new document
+    case Types.START_NEW_DOCUMENT:
+      return {
+        ...state,
+        remoteStatus: Constants.STATUS_IDLE,
+        remote: null,
+        local: {}
       }
 
     // Action: user signed out
