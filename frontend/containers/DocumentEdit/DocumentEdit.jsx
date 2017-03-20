@@ -385,7 +385,7 @@ class DocumentEdit extends Component {
 
   // Renders a field, deciding which component to use based on the field type
   renderField(field) {
-    const {document, app} = this.props.state
+    const {app, document} = this.props.state
     const hasError = document.validationErrors[field._id]
     const {hasTriedSubmitting} = this.state
 
