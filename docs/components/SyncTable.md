@@ -6,13 +6,6 @@ An advanced table that controls which properties of an object are displayed and 
 Props
 -----
 
-### `children`
-
-The list of `SyncTableRow` elements to be rendered as rows.
-
-- type: `node`
-
-
 ### `columns`
 
 An array of objects containing the id and label of the columns to be displayed in the table.
@@ -30,15 +23,45 @@ An array of objects containing the id and label of the columns to be displayed i
 - default value: `[]`
 
 
-### `selectable`
+### `data`
 
-Whether rows are selectable. When `true`, check boxes will automatically be added to the table head and to each row.
-
-- type: `bool`
-- default value: `true`
+- default value: `[]`
 
 
-### `sort`
+### `onRender`
+
+A callback function that, when present, is used to render the contents of each cell in a row.
+The callback receives as arguments the value of the object for the given column, the whole object, the column object and the index of the column.
+
+In the example below, `onRender` is used to wrap the first cell of every row with a link.
+
+ ```jsx
+ <SyncTableRow
+   data={document}
+   onRender={(value, data, column, index) => {
+     if (index === 0) {
+       return (
+         <a href={`/${collection.name}/document/edit/${data._id}`}>{value}</a>
+       )
+     }
+
+     return value
+   }}
+ />
+ ````
+
+- type: `func`
+
+
+### `onSelect`
+
+A callback function that is fired whenever rows are selected. The function
+will be called with an array of selected indices as the argument.
+
+- type: `func`
+
+
+### `onSort`
 
 A callback function that is used to render the links of the table headings that allow the sort field and order to be changed.
 The callback receives as arguments the column label, the column id and the sort order that the heading should link to.
@@ -61,6 +84,22 @@ The callback receives as arguments the column label, the column id and the sort 
 
 - type: `func`
 - default value: `null`
+
+
+### `selectable`
+
+Whether rows are selectable. When `true`, check boxes will automatically be added to the table head and to each row.
+
+- type: `bool`
+- default value: `true`
+
+
+### `selectedRows`
+
+A hash map of the indices of the currently selected rows.
+
+- type: `custom`
+- default value: `{}`
 
 
 ### `sortBy`
