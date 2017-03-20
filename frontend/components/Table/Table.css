@@ -84,7 +84,6 @@
 .row-selected {
   background-color: #79879b !important;
   color: var(--theme-colour-secondary, #FFFFFF) !important;
-  font-weight: bold;
 }
 
 /*

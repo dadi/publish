@@ -40,7 +40,12 @@ export default class DocumentListToolbar extends Component {
      * A callback to be fired when the "Apply" button on the bulk actions
      * control is clicked.
      */
-    onBulkAction: proptypes.func
+    onBulkAction: proptypes.func,
+
+    /**
+     * A list of the IDs of the currently selected documents.
+     */
+    selectedDocuments: proptypes.array
   }
 
   constructor(props) {
@@ -55,7 +60,8 @@ export default class DocumentListToolbar extends Component {
       collection,
       group,
       metadata,
-      onBulkAction
+      onBulkAction,
+      selectedDocuments
     } = this.props
     const {bulkActionSelected} = this.state
 
@@ -96,7 +102,7 @@ export default class DocumentListToolbar extends Component {
           <Button
             accent="data"
             className={styles['actions-button']}
-            disabled={bulkActionSelected === this.BULK_ACTIONS_PLACEHOLDER}
+            disabled={(bulkActionSelected === this.BULK_ACTIONS_PLACEHOLDER) || !selectedDocuments.length}
             onClick={this.handleBulkActionApply.bind(this)}
             size="small"
           >Apply</Button>

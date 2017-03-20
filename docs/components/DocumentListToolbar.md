@@ -35,3 +35,10 @@ control is clicked.
 
 - type: `func`
 
+
+### `selectedDocuments`
+
+A list of the IDs of the currently selected documents.
+
+- type: `array`
+

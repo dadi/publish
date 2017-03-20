@@ -6,6 +6,8 @@ import proptypes from 'proptypes'
 import Table from 'components/Table/Table'
 import TableHead from 'components/Table/TableHead'
 import TableHeadCell from 'components/Table/TableHeadCell'
+import TableRow from 'components/Table/TableRow'
+import TableRowCell from 'components/Table/TableRowCell'
 
 /**
  * An advanced table that controls which properties of an object are displayed and ensures that table headings and row cells stay in sync.
@@ -28,9 +30,33 @@ export default class SyncTable extends Component {
     columns: proptypes.array,
 
     /**
-     * Whether rows are selectable. When `true`, check boxes will automatically be added to the table head and to each row.
+     * A callback function that, when present, is used to render the contents of each cell in a row.
+     * The callback receives as arguments the value of the object for the given column, the whole object, the column object and the index of the column.
+     *
+     * In the example below, `onRender` is used to wrap the first cell of every row with a link.
+     *
+     *  ```jsx
+     *  <SyncTableRow
+     *    data={document}
+     *    onRender={(value, data, column, index) => {
+     *      if (index === 0) {
+     *        return (
+     *          <a href={`/${collection.name}/document/edit/${data._id}`}>{value}</a>
+     *        )
+     *      }
+     *
+     *      return value
+     *    }}
+     *  />
+     *  ````
      */
-    selectable: proptypes.bool,
+    onRender: proptypes.func,
+
+    /**
+     * A callback function that is fired whenever rows are selected. The function
+     * will be called with an array of selected indices as the argument.
+     */
+    onSelect: proptypes.func,
 
     /**
      * A callback function that is used to render the links of the table headings that allow the sort field and order to be changed.
@@ -52,7 +78,17 @@ export default class SyncTable extends Component {
      *   >
      *  ````
      */
-    sort: proptypes.func,
+    onSort: proptypes.func,
+
+    /**
+     * Whether rows are selectable. When `true`, check boxes will automatically be added to the table head and to each row.
+     */
+    selectable: proptypes.bool,
+
+    /**
+     * A hash map of the indices of the currently selected rows.
+     */
+    selectedRows: proptypes.obj,
 
     /**
      * The name of the column currently being used to sort the rows.
@@ -62,50 +98,71 @@ export default class SyncTable extends Component {
     /**
      * The order currently being used to sort the rows by `sortBy`.
      */
-    sortOrder: proptypes.oneOf(['asc', 'desc']),
-
-    /**
-     * The list of `SyncTableRow` elements to be rendered as rows.
-     */
-    children: proptypes.node
+    sortOrder: proptypes.oneOf(['asc', 'desc'])
   }
 
   static defaultProps = {
     columns: [],
+    data: [],
+    onSort: null,
+    selectedRows: {},
     selectable: true,
-    sort: null,
     sortBy: null,
     sortOrder: null
   }
 
-  renderChildren() {
-    // Pass `columns` to children
-    return this.props.children.map(child => {
-      child.attributes = child.attributes || {}
-      child.attributes.columns = child.attributes.columns || this.props.columns
+  renderRows() {
+    const {
+      columns,
+      data,
+      onSelect,
+      onRender
+    } = this.props
 
-      return child
+    return data.map(row => {
+      return (
+        <TableRow onSelect={onSelect}>
+          {columns.map((column, index) => {
+            let value = row[column.id]
+
+            // If there's a onRender callback, we run the value through it
+            if (typeof onRender === 'function') {
+              value = onRender.call(this, row[column.id], row, column, index)
+            }
+
+            return (
+              <TableRowCell>{value}</TableRowCell>
+            )
+          })}
+        </TableRow>
+      )
     })
   }
 
   render() {
     const {
       columns,
+      onSelect,
+      onSort,
+      selectedRows,
       selectable,
-      sort,
       sortBy,
       sortOrder
     } = this.props
 
     return (
-      <Table selectable={selectable}>
+      <Table
+        onSelect={onSelect}
+        selectable={selectable}
+        selectedRows={selectedRows}
+      >
         <TableHead>
           {columns.map(column => {
             let content = column.label
             let arrow = null
             let linkSortOrder = 'asc'
 
-            if (typeof sort === 'function') {
+            if (typeof onSort === 'function') {
               if (sortBy === column.id) {
                 if (sortOrder === 'desc') {
                   arrow = 'down'
@@ -118,7 +175,7 @@ export default class SyncTable extends Component {
                 arrow = (sortOrder === 'desc') ? 'down' : 'up'
               }
 
-              content = sort(content, column.id, linkSortOrder)
+              content = onSort(content, column.id, linkSortOrder)
             }
 
             return (
@@ -127,7 +184,7 @@ export default class SyncTable extends Component {
           })}
         </TableHead>
 
-        {this.renderChildren()}
+        {this.renderRows()}
       </Table>
     )
   }
