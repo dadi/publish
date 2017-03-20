@@ -19,11 +19,9 @@ export default class FieldStringListView extends Component {
     schema: proptypes.object
   }
 
-  constructor(props) {
-    super(props)
-
-    this.MAX_LENGTH = 50
-    this.MAX_OPTIONS = 1
+  static defaultProps = {
+    maxLength: 50,
+    maxOptions: 1
   }
 
   render() {
@@ -46,6 +44,7 @@ export default class FieldStringListView extends Component {
   }
 
   renderOptions(options, schema) {
+    const {maxLength, maxOptions} = this.props
     const optionsBlock = schema.publish && schema.publish.options
 
     let optionsArray = options
@@ -57,17 +56,17 @@ export default class FieldStringListView extends Component {
         })
 
         if (match) {
-          return this.renderTrimmedValue(match.label, this.MAX_LENGTH / this.MAX_OPTIONS)
+          return this.renderTrimmedValue(match.label, maxLength / maxOptions)
         }
 
-        return this.renderTrimmedValue(option, this.MAX_LENGTH / this.MAX_OPTIONS)
+        return this.renderTrimmedValue(option, maxLength / maxOptions)
       })
     }
 
-    const excessOptions = options.length - this.MAX_OPTIONS
+    const excessOptions = options.length - maxOptions
 
     if (excessOptions > 0) {
-      optionsArray = optionsArray.slice(0, this.MAX_OPTIONS)
+      optionsArray = optionsArray.slice(0, maxOptions)
     }
 
     const optionsString = optionsArray.join(', ') + ((excessOptions > 0) ? ` + ${excessOptions}` : '')
@@ -76,7 +75,7 @@ export default class FieldStringListView extends Component {
   }
 
   renderTrimmedValue(value, maxLength) {
-    maxLength = Math.floor(maxLength) || this.MAX_LENGTH
+    maxLength = Math.floor(maxLength) || this.props.maxLength
 
     if (value.length > maxLength) {
       return value.slice(0, maxLength - 1) + '…'

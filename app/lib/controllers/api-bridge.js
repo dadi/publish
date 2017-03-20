@@ -74,7 +74,7 @@ APIBridgeController.prototype.post = function (req, res, next) {
     })
 
     Promise.all(queue).then(response => {
-      const output = multiple ? response : response[0]
+      let output = multiple ? response : response[0]
 
       res.end(JSON.stringify(output))
     }).catch(err => {

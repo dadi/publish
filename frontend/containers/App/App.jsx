@@ -3,6 +3,9 @@ import {Router, route} from 'preact-router'
 import {connect} from 'preact-redux'
 import {bindActionCreators} from 'redux'
 
+import Style from 'lib/Style'
+import styles from './App.css'
+
 import * as userActions from 'actions/userActions'
 import * as apiActions from 'actions/apiActions'
 import * as appActions from 'actions/appActions'
@@ -91,7 +94,7 @@ class App extends Component {
     // -- eb, 01/02/2017
 
     return (
-      <div style="height: 100%;">
+      <div style={styles.container}>
         <LoadingBar loading={isFetchingData} />
 
         {state.user.user &&
