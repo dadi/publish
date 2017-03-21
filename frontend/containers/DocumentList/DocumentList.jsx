@@ -137,7 +137,7 @@ class DocumentList extends Component {
             <SyncTable
               columns={tableColumns}
               data={documents.list.results}
-              onRender={this.handleRender.bind(this)}
+              onRender={this.handleAnchorRender.bind(this)}
               onSelect={this.handleRowSelect.bind(this)}
               onSort={this.handleTableSort.bind(this)}
               selectedRows={selectedRows}
@@ -174,7 +174,7 @@ class DocumentList extends Component {
     )
   }
 
-  handleRender(value, data, column, index) {
+  handleAnchorRender(value, data, column, index) {
     const {
       collection,
       group,
