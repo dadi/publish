@@ -57,8 +57,9 @@ class DocumentListController extends Component {
       state
     } = this.props
     const currentCollection = getCurrentCollection(state.api.apis, group, collection)
+    const hasDocuments = state.documents.list && state.documents.list.results && (state.documents.list.results.length > 0)
 
-    if (!currentCollection) {
+    if (!currentCollection || !hasDocuments) {
       return null
     }
 
