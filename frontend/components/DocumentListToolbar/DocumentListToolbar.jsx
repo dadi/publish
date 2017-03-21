@@ -68,16 +68,19 @@ export default class DocumentListToolbar extends Component {
     return (
       <Toolbar>
         <div class={styles.section}>
-          <ToolbarTextInput
-            onChange={this.handleGoToPage.bind(this)}
-            size="small"
-            placeholder="Go to page"
-          />
-
-          <span class={styles['count-label']}>
-            Showing <strong>{`${metadata.offset + 1}-${Math.min(metadata.offset + metadata.limit, metadata.totalCount)} `}</strong>
-            of <strong>{metadata.totalCount}</strong>
-          </span>
+          {metadata.totalCount > metadata.limit && (
+            <ToolbarTextInput
+              onChange={this.handleGoToPage.bind(this)}
+              size="small"
+              placeholder="Go to page"
+            />
+          )}
+          {metadata.totalCount > 1 && (
+            <span class={styles['count-label']}>
+              Showing <strong>{`${metadata.offset + 1}-${Math.min(metadata.offset + metadata.limit, metadata.totalCount)} `}</strong>
+              of <strong>{metadata.totalCount}</strong>
+            </span>
+          )}
         </div>
 
         <div class={styles.section}>

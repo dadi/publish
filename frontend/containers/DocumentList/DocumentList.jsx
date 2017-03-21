@@ -86,21 +86,14 @@ class DocumentList extends Component {
   }
 
   componentDidUpdate(previousProps) {
-    const previousState = previousProps.state
-    const previousStatePath = previousState.router.locationBeforeTransitions.pathname
-    const previousStateSearch = previousState.router.locationBeforeTransitions.search
-
     const {actions, state} = this.props
     const {list, status} = state.documents
-
-    const newStatePath = state.router.locationBeforeTransitions.pathname
-    const newStateSearch = state.router.locationBeforeTransitions.search
 
     // State check: reject when missing config, session, or apis
     if (!state.app.config || !state.api.apis.length || !state.user) return
 
     // State check: reject when there are still APIs without collections
-    const apisWithoutCollections = state.api.apis.filter(api => !api.collections).length
+    const apisWithoutCollections = state.api.apis.filter(api => !api.hasCollections).length
 
     if (apisWithoutCollections) return
 

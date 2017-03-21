@@ -64,10 +64,7 @@ class DocumentListController extends Component {
 
     return (
       <div>
-        <ListController
-          collection={currentCollection}
-          search={true}
-        >
+        <ListController collection={currentCollection}>
           <Button
             accent="data"
             onClick={onFiltersToggle}
