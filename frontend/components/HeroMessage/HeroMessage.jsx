@@ -7,17 +7,23 @@ import Style from 'lib/Style'
 import styles from './HeroMessage.css'
 
 /**
- * A simple call-to-action HeroMessage.
+ * An informative message at the centre of the page.
  */
 export default class HeroMessage extends Component {
   static propTypes = {
     /**
-     * The text to be rendered inside the button.
+     * The child elements to be rendered next to the message.
      */
     children: proptypes.node,
 
+    /**
+     * The subtitle of the message.
+     */
     subtitle: proptypes.string,
 
+    /**
+     * The title of the message.
+     */
     title: proptypes.string
   }
 
