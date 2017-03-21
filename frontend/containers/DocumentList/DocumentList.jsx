@@ -50,11 +50,6 @@ class DocumentList extends Component {
     onPageTitle: proptypes.func,
 
     /**
-     * Whether to show the document list toolbar.
-     */
-    showToolbar: proptypes.bool,
-
-    /**
      * The name of the field currently being used to sort the documents.
      */
     sort: proptypes.string,
@@ -75,10 +70,6 @@ class DocumentList extends Component {
     page: proptypes.number
   }
 
-  static defaultProps = {
-    showToolbar: true
-  }
-
   constructor(props) {
     super(props)
 
@@ -88,20 +79,18 @@ class DocumentList extends Component {
   componentDidUpdate(previousProps) {
     const {actions, state} = this.props
     const {list, status} = state.documents
+    const pathKey = previousProps.state.router.locationBeforeTransitions.key
+    const historyKeyMatch = history.state.key === pathKey
+    const apisWithoutCollections = state.api.apis.filter(api => !api.hasCollections).length
 
     // State check: reject when missing config, session, or apis
     if (!state.app.config || !state.api.apis.length || !state.user) return
 
     // State check: reject when there are still APIs without collections
-    const apisWithoutCollections = state.api.apis.filter(api => !api.hasCollections).length
-
     if (apisWithoutCollections) return
 
     // State check: reject when path matches and document list loaded
-    const pathKey = state.router.locationBeforeTransitions.key
-
-    if (list && (typeof pathKey === 'undefined' || history.state.key === pathKey)) return
-
+    if (list && (typeof pathKey === 'undefined' || historyKeyMatch)) return
     // State check: reject when documents are still loading
     if (status === Constants.STATUS_LOADING) return
 
@@ -114,7 +103,6 @@ class DocumentList extends Component {
       group,
       onPageTitle,
       order,
-      showToolbar,
       sort,
       state
     } = this.props
@@ -142,45 +130,29 @@ class DocumentList extends Component {
 
     return (
       <div>
-        <SyncTable
-          columns={tableColumns}
-          data={documents.list.results}
-          onRender={(value, data, column, index) => {
-            const fieldSchema = currentCollection.fields[column.id]
-            const renderedValue = this.renderField(column.id, fieldSchema, value)
-
-            if (index === 0) {
-              return (
-                <a href={buildUrl(group, collection, 'document/edit', data._id)}>{renderedValue}</a>
-              )
-            }
-
-            return renderedValue
-          }}
-          onSelect={this.handleRowSelect.bind(this)}
-          onSort={(value, sortBy, sortOrder) => {
-            return (
-              <a href={createRoute({
-                params: {sort: sortBy, order: sortOrder},
-                update: true
-              })}>{value}</a>
-            )
-          }}
-          selectedRows={selectedRows}
-          sortable={true}
-          sortBy={sort}
-          sortOrder={order}
-        />
-        
-        {showToolbar && 
-          <DocumentListToolbar
-            collection={collection}
-            group={group}
-            metadata={documents.list.metadata}
-            onBulkAction={this.handleBulkAction.bind(this)}
-            selectedDocuments={selectedDocuments}
-          />
-        }
+        {documents.list.results.length ? (
+          <div>
+            <SyncTable
+              columns={tableColumns}
+              data={documents.list.results}
+              onRender={this.handleAnchorRender.bind(this)}
+              onSelect={this.handleRowSelect.bind(this)}
+              onSort={this.handleTableSort.bind(this)}
+              selectedRows={selectedRows}
+              sortable={true}
+              sortBy={sort}
+              sortOrder={order}
+            />
+            
+            <DocumentListToolbar
+              collection={collection}
+              group={group}
+              metadata={documents.list.metadata}
+              onBulkAction={this.handleBulkAction.bind(this)}
+              selectedDocuments={selectedDocuments}
+            />
+          </div>
+        ) : (<h1>No Documents</h1>)}
       </div>
     )
   }
@@ -189,6 +161,35 @@ class DocumentList extends Component {
     const {actions} = this.props
 
     actions.clearDocumentList()
+  }
+
+  handleTableSort(value, sortBy, sortOrder) {
+    return (
+      <a href={createRoute({
+        params: {sort: sortBy, order: sortOrder},
+        update: true
+      })}>{value}</a>
+    )
+  }
+
+  handleAnchorRender(value, data, column, index) {
+    const {
+      collection,
+      group,
+      state
+    } = this.props
+
+    const currentCollection = getCurrentCollection(state.api.apis, group, collection)
+    const fieldSchema = currentCollection.fields[column.id]
+    const renderedValue = this.renderField(column.id, fieldSchema, value)
+
+    if (index === 0) {
+      return (
+        <a href={buildUrl(group, collection, 'document/edit', data._id)}>{renderedValue}</a>
+      )
+    }
+
+    return renderedValue
   }
 
   renderField(fieldName, schema, value) {
@@ -251,7 +252,6 @@ class DocumentList extends Component {
       actions.setDocumentList(docs)
     }).catch(err => {
       console.log(err)
-      //actions.clearDocumentList()
       // {!} TODO: Graceful deal with failure
     })
   }
