@@ -13,9 +13,11 @@ import {buildUrl, createRoute} from 'lib/router'
 import {connectHelper, isValidJSON} from 'lib/util'
 import {getCurrentApi, getCurrentCollection} from 'lib/app-config'
 
+import Button from 'components/Button/Button'
 import DocumentListToolbar from 'components/DocumentListToolbar/DocumentListToolbar'
 import FieldBooleanListView from 'components/FieldBoolean/FieldBooleanListView'
 import FieldStringListView from 'components/FieldString/FieldStringListView'
+import HeroMessage from 'components/HeroMessage/HeroMessage'
 import SyncTable from 'components/SyncTable/SyncTable'
 
 /**
@@ -122,37 +124,48 @@ class DocumentList extends Component {
       }
     })
     const selectedDocuments = this.getSelectedDocuments()
+    const documentsList = documents.list.results
 
     // Setting page title
     if (typeof onPageTitle === 'function') {
       onPageTitle.call(this, currentCollection.settings.description || currentCollection.name)
     }
 
+    if (!documentsList.length) {
+      return (
+        <HeroMessage
+          title="No documents yet."
+          subtitle="Once created, they will appear here."
+        >
+          <Button
+            accent="save"
+            href={buildUrl(group, collection, 'document', 'new')}
+          >Create new document</Button>
+        </HeroMessage>
+      )
+    }
+
     return (
       <div>
-        {documents.list.results.length ? (
-          <div>
-            <SyncTable
-              columns={tableColumns}
-              data={documents.list.results}
-              onRender={this.handleAnchorRender.bind(this)}
-              onSelect={this.handleRowSelect.bind(this)}
-              onSort={this.handleTableSort.bind(this)}
-              selectedRows={selectedRows}
-              sortable={true}
-              sortBy={sort}
-              sortOrder={order}
-            />
-            
-            <DocumentListToolbar
-              collection={collection}
-              group={group}
-              metadata={documents.list.metadata}
-              onBulkAction={this.handleBulkAction.bind(this)}
-              selectedDocuments={selectedDocuments}
-            />
-          </div>
-        ) : (<h1>No Documents</h1>)}
+        <SyncTable
+          columns={tableColumns}
+          data={documents.list.results}
+          onRender={this.handleAnchorRender.bind(this)}
+          onSelect={this.handleRowSelect.bind(this)}
+          onSort={this.handleTableSort.bind(this)}
+          selectedRows={selectedRows}
+          sortable={true}
+          sortBy={sort}
+          sortOrder={order}
+        />
+
+        <DocumentListToolbar
+          collection={collection}
+          group={group}
+          metadata={documents.list.metadata}
+          onBulkAction={this.handleBulkAction.bind(this)}
+          selectedDocuments={selectedDocuments}
+        />
       </div>
     )
   }
