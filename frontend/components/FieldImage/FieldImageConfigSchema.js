@@ -34,6 +34,11 @@ module.exports = {
         default: 3000
       }
     },
+    useAPI: {
+      availableInFrontend: true,
+      type: Boolean,
+      default: true
+    },
     s3: {
       doc: "Store Image in S3",
       availableInFrontend: true,
