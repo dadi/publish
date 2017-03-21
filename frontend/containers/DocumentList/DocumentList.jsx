@@ -83,8 +83,6 @@ class DocumentList extends Component {
     const historyKeyMatch = history.state.key === pathKey
     const apisWithoutCollections = state.api.apis.filter(api => !api.hasCollections).length
 
-    // console.log('[HISTORY MATCHES]', historyKeyMatch)
-
     // State check: reject when missing config, session, or apis
     if (!state.app.config || !state.api.apis.length || !state.user) return
 
