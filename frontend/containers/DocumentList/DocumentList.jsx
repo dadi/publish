@@ -73,9 +73,7 @@ class DocumentList extends Component {
   constructor(props) {
     super(props)
 
-    this.state = {
-      selectedRows: {}
-    }
+    this.state.selectedRows = {}
   }
 
   componentDidUpdate(previousProps) {
