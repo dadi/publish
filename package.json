@@ -15,7 +15,7 @@
     "watch:server": "nodemon \"./index.js\" --watch \"./app\"",
     "snyk-protect": "snyk protect",
     "prepublish": "npm run snyk-protect",
-    "build-docs": "react-docgen --exclude ['/^(ConfigSchema$)/g'] frontend/components | node scripts/build-docs/build-docs.js docs/components"
+    "build-docs": "rm -rf docs/components/* && react-docgen --exclude ['/^(ConfigSchema$)/g'] frontend/components | node scripts/build-docs/build-docs.js docs/components; rm -rf docs/containers/* && react-docgen --exclude ['/^(ConfigSchema$)/g'] frontend/containers | node scripts/build-docs/build-docs.js docs/containers"
   },
   "repository": {
     "type": "git",
