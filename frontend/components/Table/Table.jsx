@@ -59,7 +59,7 @@ export default class Table extends Component {
     let newSelectedRows = {}
 
     if (selected) {
-      for (let i = 0; i < children.length; i++) {
+      for (let i = 0; i < children.length - 1; i++) {
         newSelectedRows[i] = true
       }
     }
@@ -129,7 +129,7 @@ export default class Table extends Component {
 
       if (child.nodeName && child.nodeName.name === 'TableHead') {
         childAttributes.onSelect = this.handleHeadSelect.bind(this)
-        childAttributes.allSelected = selectedRowsIndices.length === children.length
+        childAttributes.allSelected = selectedRowsIndices.length === children.length - 1
 
         child.attributes = childAttributes
 
