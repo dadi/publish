@@ -50,11 +50,6 @@ class DocumentList extends Component {
     onPageTitle: proptypes.func,
 
     /**
-     * Whether to show the document list toolbar.
-     */
-    showToolbar: proptypes.bool,
-
-    /**
      * The name of the field currently being used to sort the documents.
      */
     sort: proptypes.string,
@@ -75,14 +70,12 @@ class DocumentList extends Component {
     page: proptypes.number
   }
 
-  static defaultProps = {
-    showToolbar: true
-  }
-
   constructor(props) {
     super(props)
 
-    this.state.selectedRows = {}
+    this.state = {
+      selectedRows: {}
+    }
   }
 
   componentDidUpdate(previousProps) {
@@ -114,7 +107,6 @@ class DocumentList extends Component {
       group,
       onPageTitle,
       order,
-      showToolbar,
       sort,
       state
     } = this.props
@@ -142,45 +134,29 @@ class DocumentList extends Component {
 
     return (
       <div>
-        <SyncTable
-          columns={tableColumns}
-          data={documents.list.results}
-          onRender={(value, data, column, index) => {
-            const fieldSchema = currentCollection.fields[column.id]
-            const renderedValue = this.renderField(column.id, fieldSchema, value)
-
-            if (index === 0) {
-              return (
-                <a href={buildUrl(group, collection, 'document/edit', data._id)}>{renderedValue}</a>
-              )
-            }
-
-            return renderedValue
-          }}
-          onSelect={this.handleRowSelect.bind(this)}
-          onSort={(value, sortBy, sortOrder) => {
-            return (
-              <a href={createRoute({
-                params: {sort: sortBy, order: sortOrder},
-                update: true
-              })}>{value}</a>
-            )
-          }}
-          selectedRows={selectedRows}
-          sortable={true}
-          sortBy={sort}
-          sortOrder={order}
-        />
-        
-        {showToolbar && 
-          <DocumentListToolbar
-            collection={collection}
-            group={group}
-            metadata={documents.list.metadata}
-            onBulkAction={this.handleBulkAction.bind(this)}
-            selectedDocuments={selectedDocuments}
-          />
-        }
+        {documents.list.results.length ? (
+          <div>
+            <SyncTable
+              columns={tableColumns}
+              data={documents.list.results}
+              onRender={this.handleRender.bind(this)}
+              onSelect={this.handleRowSelect.bind(this)}
+              onSort={this.handleTableSort.bind(this)}
+              selectedRows={selectedRows}
+              sortable={true}
+              sortBy={sort}
+              sortOrder={order}
+            />
+            
+            <DocumentListToolbar
+              collection={collection}
+              group={group}
+              metadata={documents.list.metadata}
+              onBulkAction={this.handleBulkAction.bind(this)}
+              selectedDocuments={selectedDocuments}
+            />
+          </div>
+        ) : (<h1>No Documents</h1>)}
       </div>
     )
   }
@@ -189,6 +165,35 @@ class DocumentList extends Component {
     const {actions} = this.props
 
     actions.clearDocumentList()
+  }
+
+  handleTableSort(value, sortBy, sortOrder) {
+    return (
+      <a href={createRoute({
+        params: {sort: sortBy, order: sortOrder},
+        update: true
+      })}>{value}</a>
+    )
+  }
+
+  handleRender(value, data, column, index) {
+    const {
+      collection,
+      group,
+      state
+    } = this.props
+
+    const currentCollection = getCurrentCollection(state.api.apis, group, collection)
+    const fieldSchema = currentCollection.fields[column.id]
+    const renderedValue = this.renderField(column.id, fieldSchema, value)
+
+    if (index === 0) {
+      return (
+        <a href={buildUrl(group, collection, 'document/edit', data._id)}>{renderedValue}</a>
+      )
+    }
+
+    return renderedValue
   }
 
   renderField(fieldName, schema, value) {
