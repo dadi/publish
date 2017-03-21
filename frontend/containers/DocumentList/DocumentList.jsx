@@ -79,20 +79,20 @@ class DocumentList extends Component {
   componentDidUpdate(previousProps) {
     const {actions, state} = this.props
     const {list, status} = state.documents
+    const pathKey = previousProps.state.router.locationBeforeTransitions.key
+    const historyKeyMatch = history.state.key === pathKey
+    const apisWithoutCollections = state.api.apis.filter(api => !api.hasCollections).length
+
+    // console.log('[HISTORY MATCHES]', historyKeyMatch)
 
     // State check: reject when missing config, session, or apis
     if (!state.app.config || !state.api.apis.length || !state.user) return
 
     // State check: reject when there are still APIs without collections
-    const apisWithoutCollections = state.api.apis.filter(api => !api.hasCollections).length
-
     if (apisWithoutCollections) return
 
     // State check: reject when path matches and document list loaded
-    const pathKey = state.router.locationBeforeTransitions.key
-
-    if (list && (typeof pathKey === 'undefined' || history.state.key === pathKey)) return
-
+    if (list && (typeof pathKey === 'undefined' || historyKeyMatch)) return
     // State check: reject when documents are still loading
     if (status === Constants.STATUS_LOADING) return
 
@@ -254,7 +254,6 @@ class DocumentList extends Component {
       actions.setDocumentList(docs)
     }).catch(err => {
       console.log(err)
-      //actions.clearDocumentList()
       // {!} TODO: Graceful deal with failure
     })
   }
