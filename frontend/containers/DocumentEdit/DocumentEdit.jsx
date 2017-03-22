@@ -340,6 +340,10 @@ class DocumentEdit extends Component {
     }
   }
 
+  // stripDefaultFields(document) {
+  //   return Object.assign({}, document, {createdAt: undefined, createdBy: undefined, lastModifiedAt: undefined, lastModifiedBy: undefined, _id: undefined})
+  // }
+
   saveDocument(documentId) {
     const {
       actions,
@@ -353,6 +357,21 @@ class DocumentEdit extends Component {
     const document = state.document.local
 
     let apiBridge = APIBridge(currentApi).in(currentCollection.name)
+
+    // Cycle through referenced documents
+    Object.keys(document).forEach(docField => {
+      let fieldMatch = Object.keys(currentCollection.fields).find(field => {
+        return docField === field
+      })
+      if (fieldMatch && currentCollection.fields[fieldMatch].type === 'Reference') {
+        if (Object.is(typeof document[fieldMatch]._id, String)) {
+          // Existing referenced document
+        } else {
+          // New Reference document
+
+        }
+      }
+    })
 
     // If we have a documentId, we're updating an existing document.
     if (documentId) {
@@ -433,6 +452,7 @@ class DocumentEdit extends Component {
             <FieldImage
               error={error}
               config={app.config.FieldImage}
+              onChange={this.handleFieldChange.bind(this)}
               onError={this.handleFieldError.bind(this)}
               value={document.local[field._id]}
               schema={field}
