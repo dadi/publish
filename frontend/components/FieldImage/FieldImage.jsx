@@ -12,8 +12,6 @@ export default class FieldImage extends Component {
 
   static propTypes = {
 
-    maxWidth: proptypes.number,
-
     /**
      * Image specific config.
      */
@@ -40,10 +38,6 @@ export default class FieldImage extends Component {
     schema: proptypes.object
   }
 
-  static defaultProps = {
-    maxWidth: 100
-  }
-
   constructor(props) {
     super(props)
 
@@ -51,13 +45,13 @@ export default class FieldImage extends Component {
   }
 
   render() {
-    const {config, value, maxWidth} = this.props
+    const {config, value} = this.props
     const src = this.getImageSrc(value)
 
     return (
       <Label label="Image">
         {src && (
-          <img width={maxWidth} src={src} />
+          <img width={100} src={src} />
         )}
         {config && (
           <input 
