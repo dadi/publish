@@ -69,8 +69,8 @@ export function urlHelper () {
 export const Case = {
   sentence (value) {
     if (!value) return ''
-    return value.split('.').map(sentence => {
       
+    return value.split('.').map(sentence => {
       return sentence[0].toUpperCase() + sentence.slice(1)
     }).join('.')
   }
