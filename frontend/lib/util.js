@@ -50,7 +50,6 @@ export function urlHelper() {
           return
         }
       })
-
       return params
     },
     paramsToString(params) {
