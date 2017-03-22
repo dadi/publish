@@ -110,7 +110,7 @@ export default class FieldImage extends Component {
 
   handleFileChange(event) {
     event.preventDefault()
-
+    
     const {config, onChange, schema} = this.props
 
     let reader = new FileReader()
