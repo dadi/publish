@@ -15,7 +15,8 @@
     "watch:server": "nodemon \"./index.js\" --watch \"./app\"",
     "snyk-protect": "snyk protect",
     "prepublish": "npm run snyk-protect",
-    "build-docs": "rm -rf docs/components/* && react-docgen --exclude ['/^(ConfigSchema$)/g'] frontend/components | node scripts/build-docs/build-docs.js docs/components; rm -rf docs/containers/* && react-docgen --exclude ['/^(ConfigSchema$)/g'] frontend/containers | node scripts/build-docs/build-docs.js docs/containers"
+    "build-docs": "rm -rf docs/components/* && react-docgen --exclude ['/^(ConfigSchema$)/g'] frontend/components | node scripts/build-docs/build-docs.js docs/components; rm -rf docs/containers/* && react-docgen --exclude ['/^(ConfigSchema$)/g'] frontend/containers | node scripts/build-docs/build-docs.js docs/containers",
+    "prepush": "npm-run-all build-docs test"
   },
   "repository": {
     "type": "git",
@@ -79,6 +80,7 @@
     "extract-text-webpack-plugin": "^1.0.1",
     "file-loader": "^0.9.0",
     "fs": "0.0.1-security",
+    "husky": "^0.13.2",
     "inquirer": "^3.0.6",
     "mkdirp": "^0.5.1",
     "mocha": "^3.2.0",
@@ -90,7 +92,6 @@
     "postcss-custom-media": "^5.0.1",
     "postcss-custom-properties": "^5.0.2",
     "postcss-loader": "^1.3.0",
-    "pre-commit": "^1.2.2",
     "preact": "^6.4.0",
     "preact-compat": "^3.0.0",
     "preact-redux": "^1.2.0",
@@ -124,10 +125,6 @@
       "frontend"
     ]
   },
-  "pre-commit": [
-    "build-docs",
-    "test"
-  ],
   "directories": {
     "doc": "docs",
     "test": "test"
