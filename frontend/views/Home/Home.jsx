@@ -3,27 +3,16 @@ import {connect} from 'preact-redux'
 import {bindActionCreators} from 'redux'
 import {connectHelper} from 'lib/util'
 
-import Label from 'components/Label/Label'
-import Nav from 'components/Nav/Nav'
-import TextInput from 'components/TextInput/TextInput'
+import DateTime from 'components/DateTime/DateTime'
 
-import * as apiActions from 'actions/apiActions'
+const fecha = require('fecha')
 
-class Home extends Component {
+export default class Home extends Component {
   render() {
-    const {state} = this.props
+    const d = new Date(2015, 2, 10, 5, 30, 20)
 
     return (
-      <div>
-        <Label label="Title" comment="Optional">
-          <TextInput />
-        </Label>
-      </div>
+      <DateTime date={d} />
     )
   }
 }
-
-export default connectHelper(
-  state => state.api,
-  dispatch => bindActionCreators(apiActions, dispatch)
-)(Home)
