@@ -1,24 +1,25 @@
 'use strict'
 
-import * as Types from 'actions/actionTypes'
 import * as Constants from 'lib/constants'
+import * as Types from 'actions/actionTypes'
 
 const initialState = {
+  local: null,
   remote: null,
   remoteStatus: Constants.STATUS_IDLE,
-  local: null,
   validationErrors: {}
 }
 
 export default function document(state = initialState, action = {}) {
   switch (action.type) {
+
     // Action: set remote document
     case Types.SET_REMOTE_DOCUMENT:
       return {
         ...state,
-        remoteStatus: Constants.STATUS_IDLE,
+        local: Object.assign({}, action.document),
         remote: action.document,
-        local: Object.assign({}, action.document)
+        remoteStatus: Constants.STATUS_IDLE
       }
 
     // Action: clear remote document
@@ -65,8 +66,6 @@ export default function document(state = initialState, action = {}) {
         newValidationErrors[error.field] = error.message || true
       })
 
-      console.log('** New validation errors:', newValidationErrors)
-
       return {
         ...state,
         validationErrors: {
@@ -89,9 +88,9 @@ export default function document(state = initialState, action = {}) {
     case Types.START_NEW_DOCUMENT:
       return {
         ...state,
-        remoteStatus: Constants.STATUS_IDLE,
+        local: {},
         remote: null,
-        local: {}
+        remoteStatus: Constants.STATUS_IDLE
       }
 
     // Action: user signed out

@@ -1,7 +1,7 @@
 'use strict'
 
-import * as Types from 'actions/actionTypes'
 import * as Constants from 'lib/constants'
+import * as Types from 'actions/actionTypes'
 
 const initialState = {
   apis: [],
@@ -10,6 +10,7 @@ const initialState = {
 
 export default function api(state = initialState, action = {}) {
   switch (action.type) {
+
     // Action: Set data for a specific API
     case Types.SET_API:
       const apis = state.apis.map(api => {

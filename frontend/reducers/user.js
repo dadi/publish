@@ -1,22 +1,23 @@
 'use strict'
 
-import * as Types from 'actions/actionTypes'
 import * as Constants from 'lib/constants'
+import * as Types from 'actions/actionTypes'
 
 const initialState = {
+  local: null,
   remote: null,
-  remoteStatus: Constants.STATUS_IDLE,
-  local: null
+  remoteStatus: Constants.STATUS_IDLE
 }
 
 export default function user(state = initialState, action = {}) {
   switch (action.type) {
+
     // Action: user signed in
     case Types.SET_REMOTE_USER:
       return {
         ...state,
-        remote: action.user,
-        local: Object.assign({}, action.user)
+        local: Object.assign({}, action.user),
+        remote: action.user
       }
 
     case Types.UPDATE_LOCAL_USER:

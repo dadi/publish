@@ -2,21 +2,21 @@ import * as Types from 'actions/actionTypes'
 
 export function setApi(api) {
   return {
+    api,
     type: Types.SET_API,
-    api
   }
 }
 
 export function setApiStatus(status) {
   return {
-    type: Types.SET_API_STATUS,
-    status
+    status,
+    type: Types.SET_API_STATUS
   }
 }
 
 export function setCurrentCollection(collectionName) {
   return {
-    type: Types.SET_API_CURRENT_COLLECTION,
-    collectionName
+    collectionName,
+    type: Types.SET_API_CURRENT_COLLECTION
   }
 }

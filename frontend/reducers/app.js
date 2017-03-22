@@ -1,13 +1,13 @@
 'use strict'
 
-import * as Types from 'actions/actionTypes'
 import * as Constants from 'lib/constants'
+import * as Types from 'actions/actionTypes'
 
 // These breakpoints are declared both here and in Main.css. It'd
 // be great to get this DRY, but I can't think of a way at the mo.
 const VIEWPORT_BREAKPOINTS = {
-  'medium': 600,
-  'large': 1000
+  'large': 1000,
+  'medium': 600
 }
 
 // The interval (in ms) of network inactivity after a finished request used
@@ -26,7 +26,7 @@ let debouncedNetworkCall = null
 function getActiveBreakpoint(windowWidth) {
   let breakpointName = null
 
-  for (var breakpoint in VIEWPORT_BREAKPOINTS) {
+  for (let breakpoint in VIEWPORT_BREAKPOINTS) {
     if (windowWidth < VIEWPORT_BREAKPOINTS[breakpoint]) {
       break
     }
@@ -79,7 +79,7 @@ export default function app(state = initialState, action = {}) {
             // We queue the new timer. When the timer runs, we'll run the action,
             // sent as the `onUpdate` parameter, which will contain STATUS_COMPLETE.
             // and set the general status back to STATUS_IDLE.
-            debouncedNetworkCall = setTimeout(action.onComplete, NETWORK_DEBOUNCE)      
+            debouncedNetworkCall = setTimeout(action.onComplete, NETWORK_DEBOUNCE)
           }
 
           return state

@@ -9,12 +9,12 @@ let onUpdate = null
 
 const apiBridgeFetch = function (requestObject) {
   return fetch('/api', {
-    method: 'POST',
+    body: JSON.stringify(requestObject),
+    credentials: 'same-origin',
     headers: {
       'Content-Type': 'application/json'
     },
-    credentials: 'same-origin',
-    body: JSON.stringify(requestObject)
+    method: 'POST'
   }).then(response => {
     if (response.status === 200) {
       return response.json()
@@ -33,7 +33,7 @@ const buildAPIBridgeClient = function (api, inBundle) {
     throw 'buildAPIBridgeClient: Missing API'
   }
 
-  const { _publishId, host, port, version, database } = api
+  const {_publishId, host, port, version, database} = api
 
   const APIBridgeClient = function () {
     this._publishId = _publishId
@@ -45,10 +45,10 @@ const buildAPIBridgeClient = function (api, inBundle) {
   }
 
   APIBridgeClient.prototype = new APIWrapper({
-    uri: host,
+    database,
     port,
-    version,
-    database
+    uri: host,
+    version
   })
 
   APIBridgeClient.prototype._create = APIBridgeClient.prototype.create

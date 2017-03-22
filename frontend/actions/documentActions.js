@@ -8,15 +8,15 @@ export function startNewDocument() {
 
 export function setRemoteDocument(document) {
   return {
-    type: Types.SET_REMOTE_DOCUMENT,
-    document
+    document,
+    type: Types.SET_REMOTE_DOCUMENT
   }
 }
 
 export function setRemoteDocumentStatus(status) {
   return {
-    type: Types.SET_REMOTE_DOCUMENT_STATUS,
-    status
+    status,
+    type: Types.SET_REMOTE_DOCUMENT_STATUS
   }
 }
 
@@ -28,23 +28,23 @@ export function clearRemoteDocument() {
 
 export function setFieldErrorStatus(field, value, error) {
   return {
-    type: Types.SET_FIELD_ERROR_STATUS,
+    error,
     field,
-    value,
-    error
+    type: Types.SET_FIELD_ERROR_STATUS,
+    value
   }
 }
 
 export function setErrorsFromRemoteApi(errors) {
   return {
-    type: Types.SET_ERRORS_FROM_REMOTE_API,
-    errors
+    errors,
+    type: Types.SET_ERRORS_FROM_REMOTE_API
   }
 }
 
 export function updateLocalDocument(data) {
   return {
-    type: Types.UPDATE_LOCAL_DOCUMENT,
-    data
+    data,
+    type: Types.UPDATE_LOCAL_DOCUMENT
   }
 }
