@@ -28,8 +28,8 @@ Session.prototype.buildUserObject = function (user) {
  *
  * @return {object} The corresponding user object.
  */
-Session.prototype.createSession = function ({username, password}) {
-  return this.query({method:'POST', payload: {username, password}}).then(response => {
+Session.prototype.createSession = function ({password, username}) {
+  return this.query({method: 'POST', payload: {password, username}}).then(response => {
     return response.json().then(this.buildUserObject)
   })
 }
@@ -40,7 +40,7 @@ Session.prototype.createSession = function ({username, password}) {
  * @return {object} The corresponding user object.
  */
 Session.prototype.destroy = function () {
-  return this.query({path:'/session/destroy', method:'POST'})
+  return this.query({method: 'POST', path: '/session/destroy'})
 }
 
 /**
@@ -48,19 +48,21 @@ Session.prototype.destroy = function () {
  * @param  {String} path    Request URL path
  * @param  {String} method  Request method
  * @param  {Object} payload Payload object (optional)
- * @return {Promise}        Response callback         
+ * @return {Promise}        Response callback
  */
-Session.prototype.query = function({path='/session', method='GET', payload=null}) {
+Session.prototype.query = function ({path = '/session', method = 'GET', payload = null}) {
   let request = {
-    method: method,
     credentials: 'same-origin',
     headers: {
       'Content-Type': 'application/json'
-    }
+    },
+    method: method
   }
+
   if (payload) {
     request.body = JSON.stringify(payload)
   }
+
   return fetch(path, request)
 }
 

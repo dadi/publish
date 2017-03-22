@@ -2,75 +2,75 @@
 
 module.exports = {
   FieldImage: {
-    availableInFrontend: true,
-    doc: "Image field",
     accept: {
       availableInFrontend: true,
-      doc: "File types",
-      type: Array,
-      default: ["image/*"]
+      default: ['image/*'],
+      doc: 'File types',
+      type: Array
     },
+    availableInFrontend: true,
     cdn: {
-      doc: "DADI CDN",
       availableInFrontend: true,
+      doc: 'DADI CDN',
       enabled: {
         availableInFrontend: true,
-        type: Boolean,
-        default: false
+        default: false,
+        type: Boolean
       },
       host: {
         availableInFrontend: true,
-        format: 'url',
-        default: '0.0.0.0'
+        default: '0.0.0.0',
+        format: 'url'
       },
       path: {
         availableInFrontend: true,
-        format: String,
-        default: ''
+        default: '',
+        format: String
       },
       port: {
         availableInFrontend: true,
-        format: 'port',
-        default: 3000
+        default: 3000,
+        format: 'port'
+      }
+    },
+    doc: 'Image field',
+    s3: {
+      accessKeyId: {
+        default: '',
+        doc: 'AWS Access Key ID',
+        env: 'AWS_ACCESS_KEY',
+        format: String
+      },
+      availableInFrontend: true,
+      bucketName: {
+        default: '',
+        doc: 'AWS Bucket Name',
+        env: 'AWS_S3_BUCKET',
+        format: String
+      },
+      doc: 'Store Image in S3',
+      enabled: {
+        availableInFrontend: true,
+        default: false,
+        type: Boolean
+      },
+      region: {
+        default: '',
+        doc: 'AWS Region',
+        env: 'AWS_REGION',
+        format: String
+      },
+      secretAccessKey: {
+        default: '',
+        doc: 'AWS Secret Key',
+        env: 'AWS_SECRET_KEY',
+        format: String
       }
     },
     useAPI: {
       availableInFrontend: true,
-      type: Boolean,
-      default: true
-    },
-    s3: {
-      doc: "Store Image in S3",
-      availableInFrontend: true,
-      enabled: {
-        availableInFrontend: true,
-        type: Boolean,
-        default: false
-      },
-      accessKeyId: {
-        doc: "AWS Access Key ID",
-        format: String,
-        default: "",
-        env: "AWS_ACCESS_KEY"
-      },
-      secretAccessKey: {
-        doc: "AWS Secret Key",
-        format: String,
-        default: "",
-        env: "AWS_SECRET_KEY"
-      },
-      bucketName: {
-        doc: "AWS Bucket Name",
-        format: String,
-        default: "",
-        env: "AWS_S3_BUCKET"
-      },
-      region: {
-        doc: "AWS Region",
-        format: String,
-        default: "",
-        env: "AWS_REGION"
-      }
+      default: true,
+      type: Boolean
     }
   }
 }

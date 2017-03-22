@@ -9,8 +9,8 @@ export function setRemoteUser(user) {
 
 export function updateLocalUser(data) {
   return {
-    type: Types.UPDATE_LOCAL_USER,
-    data
+    data,
+    type: Types.UPDATE_LOCAL_USER
   }
 }
 

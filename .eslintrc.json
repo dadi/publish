@@ -20,7 +20,8 @@
         ],
         "capitalized-comments": [
             "error",
-            "always"
+            "always",
+            { "ignoreConsecutiveComments": true }
         ],
         "comma-spacing": [
             "error",
@@ -75,7 +76,7 @@
         ],
         "max-len": [
             "error",
-            80
+            100
         ],
         "new-cap": "error",
         "new-parens": "error",
@@ -122,16 +123,15 @@
             "error",
             "never"
         ],
-        "quote-props": [
-            "error",
-            "as-needed"
-        ],
         "sort-keys": "error",
         "sort-imports": "error",
         "space-before-blocks": "error",
         "space-before-function-paren": [
             "error", 
-            "never"
+            {
+                "named": "never",
+                "anonymous": "always"
+            }
         ],
         "space-in-parens": [
             "error",

@@ -2,8 +2,8 @@ import * as Types from 'actions/actionTypes'
 
 export function setAppConfig(config) {
   return {
-    type: Types.SET_APP_CONFIG,
-    config
+    config,
+    type: Types.SET_APP_CONFIG
   }
 }
 
@@ -16,8 +16,8 @@ export function setScreenWidth(width) {
 
 export function registerNetworkCall(status, onComplete) {
   return {
-    type: Types.REGISTER_NETWORK_CALL,
+    onComplete,
     status,
-    onComplete
+    type: Types.REGISTER_NETWORK_CALL
   }
 }

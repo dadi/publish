@@ -7,7 +7,6 @@ const defaultSelectLocationState = state => state.router
 
 export default function syncRouteWithStore(history, store, {
   selectLocationState = defaultSelectLocationState} = {}) {
-
   if (typeof selectLocationState(store.getState()) === 'undefined') {
     throw new Error('state.router missing')
   }
@@ -22,7 +21,9 @@ export default function syncRouteWithStore(history, store, {
   // Get location in store
   const getLocationInStore = (fallbackToInitial) => {
     let locationState = selectLocationState(store.getState())
-    return locationState.locationBeforeTransitions || (fallbackToInitial ? initialLocation : undefined)
+
+    return locationState.locationBeforeTransitions ||
+           (fallbackToInitial ? initialLocation : undefined)
   }
 
   const handleLocationChange = (location) => {
@@ -43,15 +44,15 @@ export default function syncRouteWithStore(history, store, {
 
     // Update the store by calling action
     store.dispatch({
-      type: Types.LOCATION_CHANGE,
       locationBeforeTransitions: history.location,
-      params
+      params,
+      type: Types.LOCATION_CHANGE
     })
   }
 
   const handleStoreChange = () => {
     const locationInStore = getLocationInStore(true)
-    
+
     if (!locationInStore || Object.is(locationInStore, currentLocation || initialLocation)) {
       return
     }
@@ -80,6 +81,7 @@ export default function syncRouteWithStore(history, store, {
 
       const unsubscribeFromStore = store.subscribe(() => {
         const currentLocation = getLocationInStore(true)
+
         if (currentLocation === lastSetLocation) {
           return
         }
