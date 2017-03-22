@@ -78,7 +78,56 @@ module.exports = {
     }
   },
   auth: {
-    doc: 'Connected APIs',
+    doc: 'Auth API Collection',
+    availableInFrontend: true,
+    format: Object,
+    default: {
+      enabled: false
+    },
+    enabled: {
+      availableInFrontend: true,
+      format: Boolean,
+      default: true
+    },
+    host: {
+      availableInFrontend: true,
+      format: 'ipaddress',
+      default: '0.0.0.0'
+    },
+    port: {
+      availableInFrontend: true,
+      format: 'port',
+      default: 3000
+    },
+    database: {
+      availableInFrontend: true,
+      format: String,
+      default: ''
+    },
+    collection: {
+      availableInFrontend: true,
+      format: String,
+      default: ''
+    },
+    version: {
+      availableInFrontend: true,
+      format: String,
+      default: '1.0'
+    },
+    credentials: {
+      format: Object,
+      clientId: {
+        format: String,
+        default: 'testClient'
+      },
+      secret: {
+        format: String,
+        default: 'superSecret'
+      }
+    }
+  },
+  assets: {
+    doc: 'Asset API Endpoint',
     format: Object,
     default: {
       enabled: true
@@ -99,17 +148,9 @@ module.exports = {
       format: 'port',
       default: 3000
     },
-    database: {
+    endpoint: {
       format: String,
       default: ''
-    },
-    collection: {
-      format: String,
-      default: ''
-    },
-    version: {
-      format: String,
-      default: '1.0'
     },
     credentials: {
       format: Object,
