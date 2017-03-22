@@ -14,7 +14,7 @@ import * as documentActions from 'actions/documentActions'
 
 import APIBridge from 'lib/api-bridge-client'
 import {buildUrl, createRoute} from 'lib/router'
-import {connectHelper, slugify} from 'lib/util'
+import {connectHelper, setPageTitle, slugify} from 'lib/util'
 import {getCurrentApi, getCurrentCollection} from 'lib/app-config'
 
 import Button from 'components/Button/Button'
@@ -51,12 +51,6 @@ class DocumentEdit extends Component {
     group: proptypes.string,
 
     /**
-     * A callback to be fired if the container wants to attempt changing the
-     * page title.
-     */
-    onPageTitle: proptypes.func,
-
-    /**
      * The current active section (if any).
      */
     section: proptypes.string,
@@ -85,6 +79,8 @@ class DocumentEdit extends Component {
 
     const currentCollection = getCurrentCollection(state.api.apis, group, collection)
     const method = documentId ? 'edit' : 'new'
+
+    setPageTitle(`${method[0].toUpperCase() + method.slice(1)} document`)
 
     if (currentCollection) {
       const fields = this.groupFields(currentCollection.fields)
@@ -262,7 +258,6 @@ class DocumentEdit extends Component {
     const {
       actions,
       collection,
-      onPageTitle,
       group,
       state
     } = this.props
@@ -281,16 +276,6 @@ class DocumentEdit extends Component {
         const document = response.results[0]
 
         actions.setRemoteDocument(document)
-
-        // This is something to revisit. We don't have the concept of a primary field,
-        // which we would use for, among other things, set the title of the page when
-        // editing a document. For now, and to be consistent with how we're linking to
-        // documents in the document list view, we take the contents of the first field.
-        const firstField = Object.keys(currentCollection.fields)[0]
-
-        if (typeof onPageTitle === 'function') {
-          onPageTitle.call(this, document[firstField])
-        }
       })
   }
 
