@@ -198,33 +198,26 @@ class DocumentEdit extends Component {
 
           sectionClass.addIf('section-active', section.slug === activeSection)
 
-          const mainBodyFields = section.fields.filter(field => {
-            const position = field.publish && field.publish.position
-
-            return !position || position === 'main'
-          })
-
-          const sideBarFields = section.fields.filter(field => {
-            const position = field.publish && field.publish.position
-
-            return position === 'sidebar'
-          })
+          const fields = {
+            main: section.fields.filter(field => !field.publish || field.publish.position === 'main'),
+            sidebar: section.fields.filter(field => field.publish && field.publish.position === 'sidebar')
+          }
 
           const mainBodyStyle = new Style(styles, 'main')
 
           // If there are no fields in the side bar, the main body can use
           // the full width of the page.
-          mainBodyStyle.addIf('main-full', !sideBarFields.length)
+          mainBodyStyle.addIf('main-full', !fields.sidebar.length)
 
           return (
             <section class={sectionClass.getClasses()}>
               <div class={mainBodyStyle.getClasses()}>
-                {mainBodyFields.map(field => this.renderField(field))}
+                {fields.main.map(field => this.renderField(field))}
               </div>
 
-              {(sideBarFields.length > 0) &&
+              {(fields.sidebar.length > 0) &&
                 <div class={styles.sidebar}>
-                  {sideBarFields.map(field => this.renderField(field))}
+                  {fields.sidebar.map(field => this.renderField(field))}
                 </div>
               }
             </section>
