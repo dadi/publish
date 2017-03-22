@@ -15,7 +15,6 @@ import Header from 'components/Header/Header'
 import LoadingBar from 'components/LoadingBar/LoadingBar'
 import Main from 'components/Main/Main'
 
-import DocumentEdit from 'containers/DocumentEdit/DocumentEdit'
 import DocumentListView from 'views/DocumentListView/DocumentListView'
 import Error from 'views/Error/Error'
 import Home from 'views/Home/Home'
@@ -25,6 +24,7 @@ import SignIn from 'views/SignIn/SignIn'
 import SignOut from 'views/SignOut/SignOut'
 
 import UserProfileEdit from 'containers/UserProfileEdit/UserProfileEdit'
+import DocumentEdit from 'containers/DocumentEdit/DocumentEdit'
 
 import {connectHelper, debounce, isEmpty, slugify} from 'lib/util'
 import Socket from 'lib/socket'
