@@ -31,14 +31,13 @@ class UserProfileEdit extends Component {
       const currentCollection = getAuthCollection(state.api.apis, auth)
 
       if (currentCollection) {
-        const fields = Object.keys(currentCollection.fields)
         const firstField = Object.keys(currentCollection.fields).find(field => (currentCollection.fields[field].publish && currentCollection.fields[field].publish.section))
         const firstSection = firstField.length ? currentCollection.fields[firstField].publish.section.toLowerCase() : sections[0]
 
         const sectionMatch = section ? sections.find(fieldSection => fieldSection === section) : null
         if (!section || !sectionMatch) {
           route(buildUrl('profile', firstSection))
-          
+
           return false
         }
         setPageTitle(`Edit Profile ${Case.sentence(section)}`)

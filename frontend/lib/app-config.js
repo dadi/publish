@@ -95,7 +95,6 @@ export function getAuthCollection(apis, auth) {
   if (!api || !api.collections) return null
 
   const collection = api.collections.find(collection => collection.name === auth.collection)
+
   return collection
-
-
 }
