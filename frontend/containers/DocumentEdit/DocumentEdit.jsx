@@ -156,7 +156,9 @@ class DocumentEdit extends Component {
       fields: fields.other
     }]
     const activeSection = this.props.section || sections[0].slug
-    const hasValidationErrors = Object.keys(document.validationErrors).filter(field => document.validationErrors[field]).length
+    const hasValidationErrors = Object.keys(document.validationErrors)
+    .filter(field => document.validationErrors[field])
+    .length
     const method = documentId ? 'edit' : 'new'
 
     // By default, we support these two save modes.
@@ -331,7 +333,7 @@ class DocumentEdit extends Component {
     // Cycle through referenced documents
     Object.keys(document).forEach(docField => {
       let fieldMatch = Object.keys(currentCollection.fields).find(field => docField === field)
-      
+
       if (fieldMatch && currentCollection.fields[fieldMatch].type === 'Reference') {
         if (Object.is(typeof document[fieldMatch]._id, String)) {
           // Existing referenced document
