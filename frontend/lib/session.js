@@ -18,12 +18,7 @@ Session.prototype.buildUserObject = function (user) {
   if (!user) return null
   if (user.err) return user
 
-  return {
-    email: user.email,
-    firstName: user.first_name,
-    lastName: user.last_name,
-    username: user.username
-  }
+  return user
 }
 
 /**

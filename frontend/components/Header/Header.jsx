@@ -88,7 +88,7 @@ export default class Header extends Component {
               >
                 Sign out
               </button>
-              <a href="/profile" class={styles.user}>{`${user.firstName} ${user.lastName}`}</a>
+              <a href="/profile" class={styles.user}>{`${user.first_name} ${user.last_name}`}</a>
             </div>
           </div>
 

@@ -12,6 +12,7 @@ Image specific config.
 
 - type: `object`
 
+
 ### `onChange`
 
 Callback to be executed when there is a change in the value of the field.

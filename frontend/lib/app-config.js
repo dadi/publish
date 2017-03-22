@@ -88,3 +88,14 @@ export function getCurrentCollection (apis, urlGroup, urlCollection) {
 
   return collection
 }
+
+export function getAuthCollection(apis, auth) {
+  const api = apis.find(api => api.host === auth.host && api.port === auth.port)
+
+  if (!api || !api.collections) return null
+
+  const collection = api.collections.find(collection => collection.name === auth.collection)
+  return collection
+
+
+}
