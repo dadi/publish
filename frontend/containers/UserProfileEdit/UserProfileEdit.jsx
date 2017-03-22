@@ -23,7 +23,7 @@ class UserProfileEdit extends Component {
       state
     } = this.props
 
-    const sections = ['account', 'settings', 'password_reset']
+    const sections = ['account', 'settings', 'security']
 
     if (state.app.config) {
       const auth = state.app.config.auth
