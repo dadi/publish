@@ -14,7 +14,7 @@ import * as documentActions from 'actions/documentActions'
 
 import APIBridge from 'lib/api-bridge-client'
 import {buildUrl, createRoute} from 'lib/router'
-import {connectHelper, setPageTitle, slugify} from 'lib/util'
+import {connectHelper, setPageTitle, slugify, Case} from 'lib/util'
 import {getCurrentApi, getCurrentCollection} from 'lib/app-config'
 
 import Button from 'components/Button/Button'
@@ -80,15 +80,13 @@ class DocumentEdit extends Component {
     const currentCollection = getCurrentCollection(state.api.apis, group, collection)
     const method = documentId ? 'edit' : 'new'
 
-    setPageTitle(`${method[0].toUpperCase() + method.slice(1)} document`)
+    setPageTitle(`${Case.sentence(method)} document`)
 
     if (currentCollection) {
       const fields = this.groupFields(currentCollection.fields)
 
       if (section) {
-        const sectionMatch = fields.sections.find(fieldSection => {
-          return fieldSection.slug === section
-        })
+        const sectionMatch = fields.sections.find(fieldSection => fieldSection.slug === section)
 
         if (!sectionMatch) {
           const firstSection = fields.sections[0]
@@ -158,9 +156,9 @@ class DocumentEdit extends Component {
       fields: fields.other
     }]
     const activeSection = this.props.section || sections[0].slug
-    const hasValidationErrors = Object.keys(document.validationErrors).filter(field => {
-      return document.validationErrors[field]
-    }).length
+    const hasValidationErrors = Object.keys(document.validationErrors)
+    .filter(field => document.validationErrors[field])
+    .length
     const method = documentId ? 'edit' : 'new'
 
     // By default, we support these two save modes.
@@ -318,10 +316,6 @@ class DocumentEdit extends Component {
     }
   }
 
-  // stripDefaultFields(document) {
-  //   return Object.assign({}, document, {createdAt: undefined, createdBy: undefined, lastModifiedAt: undefined, lastModifiedBy: undefined, _id: undefined})
-  // }
-
   saveDocument(documentId) {
     const {
       actions,
@@ -338,9 +332,8 @@ class DocumentEdit extends Component {
 
     // Cycle through referenced documents
     Object.keys(document).forEach(docField => {
-      let fieldMatch = Object.keys(currentCollection.fields).find(field => {
-        return docField === field
-      })
+      let fieldMatch = Object.keys(currentCollection.fields).find(field => docField === field)
+
       if (fieldMatch && currentCollection.fields[fieldMatch].type === 'Reference') {
         if (Object.is(typeof document[fieldMatch]._id, String)) {
           // Existing referenced document

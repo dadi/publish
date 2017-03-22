@@ -56,7 +56,7 @@ class App extends Component {
     const path = state.router.locationBeforeTransitions.pathname
 
     // State change: user has signed in
-    if (!previousState.user.user && state.user.user) {
+    if (!previousState.user.local && state.user.local) {
       const {actions} = this.props
 
       getAppConfig().then(config => {
@@ -71,7 +71,7 @@ class App extends Component {
     }
 
     // State change: user has signed out
-    if (previousState.user.user && !state.user.user) {
+    if (previousState.user.local && !state.user.local) {
       route('/sign-in')
     }
 
@@ -97,10 +97,10 @@ class App extends Component {
       <div class={styles.container}>
         <LoadingBar loading={isFetchingData} />
 
-        {state.user.user &&
+        {state.user.local &&
           <Header
             compact={state.app.breakpoint === null}
-            user={state.user.user}
+            user={state.user.local}
             onSignOut={this.sessionEnd.bind(this)}
           />
         }
@@ -117,7 +117,7 @@ class App extends Component {
             {hasRoutes && ( <DocumentListView path="/:group/:collection/documents/:page?" authenticate /> )}
             <MediaLibrary path="/:collection/media/:document?" authenticate/>
             {hasRoutes && ( <MediaLibrary path="/:group/:collection/media/:document?" authenticate/> )}
-            <UserProfileEdit path="/profile" authenticate />
+            <UserProfileEdit path="/profile/:section?" authenticate />
             <SignIn path="/sign-in" />
             <SignOut path="/sign-out" />
             <Error type="404" default />
@@ -179,7 +179,7 @@ class App extends Component {
 
     new Session().getSession().then(user => {
       if (user && !user.err) {
-        actions.signIn(user)
+        actions.setRemoteUser(user)
       } else {
         actions.signOut()
         route('/sign-in')
@@ -216,7 +216,7 @@ class App extends Component {
       })
       .setUser(Object.assign({}, state.user, {
         vendor: navigator.vendor,
-        identifier: `${state.user.username}_${navigator.vendor}`
+        identifier: `${state.user.localname}_${navigator.vendor}`
       })).setRoom(pathname)
 
     // Save reference to `socket` as a private variable

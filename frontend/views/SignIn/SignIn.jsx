@@ -92,7 +92,7 @@ class SignIn extends Component {
       password: this.state.password
     }).then(user => {
       if (user && !user.err) {
-        actions.signIn(user)
+        actions.setRemoteUser(user)
 
         route('/profile')
       } else {

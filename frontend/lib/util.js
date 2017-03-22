@@ -66,6 +66,16 @@ export function urlHelper () {
   }
 }
 
+export const Case = {
+  sentence (value) {
+    if (!value) return ''
+      
+    return value.split('.').map(sentence => {
+      return sentence[0].toUpperCase() + sentence.slice(1)
+    }).join('.')
+  }
+}
+
 export function objectToArray (obj, keyField) {
   if (!obj) return []
   return Object.keys(obj).map(key => {
