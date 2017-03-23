@@ -2,15 +2,15 @@ import * as Types from 'actions/actionTypes'
 
 export function setDocumentList(documents) {
   return {
-    type: Types.SET_DOCUMENT_LIST,
-    documents
+    documents,
+    type: Types.SET_DOCUMENT_LIST
   }
 }
 
 export function setDocumentListStatus(status) {
   return {
-    type: Types.SET_DOCUMENT_LIST_STATUS,
-    status
+    status,
+    type: Types.SET_DOCUMENT_LIST_STATUS
   }
 }
 

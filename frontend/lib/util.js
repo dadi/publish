@@ -1,15 +1,15 @@
 'use strict'
 
-import { connect } from 'preact-redux'
-import { bindActionCreators } from 'redux'
+import {bindActionCreators} from 'redux'
+import {connect} from 'preact-redux'
 
-export function bindActions (actions) {
+export function bindActions(actions) {
   return dispatch => ({
     ...bindActionCreators(actions, dispatch)
   })
 }
 
-export function connectHelper (stateMap, dispatchMap) {
+export function connectHelper(stateMap, dispatchMap) {
   return connect((state) => {
     return {
       state: stateMap(state)
@@ -30,16 +30,19 @@ let lastId = 0
 // generated on the client to avoid conflicts
 const ID_PREFIX = 'c'
 
-export function getUniqueId () {
+export function getUniqueId() {
   return `${ID_PREFIX}-${lastId++}`
 }
 
-export function urlHelper () {
-
+export function urlHelper() {
   return {
-    paramsToObject (source) {
+    paramsToObject(source) {
       if (!source || typeof source === 'undefined') return null
-      let params = JSON.parse('{"' + decodeURI(source.replace(/^(\?)/,'')).replace(/"/g, '\\"').replace(/&/g, '","').replace(/=/g,'":"') + '"}')
+      let params = JSON.parse('{"' + decodeURI(source.replace(/^(\?)/, ''))
+        .replace(/"/g, '\\"')
+        .replace(/&/g, '","')
+        .replace(/=/g, '":"') + '"}')
+
       Object.keys(params).forEach(param => {
         try {
           params[param] = JSON.parse(params[param])
@@ -50,16 +53,16 @@ export function urlHelper () {
 
       return params
     },
-    paramsToString (params) {
+    paramsToString(params) {
       return Object.keys(params).map(key => {
         if (typeof params[key] === 'object') {
           try {
-            return key + "=" + JSON.stringify(params[key])
+            return key + '=' + JSON.stringify(params[key])
           } catch (e) {
-            return key + "=" + params[key]
+            return key + '=' + params[key]
           }
         } else {
-          return key + "=" + params[key]
+          return key + '=' + params[key]
         }
       }).join('&')
     }
@@ -67,31 +70,33 @@ export function urlHelper () {
 }
 
 export const Case = {
-  sentence (value) {
+  sentence(value) {
     if (!value) return ''
-      
+
     return value.split('.').map(sentence => {
       return sentence[0].toUpperCase() + sentence.slice(1)
     }).join('.')
   }
 }
 
-export function objectToArray (obj, keyField) {
+export function objectToArray(obj, keyField) {
   if (!obj) return []
+
   return Object.keys(obj).map(key => {
     return Object.assign({}, {[keyField || 'key']: key, value: obj[key]})
   })
 }
 
-export function arrayToObject (arr, keyField) {
+export function arrayToObject(arr, keyField) {
   if (!arr.length) return null
+
   return Object.assign({}, ...arr.map(obj => {
     return {[obj[keyField] || 'key']: obj.value}
   }))
 }
 
 // Object and Field validation
-export function isValidJSON (string) {
+export function isValidJSON(string) {
   if (!string || typeof string !== 'string') return
 
   return /^[\],:{}\s]*$/.test(string.replace(/\\["\\\/bfnrtu]/g, '@').
@@ -99,11 +104,11 @@ export function isValidJSON (string) {
     replace(/(?:^|:|,)(?:\s*\[)+/g, ''))
 }
 
-export function isEmpty (subject) {
-  return subject === undefined || subject === null || (typeof subject === 'object' && subject.length < 1)
+export function isEmpty(subject) {
+  return !subject || (typeof subject === 'object' && subject.length < 1)
 }
 
-export function slugify (str) {
+export function slugify(str) {
   return str.toString()
     .toLowerCase()
     .replace(/\s+/g, '-')     // Replace spaces with -
@@ -114,7 +119,7 @@ export function slugify (str) {
     .replace(/-+$/, '')       // Trim - from end of text
 }
 
-export function debounce (func, wait, immediate) {
+export function debounce(func, wait, immediate) {
   let timeout
 
   return () => {
@@ -124,12 +129,13 @@ export function debounce (func, wait, immediate) {
       if (!immediate) func.apply(context, args)
     }
     let callNow = immediate && !timeout
+
     clearTimeout(timeout)
     timeout = setTimeout(later, wait)
     if (callNow) func.apply(context, args)
   }
 }
 
-export function setPageTitle (title) {
+export function setPageTitle(title) {
   document.title = `${title} / DADI Publish`
 }

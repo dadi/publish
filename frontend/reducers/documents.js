@@ -1,7 +1,7 @@
 'use strict'
 
-import * as types from 'actions/actionTypes'
 import * as Constants from 'lib/constants'
+import * as Types from 'actions/actionTypes'
 
 const initialState = {
   list: null,
@@ -10,33 +10,34 @@ const initialState = {
 
 export default function document(state = initialState, action = {}) {
   switch (action.type) {
+
     // Action: set document list
-    case types.SET_DOCUMENT_LIST:
+    case Types.SET_DOCUMENT_LIST:
       return {
         ...state,
-        status: Constants.STATUS_IDLE,
-        list: action.documents
+        list: action.documents,
+        status: Constants.STATUS_IDLE
       }
 
     // Action: clear document list
-    case types.CLEAR_DOCUMENT_LIST:
+    case Types.CLEAR_DOCUMENT_LIST:
       return {
         ...state,
-        status: Constants.STATUS_IDLE,
         list: null,
         sortBy: null,
-        sortOrder: null
+        sortOrder: null,
+        status: Constants.STATUS_IDLE
       }
 
     // Action: set document loading status
-    case types.SET_DOCUMENT_LIST_STATUS:
+    case Types.SET_DOCUMENT_LIST_STATUS:
       return {
         ...state,
         status: action.status
       }
 
     // Action: user signed out
-    case types.SIGN_OUT:
+    case Types.SIGN_OUT:
       return initialState
 
     default:

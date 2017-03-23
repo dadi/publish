@@ -14,6 +14,7 @@ const Socket = function (port) {
   this.onConnectListeners = []
   this.socket = connect(this.options)
   this.registerListeners()
+
   return this
 }
 
@@ -31,9 +32,9 @@ Socket.prototype.onConnect = function () {
   if (this.user) {
     this.user.channel = this.room
     if (!this.socket.getAuthToken()) {
-      this.socket.emit('login', {user: this.user},(err, failure) => {
+      this.socket.emit('login', {user: this.user}, (err, failure) => {
         if (!err) {
-          // Run all queued 
+          // Run all queued
           this.queuedTasks.forEach(task => {
             task()
           })
@@ -44,6 +45,7 @@ Socket.prototype.onConnect = function () {
   this.onConnectListeners.forEach(connectListener => {
     connectListener()
   })
+
   return this
 }
 
@@ -53,6 +55,7 @@ Socket.prototype.isConnected = function () {
 
 Socket.prototype.setUser = function (data) {
   this.user = data
+
   return this
 }
 
@@ -71,8 +74,10 @@ Socket.prototype.getUser = function () {
 
 Socket.prototype.onError = function (err) {
   console.log(err)
+
   return
 }
+
 // //Room
 
 Socket.prototype.setRoom = function (room) {
@@ -83,11 +88,13 @@ Socket.prototype.setRoom = function (room) {
   } else {
     this.queuedTasks.push(this.enterRoom.bind(this))
   }
+
   return this
 }
 
 Socket.prototype.leaveRoom = function () {
   this.socket.unsubscribe(this.room)
+
   return this
 }
 
@@ -98,9 +105,13 @@ Socket.prototype.enterRoom = function () {
     this.channel.on('unsubscribe', this.onRoomUnSubscribe.bind(this))
     this.channel.on('subscribe', this.onRoomSubscribe.bind(this))
     if (this.socket.authToken) {
-      this.publishMessage('getUsersInRoom', {channel: this.room, user: this.socket.authToken.username})
+      this.publishMessage('getUsersInRoom', {
+        channel: this.room,
+        user: this.socket.authToken.username
+      })
     }
   }
+
   return this
 }
 
@@ -110,17 +121,20 @@ Socket.prototype.watchChannel = function (data) {
       this.listeners[data.type](data)
     }
   }
+
   return this
 }
 
 Socket.prototype.on = function (type, callback) {
   this.listeners[type] = callback
+
   return this
 }
 
 Socket.prototype.publishMessage = function (type, data) {
   if (!this.channel) return
-  this.channel.publish({type: type, data: data}, this.channelDidPublish)
+  this.channel.publish({data, type}, this.channelDidPublish)
+
   return this
 }
 
@@ -134,6 +148,7 @@ Socket.prototype.onRoomUnSubscribe = function () {
     this.channel.unwatch()
     this.socket.unsubscribe(this.room)
   }
+
   return this
 }
 
@@ -141,12 +156,14 @@ Socket.prototype.onRoomSubscribe = function () {
   if (this.channel) {
     this.channel.watch(this.watchChannel.bind(this))
   }
+
   return this
 }
 
 Socket.prototype.onRoomSubscribeFail = function (err) {
   //Room subscription failer
-  console.log("ROOM SUBSCRIBE FAIL", err)
+  console.log('ROOM SUBSCRIBE FAIL', err)
+
   return this
 }
 
