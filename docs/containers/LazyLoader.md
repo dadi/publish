@@ -26,4 +26,5 @@ Load only when app status is idle
 The placeholder node to be rendered before load
 
 - type: `node`
+- default value: `null`
 

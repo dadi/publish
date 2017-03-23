@@ -26,17 +26,16 @@ class LazyLoader extends Component {
   }
 
   static defaultProps = {
-    placeholder: null,
     idleOnly: true
   }
 
   render() {
-    const {children} = this.props
+    const {children, placeholder} = this.props
 
     const canLoad = this.evalLoadingConditions()
 
     if (!canLoad) {
-      if (placeholder) return placeholder
+      if (placeholder) return (placeholder)
 
       return null
     }
