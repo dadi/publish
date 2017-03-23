@@ -11,7 +11,7 @@
   outline: 0;
 }
 
-.dropdown[multiple] {
+.dropdown-multiple {
   background-color: #fafafa;
   height: 170px;
 }

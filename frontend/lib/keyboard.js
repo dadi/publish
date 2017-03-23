@@ -68,16 +68,16 @@ class Keys {
     }
 
     // Letters
-    for (i = 97; i < 123; i++) codes[String.fromCharCode(i)] = i - 32
+    for (let i = 97; i < 123; i++) codes[String.fromCharCode(i)] = i - 32
 
     // Numbers
     for (let i = 48; i < 58; i++) codes[i - 48] = i
 
     // Function keys
-    for (i = 1; i < 13; i++) codes['f' + i] = i + 111
+    for (let i = 1; i < 13; i++) codes['f' + i] = i + 111
 
     // Numpad keys
-    for (i = 0; i < 10; i++) codes['numpad ' + i] = i + 96
+    for (let i = 0; i < 10; i++) codes['numpad ' + i] = i + 96
 
     return codes
   }

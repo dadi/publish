@@ -4,7 +4,7 @@ const config = require(paths.config)
 const AWS = require('aws-sdk')
 
 const ImageFieldRoute = function (app) {
-  if (config.get('FieldImage.s3.enabled')) {
+  if (config.get('FieldAsset.s3.enabled')) {
     this.initAWS()
     this.S3 = this.initS3()
 
@@ -53,12 +53,12 @@ ImageFieldRoute.prototype.getSignedResponse = function (fileName, headers) {
 // S3
 ImageFieldRoute.prototype.initAWS = function () {
   AWS.config.update({
-    accessKeyId: config.get('FieldImage.s3.accessKeyId'),
-    secretAccessKey: config.get('FieldImage.s3.secretAccessKey')
+    accessKeyId: config.get('FieldAsset.s3.accessKeyId'),
+    secretAccessKey: config.get('FieldAsset.s3.secretAccessKey')
   })
 
-  if (config.get('FieldImage.s3.region') && config.get('FieldImage.s3.region') != '') {
-    AWS.config.update({region: config.get('FieldImage.s3.region')})
+  if (config.get('FieldAsset.s3.region') && config.get('FieldAsset.s3.region') != '') {
+    AWS.config.update({region: config.get('FieldAsset.s3.region')})
   }
 }
 
@@ -70,7 +70,7 @@ ImageFieldRoute.prototype.getS3SignedUrl = function (fileName, headers) {
   return new Promise((resolve, reject) => {
     let obj = {
       ACL: 'public-read',
-      Bucket: config.get('FieldImage.s3.bucketName'),
+      Bucket: config.get('FieldAsset.s3.bucketName'),
       ContentType: headers.contenttype,
       Expires: 600,
       Key: fileName

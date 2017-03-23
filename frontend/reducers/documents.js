@@ -5,6 +5,7 @@ import * as Types from 'actions/actionTypes'
 
 const initialState = {
   list: null,
+  query: null,
   status: Constants.STATUS_IDLE
 }
 
@@ -16,6 +17,7 @@ export default function document(state = initialState, action = {}) {
       return {
         ...state,
         list: action.documents,
+        query: action.query,
         status: Constants.STATUS_IDLE
       }
 

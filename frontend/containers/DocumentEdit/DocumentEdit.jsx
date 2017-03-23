@@ -20,7 +20,7 @@ import {getCurrentApi, getCurrentCollection} from 'lib/app-config'
 import Button from 'components/Button/Button'
 import ButtonWithOptions from 'components/ButtonWithOptions/ButtonWithOptions'
 import FieldBoolean from 'components/FieldBoolean/FieldBoolean'
-import FieldImage from 'components/FieldImage/FieldImage'
+import FieldAsset from 'components/FieldAsset/FieldAsset'
 import FieldString from 'components/FieldString/FieldString'
 import SubNavItem from 'components/SubNavItem/SubNavItem'
 import Toolbar from 'components/Toolbar/Toolbar'
@@ -420,9 +420,10 @@ class DocumentEdit extends Component {
 
         case 'Image':
           fieldElement = (
-            <FieldImage
+            <FieldAsset
               error={error}
-              config={app.config.FieldImage}
+              config={app.config.FieldAsset}
+              showPreview={true}
               onChange={this.handleFieldChange.bind(this)}
               onError={this.handleFieldError.bind(this)}
               value={document.local[field._id]}

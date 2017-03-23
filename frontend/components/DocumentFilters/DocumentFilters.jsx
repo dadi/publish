@@ -30,15 +30,21 @@ export default class DocumentFilters extends Component {
   constructor(props) {
     super(props)
 
-    const {filter} = props
+    const {collection, filter} = props
 
     // Evaluate passed filter / store in state
     const filters = (isValidJSON(filter) ? objectToArray(JSON.parse(filter), 'field') : []).map(this.deconstructFilters)
 
-    // The list of applied filters
-    this.state = {
-      filters: filters
+    if (!filters.length) {
+      filters.push({
+        index: 0,
+        field: Object.keys(collection.fields)[0],
+        type: '$eq'
+      })
     }
+
+    // The list of applied filters
+    this.state.filters = filters
   }
 
   render() {

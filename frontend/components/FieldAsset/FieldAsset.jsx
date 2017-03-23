@@ -6,9 +6,13 @@ import 'fetch'
 
 import {buildUrl} from 'lib/router'
 
-import Label from 'components/Label/Label'
+import Style from 'lib/Style'
+import styles from './FieldAsset.css'
 
-export default class FieldImage extends Component { 
+import Label from 'components/Label/Label'
+import LazyLoader from 'containers/LazyLoader/LazyLoader'
+
+export default class FieldAsset extends Component { 
 
   static propTypes = {
 
@@ -45,13 +49,21 @@ export default class FieldImage extends Component {
   }
 
   render() {
-    const {config, value} = this.props
+    const {config, value, showPreview} = this.props
     const src = this.getImageSrc(value)
+    const assetFieldStyles = new Style(styles, 'container')
+      .addIf('show-preview', showPreview)
 
     return (
       <Label label="Image">
         {src && (
-          <img width={100} src={src} />
+          <div class={assetFieldStyles.getClasses()}>
+            <LazyLoader
+              loadWhenIdle={true}
+              >
+              <img class={styles['image-thumb']} src={src} />
+            </LazyLoader>
+          </div>
         )}
         {config && (
           <input 

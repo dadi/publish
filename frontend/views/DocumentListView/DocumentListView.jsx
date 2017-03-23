@@ -40,11 +40,7 @@ export default class DocumentListView extends Component {
             group={group}
             filter={filter}
             filtersVisible={filtersVisible}
-            onFiltersToggle={() => {
-              this.setState({
-                filtersVisible: !this.state.filtersVisible
-              })
-            }}
+            onFiltersToggle={this.handleFilterToggle.bind(this)}
           />
 
           <DocumentList
@@ -59,6 +55,12 @@ export default class DocumentListView extends Component {
         </section>
       </div>
     )
+  }
+
+  handleFilterToggle() {
+    this.setState({
+      filtersVisible: !this.state.filtersVisible
+    })
   }
 
   handlePageTitle(title) {

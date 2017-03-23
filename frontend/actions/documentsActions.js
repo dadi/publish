@@ -1,8 +1,9 @@
 import * as Types from 'actions/actionTypes'
 
-export function setDocumentList(documents) {
+export function setDocumentList(documents, query) {
   return {
     documents,
+    query,
     type: Types.SET_DOCUMENT_LIST
   }
 }

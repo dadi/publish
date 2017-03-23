@@ -7,7 +7,6 @@ import Style from 'lib/Style'
 import styles from './FieldString.css'
 
 import Label from 'components/Label/Label'
-import FieldImage from 'components/FieldImage/FieldImage'
 import TextInput from 'components/TextInput/TextInput'
 
 /**
@@ -104,6 +103,7 @@ export default class FieldString extends Component {
     const dropdownStyle = new Style(styles, 'dropdown')
 
     dropdownStyle.addIf('dropdown-error', error)
+    dropdownStyle.addIf('dropdown-multiple', multiple)
 
     return (
       <Label
