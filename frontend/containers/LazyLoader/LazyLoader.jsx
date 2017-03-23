@@ -15,7 +15,6 @@ class LazyLoader extends Component {
      * Load only when app status is idle
      */
     idleOnly: proptypes.bool,
-
     /**
      * The placeholder node to be rendered before load
      */
