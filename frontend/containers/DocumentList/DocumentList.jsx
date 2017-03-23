@@ -82,7 +82,7 @@ class DocumentList extends Component {
     const {actions, state} = this.props
     const {list, status} = state.documents
     const pathKey = previousProps.state.router.locationBeforeTransitions.key
-    const historyKeyMatch = history.state.key === pathKey
+    const historyKeyMatch = history.state && history.state.key === pathKey
     const apisWithoutCollections = state.api.apis.filter(api => !api.hasCollections).length
 
     // State check: reject when missing config, session, or apis
@@ -102,6 +102,7 @@ class DocumentList extends Component {
   render() {
     const {
       collection,
+      filter,
       group,
       onPageTitle,
       order,
@@ -125,13 +126,15 @@ class DocumentList extends Component {
     })
     const selectedDocuments = this.getSelectedDocuments()
     const documentsList = documents.list.results
+    const metadata = documents.list.metadata
+    const query = documents.query
 
     // Setting page title
     if (typeof onPageTitle === 'function') {
       onPageTitle.call(this, currentCollection.settings.description || currentCollection.name)
     }
 
-    if (!documentsList.length) {
+    if (!documentsList.length && !query) {
       return (
         <HeroMessage
           title="No documents yet."
@@ -147,25 +150,32 @@ class DocumentList extends Component {
 
     return (
       <div>
-        <SyncTable
-          columns={tableColumns}
-          data={documents.list.results}
-          onRender={this.handleAnchorRender.bind(this)}
-          onSelect={this.handleRowSelect.bind(this)}
-          onSort={this.handleTableSort.bind(this)}
-          selectedRows={selectedRows}
-          sortable={true}
-          sortBy={sort}
-          sortOrder={order}
-        />
-
+        {documentsList.length > 0 && (
+          <SyncTable
+            columns={tableColumns}
+            data={documents.list.results}
+            onRender={this.handleAnchorRender.bind(this)}
+            onSelect={this.handleRowSelect.bind(this)}
+            onSort={this.handleTableSort.bind(this)}
+            selectedRows={selectedRows}
+            sortable={true}
+            sortBy={sort}
+            sortOrder={order}
+          />
+        )}
         <DocumentListToolbar
           collection={collection}
           group={group}
-          metadata={documents.list.metadata}
+          metadata={metadata}
           onBulkAction={this.handleBulkAction.bind(this)}
           selectedDocuments={selectedDocuments}
         />
+        {query && !documentsList.length && (
+          <div>
+            <h1>0 results</h1>
+            <p>There are no documents that match these filters</p>
+          </div>
+        )}
       </div>
     )
   }
@@ -262,7 +272,7 @@ class DocumentList extends Component {
 
     return query.find().then(docs => {
       // Update state with results
-      actions.setDocumentList(docs)
+      actions.setDocumentList(docs, query.query)
     }).catch(err => {
       console.log(err)
       // {!} TODO: Graceful deal with failure
@@ -273,11 +283,10 @@ class DocumentList extends Component {
     const {state} = this.props
     const {selectedRows} = this.state
     const documents = state.documents.list.results
-    const selectedDocuments = Object.keys(selectedRows).filter(index => {
-      return Boolean(selectedRows[index])
-    }).map(index => documents[index]._id)
 
-    return selectedDocuments
+    return Object.keys(selectedRows)
+      .filter(index => Boolean(selectedRows[index]))
+      .map(index => documents[index]._id)
   }
 
   handleBulkAction(action) {
@@ -293,5 +302,5 @@ class DocumentList extends Component {
 
 export default connectHelper(
   state => state,
-  dispatch => bindActionCreators({...documentsActions}, dispatch)
+  dispatch => bindActionCreators(documentsActions, dispatch)
 )(DocumentList)

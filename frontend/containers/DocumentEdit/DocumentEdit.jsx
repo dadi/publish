@@ -385,6 +385,7 @@ class DocumentEdit extends Component {
     // the validation message with "This field", but this is something that we can
     // easily revisit.
     const error = typeof hasError === 'string' ? 'This field ' + hasError : hasError
+
     const fieldType = field.publish && field.publish.subType ? field.publish.subType : field.type
 
     let fieldElement = null
