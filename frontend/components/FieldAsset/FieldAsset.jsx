@@ -51,11 +51,13 @@ export default class FieldAsset extends Component {
   render() {
     const {config, value, showPreview} = this.props
     const src = this.getImageSrc(value)
+    const assetFieldStyles = new Style(styles, 'container')
+      .addIf('show-preview', showPreview)
 
     return (
       <Label label="Image">
         {src && (
-          <div class={styles['container']} preview={showPreview}>
+          <div class={assetFieldStyles.getClasses()}>
             <LazyLoader
               loadWhenIdle={true}
               >
