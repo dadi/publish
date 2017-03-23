@@ -55,6 +55,7 @@
     "passport-strategy": "^1.0.0",
     "path": "^0.12.7",
     "preact-router": "github:eduardoboucas/preact-router",
+    "react-docgen": "github:eduardoboucas/react-docgen",
     "request-promise": "^4.1.1",
     "restify": "^4.3.0",
     "restify-cookies": "^0.2.2",
@@ -62,6 +63,7 @@
     "serve-static-restify": "^1.0.0",
     "snyk": "^1.25.0",
     "socketcluster-server": "^5.3.0",
+    "uglify-js": "github:mishoo/UglifyJS2#harmony",
     "url": "^0.11.0",
     "ws": "2.0.0"
   },
