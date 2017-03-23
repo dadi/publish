@@ -26,6 +26,7 @@ class LazyLoader extends Component {
   }
 
   static defaultProps = {
+    placeholder: null,
     idleOnly: true
   }
 
