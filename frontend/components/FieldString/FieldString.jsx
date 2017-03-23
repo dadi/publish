@@ -103,6 +103,7 @@ export default class FieldString extends Component {
     const dropdownStyle = new Style(styles, 'dropdown')
 
     dropdownStyle.addIf('dropdown-error', error)
+    dropdownStyle.addIf('dropdown-multiple', multiple)
 
     return (
       <Label
