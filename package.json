@@ -14,7 +14,7 @@
     "prepush": "npm-run-all build-docs test",
     "snyk-protect": "snyk protect",
     "start": "NODE_ENV=development node index.js",
-    "test": "standard --fix && env NODE_ENV=development mocha --colors --webpack-config webpack.config.js \"test/**/*.js\"",
+    "test": "standard --fix && env NODE_ENV=development mocha --colors --webpack-config webpack.config.js \"test/**/*.js\" && npm run lint",
     "watch": "NODE_ENV=development npm-run-all --parallel watch:server watch:build",
     "watch:build": "webpack --watch",
     "watch:server": "nodemon \"./index.js\" --watch \"./app\""
