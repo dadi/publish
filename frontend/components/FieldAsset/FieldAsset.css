@@ -1,0 +1,28 @@
+.container {
+  width: 100%;
+  margin-top: 9px;
+  height: 40px;
+  line-height: 25px;
+  font-size: 15px;
+  box-sizing: border-box;
+  border: 1px solid #e4e4e4;
+  border-radius: 5px;
+  outline: 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.container[preview] {
+  background-color: #fafafa;
+  height: auto;
+  max-height: 130px;
+}
+
+.image-thumb {
+  height: auto;
+  max-height: 110px;
+  width: auto;
+  max-width: 50%;
+  margin: 10px;
+}

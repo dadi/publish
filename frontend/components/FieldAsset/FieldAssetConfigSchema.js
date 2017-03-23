@@ -1,7 +1,7 @@
 'use strict'
 
 module.exports = {
-  FieldImage: {
+  FieldAsset: {
     accept: {
       availableInFrontend: true,
       default: ['image/*'],

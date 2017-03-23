@@ -7,7 +7,6 @@ import Style from 'lib/Style'
 import styles from './FieldString.css'
 
 import Label from 'components/Label/Label'
-import FieldImage from 'components/FieldImage/FieldImage'
 import TextInput from 'components/TextInput/TextInput'
 
 /**
