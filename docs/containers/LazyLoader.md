@@ -8,14 +8,14 @@ Props
 
 ### `children`
 
-The asset to be loaded when appropriate
+The asset to be loaded when appropriate.
 
 - type: `node`
 
 
 ### `idleOnly`
 
-Load only when app status is idle
+Load only when app status is idle.
 
 - type: `bool`
 - default value: `true`
@@ -23,7 +23,7 @@ Load only when app status is idle
 
 ### `placeholder`
 
-The placeholder node to be rendered before load
+The placeholder node to be rendered before load.
 
 - type: `node`
 
