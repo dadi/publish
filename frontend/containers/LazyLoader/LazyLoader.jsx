@@ -12,15 +12,17 @@ class LazyLoader extends Component {
   static propTypes = {
 
     /**
-     * Load only when app status is idle
+     * Load only when app status is idle.
      */
     idleOnly: proptypes.bool,
+
     /**
-     * The placeholder node to be rendered before load
+     * The placeholder node to be rendered before load.
      */
     placeholder: proptypes.node,
+    
     /**
-     * The asset to be loaded when appropriate
+     * The asset to be loaded when appropriate.
      */
     children: proptypes.node
   }
@@ -40,7 +42,9 @@ class LazyLoader extends Component {
       return null
     }
 
-    return (<div>{children}</div>)
+    return (
+      <div>{children}</div>
+    )
   }
 
   evalLoadingConditions() {
