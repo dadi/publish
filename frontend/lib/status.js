@@ -8,7 +8,6 @@ export function isOnline () {
 }
 
 export function isServerOnline () {
-
   return fetch('/', {
     credentials: 'same-origin',
     method: 'HEAD'
