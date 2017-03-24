@@ -35,12 +35,30 @@ class UserProfile extends Component {
   }
 
   static defaultProps = {
-    sections: ['account', 'settings', 'security']
+    sections: [
+      {
+        slug: 'account',
+        value: 'Account'
+      },
+      {
+        slug: 'settings',
+        value: 'Settings'
+      },
+      {
+        slug: 'security',
+        value: 'Security'
+      }
+    ]
   }
 
   componentDidUpdate(previousProps) {
+    const {section} = this.props
+
+    setPageTitle(`Edit Profile ${Case.sentence(section)}`)
+  }
+
+  shouldComponentUpdate(nextProps, nextState) {
     const {
-      actions,
       section,
       state,
       sections,
@@ -54,35 +72,35 @@ class UserProfile extends Component {
 
       if (currentCollection) {
         const firstField = Object.keys(currentCollection.fields).find(field => (currentCollection.fields[field].publish && currentCollection.fields[field].publish.section))
-        const firstSection = firstField.length ? currentCollection.fields[firstField].publish.section.toLowerCase() : sections[0]
+        const firstSection = firstField.length ? currentCollection.fields[firstField].publish.section.toLowerCase() : sections[0].slug
 
-        const sectionMatch = section ? sections.find(fieldSection => fieldSection === section) : null
+        const sectionMatch = section ? sections.find(fieldSection => fieldSection.slug === section) : null
 
-        if (!section || !sectionMatch) {
+        if (section && !sectionMatch) {
           route(buildUrl('profile', firstSection))
 
           return false
         }
-        setPageTitle(`Edit Profile ${Case.sentence(section)}`)
       }
     }
   }
 
   render() {
     const {sections, section} = this.props
+    const activeSection = section || sections[0].slug
 
     return (
       <div class={styles.container}>
         <div class={styles.navigation}>
           {sections.map(userSection => {
-            let isActive = userSection === section
+            let isActive = userSection.slug === activeSection
 
             return (
               <SubNavItem
                 active={isActive}
-                href={buildUrl('profile', userSection)}
+                href={buildUrl('profile', userSection.slug)}
               >
-                {userSection}
+                {userSection.value}
               </SubNavItem>
             )
           })}

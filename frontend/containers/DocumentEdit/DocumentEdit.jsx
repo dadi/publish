@@ -140,6 +140,7 @@ class DocumentEdit extends Component {
       collection,
       documentId,
       group,
+      section,
       state
     } = this.props
 
@@ -155,7 +156,7 @@ class DocumentEdit extends Component {
       slug: 'other',
       fields: fields.other
     }]
-    const activeSection = this.props.section || sections[0].slug
+    const activeSection = section || sections[0].slug
     const hasValidationErrors = Object.keys(document.validationErrors)
     .filter(field => document.validationErrors[field])
     .length
