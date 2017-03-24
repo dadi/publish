@@ -181,7 +181,7 @@ class DocumentList extends Component {
   }
 
   componentWillUnmount() {
-    const {actions, onFiltersToggle} = this.props
+    const {actions} = this.props
 
     actions.clearDocumentList()
   }
