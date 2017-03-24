@@ -14,10 +14,7 @@ let onUpdate = null
 let throttle = null
 
 function throttleAllow() {
-  throttle = throttle || setTimeout(() => {
-    callCount = 0
-    throttle = null
-  }, 1000)
+  throttle = setTimeout(() => callCount = 0, 1000)
 
   return ++callCount <= MAX_CALLS_PER_SECOND
 }
