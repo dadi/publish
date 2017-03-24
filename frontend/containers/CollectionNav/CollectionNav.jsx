@@ -1,4 +1,4 @@
-import {h, Component} from 'preact'
+import {Component, h} from 'preact'
 import {Router} from 'preact-router'
 import {connect} from 'preact-redux'
 import {bindActionCreators} from 'redux'
@@ -116,10 +116,10 @@ class CollectionNav extends Component {
   componentWillUpdate() {
     const {state, actions} = this.props
     const apis = state.api.apis
-    
+
     if (apis && apis.length) {
       const apisWithoutCollections = apis.filter(api => !api.hasCollections)
-      
+
       if (apisWithoutCollections.length === 0) {
         const collectionMap = this.buildCollectionMap(apis)
 

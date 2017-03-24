@@ -9,7 +9,7 @@ const initialState = {
   status: Constants.STATUS_IDLE
 }
 
-export default function document(state = initialState, action = {}) {
+export default function document (state = initialState, action = {}) {
   switch (action.type) {
 
     // Action: set document list

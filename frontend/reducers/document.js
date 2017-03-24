@@ -10,7 +10,7 @@ const initialState = {
   validationErrors: {}
 }
 
-export default function document(state = initialState, action = {}) {
+export default function document (state = initialState, action = {}) {
   switch (action.type) {
 
     // Action: set remote document

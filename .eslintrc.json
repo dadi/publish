@@ -129,7 +129,7 @@
         "space-before-function-paren": [
             "error", 
             {
-                "named": "never",
+                "named": "always",
                 "anonymous": "always"
             }
         ],

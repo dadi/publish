@@ -1,4 +1,4 @@
-import {h, Component} from 'preact'
+import {Component, h} from 'preact'
 import {connect} from 'preact-redux'
 import {route} from 'preact-router'
 import {bindActionCreators} from 'redux'
@@ -35,7 +35,7 @@ class SignIn extends Component {
   }
 
   render() {
-    const { state, actions } = this.props
+    const {state, actions} = this.props
 
     return (
       <div class={styles.wrapper}>

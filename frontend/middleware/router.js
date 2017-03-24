@@ -5,7 +5,7 @@ import {urlHelper} from 'lib/util'
 
 const defaultSelectLocationState = state => state.router
 
-export default function syncRouteWithStore(history, store, {
+export default function syncRouteWithStore (history, store, {
   selectLocationState = defaultSelectLocationState} = {}) {
   if (typeof selectLocationState(store.getState()) === 'undefined') {
     throw new Error('state.router missing')
@@ -75,7 +75,7 @@ export default function syncRouteWithStore(history, store, {
 
   return {
     ...history,
-    listen(listener) {
+    listen (listener) {
       let lastSetLocation = getLocationInStore(true)
       let unsubscribed = false
 

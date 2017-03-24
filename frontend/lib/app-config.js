@@ -8,7 +8,7 @@ import {slugify} from 'lib/util'
  *
  * @return {promise} An object representing the configuration file.
  */
-export function getAppConfig() {
+export function getAppConfig () {
   return fetch('/config', {
     headers: {
       'Content-Type': 'application/json'
@@ -28,7 +28,7 @@ export function getAppConfig() {
  *
  * @return {object} The configuration block for the given API.
  */
-export function getCurrentApi(apis, urlGroup, urlCollection) {
+export function getCurrentApi (apis, urlGroup, urlCollection) {
   // Are we looking at a collection name with a prefix (e.g. 'users-2')?
   const urlCollectionParts = urlCollection.match(/(.*)-([0-9]+)/)
   const urlCollectionName = urlCollectionParts ? urlCollectionParts[1] : urlCollection
@@ -74,7 +74,7 @@ export function getCurrentApi(apis, urlGroup, urlCollection) {
  *
  * @return {object} The schema for the given collection.
  */
-export function getCurrentCollection(apis, urlGroup, urlCollection) {
+export function getCurrentCollection (apis, urlGroup, urlCollection) {
   const api = getCurrentApi(apis, urlGroup, urlCollection)
 
   if (!api || !api.collections) return null
@@ -89,7 +89,7 @@ export function getCurrentCollection(apis, urlGroup, urlCollection) {
   return collection
 }
 
-export function getAuthCollection(apis, auth) {
+export function getAuthCollection (apis, auth) {
   const api = apis.find(api => api.host === auth.host && api.port === auth.port)
 
   if (!api || !api.collections) return null

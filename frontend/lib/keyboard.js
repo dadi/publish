@@ -1,7 +1,7 @@
 'use strict'
 
 class Keys {
-  get keys() {
+  get keys () {
     let codes = {
       '\'': 222,
       ',': 188,
@@ -82,7 +82,7 @@ class Keys {
     return codes
   }
 
-  find(pattern) {
+  find (pattern) {
     return pattern.map(key => {
       return this.keys[key]
     }).filter(key => {
@@ -92,13 +92,13 @@ class Keys {
 }
 
 class Pattern {
-  constructor(pattern, keys) {
+  constructor (pattern, keys) {
     this.pattern = pattern
     this.keys = keys
     this.active = 0
   }
 
-  next(keyCode) {
+  next (keyCode) {
     if (this.match(keyCode, this.keys[this.active])) {
       if (this.active < this.keys.length - 1) {
         this.active++
@@ -120,28 +120,28 @@ class Pattern {
       return false
     }
   }
-  match(key, current) {
+  match (key, current) {
     return key === current
   }
 
-  reset() {
+  reset () {
     this.active = 0
   }
 
-  do(callback) {
+  do (callback) {
     this.callback = callback
   }
 }
 
 export class Keyboard extends Keys {
-  constructor() {
+  constructor () {
     super()
 
     this.shortcuts = []
     this.listen()
   }
 
-  listen() {
+  listen () {
     // Bind required for `this` context in window events
     this.keydown = this.keydown.bind(this)
     this.keyup = this.keyup.bind(this)
@@ -152,7 +152,7 @@ export class Keyboard extends Keys {
     }
   }
 
-  keydown(event) {
+  keydown (event) {
     if (event.keyCode) {
       if (this.findShortcut(event.keyCode)) {
         event.preventDefault()
@@ -160,7 +160,7 @@ export class Keyboard extends Keys {
     }
   }
 
-  keyup(event) {
+  keyup (event) {
     // Reset all patterns
     this.shortcuts.forEach(pattern => {
       pattern.reset()
@@ -169,13 +169,13 @@ export class Keyboard extends Keys {
     event.preventDefault()
   }
 
-  findShortcut(keyCode) {
+  findShortcut (keyCode) {
     return this.shortcuts.find(shortcut => {
       return shortcut.next(keyCode)
     })
   }
 
-  on(pattern) {
+  on (pattern) {
     let keys = this.find(pattern.toLowerCase().split('+'))
     let shortcut = new Pattern(pattern, keys)
 
@@ -184,7 +184,7 @@ export class Keyboard extends Keys {
     return shortcut
   }
 
-  off() {
+  off () {
     if (window) {
       window.removeEventListener('keydown', this.keydown)
       window.removeEventListener('keyup', this.keyup)

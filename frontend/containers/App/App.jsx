@@ -1,4 +1,4 @@
-import {h, Component} from 'preact'
+import {Component, h} from 'preact'
 import {Router, route} from 'preact-router'
 import {connect} from 'preact-redux'
 import {bindActionCreators} from 'redux'
@@ -109,14 +109,14 @@ class App extends Component {
           <Router history={history}>
             <Home path="/" authenticate />
             <PasswordReset path="/reset" authenticate/>
-            {hasRoutes && ( <DocumentEdit path="/:group/:collection/document/edit/:documentId?/:section?" authenticate /> )}
+            {hasRoutes && (<DocumentEdit path="/:group/:collection/document/edit/:documentId?/:section?" authenticate />)}
             <DocumentEdit path="/:collection/document/edit/:documentId?/:section?" authenticate />
-            {hasRoutes && ( <DocumentEdit path="/:group/:collection/document/new/:section?" authenticate /> )}
+            {hasRoutes && (<DocumentEdit path="/:group/:collection/document/new/:section?" authenticate />)}
             <DocumentEdit path="/:collection/document/new/:section?" authenticate />
             <DocumentListView path="/:collection/documents/:page?" authenticate />
-            {hasRoutes && ( <DocumentListView path="/:group/:collection/documents/:page?" authenticate /> )}
+            {hasRoutes && (<DocumentListView path="/:group/:collection/documents/:page?" authenticate />)}
             <MediaLibrary path="/:collection/media/:document?" authenticate/>
-            {hasRoutes && ( <MediaLibrary path="/:group/:collection/media/:document?" authenticate/> )}
+            {hasRoutes && (<MediaLibrary path="/:group/:collection/media/:document?" authenticate/>)}
             <UserProfileEdit path="/profile/:section?" authenticate />
             <SignIn path="/sign-in" />
             <SignOut path="/sign-out" />
@@ -132,7 +132,7 @@ class App extends Component {
     const foundMenus = state.app.config.apis.some(api => {
       return typeof api.menu !== 'undefined'
     })
-    
+
     return state
   }
 
