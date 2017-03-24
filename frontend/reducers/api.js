@@ -8,7 +8,7 @@ const initialState = {
   status: Constants.STATUS_IDLE
 }
 
-export default function api(state = initialState, action = {}) {
+export default function api (state = initialState, action = {}) {
   switch (action.type) {
 
     // Action: Set data for a specific API

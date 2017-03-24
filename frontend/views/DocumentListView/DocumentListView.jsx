@@ -1,6 +1,6 @@
 'use strict'
 
-import {h, Component} from 'preact'
+import {Component, h} from 'preact'
 
 import Style from 'lib/Style'
 import styles from './DocumentListView.css'

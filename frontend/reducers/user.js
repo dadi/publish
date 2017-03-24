@@ -9,7 +9,7 @@ const initialState = {
   remoteStatus: Constants.STATUS_IDLE
 }
 
-export default function user(state = initialState, action = {}) {
+export default function user (state = initialState, action = {}) {
   switch (action.type) {
 
     // Action: user signed in

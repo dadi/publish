@@ -23,7 +23,7 @@ const initialState = {
 
 let debouncedNetworkCall = null
 
-function getActiveBreakpoint(windowWidth) {
+function getActiveBreakpoint (windowWidth) {
   let breakpointName = null
 
   for (let breakpoint in VIEWPORT_BREAKPOINTS) {
@@ -37,7 +37,7 @@ function getActiveBreakpoint(windowWidth) {
   return breakpointName
 }
 
-export default function app(state = initialState, action = {}) {
+export default function app (state = initialState, action = {}) {
   switch (action.type) {
     case Types.SET_APP_CONFIG:
       return {

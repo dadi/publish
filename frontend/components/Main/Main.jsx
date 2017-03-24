@@ -1,4 +1,4 @@
-import {h, Component} from 'preact'
+import {Component, h} from 'preact'
 import proptypes from 'proptypes'
 
 import styles from './Main.css'

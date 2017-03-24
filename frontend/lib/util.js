@@ -3,13 +3,13 @@
 import {bindActionCreators} from 'redux'
 import {connect} from 'preact-redux'
 
-export function bindActions(actions) {
+export function bindActions (actions) {
   return dispatch => ({
     ...bindActionCreators(actions, dispatch)
   })
 }
 
-export function connectHelper(stateMap, dispatchMap) {
+export function connectHelper (stateMap, dispatchMap) {
   return connect((state) => {
     return {
       state: stateMap(state)
@@ -30,13 +30,13 @@ let lastId = 0
 // generated on the client to avoid conflicts
 const ID_PREFIX = 'c'
 
-export function getUniqueId() {
+export function getUniqueId () {
   return `${ID_PREFIX}-${lastId++}`
 }
 
-export function urlHelper() {
+export function urlHelper () {
   return {
-    paramsToObject(source) {
+    paramsToObject (source) {
       if (!source || typeof source === 'undefined') return null
       let params = JSON.parse('{"' + decodeURI(source.replace(/^(\?)/, ''))
         .replace(/"/g, '\\"')
@@ -53,7 +53,7 @@ export function urlHelper() {
 
       return params
     },
-    paramsToString(params) {
+    paramsToString (params) {
       return Object.keys(params).map(key => {
         if (typeof params[key] === 'object') {
           try {
@@ -70,7 +70,7 @@ export function urlHelper() {
 }
 
 export const Case = {
-  sentence(value) {
+  sentence (value) {
     if (!value) return ''
 
     return value.split('.').map(sentence => {
@@ -79,7 +79,7 @@ export const Case = {
   }
 }
 
-export function objectToArray(obj, keyField) {
+export function objectToArray (obj, keyField) {
   if (!obj) return []
 
   return Object.keys(obj).map(key => {
@@ -87,7 +87,7 @@ export function objectToArray(obj, keyField) {
   })
 }
 
-export function arrayToObject(arr, keyField) {
+export function arrayToObject (arr, keyField) {
   if (!arr.length) return null
 
   return Object.assign({}, ...arr.map(obj => {
@@ -96,7 +96,7 @@ export function arrayToObject(arr, keyField) {
 }
 
 // Object and Field validation
-export function isValidJSON(string) {
+export function isValidJSON (string) {
   if (!string || typeof string !== 'string') return
 
   return /^[\],:{}\s]*$/.test(string.replace(/\\["\\\/bfnrtu]/g, '@').
@@ -104,11 +104,11 @@ export function isValidJSON(string) {
     replace(/(?:^|:|,)(?:\s*\[)+/g, ''))
 }
 
-export function isEmpty(subject) {
+export function isEmpty (subject) {
   return !subject || (typeof subject === 'object' && subject.length < 1)
 }
 
-export function slugify(str) {
+export function slugify (str) {
   return str.toString()
     .toLowerCase()
     .replace(/\s+/g, '-')     // Replace spaces with -
@@ -119,7 +119,7 @@ export function slugify(str) {
     .replace(/-+$/, '')       // Trim - from end of text
 }
 
-export function debounce(func, wait, immediate) {
+export function debounce (func, wait, immediate) {
   let timeout
 
   return () => {
@@ -136,6 +136,6 @@ export function debounce(func, wait, immediate) {
   }
 }
 
-export function setPageTitle(title) {
+export function setPageTitle (title) {
   document.title = `${title} / DADI Publish`
 }

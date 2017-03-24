@@ -1,11 +1,11 @@
 'use strict'
 
-import {h, Component} from 'preact'
+import {Component, h} from 'preact'
 import {connect} from 'preact-redux'
 import {bindActionCreators} from 'redux'
 import {route} from 'preact-router'
 
-import {connectHelper, setPageTitle, Case} from 'lib/util'
+import {Case, connectHelper, setPageTitle} from 'lib/util'
 import {getAuthCollection} from 'lib/app-config'
 import {buildUrl} from 'lib/router'
 
@@ -35,6 +35,7 @@ class UserProfileEdit extends Component {
         const firstSection = firstField.length ? currentCollection.fields[firstField].publish.section.toLowerCase() : sections[0]
 
         const sectionMatch = section ? sections.find(fieldSection => fieldSection === section) : null
+
         if (!section || !sectionMatch) {
           route(buildUrl('profile', firstSection))
 
@@ -47,7 +48,7 @@ class UserProfileEdit extends Component {
 
   render() {
     return (
-      <h1>PROFILES</h1> 
+      <h1>PROFILES</h1>
     )
   }
 }

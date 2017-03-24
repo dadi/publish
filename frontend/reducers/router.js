@@ -7,7 +7,7 @@ const initialState = {
   params: null
 }
 
-export default function router(state = initialState, {
+export default function router (state = initialState, {
   type,
   locationBeforeTransitions,
   params
