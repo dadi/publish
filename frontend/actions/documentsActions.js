@@ -1,6 +1,7 @@
 import * as Types from 'actions/actionTypes'
 
 export function setDocumentList (documents, query) {
+
   return {
     documents,
     query,
