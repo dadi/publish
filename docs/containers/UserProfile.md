@@ -18,5 +18,18 @@ The current active section (if any).
 The current active section (if any).
 
 - type: `array`
-- default value: `['account', 'settings', 'security']`
+- default value: `[
+  {
+    slug: 'account',
+    value: 'Account'
+  },
+  {
+    slug: 'settings',
+    value: 'Settings'
+  },
+  {
+    slug: 'security',
+    value: 'Security'
+  }
+]`
 

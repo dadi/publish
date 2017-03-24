@@ -28,6 +28,7 @@ import DocumentEdit from 'containers/DocumentEdit/DocumentEdit'
 
 import {connectHelper, debounce, isEmpty, slugify} from 'lib/util'
 import Socket from 'lib/socket'
+import {isOnline, isServerOnline} from 'lib/status'
 import Session from 'lib/session'
 import {getAppConfig, getCurrentApi} from 'lib/app-config'
 import APIBridge from 'lib/api-bridge-client'
@@ -38,6 +39,11 @@ class App extends Component {
 
     APIBridge.registerProgressCallback(actions.registerNetworkCall)
 
+    // setInterval(() => {
+    //   console.log('isOnline', isOnline())
+    //   isServerOnline().then(resp => console.log('isServerOnline', resp))
+    // }, 1000)
+    
     this.sessionStart()
   }
 
