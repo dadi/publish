@@ -23,7 +23,7 @@ import PasswordReset from 'views/PasswordReset/PasswordReset'
 import SignIn from 'views/SignIn/SignIn'
 import SignOut from 'views/SignOut/SignOut'
 
-import UserProfileEdit from 'containers/UserProfileEdit/UserProfileEdit'
+import UserProfile from 'containers/UserProfile/UserProfile'
 import DocumentEdit from 'containers/DocumentEdit/DocumentEdit'
 
 import {connectHelper, debounce, isEmpty, slugify} from 'lib/util'
@@ -117,7 +117,7 @@ class App extends Component {
             {hasRoutes && (<DocumentListView path="/:group/:collection/documents/:page?" authenticate />)}
             <MediaLibrary path="/:collection/media/:document?" authenticate/>
             {hasRoutes && (<MediaLibrary path="/:group/:collection/media/:document?" authenticate/>)}
-            <UserProfileEdit path="/profile/:section?" authenticate />
+            <UserProfile path="/profile/:section?" authenticate />
             <SignIn path="/sign-in" />
             <SignOut path="/sign-out" />
             <Error type="404" default />

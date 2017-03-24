@@ -1,9 +1,13 @@
 'use strict'
 
 import {Component, h} from 'preact'
+import proptypes from 'proptypes'
 import {connect} from 'preact-redux'
 import {bindActionCreators} from 'redux'
 import {route} from 'preact-router'
+
+import Style from 'lib/Style'
+import styles from './UserProfile.css'
 
 import {Case, connectHelper, setPageTitle} from 'lib/util'
 import {getAuthCollection} from 'lib/app-config'
@@ -11,19 +15,37 @@ import {buildUrl} from 'lib/router'
 
 import * as userActions from 'actions/userActions'
 
+import SubNavItem from 'components/SubNavItem/SubNavItem'
+
 /**
  * The interface for editing a user profile.
  */
-class UserProfileEdit extends Component {
+class UserProfile extends Component {
+
+  static propTypes = {
+
+    /**
+     * The current active section (if any).
+     */
+    section: proptypes.string,
+    /**
+     * The current active section (if any).
+     */
+    sections: proptypes.array
+  }
+
+  static defaultProps = {
+    sections: ['account', 'settings', 'security']
+  }
 
   componentDidUpdate(previousProps) {
     const {
       actions,
       section,
-      state
+      state,
+      sections,
     } = this.props
 
-    const sections = ['account', 'settings', 'security']
 
     if (state.app.config) {
       const auth = state.app.config.auth
@@ -47,8 +69,25 @@ class UserProfileEdit extends Component {
   }
 
   render() {
+    const {sections, section} = this.props
+
     return (
-      <h1>PROFILES</h1>
+      <div class={styles.container}>
+        <div class={styles.navigation}>
+          {sections.map(userSection => {
+            let isActive = userSection === section
+
+            return (
+              <SubNavItem
+                active={isActive}
+                href={buildUrl('profile', userSection)}
+              >
+                {userSection}
+              </SubNavItem>
+            )
+          })}
+        </div>
+      </div>
     )
   }
 }
@@ -56,4 +95,4 @@ class UserProfileEdit extends Component {
 export default connectHelper(
   state => state,
   dispatch => bindActionCreators(userActions, dispatch)
-)(UserProfileEdit)
+)(UserProfile)

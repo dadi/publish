@@ -178,11 +178,14 @@ class DocumentEdit extends Component {
         {fields.sections &&
           <div class={styles.navigation}>
             {fields.sections.map(collectionSection => {
+              let isActive = activeSection === collectionSection.slug
+              let href = buildUrl(group, collection, 'document', method, documentId, collectionSection.slug)
+
               return (
                 <SubNavItem
-                  active={activeSection === collectionSection.slug}
+                  active={isActive}
                   error={collectionSection.hasErrors}
-                  href={buildUrl(group, collection, 'document', method, documentId, collectionSection.slug)}
+                  href={href}
                 >
                   {collectionSection.name}
                 </SubNavItem>
