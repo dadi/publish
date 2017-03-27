@@ -16,12 +16,26 @@ export default class Toolbar extends Component {
     /**
      * The elements to be rendered inside the bar.
      */
-    children: proptypes.node
+    children: proptypes.node,
+
+    /**
+     * Whether the toolbar should have the default padding applied.
+     */
+    padded: proptypes.bool
+  }
+
+  static defaultProps = {
+    padded: true
   }
 
   render() {
+    const {padded} = this.props
+    const toolbarStyle = new Style(styles, 'container')
+
+    toolbarStyle.addIf('container-padded', padded)
+
     return (
-      <footer class={styles.container}>
+      <footer class={toolbarStyle.getClasses()}>
         {this.props.children}
       </footer>
     )

@@ -17,13 +17,11 @@ import {buildUrl, createRoute} from 'lib/router'
 import {connectHelper, slugify, Case} from 'lib/util'
 import {getCurrentApi, getCurrentCollection} from 'lib/app-config'
 
-import Button from 'components/Button/Button'
-import ButtonWithOptions from 'components/ButtonWithOptions/ButtonWithOptions'
+import DocumentEditToolbar from 'components/DocumentEditToolbar/DocumentEditToolbar'
 import FieldBoolean from 'components/FieldBoolean/FieldBoolean'
 import FieldAsset from 'components/FieldAsset/FieldAsset'
 import FieldString from 'components/FieldString/FieldString'
 import SubNavItem from 'components/SubNavItem/SubNavItem'
-import Toolbar from 'components/Toolbar/Toolbar'
 
 /**
  * The interface for editing a document.
@@ -87,7 +85,9 @@ class DocumentEdit extends Component {
     const currentCollection = getCurrentCollection(state.api.apis, group, collection)
     const method = documentId ? 'edit' : 'new'
 
-    onPageTitle(`${Case.sentence(method)} document`)
+    if (typeof onPageTitle === 'function') {
+      onPageTitle(`${Case.sentence(method)} document`)  
+    }
 
     if (currentCollection) {
       const fields = this.groupFields(currentCollection.fields)
@@ -169,18 +169,6 @@ class DocumentEdit extends Component {
     .length
     const method = documentId ? 'edit' : 'new'
 
-    // By default, we support these two save modes.
-    let saveOptions = {
-      'Save and create new': this.handleSave.bind(this, 'saveAndCreateNew'),
-      'Save and go back': this.handleSave.bind(this, 'saveAndGoBack')
-    }
-
-    // If we're editing an existing document, we also allow users to duplicate
-    // the document.
-    if (method === 'edit') {
-      saveOptions['Save as duplicate'] = this.handleSave.bind(this, 'saveAsDuplicate')
-    }
-
     return (
       <div class={styles.container}>
         {fields.sections &&
@@ -233,24 +221,12 @@ class DocumentEdit extends Component {
           )
         })}
 
-        <Toolbar>
-          <div>
-            <Button
-              accent="destruct"
-            >Delete</Button>
-          </div>
-
-          <div>
-            <ButtonWithOptions
-              accent="save"
-              disabled={hasValidationErrors}
-              onClick={this.handleSave.bind(this, 'save')}
-              options={saveOptions}
-            >
-              Save and continue
-            </ButtonWithOptions>
-          </div>
-        </Toolbar>
+        <DocumentEditToolbar
+          document={document.local}
+          hasValidationErrors={hasValidationErrors}
+          method={method}
+          onSave={this.handleSave.bind(this)}
+        />
       </div>
     )
   }
