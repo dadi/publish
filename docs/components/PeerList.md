@@ -10,5 +10,5 @@ Props
 
 The array of socket peers.
 
-- type: `custom`
+- type: `object`
 
