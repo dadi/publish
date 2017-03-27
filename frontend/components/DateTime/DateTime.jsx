@@ -5,7 +5,6 @@ import proptypes from 'proptypes'
 
 const fecha = require('fecha')
 
-<<<<<<< HEAD
 const SECOND = 1000
 const MINUTE = 60 * SECOND
 const HOUR = 60 * MINUTE
@@ -16,8 +15,6 @@ const MONTH = YEAR / 12
 
 const UPDATE_INTERVAL = SECOND * 30
 
-=======
->>>>>>> 972461548d307c6bad873e3a68ef65168a0edd5b
 /**
  * The time elapsed since a given event, as an automatically updated string.
  */
@@ -46,7 +43,6 @@ export default class ElapsedTime extends Component {
      * If present, the date received as prop will be parsed using the
      * given format as a reference.
      */
-<<<<<<< HEAD
     fromFormat: proptypes.string,
 
     /**
@@ -54,14 +50,10 @@ export default class ElapsedTime extends Component {
      * Overrides the `format` prop.
      */
     relative: proptypes.bool
-=======
-    fromFormat: proptypes.string
->>>>>>> 972461548d307c6bad873e3a68ef65168a0edd5b
   }
 
   static defaultProps = {
     format: 'default',
-<<<<<<< HEAD
     fromFormat: null,
     relative: false
   }
@@ -90,9 +82,6 @@ export default class ElapsedTime extends Component {
     if (date !== prevProps.date) {
       this.setUpdateInterval(SECOND)
     }
-=======
-    fromFormat: null
->>>>>>> 972461548d307c6bad873e3a68ef65168a0edd5b
   }
 
   render() {
