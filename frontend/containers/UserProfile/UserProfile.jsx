@@ -28,8 +28,9 @@ class UserProfile extends Component {
      * The current active section (if any).
      */
     section: proptypes.string,
+
     /**
-     * The current active section (if any).
+     * All available sections.
      */
     sections: proptypes.array
   }
@@ -67,11 +68,11 @@ class UserProfile extends Component {
 
     if (state.app.config) {
       const auth = state.app.config.auth
-
       const currentCollection = getAuthCollection(state.api.apis, auth)
 
       if (currentCollection) {
-        const firstField = Object.keys(currentCollection.fields).find(field => (currentCollection.fields[field].publish && currentCollection.fields[field].publish.section))
+        const firstField = Object.keys(currentCollection.fields)
+          .find(field => (currentCollection.fields[field].publish && currentCollection.fields[field].publish.section))
         const firstSection = firstField.length ? currentCollection.fields[firstField].publish.section.toLowerCase() : sections[0].slug
 
         const sectionMatch = section ? sections.find(fieldSection => fieldSection.slug === section) : null
@@ -93,7 +94,7 @@ class UserProfile extends Component {
       <div class={styles.container}>
         <div class={styles.navigation}>
           {sections.map(userSection => {
-            let isActive = userSection.slug === activeSection
+            const isActive = userSection.slug === activeSection
 
             return (
               <SubNavItem
