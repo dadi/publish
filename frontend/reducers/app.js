@@ -101,7 +101,6 @@ export default function app (state = initialState, action = {}) {
       }
 
     case Types.SET_SCREEN_WIDTH:
-      console.log('NOW')
       const breakpoint = getActiveBreakpoint(action.width)
 
       if (breakpoint === state.breakpoint) {
