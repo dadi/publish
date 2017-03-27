@@ -46,12 +46,10 @@ Socket.prototype.onPublish = function (req, next) {
     switch (req.data.type) {
       case 'getUsersInRoom':
         let users = new Room().getUsers(req.channel, req.socket.server.clients)
-
           // Send to single user (WIP)
           // req.socket.exchange.publish(req.data.data.user, {type: 'userListChange', body: {users: users}})
-
         req.socket.exchange.publish(req.channel, {type: 'userListChange', body: {users: users}})
-        break
+
     }
   }
   return next()

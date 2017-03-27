@@ -22,6 +22,7 @@ import ButtonWithOptions from 'components/ButtonWithOptions/ButtonWithOptions'
 import FieldBoolean from 'components/FieldBoolean/FieldBoolean'
 import FieldAsset from 'components/FieldAsset/FieldAsset'
 import FieldString from 'components/FieldString/FieldString'
+import PeerList from 'components/PeerList/PeerList'
 import SubNavItem from 'components/SubNavItem/SubNavItem'
 import Toolbar from 'components/Toolbar/Toolbar'
 
@@ -240,6 +241,9 @@ class DocumentEdit extends Component {
               accent="destruct"
               disabled={hasConnectionIssues}
             >Delete</Button>
+            <PeerList
+              peers={document.peers}
+            />
           </div>
 
           <div>

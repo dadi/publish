@@ -9,6 +9,7 @@ import styles from './App.css'
 import * as userActions from 'actions/userActions'
 import * as apiActions from 'actions/apiActions'
 import * as appActions from 'actions/appActions'
+import * as documentActions from 'actions/documentActions'
 import * as Constants from 'lib/constants'
 
 import Header from 'components/Header/Header'
@@ -209,24 +210,21 @@ class App extends Component {
   initialiseSocket(config) {
     const {actions, state} = this.props
     const pathname = state.router.locationBeforeTransitions.pathname
-
+    const user = state.user.local
     const session = new Session()
-    const socket = new Socket(config.server.port)
+    this.socket = new Socket(config.server.port)
       .on('userListChange', data => {
         // Table of connected users
-        // console.table(data.body.users)
+        actions.setDocumentPeers(data.body.users)
       })
-      .setUser(Object.assign({}, state.user, {
-        vendor: navigator.vendor,
-        identifier: `${state.user.localname}_${navigator.vendor}`
-      })).setRoom(pathname)
+      .setUser(user)
+      .setRoom(pathname)
 
     // Save reference to `socket` as a private variable
-    this.socket = socket
   }
 }
 
 export default connectHelper(
   state => state,
-  dispatch => bindActionCreators({...userActions, ...apiActions, ...appActions}, dispatch)
+  dispatch => bindActionCreators({...userActions, ...apiActions, ...appActions, ...documentActions}, dispatch)
 )(App)

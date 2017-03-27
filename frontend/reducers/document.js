@@ -5,6 +5,7 @@ import * as Types from 'actions/actionTypes'
 
 const initialState = {
   local: null,
+  peers: null,
   remote: null,
   remoteStatus: Constants.STATUS_IDLE,
   validationErrors: {}
@@ -96,6 +97,12 @@ export default function document (state = initialState, action = {}) {
     // Action: user signed out
     case Types.SIGN_OUT:
       return initialState
+
+    case Types.SET_DOCUMENT_PEERS:
+      return {
+        ...state,
+        peers: action.peers
+      }
 
     default:
       return state
