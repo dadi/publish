@@ -223,8 +223,8 @@ class DocumentEdit extends Component {
         })}
 
         <DocumentEditToolbar
+          disabled={hasValidationErrors || hasConnectionIssues}
           document={document.local}
-          hasValidationErrors={hasValidationErrors}
           method={method}
           onSave={this.handleSave.bind(this)}
           peers={document.peers}

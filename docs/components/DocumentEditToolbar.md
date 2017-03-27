@@ -6,18 +6,19 @@ A toolbar used in a document list view.
 Props
 -----
 
+### `disabled`
+
+Whether controls are disabled, preventing user interaction.
+
+- type: `bool`
+- default value: `false`
+
+
 ### `document`
 
 The document currently being edited.
 
 - type: `object`
-
-
-### `hasValidationErrors`
-
-Whether the document currently being edited has any validation errors.
-
-- type: `bool`
 
 
 ### `method`
@@ -37,7 +38,7 @@ A callback to be fired when the "Save" button is pressed.
 
 ### `peers`
 
-The document currently being edited.
+An array of peers currently editing the document.
 
 - type: `object`
 

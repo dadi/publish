@@ -16,7 +16,7 @@ const MONTH = YEAR / 12
 /**
  * The time elapsed since a given event, as an automatically updated string.
  */
-export default class ElapsedTime extends Component {
+export default class DateTime extends Component {
   static propTypes = {
     /**
      * The date to be displayed. This can be in one of three formats:
