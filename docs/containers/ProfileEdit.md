@@ -6,6 +6,14 @@ The interface for editing a user profile.
 Props
 -----
 
+### `onPageTitle`
+
+A callback to be fired if the container wants to attempt changing the
+page title.
+
+- type: `func`
+
+
 ### `section`
 
 The current active section (if any).
