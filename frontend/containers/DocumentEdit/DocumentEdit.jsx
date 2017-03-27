@@ -227,6 +227,7 @@ class DocumentEdit extends Component {
           hasValidationErrors={hasValidationErrors}
           method={method}
           onSave={this.handleSave.bind(this)}
+          peers={document.peers}
         />
       </div>
     )
