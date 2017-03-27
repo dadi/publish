@@ -21,3 +21,10 @@ export function registerNetworkCall (status, onComplete) {
     type: Types.REGISTER_NETWORK_CALL
   }
 }
+
+export function setNetworkStatus (networkStatus) {
+  return {
+    networkStatus,
+    type: Types.SET_NETWORK_STATUS
+  }
+}
