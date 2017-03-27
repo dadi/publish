@@ -167,6 +167,7 @@ class DocumentEdit extends Component {
     const hasValidationErrors = Object.keys(document.validationErrors)
     .filter(field => document.validationErrors[field])
     .length
+    const hasConnectionIssues = state.app.networkStatus !== Constants.NETWORK_OK
     const method = documentId ? 'edit' : 'new'
 
     // By default, we support these two save modes.
@@ -237,13 +238,14 @@ class DocumentEdit extends Component {
           <div>
             <Button
               accent="destruct"
+              disabled={hasConnectionIssues}
             >Delete</Button>
           </div>
 
           <div>
             <ButtonWithOptions
               accent="save"
-              disabled={hasValidationErrors}
+              disabled={hasValidationErrors || hasConnectionIssues}
               onClick={this.handleSave.bind(this, 'save')}
               options={saveOptions}
             >

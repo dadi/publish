@@ -18,6 +18,7 @@ const NETWORK_DEBOUNCE = 200
 const initialState = {
   breakpoint: getActiveBreakpoint(window.innerWidth),
   config: null,
+  networkStatus: Constants.NETWORK_OK,
   status: Constants.STATUS_IDLE
 }
 
@@ -89,6 +90,14 @@ export default function app (state = initialState, action = {}) {
             ...state,
             status: Constants.STATUS_IDLE
           }
+      }
+
+      return state
+
+    case Types.SET_NETWORK_STATUS:
+      return {
+        ...state,
+        networkStatus: action.networkStatus
       }
 
     case Types.SET_SCREEN_WIDTH:
