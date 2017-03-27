@@ -13,8 +13,6 @@ const WEEK = 7 * DAY
 const YEAR = 365 * DAY
 const MONTH = YEAR / 12
 
-const UPDATE_INTERVAL = SECOND * 30
-
 /**
  * The time elapsed since a given event, as an automatically updated string.
  */
