@@ -7,9 +7,9 @@ import {bindActionCreators} from 'redux'
 import {route} from 'preact-router'
 
 import Style from 'lib/Style'
-import styles from './UserProfile.css'
+import styles from './ProfileEdit.css'
 
-import {Case, connectHelper, setPageTitle} from 'lib/util'
+import {Case, connectHelper} from 'lib/util'
 import {getAuthCollection} from 'lib/app-config'
 import {buildUrl} from 'lib/router'
 
@@ -20,7 +20,7 @@ import SubNavItem from 'components/SubNavItem/SubNavItem'
 /**
  * The interface for editing a user profile.
  */
-class UserProfile extends Component {
+class ProfileEdit extends Component {
 
   static propTypes = {
 
@@ -53,9 +53,9 @@ class UserProfile extends Component {
   }
 
   componentDidUpdate(previousProps) {
-    const {section} = this.props
+    const {section, onPageTitle} = this.props
 
-    setPageTitle(`Edit Profile ${Case.sentence(section)}`)
+    onPageTitle(`Edit Profile ${Case.sentence(section)}`)
   }
 
   shouldComponentUpdate(nextProps, nextState) {
@@ -114,4 +114,4 @@ class UserProfile extends Component {
 export default connectHelper(
   state => state,
   dispatch => bindActionCreators(userActions, dispatch)
-)(UserProfile)
+)(ProfileEdit)

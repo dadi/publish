@@ -15,7 +15,7 @@ The current active section (if any).
 
 ### `sections`
 
-The current active section (if any).
+All available sections.
 
 - type: `array`
 - default value: `[

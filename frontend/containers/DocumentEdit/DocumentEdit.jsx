@@ -14,7 +14,7 @@ import * as documentActions from 'actions/documentActions'
 
 import APIBridge from 'lib/api-bridge-client'
 import {buildUrl, createRoute} from 'lib/router'
-import {connectHelper, setPageTitle, slugify, Case} from 'lib/util'
+import {connectHelper, slugify, Case} from 'lib/util'
 import {getCurrentApi, getCurrentCollection} from 'lib/app-config'
 
 import Button from 'components/Button/Button'
@@ -51,6 +51,12 @@ class DocumentEdit extends Component {
     group: proptypes.string,
 
     /**
+    * A callback to be fired if the container wants to attempt changing the
+    * page title.
+    */
+    onPageTitle: proptypes.func,
+
+    /**
      * The current active section (if any).
      */
     section: proptypes.string,
@@ -73,6 +79,7 @@ class DocumentEdit extends Component {
       collection,
       documentId,
       group,
+      onPageTitle,
       section,
       state
     } = this.props
@@ -80,7 +87,7 @@ class DocumentEdit extends Component {
     const currentCollection = getCurrentCollection(state.api.apis, group, collection)
     const method = documentId ? 'edit' : 'new'
 
-    setPageTitle(`${Case.sentence(method)} document`)
+    onPageTitle(`${Case.sentence(method)} document`)
 
     if (currentCollection) {
       const fields = this.groupFields(currentCollection.fields)
