@@ -9,7 +9,7 @@ import styles from './DocumentEditToolbar.css'
 import Button from 'components/Button/Button'
 import ButtonWithOptions from 'components/ButtonWithOptions/ButtonWithOptions'
 import DateTime from 'components/DateTime/DateTime'
-import PeerList from 'components/PeerList/PeerList'
+import Peer from 'components/Peer/Peer'
 import Toolbar from 'components/Toolbar/Toolbar'
 
 /**
@@ -76,9 +76,13 @@ export default class DocumentListToolbar extends Component {
               accent="destruct"
             >Delete</Button>
 
-            <PeerList
-              peers={peers}
-            />            
+            {peers && peers.length &&
+              <div class={styles.peers}>
+                {peers.map(peer => (
+                  <Peer peer={peer} />
+                ))}   
+              </div>
+            }    
           </div>
 
           <div class={styles.metadata}>

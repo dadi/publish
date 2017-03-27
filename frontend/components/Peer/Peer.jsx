@@ -4,11 +4,11 @@ import {h, Component} from 'preact'
 import proptypes from 'proptypes'
 
 import Style from 'lib/Style'
-import styles from './PeerItem.css'
+import styles from './Peer.css'
 
 import Button from 'components/Button/Button'
 
-export default class PeerItem extends Component {
+export default class Peer extends Component {
   static propTypes = {
     /**
      * The socket peer.
