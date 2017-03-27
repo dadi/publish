@@ -6,19 +6,18 @@ A toolbar used in a document list view.
 Props
 -----
 
-### `disabled`
-
-Whether controls should be disabled, preventing user interaction.
-
-- type: `bool`
-- default value: `false`
-
-
 ### `document`
 
 The document currently being edited.
 
 - type: `object`
+
+
+### `hasConnectionIssues`
+
+Whether the app is experiencing network connection issues.
+
+- type: `bool`
 
 
 ### `hasValidationErrors`

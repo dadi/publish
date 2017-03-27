@@ -18,14 +18,14 @@ import Toolbar from 'components/Toolbar/Toolbar'
 export default class DocumentListToolbar extends Component {
   static propTypes = {
     /**
-     * Whether controls should be disabled, preventing user interaction.
-     */
-    disabled: proptypes.bool,
-
-    /**
      * The document currently being edited.
      */
     document: proptypes.object,
+
+    /**
+     * Whether the app is experiencing network connection issues.
+     */
+    hasConnectionIssues: proptypes.bool,
 
     /**
      * Whether the document currently being edited has any validation errors.
@@ -49,18 +49,14 @@ export default class DocumentListToolbar extends Component {
     peers: proptypes.object
   }
 
-  static defaultProps = {
-    disabled: false
-  }
-
   constructor(props) {
     super(props)
   }
 
   render() {
     const {
-      disabled,
       document,
+      hasConnectionIssues,
       hasValidationErrors,
       method,
       peers
@@ -84,7 +80,7 @@ export default class DocumentListToolbar extends Component {
           <div class={styles['padded-group']}>
             <Button
               accent="destruct"
-              disabled={disabled}
+              disabled={hasConnectionIssues}
             >Delete</Button>
 
             {peers && peers.length &&
@@ -117,7 +113,7 @@ export default class DocumentListToolbar extends Component {
         <div class={styles['padded-group']}>
           <ButtonWithOptions
             accent="save"
-            disabled={hasValidationErrors || disabled}
+            disabled={hasConnectionIssues || hasValidationErrors}
             onClick={this.handleSave.bind(this, 'save')}
             options={saveOptions}
           >
