@@ -1,4 +1,4 @@
-`UserProfile`
+`ProfileEdit`
 =============
 
 The interface for editing a user profile.

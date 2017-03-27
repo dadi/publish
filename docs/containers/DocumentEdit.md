@@ -34,6 +34,14 @@ The name of the group where the current collection belongs (if any).
 - type: `string`
 
 
+### `onPageTitle`
+
+A callback to be fired if the container wants to attempt changing the
+page title.
+
+- type: `func`
+
+
 ### `section`
 
 The current active section (if any).
