@@ -41,7 +41,7 @@ export default class DocumentListToolbar extends Component {
     /**
      * The document currently being edited.
      */
-    peers: proptypes.object,
+    peers: proptypes.object
   }
 
   constructor(props) {
