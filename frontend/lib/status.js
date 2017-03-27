@@ -1,7 +1,7 @@
 'use strict'
 
-import * as Constants from 'lib/constants'
 import 'fetch'
+import * as Constants from 'lib/constants'
 
 export function isOnline () {
   // Return true when property undefined
