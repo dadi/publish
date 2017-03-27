@@ -49,7 +49,7 @@ Socket.prototype.onPublish = function (req, next) {
           // Send to single user (WIP)
           // req.socket.exchange.publish(req.data.data.user, {type: 'userListChange', body: {users: users}})
         req.socket.exchange.publish(req.channel, {type: 'userListChange', body: {users: users}})
-        
+
     }
   }
   return next()
