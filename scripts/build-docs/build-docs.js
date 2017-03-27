@@ -1,3 +1,5 @@
+'use strict'
+
 const fs = require('fs')
 const generateMarkdown = require('./generateMarkdown')
 const mkdirp = require('mkdirp')
