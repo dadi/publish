@@ -13,7 +13,7 @@ Room.prototype.getUsers = function (room, clients) {
     // console.log(Object.keys(client), "HAS Subscriptions", client.channelSubscriptions)
   }).map(key => {
     let client = clients[key]
-    return {username: client.authToken.username, vendor: client.authToken.vendor}
+    return client.authToken
   })
 }
 

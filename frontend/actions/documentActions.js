@@ -48,3 +48,10 @@ export function updateLocalDocument (data) {
     type: Types.UPDATE_LOCAL_DOCUMENT
   }
 }
+
+export function setDocumentPeers (peers) {
+  return {
+    peers,
+    type: Types.SET_DOCUMENT_PEERS
+  }
+}

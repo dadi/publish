@@ -12,10 +12,12 @@ Auth.prototype.attach = function (scServer, socket) {
     if (!data.user) {
       respond(null, 'Invalid user')
     } else {
-      let token = {
-        username: data.user.identifier, // username
-        vendor: data.user.vendor
-      }
+      let token = Object.assign({}, {
+        name: `${data.user.first_name} ${data.user.last_name}`,
+        email: data.user.email,
+        handle: data.user.handle,
+        username: data.user.username
+      })
       socket.setAuthToken(token)
       respond()
     }
