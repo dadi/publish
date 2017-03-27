@@ -25,6 +25,12 @@ class ProfileEdit extends Component {
   static propTypes = {
 
     /**
+    * A callback to be fired if the container wants to attempt changing the
+    * page title.
+    */
+    onPageTitle: proptypes.func,
+
+    /**
      * The current active section (if any).
      */
     section: proptypes.string,
