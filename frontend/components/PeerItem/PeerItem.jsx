@@ -8,6 +8,14 @@ import styles from './PeerItem.css'
 import Button from 'components/Button/Button'
 
 export default class PeerItem extends Component {
+
+  static propTypes = {
+    /**
+     * The socket peer.
+     */
+    peer: proptypes.object
+  }
+
   constructor(props) {
     super(props)
   }

@@ -8,6 +8,14 @@ import styles from './PeerList.css'
 import PeerItem from 'components/PeerItem/PeerItem'
 
 export default class PeerList extends Component {
+
+  static propTypes = {
+    /**
+     * The array of socket peers.
+     */
+    peers: proptypes.object
+  }
+
   constructor(props) {
     super(props)
   }
