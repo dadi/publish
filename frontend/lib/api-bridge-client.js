@@ -13,7 +13,7 @@ let callCount = 0
 let onUpdate = null
 let throttle = null
 
-function throttleAllow() {
+function throttleAllow () {
   clearInterval(throttle)
   throttle = setTimeout(() => callCount = 0, 1000)
 
