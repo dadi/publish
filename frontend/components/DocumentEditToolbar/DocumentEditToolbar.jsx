@@ -82,8 +82,20 @@ export default class DocumentListToolbar extends Component {
           </div>
 
           <div class={styles.metadata}>
-            <p>Created <DateTime date={'hello'}/></p>
-            <p>Updated <DateTime date={'hello'}/></p>
+            <p>
+              <span>Created </span>
+              <DateTime
+                date={document.createdAt}
+                relative={true}
+              />
+            </p>
+            <p>
+              <span>Last updated </span>
+              <DateTime
+                date={document.lastModifiedAt}
+                relative={true}
+              />
+            </p>
           </div>
         </div>
 
