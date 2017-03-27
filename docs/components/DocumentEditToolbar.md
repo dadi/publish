@@ -8,7 +8,7 @@ Props
 
 ### `disabled`
 
-Whether controls are disabled, preventing user interaction.
+Whether controls should be disabled, preventing user interaction.
 
 - type: `bool`
 - default value: `false`
@@ -19,6 +19,13 @@ Whether controls are disabled, preventing user interaction.
 The document currently being edited.
 
 - type: `object`
+
+
+### `hasValidationErrors`
+
+Whether the document currently being edited has any validation errors.
+
+- type: `bool`
 
 
 ### `method`
