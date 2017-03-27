@@ -79,11 +79,11 @@ export default class ElapsedTime extends Component {
     }
 
     if (!(dateObj instanceof Date)) {
-      if (typeof date)
+      //if (typeof date)
     }
 
     return (
-      <p>Date</p>
+      <span>{date}</span>
     )
   }
 }
