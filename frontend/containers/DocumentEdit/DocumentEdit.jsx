@@ -140,6 +140,7 @@ class DocumentEdit extends Component {
       collection,
       documentId,
       group,
+      section,
       state
     } = this.props
 
@@ -155,7 +156,7 @@ class DocumentEdit extends Component {
       slug: 'other',
       fields: fields.other
     }]
-    const activeSection = this.props.section || sections[0].slug
+    const activeSection = section || sections[0].slug
     const hasValidationErrors = Object.keys(document.validationErrors)
     .filter(field => document.validationErrors[field])
     .length
@@ -178,11 +179,14 @@ class DocumentEdit extends Component {
         {fields.sections &&
           <div class={styles.navigation}>
             {fields.sections.map(collectionSection => {
+              let isActive = activeSection === collectionSection.slug
+              let href = buildUrl(group, collection, 'document', method, documentId, collectionSection.slug)
+
               return (
                 <SubNavItem
-                  active={activeSection === collectionSection.slug}
+                  active={isActive}
                   error={collectionSection.hasErrors}
-                  href={buildUrl(group, collection, 'document', method, documentId, collectionSection.slug)}
+                  href={href}
                 >
                   {collectionSection.name}
                 </SubNavItem>

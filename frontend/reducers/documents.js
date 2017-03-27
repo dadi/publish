@@ -26,6 +26,7 @@ export default function document (state = initialState, action = {}) {
       return {
         ...state,
         list: null,
+        query: null,
         sortBy: null,
         sortOrder: null,
         status: Constants.STATUS_IDLE

@@ -57,6 +57,14 @@ export default class DocumentListView extends Component {
     )
   }
 
+  componentDidUpdate(prevProps, prevState) {
+    if (prevProps.collection !== this.props.collection) {
+      this.setState({
+        filtersVisible: false
+      })
+    }
+  }
+
   handleFilterToggle() {
     this.setState({
       filtersVisible: !this.state.filtersVisible
