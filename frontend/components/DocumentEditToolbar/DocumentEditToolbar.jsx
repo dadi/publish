@@ -18,7 +18,7 @@ import Toolbar from 'components/Toolbar/Toolbar'
 export default class DocumentListToolbar extends Component {
   static propTypes = {
     /**
-     * Whether controls are disabled, preventing user interaction.
+     * Whether controls should be disabled, preventing user interaction.
      */
     disabled: proptypes.bool,
 
@@ -26,6 +26,11 @@ export default class DocumentListToolbar extends Component {
      * The document currently being edited.
      */
     document: proptypes.object,
+
+    /**
+     * Whether the document currently being edited has any validation errors.
+     */
+    hasValidationErrors: proptypes.bool,
 
     /**
      * Whether the interface is editing an existing document or creating
@@ -56,6 +61,7 @@ export default class DocumentListToolbar extends Component {
     const {
       disabled,
       document,
+      hasValidationErrors,
       method,
       peers
     } = this.props
@@ -111,7 +117,7 @@ export default class DocumentListToolbar extends Component {
         <div class={styles['padded-group']}>
           <ButtonWithOptions
             accent="save"
-            disabled={disabled}
+            disabled={hasValidationErrors || disabled}
             onClick={this.handleSave.bind(this, 'save')}
             options={saveOptions}
           >
