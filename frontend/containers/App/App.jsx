@@ -15,6 +15,8 @@ import Header from 'components/Header/Header'
 import LoadingBar from 'components/LoadingBar/LoadingBar'
 import Main from 'components/Main/Main'
 
+import DocumentCreateView from 'views/DocumentCreateView/DocumentCreateView'
+import DocumentEditView from 'views/DocumentEditView/DocumentEditView'
 import DocumentListView from 'views/DocumentListView/DocumentListView'
 import Error from 'views/Error/Error'
 import Home from 'views/Home/Home'
@@ -22,9 +24,7 @@ import MediaLibrary from 'views/MediaLibrary/MediaLibrary'
 import PasswordReset from 'views/PasswordReset/PasswordReset'
 import SignIn from 'views/SignIn/SignIn'
 import SignOut from 'views/SignOut/SignOut'
-
-import UserProfile from 'containers/UserProfile/UserProfile'
-import DocumentEdit from 'containers/DocumentEdit/DocumentEdit'
+import ProfileEditView from 'views/ProfileEditView/ProfileEditView'
 
 import {connectHelper, debounce, isEmpty, slugify} from 'lib/util'
 import Socket from 'lib/socket'
@@ -115,15 +115,15 @@ class App extends Component {
           <Router history={history}>
             <Home path="/" authenticate />
             <PasswordReset path="/reset" authenticate/>
-            {hasRoutes && (<DocumentEdit path="/:group/:collection/document/edit/:documentId?/:section?" authenticate />)}
-            <DocumentEdit path="/:collection/document/edit/:documentId?/:section?" authenticate />
-            {hasRoutes && (<DocumentEdit path="/:group/:collection/document/new/:section?" authenticate />)}
-            <DocumentEdit path="/:collection/document/new/:section?" authenticate />
+            {hasRoutes && (<DocumentEditView path="/:group/:collection/document/edit/:documentId?/:section?" authenticate />)}
+            <DocumentEditView path="/:collection/document/edit/:documentId?/:section?" authenticate />
+            {hasRoutes && (<DocumentCreateView path="/:group/:collection/document/new/:section?" authenticate />)}
+            <DocumentCreateView path="/:collection/document/new/:section?" authenticate />
             <DocumentListView path="/:collection/documents/:page?" authenticate />
             {hasRoutes && (<DocumentListView path="/:group/:collection/documents/:page?" authenticate />)}
             <MediaLibrary path="/:collection/media/:document?" authenticate/>
             {hasRoutes && (<MediaLibrary path="/:group/:collection/media/:document?" authenticate/>)}
-            <UserProfile path="/profile/:section?" authenticate />
+            <ProfileEditView path="/profile/:section?" authenticate />
             <SignIn path="/sign-in" />
             <SignOut path="/sign-out" />
             <Error type="404" default />
