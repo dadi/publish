@@ -89,7 +89,7 @@ export default class DocumentListToolbar extends Component {
                 relative={true}
               />
             </p>
-            <p>
+            <p class={styles['metadata-emphasis']}>
               <span>Last updated </span>
               <DateTime
                 date={document.lastModifiedAt}
@@ -99,7 +99,7 @@ export default class DocumentListToolbar extends Component {
           </div>
         </div>
 
-        <div>
+        <div class={styles['padded-group']}>
           <ButtonWithOptions
             accent="save"
             disabled={hasValidationErrors}
