@@ -36,11 +36,11 @@ export default class DocumentFilters extends Component {
     super(props)
 
     const {collection} = this.props
-    const paramFilters = this.setFiltersFromParams()
+    const paramFilters = this.getFiltersFromParams()
     this.state.filters = paramFilters.length ? paramFilters : this.createDefaultFilters(collection)
   }
 
-  setFiltersFromParams () {
+  getFiltersFromParams () {
     const {filters} = this.props
     return (filters ? objectToArray(filters, 'field') : [])
       .map(this.deconstructFilters)
@@ -54,7 +54,7 @@ export default class DocumentFilters extends Component {
       this.setState({filters: this.createDefaultFilters(nextProps.collection)})
     } else {
       // If we aren't changing collection
-      const paramFilters = this.setFiltersFromParams()
+      const paramFilters = this.getFiltersFromParams()
       this.setState({filters: paramFilters.length ? paramFilters : this.createDefaultFilters(collection)})
     }
   }
@@ -77,8 +77,7 @@ export default class DocumentFilters extends Component {
 
     return (
       <form class={styles.filters} onSubmit={e => e.preventDefault()}>
-        {filters && collection && filters.map((filter, index) => {
-          return (
+        {filters && collection && filters.map((filter, index) => (
           <DocumentFilter
             index={index}
             field={filter.field}
@@ -88,7 +87,7 @@ export default class DocumentFilters extends Component {
             onUpdate={this.handleUpdateFilter.bind(this)}
             onRemove={this.handleRemoveFilter.bind(this)}
           />
-        )})}
+        ))}
 
         <div class={styles.controls}>
           <Button
