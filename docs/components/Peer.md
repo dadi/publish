@@ -1,5 +1,5 @@
-`PeerItem`
-==========
+`Peer`
+======
 
 
 
@@ -10,5 +10,5 @@ Props
 
 The socket peer.
 
-- type: `custom`
+- type: `object`
 

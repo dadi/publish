@@ -6,12 +6,15 @@
   box-shadow: 0 0 1px rgba(0, 0, 0, 0.08);
   border-top: 1px solid #e4e4e4;
   background-color: var(--theme-colour-background, #FFFFFF);
-  padding: 13px 20px;
   display: flex;
   justify-content: space-between;
   align-items: center;
   font-family: var(--theme-font-family, sans-serif);
   color: var(--theme-colour-primary, #000000);
+}
+
+.container-padded {
+  padding: 13px 20px;
 }
 
 .input {

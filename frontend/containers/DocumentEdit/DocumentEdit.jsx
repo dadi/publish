@@ -17,14 +17,11 @@ import {buildUrl, createRoute} from 'lib/router'
 import {connectHelper, slugify, Case} from 'lib/util'
 import {getCurrentApi, getCurrentCollection} from 'lib/app-config'
 
-import Button from 'components/Button/Button'
-import ButtonWithOptions from 'components/ButtonWithOptions/ButtonWithOptions'
-import FieldBoolean from 'components/FieldBoolean/FieldBoolean'
+import DocumentEditToolbar from 'components/DocumentEditToolbar/DocumentEditToolbar'
 import FieldAsset from 'components/FieldAsset/FieldAsset'
+import FieldBoolean from 'components/FieldBoolean/FieldBoolean'
 import FieldString from 'components/FieldString/FieldString'
-import PeerList from 'components/PeerList/PeerList'
 import SubNavItem from 'components/SubNavItem/SubNavItem'
-import Toolbar from 'components/Toolbar/Toolbar'
 
 /**
  * The interface for editing a document.
@@ -88,7 +85,9 @@ class DocumentEdit extends Component {
     const currentCollection = getCurrentCollection(state.api.apis, group, collection)
     const method = documentId ? 'edit' : 'new'
 
-    onPageTitle(`${Case.sentence(method)} document`)
+    if (typeof onPageTitle === 'function') {
+      onPageTitle(`${Case.sentence(method)} document`)  
+    }
 
     if (currentCollection) {
       const fields = this.groupFields(currentCollection.fields)
@@ -166,22 +165,10 @@ class DocumentEdit extends Component {
     }]
     const activeSection = section || sections[0].slug
     const hasValidationErrors = Object.keys(document.validationErrors)
-    .filter(field => document.validationErrors[field])
-    .length
+      .filter(field => document.validationErrors[field])
+      .length
     const hasConnectionIssues = state.app.networkStatus !== Constants.NETWORK_OK
     const method = documentId ? 'edit' : 'new'
-
-    // By default, we support these two save modes.
-    let saveOptions = {
-      'Save and create new': this.handleSave.bind(this, 'saveAndCreateNew'),
-      'Save and go back': this.handleSave.bind(this, 'saveAndGoBack')
-    }
-
-    // If we're editing an existing document, we also allow users to duplicate
-    // the document.
-    if (method === 'edit') {
-      saveOptions['Save as duplicate'] = this.handleSave.bind(this, 'saveAsDuplicate')
-    }
 
     return (
       <div class={styles.container}>
@@ -235,28 +222,14 @@ class DocumentEdit extends Component {
           )
         })}
 
-        <Toolbar>
-          <div>
-            <Button
-              accent="destruct"
-              disabled={hasConnectionIssues}
-            >Delete</Button>
-            <PeerList
-              peers={document.peers}
-            />
-          </div>
-
-          <div>
-            <ButtonWithOptions
-              accent="save"
-              disabled={hasValidationErrors || hasConnectionIssues}
-              onClick={this.handleSave.bind(this, 'save')}
-              options={saveOptions}
-            >
-              Save and continue
-            </ButtonWithOptions>
-          </div>
-        </Toolbar>
+        <DocumentEditToolbar
+          document={document.local}
+          hasConnectionIssues={hasConnectionIssues}
+          hasValidationErrors={hasValidationErrors}
+          method={method}
+          onSave={this.handleSave.bind(this)}
+          peers={document.peers}
+        />
       </div>
     )
   }

@@ -14,3 +14,11 @@ The elements to be rendered inside the bar.
 
 - type: `node`
 
+
+### `padded`
+
+Whether the toolbar should have the default padding applied.
+
+- type: `bool`
+- default value: `true`
+
