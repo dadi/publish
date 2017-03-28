@@ -78,7 +78,6 @@ export default class DocumentFilter extends Component {
 
   render() {
     const {field, fields, type, value} = this.props
-
     const controlFieldStyle = new Style(styles, 'control', 'control-field')
     const controlAnalyserStyle = new Style(styles, 'control', 'control-analyser')
     const controlValueStyle = new Style(styles, 'control', 'control-value')
@@ -91,7 +90,7 @@ export default class DocumentFilter extends Component {
             class={styles.select}
             onChange={this.handleChange.bind(this, 'field')}
           >
-            <option disabled selected value>Select field</option>
+            <option disabled selected value>Select a field</option>
 
             {Object.keys(fields).map(key => (
               <option

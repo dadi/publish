@@ -3,21 +3,24 @@
 import * as types from 'actions/actionTypes'
 
 const initialState = {
+  action: null,
   locationBeforeTransitions: null,
-  params: null
+  params: {}
 }
 
 export default function router (state = initialState, {
   type,
   locationBeforeTransitions,
-  params
+  params,
+  action
 } = {}) {
   switch (type) {
     case types.LOCATION_CHANGE:
       return {
         ...state,
+        action: action,
         locationBeforeTransitions: locationBeforeTransitions,
-        params: params || null
+        params: params || {}
       }
     default:
       return state
