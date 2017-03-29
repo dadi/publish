@@ -100,13 +100,16 @@ export default class DocumentListToolbar extends Component {
                 relative={true}
               />
             </p>
-            <p class={styles['metadata-emphasis']}>
-              <span>Last updated </span>
-              <DateTime
-                date={document.lastModifiedAt}
-                relative={true}
-              />
-            </p>
+
+            {document.lastModifiedAt &&
+              <p class={styles['metadata-emphasis']}>
+                <span>Last updated </span>
+                <DateTime
+                  date={document.lastModifiedAt}
+                  relative={true}
+                />
+              </p>
+            }
           </div>
         </div>
 

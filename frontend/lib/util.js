@@ -122,8 +122,9 @@ export function slugify (str) {
 export function debounce (func, wait, immediate) {
   let timeout
 
-  return () => {
-    let context = this, args = arguments
+  return function () {
+    let context = this
+    let args = arguments
     let later = () => {
       timeout = null
       if (!immediate) func.apply(context, args)
@@ -133,6 +134,27 @@ export function debounce (func, wait, immediate) {
     clearTimeout(timeout)
     timeout = setTimeout(later, wait)
     if (callNow) func.apply(context, args)
+  }
+}
+
+export function throttle (func, threshold) {
+  let lastCall
+  let timeout
+
+  return function () {
+    let now = new Date().getTime()
+    let args = arguments
+
+    if (lastCall && (now < lastCall + threshold)) {
+      clearTimeout(timeout)
+      timeout = setTimeout(() => {
+        lastCall = now
+        func.apply(this, args)
+      }, threshold)
+    } else {
+      lastCall = now
+      func.apply(this, args)
+    }
   }
 }
 
