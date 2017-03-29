@@ -118,6 +118,7 @@ class DocumentList extends Component {
     if (!documents.list || documents.status === Constants.STATUS_LOADING || !currentCollection) {
       return null
     }
+
     const collectionFields = currentCollection.fields
     const fieldsToDisplay = Object.keys(collectionFields)
       .filter(key => {

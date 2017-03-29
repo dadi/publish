@@ -104,10 +104,6 @@ module.exports = {
         loader: 'babel-loader'
       },
       {
-        test: /\.svg|jpg$/,
-        loader: 'url'
-      },
-      {
         test: /\.(png|woff|woff2|eot|ttf|svg)(\?.*$|$)/,
         loader: 'url-loader?limit=100000'
       },

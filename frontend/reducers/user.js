@@ -5,8 +5,7 @@ import * as Types from 'actions/actionTypes'
 
 const initialState = {
   local: null,
-  remote: null,
-  remoteStatus: Constants.STATUS_IDLE
+  remote: null
 }
 
 export default function user (state = initialState, action = {}) {

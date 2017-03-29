@@ -4,14 +4,17 @@ Publish can use a variety of extended field values to aid the UI and document op
 
 Currently, the supported fields are:
 
-| Field       | Description                                                                                | Example               | Default |
-|-------------|--------------------------------------------------------------------------------------------|-----------------------|---------|
-| `section`   | Human-friendly name of the section                                                         | `"Article"`           | None    |
-| `position`  | Position of the field within the document editing interface                                | `"main"`, `"sidebar"` | None    |
-| `multiline` | When set to `true`, String fields will be rendered with a textarea instead of a text input | `true`                | `false` |
-| `options`   | Limits the content of the field to a fixed set of values. It's defined as an array of objects containing `value` and `label` properties. When used with the String field, a dropdown is rendered | `[{"value": "uk", "label": "United Kingdom"}]`                | `null` |
-| `multiple`  | Defines whether the field allows multiple values. When used with the String field and `options` is defined, a multi-select dropdown is rendered | `true`                | `false` |
-| `limit`     | Defines the maximum number of values allowed in the field. Overrides `multiple` | `10`                | `1` |
+| Field             | Description                                                                                | Example               | Default |
+|-------------------|--------------------------------------------------------------------------------------------|-----------------------|---------|
+| `section`         | Human-friendly name of the section                                                         | `"Article"`           | None    |
+| `placement`       | Placement of the field within the document editing interface                               | `"main"`, `"sidebar"` | None    |
+| `multiline`       | When set to `true`, String fields will be rendered with a textarea instead of a text input | `true`                | `false` |
+| `options`         | Limits the content of the field to a fixed set of values. It's defined as an array of objects containing `value` and `label` properties. When used with the String field, a dropdown is rendered | `[{"value": "uk", "label": "United Kingdom"}]`                | `null` |
+| `multiple`        | Defines whether the field allows multiple values. When used with the String field and `options` is defined, a multi-select dropdown is rendered | `true`                | `false` |
+| `limit`           | Defines the maximum number of values allowed in the field. Overrides `multiple`            | `10`                  | `1`     |
+| `display.list`    | Defines whether the field is displayed in the document list view                           | `true`                | `true`  |
+| `display.edit`    | Defines whether the field is displayed in the document edit view                           | `true`                | `true`  |
+| `readonly`        | Defines whether the document is editable when displayed within the document list view      | `true`                | `false` |
 
 *Example: A `String` type rendered in the main body as a textarea:*
 
@@ -21,14 +24,15 @@ Currently, the supported fields are:
   "label": "Synopsis",
   "validation": {},
   "message": "can't be empty",
-  "display": {
-    "index": true,
-    "edit": true
-  },
   "publish": {
     "section": "Article",
-    "position": "main",
-    "multiline": true
+    "placement": "main",
+    "multiline": true,
+    "display": {
+      "list": false,
+      "edit": true
+    },
+    "readonly": true
   }
 }
 ```
@@ -41,13 +45,13 @@ Currently, the supported fields are:
   "label": "Country",
   "default": "pt",
   "message": "can't be empty",
-  "display": {
-    "index": true,
-    "edit": true
-  },
   "publish": {
     "section": "Article",
-    "position": "sidebar",
+    "placement": "sidebar",
+    "display": {
+      "list": true,
+      "edit": true
+    },
     "options": [
       {
         "value": "uk",
