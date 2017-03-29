@@ -121,6 +121,7 @@ class DocumentList extends Component {
     const fields = currentCollection.fields
     const fieldsToDisplay = Object.keys(fields)
       .filter(key => {
+        // If the publish && display block don't exist, or if list is true allow this field to pass.
         return !fields[key].publish || !fields[key].publish.display || fields[key].publish.display.list
       })
     const tableColumns = fieldsToDisplay.map(field => {
