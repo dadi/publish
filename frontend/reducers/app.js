@@ -58,6 +58,7 @@ function getNotificationObject (notification) {
 
 export default function app (state = initialState, action = {}) {
   switch (action.type) {
+
     // App action: register network call
     case Types.REGISTER_NETWORK_CALL:
       switch (action.status) {

@@ -67,8 +67,8 @@ export function startNewDocument () {
 
 export function updateLocalDocument (change, context) {
   return {
-    context,
     change,
+    context,
     type: Types.UPDATE_LOCAL_DOCUMENT
   }
 }

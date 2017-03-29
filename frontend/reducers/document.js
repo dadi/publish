@@ -41,6 +41,7 @@ function getDocumentWithBooleans (document, collectionSchema) {
 
 export default function document (state = initialState, action = {}) {
   switch (action.type) {
+
     // Document action: clear remote document
     case Types.CLEAR_REMOTE_DOCUMENT:
       return initialState
@@ -119,8 +120,8 @@ export default function document (state = initialState, action = {}) {
       // We start by trying to load the document with the given ID from local
       // storage.
       let draftDocument = LocalStorage.readDocument(action.context)
-      let localDocument = draftDocument
-        || getDocumentWithBooleans(action.document, action.context.collection)
+      let localDocument = draftDocument ||
+        getDocumentWithBooleans(action.document, action.context.collection)
 
       return {
         ...state,

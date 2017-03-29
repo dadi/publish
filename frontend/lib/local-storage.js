@@ -12,7 +12,7 @@ function clear (key) {
   }
 }
 
-function getKeyFromContext({collection, documentId, group}) {
+function getKeyFromContext ({collection, documentId, group}) {
   let key
 
   if (documentId) {
