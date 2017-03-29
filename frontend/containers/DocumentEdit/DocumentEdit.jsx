@@ -197,8 +197,8 @@ class DocumentEdit extends Component {
           sectionClass.addIf('section-active', section.slug === activeSection)
 
           const fields = {
-            main: section.fields.filter(field => !field.publish || field.publish.position === 'main'),
-            sidebar: section.fields.filter(field => field.publish && field.publish.position === 'sidebar')
+            main: section.fields.filter(field => !field.publish || field.publish.placement === 'main'),
+            sidebar: section.fields.filter(field => field.publish && field.publish.placement === 'sidebar')
           }
 
           const mainBodyStyle = new Style(styles, 'main')
