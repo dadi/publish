@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "build": "webpack --progress",
+    "profile": "webpack --progress --profile --json > stats.json",
     "build-docs": "rm -rf docs/components/* && react-docgen --exclude ['/^(ConfigSchema$)/g'] frontend/components | node scripts/build-docs/build-docs.js docs/components; rm -rf docs/containers/* && react-docgen --exclude ['/^(ConfigSchema$)/g'] frontend/containers | node scripts/build-docs/build-docs.js docs/containers",
     "create-component": "node scripts/create-component/create-component.js",
     "init": "validate-commit-msg",
@@ -63,7 +64,6 @@
     "serve-static-restify": "^1.0.0",
     "snyk": "^1.25.0",
     "socketcluster-server": "^5.3.0",
-    "url": "^0.11.0",
     "ws": "2.0.0"
   },
   "devDependencies": {
@@ -103,7 +103,7 @@
     "proptypes": "^0.14.3",
     "react-docgen": "github:eduardoboucas/react-docgen",
     "redux": "^3.6.0",
-    "socketcluster-client": "^5.1.1",
+    "socketcluster-client": "^5.10.2",
     "standard": "^8.6.0",
     "style-loader": "^0.13.1",
     "uglify-js": "github:mishoo/UglifyJS2#harmony",
