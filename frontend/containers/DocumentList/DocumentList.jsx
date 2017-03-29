@@ -120,7 +120,9 @@ class DocumentList extends Component {
     }
     const fields = currentCollection.fields
     const fieldsToDisplay = Object.keys(fields)
-      .filter(key => !fields[key].publish || !fields[key].publish.display || fields[key].publish.display.list)
+      .filter(key => {
+        return !fields[key].publish || !fields[key].publish.display || fields[key].publish.display.list
+      })
     const tableColumns = fieldsToDisplay.map(field => {
       return {
         id: field,
