@@ -56,6 +56,16 @@ Placeholder for the input field.
 - type: `string`
 
 
+### `readonly`
+
+Whether the field is required.
+
+**NOTE:** This prop is automatically passed down by `<Label/>`.
+
+- type: `bool`
+- default value: `false`
+
+
 ### `required`
 
 Whether the field is required.
