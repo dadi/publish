@@ -48,6 +48,13 @@ export default class TextInput extends Component {
      *
      * **NOTE:** This prop is automatically passed down by `<Label/>`.       
      */
+    readonly: proptypes.bool,
+
+    /**
+     * Whether the field is required.
+     *
+     * **NOTE:** This prop is automatically passed down by `<Label/>`.       
+     */
     required: proptypes.bool,
 
     /**
@@ -72,6 +79,7 @@ export default class TextInput extends Component {
   static defaultProps = {
     inLabel: false,
     multiline: false,
+    readonly: false,
     type: 'text'
   }
 
@@ -87,6 +95,7 @@ export default class TextInput extends Component {
       id,
       inLabel,
       placeholder,
+      readonly,
       required,
       type,
       value
@@ -106,6 +115,7 @@ export default class TextInput extends Component {
           placeholder={placeholder}
           required={required}
           rows={10}
+          readonly={readonly}
           onChange={this.handleChange.bind(this)}
           onKeyUp={this.handleChange.bind(this)}
         >
@@ -122,6 +132,7 @@ export default class TextInput extends Component {
         value={value}
         id={id}
         placeholder={placeholder}
+        readonly={readonly}
         required={required}
         onChange={this.handleChange.bind(this)}
         onKeyUp={this.handleChange.bind(this)}
