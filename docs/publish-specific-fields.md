@@ -7,7 +7,7 @@ Currently, the supported fields are:
 | Field       | Description                                                                                | Example               | Default |
 |-------------|--------------------------------------------------------------------------------------------|-----------------------|---------|
 | `section`   | Human-friendly name of the section                                                         | `"Article"`           | None    |
-| `position`  | Position of the field within the document editing interface                                | `"main"`, `"sidebar"` | None    |
+| `placement`  | Placement of the field within the document editing interface                               | `"main"`, `"sidebar"` | None    |
 | `multiline` | When set to `true`, String fields will be rendered with a textarea instead of a text input | `true`                | `false` |
 | `options`   | Limits the content of the field to a fixed set of values. It's defined as an array of objects containing `value` and `label` properties. When used with the String field, a dropdown is rendered | `[{"value": "uk", "label": "United Kingdom"}]`                | `null` |
 | `multiple`  | Defines whether the field allows multiple values. When used with the String field and `options` is defined, a multi-select dropdown is rendered | `true`                | `false` |
@@ -27,7 +27,7 @@ Currently, the supported fields are:
   },
   "publish": {
     "section": "Article",
-    "position": "main",
+    "placement": "main",
     "multiline": true
   }
 }
@@ -47,7 +47,7 @@ Currently, the supported fields are:
   },
   "publish": {
     "section": "Article",
-    "position": "sidebar",
+    "placement": "sidebar",
     "options": [
       {
         "value": "uk",
