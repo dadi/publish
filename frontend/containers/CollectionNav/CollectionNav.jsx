@@ -146,6 +146,10 @@ class CollectionNav extends Component {
 }
 
 export default connectHelper(
-  state => state,
+  state => ({
+    api: state.api,
+    app: state.app,
+    router: state.router
+  }),
   dispatch => bindActionCreators({...apiActions, ...appActions}, dispatch)
 )(CollectionNav)

@@ -71,7 +71,6 @@ class ProfileEdit extends Component {
       sections,
     } = this.props
 
-
     if (state.app.config) {
       const auth = state.app.config.auth
       const currentCollection = getAuthCollection(state.api.apis, auth)
@@ -79,7 +78,9 @@ class ProfileEdit extends Component {
       if (currentCollection) {
         const firstField = Object.keys(currentCollection.fields)
           .find(field => (currentCollection.fields[field].publish && currentCollection.fields[field].publish.section))
-        const firstSection = firstField.length ? currentCollection.fields[firstField].publish.section.toLowerCase() : sections[0].slug
+        const firstSection = firstField.length
+          ? currentCollection.fields[firstField].publish.section.toLowerCase()
+          : sections[0].slug
 
         const sectionMatch = section ? sections.find(fieldSection => fieldSection.slug === section) : null
 
@@ -118,6 +119,9 @@ class ProfileEdit extends Component {
 }
 
 export default connectHelper(
-  state => state,
+  state => ({
+    api: state.api,
+    app: state.app
+  }),
   dispatch => bindActionCreators(userActions, dispatch)
 )(ProfileEdit)
