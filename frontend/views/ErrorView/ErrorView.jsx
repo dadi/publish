@@ -10,17 +10,23 @@ import Page from 'components/Page/Page'
 
 class Error extends Component {
   render() {
-    const {type} = this.props
+    const {state, type} = this.props
+    const hasConfig = state.app && state.app.config
 
+    // We only treat this as an actual error, and therefore display the error
+    // message, if the config has already been loaded. This prevents us from
+    // showing a flashing 404 page whilst routes are still being loaded.
     return (
       <Page>
         <Header />
 
         <Main>
-          <HeroMessage
-            title={type}
-            subtitle="Oops! Something went wrong, sorry."
-          />
+          {hasConfig &&
+            <HeroMessage
+              title={type}
+              subtitle="Oops! Something went wrong, sorry."
+            />
+          }
         </Main>
       </Page>
     ) 
