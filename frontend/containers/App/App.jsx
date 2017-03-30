@@ -27,7 +27,7 @@ import SignIn from 'views/SignIn/SignIn'
 import SignOut from 'views/SignOut/SignOut'
 import ProfileEditView from 'views/ProfileEditView/ProfileEditView'
 
-import {connectHelper, debounce, isEmpty, slugify} from 'lib/util'
+import {connectHelper, debounce, isEmpty, slugify, throttle} from 'lib/util'
 import Socket from 'lib/socket'
 import ConnectionMonitor from 'lib/status'
 import Session from 'lib/session'
@@ -136,7 +136,7 @@ class App extends Component {
       return typeof api.menu !== 'undefined'
     })
 
-    return state
+    return foundMenus
   }
 
   getApiCollections(config) {

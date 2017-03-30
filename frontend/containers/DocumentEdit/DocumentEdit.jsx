@@ -10,6 +10,7 @@ import Style from 'lib/Style'
 import styles from './DocumentEdit.css'
 
 import * as Constants from 'lib/constants'
+import * as appActions from 'actions/appActions'
 import * as documentActions from 'actions/documentActions'
 
 import APIBridge from 'lib/api-bridge-client'
@@ -145,6 +146,7 @@ class DocumentEdit extends Component {
 
   render() {
     const {
+      actions,
       collection,
       documentId,
       group,
@@ -158,6 +160,23 @@ class DocumentEdit extends Component {
     if (document.remoteStatus === Constants.STATUS_LOADING || !currentCollection || !document.local) {
       return null
     }
+
+    if (document.loadedFromLocalStorage) {
+      const context = {
+        collection: currentCollection,
+        documentId,
+        group
+      }
+      const notification = {
+        message: 'This document has unsaved changes',
+        options: {
+          'Discard': this.handleDiscardUnsavedChanges.bind(this, context)
+        }
+      }
+
+      actions.setNotification(notification)
+    }
+
     const collectionFields = this.filterHiddenFields(currentCollection.fields)
     const fields = this.groupFields(collectionFields)
     const sections = fields.sections || [{
@@ -268,7 +287,11 @@ class DocumentEdit extends Component {
 
         const document = response.results[0]
 
-        actions.setRemoteDocument(document)
+        actions.setRemoteDocument(document, {
+          collection: currentCollection,
+          documentId,
+          group
+        })
       })
   }
 
@@ -318,7 +341,7 @@ class DocumentEdit extends Component {
     }
   }
 
-  saveDocument(documentId) {
+  saveDocument(documentId, successNotification) {
     const {
       actions,
       collection,
@@ -357,6 +380,12 @@ class DocumentEdit extends Component {
 
     return apiBridge.then(response => {
       if (response.results && response.results.length) {
+        actions.saveDocument({
+          collection: currentCollection,
+          documentId,
+          group
+        }, successNotification)
+
         return response.results[0]._id
       }
 
@@ -370,8 +399,7 @@ class DocumentEdit extends Component {
         // way we treat the local ones, adding them to the document store.
         actions.setErrorsFromRemoteApi(response.errors)
       } else {
-        // Some other type of error occurred. We display a generic message.
-        alert('The document was not saved.')
+        throw 'SAVE_ERROR'
       }
     })
   }
@@ -440,13 +468,28 @@ class DocumentEdit extends Component {
     return fieldElement ? <div class={styles.field}>{fieldElement}</div> : null
   }
 
+  handleDiscardUnsavedChanges(context) {
+    const {actions} = this.props
+
+    actions.discardUnsavedChanges(context)
+  }
+
   // Handles the callback that fires whenever a field changes and the new value is ready
   // to be sent to the store
   handleFieldChange(fieldName, value) {
-    const {actions} = this.props
+    const {
+      actions,
+      collection,
+      documentId,
+      group
+    } = this.props
 
     actions.updateLocalDocument({
       [fieldName]: value
+    }, {
+      collection,
+      documentId,
+      group
     })
   }
 
@@ -471,45 +514,46 @@ class DocumentEdit extends Component {
       hasTriedSubmitting: true
     })
 
+    let notification = {
+      dismissAfterSeconds: 10,
+      type: Constants.NOTIFICATION_TYPE_SUCCESS
+    }
+
     switch (saveMode) {
       // Save
       case 'save':
-        return this.saveDocument(documentId).then(newDocumentId => {
+        notification.message = `The document has been ${documentId ? 'updated' : 'created'}`
+
+        return this.saveDocument(documentId, notification).then(newDocumentId => {
           // If we're creating a new document (either by starting a blank one or by
           // duplicating an existing one), we redirect to the new document ID.
           if (documentId !== newDocumentId) {
             route(buildUrl(group, collection, 'document', 'edit', newDocumentId, section))
           }
-
-          // (!) TO DO: Replace with toaster.
-          alert(`The document has been ${documentId ? 'updated' : 'created'} successfully.`)
         })
 
       // Save and create new
       case 'saveAndCreateNew':
+        notification.message = `The document has been ${documentId ? 'updated' : 'created'}`
+
         return this.saveDocument(documentId).then(newDocumentId => {
           route(buildUrl(group, collection, 'document', 'new'))
-
-          // (!) TO DO: Replace with toaster.
-          alert(`The document has been ${documentId ? 'updated' : 'created'} successfully.`)
         })
 
       // Save and go back
       case 'saveAndGoBack':
+        notification.message = `The document has been ${documentId ? 'updated' : 'created'}`
+
         return this.saveDocument(documentId).then(newDocumentId => {
           route(buildUrl(group, collection, 'documents'))
-
-          // (!) TO DO: Replace with toaster.
-          alert(`The document has been ${documentId ? 'updated' : 'created'} successfully.`)
         })
 
       // Save as duplicate
       case 'saveAsDuplicate':
+        notification.message = `The document has been created`
+
         return this.saveDocument().then(newDocumentId => {
           route(buildUrl(group, collection, 'document', 'edit', newDocumentId, section))
-
-          // (!) TO DO: Replace with toaster.
-          alert(`The document has been created successfully.`)
         })
     }
   }
@@ -517,5 +561,5 @@ class DocumentEdit extends Component {
 
 export default connectHelper(
   state => state,
-  dispatch => bindActionCreators(documentActions, dispatch)
+  dispatch => bindActionCreators({...appActions, ...documentActions}, dispatch)
 )(DocumentEdit)

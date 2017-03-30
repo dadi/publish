@@ -17,14 +17,14 @@ export default class FieldBoolean extends Component {
     onChange: proptypes.func,
 
     /**
-     * The field value.
-     */
-    value: proptypes.bool,
-
-    /**
      * The field schema.
      */
-    schema: proptypes.object
+    schema: proptypes.object,
+
+    /**
+     * The field value.
+     */
+    value: proptypes.bool
   }
 
   static defaultProps = {
@@ -45,17 +45,6 @@ export default class FieldBoolean extends Component {
         />
       </Label>
     )
-  }
-
-  componentDidMount() {
-    const {onChange, schema, value} = this.props
-
-    // Because Boolean fields don't have an "unset" state, we need to register
-    // the state of the field as soon as it's mounted, and not just when its
-    // value changes.
-    if (typeof onChange === 'function') {
-      onChange.call(this, schema._id, value)
-    }
   }
 
   handleOnChange(event) {

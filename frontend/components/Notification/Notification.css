@@ -1,0 +1,44 @@
+.container {
+  position: fixed;
+  bottom: var(--theme-toolbar-height, 63px);
+  left: 0;
+  text-align: center;
+  width: 100%;
+  opacity: 0;
+  transform: translateY(100%);
+  transition: all 0.3s ease-out;
+}
+
+.container-visible {
+  opacity: 1;
+  transform: none;
+}
+
+.notification {
+  display: inline-block;
+  line-height: 1.25;
+  font-family: var(--theme-font-family, sans-serif);
+  padding: 10px 50px;
+  border-top-left-radius: 3px;
+  border-top-right-radius: 3px;
+}
+
+.notification-visible {
+  color: red !important;
+}
+
+/* Accent: system */
+.notification-system {
+  background-color: var(--theme-colour-system, #ffbf0d);
+  color: var(--theme-colour-primary, #000000);
+}
+
+.option {
+  cursor: pointer;
+  margin-left: 10px;
+  font-weight: bold;
+}
+
+.option:hover {
+  text-decoration: underline;
+}

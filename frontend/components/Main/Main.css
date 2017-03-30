@@ -49,28 +49,29 @@
 }
 
 :global :root {
-  --theme-font-family: 'Karla', 'Helvetica Neue', Arial, Helvetica, Geneva, sans-serif;
-  --theme-font-size-small: 13px;
-  --theme-font-size-normal: 16px;
-  --theme-font-size-large: 20px;
   --theme-colour-background: #FFFFFF;
   --theme-colour-background-shade-1: #FAFAFA;
   --theme-colour-background-shade-2: #AAAAAA;
   --theme-colour-background-shade-3: #EEEEEE;
+  --theme-colour-data: #4A91FF;
+  --theme-colour-data-shade-1: #1772ff;
+  --theme-colour-error: #E5462C;
+  --theme-colour-error-shade-1: #982613;
   --theme-colour-primary: #000000;
   --theme-colour-primary-shade-1: #777777;
+  --theme-colour-save: #88c24c;
+  --theme-colour-save-shade-1: #6ea338;
+  --theme-colour-save-shade-2: #58822d;
   --theme-colour-secondary: #FFFFFF;
   --theme-colour-system: #ffbf0d;
   --theme-colour-system-shade-1: #d9a000;
   --theme-colour-system-shade-2: #c08d00;
   --theme-colour-system-shade-3: #a67a00;
-  --theme-colour-data: #4A91FF;
-  --theme-colour-data-shade-1: #1772ff;
-  --theme-colour-error: #E5462C;
-  --theme-colour-error-shade-1: #982613;
-  --theme-colour-save: #88c24c;
-  --theme-colour-save-shade-1: #6ea338;
-  --theme-colour-save-shade-2: #58822d;
+  --theme-font-family: 'Karla', 'Helvetica Neue', Arial, Helvetica, Geneva, sans-serif;
+  --theme-font-size-small: 13px;
+  --theme-font-size-normal: 16px;
+  --theme-font-size-large: 20px;
+  --theme-toolbar-height: 63px;
 }
 
 @custom-media --breakpoint-medium (min-width: 600px);
