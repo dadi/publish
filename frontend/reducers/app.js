@@ -108,6 +108,17 @@ export default function app (state = initialState, action = {}) {
 
       return state
 
+    // Document action: save document
+    case Types.SAVE_DOCUMENT:
+      if (!action.notification) {
+        return state
+      }
+
+      return {
+        ...state,
+        notification: getNotificationObject(action.notification)
+      }
+
     // App action: set config
     case Types.SET_APP_CONFIG:
       return {
@@ -144,17 +155,6 @@ export default function app (state = initialState, action = {}) {
       return {
         ...state,
         breakpoint
-      }
-
-    // Document action: save document
-    case Types.SAVE_DOCUMENT:
-      if (!action.notification) {
-        return state
-      }
-
-      return {
-        ...state,
-        notification: getNotificationObject(action.notification)
       }
 
     // User action: user signed out
