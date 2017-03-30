@@ -11,7 +11,7 @@ const initialState = {
   peers: null,
   remote: null,
   remoteStatus: Constants.STATUS_IDLE,
-  validationErrors: {}
+  validationErrors: null
 }
 
 // Boolean fields are a bit special. Any required field that hasn't
@@ -57,7 +57,7 @@ export default function document (state = initialState, action = {}) {
         dirty: false,
         loadedFromLocalStorage: false,
         local: getDocumentWithBooleans(state.remote, action.context.collection),
-        validationErrors: {}
+        validationErrors: null
       }
 
     // Document action: save document
@@ -96,12 +96,13 @@ export default function document (state = initialState, action = {}) {
     case Types.SET_FIELD_ERROR_STATUS:
       const error = action.error || null
       const fieldName = action.field
+      const {validationErrors} = state
 
       // If the validation error status for the field hasn't changed, there's nothing
       // to do here, so we return the current state (avoiding a re-render).
       // Note that the weak comparison (== instead of ===) is on purpose, as we want
       // `null` and `undefined` to evaluate the same way.
-      if (state.validationErrors[fieldName] == error) {
+      if (validationErrors && validationErrors[fieldName] == error) {
         return state
       }
 

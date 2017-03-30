@@ -106,12 +106,21 @@ class DocumentEdit extends Component {
         }
       }
     }
+
+    this.currentCollection = currentCollection
   }
 
-  componentDidUpdate(previousProps) {
-    const {actions, documentId, state} = this.props
+  componentDidUpdate(previousProps, previousState) {
+    const {
+      actions,
+      documentId,
+      group,
+      state
+    } = this.props
     const document = state.document
     const documentIdHasChanged = documentId !== previousProps.documentId
+    const {hasTriedSubmitting} = this.state
+    const previousDocument = previousProps.state.document
 
     // There's no document ID, so it means we're creating a new document.
     if (!documentId) {
@@ -136,6 +145,38 @@ class DocumentEdit extends Component {
     if (notLoading && needsFetch && allApisHaveCollections) {
       this.fetchDocument(documentId)
     }
+
+    // If `validationErrors` was previously `null` but now has a value (even
+    // if an empty object), it means that we have just started validating the
+    // document. If `hasTriedSubmitting` is also true, it means we are trying
+    // to save the document, so we call  `processSave()`.
+    const hasBeenValidated = !previousDocument.validationErrors && document.validationErrors
+
+    if (hasBeenValidated && hasTriedSubmitting) {
+      this.processSave(hasTriedSubmitting)
+    }
+
+    if (!previousDocument.local && document.local && document.loadedFromLocalStorage) {
+      const context = {
+        collection: this.currentCollection,
+        documentId,
+        group
+      }
+      const notification = {
+        message: 'This document has unsaved changes',
+        options: {
+          'Discard': this.handleDiscardUnsavedChanges.bind(this, context)
+        }
+      }
+
+      actions.setNotification(notification)
+    }
+  }
+
+  componentWillMount() {
+    const {collection, group, state} = this.props
+
+    this.currentCollection = getCurrentCollection(state.api.apis, group, collection)
   }
 
   componentWillUnmount() {
@@ -154,39 +195,23 @@ class DocumentEdit extends Component {
       state
     } = this.props
 
-    const currentCollection = getCurrentCollection(state.api.apis, group, collection)
     const document = state.document
 
-    if (document.remoteStatus === Constants.STATUS_LOADING || !currentCollection || !document.local) {
+    if (document.remoteStatus === Constants.STATUS_LOADING || !this.currentCollection || !document.local) {
       return null
     }
 
-    if (document.loadedFromLocalStorage) {
-      const context = {
-        collection: currentCollection,
-        documentId,
-        group
-      }
-      const notification = {
-        message: 'This document has unsaved changes',
-        options: {
-          'Discard': this.handleDiscardUnsavedChanges.bind(this, context)
-        }
-      }
-
-      actions.setNotification(notification)
-    }
-
-    const collectionFields = this.filterHiddenFields(currentCollection.fields)
+    const collectionFields = this.filterHiddenFields(this.currentCollection.fields)
     const fields = this.groupFields(collectionFields)
     const sections = fields.sections || [{
       slug: 'other',
       fields: fields.other
     }]
     const activeSection = section || sections[0].slug
-    const hasValidationErrors = Object.keys(document.validationErrors)
-      .filter(field => document.validationErrors[field])
-      .length
+    const hasValidationErrors = document.validationErrors
+      && Object.keys(document.validationErrors)
+          .filter(field => document.validationErrors[field])
+          .length
     const hasConnectionIssues = state.app.networkStatus !== Constants.NETWORK_OK
     const method = documentId ? 'edit' : 'new'
 
@@ -254,17 +279,6 @@ class DocumentEdit extends Component {
     )
   }
 
-  filterHiddenFields(fields) {
-    return Object.assign({}, ...Object.keys(fields)
-      .filter(key => {
-        // If the publish && display block don't exist, or if list is true allow this field to pass.
-        return !fields[key].publish || !fields[key].publish.display || fields[key].publish.display.editor
-      }).map(key => {
-        return {[key]: fields[key]}
-      })
-    )
-  }
-
   // Fetches a document from the remote API
   fetchDocument(documentId) {
     const {
@@ -295,6 +309,17 @@ class DocumentEdit extends Component {
       })
   }
 
+  filterHiddenFields(fields) {
+    return Object.assign({}, ...Object.keys(fields)
+      .filter(key => {
+        // If the publish && display block don't exist, or if list is true allow this field to pass.
+        return !fields[key].publish || !fields[key].publish.display || fields[key].publish.display.editor
+      }).map(key => {
+        return {[key]: fields[key]}
+      })
+    )
+  }
+
   // Groups fields by section
   groupFields(fields) {
     const {state} = this.props
@@ -322,7 +347,8 @@ class DocumentEdit extends Component {
     if (Object.keys(sections).length) {
       sectionsArray = Object.keys(sections).map(sectionName => {
         const fields = sections[sectionName]
-        const sectionHasErrors = fields.some(field => document.validationErrors[field._id])
+        const sectionHasErrors = document.validationErrors
+          && fields.some(field => document.validationErrors[field._id])
 
         let section = {
           fields,
@@ -339,6 +365,184 @@ class DocumentEdit extends Component {
       sections: sectionsArray,
       other
     }
+  }
+
+  handleDiscardUnsavedChanges(context) {
+    const {actions} = this.props
+
+    actions.discardUnsavedChanges(context)
+  }
+
+  // Handles the callback that fires whenever a field changes and the new value is ready
+  // to be sent to the store
+  handleFieldChange(fieldName, value) {
+    const {
+      actions,
+      collection,
+      documentId,
+      group
+    } = this.props
+
+    actions.updateLocalDocument({
+      [fieldName]: value
+    }, {
+      collection,
+      documentId,
+      group
+    })
+  }
+
+  // Handles the callback that fires whenever there's a new validation error in a field or
+  // when a validation error has been cleared
+  handleFieldError(fieldName, hasError, value) {
+    const {actions} = this.props
+
+    actions.setFieldErrorStatus(fieldName, value, hasError)
+  }
+
+  // Handles a click on the save button
+  handleSave(saveMode) {
+    const {hasTriedSubmitting} = this.state
+
+    // If we've tried to submit before, then the initial validation step
+    // has been done, so we can process the save straight away.
+    if (hasTriedSubmitting) {
+      this.processSave(saveMode)
+    } else {
+      // Otherwise, we set the `hasTriedSubmitting` state, which will force
+      // fields to validate. The save will be processed on the next update
+      // call.
+      this.setState({
+        hasTriedSubmitting: saveMode
+      })
+    }
+  }
+
+  // Processes the save of the document
+  processSave(saveMode) {
+    const {
+      collection,
+      documentId,
+      group,
+      section,
+      state
+    } = this.props
+    const document = state.document
+    const {validationErrors} = document
+    const hasValidationErrors = validationErrors && Object.keys(validationErrors)
+      .filter(field => validationErrors[field])
+      .length
+
+    // If there are any validation errors, we abort the save operation.
+    if (hasValidationErrors) return
+
+    let notification = {
+      dismissAfterSeconds: 10,
+      type: Constants.NOTIFICATION_TYPE_SUCCESS
+    }
+
+    switch (saveMode) {
+      // Save
+      case 'save':
+        notification.message = `The document has been ${documentId ? 'updated' : 'created'}`
+
+        return this.saveDocument(documentId, notification).then(newDocumentId => {
+          // If we're creating a new document (either by starting a blank one or by
+          // duplicating an existing one), we redirect to the new document ID.
+          if (documentId !== newDocumentId) {
+            route(buildUrl(group, collection, 'document', 'edit', newDocumentId, section))
+          }
+        })
+
+      // Save and create new
+      case 'saveAndCreateNew':
+        notification.message = `The document has been ${documentId ? 'updated' : 'created'}`
+
+        return this.saveDocument(documentId).then(newDocumentId => {
+          route(buildUrl(group, collection, 'document', 'new'))
+        })
+
+      // Save and go back
+      case 'saveAndGoBack':
+        notification.message = `The document has been ${documentId ? 'updated' : 'created'}`
+
+        return this.saveDocument(documentId).then(newDocumentId => {
+          route(buildUrl(group, collection, 'documents'))
+        })
+
+      // Save as duplicate
+      case 'saveAsDuplicate':
+        notification.message = `The document has been created`
+
+        return this.saveDocument().then(newDocumentId => {
+          route(buildUrl(group, collection, 'document', 'edit', newDocumentId, section))
+        })
+    }
+  }
+
+  // Renders a field, deciding which component to use based on the field type
+  renderField(field) {
+    const {app, document} = this.props.state
+    const hasError = document.validationErrors
+      && document.validationErrors[field._id]
+    const {hasTriedSubmitting} = this.state
+
+    // As per API docs, validation messages are in the format "must be xxx", which
+    // assumes that something (probably the name of the field) will be prepended to
+    // the string to form a final error message. For this reason, we're prepending
+    // the validation message with "This field", but this is something that we can
+    // easily revisit.
+    const error = typeof hasError === 'string' ? 'This field ' + hasError : hasError
+    const fieldType = field.publish && field.publish.subType ? field.publish.subType : field.type
+
+    let fieldElement = null
+
+    switch (fieldType) {
+      case 'Boolean':
+        fieldElement = (
+          <FieldBoolean
+            error={error}
+            forceValidation={hasTriedSubmitting}
+            onChange={this.handleFieldChange.bind(this)}
+            onError={this.handleFieldError.bind(this)}
+            value={document.local[field._id]}
+            schema={field}
+          />
+        )
+
+        break
+
+      case 'String':
+        fieldElement = (
+          <FieldString
+            error={error}
+            forceValidation={hasTriedSubmitting}
+            onChange={this.handleFieldChange.bind(this)}
+            onError={this.handleFieldError.bind(this)}
+            value={document.local[field._id]}
+            schema={field}
+          />
+        )
+
+        break
+
+        case 'Image':
+          fieldElement = (
+            <FieldAsset
+              error={error}
+              config={app.config.FieldAsset}
+              showPreview={true}
+              onChange={this.handleFieldChange.bind(this)}
+              onError={this.handleFieldError.bind(this)}
+              value={document.local[field._id]}
+              schema={field}
+            />
+          )
+
+          break
+    }
+
+    return fieldElement ? <div class={styles.field}>{fieldElement}</div> : null
   }
 
   saveDocument(documentId, successNotification) {
@@ -402,160 +606,6 @@ class DocumentEdit extends Component {
         throw 'SAVE_ERROR'
       }
     })
-  }
-
-  // Renders a field, deciding which component to use based on the field type
-  renderField(field) {
-    const {app, document} = this.props.state
-    const hasError = document.validationErrors[field._id]
-    const {hasTriedSubmitting} = this.state
-
-    // As per API docs, validation messages are in the format "must be xxx", which
-    // assumes that something (probably the name of the field) will be prepended to
-    // the string to form a final error message. For this reason, we're prepending
-    // the validation message with "This field", but this is something that we can
-    // easily revisit.
-    const error = typeof hasError === 'string' ? 'This field ' + hasError : hasError
-    const fieldType = field.publish && field.publish.subType ? field.publish.subType : field.type
-
-    let fieldElement = null
-
-    switch (fieldType) {
-      case 'Boolean':
-        fieldElement = (
-          <FieldBoolean
-            error={error}
-            forceValidation={hasTriedSubmitting}
-            onChange={this.handleFieldChange.bind(this)}
-            onError={this.handleFieldError.bind(this)}
-            value={document.local[field._id]}
-            schema={field}
-          />
-        )
-
-        break
-
-      case 'String':
-        fieldElement = (
-          <FieldString
-            error={error}
-            forceValidation={hasTriedSubmitting}
-            onChange={this.handleFieldChange.bind(this)}
-            onError={this.handleFieldError.bind(this)}
-            value={document.local[field._id]}
-            schema={field}
-          />
-        )
-
-        break
-
-        case 'Image':
-          fieldElement = (
-            <FieldAsset
-              error={error}
-              config={app.config.FieldAsset}
-              showPreview={true}
-              onChange={this.handleFieldChange.bind(this)}
-              onError={this.handleFieldError.bind(this)}
-              value={document.local[field._id]}
-              schema={field}
-            />
-          )
-
-          break
-    }
-
-    return fieldElement ? <div class={styles.field}>{fieldElement}</div> : null
-  }
-
-  handleDiscardUnsavedChanges(context) {
-    const {actions} = this.props
-
-    actions.discardUnsavedChanges(context)
-  }
-
-  // Handles the callback that fires whenever a field changes and the new value is ready
-  // to be sent to the store
-  handleFieldChange(fieldName, value) {
-    const {
-      actions,
-      collection,
-      documentId,
-      group
-    } = this.props
-
-    actions.updateLocalDocument({
-      [fieldName]: value
-    }, {
-      collection,
-      documentId,
-      group
-    })
-  }
-
-  // Handles the callback that fires whenever there's a new validation error in a field or
-  // when a validation error has been cleared
-  handleFieldError(fieldName, hasError, value) {
-    const {actions} = this.props
-
-    actions.setFieldErrorStatus(fieldName, value, hasError)
-  }
-
-  // Handles the save operation
-  handleSave(saveMode) {
-    const {
-      collection,
-      documentId,
-      group,
-      section
-    } = this.props
-
-    this.setState({
-      hasTriedSubmitting: true
-    })
-
-    let notification = {
-      dismissAfterSeconds: 10,
-      type: Constants.NOTIFICATION_TYPE_SUCCESS
-    }
-
-    switch (saveMode) {
-      // Save
-      case 'save':
-        notification.message = `The document has been ${documentId ? 'updated' : 'created'}`
-
-        return this.saveDocument(documentId, notification).then(newDocumentId => {
-          // If we're creating a new document (either by starting a blank one or by
-          // duplicating an existing one), we redirect to the new document ID.
-          if (documentId !== newDocumentId) {
-            route(buildUrl(group, collection, 'document', 'edit', newDocumentId, section))
-          }
-        })
-
-      // Save and create new
-      case 'saveAndCreateNew':
-        notification.message = `The document has been ${documentId ? 'updated' : 'created'}`
-
-        return this.saveDocument(documentId).then(newDocumentId => {
-          route(buildUrl(group, collection, 'document', 'new'))
-        })
-
-      // Save and go back
-      case 'saveAndGoBack':
-        notification.message = `The document has been ${documentId ? 'updated' : 'created'}`
-
-        return this.saveDocument(documentId).then(newDocumentId => {
-          route(buildUrl(group, collection, 'documents'))
-        })
-
-      // Save as duplicate
-      case 'saveAsDuplicate':
-        notification.message = `The document has been created`
-
-        return this.saveDocument().then(newDocumentId => {
-          route(buildUrl(group, collection, 'document', 'edit', newDocumentId, section))
-        })
-    }
   }
 }
 
