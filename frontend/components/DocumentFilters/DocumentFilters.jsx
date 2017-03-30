@@ -24,32 +24,56 @@ export default class DocumentFilters extends Component {
     /**
      * The JSON-stringified object of filters currently applied.
      */
-    filter: proptypes.string
+    filter: proptypes.string,
+
+    /**
+     * Whether the filters are visible.
+     */
+    visible: proptypes.bool
   }
 
   constructor(props) {
     super(props)
 
-    const {collection, filter} = props
+    const {collection} = this.props
+    const paramFilters = this.getFiltersFromParams()
+    this.state.filters = paramFilters.length ? paramFilters : this.createDefaultFilters(collection)
+  }
 
-    // Evaluate passed filter / store in state
-    const filters = (isValidJSON(filter) ? objectToArray(JSON.parse(filter), 'field') : []).map(this.deconstructFilters)
+  getFiltersFromParams () {
+    const {filters} = this.props
+    return (filters ? objectToArray(filters, 'field') : [])
+      .map(this.deconstructFilters)
+  }
 
-    if (!filters.length) {
-      filters.push({
-        index: 0,
-        field: Object.keys(collection.fields)[0],
-        type: '$eq'
-      })
+  componentWillUpdate(nextProps, nextState) {
+    const {collection, filters} = this.props
+
+    if (nextProps.collection !== collection) {
+      // If we're changing collection, reset all filters
+      this.setState({filters: this.createDefaultFilters(nextProps.collection)})
+    } else {
+      // If we aren't changing collection
+      const paramFilters = this.getFiltersFromParams()
+      this.setState({filters: paramFilters.length ? paramFilters : this.createDefaultFilters(collection)})
     }
+  }
 
-    // The list of applied filters
-    this.state.filters = filters
+  createDefaultFilters(collection) {
+    const filters = [{
+      field: Object.keys(collection.fields)[0],
+      type: '$eq',
+      value: null
+    }]    
+
+    return filters
   }
 
   render() {
     const {filters} = this.state
-    const {collection} = this.props
+    const {collection, visible} = this.props
+
+    if (!visible) return null
 
     return (
       <form class={styles.filters} onSubmit={e => e.preventDefault()}>
@@ -96,12 +120,18 @@ export default class DocumentFilters extends Component {
 
   handleRemoveFilter(index) {
     const {filters} = this.state
+    const {collection} = this.props
     const newFilters = [...filters]
 
     newFilters.splice(index, 1)
 
-    this.setState({filters: newFilters})
-    this.updateUrl(true)
+    if (!newFilters.length) {
+      this.setState({filters: this.createDefaultFilters(collection)})
+    } else {
+      this.setState({filters: newFilters})
+    }
+
+    this.updateUrl(!newFilters.length)
   }
 
   handleUpdateFilter(filterProp, index) {
@@ -112,7 +142,9 @@ export default class DocumentFilters extends Component {
     Object.assign(newFilters[index], filter)
     this.setState({filters: newFilters})
 
-    this.updateUrl()
+    if (filter.value) {
+      this.updateUrl()
+    }
   }
 
   updateUrl(clear) {

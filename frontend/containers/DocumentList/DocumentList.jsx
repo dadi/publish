@@ -78,11 +78,13 @@ class DocumentList extends Component {
     this.state.selectedRows = {}
   }
 
-  componentDidUpdate(previousProps) {
+  componentDidUpdate(prevProps) {
+
     const {actions, state} = this.props
     const {list, status} = state.documents
-    const pathKey = previousProps.state.router.locationBeforeTransitions.key
-    const historyKeyMatch = history.state && history.state.key === pathKey
+    const pathKey = prevProps.state.router.locationBeforeTransitions.key
+    const previousPathKey = state.router.locationBeforeTransitions.key
+    const historyKeyMatch = pathKey === previousPathKey
     const apisWithoutCollections = state.api.apis.filter(api => !api.hasCollections).length
 
     // State check: reject when missing config, session, or apis
@@ -92,7 +94,7 @@ class DocumentList extends Component {
     if (apisWithoutCollections) return
 
     // State check: reject when path matches and document list loaded
-    if (list && (typeof pathKey === 'undefined' || historyKeyMatch)) return
+    if (list && historyKeyMatch) return
     // State check: reject when documents are still loading
     if (status === Constants.STATUS_LOADING) return
 
@@ -117,11 +119,16 @@ class DocumentList extends Component {
       return null
     }
 
-    const fieldsToDisplay = Object.keys(currentCollection.fields)
+    const collectionFields = currentCollection.fields
+    const fieldsToDisplay = Object.keys(collectionFields)
+      .filter(key => {
+        // If the publish && display block don't exist, or if list is true allow this field to pass.
+        return !collectionFields[key].publish || !collectionFields[key].publish.display || collectionFields[key].publish.display.list
+      })
     const tableColumns = fieldsToDisplay.map(field => {
       return {
         id: field,
-        label: currentCollection.fields[field].label
+        label: collectionFields[field].label
       }
     })
     const selectedDocuments = this.getSelectedDocuments()
@@ -254,6 +261,7 @@ class DocumentList extends Component {
     const currentApi = getCurrentApi(state.api.apis, group, collection)
     const currentCollection = getCurrentCollection(state.api.apis, group, collection)
     const count = currentCollection.settings && currentCollection.settings.count || 20
+    const filterValue = state.router.params ? state.router.params.filter : null
 
     // Set document loading status to 'Loading'
     actions.setDocumentListStatus(Constants.STATUS_LOADING)
@@ -263,12 +271,7 @@ class DocumentList extends Component {
       .limitTo(count)
       .goToPage(page)
       .sortBy(sortBy, sortOrder)
-
-    if (filter && isValidJSON(filter)) {
-      let filters = JSON.parse(this.props.filter)
-
-      query.where(filters)
-    }
+      .where(filterValue)
 
     return query.find().then(docs => {
       // Update state with results

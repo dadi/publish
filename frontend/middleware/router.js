@@ -44,6 +44,7 @@ export default function syncRouteWithStore (history, store, {
 
     // Update the store by calling action
     store.dispatch({
+      action: history.action,
       locationBeforeTransitions: history.location,
       params,
       type: Types.LOCATION_CHANGE
@@ -56,6 +57,7 @@ export default function syncRouteWithStore (history, store, {
     if (!locationInStore || Object.is(locationInStore, currentLocation || initialLocation)) {
       return
     }
+
     isTimeTraveling = true
     history.push(locationInStore)
     isTimeTraveling = false

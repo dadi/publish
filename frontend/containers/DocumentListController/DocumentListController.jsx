@@ -59,6 +59,7 @@ class DocumentListController extends Component {
     const currentCollection = getCurrentCollection(state.api.apis, group, collection)
     const hasDocuments = state.documents.list && state.documents.list.results && (state.documents.list.results.length > 0)
     const hasQuery = Boolean(state.documents.query)
+    const filters = state.router.params ? state.router.params.filter : null
 
     if (!currentCollection || !hasDocuments && !hasQuery) {
       return null
@@ -76,14 +77,12 @@ class DocumentListController extends Component {
             href={buildUrl(group, collection, 'document', 'new')}
           >Create new</Button>
         </ListController>
-
-        <div style={!filtersVisible && "display: none;"}>
-          <DocumentFilters
-            filter={filter}
-            collection={currentCollection}
-            updateUrlParams={this.updateUrlParams.bind(this)}
-          />
-        </div>
+        <DocumentFilters
+          visible={filtersVisible}
+          filters={filters}
+          collection={currentCollection}
+          updateUrlParams={this.updateUrlParams.bind(this)}
+        />
       </div>
     )
   }
@@ -113,5 +112,5 @@ class DocumentListController extends Component {
 
 export default connectHelper(
   state => state,
-  dispatch => bindActionCreators({...documentsActions}, dispatch)
+  dispatch => bindActionCreators(documentsActions, dispatch)
 )(DocumentListController)

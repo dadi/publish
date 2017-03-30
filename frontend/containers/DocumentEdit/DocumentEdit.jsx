@@ -91,7 +91,8 @@ class DocumentEdit extends Component {
     }
 
     if (currentCollection) {
-      const fields = this.groupFields(currentCollection.fields)
+      const collectionFields = this.filterHiddenFields(currentCollection.fields)
+      const fields = this.groupFields(collectionFields)
 
       if (section) {
         const sectionMatch = fields.sections.find(fieldSection => fieldSection.slug === section)
@@ -176,7 +177,8 @@ class DocumentEdit extends Component {
       actions.setNotification(notification)
     }
 
-    const fields = this.groupFields(currentCollection.fields)
+    const collectionFields = this.filterHiddenFields(currentCollection.fields)
+    const fields = this.groupFields(collectionFields)
     const sections = fields.sections || [{
       slug: 'other',
       fields: fields.other
@@ -249,6 +251,17 @@ class DocumentEdit extends Component {
           peers={document.peers}
         />
       </div>
+    )
+  }
+
+  filterHiddenFields(fields) {
+    return Object.assign({}, ...Object.keys(fields)
+      .filter(key => {
+        // If the publish && display block don't exist, or if list is true allow this field to pass.
+        return !fields[key].publish || !fields[key].publish.display || fields[key].publish.display.editor
+      }).map(key => {
+        return {[key]: fields[key]}
+      })
     )
   }
 
@@ -338,15 +351,16 @@ class DocumentEdit extends Component {
     } = this.props
     const currentApi = getCurrentApi(state.api.apis, group, collection)
     const currentCollection = getCurrentCollection(state.api.apis, group, collection)
+    const collectionFields = this.filterHiddenFields(currentCollection.fields)
     const document = state.document.local
 
     let apiBridge = APIBridge(currentApi).in(currentCollection.name)
 
     // Cycle through referenced documents
     Object.keys(document).forEach(docField => {
-      let fieldMatch = Object.keys(currentCollection.fields).find(field => docField === field)
+      let fieldMatch = Object.keys(collectionFields).find(field => docField === field)
 
-      if (fieldMatch && currentCollection.fields[fieldMatch].type === 'Reference') {
+      if (fieldMatch && collectionFields[fieldMatch].type === 'Reference') {
         if (Object.is(typeof document[fieldMatch]._id, String)) {
           // Existing referenced document
         } else {

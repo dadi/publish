@@ -54,17 +54,20 @@ export function urlHelper () {
       return params
     },
     paramsToString (params) {
-      return Object.keys(params).map(key => {
-        if (typeof params[key] === 'object') {
-          try {
-            return key + '=' + JSON.stringify(params[key])
-          } catch (e) {
+      return Object.keys(params)
+        .filter(key => params[key])
+        .map(key => {
+          if (typeof params[key] === 'object') {
+            try {
+              return key + '=' + JSON.stringify(params[key])
+            } catch (e) {
+              return key + '=' + params[key]
+            }
+          } else {
             return key + '=' + params[key]
           }
-        } else {
-          return key + '=' + params[key]
-        }
-      }).join('&')
+        })
+        .join('&')
     }
   }
 }

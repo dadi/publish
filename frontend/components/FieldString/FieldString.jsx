@@ -76,6 +76,7 @@ export default class FieldString extends Component {
     const {error, value, schema} = this.props
     const publishBlock = schema.publish || {}
     const type = publishBlock.multiline ? 'multiline' : 'text'
+    const readOnly = publishBlock.readonly === true
 
     return (
       <Label
@@ -87,6 +88,7 @@ export default class FieldString extends Component {
         <TextInput
           onChange={this.handleOnChange.bind(this)}
           onKeyUp={this.handleOnKeyUp.bind(this)}
+          readonly={readOnly}
           type={type}
           value={value}
         />
@@ -100,10 +102,10 @@ export default class FieldString extends Component {
     const options = publishBlock.options
     const selectedValue = value || schema.default || null
     const multiple = publishBlock.multiple === true
+    const readOnly = publishBlock.readonly === true
     const dropdownStyle = new Style(styles, 'dropdown')
-
-    dropdownStyle.addIf('dropdown-error', error)
-    dropdownStyle.addIf('dropdown-multiple', multiple)
+      .addIf('dropdown-error', error)
+      .addIf('dropdown-multiple', multiple)
 
     return (
       <Label
@@ -116,6 +118,7 @@ export default class FieldString extends Component {
           class={dropdownStyle.getClasses()}
           onChange={this.handleOnChange.bind(this)}
           multiple={multiple}
+          disabled={readOnly}
           ref={multiple && this.selectDropdownOptions.bind(this)}
           value={selectedValue}
         >
