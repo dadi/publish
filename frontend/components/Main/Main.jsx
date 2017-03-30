@@ -4,6 +4,7 @@ import proptypes from 'proptypes'
 import styles from './Main.css'
 import normalize from './Normalize.css'
 
+import LoadingBar from 'containers/LoadingBar/LoadingBar'
 import NotificationCentre from 'containers/NotificationCentre/NotificationCentre'
 
 /**
@@ -15,6 +16,7 @@ export default class Main extends Component {
       <main className={styles.main}>
         {this.props.children}
 
+        <LoadingBar />
         <NotificationCentre />
       </main>
     )

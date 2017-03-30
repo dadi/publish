@@ -2,6 +2,11 @@
 
 import {h, Component} from 'preact'
 import proptypes from 'proptypes'
+import {bindActionCreators} from 'redux'
+
+import * as appActions from 'actions/appActions'
+import {connectHelper} from 'lib/util'
+import * as Constants from 'lib/constants'
 
 import Style from 'lib/Style'
 import styles from './LoadingBar.css'
@@ -12,7 +17,7 @@ const INTERVAL_VISIBLE = 200
 /**
  * A progress bar indicating loading progress.
  */
-export default class LoadingBar extends Component {
+class LoadingBar extends Component {
   constructor(props) {
     super(props)
 
@@ -25,14 +30,14 @@ export default class LoadingBar extends Component {
 
   static propTypes = {
     /**
-     * Whether the app is currently loading.
+     * The global actions object.
      */
-    loading: proptypes.node,
+    actions: proptypes.object,
 
     /**
-     * The text to be rendered.
+     * The global state object.
      */
-    children: proptypes.node
+    state: proptypes.object
   }
 
   start() {
@@ -93,7 +98,9 @@ export default class LoadingBar extends Component {
 
   componentDidUpdate(prevProps, prevState) {
     const {percentage, visible} = this.state
-    const {loading} = this.props
+    const {state} = this.props
+    const loading = state.app.status === Constants.STATUS_LOADING
+    const prevLoading = prevProps.state.app.status === Constants.STATUS_LOADING
 
     if (prevState.visible && !visible) {
       this.setState({
@@ -101,11 +108,11 @@ export default class LoadingBar extends Component {
       })
     }
 
-    if (!prevProps.loading && loading) {
+    if (!prevLoading && loading) {
       this.start()  
     }
 
-    if (prevProps.loading && !loading) {
+    if (prevLoading && !loading) {
       this.done()
     }
   }
@@ -129,3 +136,10 @@ export default class LoadingBar extends Component {
     )
   }
 }
+
+export default connectHelper(
+  state => ({
+    app: state.app
+  }),
+  dispatch => bindActionCreators(appActions, dispatch)
+)(LoadingBar)

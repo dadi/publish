@@ -8,7 +8,7 @@ import * as userActions from 'actions/userActions'
 
 import Session from 'lib/session'
 
-class SignOut extends Component {
+class SignOutView extends Component {
   componentWillMount() {
     const {state, actions} = this.props
 
@@ -23,4 +23,4 @@ class SignOut extends Component {
 export default connectHelper(
   state => state.user,
   dispatch => bindActionCreators(userActions, dispatch)
-)(SignOut)
+)(SignOutView)

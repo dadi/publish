@@ -9,6 +9,9 @@ import {isValidJSON, setPageTitle} from 'lib/util'
 
 import DocumentListController from 'containers/DocumentListController/DocumentListController'
 import DocumentList from 'containers/DocumentList/DocumentList'
+import Header from 'containers/Header/Header'
+import Main from 'components/Main/Main'
+import Page from 'components/Page/Page'
 
 export default class DocumentListView extends Component {
   constructor(props) {
@@ -33,27 +36,31 @@ export default class DocumentListView extends Component {
     const {filtersVisible} = this.state
 
     return (
-      <div class={styles.container}>
-        <section class="Documents">
-          <DocumentListController
-            collection={collection}
-            group={group}
-            filter={filter}
-            filtersVisible={filtersVisible}
-            onFiltersToggle={this.handleFilterToggle.bind(this)}
-          />
+      <Page>
+        <Header />
 
-          <DocumentList
-            collection={collection}
-            filter={filter}
-            group={group}
-            onPageTitle={this.handlePageTitle}
-            order={order}
-            page={page}
-            sort={sort}
-          />
-        </section>
-      </div>
+        <Main>
+          <div class={styles.container}>
+            <DocumentListController
+              collection={collection}
+              group={group}
+              filter={filter}
+              filtersVisible={filtersVisible}
+              onFiltersToggle={this.handleFilterToggle.bind(this)}
+            />
+
+            <DocumentList
+              collection={collection}
+              filter={filter}
+              group={group}
+              onPageTitle={this.handlePageTitle}
+              order={order}
+              page={page}
+              sort={sort}
+            />
+          </div>        
+        </Main>
+      </Page>
     )
   }
 
