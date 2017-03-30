@@ -111,6 +111,10 @@ class DocumentListController extends Component {
 }
 
 export default connectHelper(
-  state => state,
+  state => ({
+    api: state.api,
+    documents: state.documents,
+    router: state.router
+  }),
   dispatch => bindActionCreators(documentsActions, dispatch)
 )(DocumentListController)

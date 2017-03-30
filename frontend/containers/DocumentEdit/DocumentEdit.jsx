@@ -560,6 +560,10 @@ class DocumentEdit extends Component {
 }
 
 export default connectHelper(
-  state => state,
+  state => ({
+    api: state.api,
+    app: state.app,
+    document: state.document
+  }),
   dispatch => bindActionCreators({...appActions, ...documentActions}, dispatch)
 )(DocumentEdit)
