@@ -154,6 +154,7 @@ CreateComponent.prototype.component = function () {
   return `'use strict'
 
 import {h, Component} from 'preact'
+import proptypes from 'proptypes'
 
 import Style from 'lib/Style'
 import styles from './${this.results.name}.css'
@@ -180,6 +181,7 @@ CreateComponent.prototype.view = function () {
   return `'use strict'
 
 import {h, Component} from 'preact'
+import proptypes from 'proptypes'
 import {connect} from 'preact-redux'
 import {bindActionCreators} from 'redux'
 import {connectHelper} from 'lib/util'${imports}
@@ -243,6 +245,7 @@ CreateComponent.prototype.container = function () {
   return `'use strict'
 
 import {h, Component} from 'preact'
+import proptypes from 'proptypes'
 import {connect} from 'preact-redux'
 import {bindActionCreators} from 'redux'
 import {connectHelper} from 'lib/util'${imports}
