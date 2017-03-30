@@ -17,6 +17,9 @@ class NotificationCentre extends Component {
      */
     actions: proptypes.object,
 
+    /**
+     * The global state object.
+     */
     state: proptypes.object
   }
 

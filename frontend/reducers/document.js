@@ -21,11 +21,13 @@ const initialState = {
 // "false" and that may be exactly how you want it, but at that point the
 // field doesn't exist in the document store yet because there wasn't a
 // change event. To get around this, when we create our local copy of
-// the document we check for any Boolean fields in the collection
+// the document we check for any required Boolean fields in the collection
 // that aren't in the document object and set those to `false`.
 function getDocumentWithBooleans (document, collectionSchema) {
-  const booleanFields = Object.keys(collectionSchema.fields).filter(field => {
-    return collectionSchema.fields[field].type === 'Boolean'
+  const booleanFields = Object.keys(collectionSchema.fields).filter(fieldName => {
+    const field = collectionSchema.fields[fieldName]
+
+    return field.required && field.type === 'Boolean'
   })
 
   let newDocument = Object.assign({}, document)
