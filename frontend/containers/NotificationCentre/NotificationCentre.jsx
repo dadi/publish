@@ -143,5 +143,5 @@ class NotificationCentre extends Component {
 
 export default connectHelper(
   state => state,
-  dispatch => bindActionCreators({...appActions}, dispatch)
+  dispatch => bindActionCreators(appActions, dispatch)
 )(NotificationCentre)
