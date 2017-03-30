@@ -112,6 +112,22 @@ class App extends Component {
     return foundMenus
   }
 
+  initialiseSocket(config) {
+    const {actions, state} = this.props
+    const pathname = state.router.locationBeforeTransitions.pathname
+    const user = state.user.local
+    const session = new Session()
+    this.socket = new Socket(config.server.port)
+      .on('userListChange', data => {
+        // Table of connected users
+        actions.setDocumentPeers(data.body.users)
+      })
+      .setUser(user)
+      .setRoom(pathname)
+
+    // Save reference to `socket` as a private variable
+  }
+
   getApiCollections(config) {
     const {actions, state} = this.props
 
@@ -161,24 +177,6 @@ class App extends Component {
         route('/sign-in')
       }
     })
-  }
-
-  
-
-  initialiseSocket(config) {
-    const {actions, state} = this.props
-    const pathname = state.router.locationBeforeTransitions.pathname
-    const user = state.user.local
-    const session = new Session()
-    this.socket = new Socket(config.server.port)
-      .on('userListChange', data => {
-        // Table of connected users
-        actions.setDocumentPeers(data.body.users)
-      })
-      .setUser(user)
-      .setRoom(pathname)
-
-    // Save reference to `socket` as a private variable
   }
 }
 
