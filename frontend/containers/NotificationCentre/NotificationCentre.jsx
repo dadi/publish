@@ -26,8 +26,21 @@ class NotificationCentre extends Component {
   constructor(props) {
     super(props)
 
+    this.enqueuedNotification = null
     this.state.visible = false
     this.timeout = null
+  }
+
+  componentWillReceiveProps(nextProps) {
+    const notification = this.props.state.app.notification
+    const nextNotification = nextProps.state.app.notification
+
+    if (notification && nextNotification &&
+        notification.timestamp !== nextNotification.timestamp) {
+      this.enqueuedNotification = notification
+
+      this.dismiss()
+    }
   }
 
   shouldComponentUpdate(nextProps, nextState) {
@@ -38,8 +51,8 @@ class NotificationCentre extends Component {
       return true
     }
 
-    if (notification && nextNotification && 
-       (notification.timestamp === nextNotification.timestamp)) {
+    if (notification && nextNotification &&
+        notification.timestamp === nextNotification.timestamp) {
       return false
     }
   }
@@ -67,16 +80,20 @@ class NotificationCentre extends Component {
       this.start()
     }
 
-    if (prevNotification && notification && 
-       (prevNotification.timestamp !== notification.timestamp)) {
-      this.start()
+    if (prevNotification && notification &&
+        prevNotification.timestamp !== notification.timestamp) {
+      setTimeout(() => {
+        this.enqueuedNotification = null
+
+        this.start()
+      }, 300)
     }
   }
 
   render() {
     const {state} = this.props
     const {visible} = this.state
-    const notification = state.app.notification
+    const notification = this.enqueuedNotification || state.app.notification
 
     if (!notification) return null
 
@@ -120,6 +137,8 @@ class NotificationCentre extends Component {
   }
 
   dismiss() {
+    clearTimeout(this.timeout)
+
     this.setState({
       visible: false
     })
