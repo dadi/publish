@@ -77,7 +77,7 @@ class Header extends Component {
             <div class={styles.controls}>
               <button
                 class={styles.signout}
-                onClick={this.props.onSignOut}
+                onClick={this.handleSignOut.bind(this)}
               >
                 Sign out
               </button>
@@ -91,7 +91,7 @@ class Header extends Component {
     )
   }
 
-  sessionEnd() {
+  handleSignOut() {
     const {actions, state} = this.props
     const session = new Session()
 
