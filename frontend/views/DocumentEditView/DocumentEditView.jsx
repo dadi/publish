@@ -15,7 +15,9 @@ export default class DocumentEditView extends Component {
       section
     } = this.props
 
-    const documentEdit = (
+    // Returning an empty `div` if the container returns `null` to avoid seeing
+    // the 404 page.
+    return (
       <DocumentEdit
         collection={collection}
         documentId={documentId}
@@ -23,11 +25,7 @@ export default class DocumentEditView extends Component {
         onPageTitle={this.handlePageTitle}
         section={section}
       />
-    )
-
-    // Returning an empty `div` if the container returns `null` to avoid seeing
-    // the 404 page.
-    return documentEdit || <div />
+    ) || <div />
   }
 
   handlePageTitle(title) {
