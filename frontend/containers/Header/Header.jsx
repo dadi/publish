@@ -1,5 +1,12 @@
 import {h, Component} from 'preact'
+import {route} from 'preact-router'
 import proptypes from 'proptypes'
+import {bindActionCreators} from 'redux'
+
+import * as userActions from 'actions/userActions'
+import {connectHelper} from 'lib/util'
+import * as Constants from 'lib/constants'
+import Session from 'lib/session'
 
 import CollectionNav from 'containers/CollectionNav/CollectionNav'
 import IconBurger from 'components/IconBurger/IconBurger'
@@ -11,26 +18,17 @@ import styles from './Header.css'
 /**
  * The application masthead.
  */
-export default class Header extends Component {
+class Header extends Component {
   static propTypes = {
     /**
-     * Whether to render the header in compact/mobile mode.
+     * The global actions object.
      */
-    compact: proptypes.bool,
+    actions: proptypes.object,
 
     /**
-     * An object containing information about the currently signed-in user.
+     * The global state object.
      */
-    user: proptypes.object,
-
-    /**
-     * Callback to be executed when the sign out button is clicked.
-     */
-    onSignOut: proptypes.func
-  }
-
-  static defaultProps = {
-    compact: false
+    state: proptypes.object
   }
 
   constructor(props) {
@@ -39,18 +37,13 @@ export default class Header extends Component {
     this.state.expanded = false
   }
 
-  toggleCollapsed(expanded, event) {
-    if (typeof expanded === 'undefined') {
-      expanded = !this.state.expanded
-    }
-
-    this.setState({
-      expanded
-    })
-  }
-
   render() {
-    const {compact, user} = this.props
+    const {state} = this.props
+    const compact = state.app.breakpoint === null
+    const user = state.user.local
+
+    if (!user) return null
+
     let contentStyle = new Style(styles, 'content')
 
     contentStyle.addIf('content-compact', compact)
@@ -84,7 +77,7 @@ export default class Header extends Component {
             <div class={styles.controls}>
               <button
                 class={styles.signout}
-                onClick={this.props.onSignOut}
+                onClick={this.handleSignOut.bind(this)}
               >
                 Sign out
               </button>
@@ -97,4 +90,39 @@ export default class Header extends Component {
       </header>
     )
   }
+
+  handleSignOut() {
+    const {actions, state} = this.props
+    const session = new Session()
+
+    session.getSession().then(user => {
+      if (user) {
+        session.destroy().then(success => {
+          // (!) TO DO: Handle failure of session destroy
+          if (success) {
+            actions.signOut()
+            route('/sign-in')
+          }
+        })
+      }
+    })
+  }
+
+  toggleCollapsed(expanded, event) {
+    if (typeof expanded === 'undefined') {
+      expanded = !this.state.expanded
+    }
+
+    this.setState({
+      expanded
+    })
+  }
 }
+
+export default connectHelper(
+  state => ({
+    app: state.app,
+    user: state.user
+  }),
+  dispatch => bindActionCreators(userActions, dispatch)
+)(Header)

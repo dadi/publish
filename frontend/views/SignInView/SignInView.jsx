@@ -13,9 +13,9 @@ import TextInput from 'components/TextInput/TextInput'
 
 import Session from 'lib/session'
 
-import styles from './SignIn.css'
+import styles from './SignInView.css'
 
-class SignIn extends Component {
+class SignInView extends Component {
 
   constructor(props) {
     super(props)
@@ -115,4 +115,4 @@ class SignIn extends Component {
 export default connectHelper(
   state => state.user,
   dispatch => bindActionCreators(userActions, dispatch)
-)(SignIn)
+)(SignInView)
