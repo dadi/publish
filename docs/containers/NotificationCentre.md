@@ -15,5 +15,7 @@ The global actions object.
 
 ### `state`
 
+The global state object.
+
 - type: `object`
 
