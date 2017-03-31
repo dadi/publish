@@ -16,7 +16,7 @@ import DocumentCreateView from 'views/DocumentCreateView/DocumentCreateView'
 import DocumentEditView from 'views/DocumentEditView/DocumentEditView'
 import DocumentListView from 'views/DocumentListView/DocumentListView'
 import ErrorView from 'views/ErrorView/ErrorView'
-import Home from 'views/Home/Home'
+import HomeView from 'views/HomeView/HomeView'
 import MediaLibrary from 'views/MediaLibrary/MediaLibrary'
 import PasswordReset from 'views/PasswordReset/PasswordReset'
 import SignInView from 'views/SignInView/SignInView'
@@ -85,7 +85,7 @@ class App extends Component {
 
     return (
       <Router history={history}>
-        <Home path="/" authenticate />
+        <HomeView path="/" authenticate />
         <PasswordReset path="/reset" authenticate/>
         {hasRoutes && (<DocumentEditView path="/:group/:collection/document/edit/:documentId?/:section?" authenticate />)}
         <DocumentEditView path="/:collection/document/edit/:documentId?/:section?" authenticate />
