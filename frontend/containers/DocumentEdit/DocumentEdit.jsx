@@ -289,12 +289,15 @@ class DocumentEdit extends Component {
     } = this.props
     const currentApi = getCurrentApi(state.api.apis, group, collection)
     const currentCollection = getCurrentCollection(state.api.apis, group, collection)
+    const collectionFields = Object.keys(this.filterHiddenFields(currentCollection.fields))
+      .map(key => key)
 
     actions.setRemoteDocumentStatus(Constants.STATUS_LOADING)
 
     return APIBridge(currentApi)
       .in(currentCollection.name)
       .whereFieldIsEqualTo('_id', documentId)
+      .useFields(collectionFields)
       .find()
       .then(response => {
         if (!response.results.length) return
