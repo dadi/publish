@@ -5,6 +5,9 @@ import {h, Component} from 'preact'
 import {setPageTitle} from 'lib/util'
 
 import DocumentEdit from 'containers/DocumentEdit/DocumentEdit'
+import Header from 'containers/Header/Header'
+import Main from 'components/Main/Main'
+import Page from 'components/Page/Page'
 
 export default class DocumentCreateView extends Component {
   render() {
@@ -16,12 +19,18 @@ export default class DocumentCreateView extends Component {
     } = this.props
 
     return (
-      <DocumentEdit
-        collection={collection}
-        group={group}
-        onPageTitle={this.handlePageTitle}
-        section={section}
-      />
+      <Page>
+        <Header />
+
+        <Main>
+          <DocumentEdit
+            collection={collection}
+            group={group}
+            onPageTitle={this.handlePageTitle}
+            section={section}
+          />
+        </Main>
+      </Page>
     )    
   }
   handlePageTitle(title) {
