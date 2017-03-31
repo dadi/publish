@@ -120,12 +120,8 @@ class DocumentList extends Component {
     }
 
     const collectionFields = currentCollection.fields
-    const fieldsToDisplay = Object.keys(collectionFields)
-      .filter(key => {
-        // If the publish && display block don't exist, or if list is true allow this field to pass.
-        return !collectionFields[key].publish || !collectionFields[key].publish.display || collectionFields[key].publish.display.list
-      })
-    const tableColumns = fieldsToDisplay.map(field => {
+    const tableColumns = Object.keys(this.filterHiddenFields(collectionFields))
+    .map(field => {
       return {
         id: field,
         label: collectionFields[field].label
@@ -262,6 +258,7 @@ class DocumentList extends Component {
     const currentCollection = getCurrentCollection(state.api.apis, group, collection)
     const count = currentCollection.settings && currentCollection.settings.count || 20
     const filterValue = state.router.params ? state.router.params.filter : null
+    const fieldsToFetch = Object.keys(this.filterHiddenFields(currentCollection.fields))
 
     // Set document loading status to 'Loading'
     actions.setDocumentListStatus(Constants.STATUS_LOADING)
@@ -272,6 +269,7 @@ class DocumentList extends Component {
       .goToPage(page)
       .sortBy(sortBy, sortOrder)
       .where(filterValue)
+      .useFields(fieldsToFetch)
 
     return query.find().then(docs => {
       // Update state with results
@@ -300,6 +298,18 @@ class DocumentList extends Component {
     this.setState({
       selectedRows: selectedRows
     })
+  }
+
+
+  filterHiddenFields(fields) {
+    return Object.assign({}, ...Object.keys(fields)
+      .filter(key => {
+        // If the publish && display block don't exist, or if list is true allow this field to pass.
+        return !fields[key].publish || !fields[key].publish.display || fields[key].publish.display.list
+      }).map(key => {
+        return {[key]: fields[key]}
+      })
+    )
   }
 }
 
