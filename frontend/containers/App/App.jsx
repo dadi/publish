@@ -17,7 +17,6 @@ import DocumentEditView from 'views/DocumentEditView/DocumentEditView'
 import DocumentListView from 'views/DocumentListView/DocumentListView'
 import ErrorView from 'views/ErrorView/ErrorView'
 import HomeView from 'views/HomeView/HomeView'
-import MediaLibrary from 'views/MediaLibrary/MediaLibrary'
 import PasswordReset from 'views/PasswordReset/PasswordReset'
 import SignInView from 'views/SignInView/SignInView'
 import SignOutView from 'views/SignOutView/SignOutView'
@@ -93,8 +92,6 @@ class App extends Component {
         <DocumentCreateView path="/:collection/document/new/:section?" authenticate />
         <DocumentListView path="/:collection/documents/:page?" authenticate />
         {hasRoutes && (<DocumentListView path="/:group/:collection/documents/:page?" authenticate />)}
-        <MediaLibrary path="/:collection/media/:document?" authenticate/>
-        {hasRoutes && (<MediaLibrary path="/:group/:collection/media/:document?" authenticate/>)}
         <ProfileEditView path="/profile/:section?" authenticate />
         <SignInView path="/sign-in" />
         <SignOutView path="/sign-out" />

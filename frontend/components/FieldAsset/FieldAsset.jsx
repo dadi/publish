@@ -9,6 +9,7 @@ import {buildUrl} from 'lib/router'
 import Style from 'lib/Style'
 import styles from './FieldAsset.css'
 
+import FileUpload from 'components/FileUpload/FileUpload'
 import Label from 'components/Label/Label'
 import LazyLoader from 'containers/LazyLoader/LazyLoader'
 
@@ -66,9 +67,9 @@ export default class FieldAsset extends Component {
           </div>
         )}
         {config && (
-          <input 
-            type="file" 
-            accept={config.accept} 
+          <FileUpload
+            allowDrop={true}
+            accept={config.accept}
             onChange={this.handleFileChange.bind(this)}
           />
         )}
