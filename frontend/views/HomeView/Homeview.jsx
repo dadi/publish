@@ -1,5 +1,4 @@
 import {Component, h} from 'preact'
-import {connect} from 'preact-redux'
 import {bindActionCreators} from 'redux'
 import {connectHelper} from 'lib/util'
 
@@ -9,8 +8,6 @@ import Header from 'containers/Header/Header'
 import HeroMessage from 'components/HeroMessage/HeroMessage'
 import Main from 'components/Main/Main'
 import Page from 'components/Page/Page'
-
-const fecha = require('fecha')
 
 class HomeView extends Component {
   render() {
