@@ -290,7 +290,7 @@ class DocumentEdit extends Component {
     const currentApi = getCurrentApi(state.api.apis, group, collection)
     const currentCollection = getCurrentCollection(state.api.apis, group, collection)
     const collectionFields = Object.keys(this.filterHiddenFields(currentCollection.fields))
-    .map(key => key)
+      .map(key => key)
 
     actions.setRemoteDocumentStatus(Constants.STATUS_LOADING)
 

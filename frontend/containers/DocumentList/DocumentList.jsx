@@ -121,12 +121,12 @@ class DocumentList extends Component {
 
     const collectionFields = currentCollection.fields
     const tableColumns = Object.keys(this.filterHiddenFields(collectionFields))
-    .map(field => {
-      return {
-        id: field,
-        label: collectionFields[field].label
-      }
-    })
+      .map(field => {
+        return {
+          id: field,
+          label: collectionFields[field].label
+        }
+      })
     const selectedDocuments = this.getSelectedDocuments()
     const documentsList = documents.list.results
     const metadata = documents.list.metadata
