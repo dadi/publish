@@ -38,6 +38,7 @@ export default class FileUpload extends Component {
           <div
             ondrop={this.handleDrop.bind(this)} 
             ondragover={this.handleDragOver.bind(this)}>
+            <p>Drop file</p>
           </div>
         )}
         <input 
@@ -51,11 +52,9 @@ export default class FileUpload extends Component {
 
   handleDrop(event) {
     event.preventDefault()
-    console.log('DROP')
   }
 
   handleDragOver(event) {
     event.preventDefault()
-    console.log('Over')
   }
 }
