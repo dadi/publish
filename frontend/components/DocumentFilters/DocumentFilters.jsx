@@ -24,12 +24,7 @@ export default class DocumentFilters extends Component {
     /**
      * The JSON-stringified object of filters currently applied.
      */
-    filter: proptypes.string,
-
-    /**
-     * Whether the filters are visible.
-     */
-    visible: proptypes.bool
+    filter: proptypes.string
   }
 
   constructor(props) {
@@ -37,7 +32,7 @@ export default class DocumentFilters extends Component {
 
     const {collection} = this.props
     const paramFilters = this.getFiltersFromParams()
-    this.state.filters = paramFilters.length ? paramFilters : this.createDefaultFilters(collection)
+    this.state.filters = paramFilters
   }
 
   getFiltersFromParams () {
@@ -51,29 +46,25 @@ export default class DocumentFilters extends Component {
 
     if (nextProps.collection !== collection) {
       // If we're changing collection, reset all filters
-      this.setState({filters: this.createDefaultFilters(nextProps.collection)})
+      this.setState({filters: []})
     } else {
       // If we aren't changing collection
       const paramFilters = this.getFiltersFromParams()
-      this.setState({filters: paramFilters.length ? paramFilters : this.createDefaultFilters(collection)})
+      this.setState({filters: paramFilters})
     }
   }
 
-  createDefaultFilters(collection) {
-    const filters = [{
+  createDefaultFilter(collection) {
+    return {
       field: Object.keys(collection.fields)[0],
       type: '$eq',
       value: null
-    }]    
-
-    return filters
+    }   
   }
 
   render() {
     const {filters} = this.state
-    const {collection, visible} = this.props
-
-    if (!visible) return null
+    const {collection} = this.props
 
     return (
       <form class={styles.filters} onSubmit={e => e.preventDefault()}>
@@ -88,15 +79,6 @@ export default class DocumentFilters extends Component {
             onRemove={this.handleRemoveFilter.bind(this)}
           />
         ))}
-
-        <div class={styles.controls}>
-          <Button
-            className={styles['add-button']}
-            onClick={this.addFilter.bind(this)}
-          >
-            +
-          </Button>
-        </div>
       </form>
     )
   }
@@ -125,12 +107,8 @@ export default class DocumentFilters extends Component {
 
     newFilters.splice(index, 1)
 
-    if (!newFilters.length) {
-      this.setState({filters: this.createDefaultFilters(collection)})
-    } else {
-      this.setState({filters: newFilters})
-    }
-
+    this.setState({filters: newFilters})
+    
     this.updateUrl(!newFilters.length)
   }
 

@@ -26,20 +26,11 @@ class DocumentListController extends Component {
      */
     filter: proptypes.string,
 
-    /**
-     * Whether the list of filters should be visible.
-     */
-    filtersVisible: proptypes.bool,
 
     /**
      * The name of the group where the current collection belongs (if any).
      */
     group: proptypes.string,
-
-    /**
-     * A callback to be executed when the "Filters" button is pressed.
-     */
-    onFiltersToggle: proptypes.func,
 
     /**
      * The global state object.
@@ -51,9 +42,7 @@ class DocumentListController extends Component {
     const {
       collection,
       filter,
-      filtersVisible,
       group,
-      onFiltersToggle,
       state
     } = this.props
     const currentCollection = getCurrentCollection(state.api.apis, group, collection)
@@ -70,15 +59,13 @@ class DocumentListController extends Component {
         <ListController collection={currentCollection}>
           <Button
             accent="data"
-            onClick={onFiltersToggle}
-          >Filters</Button>
+          >Add Filter</Button>
           <Button
             accent="save"
             href={buildUrl(group, collection, 'document', 'new')}
           >Create new</Button>
         </ListController>
         <DocumentFilters
-          visible={filtersVisible}
           filters={filters}
           collection={currentCollection}
           updateUrlParams={this.updateUrlParams.bind(this)}
