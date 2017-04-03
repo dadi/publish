@@ -118,6 +118,32 @@ export default class FieldAsset extends Component {
       }
     }
   }
+  
+  handleRemoveFile() {
+    const {onChange, schema} = this.props
+
+    if (typeof onChange === 'function') {
+      onChange.call(this, schema._id, null)
+    }
+  }
+
+  handleFileChange (file) {
+    const {config, onChange, schema} = this.props
+    let reader = new FileReader()
+    
+    reader.onload = () => {
+      if (typeof onChange === 'function') {
+        onChange.call(this, schema._id, {
+          fileName: file.name,
+          raw: reader.result
+        })
+      }
+    }
+
+    reader.readAsDataURL(file)
+  }
+
+  // Below support for S3 image upload. Decision on whether to support direct push has yet to be made.
 
   // uploadToS3() {
     // const {config} = this.props
@@ -146,29 +172,6 @@ export default class FieldAsset extends Component {
     //   console.log("ERR", err)
     // })
   // }
-  
-  handleRemoveFile() {
-    const {onChange, schema} = this.props
-
-    if (typeof onChange === 'function') {
-      onChange.call(this, schema._id, null)
-    }
-  }
-
-  handleFileChange(event) {
-    event.preventDefault()
-    const {config, onChange, schema} = this.props
-    let reader = new FileReader()
-    
-    reader.onload = () => {
-      if (typeof onChange === 'function') {
-        onChange.call(this, schema._id, {
-          fileName: event.target.files[0].name,
-          raw: reader.result
-        })
-      }
-    }
-    reader.readAsDataURL(event.target.files[0])
 
     // this.setState({
     //   fileName: event.target.files[0].name,
@@ -204,5 +207,5 @@ export default class FieldAsset extends Component {
     //     })
     //   })
     // }
-  }
+  // }
 }
