@@ -26,6 +26,10 @@ class DocumentListController extends Component {
      */
     filter: proptypes.string,
 
+    /**
+    * Whether we are editing a new filter.
+    */
+    newFilter: proptypes.bool,
 
     /**
      * The name of the group where the current collection belongs (if any).
@@ -35,22 +39,30 @@ class DocumentListController extends Component {
     /**
      * The global state object.
      */
-    state: proptypes.object
+    state: proptypes.object,
+
+    /**
+    * Whether a new filter has been added.
+    */
+    onAddNewFilter: proptypes.func
   }
 
   render() {
     const {
       collection,
       filter,
+      newFilter,
+      onAddNewFilter,
       group,
       state
     } = this.props
+
     const currentCollection = getCurrentCollection(state.api.apis, group, collection)
     const hasDocuments = state.documents.list && state.documents.list.results && (state.documents.list.results.length > 0)
-    const hasQuery = Boolean(state.documents.query)
-    const filters = state.router.params ? state.router.params.filter : null
+    const params = state.router.params
+    const filters = params && params.filter ? params.filter : null
 
-    if (!currentCollection || !hasDocuments && !hasQuery) {
+    if (!currentCollection || !hasDocuments) {
       return null
     }
 
@@ -59,6 +71,7 @@ class DocumentListController extends Component {
         <ListController collection={currentCollection}>
           <Button
             accent="data"
+            onClick={this.handleAddNewFilter.bind(this)}
           >Add Filter</Button>
           <Button
             accent="save"
@@ -67,11 +80,17 @@ class DocumentListController extends Component {
         </ListController>
         <DocumentFilters
           filters={filters}
+          newFilter={newFilter}
           collection={currentCollection}
           updateUrlParams={this.updateUrlParams.bind(this)}
         />
       </div>
     )
+  }
+
+  handleAddNewFilter() {
+    const {onAddNewFilter} = this.props
+    onAddNewFilter(true)
   }
 
   handleGoToPage(event) {
@@ -90,10 +109,11 @@ class DocumentListController extends Component {
   }
 
   updateUrlParams(filters) {
-    const {actions, state} = this.props
+    const {actions, onAddNewFilter, state} = this.props
     
     // Replace existing filters
     router({params: {filter: filters}, update: true})
+    onAddNewFilter(false)
   }
 }
 

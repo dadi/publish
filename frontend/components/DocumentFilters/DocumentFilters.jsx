@@ -24,7 +24,12 @@ export default class DocumentFilters extends Component {
     /**
      * The JSON-stringified object of filters currently applied.
      */
-    filter: proptypes.string
+    filter: proptypes.string,
+
+    /**
+     * Whether we are creating a new filter.
+     */
+    newFilter: proptypes.bool
   }
 
   constructor(props) {
@@ -43,13 +48,17 @@ export default class DocumentFilters extends Component {
 
   componentWillUpdate(nextProps, nextState) {
     const {collection, filters} = this.props
+    const {newFilter} = nextProps 
 
     if (nextProps.collection !== collection) {
       // If we're changing collection, reset all filters
       this.setState({filters: []})
     } else {
       // If we aren't changing collection
-      const paramFilters = this.getFiltersFromParams()
+      let paramFilters = this.getFiltersFromParams()
+      if (newFilter) {
+        paramFilters.push(this.createDefaultFilter(collection))
+      }
       this.setState({filters: paramFilters})
     }
   }
@@ -108,7 +117,7 @@ export default class DocumentFilters extends Component {
     newFilters.splice(index, 1)
 
     this.setState({filters: newFilters})
-    
+
     this.updateUrl(!newFilters.length)
   }
 

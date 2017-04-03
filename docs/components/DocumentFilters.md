@@ -19,10 +19,3 @@ The JSON-stringified object of filters currently applied.
 
 - type: `string`
 
-
-### `visible`
-
-Whether the filters are visible.
-
-- type: `bool`
-
