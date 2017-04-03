@@ -1,0 +1,15 @@
+.container {
+  outline: 0;
+  display: flex;
+  align-items: center;
+  flex-wrap: nowrap;
+}
+
+.or {
+  margin: 0 10px;
+}
+
+.dropzone {
+  align-items: center;
+  display: flex;
+}

@@ -9,6 +9,8 @@ import {buildUrl} from 'lib/router'
 import Style from 'lib/Style'
 import styles from './FieldAsset.css'
 
+import Button from 'components/Button/Button'
+import FileUpload from 'components/FileUpload/FileUpload'
 import Label from 'components/Label/Label'
 import LazyLoader from 'containers/LazyLoader/LazyLoader'
 
@@ -49,10 +51,13 @@ export default class FieldAsset extends Component {
   }
 
   render() {
-    const {config, value, showPreview} = this.props
+    const {config, schema, showPreview, value} = this.props
     const src = this.getImageSrc(value)
+    const isReference = schema.type === 'Reference'
+    const fieldLocalType = schema.publish && schema.publish.subType ? schema.publish.subType : schema.type
     const assetFieldStyles = new Style(styles, 'container')
       .addIf('show-preview', showPreview)
+    const href = buildUrl(window.location.pathname, schema._id)
 
     return (
       <Label label="Image">
@@ -62,15 +67,37 @@ export default class FieldAsset extends Component {
               loadWhenIdle={true}
               >
               <img class={styles['image-thumb']} src={src} />
+              <Button
+                accent="destruct"
+                size="small"
+                className={styles['remove-existing']}
+                onClick={this.handleRemoveFile.bind(this)}
+              >Delete</Button>
             </LazyLoader>
           </div>
         )}
-        {config && (
-          <input 
-            type="file" 
-            accept={config.accept} 
-            onChange={this.handleFileChange.bind(this)}
-          />
+        {!src && (
+          <div>
+            {isReference && (
+              <div class={styles['reference-options']}>
+                <Button
+                  accent="data"
+                  size="small"
+                  href={href}
+                  className={styles['select-existing']}
+                >Select existing {fieldLocalType}</Button>
+              </div>
+            )}
+            {config && (
+              <div class={styles['upload-options']}>
+                <FileUpload
+                  allowDrop={true}
+                  accept={config.accept}
+                  onChange={this.handleFileChange.bind(this)}
+                />
+              </div>
+            )}
+          </div>
         )}
       </Label>
     )
@@ -91,6 +118,32 @@ export default class FieldAsset extends Component {
       }
     }
   }
+  
+  handleRemoveFile() {
+    const {onChange, schema} = this.props
+
+    if (typeof onChange === 'function') {
+      onChange.call(this, schema._id, null)
+    }
+  }
+
+  handleFileChange (file) {
+    const {config, onChange, schema} = this.props
+    let reader = new FileReader()
+    
+    reader.onload = () => {
+      if (typeof onChange === 'function') {
+        onChange.call(this, schema._id, {
+          fileName: file.name,
+          raw: reader.result
+        })
+      }
+    }
+
+    reader.readAsDataURL(file)
+  }
+
+  // Below support for S3 image upload. Decision on whether to support direct push has yet to be made.
 
   // uploadToS3() {
     // const {config} = this.props
@@ -119,23 +172,6 @@ export default class FieldAsset extends Component {
     //   console.log("ERR", err)
     // })
   // }
-
-  handleFileChange(event) {
-    event.preventDefault()
-    
-    const {config, onChange, schema} = this.props
-
-    let reader = new FileReader()
-    
-    reader.onload = () => {
-      if (typeof onChange === 'function') {
-        onChange.call(this, schema._id, {
-          fileName: event.target.files[0].name,
-          raw: reader.result
-        })
-      }
-    }
-    reader.readAsDataURL(event.target.files[0])
 
     // this.setState({
     //   fileName: event.target.files[0].name,
@@ -171,5 +207,5 @@ export default class FieldAsset extends Component {
     //     })
     //   })
     // }
-  }
+  // }
 }
