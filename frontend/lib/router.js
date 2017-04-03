@@ -37,6 +37,6 @@ export function buildUrl (...parts) {
   return (/^(http|https)/.test(parts[0]) ? '' : '/') + (parts.filter(part => {
     return (typeof part === 'string' || typeof part === 'number') && part !== ''
   })
-  .join('/')
-  .replace(/^\/|\/$/g, ''))
+    .join('/')
+    .replace(/^\/|\/$/g, ''))
 }

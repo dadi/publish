@@ -32,7 +32,7 @@ export default class FileUpload extends Component {
   render() {
     const {allowDrop, accept} = this.props
     const dropStyles = new Style(styles, 'container')
-    .addIf('dropzone', allowDrop)
+      .addIf('dropzone', allowDrop)
 
     return (
       <div class={dropStyles.getClasses()}>
@@ -55,10 +55,10 @@ export default class FileUpload extends Component {
     )
   }
 
-  handleFileSelect (event) {
+  handleFileSelect(event) {
     event.preventDefault()
     const {onChange} = this.props
-    
+
     onChange(event.target.files[0])
   }
 
