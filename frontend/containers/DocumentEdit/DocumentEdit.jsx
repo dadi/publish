@@ -305,7 +305,7 @@ class DocumentEdit extends Component {
         if (!response.results.length) return
 
         const document = response.results[0]
-      console.log(document)
+      
         actions.setRemoteDocument(document, {
           collection: currentCollection,
           documentId,
