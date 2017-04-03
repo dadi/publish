@@ -1,16 +1,15 @@
 .container {
   width: 100%;
-  margin-top: 9px;
-  height: 40px;
   line-height: 25px;
   font-size: 15px;
+  padding: 25px;
   box-sizing: border-box;
   border: 1px solid #e4e4e4;
-  border-radius: 5px;
+  border-radius: 4px;
   outline: 0;
   display: flex;
-  flex-wrap: wrap;
   align-items: center;
+  flex-wrap: nowrap;
 }
 
 .show-preview {
@@ -24,5 +23,26 @@
   max-height: 110px;
   width: auto;
   max-width: 50%;
-  margin: 10px;
+  margin-right: 10px;
+  border-radius: 3px;
+}
+
+.reference-options {
+  border-bottom: 1px solid #e4e4e4;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+}
+
+.upload-options {
+  display: flex;
+  align-items: center;
+}
+
+.select-existing {
+  margin: 20px auto;
+}
+
+.remove-existing {
+  margin: 20px auto;
 }

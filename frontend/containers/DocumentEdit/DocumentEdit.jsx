@@ -292,6 +292,8 @@ class DocumentEdit extends Component {
     const collectionFields = Object.keys(this.filterHiddenFields(currentCollection.fields))
       .map(key => key)
 
+    collectionFields.push('createdAt', 'createdBy', 'lastModifiedAt', 'lastModifiedBy')
+
     actions.setRemoteDocumentStatus(Constants.STATUS_LOADING)
 
     return APIBridge(currentApi)
@@ -316,7 +318,9 @@ class DocumentEdit extends Component {
     return Object.assign({}, ...Object.keys(fields)
       .filter(key => {
         // If the publish && display block don't exist, or if list is true allow this field to pass.
-        return !fields[key].publish || !fields[key].publish.display || fields[key].publish.display.editor
+        return !fields[key].publish 
+          || !fields[key].publish.display 
+          || fields[key].publish.display.editor
       }).map(key => {
         return {[key]: fields[key]}
       })

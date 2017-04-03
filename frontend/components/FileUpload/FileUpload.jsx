@@ -3,8 +3,8 @@
 import {h, Component} from 'preact'
 import proptypes from 'proptypes'
 
-// import Style from 'lib/Style'
-// import styles from './FileUpload.css'
+import Style from 'lib/Style'
+import styles from './FileUpload.css'
 
 export default class FileUpload extends Component {
 
@@ -31,19 +31,24 @@ export default class FileUpload extends Component {
 
   render() {
     const {allowDrop, accept, onChange} = this.props
+    const dropStyles = new Style(styles, 'container')
+    .addIf('dropzone', allowDrop)
 
     return (
-      <div>
+      <div class={dropStyles.getClasses()}>
         {allowDrop && (
           <div
             ondrop={this.handleDrop.bind(this)} 
             ondragover={this.handleDragOver.bind(this)}>
-            <p>Drop file</p>
+            <p>Drop files to upload</p>
           </div>
         )}
+        {allowDrop && (
+          <span class={styles.or}>or</span>
+        )}
         <input 
-          type="file" 
-          accept={accept} 
+          type="file"
+          accept={accept}
           onChange={onChange}
         />
       </div>

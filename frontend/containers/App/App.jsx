@@ -86,8 +86,8 @@ class App extends Component {
       <Router history={history}>
         <HomeView path="/" authenticate />
         <PasswordReset path="/reset" authenticate/>
-        {hasRoutes && (<DocumentEditView path="/:group/:collection/document/edit/:documentId?/:section?" authenticate />)}
-        <DocumentEditView path="/:collection/document/edit/:documentId?/:section?" authenticate />
+        {hasRoutes && (<DocumentEditView path="/:group/:collection/document/edit/:documentId?/:section?/:field?" authenticate />)}
+        <DocumentEditView path="/:collection/document/edit/:documentId?/:section?/:field?" authenticate />
         {hasRoutes && (<DocumentCreateView path="/:group/:collection/document/new/:section?" authenticate />)}
         <DocumentCreateView path="/:collection/document/new/:section?" authenticate />
         <DocumentListView path="/:collection/documents/:page?" authenticate />
