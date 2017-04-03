@@ -20,6 +20,20 @@ The name of the group where the current collection belongs (if any).
 - type: `string`
 
 
+### `newFilter`
+
+Whether we are editing a new filter.
+
+- type: `bool`
+
+
+### `onAddNewFilter`
+
+Whether a new filter has been added.
+
+- type: `func`
+
+
 ### `state`
 
 The global state object.

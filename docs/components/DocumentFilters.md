@@ -19,3 +19,10 @@ The JSON-stringified object of filters currently applied.
 
 - type: `string`
 
+
+### `newFilter`
+
+Whether we are creating a new filter.
+
+- type: `bool`
+
