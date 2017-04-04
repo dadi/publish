@@ -85,13 +85,15 @@ export default class DocumentListToolbar extends Component {
         }
 
         <div class={styles.metadata}>
-          <p>
-            <span>Created </span>
-            <DateTime
-              date={document.createdAt}
-              relative={true}
-            />
-          </p>
+          {document.createdAt &&
+            <p>
+              <span>Created </span>
+              <DateTime
+                date={document.createdAt}
+                relative={true}
+              />
+            </p>
+          }
 
           {document.lastModifiedAt &&
             <p class={styles['metadata-emphasis']}>

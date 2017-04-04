@@ -14,33 +14,6 @@ const initialState = {
   validationErrors: null
 }
 
-// Boolean fields are a bit special. Any required field that hasn't
-// been touched by the user in the UI should generate a validation error,
-// except for Boolean fields, as these don't have a "neutral" state.
-// You can start editing a document and see a Boolean field set to
-// "false" and that may be exactly how you want it, but at that point the
-// field doesn't exist in the document store yet because there wasn't a
-// change event. To get around this, when we create our local copy of
-// the document we check for any required Boolean fields in the collection
-// that aren't in the document object and set those to `false`.
-function getDocumentWithBooleans (document, collectionSchema) {
-  const booleanFields = Object.keys(collectionSchema.fields).filter(fieldName => {
-    const field = collectionSchema.fields[fieldName]
-
-    return field.required && field.type === 'Boolean'
-  })
-
-  let newDocument = Object.assign({}, document)
-
-  booleanFields.forEach(booleanField => {
-    if (typeof newDocument[booleanField] === 'undefined') {
-      newDocument[booleanField] = false
-    }
-  })
-
-  return newDocument
-}
-
 export default function document (state = initialState, action = {}) {
   switch (action.type) {
 
@@ -56,7 +29,7 @@ export default function document (state = initialState, action = {}) {
         ...state,
         dirty: false,
         loadedFromLocalStorage: false,
-        local: getDocumentWithBooleans(state.remote, action.context.collection),
+        local: {},
         validationErrors: null
       }
 
@@ -123,8 +96,7 @@ export default function document (state = initialState, action = {}) {
       // We start by trying to load the document with the given ID from local
       // storage.
       let draftDocument = LocalStorage.readDocument(action.context)
-      let localDocument = draftDocument ||
-        getDocumentWithBooleans(action.document, action.context.collection)
+      let localDocument = draftDocument || {}
 
       return {
         ...state,
@@ -148,9 +120,11 @@ export default function document (state = initialState, action = {}) {
 
     // Document action: start new document
     case Types.START_NEW_DOCUMENT:
+      const newDocument = LocalStorage.readDocument(action.context) || {}
+
       return {
         ...state,
-        local: {},
+        local: newDocument,
         remote: null,
         remoteStatus: Constants.STATUS_IDLE
       }

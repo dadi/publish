@@ -59,8 +59,9 @@ export function setRemoteDocumentStatus (status) {
   }
 }
 
-export function startNewDocument () {
+export function startNewDocument (context) {
   return {
+    context,
     type: Types.START_NEW_DOCUMENT
   }
 }
