@@ -121,12 +121,17 @@ class DocumentEdit extends Component {
     const documentIdHasChanged = documentId !== previousProps.documentId
     const {hasTriedSubmitting} = this.state
     const previousDocument = previousProps.state.document
+    const context = {
+      collection: this.currentCollection,
+      documentId,
+      group
+    }
 
     // There's no document ID, so it means we're creating a new document.
     if (!documentId) {
       // If there isn't a document in `document.local`, we start a new one.
-      if (!document.local) {
-        actions.startNewDocument()
+      if (!document.local && this.currentCollection) {
+        actions.startNewDocument(context)
       }
 
       return
@@ -157,11 +162,6 @@ class DocumentEdit extends Component {
     }
 
     if (!previousDocument.local && document.local && document.loadedFromLocalStorage) {
-      const context = {
-        collection: this.currentCollection,
-        documentId,
-        group
-      }
       const notification = {
         message: 'This document has unsaved changes',
         options: {
@@ -219,6 +219,7 @@ class DocumentEdit extends Component {
           .length
     const hasConnectionIssues = state.app.networkStatus !== Constants.NETWORK_OK
     const method = documentId ? 'edit' : 'new'
+    const documentData = Object.assign({}, document.remote, document.local)
 
     return (
       <div class={styles.container}>
@@ -260,12 +261,12 @@ class DocumentEdit extends Component {
           return (
             <section class={sectionClass.getClasses()}>
               <div class={mainBodyStyle.getClasses()}>
-                {fields.main.map(field => this.renderField(field))}
+                {fields.main.map(field => this.renderField(field, documentData[field._id]))}
               </div>
 
               {(fields.sidebar.length > 0) &&
                 <div class={styles.sidebar}>
-                  {fields.sidebar.map(field => this.renderField(field))}
+                  {fields.sidebar.map(field => this.renderField(field, documentData[field._id]))}
                 </div>
               }
             </section>
@@ -273,7 +274,7 @@ class DocumentEdit extends Component {
         })}
 
         <DocumentEditToolbar
-          document={document.local}
+          document={documentData}
           hasConnectionIssues={hasConnectionIssues}
           hasValidationErrors={hasValidationErrors}
           method={method}
@@ -282,6 +283,34 @@ class DocumentEdit extends Component {
         />
       </div>
     )
+  }
+
+  // Boolean fields are a bit special. Any required field that hasn't
+  // been touched by the user in the UI should generate a validation error,
+  // except for Boolean fields, as these don't have a "neutral" state.
+  // You can start editing a document and see a Boolean field set to
+  // "false" and that may be exactly how you want it, but at that point the
+  // field doesn't exist in the document store yet because there wasn't a
+  // change event. To get around this, we check for any required Boolean
+  // fields in the collection that aren't in the document object and
+  // set those to `false`.
+  addRequiredBooleanFieldsToDocument(document) {
+    const collectionSchema = this.currentCollection
+    const booleanFields = Object.keys(collectionSchema.fields).filter(fieldName => {
+      const field = collectionSchema.fields[fieldName]
+
+      return field.required && field.type === 'Boolean'
+    })
+
+    let newDocument = Object.assign({}, document)
+
+    booleanFields.forEach(booleanField => {
+      if (typeof newDocument[booleanField] === 'undefined') {
+        newDocument[booleanField] = false
+      }
+    })
+
+    return newDocument
   }
 
   // Fetches a document from the remote API
@@ -322,7 +351,8 @@ class DocumentEdit extends Component {
   filterHiddenFields(fields) {
     return Object.assign({}, ...Object.keys(fields)
       .filter(key => {
-        // If the publish && display block don't exist, or if list is true allow this field to pass.
+        // If the publish && display block don't exist, or if list is true allow
+        // this field to pass.
         return !fields[key].publish 
           || !fields[key].publish.display 
           || fields[key].publish.display.editor
@@ -385,8 +415,8 @@ class DocumentEdit extends Component {
     actions.discardUnsavedChanges(context)
   }
 
-  // Handles the callback that fires whenever a field changes and the new value is ready
-  // to be sent to the store
+  // Handles the callback that fires whenever a field changes and the new value
+  // is ready to be sent to the store.
   handleFieldChange(fieldName, value) {
     const {
       actions,
@@ -398,14 +428,14 @@ class DocumentEdit extends Component {
     actions.updateLocalDocument({
       [fieldName]: value
     }, {
-      collection,
+      collection: this.currentCollection,
       documentId,
       group
     })
   }
 
-  // Handles the callback that fires whenever there's a new validation error in a field or
-  // when a validation error has been cleared
+  // Handles the callback that fires whenever there's a new validation error
+  // in a field or when a validation error has been cleared.
   handleFieldError(fieldName, hasError, value) {
     const {actions} = this.props
 
@@ -507,7 +537,7 @@ class DocumentEdit extends Component {
   }
 
   // Renders a field, deciding which component to use based on the field type
-  renderField(field) {
+  renderField(field, value) {
     const {app, document} = this.props.state
     const hasError = document.validationErrors
       && document.validationErrors[field._id]
@@ -531,7 +561,7 @@ class DocumentEdit extends Component {
             forceValidation={hasTriedSubmitting}
             onChange={this.handleFieldChange.bind(this)}
             onError={this.handleFieldError.bind(this)}
-            value={document.local[field._id]}
+            value={value}
             schema={field}
           />
         )
@@ -545,7 +575,7 @@ class DocumentEdit extends Component {
             forceValidation={hasTriedSubmitting}
             onChange={this.handleFieldChange.bind(this)}
             onError={this.handleFieldError.bind(this)}
-            value={document.local[field._id]}
+            value={value}
             schema={field}
           />
         )
@@ -560,7 +590,7 @@ class DocumentEdit extends Component {
               showPreview={true}
               onChange={this.handleFieldChange.bind(this)}
               onError={this.handleFieldError.bind(this)}
-              value={document.local[field._id]}
+              value={value}
               schema={field}
             />
           )
@@ -582,9 +612,13 @@ class DocumentEdit extends Component {
     const currentApi = getCurrentApi(state.api.apis, group, collection)
     const currentCollection = getCurrentCollection(state.api.apis, group, collection)
     const collectionFields = this.filterHiddenFields(currentCollection.fields)
-    const document = state.document.local
+    let document = state.document.local
 
-    let apiBridge = APIBridge(currentApi).in(currentCollection.name)
+    // If we're creating a new document, we need to inject any required Boolean
+    // fields.
+    if (!documentId) {
+      document = this.addRequiredBooleanFieldsToDocument(document)
+    }
 
     // Cycle through referenced documents
     Object.keys(document).forEach(docField => {
@@ -599,6 +633,9 @@ class DocumentEdit extends Component {
         }
       }
     })
+
+    // Initialising API bridge
+    let apiBridge = APIBridge(currentApi).in(currentCollection.name)
 
     // If we have a documentId, we're updating an existing document.
     if (documentId) {
