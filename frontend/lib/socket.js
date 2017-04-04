@@ -35,11 +35,11 @@ Socket.prototype.onConnect = function () {
       this.socket.emit('login', {user: this.user}, (err, failure) => {
         if (!err) {
           // Run all queued
-          this.queuedTasks.forEach(task => {
-            task()
-          })
+          this.clearQueued()
         }
       })
+    } else {
+      this.clearQueued()
     }
   }
   this.onConnectListeners.forEach(connectListener => {
@@ -47,6 +47,12 @@ Socket.prototype.onConnect = function () {
   })
 
   return this
+}
+
+Socket.prototype.clearQueued = function () {
+  this.queuedTasks.forEach(task => {
+    task()
+  })
 }
 
 Socket.prototype.isConnected = function () {
@@ -78,12 +84,15 @@ Socket.prototype.onError = function (err) {
   return
 }
 
-// //Room
-
+/**
+ * Set Room
+ * @param {Sting} room Room identifier.
+ */
 Socket.prototype.setRoom = function (room) {
+  this.leaveRoom()
+  this.room = room
+
   if (this.socket.getAuthToken()) {
-    this.leaveRoom()
-    this.room = room
     this.enterRoom()
   } else {
     this.queuedTasks.push(this.enterRoom.bind(this))
@@ -92,8 +101,18 @@ Socket.prototype.setRoom = function (room) {
   return this
 }
 
+/**
+ * Get Room.
+ * Return name of current room.
+ */
+Socket.prototype.getRoom = function () {
+  return this.room
+}
+
 Socket.prototype.leaveRoom = function () {
-  this.socket.unsubscribe(this.room)
+  if (this.room) {
+    this.socket.unsubscribe(this.room)
+  }
 
   return this
 }

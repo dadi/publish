@@ -72,8 +72,7 @@ class App extends Component {
     if (previousState.user.local && !state.user.local) {
       route('/sign-in')
     }
-
-    if (previousPath !== path && (this.socket && this.socket.getUser())) {
+    if ((this.socket && this.socket.getUser()) && (previousPath !== path)) {
       this.socket.setRoom(path)
     }
   }
@@ -114,15 +113,16 @@ class App extends Component {
     const pathname = state.router.locationBeforeTransitions.pathname
     const user = state.user.local
     const session = new Session()
+
     this.socket = new Socket(config.server.port)
       .on('userListChange', data => {
-        // Table of connected users
-        actions.setDocumentPeers(data.body.users)
+        // Store connected users in state.
+        // Filter current user
+        actions.setDocumentPeers(data.body.users
+          .filter(socketUser => socketUser.handle !== user.handle))
       })
       .setUser(user)
       .setRoom(pathname)
-
-    // Save reference to `socket` as a private variable
   }
 
   getApiCollections(config) {
