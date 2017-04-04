@@ -1,3 +1,14 @@
+.information {
+  display: none;
+  align-items: center;
+}
+
+@media (--breakpoint-large) {
+  .information {
+    display: flex;
+  }
+}
+
 .count-label {
   margin-left: 15px;
 }
@@ -19,4 +30,19 @@
 
 .actions-button {
   margin-left: 10px;
+}
+
+.page-input {
+  width: 100px;
+  text-align: center;
+}
+
+.bulk {
+  display: none;
+}
+
+@media (--breakpoint-large) {
+  .bulk {
+    display: block;
+  }
 }

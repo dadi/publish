@@ -75,4 +75,4 @@
 }
 
 @custom-media --breakpoint-medium (min-width: 600px);
-@custom-media --breakpoint-large (min-width: 1000px);
+@custom-media --breakpoint-large (min-width: 800px);

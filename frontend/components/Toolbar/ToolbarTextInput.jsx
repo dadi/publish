@@ -16,6 +16,11 @@ import TextInput from 'components/TextInput/TextInput'
 export default class ToolbarTextInput extends Component {
   static propTypes = {
     /**
+     * Classes to append to the button element.
+     */
+    className: proptypes.string,
+
+    /**
      * A callback to be executed when the value of the text input changes.
      */
     onChange: proptypes.func,
@@ -23,23 +28,14 @@ export default class ToolbarTextInput extends Component {
     /**
      * The placeholder to be rendered on the text input.
      */
-    placeholder: proptypes.string,
-
-    /**
-     * A callback to be executed when the value of the text input changes.
-     */
-    size: proptypes.oneOf(['small', 'medium', 'large'])
-  }
-
-  static defaultProps = {
-    size: 'medium'
+    placeholder: proptypes.string
   }
 
   render() {
-    const {onChange, placeholder, size} = this.props
+    const {className, onChange, placeholder} = this.props
     const inputStyle = new Style(styles, 'input')
 
-    inputStyle.add(`input-${size}`)
+    inputStyle.addResolved(className)
 
     return (
       <TextInput
