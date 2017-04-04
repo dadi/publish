@@ -20,9 +20,9 @@ The JSON-stringified object of filters currently applied.
 - type: `string`
 
 
-### `visible`
+### `newFilter`
 
-Whether the filters are visible.
+Whether we are creating a new filter.
 
 - type: `bool`
 

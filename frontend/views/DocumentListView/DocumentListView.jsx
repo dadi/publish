@@ -20,7 +20,7 @@ export default class DocumentListView extends Component {
     // If we have a valid filter when we mount the component for the first time,
     // then we start with the filters visible by default. Otherwise, they're
     // hidden.
-    this.state.filtersVisible = props.filter && isValidJSON(props.filter)
+    this.state.newFilter = false
   }
 
   render() {
@@ -33,7 +33,7 @@ export default class DocumentListView extends Component {
       sort,
       state
     } = this.props
-    const {filtersVisible} = this.state
+    const {newFilter} = this.state
 
     return (
       <Page>
@@ -45,8 +45,8 @@ export default class DocumentListView extends Component {
               collection={collection}
               group={group}
               filter={filter}
-              filtersVisible={filtersVisible}
-              onFiltersToggle={this.handleFilterToggle.bind(this)}
+              newFilter={newFilter}
+              onAddNewFilter={this.handleAddNewFilter.bind(this)}
             />
 
             <DocumentList
@@ -67,14 +67,14 @@ export default class DocumentListView extends Component {
   componentDidUpdate(prevProps, prevState) {
     if (prevProps.collection !== this.props.collection) {
       this.setState({
-        filtersVisible: false
+        newFilter: false
       })
     }
   }
 
-  handleFilterToggle() {
+  handleAddNewFilter(isNewFilter) {
     this.setState({
-      filtersVisible: !this.state.filtersVisible
+      newFilter: isNewFilter
     })
   }
 

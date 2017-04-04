@@ -13,13 +13,6 @@ The JSON-stringified object of active filters.
 - type: `string`
 
 
-### `filtersVisible`
-
-Whether the list of filters should be visible.
-
-- type: `bool`
-
-
 ### `group`
 
 The name of the group where the current collection belongs (if any).
@@ -27,9 +20,16 @@ The name of the group where the current collection belongs (if any).
 - type: `string`
 
 
-### `onFiltersToggle`
+### `newFilter`
 
-A callback to be executed when the "Filters" button is pressed.
+Whether we are editing a new filter.
+
+- type: `bool`
+
+
+### `onAddNewFilter`
+
+Whether a new filter has been added.
 
 - type: `func`
 

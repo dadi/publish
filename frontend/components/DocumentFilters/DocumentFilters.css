@@ -1,14 +1,4 @@
 .filters {
   background-color: var(--theme-colour-background-shade-3, #DDDDDD);
-  border-top: 1px solid #e4e4e4;
-  padding: 15px 20px;
-}
-
-.controls {
-  text-align: right;
-}
-
-.add-button {
-  padding: 3px 0;
-  width: 25px;
+  padding: 1px 20px;
 }
