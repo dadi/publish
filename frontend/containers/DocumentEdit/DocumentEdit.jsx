@@ -177,12 +177,17 @@ class DocumentEdit extends Component {
     const {collection, group, state} = this.props
 
     this.currentCollection = getCurrentCollection(state.api.apis, group, collection)
+    this.userLeavingDocumentHandler = this.handleUserLeavingDocument.bind(this)
+
+    window.addEventListener('beforeunload', this.userLeavingDocumentHandler)
   }
 
   componentWillUnmount() {
     const {actions} = this.props
 
     actions.clearRemoteDocument()
+
+    window.removeEventListener('beforeunload', this.userLeavingDocumentHandler)
   }
 
   render() {
@@ -423,6 +428,20 @@ class DocumentEdit extends Component {
         hasTriedSubmitting: saveMode
       })
     }
+  }
+
+  handleUserLeavingDocument() {
+    const {
+      actions,
+      documentId,
+      group
+    } = this.props
+
+    actions.registerUserLeavingDocument({
+      collection: this.currentCollection,
+      documentId,
+      group
+    })
   }
 
   // Processes the save of the document
