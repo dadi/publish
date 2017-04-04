@@ -13,6 +13,13 @@ export function discardUnsavedChanges (context) {
   }
 }
 
+export function registerUserLeavingDocument (context) {
+  return {
+    context,
+    type: Types.USER_LEAVING_DOCUMENT
+  }
+}
+
 export function saveDocument (context, notification) {
   return {
     context,

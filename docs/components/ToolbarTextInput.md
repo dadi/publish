@@ -8,6 +8,13 @@ the width of the page.
 Props
 -----
 
+### `className`
+
+Classes to append to the button element.
+
+- type: `string`
+
+
 ### `onChange`
 
 A callback to be executed when the value of the text input changes.
@@ -20,12 +27,4 @@ A callback to be executed when the value of the text input changes.
 The placeholder to be rendered on the text input.
 
 - type: `string`
-
-
-### `size`
-
-A callback to be executed when the value of the text input changes.
-
-- type: `enum('small'|'medium'|'large')`
-- default value: `'medium'`
 

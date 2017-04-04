@@ -60,6 +60,12 @@ export default function document (state = initialState, action = {}) {
         validationErrors: null
       }
 
+    // Document action: user leaving document
+    case Types.USER_LEAVING_DOCUMENT:
+      LocalStorage.writeDocument(action.context, state.local)
+
+      return state
+
     // Document action: save document
     case Types.SAVE_DOCUMENT:
       LocalStorage.clearDocument(action.context)
