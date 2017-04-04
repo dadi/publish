@@ -76,11 +76,13 @@ export default class DocumentListToolbar extends Component {
 
     return (
       <Toolbar>
-        <div class={styles.peers}>
-          <Peer peer={{name: 'Foo'}} />
-          <Peer peer={{name: 'Bar'}} />
-          <Peer peer={{name: 'Whatever'}} />
-        </div>
+        {peers && peers.length &&
+          <div class={styles.peers}>
+            {peers.map(peer => (
+              <Peer peer={peer} />
+            ))}
+          </div>
+        }
 
         <div class={styles.metadata}>
           <p>
