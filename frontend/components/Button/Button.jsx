@@ -116,7 +116,7 @@ export default class Button extends Component {
     }
 
     return (
-      <button type="button"
+      <button
         class={buttonStyle.getClasses()}
         disabled={disabled}
         onClick={onClick}

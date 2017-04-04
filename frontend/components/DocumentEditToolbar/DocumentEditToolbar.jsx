@@ -75,53 +75,54 @@ export default class DocumentListToolbar extends Component {
     }
 
     return (
-      <Toolbar padded={false}>
-        <div class={styles.section}>
-          <div class={styles['padded-group']}>
-            <Button
-              accent="destruct"
-              disabled={hasConnectionIssues}
-            >Delete</Button>
-
-            {peers && peers.length &&
-              <div class={styles.peers}>
-                {peers.map(peer => (
-                  <Peer peer={peer} />
-                ))}   
-              </div>
-            }    
+      <Toolbar>
+        {peers && peers.length &&
+          <div class={styles.peers}>
+            {peers.map(peer => (
+              <Peer peer={peer} />
+            ))}
           </div>
+        }
 
-          <div class={styles.metadata}>
-            <p>
-              <span>Created </span>
+        <div class={styles.metadata}>
+          <p>
+            <span>Created </span>
+            <DateTime
+              date={document.createdAt}
+              relative={true}
+            />
+          </p>
+
+          {document.lastModifiedAt &&
+            <p class={styles['metadata-emphasis']}>
+              <span>Last updated </span>
               <DateTime
-                date={document.createdAt}
+                date={document.lastModifiedAt}
                 relative={true}
               />
             </p>
-
-            {document.lastModifiedAt &&
-              <p class={styles['metadata-emphasis']}>
-                <span>Last updated </span>
-                <DateTime
-                  date={document.lastModifiedAt}
-                  relative={true}
-                />
-              </p>
-            }
-          </div>
+          }
         </div>
 
-        <div class={styles['padded-group']}>
-          <ButtonWithOptions
-            accent="save"
-            disabled={hasConnectionIssues || hasValidationErrors}
-            onClick={this.handleSave.bind(this, 'save')}
-            options={saveOptions}
-          >
-            Save and continue
-          </ButtonWithOptions>
+        <div class={styles.buttons}>
+          <div class={styles.button}>
+            <Button
+              accent="destruct"
+              className={styles.button}
+              disabled={hasConnectionIssues}
+            >Delete</Button> 
+          </div>
+
+          <div class={styles.button}>
+            <ButtonWithOptions
+              accent="save"
+              disabled={hasConnectionIssues || hasValidationErrors}
+              onClick={this.handleSave.bind(this, 'save')}
+              options={saveOptions}
+            >
+              Save and continue
+            </ButtonWithOptions>
+          </div>
         </div>
       </Toolbar>
     )
