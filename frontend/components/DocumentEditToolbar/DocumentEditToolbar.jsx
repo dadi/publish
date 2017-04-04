@@ -76,7 +76,7 @@ export default class DocumentListToolbar extends Component {
 
     return (
       <Toolbar>
-        {peers && peers.length &&
+        {Boolean(peers && peers.length) &&
           <div class={styles.peers}>
             {peers.map(peer => (
               <Peer peer={peer} />
