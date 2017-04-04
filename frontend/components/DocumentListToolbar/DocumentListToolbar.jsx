@@ -68,19 +68,23 @@ export default class DocumentListToolbar extends Component {
     return (
       <Toolbar>
         <div class={styles.section}>
-          {metadata.totalCount > metadata.limit && (
-            <ToolbarTextInput
-              onChange={this.handleGoToPage.bind(this)}
-              size="small"
-              placeholder="Go to page"
-            />
-          )}
-          {metadata.totalCount > 1 && (
-            <span class={styles['count-label']}>
-              Showing <strong>{`${metadata.offset + 1}-${Math.min(metadata.offset + metadata.limit, metadata.totalCount)} `}</strong>
-              of <strong>{metadata.totalCount}</strong>
-            </span>
-          )}
+          <div class={styles.information}>
+            {metadata.totalCount > metadata.limit && (
+              <ToolbarTextInput
+                className={styles['page-input']}
+                onChange={this.handleGoToPage.bind(this)}
+                size="small"
+                placeholder="Go to page"
+              />
+            )}
+            {metadata.totalCount > 1 && (
+              <span class={styles['count-label']}>
+                <span>Showing </span>
+                <strong>{`${metadata.offset + 1}-${Math.min(metadata.offset + metadata.limit, metadata.totalCount)} `}</strong>
+                of <strong>{metadata.totalCount}</strong>
+              </span>
+            )}   
+          </div>
         </div>
 
         <div class={styles.section}>
@@ -93,23 +97,24 @@ export default class DocumentListToolbar extends Component {
         </div>
 
         <div class={styles.section}>
-          <select
-            class={styles.actions}
-            onChange={this.handleBulkActionSelect.bind(this)}
-            value={bulkActionSelected}
-          >
-            <option disabled value={this.BULK_ACTIONS_PLACEHOLDER}>With selected...</option>
-            <option value="delete">Delete</option>
-          </select>
+          <div class={styles.bulk}>
+            <select
+              class={styles.actions}
+              onChange={this.handleBulkActionSelect.bind(this)}
+              value={bulkActionSelected}
+            >
+              <option disabled value={this.BULK_ACTIONS_PLACEHOLDER}>With selected...</option>
+              <option value="delete">Delete</option>
+            </select>
 
-          <Button
-            accent="data"
-            className={styles['actions-button']}
-            disabled={(bulkActionSelected === this.BULK_ACTIONS_PLACEHOLDER) || !selectedDocuments.length}
-            onClick={this.handleBulkActionApply.bind(this)}
-            size="small"
-          >Apply</Button>
-
+            <Button
+              accent="data"
+              className={styles['actions-button']}
+              disabled={(bulkActionSelected === this.BULK_ACTIONS_PLACEHOLDER) || !selectedDocuments.length}
+              onClick={this.handleBulkActionApply.bind(this)}
+              size="small"
+            >Apply</Button>
+          </div>
         </div>
       </Toolbar>
     )
