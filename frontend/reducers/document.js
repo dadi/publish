@@ -35,7 +35,7 @@ export default function document (state = initialState, action = {}) {
 
     // Document action: user leaving document
     case Types.USER_LEAVING_DOCUMENT:
-      if (Object.keys(state.local) > 0) {
+      if (Object.keys(state.local).length > 0) {
         LocalStorage.writeDocument(action.context, state.local)
       }
 
