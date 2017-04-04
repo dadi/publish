@@ -72,7 +72,7 @@ class App extends Component {
     if (previousState.user.local && !state.user.local) {
       route('/sign-in')
     }
-    if ((this.socket && this.socket.getUser()) && (previousPath !== path)) {
+    if (this.socket && this.socket.getUser() && (this.socket.getRoom() !== path)) {
       this.socket.setRoom(path)
     }
   }
