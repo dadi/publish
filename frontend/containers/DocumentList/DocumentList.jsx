@@ -91,16 +91,12 @@ class DocumentList extends Component {
       // Hard reset all state properties.
       this.setState(this.defaultLocalState())
     }
-
     // State check: reject when missing config, session, or apis
     if (!state.app.config || !state.api.apis.length || !state.user) return
-
     // State check: reject when there are still APIs without collections
     if (apisWithoutCollections) return
-
     // State check: reject when path matches and document list loaded
     if (list && historyKeyMatch) return
-
     // State check: reject when documents are still loading
     if (status === Constants.STATUS_LOADING) return
 
@@ -134,7 +130,6 @@ class DocumentList extends Component {
         }
       })
     const selectedDocuments = this.getSelectedDocuments()
-
     const documentsList = documents.list.results
     const metadata = documents.list.metadata
     const query = documents.query
