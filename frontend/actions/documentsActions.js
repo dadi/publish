@@ -8,6 +8,13 @@ export function setDocumentList (documents, query) {
   }
 }
 
+export function setDocumentSelection (selectedDocuments) {
+  return {
+    selectedDocuments,
+    type: Types.SET_DOCUMENT_SELECTION
+  }
+}
+
 export function setDocumentListStatus (status) {
   return {
     status,
