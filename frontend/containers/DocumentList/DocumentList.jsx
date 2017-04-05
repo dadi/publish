@@ -75,7 +75,7 @@ class DocumentList extends Component {
   constructor(props) {
     super(props)
 
-    this.state = this.defaultLocalState()
+    this.state = this.getDefaultLocalState()
   }
 
   componentDidUpdate(prevProps) {
@@ -87,9 +87,9 @@ class DocumentList extends Component {
     const historyKeyMatch = pathKey === previousPathKey
     const apisWithoutCollections = state.api.apis.filter(api => !api.hasCollections).length
 
-    if(prevProps.collection !== this.props.collection || prevProps.page !== this.props.page) {
+    if (prevProps.collection !== this.props.collection || prevProps.page !== this.props.page) {
       // Hard reset all state properties.
-      this.setState(this.defaultLocalState())
+      this.setState(this.getDefaultLocalState())
     }
     // State check: reject when missing config, session, or apis
     if (!state.app.config || !state.api.apis.length || !state.user) return
@@ -185,7 +185,7 @@ class DocumentList extends Component {
     )
   }
 
-  defaultLocalState() {
+  getDefaultLocalState() {
     return {
       selectedRows: {}
     }
