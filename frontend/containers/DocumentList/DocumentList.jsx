@@ -326,9 +326,9 @@ class DocumentList extends Component {
     ])]
   }
 
-  handleBulkAction(action) {
+  handleBulkAction(actionType) {
     const {state} = this.props
-    console.log('(*) Selected documents:', state.documents.selectedDocuments)
+    console.log('(*) Selected documents:', state.documents.selectedDocuments, actionType)
   }
 
   handleRowSelect(selectedRows) {
