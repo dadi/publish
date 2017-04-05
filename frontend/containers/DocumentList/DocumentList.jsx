@@ -75,7 +75,7 @@ class DocumentList extends Component {
   constructor(props) {
     super(props)
 
-    this.state.selectedRows = {}
+    this.state = this.getDefaultLocalState()
   }
 
   componentDidUpdate(prevProps) {
@@ -87,12 +87,14 @@ class DocumentList extends Component {
     const historyKeyMatch = pathKey === previousPathKey
     const apisWithoutCollections = state.api.apis.filter(api => !api.hasCollections).length
 
+    if (prevProps.collection !== this.props.collection || prevProps.page !== this.props.page) {
+      // Hard reset all state properties.
+      this.setState(this.getDefaultLocalState())
+    }
     // State check: reject when missing config, session, or apis
     if (!state.app.config || !state.api.apis.length || !state.user) return
-
     // State check: reject when there are still APIs without collections
     if (apisWithoutCollections) return
-
     // State check: reject when path matches and document list loaded
     if (list && historyKeyMatch) return
     // State check: reject when documents are still loading
@@ -181,6 +183,12 @@ class DocumentList extends Component {
         )}
       </div>
     )
+  }
+
+  getDefaultLocalState() {
+    return {
+      selectedRows: {}
+    }
   }
 
   componentWillUnmount() {
@@ -272,29 +280,75 @@ class DocumentList extends Component {
       .useFields(fieldsToFetch)
 
     return query.find().then(docs => {
-      // Update state with results
+      // Update state with results.
       actions.setDocumentList(docs, query.query)
+      // Update local selected state.
+      this.setSelectedState(docs.results)
+
     }).catch(err => {
       console.log(err)
       // {!} TODO: Graceful deal with failure
     })
   }
 
+  setSelectedState(documents) {
+    const {state} = this.props
+    const {selectedRows} = this.state
+    const selectedDocuments = state.documents.selectedDocuments
+
+    const matchingRows = Object.assign({}, ...documents
+      .map((document, index) => {
+        return {[index]: selectedDocuments.includes(document._id)}
+      }))
+    this.setState({selectedRows: matchingRows})
+  }
+
   getSelectedDocuments() {
     const {state} = this.props
     const {selectedRows} = this.state
     const documents = state.documents.list.results
+    const selectedDocuments = state.documents.selectedDocuments
 
-    return Object.keys(selectedRows)
+    // Documents thqt match ID with a selected row.
+    const localSelected = Object.keys(selectedRows)
       .filter(index => Boolean(selectedRows[index]))
-      .map(index => documents[index]._id)
+      .map(index => documents[index] && documents[index]._id)
+
+    // Documents that are selected in documents state.
+    const stateSelected = documents
+      .filter(document => selectedDocuments.includes(document._id))
+      .map(document => document._id)
+
+    // Force unique.
+    return [...new Set([
+      ...localSelected,
+      ...stateSelected
+    ])]
   }
 
-  handleBulkAction(action) {
-    console.log('(*) Selected documents:', this.getSelectedDocuments())
+  handleBulkAction(actionType) {
+    const {state} = this.props
+    console.log('(*) Selected documents:', state.documents.selectedDocuments, actionType)
   }
 
   handleRowSelect(selectedRows) {
+    const {actions, state} = this.props
+    const documents = state.documents.list.results
+    const previousIDs = state.documents.selectedDocuments
+    
+    const toRemove = documents
+      .filter((doc, ind) => !selectedRows[ind])
+      .map(doc => doc._id)
+
+    const toAdd = documents
+      .filter((doc, ind) => selectedRows[ind])
+      .map(doc => doc._id)
+
+    const selectedIDs = [...previousIDs, ...toAdd]
+      .filter(docID => toRemove.indexOf(docID) < 0)
+
+    actions.setDocumentSelection(selectedIDs)
+
     this.setState({
       selectedRows: selectedRows
     })
