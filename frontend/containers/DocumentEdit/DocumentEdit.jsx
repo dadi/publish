@@ -19,7 +19,7 @@ import {connectHelper, slugify, Case} from 'lib/util'
 import {getCurrentApi, getCurrentCollection} from 'lib/app-config'
 
 import DocumentEditToolbar from 'components/DocumentEditToolbar/DocumentEditToolbar'
-import FieldAsset from 'components/FieldAsset/FieldAsset'
+import FieldImage from 'components/FieldImage/FieldImage'
 import FieldBoolean from 'components/FieldBoolean/FieldBoolean'
 import FieldString from 'components/FieldString/FieldString'
 import SubNavItem from 'components/SubNavItem/SubNavItem'
@@ -584,10 +584,9 @@ class DocumentEdit extends Component {
 
         case 'Image':
           fieldElement = (
-            <FieldAsset
+            <FieldImage
               error={error}
-              config={app.config.FieldAsset}
-              showPreview={true}
+              config={app.config.FieldImage}
               onChange={this.handleFieldChange.bind(this)}
               onError={this.handleFieldError.bind(this)}
               value={value}
