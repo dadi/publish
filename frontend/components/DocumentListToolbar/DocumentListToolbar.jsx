@@ -31,6 +31,11 @@ export default class DocumentListToolbar extends Component {
     group: proptypes.string,
 
     /**
+     * Whether the current list of documents refers to a nested document.
+     */
+    isReferencedField: proptypes.bool,
+
+    /**
      * The object containing metadata about the current query, as defined
      * in DADI API.
      */
@@ -43,9 +48,18 @@ export default class DocumentListToolbar extends Component {
     onBulkAction: proptypes.func,
 
     /**
+     * A callback to be fired when a reference document has been selected.
+     */
+    onReferenceDocumentSelect: proptypes.func,
+
+    /**
      * A list of the IDs of the currently selected documents.
      */
     selectedDocuments: proptypes.array
+  }
+
+  static defaultProps = {
+    isReferencedField: false
   }
 
   constructor(props) {
@@ -59,6 +73,7 @@ export default class DocumentListToolbar extends Component {
     const {
       collection,
       group,
+      isReferencedField,
       metadata,
       onBulkAction,
       selectedDocuments
@@ -97,27 +112,70 @@ export default class DocumentListToolbar extends Component {
         </div>
 
         <div class={styles.section}>
-          <div class={styles.bulk}>
-            <select
-              class={styles.actions}
-              onChange={this.handleBulkActionSelect.bind(this)}
-              value={bulkActionSelected}
-            >
-              <option disabled value={this.BULK_ACTIONS_PLACEHOLDER}>With selected...</option>
-              <option value="delete">Delete</option>
-            </select>
-
-            <Button
-              accent="data"
-              className={styles['actions-button']}
-              disabled={(bulkActionSelected === this.BULK_ACTIONS_PLACEHOLDER) || !selectedDocuments.length}
-              onClick={this.handleBulkActionApply.bind(this)}
-              size="small"
-            >Apply</Button>
-          </div>
+          {isReferencedField
+            ? this.renderReferencedDocumentActions()
+            : this.renderBulkActions()
+          }
         </div>
       </Toolbar>
     )
+  }
+
+  renderBulkActions() {
+    const {bulkActionSelected} = this.state
+    const {selectedDocuments} = this.props
+
+    return (
+      <div class={styles.actions}>
+        <select
+          class={styles.select}
+          onChange={this.handleBulkActionSelect.bind(this)}
+          value={bulkActionSelected}
+        >
+          <option disabled value={this.BULK_ACTIONS_PLACEHOLDER}>With selected...</option>
+          <option value="delete">Delete</option>
+        </select>
+
+        <Button
+          accent="data"
+          className={styles['select-button']}
+          disabled={(bulkActionSelected === this.BULK_ACTIONS_PLACEHOLDER) || !selectedDocuments.length}
+          onClick={this.handleBulkActionApply.bind(this)}
+          size="small"
+        >Apply</Button>
+      </div>
+    )
+  }
+
+  renderReferencedDocumentActions() {
+    const {selectedDocuments} = this.props
+
+    return (
+      <div class={styles.actions}>
+        <Button
+          accent="save"
+          disabled={!selectedDocuments.length}
+          onClick={this.handleReferencedDocumentSelect.bind(this)}
+        >Add selected document</Button>
+      </div>
+    )
+  }
+
+  handleBulkActionApply(event) {
+    const {onBulkAction} = this.props
+    const {bulkActionSelected} = this.state
+    const validBulkActionSelected = bulkActionSelected &&
+      (bulkActionSelected !== this.BULK_ACTIONS_PLACEHOLDER)
+
+    if (validBulkActionSelected && (typeof onBulkAction === 'function')) {
+      onBulkAction.call(this, bulkActionSelected)
+    }
+  }
+
+  handleBulkActionSelect(event) {
+    this.setState({
+      bulkActionSelected: event.target.value
+    })
   }
 
   handleGoToPage(event) {
@@ -135,18 +193,14 @@ export default class DocumentListToolbar extends Component {
     route(buildUrl(group, collection, 'documents', parsedValue))
   }
 
-  handleBulkActionSelect(event) {
-    this.setState({
-      bulkActionSelected: event.target.value
-    })
-  }
+  handleReferencedDocumentSelect() {
+    const {
+      onReferenceDocumentSelect,
+      selectedDocuments
+    } = this.props
 
-  handleBulkActionApply(event) {
-    const {onBulkAction} = this.props
-    const {bulkActionSelected} = this.state
-
-    if ((typeof onBulkAction === 'function') && bulkActionSelected && (bulkActionSelected !== this.BULK_ACTIONS_PLACEHOLDER)) {
-      onBulkAction.call(this, bulkActionSelected)
+    if (typeof onReferenceDocumentSelect === 'function') {
+      onReferenceDocumentSelect()
     }
   }
 }
