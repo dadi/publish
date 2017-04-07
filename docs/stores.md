@@ -1,16 +1,24 @@
-# Redux stores
+# Redux
 
-We use [Redux](http://redux.js.org/docs/introduction/) to manage the global application state. We have 5 stores that hold the state of different parts of the application.
+We use [Redux](http://redux.js.org/docs/introduction/) to manage the global application state.
 
-- [1. App](#1-app)
-- [2. API](#2-api)
-- [3. Document](#3-document)
-- [4. Documents](#4-documents)
-- [5. User](#5-user)
+- [1. Stores](#1-stores)
+  - [1.1. App](#1-1-app)
+  - [1.2. API](#1-2-api)
+  - [1.3. Document](#1-3-document)
+  - [1.4. Documents](#1-4-documents)
+  - [1.5. User](#1-5-user)
+- [2. Actions](#2-actions)
+  - [2.1. Dispatching](#2-1-dispatching)
+  - [2.2. Asynchronous actions](#2-2-asynchronous-actions)
 
 ---
 
-## 1. App
+## 1. Stores
+
+We have 5 stores that hold the state of different parts of the application.
+
+### 1.1. App
 
 Holds generic app-wide state
 
@@ -21,7 +29,7 @@ Holds generic app-wide state
 | `networkStatus` | Constant | The status of the client internet connection and connection to the Publish server app                 | `NETWORK_OK`                                                  |
 | `status`        | Constant | The status of the app, representing whether it's idle or loading                                      | `STATUS_IDLE`                                                 |
 
-## 2. API
+### 1.2. API
 
 Holds state about APIs and collections.
 
@@ -30,7 +38,7 @@ Holds state about APIs and collections.
 | `apis`              | Array  | List of all available APIs, including the schema for all their collections.            | `[]`          |
 | `status`            | String | The status of the api config data, representing whether it's idle, loading or erroing  | `STATUS_IDLE` |
 
-## 3. Document
+### 1.3. Document
 
 Holds the current active document (for document edit view)
 
@@ -42,7 +50,7 @@ Holds the current active document (for document edit view)
 | `remoteStatus`     | Constant | The status of the document, representing whether it's idle, loading or erroing     | `STATUS_IDLE` |
 | `validationErrors` | Object   | Document field validation errors                                                   | `{}`          |
 
-## 4. Documents
+### 1.4. Documents
 
 Holds the current list of documents (for document list view)
 
@@ -52,7 +60,7 @@ Holds the current list of documents (for document list view)
 | `query`  | String   | The current query parameters, used to distinguish between and empty collection and empty results based on a query | `null`        |
 | `status` | Constant | The status of the document, representing whether it's idle, loading or erroing                                    | `STATUS_IDLE` |
 
-## 5. User
+### 1.5. User
 
 Holds state about the current user
 
@@ -60,3 +68,64 @@ Holds state about the current user
 |-----------|--------|--------------------------------------------------------------------|---------------|
 | `local`   | Object | The object representing the state of the user as it's being edited | `null`        |
 | `remote`  | Object | The object representing the state of the user on the remote API    | `null`        |
+
+## 2. Actions
+
+Action creators are separated into different files within `frontend/actions`, depending on which part of the store they tend to change.
+
+### 2.1. Dispatching
+
+For convenience, we typically [bind the action creators](http://redux.js.org/docs/api/bindActionCreators.html) to the store's `dispatch` method, so we can simply run `action.doSomething()` instead of `dispatch(action.doSomething())`.
+
+However, sometimes we need to have a finer control and have the need to call `dispatch()` manually, such as when dispatching multiple actions. Batching multiple actions within one dispatch is better than firing multiple bounded actions, as the latter will generate multiple re-renders of the components listening to the store.
+
+*Example:*
+```js
+// We want to display a notification and clear the remote document
+// at the same time, on a single change to the store, so we batch
+// the two actions together.
+dispatch(
+  batchActions(
+    actions.setNotification(notification),
+    actions.clearRemoteDocument()
+  )
+)
+```
+
+### 2.2. Asynchronous actions
+
+When we need to fetch data from a network or perform any other type of asynchronous operation, we use [asynchronous actions](http://redux.js.org/docs/advanced/AsyncActions.html). This allows a single action call to perform multiple changes to the store as events occur.
+
+A perfect example of this is an API call to request data from the network. In this case, we want to update the store a few times:
+
+1. Change the status to *loading* as the request begins;
+2. If the request succeeds, update the store with the result and change the status to *idle*;
+3. If the request fails, change the status to *failed*.
+
+An asynchronous action can take care of all of this, leaving the calling containers with the sole task of dispatching a single action.
+
+```js
+// actions/documentActions.js
+export function fetchDocument ({api, collection, id, fields}) {
+  return (dispatch) => {
+    const apiBridge = APIBridge(api)
+      .in(collection)
+      .whereFieldIsEqualTo('_id', id)
+
+    if (fields) {
+      apiBridge.useFields(fields)
+    }
+
+    // Set loading status
+    dispatch(setRemoteDocumentStatus(Constants.STATUS_LOADING))
+
+    apiBridge.find().then(response => {
+      const document = response.results[0]
+
+      dispatch(setRemoteDocument(document))
+    }).catch(err => {
+      dispatch(setRemoteDocumentStatus(Constants.STATUS_FAILED))
+    })
+  }
+}
+```
