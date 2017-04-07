@@ -14,7 +14,7 @@ function clear (key) {
 
 function read (key) {
   if (!window.localStorage) return null
-console.log('(LS) Reading:', key)
+
   try {
     const item = window.localStorage.getItem(key)
     const deserialisedItem = JSON.parse(item)
@@ -27,7 +27,7 @@ console.log('(LS) Reading:', key)
 
 function write (key, payload) {
   if (!window.localStorage) return false
-console.log('(LS) Writing:', key, payload)
+
   try {
     const serialisedItem = JSON.stringify(payload)
 
