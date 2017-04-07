@@ -1,0 +1,10 @@
+.container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: var(--theme-colour-secondary-background, #17273F);
+  padding: 14px 20px;
+  color: var(--theme-colour-secondary, #FFFFFF);
+  font-family: var(--theme-font-family, sans-serif);
+  line-height: 1.25;
+}

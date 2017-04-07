@@ -15,6 +15,7 @@ export default class DocumentEditView extends Component {
       collection,
       documentId,
       group,
+      referencedField,
       section
     } = this.props
 
@@ -28,6 +29,7 @@ export default class DocumentEditView extends Component {
             documentId={documentId}
             group={group}
             onPageTitle={this.handlePageTitle}
+            referencedField={referencedField}
             section={section}
           />
         </Main>
