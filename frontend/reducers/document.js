@@ -39,7 +39,7 @@ export default function document (state = initialState, action = {}) {
         //LocalStorage.writeDocument(action.context, state.local)
       }
 
-      return state
+      return state // eslint-disable-line newline-before-return
 
     // Document action: save document
     case Types.SAVE_DOCUMENT:

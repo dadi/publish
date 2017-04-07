@@ -1,8 +1,8 @@
 'use strict'
 
+import * as Constants from 'lib/constants'
 import {bindActionCreators} from 'redux'
 import {connect} from 'preact-redux'
-import * as Constants from 'lib/constants'
 
 export function connectHelper (stateMap, dispatchMap) {
   return connect((state) => {
@@ -166,7 +166,7 @@ export function setPageTitle (title) {
   document.title = `${title} / DADI Publish`
 }
 
-export function filterHiddenFields(fields, type) {
+export function filterHiddenFields (fields, type) {
   if (!(typeof type === 'string')) {
     return fields
   }
@@ -175,9 +175,9 @@ export function filterHiddenFields(fields, type) {
     .filter(key => {
       // If the publish && display block don't exist, or if the given type is
       // true,  allow this field to pass.
-      return !fields[key].publish
-        || !fields[key].publish.display
-        || fields[key].publish.display[type]
+      return !fields[key].publish ||
+        !fields[key].publish.display ||
+        fields[key].publish.display[type]
     }).map(key => {
       return {[key]: fields[key]}
     })
