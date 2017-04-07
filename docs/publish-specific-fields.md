@@ -15,6 +15,7 @@ Currently, the supported fields are:
 | `display.list`    | Defines whether the field is displayed in the document list view                           | `true`                | `true`  |
 | `display.edit`    | Defines whether the field is displayed in the document edit view                           | `true`                | `true`  |
 | `readonly`        | Defines whether the document is editable when displayed within the document list view      | `true`                | `false` |
+| `subType`         | Defines an optional subType for the field. Currently only used with `type` of `Object`     | `Image`               |  None   |
 
 *Example: A `String` type rendered in the main body as a textarea:*
 
@@ -62,6 +63,25 @@ Currently, the supported fields are:
         "label": "Portugal"
       }
     ]
+  }
+}
+
+*Example: A field with a subType:*
+
+```json
+"synopsis": {
+  "type": "Object",
+  "label": "Lead Image",
+  "validation": {},
+  "message": "Can be jpeg or png",
+  "publish": {
+    "section": "Media",
+    "placement": "main",
+    "display": {
+      "list": false,
+      "edit": true
+    },
+    "subType": "Image"
   }
 }
 ```
