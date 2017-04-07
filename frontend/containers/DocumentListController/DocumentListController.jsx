@@ -37,6 +37,16 @@ class DocumentListController extends Component {
     group: proptypes.string,
 
     /**
+     * When on a reference field, contains the ID of the parent document.
+     */
+    parentDocumentId: proptypes.string,
+
+    /**
+     * The name of a reference field currently being edited.
+     */
+    referencedField: proptypes.string,
+
+    /**
      * The global state object.
      */
     state: proptypes.object,
@@ -51,13 +61,14 @@ class DocumentListController extends Component {
     const {
       collection,
       filter,
+      group,
       newFilter,
       onAddNewFilter,
-      group,
+      referencedField,
       state
     } = this.props
 
-    const currentCollection = getCurrentCollection(state.api.apis, group, collection)
+    const currentCollection = getCurrentCollection(state.api.apis, group, collection, referencedField)
     const hasDocuments = state.documents.list && state.documents.list.results && (state.documents.list.results.length > 0)
     const params = state.router.params
     const filters = params && params.filter ? params.filter : null

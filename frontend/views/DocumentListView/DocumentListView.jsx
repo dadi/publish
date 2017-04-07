@@ -57,6 +57,8 @@ export default class DocumentListView extends Component {
               filter={filter}
               newFilter={newFilter}
               onAddNewFilter={this.handleAddNewFilter.bind(this)}
+              parentDocumentId={documentId}
+              referencedField={referencedField}
             />
 
             <DocumentList
