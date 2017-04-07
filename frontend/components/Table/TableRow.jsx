@@ -23,7 +23,23 @@ export default class TableRow extends Component {
     /**
      * A callback function to be executed when the selection checkbox is clicked.
      */
-    onSelect: proptypes.func,    
+    onSelect: proptypes.func,
+
+    /**
+     * Whether the row is selectable.
+     */
+    selectable: proptypes.bool,
+
+    /**
+     * If the table allows multiple rows to be selected (multi), or if it has
+     * exceeded the maximum number of selected rows (multiDisabled), or if the
+     * the table only allows a single row to be selected (single).
+     */
+    selectableMode: proptypes.oneOf([
+      'multi',
+      'multiDisabled',
+      'single'
+    ]),
 
     /**
      * Whether the row is currently selected.
@@ -39,6 +55,8 @@ export default class TableRow extends Component {
   static defaultProps = {
     fillBlanks: false,
     onSelect: null,
+    selectable: true,
+    selectableMode: 'multi',
     selected: false
   }
 
@@ -60,7 +78,11 @@ export default class TableRow extends Component {
   }
 
   render() {
-    const {selectable, selected} = this.props
+    const {
+      selectable,
+      selectableMode,
+      selected
+    } = this.props
 
     let rowStyle = new Style(styles, 'row')
 
@@ -73,7 +95,8 @@ export default class TableRow extends Component {
             <input
               checked={selected}
               class={styles.select}
-              type="checkbox"
+              disabled={selectableMode === 'multiDisabled'}
+              type={selectableMode === 'single' ? 'radio' : 'checkbox'}
               onClick={this.handleSelectClick.bind(this)}
             />
           </TableRowCell>
