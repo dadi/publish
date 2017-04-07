@@ -130,17 +130,23 @@ class DocumentEdit extends Component {
     const document = state.document
     const {saveAttempt} = this.state
     const previousDocument = previousProps.state.document
-    const context = {
-      collection: this.currentCollection,
-      documentId,
-      group
+
+    if (!previousDocument.local && document.local && document.loadedFromLocalStorage) {
+      const notification = {
+        message: 'This document has unsaved changes',
+        options: {
+          'Discard': this.handleDiscardUnsavedChanges.bind(this)
+        }
+      }
+
+      dispatch(actions.setNotification(notification))
     }
 
     // There's no document ID, so it means we're creating a new document.
     if (!documentId) {
       // If there isn't a document in `document.local`, we start a new one.
       if (!document.local && this.currentCollection) {
-        dispatch(actions.startNewDocument(context))
+        dispatch(actions.startNewDocument())
       }
 
       return
@@ -174,17 +180,6 @@ class DocumentEdit extends Component {
     // Have we just saved a document?
     if (wasSaving && isIdle) {
       this.processSaveResult()
-    }
-
-    if (!previousDocument.local && document.local && document.loadedFromLocalStorage) {
-      const notification = {
-        message: 'This document has unsaved changes',
-        options: {
-          'Discard': this.handleDiscardUnsavedChanges.bind(this, context)
-        }
-      }
-
-      dispatch(actions.setNotification(notification))
     }
   }
 
@@ -408,10 +403,10 @@ class DocumentEdit extends Component {
     }
   }
 
-  handleDiscardUnsavedChanges(context) {
-    const {actions, dispatch} = this.props
+  handleDiscardUnsavedChanges() {
+    const {dispatch} = this.props
 
-    dispatch(actions.discardUnsavedChanges(context))
+    dispatch(actions.discardUnsavedChanges())
   }
 
   // Handles the callback that fires whenever a field changes and the new value
@@ -426,10 +421,6 @@ class DocumentEdit extends Component {
 
     dispatch(actions.updateLocalDocument({
       [fieldName]: value
-    }, {
-      collection: this.currentCollection,
-      documentId,
-      group
     }))
   }
 
