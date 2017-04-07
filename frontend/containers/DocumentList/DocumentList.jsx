@@ -197,6 +197,7 @@ class DocumentList extends Component {
         <DocumentListToolbar
           collection={collection}
           group={group}
+          isReferencedField={Boolean(referencedField)}
           metadata={metadata}
           onBulkAction={this.handleBulkAction.bind(this)}
           onReferenceDocumentSelect={this.handleReferenceDocumentSelect.bind(this)}
