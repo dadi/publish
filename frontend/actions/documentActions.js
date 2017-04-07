@@ -1,6 +1,11 @@
 import * as Constants from 'lib/constants'
+import * as LocalStorage from 'lib/local-storage'
 import * as Types from 'actions/actionTypes'
 import apiBridgeClient from 'lib/api-bridge-client'
+
+function getLocalStorageKeyFromState(state) {
+  return state.router.locationBeforeTransitions.pathname
+}
 
 export function clearRemoteDocument () {
   return {
@@ -9,8 +14,14 @@ export function clearRemoteDocument () {
 }
 
 export function discardUnsavedChanges () {
-  return {
-    type: Types.DISCARD_UNSAVED_CHANGES
+  return (dispatch, getState) => {
+    let localStorageKey = getLocalStorageKeyFromState(getState())
+
+    LocalStorage.clearDocument(localStorageKey)
+
+    dispatch({
+      type: Types.DISCARD_UNSAVED_CHANGES
+    })
   }
 }
 
@@ -38,8 +49,17 @@ export function fetchDocument ({api, collection, id, fields}) {
 }
 
 export function registerUserLeavingDocument () {
-  return {
-    type: Types.USER_LEAVING_DOCUMENT
+  return (dispatch, getState) => {
+    let localStorageKey = getLocalStorageKeyFromState(getState())
+    let localDocument = getState().document.local
+
+    if (Object.keys(localDocument).length > 0) {
+      LocalStorage.writeDocument(localStorageKey, localDocument)
+    }
+
+    dispatch({
+      type: Types.USER_LEAVING_DOCUMENT
+    })
   }
 }
 
@@ -176,11 +196,18 @@ export function setFieldErrorStatus (field, value, error) {
   }
 }
 
-export function setRemoteDocument (document, forceUpdate = true) {
-  return {
-    document,
-    forceUpdate,
-    type: Types.SET_REMOTE_DOCUMENT
+export function setRemoteDocument (remote, forceUpdate = true) {
+  return (dispatch, getState) => {
+    let localStorageKey = getLocalStorageKeyFromState(getState())
+    let draft = LocalStorage.readDocument(localStorageKey)
+
+    dispatch({
+      loadedFromLocalStorage: Boolean(draft),
+      local: draft || {},
+      forceUpdate,
+      remote,
+      type: Types.SET_REMOTE_DOCUMENT
+    })
   }
 }
 
@@ -191,16 +218,28 @@ export function setRemoteDocumentStatus (status) {
   }
 }
 
-export function startNewDocument (context) {
-  return {
-    context,
-    type: Types.START_NEW_DOCUMENT
+export function startNewDocument () {
+  return (dispatch, getState) => {
+    let localStorageKey = getLocalStorageKeyFromState(getState())
+    let document = LocalStorage.readDocument(localStorageKey) || {}
+
+    dispatch({
+      document,
+      type: Types.START_NEW_DOCUMENT
+    })
   }
 }
 
 export function updateLocalDocument (change) {
-  return {
-    change,
-    type: Types.UPDATE_LOCAL_DOCUMENT
+  return (dispatch, getState) => {
+    let localStorageKey = getLocalStorageKeyFromState(getState())
+    let newLocal = Object.assign({}, getState().document.local, change)
+
+    LocalStorage.writeDocument(localStorageKey, newLocal)
+
+    dispatch({
+      change,
+      type: Types.UPDATE_LOCAL_DOCUMENT
+    })
   }
 }

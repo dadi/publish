@@ -12,23 +12,9 @@ function clear (key) {
   }
 }
 
-function getKeyFromContext ({collection, documentId, group}) {
-  let key
-
-  if (documentId) {
-    key = documentId
-  } else if (group) {
-    key = `${group}/${collection.name}`
-  } else {
-    key = collection.name
-  }
-
-  return key
-}
-
 function read (key) {
   if (!window.localStorage) return null
-
+console.log('(LS) Reading:', key)
   try {
     const item = window.localStorage.getItem(key)
     const deserialisedItem = JSON.parse(item)
@@ -41,7 +27,7 @@ function read (key) {
 
 function write (key, payload) {
   if (!window.localStorage) return false
-
+console.log('(LS) Writing:', key, payload)
   try {
     const serialisedItem = JSON.stringify(payload)
 
@@ -53,14 +39,14 @@ function write (key, payload) {
   }
 }
 
-export function clearDocument (context) {
-  return clear(getKeyFromContext(context))
+export function clearDocument (key) {
+  return clear(key)
 }
 
-export function readDocument (context) {
-  return read(getKeyFromContext(context))
+export function readDocument (key) {
+  return read(key)
 }
 
-export function writeDocument (context, value) {
-  return write(getKeyFromContext(context), value)
+export function writeDocument (key, value) {
+  return write(key, value)
 }
