@@ -71,10 +71,12 @@ export function getCurrentApi (apis, urlGroup, urlCollection) {
  * @param {string} urlGroup - The group present in the URL.
  * @param {string} urlCollection - The name of the collection present
  *                                 in the URL.
+ * @param {string} field - The name of the field containing a referenced
+ *                         document being edited.
  *
  * @return {object} The schema for the given collection.
  */
-export function getCurrentCollection (apis, urlGroup, urlCollection) {
+export function getCurrentCollection (apis, urlGroup, urlCollection, field) {
   const api = getCurrentApi(apis, urlGroup, urlCollection)
 
   if (!api || !api.collections) return null
@@ -82,9 +84,24 @@ export function getCurrentCollection (apis, urlGroup, urlCollection) {
   const urlCollectionParts = urlCollection.match(/(.*)-([0-9]+)/)
   const urlCollectionName = urlCollectionParts ? urlCollectionParts[1] : urlCollection
 
-  const collection = api.collections.find(collection => {
+  let collection = api.collections.find(collection => {
     return collection.name === urlCollectionName
   })
+
+  // If we have a referenced field with a valid referenced collection,
+  // we need to return the schema of that collection instead.
+  if (field) {
+    const fieldSchema = collection.fields[field]
+    const referencedCollection = fieldSchema &&
+      fieldSchema.settings &&
+      fieldSchema.settings.collection
+
+    if (referencedCollection) {
+      collection = api.collections.find(collection => {
+        return collection.name === referencedCollection
+      })
+    }
+  }
 
   return collection
 }
