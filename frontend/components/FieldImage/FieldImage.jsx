@@ -60,7 +60,7 @@ export default class FieldImage extends Component {
     return (
       <Label label="Image">
         {src && (
-          <div class={styles['container']}>
+          <div class={styles.container}>
             <LazyLoader
               loadWhenIdle={true}
               >
