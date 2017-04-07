@@ -91,6 +91,11 @@ export default class SyncTable extends Component {
     selectedRows: proptypes.obj,
 
     /**
+     * The maximum number of documents that can be selected at the same time.
+     */
+    selectLimit: proptypes.number,
+
+    /**
      * The name of the column currently being used to sort the rows.
      */
     sortBy: proptypes.string,
@@ -106,6 +111,7 @@ export default class SyncTable extends Component {
     data: [],
     onSort: null,
     selectedRows: {},
+    selectLimit: Infinity,
     selectable: true,
     sortBy: null,
     sortOrder: null
@@ -144,8 +150,9 @@ export default class SyncTable extends Component {
       columns,
       onSelect,
       onSort,
-      selectedRows,
       selectable,
+      selectedRows,
+      selectLimit,
       sortBy,
       sortOrder
     } = this.props
@@ -154,6 +161,7 @@ export default class SyncTable extends Component {
       <Table
         onSelect={onSelect}
         selectable={selectable}
+        selectLimit={selectLimit}
         selectedRows={selectedRows}
       >
         <TableHead>
