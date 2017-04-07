@@ -14,15 +14,6 @@ const VIEWPORT_BREAKPOINTS = {
 // to determine whether all necessary network requests have been issued.
 const NETWORK_DEBOUNCE = 200
 
-// The default schema for a notification
-const NOTIFICATION_DEFAULTS = {
-  dismissAfterRouteChange: true,
-  dismissAfterSeconds: 10,
-  dismissOnHover: true,
-  options: {},
-  type: Constants.NOTIFICATION_TYPE_WARNING
-}
-
 // The initial state
 const initialState = {
   breakpoint: getActiveBreakpoint(window.innerWidth),
@@ -46,14 +37,6 @@ function getActiveBreakpoint (windowWidth) {
   }
 
   return breakpointName
-}
-
-function getNotificationObject (notification) {
-  const notificationObject = Object.assign({}, NOTIFICATION_DEFAULTS, notification, {
-    timestamp: new Date().getTime()
-  })
-
-  return notificationObject
 }
 
 export default function app (state = initialState, action = {}) {
@@ -108,17 +91,6 @@ export default function app (state = initialState, action = {}) {
 
       return state
 
-    // Document action: save document
-    case Types.SAVE_DOCUMENT:
-      if (!action.notification) {
-        return state
-      }
-
-      return {
-        ...state,
-        notification: getNotificationObject(action.notification)
-      }
-
     // App action: set config
     case Types.SET_APP_CONFIG:
       return {
@@ -135,13 +107,13 @@ export default function app (state = initialState, action = {}) {
 
     // App action: set notification
     case Types.SET_NOTIFICATION:
-      if (state.notification && (state.notification.message === action.notification.message)) {
+      if (state.notification && (state.notification.timestamp === action.notification.timestamp)) {
         return state
       }
 
       return {
         ...state,
-        notification: getNotificationObject(action.notification)
+        notification: action.notification
       }
 
     // App action: set screen width
