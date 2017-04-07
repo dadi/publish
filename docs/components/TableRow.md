@@ -31,6 +31,24 @@ A callback function to be executed when the selection checkbox is clicked.
 - default value: `null`
 
 
+### `selectable`
+
+Whether the row is selectable.
+
+- type: `bool`
+- default value: `true`
+
+
+### `selectableMode`
+
+If the table allows multiple rows to be selected (multi), or if it has
+exceeded the maximum number of selected rows (multiDisabled), or if the
+the table only allows a single row to be selected (single).
+
+- type: `enum('multi'|'multiDisabled'|'single')`
+- default value: `'multi'`
+
+
 ### `selected`
 
 Whether the row is currently selected.

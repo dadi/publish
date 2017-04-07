@@ -56,6 +56,20 @@ The number of the current active page.
 - type: `number`
 
 
+### `referencedField`
+
+The name of a reference field currently being edited.
+
+- type: `string`
+
+
+### `selectLimit`
+
+The maximum number of documents that can be selected at the same time.
+
+- type: `number`
+
+
 ### `sort`
 
 The name of the field currently being used to sort the documents.
