@@ -3,7 +3,7 @@ import * as LocalStorage from 'lib/local-storage'
 import * as Types from 'actions/actionTypes'
 import apiBridgeClient from 'lib/api-bridge-client'
 
-function getLocalStorageKeyFromState(state) {
+function getLocalStorageKeyFromState (state) {
   return state.router.locationBeforeTransitions.pathname
 }
 
@@ -202,9 +202,9 @@ export function setRemoteDocument (remote, forceUpdate = true) {
     let draft = LocalStorage.readDocument(localStorageKey)
 
     dispatch({
+      forceUpdate,
       loadedFromLocalStorage: Boolean(draft),
       local: draft || {},
-      forceUpdate,
       remote,
       type: Types.SET_REMOTE_DOCUMENT
     })
