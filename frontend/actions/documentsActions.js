@@ -1,6 +1,6 @@
 import * as Constants from 'lib/constants'
 import * as Types from 'actions/actionTypes'
-import APIBridge from 'lib/api-bridge-client'
+import apiBridgeClient from 'lib/api-bridge-client'
 import {batchActions} from 'lib/redux'
 import {setRemoteDocument} from 'actions/documentActions'
 
@@ -17,13 +17,13 @@ export function fetchDocuments ({
   sortOrder
 }) {
   return (dispatch) => {
-    // We use the APIBridge bundler because we might need to run more than
+    // We use the API Bridge bundler because we might need to run more than
     // one query.
-    const bundler = APIBridge.Bundler()
+    const bundler = apiBridgeClient.getBundler()
 
     // This is the main one, where we retrieve the list of documents.
     bundler.add(
-      APIBridge(api, true)
+      apiBridgeClient(api, true)
         .in(collection)
         .limitTo(count)
         .goToPage(page)
@@ -35,11 +35,11 @@ export function fetchDocuments ({
     // If we're on a nested document, we need to retrieve the parent too.
     if (referencedField) {
       bundler.add(
-        APIBridge(api, true)
+        apiBridgeClient(api, true)
           .in(parentCollection)
           .whereFieldIsEqualTo('_id', parentDocumentId)
           .find()
-      )    
+      )
     }
 
     dispatch(setDocumentListStatus(Constants.STATUS_LOADING))
@@ -50,7 +50,7 @@ export function fetchDocuments ({
       let actions = [
         setDocumentList(documentList, filters)
       ]
-      
+
       if (referencedField) {
         const document = response[1].results[0]
 

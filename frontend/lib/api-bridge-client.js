@@ -137,7 +137,7 @@ module.exports.registerProgressCallback = callback => {
   onUpdate = callback
 }
 
-module.exports.Bundler = () => {
+module.exports.getBundler = () => {
   const APIBridgeBundler = function (api) {
     this.queries = []
 

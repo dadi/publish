@@ -27,13 +27,13 @@ import Socket from 'lib/socket'
 import ConnectionMonitor from 'lib/status'
 import Session from 'lib/session'
 import {getAppConfig, getCurrentApi} from 'lib/app-config'
-import APIBridge from 'lib/api-bridge-client'
+import apiBridgeClient from 'lib/api-bridge-client'
 
 class App extends Component {
   componentWillMount() {
     const {actions} = this.props
 
-    APIBridge.registerProgressCallback(actions.registerNetworkCall)
+    apiBridgeClient.registerProgressCallback(actions.registerNetworkCall)
     ConnectionMonitor(2000).registerStatusChangeCallback(actions.setNetworkStatus)
 
     this.sessionStart()
@@ -149,11 +149,11 @@ class App extends Component {
     let processedApis = []
 
     apisToProcess.forEach((api, apiIndex) => {
-      let bundler = APIBridge.Bundler()
+      let bundler = apiBridgeClient.getBundler()
 
-      return APIBridge(api).getCollections().then(({collections}) => {
+      return apiBridgeClient(api).getCollections().then(({collections}) => {
         collections.forEach(collection => {
-          const query = APIBridge(api, true).in(collection.slug).getConfig()
+          const query = apiBridgeClient(api, true).in(collection.slug).getConfig()
 
           // Add query to bundler
           bundler.add(query)

@@ -1,6 +1,6 @@
 import * as Constants from 'lib/constants'
 import * as Types from 'actions/actionTypes'
-import APIBridge from 'lib/api-bridge-client'
+import apiBridgeClient from 'lib/api-bridge-client'
 
 export function clearRemoteDocument () {
   return {
@@ -16,7 +16,7 @@ export function discardUnsavedChanges () {
 
 export function fetchDocument ({api, collection, id, fields}) {
   return (dispatch) => {
-    const apiBridge = APIBridge(api)
+    const apiBridge = apiBridgeClient(api)
       .in(collection)
       .whereFieldIsEqualTo('_id', id)
 
@@ -57,7 +57,7 @@ export function saveDocument ({api, collection, document, documentId}) {
     const isUpdate = Boolean(documentId)
 
     let payload = {}
-    let apiBridge = APIBridge(api).in(collection.name)
+    let apiBridge = apiBridgeClient(api).in(collection.name)
 
     dispatch(setRemoteDocumentStatus(Constants.STATUS_SAVING))
 
@@ -75,7 +75,7 @@ export function saveDocument ({api, collection, document, documentId}) {
 
     // Handling reference fields. We might need to run multiple queries, so
     // we use the API Bridge bundler.
-    const referenceBundler = APIBridge.Bundler()
+    const referenceBundler = apiBridgeClient.getBundler()
     let referenceBundlerMap = []
 
     // We iterate through the payload and find reference fields.
@@ -94,7 +94,7 @@ export function saveDocument ({api, collection, document, documentId}) {
         // The document already exists, we need to update it.
         if (referencedDocument._id) {
           referenceBundler.add(
-            APIBridge(api, true)
+            apiBridgeClient(api, true)
               .in(referencedCollection)
               .whereFieldIsEqualTo('_id', referencedDocument._id)
               .update(referencedDocument)
@@ -102,6 +102,7 @@ export function saveDocument ({api, collection, document, documentId}) {
 
           referenceBundlerMap.push(field)
         } else {
+
           // The document does not exist, we need to create it.
         }
       }
@@ -128,8 +129,9 @@ export function saveDocument ({api, collection, document, documentId}) {
 
       return apiBridge.then(response => {
         if (response.results && response.results.length) {
-          const newRemoteDocument = isUpdate ? Object.assign({}, currentRemote, payload)
-            : response.results[0]
+          const newRemoteDocument = isUpdate ?
+            Object.assign({}, currentRemote, payload) :
+            response.results[0]
 
           // (!) Ideally, we'd use `response.results[0]` to set the new remote
           // document, as that's the freshest representation of the document.
