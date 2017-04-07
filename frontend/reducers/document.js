@@ -23,7 +23,7 @@ export default function document (state = initialState, action = {}) {
 
     // Document action: discard unsaved changes
     case Types.DISCARD_UNSAVED_CHANGES:
-      LocalStorage.clearDocument(action.context)
+      //LocalStorage.clearDocument(action.context)
 
       return {
         ...state,
@@ -35,19 +35,20 @@ export default function document (state = initialState, action = {}) {
 
     // Document action: user leaving document
     case Types.USER_LEAVING_DOCUMENT:
-      if (Object.keys(state.local).length > 0) {
-        LocalStorage.writeDocument(action.context, state.local)
+      if (state.local && (Object.keys(state.local).length > 0)) {
+        //LocalStorage.writeDocument(action.context, state.local)
       }
 
       return state
 
     // Document action: save document
     case Types.SAVE_DOCUMENT:
-      LocalStorage.clearDocument(action.context)
+      //LocalStorage.clearDocument(action.context)
 
       return {
         ...state,
-        dirty: false
+        dirty: false,
+        remoteStatus: Constants.STATUS_IDLE
       }
 
     // Document action: set document peers
@@ -101,9 +102,18 @@ export default function document (state = initialState, action = {}) {
 
     // Document action: set remote document
     case Types.SET_REMOTE_DOCUMENT:
+      let {document, forceUpdate} = action
+
+      // If there is already a document in the store with the same ID as the one
+      // we're trying to add AND `forceUpdate` was set to false, we don't need
+      // to update the store.
+      if (!forceUpdate && state.remote && (state.remote._id === document._id)) {
+        return state
+      }
+
       // We start by trying to load the document with the given ID from local
       // storage.
-      let draftDocument = LocalStorage.readDocument(action.context)
+      let draftDocument = null //LocalStorage.readDocument(action.context)
       let localDocument = draftDocument || {}
 
       return {
@@ -128,7 +138,7 @@ export default function document (state = initialState, action = {}) {
 
     // Document action: start new document
     case Types.START_NEW_DOCUMENT:
-      const newDocument = LocalStorage.readDocument(action.context) || {}
+      const newDocument = /*LocalStorage.readDocument(action.context) ||*/ {}
 
       return {
         ...state,
@@ -148,7 +158,7 @@ export default function document (state = initialState, action = {}) {
         }
       }
 
-      LocalStorage.writeDocument(action.context, newState.local)
+      //LocalStorage.writeDocument(action.context, newState.local)
 
       return newState
 
