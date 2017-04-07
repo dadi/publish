@@ -86,6 +86,14 @@ The callback receives as arguments the column label, the column id and the sort 
 - default value: `null`
 
 
+### `selectLimit`
+
+The maximum number of documents that can be selected at the same time.
+
+- type: `number`
+- default value: `Infinity`
+
+
 ### `selectable`
 
 Whether rows are selectable. When `true`, check boxes will automatically be added to the table head and to each row.
