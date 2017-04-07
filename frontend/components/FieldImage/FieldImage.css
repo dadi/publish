@@ -10,9 +10,6 @@
   display: flex;
   align-items: center;
   flex-wrap: nowrap;
-}
-
-.show-preview {
   background-color: #fafafa;
   height: auto;
   max-height: 130px;

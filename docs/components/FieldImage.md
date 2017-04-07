@@ -1,4 +1,4 @@
-`FieldAsset`
+`FieldImage`
 ============
 
 
