@@ -1,3 +1,5 @@
+export const BATCH_ACTIONS = 'BATCH_ACTIONS'
+
 //
 // App
 //
