@@ -85,12 +85,27 @@ class App extends Component {
       <Router history={history}>
         <HomeView path="/" authenticate />
         <PasswordReset path="/reset" authenticate/>
-        {hasRoutes && (<DocumentEditView path="/:group/:collection/document/edit/:documentId?/:section?/:field?" authenticate />)}
-        <DocumentEditView path="/:collection/document/edit/:documentId?/:section?/:field?" authenticate />
-        {hasRoutes && (<DocumentCreateView path="/:group/:collection/document/new/:section?" authenticate />)}
+
+        {hasRoutes && (
+          <DocumentListView path="/:group/:collection/document/edit/:documentId?/select/:referencedField?/:page?" authenticate />
+        )}
+        <DocumentListView path="/:collection/document/edit/:documentId?/select/:referencedField?/:page?" authenticate />
+
+        {hasRoutes && (
+          <DocumentEditView path="/:group/:collection/document/edit/:documentId?/:section?" authenticate />
+        )}
+        <DocumentEditView path="/:collection/document/edit/:documentId?/:section?" authenticate />
+
+        {hasRoutes && (
+          <DocumentCreateView path="/:group/:collection/document/new/:section?" authenticate />
+        )}
         <DocumentCreateView path="/:collection/document/new/:section?" authenticate />
+
+        {hasRoutes && (
+          <DocumentListView path="/:group/:collection/documents/:page?" authenticate />
+        )}
         <DocumentListView path="/:collection/documents/:page?" authenticate />
-        {hasRoutes && (<DocumentListView path="/:group/:collection/documents/:page?" authenticate />)}
+
         <ProfileEditView path="/profile/:section?" authenticate />
         <SignInView path="/sign-in" />
         <SignOutView path="/sign-out" />
