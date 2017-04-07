@@ -30,7 +30,7 @@ class SignInView extends Component {
 
     if (state.user) {
       // Redirect signed-in user
-      route('/profile')
+      route('/')
     }
   }
 
@@ -94,7 +94,7 @@ class SignInView extends Component {
       if (user && !user.err) {
         actions.setRemoteUser(user)
 
-        route('/profile')
+        route('/')
       } else {
         actions.signOut()
         this.setState({

@@ -65,6 +65,11 @@ class DocumentList extends Component {
     page: proptypes.number,
 
     /**
+     * When on a reference field, contains the ID of the parent document.
+     */
+    parentDocumentId: proptypes.string,
+
+    /**
      * The name of a reference field currently being edited.
      */
     referencedField: proptypes.string,
