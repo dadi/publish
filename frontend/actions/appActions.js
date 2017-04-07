@@ -1,4 +1,13 @@
+import * as Constants from 'lib/constants'
 import * as Types from 'actions/actionTypes'
+
+const NOTIFICATION_DEFAULTS = {
+  dismissAfterRouteChange: true,
+  dismissAfterSeconds: 10,
+  dismissOnHover: true,
+  options: {},
+  type: Constants.NOTIFICATION_TYPE_WARNING
+}
 
 export function registerNetworkCall (status, onComplete) {
   return {
@@ -23,8 +32,12 @@ export function setNetworkStatus (networkStatus) {
 }
 
 export function setNotification (notification) {
+  let notificationObject = Object.assign({}, NOTIFICATION_DEFAULTS, notification, {
+    timestamp: new Date().getTime()
+  })
+
   return {
-    notification,
+    notification: notificationObject,
     type: Types.SET_NOTIFICATION
   }
 }

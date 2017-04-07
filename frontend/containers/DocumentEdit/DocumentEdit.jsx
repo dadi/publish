@@ -14,15 +14,19 @@ import * as appActions from 'actions/appActions'
 import * as documentActions from 'actions/documentActions'
 
 import APIBridge from 'lib/api-bridge-client'
+import {batchActions} from 'lib/redux'
 import {buildUrl, createRoute} from 'lib/router'
-import {connectHelper, slugify, Case} from 'lib/util'
+import {connectHelper, filterHiddenFields, slugify, Case} from 'lib/util'
 import {getCurrentApi, getCurrentCollection} from 'lib/app-config'
 
 import DocumentEditToolbar from 'components/DocumentEditToolbar/DocumentEditToolbar'
 import FieldAsset from 'components/FieldAsset/FieldAsset'
 import FieldBoolean from 'components/FieldBoolean/FieldBoolean'
+import FieldReference from 'components/FieldReference/FieldReference'
 import FieldString from 'components/FieldString/FieldString'
 import SubNavItem from 'components/SubNavItem/SubNavItem'
+
+const actions = {...appActions, ...documentActions}
 
 /**
  * The interface for editing a document.
@@ -56,6 +60,11 @@ class DocumentEdit extends Component {
     onPageTitle: proptypes.func,
 
     /**
+     * The name of a reference field currently being edited.
+     */
+    referencedField: proptypes.string,
+
+    /**
      * The current active section (if any).
      */
     section: proptypes.string,
@@ -69,21 +78,21 @@ class DocumentEdit extends Component {
   constructor(props) {
     super(props)
 
-    this.state.hasTriedSubmitting = false
+    this.state.saveAttempt = null
   }
 
   shouldComponentUpdate(nextProps, nextState) {
     const {
-      actions,
       collection,
       documentId,
       group,
       onPageTitle,
+      referencedField,
       section,
       state
     } = this.props
 
-    const currentCollection = getCurrentCollection(state.api.apis, group, collection)
+    const currentCollection = getCurrentCollection(state.api.apis, group, collection, referencedField)
     const method = documentId ? 'edit' : 'new'
 
     if (typeof onPageTitle === 'function') {
@@ -91,7 +100,7 @@ class DocumentEdit extends Component {
     }
 
     if (currentCollection) {
-      const collectionFields = this.filterHiddenFields(currentCollection.fields)
+      const collectionFields = filterHiddenFields(currentCollection.fields, 'editor')
       const fields = this.groupFields(collectionFields)
 
       if (section) {
@@ -107,19 +116,19 @@ class DocumentEdit extends Component {
       }
     }
 
+    this.currentApi = getCurrentApi(state.api.apis, group, collection)
     this.currentCollection = currentCollection
   }
 
   componentDidUpdate(previousProps, previousState) {
     const {
-      actions,
+      dispatch,
       documentId,
       group,
       state
     } = this.props
     const document = state.document
-    const documentIdHasChanged = documentId !== previousProps.documentId
-    const {hasTriedSubmitting} = this.state
+    const {saveAttempt} = this.state
     const previousDocument = previousProps.state.document
     const context = {
       collection: this.currentCollection,
@@ -131,7 +140,7 @@ class DocumentEdit extends Component {
     if (!documentId) {
       // If there isn't a document in `document.local`, we start a new one.
       if (!document.local && this.currentCollection) {
-        actions.startNewDocument(context)
+        dispatch(actions.startNewDocument(context))
       }
 
       return
@@ -144,21 +153,27 @@ class DocumentEdit extends Component {
     // - There is no document in the store OR the document id has changed AND
     // - All APIs have collections
     const notLoading = document.remoteStatus !== Constants.STATUS_LOADING
+      && document.remoteStatus !== Constants.STATUS_SAVING
+    const documentIdHasChanged = document.remote &&
+      (documentId !== document.remote._id)
     const needsFetch = !document.remote || documentIdHasChanged
     const allApisHaveCollections = state.api.apis.filter(api => !api.collections).length === 0
 
-    if (notLoading && needsFetch && allApisHaveCollections) {
-      this.fetchDocument(documentId)
+    if (notLoading && needsFetch && allApisHaveCollections && this.currentCollection) {
+      this.fetchDocument()
     }
 
-    // If `validationErrors` was previously `null` but now has a value (even
-    // if an empty object), it means that we have just started validating the
-    // document. If `hasTriedSubmitting` is also true, it means we are trying
-    // to save the document, so we call  `processSave()`.
-    const hasBeenValidated = !previousDocument.validationErrors && document.validationErrors
+    // Are we trying to save the document?
+    if (!previousState.saveAttempt && saveAttempt) {
+      this.processSave(saveAttempt)
+    }
 
-    if (hasBeenValidated && hasTriedSubmitting) {
-      this.processSave(hasTriedSubmitting)
+    const wasSaving = previousDocument.remoteStatus === Constants.STATUS_SAVING
+    const isIdle = document.remoteStatus === Constants.STATUS_IDLE
+
+    // Have we just saved a document?
+    if (wasSaving && isIdle) {
+      this.processSaveResult()
     }
 
     if (!previousDocument.local && document.local && document.loadedFromLocalStorage) {
@@ -169,44 +184,45 @@ class DocumentEdit extends Component {
         }
       }
 
-      actions.setNotification(notification)
+      dispatch(actions.setNotification(notification))
     }
   }
 
   componentWillMount() {
-    const {collection, group, state} = this.props
+    const {
+      collection,
+      group,
+      referencedField,
+      state
+    } = this.props
 
-    this.currentCollection = getCurrentCollection(state.api.apis, group, collection)
+    this.currentCollection = getCurrentCollection(state.api.apis, group, collection, referencedField)
+    this.currentApi = getCurrentApi(state.api.apis, group, collection)
     this.userLeavingDocumentHandler = this.handleUserLeavingDocument.bind(this)
 
     window.addEventListener('beforeunload', this.userLeavingDocumentHandler)
   }
 
   componentWillUnmount() {
-    const {actions} = this.props
-
-    actions.clearRemoteDocument()
-
     window.removeEventListener('beforeunload', this.userLeavingDocumentHandler)
   }
 
   render() {
     const {
-      actions,
       collection,
       documentId,
       group,
+      referencedField,
       section,
       state
     } = this.props
-
     const document = state.document
 
     if (document.remoteStatus === Constants.STATUS_LOADING || !this.currentCollection || !document.local) {
       return null
     }
 
-    const collectionFields = this.filterHiddenFields(this.currentCollection.fields)
+    const collectionFields = filterHiddenFields(this.currentCollection.fields, 'editor')
     const fields = this.groupFields(collectionFields)
     const sections = fields.sections || [{
       slug: 'other',
@@ -219,7 +235,13 @@ class DocumentEdit extends Component {
           .length
     const hasConnectionIssues = state.app.networkStatus !== Constants.NETWORK_OK
     const method = documentId ? 'edit' : 'new'
-    const documentData = Object.assign({}, document.remote, document.local)
+
+    let documentData = Object.assign({}, document.remote, document.local)
+
+    // (!) This will be used once we add the ability to edit nested documents.
+    //if (referencedField) {
+    //  documentData = documentData[referencedField]
+    //}
 
     return (
       <div class={styles.container}>
@@ -314,52 +336,29 @@ class DocumentEdit extends Component {
   }
 
   // Fetches a document from the remote API
-  fetchDocument(documentId) {
+  fetchDocument() {
     const {
-      actions,
       collection,
+      dispatch,
+      documentId,
       group,
       state
     } = this.props
-    const currentApi = getCurrentApi(state.api.apis, group, collection)
-    const currentCollection = getCurrentCollection(state.api.apis, group, collection)
-    const collectionFields = Object.keys(this.filterHiddenFields(currentCollection.fields))
-      .map(key => key)
 
-    collectionFields.push('createdAt', 'createdBy', 'lastModifiedAt', 'lastModifiedBy')
+    // As far as the fetch method is concerned, we're only interested in the
+    // collection of the main document, not the referenced one.
+    const documentCollection = getCurrentCollection(state.api.apis, group, collection)
+    const collectionFields = Object.keys(filterHiddenFields(documentCollection.fields, 'editor'))
+      .concat(['createdAt', 'createdBy', 'lastModifiedAt', 'lastModifiedBy'])
 
-    actions.setRemoteDocumentStatus(Constants.STATUS_LOADING)
+    const query = {
+      api: this.currentApi,
+      collection: documentCollection.name,
+      id: documentId,
+      fields: collectionFields
+    }
 
-    return APIBridge(currentApi)
-      .in(currentCollection.name)
-      .whereFieldIsEqualTo('_id', documentId)
-      .useFields(collectionFields)
-      .find()
-      .then(response => {
-        if (!response.results.length) return
-
-        const document = response.results[0]
-      
-        actions.setRemoteDocument(document, {
-          collection: currentCollection,
-          documentId,
-          group
-        })
-      })
-  }
-
-  filterHiddenFields(fields) {
-    return Object.assign({}, ...Object.keys(fields)
-      .filter(key => {
-        // If the publish && display block don't exist, or if list is true allow
-        // this field to pass.
-        return !fields[key].publish 
-          || !fields[key].publish.display 
-          || fields[key].publish.display.editor
-      }).map(key => {
-        return {[key]: fields[key]}
-      })
-    )
+    dispatch(actions.fetchDocument(query))
   }
 
   // Groups fields by section
@@ -410,68 +409,68 @@ class DocumentEdit extends Component {
   }
 
   handleDiscardUnsavedChanges(context) {
-    const {actions} = this.props
+    const {actions, dispatch} = this.props
 
-    actions.discardUnsavedChanges(context)
+    dispatch(actions.discardUnsavedChanges(context))
   }
 
   // Handles the callback that fires whenever a field changes and the new value
   // is ready to be sent to the store.
   handleFieldChange(fieldName, value) {
     const {
-      actions,
       collection,
+      dispatch,
       documentId,
       group
     } = this.props
 
-    actions.updateLocalDocument({
+    dispatch(actions.updateLocalDocument({
       [fieldName]: value
     }, {
       collection: this.currentCollection,
       documentId,
       group
-    })
+    }))
   }
 
   // Handles the callback that fires whenever there's a new validation error
   // in a field or when a validation error has been cleared.
   handleFieldError(fieldName, hasError, value) {
-    const {actions} = this.props
+    const {dispatch} = this.props
 
-    actions.setFieldErrorStatus(fieldName, value, hasError)
+    dispatch(actions.setFieldErrorStatus(fieldName, value, hasError))
   }
 
   // Handles a click on the save button
   handleSave(saveMode) {
-    const {hasTriedSubmitting} = this.state
+    const {saveAttempt} = this.state
 
-    // If we've tried to submit before, then the initial validation step
+    // If we've tried to save before, then the initial validation step
     // has been done, so we can process the save straight away.
-    if (hasTriedSubmitting) {
+    if (saveAttempt) {
       this.processSave(saveMode)
     } else {
-      // Otherwise, we set the `hasTriedSubmitting` state, which will force
+      // Otherwise, we set the `saveAttempt` state, which will force
       // fields to validate. The save will be processed on the next update
       // call.
       this.setState({
-        hasTriedSubmitting: saveMode
+        saveAttempt: saveMode
       })
     }
   }
 
   handleUserLeavingDocument() {
     const {
-      actions,
+      dispatch,
       documentId,
       group
     } = this.props
 
-    actions.registerUserLeavingDocument({
+    dispatch(actions.registerUserLeavingDocument({
       collection: this.currentCollection,
       documentId,
       group
-    })
+    }))
   }
 
   // Processes the save of the document
@@ -492,56 +491,81 @@ class DocumentEdit extends Component {
     // If there are any validation errors, we abort the save operation.
     if (hasValidationErrors) return
 
-    let notification = {
-      dismissAfterSeconds: 10,
-      type: Constants.NOTIFICATION_TYPE_SUCCESS
-    }
+    this.saveDocument(saveMode !== 'saveAsDuplicate' ? documentId : null)
+  }
+
+  processSaveResult() {
+    const {
+      collection,
+      dispatch,
+      group,
+      section,
+      state
+    } = this.props
+    const newDocument = !Boolean(this.props.documentId)
+    const documentId = state.document.remote._id
+    const saveMode = this.state.saveAttempt
 
     switch (saveMode) {
       // Save
       case 'save':
-        notification.message = `The document has been ${documentId ? 'updated' : 'created'}`
+        route(buildUrl(group, collection, 'document', 'edit', documentId, section))
 
-        return this.saveDocument(documentId, notification).then(newDocumentId => {
-          // If we're creating a new document (either by starting a blank one or by
-          // duplicating an existing one), we redirect to the new document ID.
-          if (documentId !== newDocumentId) {
-            route(buildUrl(group, collection, 'document', 'edit', newDocumentId, section))
-          }
-        })
+        dispatch(actions.setNotification({
+          message:`The document has been ${newDocument ? 'created' : 'updated'}`
+        }))
+
+        break
 
       // Save and create new
       case 'saveAndCreateNew':
-        notification.message = `The document has been ${documentId ? 'updated' : 'created'}`
+        route(buildUrl(group, collection, 'document', 'new'))
 
-        return this.saveDocument(documentId).then(newDocumentId => {
-          route(buildUrl(group, collection, 'document', 'new'))
-        })
+        dispatch(
+          batchActions(
+            actions.setNotification({
+              message: `The document has been ${newDocument ? 'created' : 'updated'}`
+            }),
+            actions.clearRemoteDocument()
+          )
+        )
+
+        break
 
       // Save and go back
       case 'saveAndGoBack':
-        notification.message = `The document has been ${documentId ? 'updated' : 'created'}`
+        route(buildUrl(group, collection, 'documents'))
 
-        return this.saveDocument(documentId).then(newDocumentId => {
-          route(buildUrl(group, collection, 'documents'))
-        })
+        dispatch(actions.setNotification({
+          message: `The document has been ${newDocument ? 'created' : 'updated'}`
+        }))
+
+        break
 
       // Save as duplicate
       case 'saveAsDuplicate':
-        notification.message = `The document has been created`
+        route(buildUrl(group, collection, 'document', 'edit', newDocumentId, section))
 
-        return this.saveDocument().then(newDocumentId => {
-          route(buildUrl(group, collection, 'document', 'edit', newDocumentId, section))
-        })
+        dispatch(actions.setNotification({
+          message: `The document has been created`
+        }))
+
+        break
     }
   }
 
   // Renders a field, deciding which component to use based on the field type
   renderField(field, value) {
-    const {app, document} = this.props.state
+    const {
+      collection,
+      documentId,
+      group,
+      state
+    } = this.props
+    const {app, document} = state
     const hasError = document.validationErrors
       && document.validationErrors[field._id]
-    const {hasTriedSubmitting} = this.state
+    const {saveAttempt} = this.state
 
     // As per API docs, validation messages are in the format "must be xxx", which
     // assumes that something (probably the name of the field) will be prepended to
@@ -558,7 +582,41 @@ class DocumentEdit extends Component {
         fieldElement = (
           <FieldBoolean
             error={error}
-            forceValidation={hasTriedSubmitting}
+            forceValidation={saveAttempt}
+            onChange={this.handleFieldChange.bind(this)}
+            onError={this.handleFieldError.bind(this)}
+            value={value}
+            schema={field}
+          />
+        )
+
+        break
+
+      case 'Image':
+        fieldElement = (
+          <FieldAsset
+            error={error}
+            config={app.config.FieldAsset}
+            showPreview={true}
+            onChange={this.handleFieldChange.bind(this)}
+            onError={this.handleFieldError.bind(this)}
+            value={value}
+            schema={field}
+          />
+        )
+
+        break
+
+      case 'Reference':
+        fieldElement = (
+          <FieldReference
+            currentApi={this.currentApi}
+            currentCollection={this.currentCollection}
+            collection={collection}
+            documentId={documentId}
+            error={error}
+            forceValidation={saveAttempt}
+            group={group}
             onChange={this.handleFieldChange.bind(this)}
             onError={this.handleFieldError.bind(this)}
             value={value}
@@ -572,7 +630,7 @@ class DocumentEdit extends Component {
         fieldElement = (
           <FieldString
             error={error}
-            forceValidation={hasTriedSubmitting}
+            forceValidation={saveAttempt}
             onChange={this.handleFieldChange.bind(this)}
             onError={this.handleFieldError.bind(this)}
             value={value}
@@ -581,94 +639,34 @@ class DocumentEdit extends Component {
         )
 
         break
-
-        case 'Image':
-          fieldElement = (
-            <FieldAsset
-              error={error}
-              config={app.config.FieldAsset}
-              showPreview={true}
-              onChange={this.handleFieldChange.bind(this)}
-              onError={this.handleFieldError.bind(this)}
-              value={value}
-              schema={field}
-            />
-          )
-
-          break
     }
 
     return fieldElement ? <div class={styles.field}>{fieldElement}</div> : null
   }
 
-  saveDocument(documentId, successNotification) {
+  saveDocument(documentId) {
     const {
-      actions,
       collection,
+      dispatch,
       group,
       section,
       state
     } = this.props
-    const currentApi = getCurrentApi(state.api.apis, group, collection)
-    const currentCollection = getCurrentCollection(state.api.apis, group, collection)
-    const collectionFields = this.filterHiddenFields(currentCollection.fields)
     let document = state.document.local
 
     // If we're creating a new document, we need to inject any required Boolean
     // fields.
     if (!documentId) {
+      document = Object.assign({}, state.document.remote, state.document.local)
       document = this.addRequiredBooleanFieldsToDocument(document)
     }
 
-    // Cycle through referenced documents
-    Object.keys(document).forEach(docField => {
-      let fieldMatch = Object.keys(collectionFields).find(field => docField === field)
-
-      if (fieldMatch && collectionFields[fieldMatch].type === 'Reference') {
-        if (Object.is(typeof document[fieldMatch]._id, String)) {
-          // Existing referenced document
-        } else {
-          // New Reference document
-
-        }
-      }
-    })
-
-    // Initialising API bridge
-    let apiBridge = APIBridge(currentApi).in(currentCollection.name)
-
-    // If we have a documentId, we're updating an existing document.
-    if (documentId) {
-      apiBridge = apiBridge.whereFieldIsEqualTo('_id', documentId).update(document)
-    } else {
-      // If not, we're creating a new document.
-      apiBridge = apiBridge.create(document)
-    }
-
-    return apiBridge.then(response => {
-      if (response.results && response.results.length) {
-        actions.saveDocument({
-          collection: currentCollection,
-          documentId,
-          group
-        }, successNotification)
-
-        return response.results[0]._id
-      }
-
-      throw 'SAVE_ERROR'
-    }).catch(response => {
-      if (response.errors && response.errors.length) {
-        // We should be able to do the same validation as API, which means that
-        // in theory we should never get to the point where we allow the form
-        // to be submitted and still get validation errors from API. However,
-        // if that happens, we treat the errors from the response in the same
-        // way we treat the local ones, adding them to the document store.
-        actions.setErrorsFromRemoteApi(response.errors)
-      } else {
-        throw 'SAVE_ERROR'
-      }
-    })
+    dispatch(actions.saveDocument({
+      api: this.currentApi,
+      collection: this.currentCollection,
+      document,
+      documentId
+    }))
   }
 }
 
@@ -677,6 +675,5 @@ export default connectHelper(
     api: state.api,
     app: state.app,
     document: state.document
-  }),
-  dispatch => bindActionCreators({...appActions, ...documentActions}, dispatch)
+  })
 )(DocumentEdit)
