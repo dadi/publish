@@ -6,7 +6,7 @@ import * as Types from 'actions/actionTypes'
 const initialState = {
   list: null,
   query: null,
-  selectedDocuments: [],
+  selected: [],
   status: Constants.STATUS_IDLE
 }
 
@@ -28,17 +28,10 @@ export default function document (state = initialState, action = {}) {
         ...state,
         list: null,
         query: null,
-        selectedDocuments: [],
+        selected: [],
         sortBy: null,
         sortOrder: null,
         status: Constants.STATUS_IDLE
-      }
-
-    // Action: set document list selection.
-    case Types.SET_DOCUMENT_SELECTION:
-      return {
-        ...state,
-        selectedDocuments: action.selectedDocuments
       }
 
     // Action: set document loading status.
@@ -46,6 +39,13 @@ export default function document (state = initialState, action = {}) {
       return {
         ...state,
         status: action.status
+      }
+
+    // Action: set document list selection.
+    case Types.SET_DOCUMENT_SELECTION:
+      return {
+        ...state,
+        selected: action.selectedDocuments
       }
 
     // Action: user signed out
