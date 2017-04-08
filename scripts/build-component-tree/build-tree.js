@@ -4,7 +4,7 @@ const archy = require('archy')
 const fs = require('fs')
 const path = require('path')
 
-const OUTPUT_PATH  = process.argv[2] || __dirname
+const OUTPUT_PATH = process.argv[2] || __dirname
 
 function readInput (callback) {
   let json = ''
@@ -44,9 +44,9 @@ function transformNodename (nodeName) {
   const extension = path.extname(nodeName)
   const componentName = path.basename(nodeName, extension)
   const directories = path.dirname(nodeName).split(path.sep)
-  const componentType = directories[directories.length - 2]
+  //const componentType = directories[directories.length - 2]
 
-  //return `${componentName} (${componentType})`
+  // return `${componentName} (${componentType})`
   return componentName
 }
 
