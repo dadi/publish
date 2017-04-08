@@ -3,18 +3,27 @@
 const fs = require('fs')
 const path = require('path')
 const postcss = require('postcss')
-const postcssCustomProperties = require('postcss-custom-properties')
 const postcssCustomMedia = require('postcss-custom-media')
+const postcssCustomProperties = require('postcss-custom-properties')
 const webpack = require('webpack')
+
+const ComponentTreePlugin = require('component-tree-webpack-plugin')
 const ExtractTextPlugin = require('extract-text-webpack-plugin')
-const WebpackOnBuildPlugin = require('on-build-webpack')
 const UglifyJSPlugin = require('uglifyjs-webpack-plugin')
+const WebpackOnBuildPlugin = require('on-build-webpack')
+const WebpackPreBuildPlugin = require('pre-build-webpack')
 
 const ENV = process.env.NODE_ENV || 'production'
 const ENABLE_SOURCE_MAP = (process.env.ENABLE_SOURCE_MAP !== false)
-
-const PATH_CSS = 'main.css'
-const PATH_PUBLIC = 'public'
+const PATHS = {
+  COMPONENT_TREE: '/../component-map.json',
+  COMPONENTS: path.resolve(__dirname, 'frontend/components'),
+  CONTAINERS: path.resolve(__dirname, 'frontend/containers'),
+  CSS: 'main.css',
+  FIELD_COMPONENT_LIST: 'frontend/lib/field-components.json',
+  PUBLIC: 'public',
+  VIEWS: path.resolve(__dirname, 'frontend/views')
+}
 
 module.exports = {
   entry: path.resolve(__dirname, 'frontend/index.jsx'),
@@ -26,7 +35,12 @@ module.exports = {
       {
         test: /\.jsx|js?$/,
         exclude: /node_modules/,
-        loader: 'babel-loader'
+        use: {
+          loader: 'babel-loader',
+          options: {
+            cacheDirectory: true
+          }
+        }
       },
       {
         test: /\.(png|woff|woff2|eot|ttf|svg)(\?.*$|$)/,
@@ -77,21 +91,44 @@ module.exports = {
   },
 
   output: {
-    path: path.resolve(__dirname, PATH_PUBLIC),
+    path: path.resolve(__dirname, PATHS.PUBLIC),
     publicPath: '/',
     filename: 'bundle.js'
   },
 
   plugins: ([
     new webpack.NoEmitOnErrorsPlugin(),
+
     new webpack.DefinePlugin({
       'process.env': JSON.stringify({ NODE_ENV: ENV })
     }),
-    new ExtractTextPlugin({
-      filename: PATH_CSS
+
+    new ComponentTreePlugin({
+      directories: [
+        PATHS.COMPONENTS,
+        PATHS.CONTAINERS,
+        PATHS.VIEWS
+      ],
+      extensions: ['.jsx'],
+      outputPath: PATHS.COMPONENT_TREE
     }),
-    new WebpackOnBuildPlugin((stats) => {
-      let fullCssPath = path.resolve(__dirname, PATH_PUBLIC, PATH_CSS)
+
+    new ExtractTextPlugin({
+      filename: PATHS.CSS
+    }),
+
+    // Build JSON file with field components
+    new WebpackPreBuildPlugin(stats => {
+      let components = fs.readdirSync(PATHS.COMPONENTS).filter(item => {
+        return item.indexOf('Field') === 0
+      })
+
+      fs.writeFileSync(PATHS.FIELD_COMPONENT_LIST, JSON.stringify(components))
+    }),
+
+    // Process CSS Custom Properties and Custom Media
+    new WebpackOnBuildPlugin(stats => {
+      let fullCssPath = path.resolve(__dirname, PATHS.PUBLIC, PATHS.CSS)
       let css = fs.readFileSync(fullCssPath, 'utf8')
       let processedCss = postcss().use(postcssCustomProperties({
         preserve: true
