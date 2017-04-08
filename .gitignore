@@ -17,3 +17,6 @@ public/main.css
 
 # Webpack
 stats.json
+
+component-map.json
+frontend/lib/field-components.json

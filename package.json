@@ -6,7 +6,7 @@
   "scripts": {
     "build": "webpack --progress",
     "profile": "webpack --progress --profile --json > stats.json",
-    "build-docs": "rm -rf docs/components/* && react-docgen --exclude ['/^(ConfigSchema$)/g'] frontend/components | node scripts/build-docs/build-docs.js docs/components; rm -rf docs/containers/* && react-docgen --exclude ['/^(ConfigSchema$)/g'] frontend/containers | node scripts/build-docs/build-docs.js docs/containers",
+    "build-docs": "rm -rf docs/components/* && react-docgen --exclude ['/^(ConfigSchema$)/g'] frontend/components | node scripts/build-docs/build-docs.js docs/components; rm -rf docs/containers/* && react-docgen --exclude ['/^(ConfigSchema$)/g'] frontend/containers | node scripts/build-docs/build-docs.js docs/containers; cat component-map.json | node scripts/build-component-tree/build-tree.js docs/component-architecture.md",
     "create-component": "node scripts/create-component/create-component.js",
     "init": "validate-commit-msg",
     "lint": "eslint frontend",
@@ -67,12 +67,12 @@
     "ws": "2.0.0"
   },
   "devDependencies": {
+    "archy": "^1.0.0",
     "autoprefixer": "^6.7.3",
     "babel": "^6.23.0",
     "babel-core": "^6.14.0",
     "babel-eslint": "^7.2.0",
     "babel-loader": "^6.4.1",
-    "babel-plugin-component-tree": "file:///Users/eduardoboucas/Sites/babel-plugin-component-tree",
     "babel-plugin-transform-decorators-legacy": "^1.3.4",
     "babel-plugin-transform-es2015-template-literals": "^6.22.0",
     "babel-plugin-transform-react-jsx": "^6.8.0",
@@ -81,6 +81,7 @@
     "babel-preset-react": "^6.16.0",
     "babel-preset-stage-0": "^6.24.1",
     "babel-preset-stage-2": "^6.18.0",
+    "component-tree-webpack-plugin": "^1.0.0",
     "css-loader": "^0.26.0",
     "eslint": "^3.18.0",
     "extract-text-webpack-plugin": "^2.1.0",
@@ -100,6 +101,7 @@
     "postcss-custom-media": "^5.0.1",
     "postcss-custom-properties": "^5.0.2",
     "postcss-loader": "^1.3.0",
+    "pre-build-webpack": "^0.1.0",
     "preact": "^6.4.0",
     "preact-compat": "^3.0.0",
     "preact-redux": "^1.2.0",
