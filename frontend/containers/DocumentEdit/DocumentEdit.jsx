@@ -528,19 +528,11 @@ class DocumentEdit extends Component {
       // Save and go back
       case 'saveAndGoBack':
         route(buildUrl(group, collection, 'documents'))
-<<<<<<< HEAD
 
         dispatch(actions.setNotification({
           message: `The document has been ${newDocument ? 'created' : 'updated'}`
         }))
 
-=======
-
-        dispatch(actions.setNotification({
-          message: `The document has been ${newDocument ? 'created' : 'updated'}`
-        }))
-
->>>>>>> daaa3c18825db3906e9bac893b839d7e55f9eb8b
         break
 
       // Save as duplicate
