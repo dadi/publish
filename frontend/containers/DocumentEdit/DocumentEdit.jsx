@@ -19,6 +19,7 @@ import {batchActions} from 'lib/redux'
 import {buildUrl, createRoute} from 'lib/router'
 import {connectHelper, filterHiddenFields, slugify, Case} from 'lib/util'
 import {getCurrentApi, getCurrentCollection} from 'lib/app-config'
+import fieldComponents from 'lib/field-components.json'
 
 import DocumentEditToolbar from 'components/DocumentEditToolbar/DocumentEditToolbar'
 import FieldImage from 'components/FieldImage/FieldImage'
@@ -527,11 +528,19 @@ class DocumentEdit extends Component {
       // Save and go back
       case 'saveAndGoBack':
         route(buildUrl(group, collection, 'documents'))
+<<<<<<< HEAD
 
         dispatch(actions.setNotification({
           message: `The document has been ${newDocument ? 'created' : 'updated'}`
         }))
 
+=======
+
+        dispatch(actions.setNotification({
+          message: `The document has been ${newDocument ? 'created' : 'updated'}`
+        }))
+
+>>>>>>> daaa3c18825db3906e9bac893b839d7e55f9eb8b
         break
 
       // Save as duplicate
