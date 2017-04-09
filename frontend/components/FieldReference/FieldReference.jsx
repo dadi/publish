@@ -73,28 +73,29 @@ export default class FieldString extends Component {
 
     if (!referencedCollection) return null
 
+    const displayName = schema.label || schema._id
     const displayField = value &&
       Object.keys(filterHiddenFields(referencedCollection.fields, 'list'))[0]
 
     return (
       <Label
-        label={schema.label || schema._id}
+        label={displayName}
       >
-        <div class={styles.wrapper}>
-          {value &&
-            <p class={styles.value}>{displayField && value[displayField]}</p>
-          }
+        {value
+          ? (
+            <div class={styles['value-container']}>
+              <p class={styles.value}>{displayField && value[displayField]}</p>
 
-          {value
-            ? (
               <Button
                 accent="destruct"
                 onClick={this.handleRemove.bind(this)}
                 size="small"
               >Remove</Button>
-            )
+            </div>
+          )
 
-            : (
+          : (
+            <div class={styles.placeholder}>
               <Button
                 accent="data"
                 href={buildUrl(
@@ -107,11 +108,10 @@ export default class FieldString extends Component {
                   schema._id
                 )}
                 size="small"
-              >Select</Button>
-            )
-          }
-          
-        </div>
+              >Select existing {displayName.toLowerCase()}</Button>
+            </div>
+          )
+        }
       </Label>
     )
   }
