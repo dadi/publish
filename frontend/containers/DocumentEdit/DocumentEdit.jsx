@@ -569,23 +569,27 @@ class DocumentEdit extends Component {
     const fieldComponentName = `Field${fieldType}`
     const FieldComponent = fieldComponents[fieldComponentName]
 
-    if (!FieldComponent) return null
+    if (!FieldComponent) {
+      console.warn('Unknown field type:', fieldType)
+
+      return null
+    }
 
     return (
       <div class={styles.field}>
         <FieldComponent
           config={app.config[fieldComponentName]}
+          collection={collection}
           currentApi={this.currentApi}
           currentCollection={this.currentCollection}
-          collection={collection}
           documentId={documentId}
           error={error}
           forceValidation={saveAttempt}
           group={group}
           onChange={this.handleFieldChange.bind(this)}
           onError={this.handleFieldError.bind(this)}
+          schema={field}
           value={value}
-          schema={field}        
         />
       </div>
     )

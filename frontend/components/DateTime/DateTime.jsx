@@ -3,7 +3,7 @@
 import {h, Component} from 'preact'
 import proptypes from 'proptypes'
 
-const fecha = require('fecha')
+import DateTimeHelper from 'lib/datetime'
 
 const SECOND = 1000
 const MINUTE = 60 * SECOND
@@ -90,48 +90,17 @@ export default class DateTime extends Component {
       relative
     } = this.props
 
-    let dateObj
+    const dateTime = new DateTimeHelper(date, fromFormat)
 
-    // If `date` is already a Date object, there's nothing we need
-    // to do.
-    if (date instanceof Date) {
-      dateObj = date
-    } else if (typeof date === 'number') {
-      // If it's a number, we assume it's a timestamp, so we create a date
-      // from that. We'll assume the timestamp is in seconds, so we need to
-      // convert to milliseconds when passing to Date().
-      dateObj = new Date(date)
-    } else if (typeof date === 'string') {
-      // If there is a `fromFormat` prop, we'll try to parse the date using
-      // that specific format.
-      if (fromFormat) {
-        dateObj = fecha.parse(date, fromFormat)
-      } else {
-        const intDate = parseInt(date)
-
-        // It might be that the input date is still a timestamp, but represented
-        // as a string. If that's the case, we use the parsed int and treat it
-        // as a timestamp.
-        if (intDate.toString() === date) {
-          dateObj = new Date(intDate)
-        } else {
-          // We assume the input string is in ISO8601 format.
-          dateObj = Date.parse(date)
-        }
-      }
-    }
-
-    if (!(dateObj instanceof Date)) {
+    if (!dateTime.isValid()) {
       return null
     }
 
     const renderedDate = relative
-      ? this.getRelativeDate(dateObj)
-      : fecha.format(dateObj, format)
+      ? this.getRelativeDate(dateTime.getDate())
+      : dateTime.format(format)
 
-    return (
-      <span>{renderedDate}</span>
-    )
+    return renderedDate
   }
 
   getRelativeDate(date) {

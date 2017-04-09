@@ -40,7 +40,7 @@
 }
 
 .main {
-  height: 100%;
+  min-height: 100vh;
   background-color: var(--theme-colour-background-shade-1, #FAFAFA);
   background-image: url(/images/bg.png);
   background-repeat: no-repeat;

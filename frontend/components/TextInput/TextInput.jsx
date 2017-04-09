@@ -29,9 +29,19 @@ export default class TextInput extends Component {
     inLabel: proptypes.bool,
 
     /**
+     * Callback to be executed when the text loses focus (onBlur event).
+     */
+    onBlur: proptypes.func,
+
+    /**
      * Callback to be executed when the text is changed (onChange event).
      */
     onChange: proptypes.func,
+
+    /**
+     * Callback to be executed when the text gains focus (onFocus event).
+     */
+    onFocus: proptypes.func,
 
     /**
      * Callback to be executed when a key is pressed (onKeyUp event).
@@ -116,7 +126,9 @@ export default class TextInput extends Component {
           required={required}
           rows={10}
           readonly={readonly}
+          onBlur={this.handleEvent.bind(this, 'onBlur')}
           onChange={this.handleChange.bind(this)}
+          onFocus={this.handleEvent.bind(this, 'onFocus')}
           onKeyUp={this.handleChange.bind(this)}
         >
           {value}
@@ -134,7 +146,9 @@ export default class TextInput extends Component {
         placeholder={placeholder}
         readonly={readonly}
         required={required}
+        onBlur={this.handleEvent.bind(this, 'onBlur')}
         onChange={this.handleChange.bind(this)}
+        onFocus={this.handleEvent.bind(this, 'onFocus')}
         onKeyUp={this.handleChange.bind(this)}
       />
     )
@@ -152,5 +166,11 @@ export default class TextInput extends Component {
     }
 
     return true
+  }
+
+  handleEvent(callback, event) {
+    if (typeof this.props[callback] === 'function') {
+      this.props[callback].call(this, event)
+    }
   }
 }
