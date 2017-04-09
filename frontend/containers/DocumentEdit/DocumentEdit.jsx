@@ -12,13 +12,13 @@ import styles from './DocumentEdit.css'
 import * as Constants from 'lib/constants'
 import * as appActions from 'actions/appActions'
 import * as documentActions from 'actions/documentActions'
+import * as fieldComponents from 'lib/field-components'
 
 import APIBridge from 'lib/api-bridge-client'
 import {batchActions} from 'lib/redux'
 import {buildUrl, createRoute} from 'lib/router'
 import {connectHelper, filterHiddenFields, slugify, Case} from 'lib/util'
 import {getCurrentApi, getCurrentCollection} from 'lib/app-config'
-import fieldComponents from 'lib/field-components.json'
 
 import DocumentEditToolbar from 'components/DocumentEditToolbar/DocumentEditToolbar'
 import FieldImage from 'components/FieldImage/FieldImage'
@@ -566,73 +566,29 @@ class DocumentEdit extends Component {
     // easily revisit.
     const error = typeof hasError === 'string' ? 'This field ' + hasError : hasError
     const fieldType = field.publish && field.publish.subType ? field.publish.subType : field.type
+    const fieldComponentName = `Field${fieldType}`
+    const FieldComponent = fieldComponents[fieldComponentName]
 
-    console.log('--->', fieldType, fieldComponents.includes(fieldType))
+    if (!FieldComponent) return null
 
-    let fieldElement = null
-
-    switch (fieldType) {
-      case 'Boolean':
-        fieldElement = (
-          <FieldBoolean
-            error={error}
-            forceValidation={saveAttempt}
-            onChange={this.handleFieldChange.bind(this)}
-            onError={this.handleFieldError.bind(this)}
-            value={value}
-            schema={field}
-          />
-        )
-
-        break
-
-      case 'Image':
-        fieldElement = (
-          <FieldImage
-            error={error}
-            config={app.config.FieldImage}
-            onChange={this.handleFieldChange.bind(this)}
-            onError={this.handleFieldError.bind(this)}
-            value={value}
-            schema={field}
-          />
-        )
-
-      case 'Reference':
-        fieldElement = (
-          <FieldReference
-            currentApi={this.currentApi}
-            currentCollection={this.currentCollection}
-            collection={collection}
-            documentId={documentId}
-            error={error}
-            forceValidation={saveAttempt}
-            group={group}
-            onChange={this.handleFieldChange.bind(this)}
-            onError={this.handleFieldError.bind(this)}
-            value={value}
-            schema={field}
-          />
-        )
-
-        break
-
-      case 'String':
-        fieldElement = (
-          <FieldString
-            error={error}
-            forceValidation={saveAttempt}
-            onChange={this.handleFieldChange.bind(this)}
-            onError={this.handleFieldError.bind(this)}
-            value={value}
-            schema={field}
-          />
-        )
-
-        break
-    }
-
-    return fieldElement ? <div class={styles.field}>{fieldElement}</div> : null
+    return (
+      <div class={styles.field}>
+        <FieldComponent
+          config={app.config[fieldComponentName]}
+          currentApi={this.currentApi}
+          currentCollection={this.currentCollection}
+          collection={collection}
+          documentId={documentId}
+          error={error}
+          forceValidation={saveAttempt}
+          group={group}
+          onChange={this.handleFieldChange.bind(this)}
+          onError={this.handleFieldError.bind(this)}
+          value={value}
+          schema={field}        
+        />
+      </div>
+    )
   }
 
   saveDocument(documentId) {

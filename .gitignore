@@ -19,4 +19,4 @@ public/main.css
 stats.json
 
 component-map.json
-frontend/lib/field-components.json
+frontend/lib/field-components.js

@@ -17,12 +17,12 @@ const ENV = process.env.NODE_ENV || 'production'
 const ENABLE_SOURCE_MAP = (process.env.ENABLE_SOURCE_MAP !== false)
 const PATHS = {
   COMPONENT_TREE: '/../component-map.json',
-  COMPONENTS: path.resolve(__dirname, 'frontend/components'),
-  CONTAINERS: path.resolve(__dirname, 'frontend/containers'),
+  COMPONENTS: 'frontend/components',
+  CONTAINERS: 'frontend/containers',
   CSS: 'main.css',
-  FIELD_COMPONENT_LIST: 'frontend/lib/field-components.json',
+  FIELD_COMPONENT_LIST: 'frontend/lib/field-components.js',
   PUBLIC: 'public',
-  VIEWS: path.resolve(__dirname, 'frontend/views')
+  VIEWS: 'frontend/views'
 }
 
 module.exports = {
@@ -105,9 +105,9 @@ module.exports = {
 
     new ComponentTreePlugin({
       directories: [
-        PATHS.COMPONENTS,
-        PATHS.CONTAINERS,
-        PATHS.VIEWS
+        path.resolve(__dirname, PATHS.COMPONENTS),
+        path.resolve(__dirname, PATHS.CONTAINERS),
+        path.resolve(__dirname, PATHS.VIEWS)
       ],
       extensions: ['.jsx'],
       outputPath: PATHS.COMPONENT_TREE
@@ -117,13 +117,19 @@ module.exports = {
       filename: PATHS.CSS
     }),
 
-    // Build JSON file with field components
+    // Build JS file with field components
     new WebpackPreBuildPlugin(stats => {
       let components = fs.readdirSync(PATHS.COMPONENTS).filter(item => {
         return item.indexOf('Field') === 0
       })
 
-      fs.writeFileSync(PATHS.FIELD_COMPONENT_LIST, JSON.stringify(components))
+      let componentsFile = components.map(component => {
+        return `import ${component} from '${PATHS.COMPONENTS}/${component}/${component}'`
+      }).join('\n')
+
+      componentsFile += `\n\nexport {${components.join(', ')}}`
+
+      fs.writeFileSync(PATHS.FIELD_COMPONENT_LIST, componentsFile)
     }),
 
     // Process CSS Custom Properties and Custom Media
