@@ -52,6 +52,7 @@ function transformNodename (nodeName) {
 
 readInput(dependencyTree => {
   const tree = archy(transformNode(dependencyTree))
+  const output = '```\n' + tree + '\n```'
 
-  fs.writeFileSync(OUTPUT_PATH, tree)
+  fs.writeFileSync(OUTPUT_PATH, output)
 })

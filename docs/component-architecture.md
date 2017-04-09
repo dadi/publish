@@ -1,3 +1,4 @@
+```
 App
 ├─┬ Header
 │ ├─┬ CollectionNav
@@ -66,11 +67,7 @@ App
 │ │ │ ├─┬ Peer
 │ │ │ │ └── Button
 │ │ │ └── Toolbar
-<<<<<<< HEAD
 │ │ ├─┬ FieldImage
-=======
-│ │ ├─┬ FieldAsset
->>>>>>> daaa3c18825db3906e9bac893b839d7e55f9eb8b
 │ │ │ ├── Button
 │ │ │ ├── FileUpload
 │ │ │ ├── Label
@@ -201,3 +198,5 @@ App
   ├── Page
   └─┬ ProfileEdit
     └── SubNavItem
+
+```
