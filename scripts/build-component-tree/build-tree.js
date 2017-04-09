@@ -43,8 +43,8 @@ function transformNode (node) {
 function transformNodename (nodeName) {
   const extension = path.extname(nodeName)
   const componentName = path.basename(nodeName, extension)
-  //const directories = path.dirname(nodeName).split(path.sep)
-  //const componentType = directories[directories.length - 2]
+  // const directories = path.dirname(nodeName).split(path.sep)
+  // const componentType = directories[directories.length - 2]
 
   // return `${componentName} (${componentType})`
   return componentName
