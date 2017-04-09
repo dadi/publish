@@ -1,7 +1,7 @@
 `ReferencedDocumentHeader`
 ==========================
 
-A simple call-to-action ReferencedDocumentHeader.
+A header to be used when navigating referenced documents.
 
 Props
 -----

@@ -15,7 +15,7 @@ import styles from './ReferencedDocumentHeader.css'
 import Button from 'components/Button/Button'
 
 /**
- * A simple call-to-action ReferencedDocumentHeader.
+ * A header to be used when navigating referenced documents.
  */
 class ReferencedDocumentHeader extends Component {
   static propTypes = {
