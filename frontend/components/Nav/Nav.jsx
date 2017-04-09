@@ -6,8 +6,6 @@ import Dropdown from 'components/Dropdown/Dropdown'
 import DropdownItem from 'components/Dropdown/DropdownItem'
 import NavItem from 'components/NavItem/NavItem'
 
-import CollectionNav from 'containers/CollectionNav/CollectionNav'
-
 import Style from 'lib/Style'
 import styles from './Nav.css'
 
