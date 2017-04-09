@@ -24,7 +24,7 @@ App
 │ │ │ ├─┬ Peer
 │ │ │ │ └── Button
 │ │ │ └── Toolbar
-│ │ ├─┬ FieldAsset
+│ │ ├─┬ FieldImage
 │ │ │ ├── Button
 │ │ │ ├── FileUpload
 │ │ │ ├── Label
@@ -66,7 +66,7 @@ App
 │ │ │ ├─┬ Peer
 │ │ │ │ └── Button
 │ │ │ └── Toolbar
-│ │ ├─┬ FieldAsset
+│ │ ├─┬ FieldImage
 │ │ │ ├── Button
 │ │ │ ├── FileUpload
 │ │ │ ├── Label
