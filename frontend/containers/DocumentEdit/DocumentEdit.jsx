@@ -18,6 +18,7 @@ import {batchActions} from 'lib/redux'
 import {buildUrl, createRoute} from 'lib/router'
 import {connectHelper, filterHiddenFields, slugify, Case} from 'lib/util'
 import {getCurrentApi, getCurrentCollection} from 'lib/app-config'
+import fieldComponents from 'lib/field-components.json'
 
 import DocumentEditToolbar from 'components/DocumentEditToolbar/DocumentEditToolbar'
 import FieldImage from 'components/FieldImage/FieldImage'
@@ -565,6 +566,8 @@ class DocumentEdit extends Component {
     // easily revisit.
     const error = typeof hasError === 'string' ? 'This field ' + hasError : hasError
     const fieldType = field.publish && field.publish.subType ? field.publish.subType : field.type
+
+    console.log('--->', fieldType, fieldComponents.includes(fieldType))
 
     let fieldElement = null
 
