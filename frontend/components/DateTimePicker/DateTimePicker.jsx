@@ -34,6 +34,8 @@ export default class DateTimePicker extends Component {
 
     this.TIME_PICKER_HOUR_SUBDIVISIONS = 2
 
+    this.hoursContainerRef = null
+    this.hoursRefs = []
     this.state.monthOffset = 0
     this.state.pickingTime = false
   }
@@ -45,6 +47,32 @@ export default class DateTimePicker extends Component {
       this.setState({
         monthOffset: 0
       })
+    }
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    const {pickingTime} = this.state
+
+    // Let's find the closest hour to the one currently selected, so we can
+    // adjust the scroll position accordingly.
+    if (!prevState.pickingTime && pickingTime) {
+      const date = this.getInternalDate()
+      
+      let closestDate
+
+      this.hoursRefs.some(hourRef => {
+        if (hourRef.date.getTime() > date.getTime()) {
+          return true
+        }
+
+        closestDate = hourRef
+      })
+
+      const offset = closestDate && closestDate.element.offsetTop
+
+      if (this.hoursContainerRef) {
+        this.hoursContainerRef.scrollTop = offset - (this.hoursContainerRef.clientHeight / 2)
+      }
     }
   }
 
@@ -136,6 +164,12 @@ export default class DateTimePicker extends Component {
 
   getInternalDate(overrides = {}, monthOffset = this.state.monthOffset) {
     const {date} = this.props
+    const dateTime = new DateTime(date)
+
+    if (!dateTime.isValid()) {
+      return null
+    }
+
     const {year, month, day, hours, minutes} = overrides
 
     return new Date(
@@ -164,8 +198,10 @@ export default class DateTimePicker extends Component {
   }
 
   handleTimeToggle() {
+    const {pickingTime} = this.state
+
     this.setState({
-      pickingTime: !this.state.pickingTime
+      pickingTime: !pickingTime
     })
   }
 
@@ -205,6 +241,12 @@ export default class DateTimePicker extends Component {
           <button
             class={styles.hour}
             onClick={this.handleDatePick.bind(this, date)}
+            ref={element => {
+              this.hoursRefs[i] = {
+                date,
+                element
+              }
+            }}
             type="button"
           >
             {new DateTime(date).format('HH:mm')}
@@ -215,7 +257,12 @@ export default class DateTimePicker extends Component {
 
     return (
       <div class={styles['hours-container']}>
-        <ul class={styles.hours}>
+        <ul
+          class={styles.hours}
+          ref={element => {
+            this.hoursContainerRef = element
+          }}
+        >
           {hours}
         </ul>
       </div>
