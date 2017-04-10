@@ -29,9 +29,9 @@ Maximum number of page links to display.
 - default value: `10`
 
 
-### `nextLast`
+### `prevNext`
 
-Whether to render `Next` and `Last` links.
+Whether to render `Prev` and `Next` links.
 
 - type: `bool`
 - default value: `true`

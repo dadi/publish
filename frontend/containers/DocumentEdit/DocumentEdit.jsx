@@ -143,6 +143,14 @@ class DocumentEdit extends Component {
       dispatch(actions.setNotification(notification))
     }
 
+    const wasSaving = previousDocument.remoteStatus === Constants.STATUS_SAVING
+    const isIdle = document.remoteStatus === Constants.STATUS_IDLE
+
+    // Have we just saved a document?
+    if (wasSaving && isIdle) {
+      this.processSaveResult()
+    }
+
     // There's no document ID, so it means we're creating a new document.
     if (!documentId) {
       // If there isn't a document in `document.local`, we start a new one.
@@ -173,14 +181,6 @@ class DocumentEdit extends Component {
     // Are we trying to save the document?
     if (!previousState.saveAttempt && saveAttempt) {
       this.processSave(saveAttempt)
-    }
-
-    const wasSaving = previousDocument.remoteStatus === Constants.STATUS_SAVING
-    const isIdle = document.remoteStatus === Constants.STATUS_IDLE
-
-    // Have we just saved a document?
-    if (wasSaving && isIdle) {
-      this.processSaveResult()
     }
   }
 
@@ -536,7 +536,7 @@ class DocumentEdit extends Component {
 
       // Save as duplicate
       case 'saveAsDuplicate':
-        route(buildUrl(group, collection, 'document', 'edit', newDocumentId, section))
+        route(buildUrl(group, collection, 'document', 'edit', documentId, section))
 
         dispatch(actions.setNotification({
           message: `The document has been created`

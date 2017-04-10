@@ -103,7 +103,7 @@ export default class FieldNumber extends Component {
     const {onChange, schema} = this.props
 
     if (typeof onChange === 'function') {
-      onChange.call(this, schema._id, event.target.value)
+      onChange.call(this, schema._id, parseFloat(event.target.value))
     }
   }
 }
