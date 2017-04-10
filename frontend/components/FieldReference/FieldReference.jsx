@@ -13,40 +13,75 @@ import Label from 'components/Label/Label'
 import TextInput from 'components/TextInput/TextInput'
 
 /**
- * Component for API fields of type String
+ * Component for API fields of type Reference.
  */
-export default class FieldString extends Component {
+export default class FieldReference extends Component {
   static propTypes = {
     /**
-     * Whether the field contains a validation error.
+     * The name of the collection being edited, as per the URL.
      */
-    error: proptypes.bool,
+    collection: proptypes.string,
 
     /**
-     * If true, validation will be executed immediately and not only when the
-     * content of the field has changed.
+     * A subset of the app config containing data specific to this field type.
+     */
+    config: proptypes.object,
+
+    /**
+     * The schema of the API being used.
+     */
+    currentApi: proptypes.object,
+
+    /**
+     * The schema of the collection being edited.
+     */
+    currentCollection: proptypes.object,
+
+    /**
+     * The ID of the document being edited.
+     */
+    documentId: proptypes.string,
+
+    /**
+     * If defined, contains an error message to be displayed by the field.
+     */
+    error: proptypes.string,
+
+    /**
+     * Whether the field should be validated as soon as it mounts, rather than
+     * waiting for a change event.
      */
     forceValidation: proptypes.bool,
 
     /**
-     * Callback to be executed when there is a change in the value of the field.
+     * If defined, specifies a group where the current collection belongs.
      */
-    onChange: proptypes.func,
+    group: proptypes.string,
 
     /**
-     * Callback to be executed when there is a new validation error in the field.
+     * A callback to be fired whenever the field wants to update its value to
+     * a successful state. The function receives the name of the field and the
+     * new value as arguments.
      */
-    onError: proptypes.func,
+    onChange: proptypes.string,
 
     /**
-     * The field value.
+     * A callback to be fired whenever the field wants to update its value to
+     * or from an error state. The function receives the name of the field, a
+     * Boolean value indicating whether or not there's an error and finally the
+     * new value of the field.
      */
-    value: proptypes.string,
+    onError: proptypes.string,
 
     /**
      * The field schema.
      */
-    schema: proptypes.object
+    schema: proptypes.object,
+
+    /**
+     * The field value.
+     */
+    value: proptypes.bool
   }
 
   render() {
