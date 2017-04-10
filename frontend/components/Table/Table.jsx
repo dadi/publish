@@ -19,20 +19,28 @@ export default class Table extends Component {
     children: proptypes.node,
 
     /**
-     * When `true`, any empty row cells will be filled with a text element saying *None*.
+     * When `true`, any empty row cells will be filled with a text element
+     * saying *None*.
      */
     fillBlanks: proptypes.bool,
 
     /**
-     * A callback function that is fired whenever rows are selected. The function
-     * will be called with an array of selected indices as the argument.
+     * A callback function that is fired whenever rows are selected. The
+     * function will be called with an array of selected indices as the
+     * argument.
      */
     onSelect: proptypes.func,
 
     /**
-     * Whether rows are selectable. When `true`, check boxes will automatically be added to the table head and to each row.
+     * Whether rows are selectable. When `true`, check boxes will automatically
+     * be added to the table head and to each row.
      */
     selectable: proptypes.bool,
+
+    /**
+     * The maximum number of rows that can be selected at the same time.
+     */
+    selectLimit: proptypes.number,
 
     /**
      * A hash map of the indices of the currently selected rows.
@@ -42,8 +50,9 @@ export default class Table extends Component {
 
   static defaultProps = {
     fillBlanks: true,
-    selectedRows: {},
-    selectable: true
+    selectable: true,
+    selectLimit: Infinity,
+    selectedRows: {}
   }
 
   constructor(props) {
@@ -70,30 +79,47 @@ export default class Table extends Component {
   }
 
   handleRowSelect(index, event) {
-    const {onSelect, selectedRows} = this.props
+    const {
+      onSelect,
+      selectLimit,
+      selectedRows
+    } = this.props
     const selected = event.target.checked
     const isRangeSelection = event.shiftKey
     const selectedRowsIndices = Object.keys(selectedRows)
 
-    let newSelectedRows = Object.assign({}, selectedRows, {
-      [index]: selected
-    })
+    let newSelectedRows = {}
 
-    if (isRangeSelection && selectedRowsIndices.length) {
-      let rangeBoundary = Infinity
-
-      selectedRowsIndices.sort().forEach(selectedRowIndex => {
-        if (Math.abs(rangeBoundary - index) > Math.abs(selectedRowIndex - index)) {
-          rangeBoundary = selectedRowIndex
-        }
+    // If only one row can be selected at a time, the logic is quite simple:
+    // the new object of selected rows contains only the index that has been
+    // received.
+    if (selectLimit === 1) {
+      newSelectedRows = {
+        [index]: true
+      }
+    } else {
+      // Otherwise, we need to merge the previous state of selected rows with
+      // the new selection.
+      newSelectedRows = Object.assign({}, selectedRows, {
+        [index]: selected
       })
 
-      const selectDown = rangeBoundary >= index
-      const rangeFrom = selectDown ? index : rangeBoundary
-      const rangeTo = selectDown ? rangeBoundary : index
+      if (isRangeSelection && selectedRowsIndices.length) {
+        let rangeBoundary = Infinity
 
-      for (let i = rangeFrom; i <= rangeTo; i++) {
-        newSelectedRows[i] = selected
+        selectedRowsIndices.sort().forEach(selectedRowIndex => {
+          if (Math.abs(rangeBoundary - index) > Math.abs(selectedRowIndex - index)) {
+            rangeBoundary = selectedRowIndex
+          }
+        })
+
+        const selectDown = rangeBoundary >= index
+        const rangeFrom = selectDown ? index : rangeBoundary
+        const rangeTo = selectDown ? rangeBoundary : index
+
+        for (let i = rangeFrom; i <= rangeTo; i++) {
+          newSelectedRows[i] = selected
+        }
       }
     }
 
@@ -107,6 +133,7 @@ export default class Table extends Component {
       children,
       fillBlanks,
       selectable,
+      selectLimit,
       selectedRows
     } = this.props
     const selectedRowsIndices = Object.keys(selectedRows).filter(index => selectedRows[index])
@@ -124,22 +151,37 @@ export default class Table extends Component {
     children.forEach((child, index) => {
       let childAttributes = Object.assign({}, child.attributes, {
         fillBlanks,
-        selectable
+        selectable,
+        selectLimit
       })
 
       if (child.nodeName && child.nodeName.name === 'TableHead') {
-        childAttributes.onSelect = this.handleHeadSelect.bind(this)
+        childAttributes.allowBulkSelection = selectLimit > (children.length - 1)
         childAttributes.allSelected = selectedRowsIndices.length === (children.length - 1)
+        childAttributes.onSelect = this.handleHeadSelect.bind(this)
 
         child.attributes = childAttributes
 
         head.push(child)
       } else {
         const rowIndex = tableHasHead ? index - 1 : index
+        const rowIsSelected = selectedRows[rowIndex] === true
+        const numberOfRows = tableHasHead ? children.length - 1 : children.length
+        const selectionExhausted = selectedRowsIndices.length >= selectLimit
 
-        childAttributes.tableIndex = rowIndex
-        childAttributes.selected = selectedRows[rowIndex] === true
         childAttributes.onSelect = this.handleRowSelect.bind(this)
+        childAttributes.selected = rowIsSelected
+        childAttributes.tableIndex = rowIndex
+
+        let selectableMode = 'multi'
+
+        if (selectLimit === 1) {
+          selectableMode = 'single'
+        } else if (selectionExhausted && !rowIsSelected) {
+          selectableMode = 'multiDisabled'
+        }
+
+        childAttributes.selectableMode = selectableMode
 
         child.attributes = childAttributes
 

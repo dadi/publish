@@ -12,6 +12,7 @@ import DocumentList from 'containers/DocumentList/DocumentList'
 import Header from 'containers/Header/Header'
 import Main from 'components/Main/Main'
 import Page from 'components/Page/Page'
+import ReferencedDocumentHeader from 'containers/ReferencedDocumentHeader/ReferencedDocumentHeader'
 
 export default class DocumentListView extends Component {
   constructor(props) {
@@ -26,10 +27,12 @@ export default class DocumentListView extends Component {
   render() {
     const {
       collection,
+      documentId,
       filter,
       group,
       order,
       page,
+      referencedField,
       sort,
       state
     } = this.props
@@ -37,7 +40,14 @@ export default class DocumentListView extends Component {
 
     return (
       <Page>
-        <Header />
+        {referencedField ?
+          <ReferencedDocumentHeader
+            collection={collection}
+            group={group}
+            parentDocumentId={documentId}
+            referencedField={referencedField}
+          /> : <Header />
+        }
 
         <Main>
           <div class={styles.container}>
@@ -47,6 +57,8 @@ export default class DocumentListView extends Component {
               filter={filter}
               newFilter={newFilter}
               onAddNewFilter={this.handleAddNewFilter.bind(this)}
+              parentDocumentId={documentId}
+              referencedField={referencedField}
             />
 
             <DocumentList
@@ -56,6 +68,9 @@ export default class DocumentListView extends Component {
               onPageTitle={this.handlePageTitle}
               order={order}
               page={page}
+              parentDocumentId={documentId}
+              referencedField={referencedField}
+              selectLimit={referencedField ? 1 : undefined}
               sort={sort}
             />
           </div>        

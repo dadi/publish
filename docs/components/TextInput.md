@@ -35,9 +35,23 @@ Whether the field is part of a `<Label/>` component. This makes it inherit certa
 - default value: `false`
 
 
+### `onBlur`
+
+Callback to be executed when the text loses focus (onBlur event).
+
+- type: `func`
+
+
 ### `onChange`
 
 Callback to be executed when the text is changed (onChange event).
+
+- type: `func`
+
+
+### `onFocus`
+
+Callback to be executed when the text gains focus (onFocus event).
 
 - type: `func`
 

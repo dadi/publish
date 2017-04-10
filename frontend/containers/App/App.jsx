@@ -27,13 +27,13 @@ import Socket from 'lib/socket'
 import ConnectionMonitor from 'lib/status'
 import Session from 'lib/session'
 import {getAppConfig, getCurrentApi} from 'lib/app-config'
-import APIBridge from 'lib/api-bridge-client'
+import apiBridgeClient from 'lib/api-bridge-client'
 
 class App extends Component {
   componentWillMount() {
     const {actions} = this.props
 
-    APIBridge.registerProgressCallback(actions.registerNetworkCall)
+    apiBridgeClient.registerProgressCallback(actions.registerNetworkCall)
     ConnectionMonitor(2000).registerStatusChangeCallback(actions.setNetworkStatus)
 
     this.sessionStart()
@@ -85,12 +85,27 @@ class App extends Component {
       <Router history={history}>
         <HomeView path="/" authenticate />
         <PasswordReset path="/reset" authenticate/>
-        {hasRoutes && (<DocumentEditView path="/:group/:collection/document/edit/:documentId?/:section?/:field?" authenticate />)}
-        <DocumentEditView path="/:collection/document/edit/:documentId?/:section?/:field?" authenticate />
-        {hasRoutes && (<DocumentCreateView path="/:group/:collection/document/new/:section?" authenticate />)}
+
+        {hasRoutes && (
+          <DocumentListView path="/:group/:collection/document/edit/:documentId?/select/:referencedField?/:page?" authenticate />
+        )}
+        <DocumentListView path="/:collection/document/edit/:documentId?/select/:referencedField?/:page?" authenticate />
+
+        {hasRoutes && (
+          <DocumentEditView path="/:group/:collection/document/edit/:documentId?/:section?" authenticate />
+        )}
+        <DocumentEditView path="/:collection/document/edit/:documentId?/:section?" authenticate />
+
+        {hasRoutes && (
+          <DocumentCreateView path="/:group/:collection/document/new/:section?" authenticate />
+        )}
         <DocumentCreateView path="/:collection/document/new/:section?" authenticate />
+
+        {hasRoutes && (
+          <DocumentListView path="/:group/:collection/documents/:page?" authenticate />
+        )}
         <DocumentListView path="/:collection/documents/:page?" authenticate />
-        {hasRoutes && (<DocumentListView path="/:group/:collection/documents/:page?" authenticate />)}
+
         <ProfileEditView path="/profile/:section?" authenticate />
         <SignInView path="/sign-in" />
         <SignOutView path="/sign-out" />
@@ -134,11 +149,11 @@ class App extends Component {
     let processedApis = []
 
     apisToProcess.forEach((api, apiIndex) => {
-      let bundler = APIBridge.Bundler()
+      let bundler = apiBridgeClient.getBundler()
 
-      return APIBridge(api).getCollections().then(({collections}) => {
+      return apiBridgeClient(api).getCollections().then(({collections}) => {
         collections.forEach(collection => {
-          const query = APIBridge(api, true).in(collection.slug).getConfig()
+          const query = apiBridgeClient(api, true).in(collection.slug).getConfig()
 
           // Add query to bundler
           bundler.add(query)

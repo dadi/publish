@@ -34,6 +34,20 @@ Whether a new filter has been added.
 - type: `func`
 
 
+### `parentDocumentId`
+
+When on a reference field, contains the ID of the parent document.
+
+- type: `string`
+
+
+### `referencedField`
+
+The name of a reference field currently being edited.
+
+- type: `string`
+
+
 ### `state`
 
 The global state object.

@@ -14,12 +14,18 @@ import TableHeadCell from 'components/Table/TableHeadCell'
 export default class TableHead extends Component {
   static propTypes = {
     /**
+     * Whether to render a checkbox that toggles the select state for all rows.
+     */
+    allowBulkSelection: proptypes.bool,
+
+    /**
      * Whether all the rows in the table are currently selected.
      */
     allSelected: proptypes.bool,
 
     /**
-     * Whether rows are selectable. When `true`, check boxes will automatically be added to the table head and to each row.
+     * Whether rows are selectable. When `true`, check boxes will automatically
+     * be added to the table head and to each row.
      */
     selectable: proptypes.bool,
 
@@ -30,6 +36,7 @@ export default class TableHead extends Component {
   }
 
   static defaultProps = {
+    allowBulkSelection: true,
     allSelected: false,
     selectable: false
   }
@@ -43,7 +50,11 @@ export default class TableHead extends Component {
   }
 
   render() {
-    const {allSelected, selectable} = this.props
+    const {
+      allowBulkSelection,
+      allSelected,
+      selectable
+    } = this.props
 
     return (
       <thead class={styles.head}>
@@ -55,6 +66,7 @@ export default class TableHead extends Component {
                 class={styles.select}
                 type="checkbox"
                 onClick={this.handleSelectClick.bind(this)}
+                style={!allowBulkSelection && 'display: none;'}
               />
             </TableHeadCell>
           }

@@ -12,20 +12,6 @@ function clear (key) {
   }
 }
 
-function getKeyFromContext ({collection, documentId, group}) {
-  let key
-
-  if (documentId) {
-    key = documentId
-  } else if (group) {
-    key = `${group}/${collection.name}`
-  } else {
-    key = collection.name
-  }
-
-  return key
-}
-
 function read (key) {
   if (!window.localStorage) return null
 
@@ -53,14 +39,14 @@ function write (key, payload) {
   }
 }
 
-export function clearDocument (context) {
-  return clear(getKeyFromContext(context))
+export function clearDocument (key) {
+  return clear(key)
 }
 
-export function readDocument (context) {
-  return read(getKeyFromContext(context))
+export function readDocument (key) {
+  return read(key)
 }
 
-export function writeDocument (context, value) {
-  return write(getKeyFromContext(context), value)
+export function writeDocument (key, value) {
+  return write(key, value)
 }

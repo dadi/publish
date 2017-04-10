@@ -18,7 +18,7 @@
   align-items: center;
 }
 
-.actions {
+.select {
   height: 25px;
   line-height: 25px;
   font-size: 13px;
@@ -28,7 +28,7 @@
   outline: 0;
 }
 
-.actions-button {
+.select-button {
   margin-left: 10px;
 }
 
@@ -37,12 +37,12 @@
   text-align: center;
 }
 
-.bulk {
+.actions {
   display: none;
 }
 
 @media (--breakpoint-large) {
-  .bulk {
+  .actions {
     display: block;
   }
 }

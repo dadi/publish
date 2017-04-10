@@ -40,7 +40,7 @@
 }
 
 .main {
-  height: 100%;
+  min-height: 100vh;
   background-color: var(--theme-colour-background-shade-1, #FAFAFA);
   background-image: url(/images/bg.png);
   background-repeat: no-repeat;
@@ -53,6 +53,8 @@
   --theme-colour-background-shade-1: #FAFAFA;
   --theme-colour-background-shade-2: #AAAAAA;
   --theme-colour-background-shade-3: #EEEEEE;
+  --theme-colour-background-shade-4: #E4E4E4;
+  --theme-colour-secondary-background: #17273F;
   --theme-colour-data: #4A91FF;
   --theme-colour-data-shade-1: #1772ff;
   --theme-colour-error: #E5462C;

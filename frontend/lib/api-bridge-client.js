@@ -94,6 +94,10 @@ const buildAPIBridgeClient = function (api, inBundle) {
     return this.serveQuery(this._getConfig())
   }
 
+  APIBridgeClient.prototype.getQuery = function () {
+    return this.query
+  }
+
   APIBridgeClient.prototype.serveQuery = function (query) {
     let queryWithIndex = Object.assign({}, query, {_publishId: this._publishId})
 
@@ -133,7 +137,7 @@ module.exports.registerProgressCallback = callback => {
   onUpdate = callback
 }
 
-module.exports.Bundler = () => {
+module.exports.getBundler = () => {
   const APIBridgeBundler = function (api) {
     this.queries = []
 
@@ -149,6 +153,10 @@ module.exports.Bundler = () => {
   APIBridgeBundler.prototype.run = function () {
     if (typeof this.onUpdate === 'function') {
       this.onUpdate.call(this, Constants.STATUS_LOADING)
+    }
+
+    if (this.queries.length === 0) {
+      return Promise.resolve([])
     }
 
     return apiBridgeFetch(this.queries).then(response => {

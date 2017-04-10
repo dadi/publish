@@ -42,6 +42,13 @@ page title.
 - type: `func`
 
 
+### `referencedField`
+
+The name of a reference field currently being edited.
+
+- type: `string`
+
+
 ### `section`
 
 The current active section (if any).

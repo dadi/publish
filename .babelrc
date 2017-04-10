@@ -1,9 +1,12 @@
 {
-  "presets": [ "es2015", "stage-2" ],
+  "presets": [
+    "es2015",
+    "stage-2"
+  ],
   "plugins": [
-    ["transform-react-jsx", { "pragma": "h" }],
-    ["transform-decorators-legacy"],
-    ["transform-es2015-template-literals", {
+    ["babel-plugin-transform-react-jsx", { "pragma": "h" }],
+    ["babel-plugin-transform-decorators-legacy"],
+    ["babel-plugin-transform-es2015-template-literals", {
       "loose": true,
       "spec": true
     }]

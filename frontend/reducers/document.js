@@ -5,7 +5,6 @@ import * as LocalStorage from 'lib/local-storage'
 import * as Types from 'actions/actionTypes'
 
 const initialState = {
-  dirty: false,
   loadedFromLocalStorage: false,
   local: null,
   peers: null,
@@ -23,11 +22,8 @@ export default function document (state = initialState, action = {}) {
 
     // Document action: discard unsaved changes
     case Types.DISCARD_UNSAVED_CHANGES:
-      LocalStorage.clearDocument(action.context)
-
       return {
         ...state,
-        dirty: false,
         loadedFromLocalStorage: false,
         local: {},
         validationErrors: null
@@ -35,19 +31,15 @@ export default function document (state = initialState, action = {}) {
 
     // Document action: user leaving document
     case Types.USER_LEAVING_DOCUMENT:
-      if (Object.keys(state.local).length > 0) {
-        LocalStorage.writeDocument(action.context, state.local)
-      }
-
       return state
 
     // Document action: save document
     case Types.SAVE_DOCUMENT:
-      LocalStorage.clearDocument(action.context)
+      //LocalStorage.clearDocument(action.context)
 
       return {
         ...state,
-        dirty: false
+        remoteStatus: Constants.STATUS_IDLE
       }
 
     // Document action: set document peers
@@ -101,17 +93,20 @@ export default function document (state = initialState, action = {}) {
 
     // Document action: set remote document
     case Types.SET_REMOTE_DOCUMENT:
-      // We start by trying to load the document with the given ID from local
-      // storage.
-      let draftDocument = LocalStorage.readDocument(action.context)
-      let localDocument = draftDocument || {}
+      let {document, forceUpdate} = action
+
+      // If there is already a document in the store with the same ID as the one
+      // we're trying to add AND `forceUpdate` was set to false, we don't need
+      // to update the store.
+      if (!forceUpdate && state.remote && (state.remote._id === document._id)) {
+        return state
+      }
 
       return {
         ...state,
-        dirty: Boolean(draftDocument),
-        loadedFromLocalStorage: Boolean(draftDocument),
-        local: localDocument,
-        remote: action.document,
+        loadedFromLocalStorage: action.loadedFromLocalStorage,
+        local: action.local,
+        remote: action.remote,
         remoteStatus: Constants.STATUS_IDLE
       }
 
@@ -128,11 +123,12 @@ export default function document (state = initialState, action = {}) {
 
     // Document action: start new document
     case Types.START_NEW_DOCUMENT:
-      const newDocument = LocalStorage.readDocument(action.context) || {}
+      let loadedFromLocalStorage = Object.keys(action.document).length > 0
 
       return {
         ...state,
-        local: newDocument,
+        loadedFromLocalStorage,
+        local: action.document,
         remote: null,
         remoteStatus: Constants.STATUS_IDLE
       }
@@ -141,14 +137,11 @@ export default function document (state = initialState, action = {}) {
     case Types.UPDATE_LOCAL_DOCUMENT:
       const newState = {
         ...state,
-        dirty: true,
         local: {
           ...state.local,
           ...action.change
         }
       }
-
-      LocalStorage.writeDocument(action.context, newState.local)
 
       return newState
 
