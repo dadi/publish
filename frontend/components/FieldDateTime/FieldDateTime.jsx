@@ -29,6 +29,7 @@ export default class FieldDateTime extends Component {
     this.picker = false
     this.pickerEventHandler = this.handlePickerClick.bind(this, true)
     this.pickerOutsideEventHandler = this.handlePickerClick.bind(this, false)
+    this.losingFocusTimeout = null
   }
 
   render() {
@@ -83,6 +84,8 @@ export default class FieldDateTime extends Component {
     if (this.picker) {
       this.picker.removeEventListener('click', this.pickerEventHandler)
     }
+
+    clearTimeout(this.losingFocusTimeout)
   }
 
   handleChange(event) {
@@ -110,11 +113,21 @@ export default class FieldDateTime extends Component {
     const {pickerVisible} = this.state
 
     this.hasFocus = hasFocus
-console.log('---> New focus:', hasFocus, pickerVisible)
+
     if (!pickerVisible) {
       this.setState({
         pickerVisible: true
       })
+    }
+
+    if (!hasFocus && pickerVisible) {
+      clearTimeout(this.losingFocusTimeout)
+
+      this.losingFocusTimeout = setTimeout(() => {
+        this.setState({
+          pickerVisible: false
+        })
+      }, 200)
     }
   }
 
@@ -128,9 +141,11 @@ console.log('---> New focus:', hasFocus, pickerVisible)
 
   handlePickerClick(insidePicker, event) {
     const {pickerVisible} = this.state
-console.log('---> Click:', insidePicker)
+
     if (insidePicker) {
       event.stopPropagation()
+
+      clearTimeout(this.losingFocusTimeout)
     } else {
       if (pickerVisible && !this.hasFocus) {
         this.setState({
