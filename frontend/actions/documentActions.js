@@ -101,6 +101,9 @@ export function saveDocument ({api, collection, document, documentId}) {
     // We iterate through the payload and find reference fields.
     Object.keys(payload).forEach(field => {
       const fieldSchema = collection.fields[field]
+
+      if (!fieldSchema) return
+
       const referencedCollection = fieldSchema.settings && fieldSchema.settings.collection
 
       // If the referenced collection isn't defined, there's nothing we can do.

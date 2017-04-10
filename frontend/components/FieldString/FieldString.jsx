@@ -107,6 +107,17 @@ export default class FieldString extends Component {
     }
   }
 
+  render() {
+    const {schema} = this.props
+    const publishBlock = schema.publish || {}
+
+    if (publishBlock.options) {
+      return this.renderAsDropdown()
+    }
+
+    return this.renderAsFreeInput()
+  }
+
   renderAsFreeInput() {
     const {error, value, schema} = this.props
     const publishBlock = schema.publish || {}
@@ -178,29 +189,6 @@ export default class FieldString extends Component {
     )
   }
 
-  selectDropdownOptions(input) {
-    const {value} = this.props
-
-    if (!input || !input.options) return
-
-    for (let i = 0; i < input.options.length; i++) {
-      if (value.includes(input.options[i].value)) {
-        input.options[i].selected = true
-      }
-    }
-  }
-
-  render() {
-    const {schema} = this.props
-    const publishBlock = schema.publish || {}
-
-    if (publishBlock.options) {
-      return this.renderAsDropdown()
-    }
-
-    return this.renderAsFreeInput()
-  }
-
   getValueOfInput(input) {
     switch (input.nodeName.toUpperCase()) {
       case 'SELECT':
@@ -220,26 +208,16 @@ export default class FieldString extends Component {
     }
   }
 
-  handleOnChange(event) {
-    const {onChange, schema} = this.props
-    const value = this.getValueOfInput(event.target)
-
-    if (typeof onChange === 'function') {
-      onChange.call(this, schema._id, value)
-    }
-  }
-
-  handleOnKeyUp(event) {
-    const value = this.getValueOfInput(event.target)
-
-    this.validate(value)
-  }
-
-  findValidationErrorsInString(value) {
+  findValidationErrorsInValue(value) {
     const {error, schema} = this.props
-    const validation = (schema && schema.validation) || {}
     const valueLength = typeof value === 'string' ? value.length : 0
 
+    // If the value is empty but the field has a default defined, it's fine.
+    if ((valueLength === 0) && schema.default) {
+      return false
+    }
+
+    const validation = (schema && schema.validation) || {}
     const validationMessage = typeof schema.message === 'string' && schema.message.length ? schema.message : null
 
     let hasValidationErrors = false
@@ -276,6 +254,35 @@ export default class FieldString extends Component {
     return hasValidationErrors
   }
 
+  handleOnChange(event) {
+    const {onChange, schema} = this.props
+    const value = this.getValueOfInput(event.target)
+
+    this.validate(value)
+
+    if (typeof onChange === 'function') {
+      onChange.call(this, schema._id, value)
+    }
+  }
+
+  handleOnKeyUp(event) {
+    const value = this.getValueOfInput(event.target)
+
+    this.validate(value)
+  }
+
+  selectDropdownOptions(input) {
+    const {value} = this.props
+
+    if (!input || !input.options) return
+
+    for (let i = 0; i < input.options.length; i++) {
+      if (value.includes(input.options[i].value)) {
+        input.options[i].selected = true
+      }
+    }
+  }
+
   validate(value) {
     const {onError, schema} = this.props
 
@@ -292,7 +299,7 @@ export default class FieldString extends Component {
       // parameters.
       if (!hasValidationErrors) {
         const individualValidationErrors = value.filter(valueString => {
-          return this.findValidationErrorsInString(valueString)
+          return this.findValidationErrorsInValue(valueString)
         })
 
         hasValidationErrors = individualValidationErrors[0] || false
@@ -300,12 +307,12 @@ export default class FieldString extends Component {
     } else {
       const trimmedValue = typeof value === 'string' ? value.trim() : ''
 
-      // If the field is required and its value is empty, there's a validation
-      // error.
-      hasValidationErrors = schema.required && (trimmedValue.length === 0)
+      // If the field is required, its value is empty and there's no default,
+      // there's a validation error.
+      hasValidationErrors = schema.required && !schema.default && (trimmedValue.length === 0)
 
       // We then proceed to validate the value for other validation parameters.
-      hasValidationErrors = hasValidationErrors || this.findValidationErrorsInString(trimmedValue)
+      hasValidationErrors = hasValidationErrors || this.findValidationErrorsInValue(trimmedValue)
     }
 
     if (typeof onError === 'function') {
