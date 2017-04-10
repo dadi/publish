@@ -19,7 +19,6 @@ import {batchActions} from 'lib/redux'
 import {buildUrl, createRoute} from 'lib/router'
 import {connectHelper, filterHiddenFields, slugify, Case} from 'lib/util'
 import {getCurrentApi, getCurrentCollection} from 'lib/app-config'
-import fieldComponents from 'lib/field-components.json'
 
 import DocumentEditToolbar from 'components/DocumentEditToolbar/DocumentEditToolbar'
 import FieldImage from 'components/FieldImage/FieldImage'
