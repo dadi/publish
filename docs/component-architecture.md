@@ -21,6 +21,10 @@ App
 │ │ │ │ ├── Dropdown
 │ │ │ │ ├── DropdownItem
 │ │ │ │ └── IconArrow
+│ │ │ ├─┬ ButtonWithPrompt
+│ │ │ │ ├── Button
+│ │ │ │ └─┬ Prompt
+│ │ │ │   └── Button
 │ │ │ ├── DateTime
 │ │ │ ├─┬ Peer
 │ │ │ │ └── Button
@@ -63,6 +67,10 @@ App
 │ │ │ │ ├── Dropdown
 │ │ │ │ ├── DropdownItem
 │ │ │ │ └── IconArrow
+│ │ │ ├─┬ ButtonWithPrompt
+│ │ │ │ ├── Button
+│ │ │ │ └─┬ Prompt
+│ │ │ │   └── Button
 │ │ │ ├── DateTime
 │ │ │ ├─┬ Peer
 │ │ │ │ └── Button
@@ -110,7 +118,10 @@ App
 │ ├─┬ DocumentList
 │ │ ├── Button
 │ │ ├─┬ DocumentListToolbar
-│ │ │ ├── Button
+│ │ │ ├─┬ ButtonWithPrompt
+│ │ │ │ ├── Button
+│ │ │ │ └─┬ Prompt
+│ │ │ │   └── Button
 │ │ │ ├── Checkbox
 │ │ │ ├─┬ Paginator
 │ │ │ │ └── Button

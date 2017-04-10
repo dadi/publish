@@ -16,7 +16,7 @@ Colour accent.
 
 ### `children`
 
-The text to be rendered inside the button.
+The text/elements to be rendered inside the button.
 
 - type: `node`
 

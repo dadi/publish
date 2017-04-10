@@ -35,6 +35,13 @@ a new one.
 - type: `enum('edit'|'new')`
 
 
+### `onDelete`
+
+A callback to be fired when the "Delete" button is pressed.
+
+- type: `func`
+
+
 ### `onSave`
 
 A callback to be fired when the "Save" button is pressed.
