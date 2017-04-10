@@ -31,9 +31,9 @@ export default class Paginator extends Component {
     maxPages: proptypes.number,
 
     /**
-     * Whether to render `Next` and `Last` links.
+     * Whether to render `Prev` and `Next` links.
      */
-    nextLast: proptypes.bool,
+    prevNext: proptypes.bool,
 
     /**
      * Number of available pages.
@@ -43,7 +43,7 @@ export default class Paginator extends Component {
 
   static defaultProps = {
     maxPages: 10,
-    nextLast: true
+    prevNext: true
   }
 
   renderPageNumber(pageNumber) {
@@ -77,7 +77,7 @@ export default class Paginator extends Component {
       currentPage,
       linkCallback,
       maxPages,
-      nextLast,
+      prevNext,
       totalPages
     } = this.props
 
@@ -115,35 +115,34 @@ export default class Paginator extends Component {
     }
 
     const nextUrl = (typeof linkCallback === 'function') && linkCallback(currentPage + 1)
-    const lastUrl = (typeof linkCallback === 'function') && linkCallback(totalPages)
-    const nextLastStyle = new Style(styles, 'page', 'page-secondary')
+    const prevUrl = (typeof linkCallback === 'function') && linkCallback(currentPage - 1)
+    const prevNextStyle = new Style(styles, 'page', 'page-secondary')
 
-    // If there's less than two pages to show, there's really no point in showing
-    // the page numbers.
+    // If there's less than two pages to show, don't show page numbers.
     if (items.length < 2) return null
 
     return (
       <div>
         {items}
 
-        {nextLast && (currentPage < totalPages) &&
+        {prevNext && (currentPage > 1) &&
           <Button
-            className={nextLastStyle.getClasses()}
+            className={prevNextStyle.getClasses()}
+            href={createRoute({
+              path: prevUrl,
+              update: true
+            })}
+          >Prev</Button>
+        }
+
+        {prevNext && (currentPage < totalPages) &&
+          <Button
+            className={prevNextStyle.getClasses()}
             href={createRoute({
               path: nextUrl,
               update: true
             })}
           >Next</Button>
-        }
-
-        {nextLast && (currentPage < (totalPages - 1)) &&
-          <Button
-            className={nextLastStyle.getClasses()}
-            href={createRoute({
-              path: lastUrl,
-              update: true
-            })}
-          >Last</Button>
         }
       </div>
     )
