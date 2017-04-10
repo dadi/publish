@@ -107,8 +107,8 @@ export default class DateTime extends Component {
     const now = new Date().getTime()
     const diff = now - date.getTime()
 
-    if (diff < (SECOND * 5)) {
-      this.setUpdateInterval(2 * SECOND)
+    if (diff < (SECOND * 50)) {
+      this.setUpdateInterval(10 * SECOND)
 
       return 'just now'
     }
