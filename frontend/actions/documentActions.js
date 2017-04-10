@@ -149,18 +149,7 @@ export function saveDocument ({api, collection, document, documentId}) {
 
       return apiBridge.then(response => {
         if (response.results && response.results.length) {
-          const newRemoteDocument = isUpdate ?
-            Object.assign({}, currentRemote, payload) :
-            response.results[0]
-
-          // (!) Ideally, we'd use `response.results[0]` to set the new remote
-          // document, as that's the freshest representation of the document.
-          // However, API doesn't currently resolve references in the response
-          // to a PUT request, so we need to use our local representation of
-          // the object instead.
-          //
-          // API issue: https://github.com/dadi/api/issues/234
-          dispatch(setRemoteDocument(newRemoteDocument))
+          dispatch(setRemoteDocument(response.results[0], true, true))
         } else {
           dispatch(setRemoteDocumentStatus(Constants.STATUS_FAILED))
         }
@@ -196,15 +185,22 @@ export function setFieldErrorStatus (field, value, error) {
   }
 }
 
-export function setRemoteDocument (remote, forceUpdate = true) {
+export function setRemoteDocument (remote, forceUpdate = true, clearLocal = false) {
   return (dispatch, getState) => {
+    let loadedFromLocalStorage = false
+    let localDocument = null
     let localStorageKey = getLocalStorageKeyFromState(getState())
-    let draft = LocalStorage.readDocument(localStorageKey)
+
+    if (clearLocal) {
+      LocalStorage.clearDocument(localStorageKey)
+    } else {
+      localDocument = LocalStorage.readDocument(localStorageKey)
+    }
 
     dispatch({
       forceUpdate,
-      loadedFromLocalStorage: Boolean(draft),
-      local: draft || {},
+      loadedFromLocalStorage: Boolean(localDocument),
+      local: localDocument || {},
       remote,
       type: Types.SET_REMOTE_DOCUMENT
     })
