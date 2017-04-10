@@ -1,0 +1,41 @@
+.container {
+  background-color: var(--theme-colour-background, #FFFFFF);
+  border: 1px solid var(--theme-colour-background-shade-2, #AAAAAA);
+  border-radius: 4px;
+  box-shadow: 7px 6px 25px rgba(0, 0, 0, 0.3);
+  line-height: 1.3;
+  padding: 13px;
+  margin: 10px;
+}
+
+.container:before {
+  bottom: -20px;
+  border: 10px solid transparent;
+  content: ' ';
+  height: 0;
+  width: 0;
+  position: absolute;
+  pointer-events: none;
+}
+
+.container-left:before {
+  left: 20px;
+}
+
+.container-right:before {
+  right: 20px;
+}
+
+.action {
+  margin-top: 20px;
+}
+
+/* Accent: destruct */
+.container-destruct {
+  border-color: var(--theme-colour-error, #E5462C);
+  background-color: var(--theme-colour-error-shade-2, #FEF8F8);
+}
+
+.container-destruct:before {
+  border-top-color: var(--theme-colour-error, #E5462C);
+}

@@ -2,7 +2,35 @@ import * as Constants from 'lib/constants'
 import * as Types from 'actions/actionTypes'
 import apiBridgeClient from 'lib/api-bridge-client'
 import {batchActions} from 'lib/redux'
+import {setNotification} from 'actions/appActions'
 import {setRemoteDocument} from 'actions/documentActions'
+
+export function clearDocumentList () {
+  return {
+    type: Types.CLEAR_DOCUMENT_LIST
+  }
+}
+
+export function deleteDocuments ({api, collection, ids}) {
+  return (dispatch) => {
+    const apiBridge = apiBridgeClient(api)
+      .in(collection.name)
+      .whereFieldIsOneOf('_id', ids)
+
+    const newStatus = ids.length > 1 ?
+      Constants.STATUS_DELETING_MULTIPLE :
+      Constants.STATUS_DELETING_SINGLE
+
+    dispatch(setDocumentListStatus(newStatus))
+
+    apiBridge.delete().then(response => {
+      dispatch({
+        ids,
+        type: Types.DELETE_DOCUMENTS
+      })
+    })
+  }
+}
 
 export function fetchDocuments ({
   api,
@@ -81,11 +109,5 @@ export function setDocumentListStatus (status) {
   return {
     status,
     type: Types.SET_DOCUMENT_LIST_STATUS
-  }
-}
-
-export function clearDocumentList () {
-  return {
-    type: Types.CLEAR_DOCUMENT_LIST
   }
 }

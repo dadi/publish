@@ -9,7 +9,7 @@ import {route} from 'preact-router'
 import Style from 'lib/Style'
 import styles from './DocumentListToolbar.css'
 
-import Button from 'components/Button/Button'
+import ButtonWithPrompt from 'components/ButtonWithPrompt/ButtonWithPrompt'
 import Checkbox from 'components/Checkbox/Checkbox'
 import Paginator from 'components/Paginator/Paginator'
 import Toolbar from 'components/Toolbar/Toolbar'
@@ -136,13 +136,15 @@ export default class DocumentListToolbar extends Component {
           <option value="delete">Delete</option>
         </select>
 
-        <Button
+        <ButtonWithPrompt
           accent="data"
           className={styles['select-button']}
           disabled={(bulkActionSelected === this.BULK_ACTIONS_PLACEHOLDER) || !selectedDocuments.length}
           onClick={this.handleBulkActionApply.bind(this)}
+          promptCallToAction="Yes, delete them."
+          promptMessage="Are you sure you want to delete the selected documents?"
           size="small"
-        >Apply</Button>
+        >Apply</ButtonWithPrompt>
       </div>
     )
   }

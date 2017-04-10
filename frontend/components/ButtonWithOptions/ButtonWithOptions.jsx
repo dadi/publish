@@ -22,6 +22,11 @@ export default class ButtonWithOptions extends Component {
     accent: proptypes.oneOf(['system']),
 
     /**
+     * The text to be rendered inside the main button.
+     */
+    children: proptypes.node,
+
+    /**
      * Whether the button is disabled.
      */
     disabled: proptypes.bool,
@@ -51,12 +56,7 @@ export default class ButtonWithOptions extends Component {
     /**
      * Type/function of the button
      */
-    type: proptypes.oneOf(['button', 'submit']),
-
-    /**
-     * The text to be rendered inside the main button.
-     */
-    children: proptypes.node
+    type: proptypes.oneOf(['button', 'submit'])
   }
 
   static defaultProps = {

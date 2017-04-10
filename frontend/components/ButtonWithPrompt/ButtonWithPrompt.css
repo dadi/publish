@@ -1,0 +1,19 @@
+.container {
+  display: inline-block;
+  position: relative;
+}
+
+.prompt {
+  position: absolute;
+  bottom: 100%;
+  min-width: 200px;
+}
+
+.prompt-left {
+  left: 0;
+}
+
+.prompt-right {
+  right: 0;
+  margin-left: -200px;
+}

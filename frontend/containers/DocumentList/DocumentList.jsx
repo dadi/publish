@@ -103,7 +103,8 @@ class DocumentList extends Component {
     const historyKeyMatch = pathKey === previousPathKey
     const apisWithoutCollections = state.api.apis.filter(api => !api.hasCollections).length
     const isIdle = status === Constants.STATUS_IDLE
-    const wasLoading = prevProps.state.documents.status === Constants.STATUS_LOADING
+    const previousStatus = prevProps.state.documents.status
+    const wasLoading = previousStatus === Constants.STATUS_LOADING
 
     // If we are have just loaded a list of documents for a nested document,
     // let's update the selection with the value of the reference field, if
@@ -115,6 +116,20 @@ class DocumentList extends Component {
       if (referencedValue && referencedValue._id) {
         actions.setDocumentSelection([referencedValue._id])
       }
+    }
+
+    // Have we just deleted a single document?
+    if (isIdle && (previousStatus === Constants.STATUS_DELETING_SINGLE)) {
+      actions.setNotification({
+        message: 'The document has been deleted'
+      })
+    }
+
+    // Have we just deleted multiple documents?
+    if (isIdle && (previousStatus === Constants.STATUS_DELETING_MULTIPLE)) {
+      actions.setNotification({
+        message: 'The documents have been deleted'
+      })
     }
 
     // State check: reject when missing config, session, or apis
@@ -301,8 +316,22 @@ class DocumentList extends Component {
   }
 
   handleBulkAction(actionType) {
-    const {state} = this.props
-    console.log('(*) Selected documents:', state.documents.selected, actionType)
+    const {
+      actions,
+      collection,
+      group,
+      state
+    } = this.props
+    const currentApi = getCurrentApi(state.api.apis, group, collection)
+    const currentCollection = getCurrentCollection(state.api.apis, group, collection)
+
+    if (actionType === 'delete') {
+      actions.deleteDocuments({
+        api: currentApi,
+        collection: currentCollection,
+        ids: state.documents.selected
+      })
+    }
   }
 
   handleReferenceDocumentSelect() {
@@ -406,6 +435,7 @@ export default connectHelper(
     user: state.user
   }),
   dispatch => bindActionCreators({
+    ...appActions,
     ...documentActions,
     ...documentsActions
   }, dispatch)

@@ -24,6 +24,11 @@ export default class Button extends Component {
     ]),
 
     /**
+     * The text/elements to be rendered inside the button.
+     */
+    children: proptypes.node,
+
+    /**
      * Classes to append to the button element.
      */
     className: proptypes.string,
@@ -58,12 +63,7 @@ export default class Button extends Component {
      * Type/function of the button. When set to `mock`, a static element will be
      * rendered (as a `span`).
      */
-    type: proptypes.oneOf(['button', 'mock', 'submit']),
-
-    /**
-     * The text to be rendered inside the button.
-     */
-    children: proptypes.node
+    type: proptypes.oneOf(['button', 'mock', 'submit'])
   }
 
   static defaultProps = {

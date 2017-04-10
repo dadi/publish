@@ -8,6 +8,7 @@ import styles from './DocumentEditToolbar.css'
 
 import Button from 'components/Button/Button'
 import ButtonWithOptions from 'components/ButtonWithOptions/ButtonWithOptions'
+import ButtonWithPrompt from 'components/ButtonWithPrompt/ButtonWithPrompt'
 import DateTime from 'components/DateTime/DateTime'
 import Peer from 'components/Peer/Peer'
 import Toolbar from 'components/Toolbar/Toolbar'
@@ -39,6 +40,11 @@ export default class DocumentListToolbar extends Component {
     method: proptypes.oneOf(['edit', 'new']),
 
     /**
+     * A callback to be fired when the "Delete" button is pressed.
+     */
+    onDelete: proptypes.func,
+
+    /**
      * A callback to be fired when the "Save" button is pressed.
      */
     onSave: proptypes.func,
@@ -59,6 +65,7 @@ export default class DocumentListToolbar extends Component {
       hasConnectionIssues,
       hasValidationErrors,
       method,
+      onDelete,
       peers
     } = this.props
 
@@ -108,11 +115,14 @@ export default class DocumentListToolbar extends Component {
 
         <div class={styles.buttons}>
           <div class={styles.button}>
-            <Button
+            <ButtonWithPrompt
               accent="destruct"
               className={styles.button}
               disabled={hasConnectionIssues}
-            >Delete</Button> 
+              onClick={onDelete}
+              promptCallToAction="Yes, delete it."
+              promptMessage="Are you sure you want to delete this document?"
+            >Delete</ButtonWithPrompt> 
           </div>
 
           <div class={styles.button}>

@@ -12,6 +12,7 @@ import styles from './DocumentEdit.css'
 import * as Constants from 'lib/constants'
 import * as appActions from 'actions/appActions'
 import * as documentActions from 'actions/documentActions'
+import * as documentsActions from 'actions/documentsActions'
 import * as fieldComponents from 'lib/field-components'
 
 import APIBridge from 'lib/api-bridge-client'
@@ -27,7 +28,11 @@ import FieldReference from 'components/FieldReference/FieldReference'
 import FieldString from 'components/FieldString/FieldString'
 import SubNavItem from 'components/SubNavItem/SubNavItem'
 
-const actions = {...appActions, ...documentActions}
+const actions = {
+  ...appActions,
+  ...documentActions,
+  ...documentsActions
+}
 
 /**
  * The interface for editing a document.
@@ -35,14 +40,14 @@ const actions = {...appActions, ...documentActions}
 class DocumentEdit extends Component {
   static propTypes = {
     /**
-     * The global actions object.
-     */
-    actions: proptypes.object,
-
-    /**
      * The name of the collection currently being listed.
      */
     collection: proptypes.string,
+
+    /**
+     * The global actions dispatcher.
+     */
+    dispatch: proptypes.func,
 
     /**
      * The ID of the document being edited.
@@ -123,6 +128,7 @@ class DocumentEdit extends Component {
 
   componentDidUpdate(previousProps, previousState) {
     const {
+      collection,
       dispatch,
       documentId,
       group,
@@ -141,6 +147,15 @@ class DocumentEdit extends Component {
       }
 
       dispatch(actions.setNotification(notification))
+    }
+
+    if (previousDocument.remote && !document.remote) {
+      // Redirect to document list view
+      route(buildUrl(group, collection, 'documents'))
+
+      dispatch(actions.setNotification({
+        message: 'The documents have been deleted'
+      }))
     }
 
     const wasSaving = previousDocument.remoteStatus === Constants.STATUS_SAVING
@@ -296,6 +311,7 @@ class DocumentEdit extends Component {
           hasConnectionIssues={hasConnectionIssues}
           hasValidationErrors={hasValidationErrors}
           method={method}
+          onDelete={this.handleDelete.bind(this)}
           onSave={this.handleSave.bind(this)}
           peers={document.peers}
         />
@@ -401,6 +417,25 @@ class DocumentEdit extends Component {
     return {
       sections: sectionsArray,
       other
+    }
+  }
+
+  handleDelete() {
+    const {
+      collection,
+      dispatch,
+      group,
+      state
+    } = this.props
+    const document = state.document.remote
+    const query = {
+      api: this.currentApi,
+      collection: this.currentCollection,
+      ids: [document._id]
+    }
+
+    if (document._id) {
+      dispatch(actions.deleteDocuments(query))
     }
   }
 
