@@ -187,7 +187,6 @@ export function setFieldErrorStatus (field, value, error) {
 
 export function setRemoteDocument (remote, forceUpdate = true, clearLocal = false) {
   return (dispatch, getState) => {
-    let loadedFromLocalStorage = false
     let localDocument = null
     let localStorageKey = getLocalStorageKeyFromState(getState())
 
