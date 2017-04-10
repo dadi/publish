@@ -69,7 +69,9 @@ APIBridgeController.prototype.post = function (req, res, next) {
           payload.body = JSON.stringify(requestObject.body)
         }
 
-        return request(payload).then(response => JSON.parse(response))
+        return request(payload).then(response => {
+          return response.length ? JSON.parse(response) : response
+        })
       }))
     })
 

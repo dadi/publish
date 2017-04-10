@@ -69,6 +69,7 @@ const buildAPIBridgeClient = function (api, inBundle) {
   })
 
   APIBridgeClient.prototype._create = APIBridgeClient.prototype.create
+  APIBridgeClient.prototype._delete = APIBridgeClient.prototype.delete
   APIBridgeClient.prototype._find = APIBridgeClient.prototype.find
   APIBridgeClient.prototype._getCollections = APIBridgeClient.prototype.getCollections
   APIBridgeClient.prototype._getConfig = APIBridgeClient.prototype.getConfig
@@ -77,6 +78,10 @@ const buildAPIBridgeClient = function (api, inBundle) {
 
   APIBridgeClient.prototype.create = function (document) {
     return this.serveQuery(this._create(document))
+  }
+
+  APIBridgeClient.prototype.delete = function (document) {
+    return this.serveQuery(this._delete(document))
   }
 
   APIBridgeClient.prototype.find = function () {

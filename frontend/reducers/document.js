@@ -1,7 +1,6 @@
 'use strict'
 
 import * as Constants from 'lib/constants'
-import * as LocalStorage from 'lib/local-storage'
 import * as Types from 'actions/actionTypes'
 
 const initialState = {
@@ -29,14 +28,20 @@ export default function document (state = initialState, action = {}) {
         validationErrors: null
       }
 
+    // Documents action: delete documents
+    case Types.DELETE_DOCUMENTS:
+      if (state.remote && action.ids.includes(state.remote._id)) {
+        return initialState
+      }
+
+      return state
+
     // Document action: user leaving document
     case Types.USER_LEAVING_DOCUMENT:
       return state
 
     // Document action: save document
     case Types.SAVE_DOCUMENT:
-      //LocalStorage.clearDocument(action.context)
-
       return {
         ...state,
         remoteStatus: Constants.STATUS_IDLE

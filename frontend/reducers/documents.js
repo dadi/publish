@@ -13,6 +13,10 @@ const initialState = {
 export default function document (state = initialState, action = {}) {
   switch (action.type) {
 
+    // Action: delete documents.
+    case Types.DELETE_DOCUMENTS:
+      return initialState
+
     // Action: set document list.
     case Types.SET_DOCUMENT_LIST:
       return {
