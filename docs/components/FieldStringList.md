@@ -1,5 +1,5 @@
-`FieldStringListView`
-=====================
+`FieldStringList`
+=================
 
 Component for rendering API fields of type String on a list view.
 

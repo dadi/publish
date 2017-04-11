@@ -1,7 +1,7 @@
-`FieldReference`
-================
+`FieldStringEdit`
+=================
 
-Component for API fields of type Reference.
+Component for API fields of type String
 
 Props
 -----
@@ -46,6 +46,7 @@ The ID of the document being edited.
 If defined, contains an error message to be displayed by the field.
 
 - type: `string`
+- default value: `false`
 
 
 ### `forceValidation`
@@ -54,6 +55,7 @@ Whether the field should be validated as soon as it mounts, rather than
 waiting for a change event.
 
 - type: `bool`
+- default value: `false`
 
 
 ### `group`
@@ -94,4 +96,5 @@ The field schema.
 The field value.
 
 - type: `bool`
+- default value: `''`
 

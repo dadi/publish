@@ -1,7 +1,7 @@
-`FieldNumber`
-=============
+`FieldReferenceEdit`
+====================
 
-Component for API fields of type Number.
+Component for API fields of type Reference.
 
 Props
 -----

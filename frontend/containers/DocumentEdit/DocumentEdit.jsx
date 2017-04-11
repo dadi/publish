@@ -627,7 +627,7 @@ class DocumentEdit extends Component {
     const error = typeof hasError === 'string' ? 'This field ' + hasError : hasError
     const fieldType = field.publish && field.publish.subType ? field.publish.subType : field.type
     const fieldComponentName = `Field${fieldType}`
-    const FieldComponent = fieldComponents[fieldComponentName]
+    const FieldComponent = fieldComponents[fieldComponentName] && fieldComponents[fieldComponentName].edit
 
     if (!FieldComponent) {
       console.warn('Unknown field type:', fieldType)

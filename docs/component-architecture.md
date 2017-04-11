@@ -31,20 +31,26 @@ App
 │ │ │ │ └── Button
 │ │ │ └── Toolbar
 │ │ ├─┬ FieldImage
-│ │ │ ├── Button
-│ │ │ ├── FileUpload
-│ │ │ ├── Label
-│ │ │ └── LazyLoader
+│ │ │ └─┬ FieldImageEdit
+│ │ │   ├── Button
+│ │ │   ├── FileUploadEdit
+│ │ │   ├── Label
+│ │ │   └── LazyLoader
 │ │ ├─┬ FieldBoolean
-│ │ │ ├── Checkbox
-│ │ │ └── Label
+│ │ │ ├─┬ FieldBooleanEdit
+│ │ │ │ ├── Checkbox
+│ │ │ │ └── Label
+│ │ │ └── FieldBooleanList
 │ │ ├─┬ FieldReference
-│ │ │ ├── Button
-│ │ │ ├── Label
-│ │ │ └── TextInput
+│ │ │ └─┬ FieldReferenceEdit
+│ │ │   ├── Button
+│ │ │   ├── Label
+│ │ │   └── TextInput
 │ │ ├─┬ FieldString
-│ │ │ ├── Label
-│ │ │ └── TextInput
+│ │ │ ├─┬ FieldStringEdit
+│ │ │ │ ├── Label
+│ │ │ │ └── TextInput
+│ │ │ └── FieldStringList
 │ │ ├── HeroMessage
 │ │ └── SubNavItem
 │ ├─┬ Header
@@ -79,20 +85,26 @@ App
 │ │ │ │ └── Button
 │ │ │ └── Toolbar
 │ │ ├─┬ FieldImage
-│ │ │ ├── Button
-│ │ │ ├── FileUpload
-│ │ │ ├── Label
-│ │ │ └── LazyLoader
+│ │ │ └─┬ FieldImageEdit
+│ │ │   ├── Button
+│ │ │   ├── FileUploadEdit
+│ │ │   ├── Label
+│ │ │   └── LazyLoader
 │ │ ├─┬ FieldBoolean
-│ │ │ ├── Checkbox
-│ │ │ └── Label
+│ │ │ ├─┬ FieldBooleanEdit
+│ │ │ │ ├── Checkbox
+│ │ │ │ └── Label
+│ │ │ └── FieldBooleanList
 │ │ ├─┬ FieldReference
-│ │ │ ├── Button
-│ │ │ ├── Label
-│ │ │ └── TextInput
+│ │ │ └─┬ FieldReferenceEdit
+│ │ │   ├── Button
+│ │ │   ├── Label
+│ │ │   └── TextInput
 │ │ ├─┬ FieldString
-│ │ │ ├── Label
-│ │ │ └── TextInput
+│ │ │ ├─┬ FieldStringEdit
+│ │ │ │ ├── Label
+│ │ │ │ └── TextInput
+│ │ │ └── FieldStringList
 │ │ ├── HeroMessage
 │ │ └── SubNavItem
 │ ├─┬ Header
@@ -133,8 +145,6 @@ App
 │ │ │ ├── Toolbar
 │ │ │ └─┬ ToolbarTextInput
 │ │ │   └── TextInput
-│ │ ├── FieldBooleanListView
-│ │ ├── FieldStringListView
 │ │ ├── HeroMessage
 │ │ └─┬ SyncTable
 │ │   ├── Table

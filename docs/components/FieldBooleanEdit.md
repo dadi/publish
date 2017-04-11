@@ -1,5 +1,5 @@
-`FieldBoolean`
-==============
+`FieldBooleanEdit`
+==================
 
 Component for API fields of type Boolean.
 

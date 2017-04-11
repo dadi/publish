@@ -6,7 +6,7 @@ import proptypes from 'proptypes'
 import Style from 'lib/Style'
 import styles from './FileUpload.css'
 
-export default class FileUpload extends Component {
+export default class FileUploadEdit extends Component {
 
   static propTypes = {
     /*

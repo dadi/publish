@@ -10,6 +10,7 @@ import * as Constants from 'lib/constants'
 import * as appActions from 'actions/appActions'
 import * as documentActions from 'actions/documentActions'
 import * as documentsActions from 'actions/documentsActions'
+import * as fieldComponents from 'lib/field-components'
 
 import APIBridge from 'lib/api-bridge-client'
 import {buildUrl, createRoute} from 'lib/router'
@@ -18,8 +19,6 @@ import {getCurrentApi, getCurrentCollection} from 'lib/app-config'
 
 import Button from 'components/Button/Button'
 import DocumentListToolbar from 'components/DocumentListToolbar/DocumentListToolbar'
-import FieldBooleanListView from 'components/FieldBoolean/FieldBooleanListView'
-import FieldStringListView from 'components/FieldString/FieldStringListView'
 import HeroMessage from 'components/HeroMessage/HeroMessage'
 import SyncTable from 'components/SyncTable/SyncTable'
 
@@ -406,22 +405,17 @@ class DocumentList extends Component {
   }
 
   renderField(fieldName, schema, value) {
-    switch (schema.type) {
-      case 'Boolean':
-        return (
-          <FieldBooleanListView
-            schema={schema}
-            value={value}
-          />
-        )
+    const fieldType = schema.publish && schema.publish.subType ? schema.publish.subType : schema.type
+    const fieldComponentName = `Field${fieldType}`
+    const FieldComponent = fieldComponents[fieldComponentName] && fieldComponents[fieldComponentName].list
 
-      case 'String':
-        return (
-          <FieldStringListView
-            schema={schema}
-            value={value}
-          />
-        )
+    if (FieldComponent) {
+      return (
+        <FieldComponent
+          schema={schema}
+          value={value}
+        />
+      )
     }
 
     return value
