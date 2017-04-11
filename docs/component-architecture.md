@@ -14,6 +14,7 @@ App
 │   └── Notification
 ├─┬ DocumentCreateView
 │ ├─┬ DocumentEdit
+│ │ ├── Button
 │ │ ├─┬ DocumentEditToolbar
 │ │ │ ├── Button
 │ │ │ ├─┬ ButtonWithOptions
@@ -44,6 +45,7 @@ App
 │ │ ├─┬ FieldString
 │ │ │ ├── Label
 │ │ │ └── TextInput
+│ │ ├── HeroMessage
 │ │ └── SubNavItem
 │ ├─┬ Header
 │ │ ├─┬ CollectionNav
@@ -60,6 +62,7 @@ App
 │ └── Page
 ├─┬ DocumentEditView
 │ ├─┬ DocumentEdit
+│ │ ├── Button
 │ │ ├─┬ DocumentEditToolbar
 │ │ │ ├── Button
 │ │ │ ├─┬ ButtonWithOptions
@@ -90,6 +93,7 @@ App
 │ │ ├─┬ FieldString
 │ │ │ ├── Label
 │ │ │ └── TextInput
+│ │ ├── HeroMessage
 │ │ └── SubNavItem
 │ ├─┬ Header
 │ │ ├─┬ CollectionNav
@@ -118,6 +122,7 @@ App
 │ ├─┬ DocumentList
 │ │ ├── Button
 │ │ ├─┬ DocumentListToolbar
+│ │ │ ├── Button
 │ │ │ ├─┬ ButtonWithPrompt
 │ │ │ │ ├── Button
 │ │ │ │ └─┬ Prompt

@@ -93,7 +93,6 @@ class DocumentList extends Component {
   componentDidUpdate(prevProps) {
     const {
       actions,
-      parentDocumentId,
       referencedField,
       state
     } = this.props
@@ -364,7 +363,11 @@ class DocumentList extends Component {
       referenceFieldSchema.publish.section &&
       slugify(referenceFieldSchema.publish.section)
 
-    route(buildUrl(group, collection, 'document', 'edit', parentDocumentId, referenceFieldSection))
+    if (parentDocumentId) {
+      route(buildUrl(group, collection, 'document', 'edit', parentDocumentId, referenceFieldSection))
+    } else {
+      route(buildUrl(group, collection, 'document', 'new', referenceFieldSection))
+    }
   }
 
   handleRowSelect(selectedRows) {

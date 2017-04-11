@@ -97,6 +97,11 @@ class App extends Component {
         <DocumentEditView path="/:collection/document/edit/:documentId?/:section?" authenticate />
 
         {hasRoutes && (
+          <DocumentListView path="/:group/:collection/document/new/:section?/:referencedField?/:page?" authenticate />
+        )}
+        <DocumentListView path="/:collection/document/new/:section?/:referencedField?/:page?" authenticate />
+
+        {hasRoutes && (
           <DocumentCreateView path="/:group/:collection/document/new/:section?" authenticate />
         )}
         <DocumentCreateView path="/:collection/document/new/:section?" authenticate />

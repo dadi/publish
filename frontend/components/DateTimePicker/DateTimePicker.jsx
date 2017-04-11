@@ -163,7 +163,7 @@ export default class DateTimePicker extends Component {
   }
 
   getInternalDate(overrides = {}, monthOffset = this.state.monthOffset) {
-    const {date} = this.props
+    const date = this.props.date || new Date()
     const dateTime = new DateTime(date)
 
     if (!dateTime.isValid()) {

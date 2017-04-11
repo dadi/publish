@@ -39,9 +39,11 @@ export function fetchDocument ({api, collection, id, fields}) {
     dispatch(setRemoteDocumentStatus(Constants.STATUS_LOADING))
 
     apiBridge.find().then(response => {
-      const document = response.results[0]
-
-      dispatch(setRemoteDocument(document))
+      if (response.results.length) {
+        dispatch(setRemoteDocument(response.results[0]))
+      } else {
+        dispatch(setRemoteDocumentStatus(Constants.STATUS_NOT_FOUND))
+      }
     }).catch(err => {
       dispatch(setRemoteDocumentStatus(Constants.STATUS_FAILED))
     })
@@ -53,7 +55,7 @@ export function registerUserLeavingDocument () {
     let localStorageKey = getLocalStorageKeyFromState(getState())
     let localDocument = getState().document.local
 
-    if (Object.keys(localDocument).length > 0) {
+    if (localDocument && Object.keys(localDocument).length > 0) {
       LocalStorage.writeDocument(localStorageKey, localDocument)
     }
 

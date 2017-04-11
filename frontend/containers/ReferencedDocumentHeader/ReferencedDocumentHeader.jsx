@@ -64,6 +64,18 @@ class ReferencedDocumentHeader extends Component {
     if (!fieldSchema) return null
 
     const displayName = fieldSchema.label || referencedField
+    const backToDocumentLink = parentDocumentId ? buildUrl(
+      group,
+      collection,
+      'document',
+      'edit',
+      parentDocumentId
+    ) : buildUrl(
+      group,
+      collection,
+      'document',
+      'new'
+    )
 
     return (
       <div class={styles.container}>
@@ -74,7 +86,7 @@ class ReferencedDocumentHeader extends Component {
 
         <Button
           accent="destruct"
-          href={buildUrl(group, collection, 'document', 'edit', parentDocumentId)}
+          href={backToDocumentLink}
           size="small"
         >Nevermind, back to document</Button>
       </div>

@@ -21,11 +21,13 @@ import {buildUrl, createRoute} from 'lib/router'
 import {connectHelper, filterHiddenFields, slugify, Case} from 'lib/util'
 import {getCurrentApi, getCurrentCollection} from 'lib/app-config'
 
+import Button from 'components/Button/Button'
 import DocumentEditToolbar from 'components/DocumentEditToolbar/DocumentEditToolbar'
 import FieldImage from 'components/FieldImage/FieldImage'
 import FieldBoolean from 'components/FieldBoolean/FieldBoolean'
 import FieldReference from 'components/FieldReference/FieldReference'
 import FieldString from 'components/FieldString/FieldString'
+import HeroMessage from 'components/HeroMessage/HeroMessage'
 import SubNavItem from 'components/SubNavItem/SubNavItem'
 
 const actions = {
@@ -84,6 +86,7 @@ class DocumentEdit extends Component {
   constructor(props) {
     super(props)
 
+    this.hasFetched = false
     this.state.saveAttempt = null
   }
 
@@ -137,6 +140,7 @@ class DocumentEdit extends Component {
     const document = state.document
     const {saveAttempt} = this.state
     const previousDocument = previousProps.state.document
+    const status = document.remoteStatus
 
     if (!previousDocument.local && document.local && document.loadedFromLocalStorage) {
       const notification = {
@@ -158,11 +162,15 @@ class DocumentEdit extends Component {
       }))
     }
 
+    // If there's an error, stop here.
+    if (this.hasFetched && (status === Constants.STATUS_NOT_FOUND)) {
+      return
+    }
+
     const wasSaving = previousDocument.remoteStatus === Constants.STATUS_SAVING
-    const isIdle = document.remoteStatus === Constants.STATUS_IDLE
 
     // Have we just saved a document?
-    if (wasSaving && isIdle) {
+    if (wasSaving && (status === Constants.STATUS_IDLE)) {
       this.processSaveResult()
     }
 
@@ -184,9 +192,9 @@ class DocumentEdit extends Component {
     // - All APIs have collections
     const notLoading = document.remoteStatus !== Constants.STATUS_LOADING
       && document.remoteStatus !== Constants.STATUS_SAVING
-    const documentIdHasChanged = document.remote &&
+    const remoteDocumentHasChanged = document.remote &&
       (documentId !== document.remote._id)
-    const needsFetch = !document.remote || documentIdHasChanged
+    const needsFetch = !document.remote || remoteDocumentHasChanged
     const allApisHaveCollections = state.api.apis.filter(api => !api.collections).length === 0
 
     if (notLoading && needsFetch && allApisHaveCollections && this.currentCollection) {
@@ -228,8 +236,23 @@ class DocumentEdit extends Component {
       state
     } = this.props
     const document = state.document
+    const status = document.remoteStatus
 
-    if (document.remoteStatus === Constants.STATUS_LOADING || !this.currentCollection || !document.local) {
+    if (status === Constants.STATUS_NOT_FOUND) {
+      return (
+        <HeroMessage
+          title="Oops!"
+          subtitle="You're looking for a document that doesn't seem to exist."
+        >
+          <Button
+            accent="data"
+            href={buildUrl(group, collection, 'documents')}
+          >List documents</Button>
+        </HeroMessage>
+      )
+    }
+
+    if (status === Constants.STATUS_LOADING || !this.currentCollection || !document.local) {
       return null
     }
 
@@ -371,6 +394,8 @@ class DocumentEdit extends Component {
     }
 
     dispatch(actions.fetchDocument(query))
+
+    this.hasFetched = true
   }
 
   // Groups fields by section

@@ -135,7 +135,7 @@ export default class FieldDateTime extends Component {
           {pickerVisible &&
             <DateTimePicker
               className={styles.picker}
-              date={dateObj.getDate()}
+              date={dateObj && dateObj.getDate()}
               onChange={this.handlePickerChange.bind(this)}
             />
           }

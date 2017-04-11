@@ -111,6 +111,22 @@ export default class FieldReference extends Component {
     const displayName = schema.label || schema._id
     const displayField = value &&
       Object.keys(filterHiddenFields(referencedCollection.fields, 'list'))[0]
+    const selectLink = documentId ? buildUrl(
+      group,
+      collection,
+      'document',
+      'edit',
+      documentId,
+      'select',
+      schema._id
+    ) : buildUrl(
+      group,
+      collection,
+      'document',
+      'new',
+      'select',
+      schema._id
+    )
 
     return (
       <Label
@@ -133,15 +149,7 @@ export default class FieldReference extends Component {
             <div class={styles.placeholder}>
               <Button
                 accent="data"
-                href={buildUrl(
-                  group,
-                  collection,
-                  'document',
-                  'edit',
-                  documentId,
-                  'select',
-                  schema._id
-                )}
+                href={selectLink}
                 size="small"
               >Select existing {displayName.toLowerCase()}</Button>
             </div>
