@@ -1,4 +1,60 @@
+import * as Constants from 'lib/constants'
 import * as Types from 'actions/actionTypes'
+import apiBridgeClient from 'lib/api-bridge-client'
+
+export function loadApis () {
+  return (dispatch, getState) => {
+    const apis = getState().app.config.apis
+
+    if (!apis) return
+
+    dispatch(setApiStatus(Constants.STATUS_LOADING))
+
+    let apisToProcess = apis.length
+    let apisWithCollections = []
+
+    apis.forEach(api => {
+      // Getting collections for this API. Each API will use a bundler to get
+      // all collection schemas in bulk.
+      apiBridgeClient(api).getCollections().then(({collections}) => {
+        const bundler = apiBridgeClient.getBundler()
+
+        collections.forEach(collection => {
+          const collectionQuery = apiBridgeClient(api, true)
+            .in(collection.slug)
+            .getConfig()
+
+          bundler.add(collectionQuery)
+        })
+
+        bundler.run().then(apiCollections => {
+          const mergedCollections = apiCollections.map((schema, index) => {
+            return Object.assign({}, schema, collections[index])
+          }).filter(collection => {
+            return !(collection.settings.publish && collection.settings.publish.hidden)
+          })
+
+          const apiWithCollections = Object.assign({}, api, {
+            collections: mergedCollections
+          })
+
+          apisWithCollections.push(apiWithCollections)
+
+          if (--apisToProcess === 0) {
+            dispatch(setApiList(apisWithCollections))
+          }
+        })
+      })
+    })
+  }
+}
+
+export function setApiList (apis) {
+  return {
+    apis,
+    type: Types.SET_API_LIST,
+  }
+}
 
 export function setApi (api) {
   return {

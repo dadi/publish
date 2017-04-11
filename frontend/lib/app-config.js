@@ -1,21 +1,6 @@
 'use strict'
 
-import 'fetch'
 import {slugify} from 'lib/util'
-
-/**
- * Retrieves the app configuration file.
- *
- * @return {promise} An object representing the configuration file.
- */
-export function getAppConfig () {
-  return fetch('/config', {
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    method: 'GET'
-  }).then(response => response.json())
-}
 
 /**
  * Returns the API to be used given a group and collection name

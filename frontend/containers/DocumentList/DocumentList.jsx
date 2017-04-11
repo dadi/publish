@@ -99,7 +99,6 @@ class DocumentList extends Component {
     const pathKey = prevProps.state.router.locationBeforeTransitions.key
     const previousPathKey = state.router.locationBeforeTransitions.key
     const historyKeyMatch = pathKey === previousPathKey
-    const apisWithoutCollections = state.api.apis.filter(api => !api.hasCollections).length
     const isIdle = status === Constants.STATUS_IDLE
     const previousStatus = prevProps.state.documents.status
     const wasLoading = previousStatus === Constants.STATUS_LOADING
@@ -132,9 +131,6 @@ class DocumentList extends Component {
 
     // State check: reject when missing config, session, or apis
     if (!state.app.config || !state.api.apis.length || !state.user) return
-
-    // State check: reject when there are still APIs without collections
-    if (apisWithoutCollections) return
 
     // State check: reject when path matches and document list loaded
     if (list && historyKeyMatch) return

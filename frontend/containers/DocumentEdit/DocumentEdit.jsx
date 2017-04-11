@@ -100,7 +100,6 @@ class DocumentEdit extends Component {
       section,
       state
     } = this.props
-
     const currentCollection = getCurrentCollection(state.api.apis, group, collection, referencedField)
     const method = documentId ? 'edit' : 'new'
 

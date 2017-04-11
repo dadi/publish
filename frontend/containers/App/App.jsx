@@ -57,15 +57,18 @@ class App extends Component {
     if (!previousState.user.local && state.user.local) {
       const {actions} = this.props
 
-      getAppConfig().then(config => {
-        actions.setAppConfig(config)
+      actions.loadAppConfig()
+    }
 
-        // Start socket logic
-        this.initialiseSocket(config)
+    // State change: app now has config
+    if (!previousState.app.config && state.app.config) {
+      // Start socket logic
+      this.initialiseSocket(state.app.config)
 
-        // Load api collections
-        this.getApiCollections(config)
-      })
+      // Load api collections
+      //this.getApiCollections(state.app.config)
+
+      actions.loadApis()
     }
 
     // State change: user has signed out

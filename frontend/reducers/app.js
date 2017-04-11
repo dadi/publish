@@ -98,6 +98,13 @@ export default function app (state = initialState, action = {}) {
         config: action.config
       }
 
+    // App action: set app status
+    case Types.SET_APP_STATUS:
+      return {
+        ...state,
+        status: action.status
+      }
+
     // App action: set network status
     case Types.SET_NETWORK_STATUS:
       return {

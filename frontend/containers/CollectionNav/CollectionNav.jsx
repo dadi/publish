@@ -118,13 +118,9 @@ class CollectionNav extends Component {
     const apis = state.api.apis
 
     if (apis && apis.length) {
-      const apisWithoutCollections = apis.filter(api => !api.hasCollections)
+      const collectionMap = this.buildCollectionMap(apis)
 
-      if (apisWithoutCollections.length === 0) {
-        const collectionMap = this.buildCollectionMap(apis)
-
-        this.groups = this.buildGroups(collectionMap)
-      }
+      this.groups = this.buildGroups(collectionMap)
     }
   }
 
