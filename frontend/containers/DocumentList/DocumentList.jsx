@@ -149,40 +149,29 @@ class DocumentList extends Component {
       onPageTitle,
       order,
       referencedField,
-      selectLimit,
       sort,
       state
     } = this.props
-    const currentCollection = getCollectionForUrlParams(state.api.apis, {
+    const documents = state.documents
+
+    this.currentCollection = getCollectionForUrlParams(state.api.apis, {
       collection,
       group,
       referencedField
     })
-    const documents = state.documents
 
-    if (!documents.list || documents.status === Constants.STATUS_LOADING || !currentCollection) {
+    if (!documents.list || documents.status === Constants.STATUS_LOADING || !this.currentCollection) {
       return null
     }
 
-    const collectionFields = currentCollection.fields
-    const tableColumns = Object.keys(filterHiddenFields(collectionFields, 'list'))
-      .map(field => {
-        return {
-          id: field,
-          label: collectionFields[field].label
-        }
-      })
-    const selectedRows = this.getSelectedRows()
-    const documentsList = documents.list.results
-    const metadata = documents.list.metadata
-    const query = documents.query
+    const documentsList = documents.list
 
     // Setting page title
     if (typeof onPageTitle === 'function') {
-      onPageTitle.call(this, currentCollection.settings.description || currentCollection.name)
+      onPageTitle.call(this, this.currentCollection.settings.description || this.currentCollection.name)
     }
 
-    if (!documentsList.length && !query) {
+    if (!documentsList.results.length && !documents.query) {
       return (
         <HeroMessage
           title="No documents yet."
@@ -196,46 +185,19 @@ class DocumentList extends Component {
       )
     }
 
-    if (referencedField) {
-      const parentCollection = getCollectionForUrlParams(state.api.apis, {
-        collection,
-        group
-      })
-
-      console.log('---> PARENT:', parentCollection)
-    }
-
     return (
       <div>
-        {documentsList.length > 0 && (
-          <SyncTable
-            columns={tableColumns}
-            data={documents.list.results}
-            onRender={this.handleAnchorRender.bind(this)}
-            onSelect={this.handleRowSelect.bind(this)}
-            onSort={this.handleTableSort.bind(this)}
-            selectedRows={selectedRows}
-            selectLimit={selectLimit}
-            sortable={true}
-            sortBy={sort}
-            sortOrder={order}
-          />
-        )}
+        {this.renderDocumentList()}
+
         <DocumentListToolbar
           collection={collection}
           group={group}
           isReferencedField={Boolean(referencedField)}
-          metadata={metadata}
+          metadata={documentsList.metadata}
           onBulkAction={this.handleBulkAction.bind(this)}
           onReferenceDocumentSelect={this.handleReferenceDocumentSelect.bind(this)}
           selectedDocuments={documents.selected}
         />
-        {query && !documentsList.length && (
-          <div>
-            <h1>0 results</h1>
-            <p>There are no documents that match these filters</p>
-          </div>
-        )}
       </div>
     )
   }
@@ -443,14 +405,87 @@ class DocumentList extends Component {
     )
   }
 
+  renderDocumentList() {
+    const {
+      collection,
+      group,
+      referencedField,
+      order,
+      selectLimit,
+      sort,
+      state
+    } = this.props
+    const documents = state.documents.list.results
+    const selectedRows = this.getSelectedRows()
+
+    // If we're on a reference field select view, we'll see if there's a field
+    // component for the referenced field type that exports a `referenceSelect`
+    // context. If it does, we'll use that instead of the default `SyncTable`
+    // to render the results.
+    if (referencedField) {
+      const parentCollection = getCollectionForUrlParams(state.api.apis, {
+        collection,
+        group
+      })
+      const fieldSchema = parentCollection.fields[referencedField]
+      const fieldType = (fieldSchema.publish && fieldSchema.publish.subType) || fieldSchema.type
+      const fieldComponentName = `Field${fieldType}`
+      const FieldComponentReferenceSelect = fieldComponents[fieldComponentName].referenceSelect
+
+      if (FieldComponentReferenceSelect) {
+        return (
+          <FieldComponentReferenceSelect
+            data={documents}
+            selectedRows={selectedRows}
+            selectLimit={selectLimit}
+            sortBy={sort}
+            sortOrder={order}
+          />
+        )
+      }
+    }
+
+    const tableColumns = Object.keys(filterHiddenFields(this.currentCollection.fields, 'list'))
+      .map(field => {
+        return {
+          id: field,
+          label: this.currentCollection.fields[field].label
+        }
+      })
+
+    if (documents.length > 0) {
+      return (
+        <SyncTable
+          columns={tableColumns}
+          data={documents}
+          onRender={this.handleAnchorRender.bind(this)}
+          onSelect={this.handleRowSelect.bind(this)}
+          onSort={this.handleTableSort.bind(this)}
+          selectedRows={selectedRows}
+          selectLimit={selectLimit}
+          sortable={true}
+          sortBy={sort}
+          sortOrder={order}
+        />
+      )
+    }
+
+    return (
+      <div>
+        <h1>0 results</h1>
+        <p>There are no documents that match these filters</p>
+      </div>
+    )
+  }
+
   renderField(fieldName, schema, value) {
     const fieldType = schema.publish && schema.publish.subType ? schema.publish.subType : schema.type
     const fieldComponentName = `Field${fieldType}`
-    const FieldComponent = fieldComponents[fieldComponentName] && fieldComponents[fieldComponentName].list
+    const FieldComponentList = fieldComponents[fieldComponentName] && fieldComponents[fieldComponentName].list
 
-    if (FieldComponent) {
+    if (FieldComponentList) {
       return (
-        <FieldComponent
+        <FieldComponentList
           schema={schema}
           value={value}
         />

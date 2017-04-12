@@ -1,3 +1,4 @@
 import edit from './FieldImageEdit'
+import referenceSelect from './FieldImageReferenceSelect'
 
-export {edit}
+export {edit, referenceSelect}

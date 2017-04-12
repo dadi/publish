@@ -42,8 +42,9 @@ A field component may wish to specify how it's represented in various contexts. 
 
 | Key  | Description                                                                      | Required |
 |------|----------------------------------------------------------------------------------|----------|
-| edit | How the field is represented in the document edit view                           | **yes**  |
-| list | How the field is represented inside its table cell within the document list view | no       |
+| `edit` | How the field is rendered in the document edit view                           | **yes**  |
+| `list` | How the field is rendered inside its table cell within the document list view | no       |
+| `referenceSelect` | How the field is rendered in a document list view when selecting the value for a reference field | no       |
 
 Components should have, within their directory, a separate file for each of the contexts they wish to implement, and then have the entry point file exporting those contexts to the app. For example, this shows the directory structure for `FieldString`, which implements the `edit` and `list` contexts:
 
@@ -53,6 +54,7 @@ FieldString
 ├── FieldString.jsx
 ├── FieldStringEdit.jsx
 └── FieldStringList.jsx
+└── FieldStringReferenceSelect.jsx
 ```
 
 *Entry point (FieldString.jsx):*
@@ -60,6 +62,7 @@ FieldString
 ```js
 import edit from './FieldStringEdit'
 import list from './FieldStringList'
+import referenceSelect from './FieldStringReferenceSelect'
 
-export {edit, list}
+export {edit, list, referenceSelect}
 ```
