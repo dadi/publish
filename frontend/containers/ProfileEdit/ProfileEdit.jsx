@@ -10,7 +10,7 @@ import Style from 'lib/Style'
 import styles from './ProfileEdit.css'
 
 import {Case, connectHelper} from 'lib/util'
-import {getAuthCollection} from 'lib/app-config'
+import {getAuthCollection} from 'lib/collection-lookup'
 import {buildUrl} from 'lib/router'
 
 import * as userActions from 'actions/userActions'

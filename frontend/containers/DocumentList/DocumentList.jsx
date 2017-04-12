@@ -15,7 +15,7 @@ import * as fieldComponents from 'lib/field-components'
 import APIBridge from 'lib/api-bridge-client'
 import {buildUrl, createRoute} from 'lib/router'
 import {connectHelper, filterHiddenFields, isValidJSON, slugify} from 'lib/util'
-import {getCurrentApi, getCurrentCollection} from 'lib/app-config'
+import {getApiForUrlParams, getCollectionForUrlParams} from 'lib/collection-lookup'
 
 import Button from 'components/Button/Button'
 import DocumentListToolbar from 'components/DocumentListToolbar/DocumentListToolbar'
@@ -153,7 +153,11 @@ class DocumentList extends Component {
       sort,
       state
     } = this.props
-    const currentCollection = getCurrentCollection(state.api.apis, group, collection, referencedField)
+    const currentCollection = getCollectionForUrlParams(state.api.apis, {
+      collection,
+      group,
+      referencedField
+    })
     const documents = state.documents
 
     if (!documents.list || documents.status === Constants.STATUS_LOADING || !currentCollection) {
@@ -246,11 +250,23 @@ class DocumentList extends Component {
       sort,
       state
     } = this.props
-    const currentApi = getCurrentApi(state.api.apis, group, collection)
-    const currentCollection = getCurrentCollection(state.api.apis, group, collection, referencedField)
+    const currentApi = getApiForUrlParams(state.api.apis, {
+      collection,
+      group
+    })
+    const currentCollection = getCollectionForUrlParams(state.api.apis, {
+      collection,
+      group,
+      referencedField,
+      useApi: currentApi
+    })
     const count = currentCollection.settings && currentCollection.settings.count || 20
     const filterValue = state.router.params ? state.router.params.filter : null
-    const parentCollection = referencedField && getCurrentCollection(state.api.apis, group, collection)
+    const parentCollection = referencedField && getCollectionForUrlParams(state.api.apis, {
+      collection,
+      group,
+      useApi: currentApi
+    })
 
     actions.fetchDocuments({
       api: currentApi,
@@ -296,7 +312,10 @@ class DocumentList extends Component {
       return value
     }
 
-    const currentCollection = getCurrentCollection(state.api.apis, group, collection)
+    const currentCollection = getCollectionForUrlParams(state.api.apis, {
+      collection,
+      group
+    })
     const fieldSchema = currentCollection.fields[column.id]
     const renderedValue = this.renderField(column.id, fieldSchema, value)
 
@@ -316,8 +335,15 @@ class DocumentList extends Component {
       group,
       state
     } = this.props
-    const currentApi = getCurrentApi(state.api.apis, group, collection)
-    const currentCollection = getCurrentCollection(state.api.apis, group, collection)
+    const currentApi = getApiForUrlParams(state.api.apis, {
+      collection,
+      group
+    })
+    const currentCollection = getCollectionForUrlParams(state.api.apis, {
+      collection,
+      group,
+      useApi: currentApi
+    })
 
     if (actionType === 'delete') {
       actions.deleteDocuments({
@@ -337,7 +363,11 @@ class DocumentList extends Component {
       referencedField,
       state
     } = this.props
-    const referencedCollection = getCurrentCollection(state.api.apis, group, collection, referencedField)
+    const referencedCollection = getCollectionForUrlParams(state.api.apis, {
+      collection,
+      group,
+      referencedField
+    })
     const documentsList = state.documents.list.results
 
     // We might want to change this when we allow a field to reference multiple
@@ -351,7 +381,10 @@ class DocumentList extends Component {
       [referencedField]: selectedDocument
     })
 
-    const parentCollection = getCurrentCollection(state.api.apis, group, collection)
+    const parentCollection = getCollectionForUrlParams(state.api.apis, {
+      collection,
+      group
+    })
     const referenceFieldSchema = parentCollection.fields[referencedField]
     const referenceFieldSection = referenceFieldSchema &&
       referenceFieldSchema.publish &&

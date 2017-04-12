@@ -19,7 +19,7 @@ import APIBridge from 'lib/api-bridge-client'
 import {batchActions} from 'lib/redux'
 import {buildUrl, createRoute} from 'lib/router'
 import {connectHelper, filterHiddenFields, slugify, Case} from 'lib/util'
-import {getCurrentApi, getCurrentCollection} from 'lib/app-config'
+import {getApiForUrlParams, getCollectionForUrlParams} from 'lib/collection-lookup'
 
 import Button from 'components/Button/Button'
 import DocumentEditToolbar from 'components/DocumentEditToolbar/DocumentEditToolbar'
@@ -100,7 +100,16 @@ class DocumentEdit extends Component {
       section,
       state
     } = this.props
-    const currentCollection = getCurrentCollection(state.api.apis, group, collection, referencedField)
+    const currentApi = getApiForUrlParams(state.api.apis, {
+      collection,
+      group
+    })
+    const currentCollection = getCollectionForUrlParams(state.api.apis, {
+      collection,
+      group,
+      referencedField,
+      useApi: currentApi
+    })
     const method = documentId ? 'edit' : 'new'
 
     if (typeof onPageTitle === 'function') {
@@ -124,7 +133,7 @@ class DocumentEdit extends Component {
       }
     }
 
-    this.currentApi = getCurrentApi(state.api.apis, group, collection)
+    this.currentApi = currentApi
     this.currentCollection = currentCollection
   }
 
@@ -213,9 +222,19 @@ class DocumentEdit extends Component {
       referencedField,
       state
     } = this.props
+    const currentApi = getApiForUrlParams(state.api.apis, {
+      collection,
+      group
+    })
+    const currentCollection = getCollectionForUrlParams(state.api.apis, {
+      collection,
+      group,
+      referencedField,
+      useApi: currentApi
+    })
 
-    this.currentCollection = getCurrentCollection(state.api.apis, group, collection, referencedField)
-    this.currentApi = getCurrentApi(state.api.apis, group, collection)
+    this.currentApi = currentApi
+    this.currentCollection = currentCollection
     this.userLeavingDocumentHandler = this.handleUserLeavingDocument.bind(this)
 
     window.addEventListener('beforeunload', this.userLeavingDocumentHandler)
@@ -381,7 +400,10 @@ class DocumentEdit extends Component {
 
     // As far as the fetch method is concerned, we're only interested in the
     // collection of the main document, not the referenced one.
-    const documentCollection = getCurrentCollection(state.api.apis, group, collection)
+    const documentCollection = getCollectionForUrlParams(state.api.apis, {
+      collection,
+      group
+    })
     const collectionFields = Object.keys(filterHiddenFields(documentCollection.fields, 'editor'))
       .concat(['createdAt', 'createdBy', 'lastModifiedAt', 'lastModifiedBy'])
 

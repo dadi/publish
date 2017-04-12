@@ -13,7 +13,10 @@ import {slugify} from 'lib/util'
  *
  * @return {object} The configuration block for the given API.
  */
-export function getCurrentApi (apis, urlGroup, urlCollection) {
+export function getApiForUrlParams (apis, filter) {
+  const urlCollection = filter.collection
+  const urlGroup = filter.group
+
   // Are we looking at a collection name with a prefix (e.g. 'users-2')?
   const urlCollectionParts = urlCollection.match(/(.*)-([0-9]+)/)
   const urlCollectionName = urlCollectionParts ? urlCollectionParts[1] : urlCollection
@@ -61,34 +64,39 @@ export function getCurrentApi (apis, urlGroup, urlCollection) {
  *
  * @return {object} The schema for the given collection.
  */
-export function getCurrentCollection (apis, urlGroup, urlCollection, field) {
-  const api = getCurrentApi(apis, urlGroup, urlCollection)
+export function getCollectionForUrlParams (apis, {
+  collection,
+  group,
+  useApi,
+  referencedField
+}) {
+  const api = useApi || getApiForUrlParams(apis, {collection, group})
 
   if (!api || !api.collections) return null
 
-  const urlCollectionParts = urlCollection.match(/(.*)-([0-9]+)/)
-  const urlCollectionName = urlCollectionParts ? urlCollectionParts[1] : urlCollection
+  const collectionParts = collection.match(/(.*)-([0-9]+)/)
+  const collectionName = collectionParts ? collectionParts[1] : collection
 
-  let collection = api.collections.find(collection => {
-    return collection.name === urlCollectionName
+  let collectionMatch = api.collections.find(collection => {
+    return collection.name === collectionName
   })
 
-  // If we have a referenced field with a valid referenced collection,
+  // If we have a referenced referencedField with a valid referenced collection,
   // we need to return the schema of that collection instead.
-  if (field) {
-    const fieldSchema = collection.fields[field]
+  if (referencedField) {
+    const fieldSchema = collectionMatch.fields[referencedField]
     const referencedCollection = fieldSchema &&
       fieldSchema.settings &&
       fieldSchema.settings.collection
 
     if (referencedCollection) {
-      collection = api.collections.find(collection => {
+      collectionMatch = api.collections.find(collection => {
         return collection.name === referencedCollection
       })
     }
   }
 
-  return collection
+  return collectionMatch
 }
 
 export function getAuthCollection (apis, auth) {

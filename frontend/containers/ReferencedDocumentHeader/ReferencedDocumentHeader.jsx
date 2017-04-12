@@ -7,7 +7,7 @@ import {buildUrl} from 'lib/router'
 
 import * as apiActions from 'actions/apiActions'
 import {connectHelper} from 'lib/util'
-import {getCurrentCollection} from 'lib/app-config'
+import {getApiForUrlParams, getCollectionForUrlParams} from 'lib/collection-lookup'
 
 import Style from 'lib/Style'
 import styles from './ReferencedDocumentHeader.css'
@@ -53,12 +53,15 @@ class ReferencedDocumentHeader extends Component {
       referencedField,
       state
     } = this.props
-    const currentCollection = getCurrentCollection(state.api.apis, group, collection)
+    const parentCollection = getCollectionForUrlParams(state.api.apis, {
+      collection,
+      group
+    })
 
     // Render nothing if we don't have the collection schema available.
-    if (!currentCollection) return null
+    if (!parentCollection) return null
 
-    const fieldSchema = currentCollection.fields[referencedField]
+    const fieldSchema = parentCollection.fields[referencedField]
     
     // Render nothing if we don't have a matching field in the collection.
     if (!fieldSchema) return null

@@ -26,7 +26,6 @@ import {connectHelper, debounce, isEmpty, slugify, throttle} from 'lib/util'
 import Socket from 'lib/socket'
 import ConnectionMonitor from 'lib/status'
 import Session from 'lib/session'
-import {getAppConfig, getCurrentApi} from 'lib/app-config'
 import apiBridgeClient from 'lib/api-bridge-client'
 
 class App extends Component {
