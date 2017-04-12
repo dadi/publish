@@ -91,9 +91,6 @@ const buildAPIBridgeClient = function (api, inBundle) {
   APIBridgeClient.prototype.getCollections = function () {
     return this.serveQuery(this._getCollections())
   }
-  APIBridgeClient.prototype.getStatus = function () {
-    return this.serveQuery(this._getStatus())
-  }
 
   APIBridgeClient.prototype.getConfig = function () {
     return this.serveQuery(this._getConfig())
@@ -101,6 +98,10 @@ const buildAPIBridgeClient = function (api, inBundle) {
 
   APIBridgeClient.prototype.getQuery = function () {
     return this.query
+  }
+
+  APIBridgeClient.prototype.getStatus = function () {
+    return this.serveQuery(this._getStatus())
   }
 
   APIBridgeClient.prototype.serveQuery = function (query) {

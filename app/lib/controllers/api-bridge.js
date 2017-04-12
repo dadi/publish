@@ -1,9 +1,23 @@
 'use strict'
 
 const config = require(paths.config)
+const objectPath = require('object-path')
 const passport = require('@dadi/passport')
 const request = require('request-promise')
 const slugify = require(`${paths.lib.helpers}/string`).Slugify
+
+// Certain API endpoints contain sensitive information that we don't want to be
+// sending across the wire. This whitelist specifies a list of allowed properties
+// for certain methods, which will be checked against before sending out any
+// response. If the corresponding method has an entry here, only the specified
+// paths will be included in the response. If this list starts becoming too
+// large, it's probably a good idea to move it to a better suited place.
+const PATH_WHITELIST = {
+  getConfig: [
+    'media.enabled',
+    'media.collection'
+  ]
+}
 
 const APIBridgeController = function () {}
 
@@ -27,6 +41,24 @@ const _createPassport = function ({host, port, clientId, secret}) {
 
 const _generateTokenWalletFilename = function (host, port, clientId) {
   return `token.${slugify(host + port)}.${slugify(clientId)}.json`
+}
+
+const filterResponse = (response, requestObject) => {
+  if ((requestObject.uri.path === '/api/config') && PATH_WHITELIST.getConfig) {
+    return filterWhitelistedPaths(response, PATH_WHITELIST.getConfig)
+  }
+
+  return response
+}
+
+const filterWhitelistedPaths = (response, whitelistedPaths) => {
+  let newResponse = {}
+
+  whitelistedPaths.forEach(path => {
+    objectPath.set(newResponse, path, objectPath.get(response, path))
+  })
+
+  return newResponse
 }
 
 APIBridgeController.prototype.post = function (req, res, next) {
@@ -71,6 +103,8 @@ APIBridgeController.prototype.post = function (req, res, next) {
 
         return request(payload).then(response => {
           return response.length ? JSON.parse(response) : response
+        }).then(parsedResponse => {
+          return filterResponse(parsedResponse, requestObject)
         })
       }))
     })

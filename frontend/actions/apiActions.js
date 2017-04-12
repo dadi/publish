@@ -14,33 +14,44 @@ export function loadApis () {
     let apisWithCollections = []
 
     apis.forEach(api => {
-      // Getting collections for this API. Each API will use a bundler to get
-      // all collection schemas in bulk.
-      apiBridgeClient(api).getCollections().then(({collections}) => {
-        const bundler = apiBridgeClient.getBundler()
+      // This bundler will be used to get the list of collections and extra
+      // config properties from this API.
+      const apiBundler = apiBridgeClient.getBundler()
+
+      apiBundler.add(apiBridgeClient(api, true).getCollections())
+      apiBundler.add(apiBridgeClient(api, true).getConfig())
+
+      apiBundler.run().then(response => {
+        const collections = response[0].collections
+        const extraConfig = response[1]
+
+        // This bundler will be used to get all the collections schemas for
+        // this API in bulk.
+        const collectionBundler = apiBridgeClient.getBundler()
 
         collections.forEach(collection => {
           const collectionQuery = apiBridgeClient(api, true)
             .in(collection.slug)
             .getConfig()
 
-          bundler.add(collectionQuery)
+          collectionBundler.add(collectionQuery)
         })
 
-        bundler.run().then(apiCollections => {
+        collectionBundler.run().then(apiCollections => {
           const mergedCollections = apiCollections.map((schema, index) => {
             return Object.assign({}, schema, collections[index])
           }).filter(collection => {
             return !(collection.settings.publish && collection.settings.publish.hidden)
           })
 
-          const apiWithCollections = Object.assign({}, api, {
+          const apiWithCollections = Object.assign({}, api, extraConfig, {
             collections: mergedCollections
           })
 
           apisWithCollections.push(apiWithCollections)
+          apisToProcess--
 
-          if (--apisToProcess === 0) {
+          if (apisToProcess === 0) {
             dispatch(setApiList(apisWithCollections))
           }
         })
