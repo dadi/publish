@@ -52,7 +52,6 @@
     "history": "^4.5.1",
     "md5": "^2.2.1",
     "mkdirp": "^0.5.1",
-    "object-path": "^0.11.4",
     "passport-local": "^1.0.0",
     "passport-restify": "^1.0.1",
     "passport-strategy": "^1.0.0",

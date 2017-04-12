@@ -1,7 +1,6 @@
 'use strict'
 
 const config = require(paths.config)
-const objectPath = require('object-path')
 const passport = require('@dadi/passport')
 const request = require('request-promise')
 const slugify = require(`${paths.lib.helpers}/string`).Slugify
