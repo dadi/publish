@@ -50,21 +50,24 @@ export function fetchDocuments ({
     const bundler = apiBridgeClient.getBundler()
 
     // This is the main one, where we retrieve the list of documents.
-    bundler.add(
-      apiBridgeClient(api, true)
-        .in(collection)
-        .limitTo(count)
-        .goToPage(page)
-        .sortBy(sortBy || 'createdAt', sortOrder || 'desc')
-        .where(filters)
-        .find()
-    )
+    let parentQuery = apiBridgeClient(api, true)
+      .goToPage(page)
+      .sortBy(sortBy || 'createdAt', sortOrder || 'desc')
+      .where(filters)
+
+    if (collection.isMediaCollection) {
+      parentQuery = parentQuery.inMedia()
+    } else {
+      parentQuery = parentQuery.in(collection.name)
+    }
+
+    bundler.add(parentQuery.find())
 
     // If we're on a nested document, we need to retrieve the parent too.
-    if (referencedField) {
+    if (referencedField && parentCollection) {
       bundler.add(
         apiBridgeClient(api, true)
-          .in(parentCollection)
+          .in(parentCollection.name)
           .whereFieldIsEqualTo('_id', parentDocumentId)
           .find()
       )

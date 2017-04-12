@@ -196,6 +196,15 @@ class DocumentList extends Component {
       )
     }
 
+    if (referencedField) {
+      const parentCollection = getCollectionForUrlParams(state.api.apis, {
+        collection,
+        group
+      })
+
+      console.log('---> PARENT:', parentCollection)
+    }
+
     return (
       <div>
         {documentsList.length > 0 && (
@@ -260,6 +269,7 @@ class DocumentList extends Component {
       referencedField,
       useApi: currentApi
     })
+
     const count = currentCollection.settings && currentCollection.settings.count || 20
     const filterValue = state.router.params ? state.router.params.filter : null
     const parentCollection = referencedField && getCollectionForUrlParams(state.api.apis, {
@@ -270,12 +280,12 @@ class DocumentList extends Component {
 
     actions.fetchDocuments({
       api: currentApi,
-      collection: currentCollection.name,
+      collection: currentCollection,
       count,
       filters: filterValue,
       page,
       parentDocumentId,
-      parentCollection: parentCollection && parentCollection.name,
+      parentCollection,
       referencedField,
       sortBy: sort,
       sortOrder: order

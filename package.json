@@ -106,7 +106,7 @@
     "preact": "^6.4.0",
     "preact-compat": "^3.0.0",
     "preact-redux": "^1.2.0",
-    "preact-router": "^2.4.3",
+    "preact-router": "^2.4.5",
     "preact-router-redux": "^4.1.0",
     "proptypes": "^0.14.3",
     "react-docgen": "github:eduardoboucas/react-docgen",

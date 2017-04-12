@@ -14,17 +14,7 @@ export function loadApis () {
     let apisWithCollections = []
 
     apis.forEach(api => {
-      // This bundler will be used to get the list of collections and extra
-      // config properties from this API.
-      const apiBundler = apiBridgeClient.getBundler()
-
-      apiBundler.add(apiBridgeClient(api, true).getCollections())
-      apiBundler.add(apiBridgeClient(api, true).getConfig())
-
-      apiBundler.run().then(response => {
-        const collections = response[0].collections
-        const extraConfig = response[1]
-
+      apiBridgeClient(api).getCollections().then(({collections, mediaCollections}) => {
         // This bundler will be used to get all the collections schemas for
         // this API in bulk.
         const collectionBundler = apiBridgeClient.getBundler()
@@ -44,8 +34,9 @@ export function loadApis () {
             return !(collection.settings.publish && collection.settings.publish.hidden)
           })
 
-          const apiWithCollections = Object.assign({}, api, extraConfig, {
-            collections: mergedCollections
+          const apiWithCollections = Object.assign({}, api, {
+            collections: mergedCollections,
+            media: mediaCollections
           })
 
           apisWithCollections.push(apiWithCollections)

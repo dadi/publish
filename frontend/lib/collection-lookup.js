@@ -1,5 +1,6 @@
 'use strict'
 
+import * as Constants from 'lib/constants'
 import {slugify} from 'lib/util'
 
 /**
@@ -7,9 +8,9 @@ import {slugify} from 'lib/util'
  * present in the URL.
  *
  * @param {array} apis - The list of available APIs.
- * @param {string} urlGroup - The group present in the URL.
- * @param {string} urlCollection - The name of the collection present
- *                                 in the URL.
+ * @param {string} filter.collection - The name of the collection present
+ *   in the URL.
+ * @param {string} filter.group - The group present in the URL.
  *
  * @return {object} The configuration block for the given API.
  */
@@ -52,15 +53,36 @@ export function getApiForUrlParams (apis, filter) {
 }
 
 /**
+ * Returns the collection to be used for authentication.
+ *
+ * @param {array} apis - The list of available APIs.
+ * @param {object} auth - The auth config block.
+ *   the URL.
+ *
+ * @return {object} The schema for the auth collection.
+ */
+export function getAuthCollection (apis, auth) {
+  const api = apis.find(api => api.host === auth.host && api.port === auth.port)
+
+  if (!api || !api.collections) return null
+
+  const collection = api.collections.find(collection => collection.name === auth.collection)
+
+  return collection
+}
+
+/**
  * Returns the collection to be used given a group and collection name
  * present in the URL.
  *
  * @param {array} apis - The list of available APIs.
- * @param {string} urlGroup - The group present in the URL.
- * @param {string} urlCollection - The name of the collection present
- *                                 in the URL.
- * @param {string} field - The name of the field containing a referenced
- *                         document being edited.
+ * @param {string} filter.collection - The name of the collectiuon present in
+ *   the URL.
+ * @param {string} filter.group - The name of the group present in the URL.
+ * @param {object} filter.useApi - If present, will use the given API, skipping
+ *   a lookup using getApiForUrlParams()
+ * @param {string} filter.referencedField - The name of a referenced field being
+ *   edited.
  *
  * @return {object} The schema for the given collection.
  */
@@ -90,21 +112,22 @@ export function getCollectionForUrlParams (apis, {
       fieldSchema.settings.collection
 
     if (referencedCollection) {
-      collectionMatch = api.collections.find(collection => {
-        return collection.name === referencedCollection
+      const mediaCollection = api.media && api.media.find(mediaCollection => {
+        return mediaCollection.name === referencedCollection
       })
+
+      // Is this field referencing a media collection?
+      if (mediaCollection) {
+        collectionMatch = Object.assign({}, mediaCollection, {
+          isMediaCollection: true
+        })
+      } else {
+        collectionMatch = api.collections.find(collection => {
+          return collection.name === referencedCollection
+        })
+      }
     }
   }
 
   return collectionMatch
-}
-
-export function getAuthCollection (apis, auth) {
-  const api = apis.find(api => api.host === auth.host && api.port === auth.port)
-
-  if (!api || !api.collections) return null
-
-  const collection = api.collections.find(collection => collection.name === auth.collection)
-
-  return collection
 }
