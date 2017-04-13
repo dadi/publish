@@ -89,6 +89,10 @@ class DocumentList extends Component {
     state: proptypes.object
   }
 
+  static defaultProps = {
+    onPageTitle: (function () {})
+  }
+
   componentDidUpdate(prevProps) {
     const {
       actions,
@@ -146,7 +150,6 @@ class DocumentList extends Component {
       collection,
       filter,
       group,
-      onPageTitle,
       order,
       referencedField,
       sort,
@@ -165,11 +168,6 @@ class DocumentList extends Component {
     }
 
     const documentsList = documents.list
-
-    // Setting page title
-    if (typeof onPageTitle === 'function') {
-      onPageTitle.call(this, this.currentCollection.settings.description || this.currentCollection.name)
-    }
 
     if (!documentsList.results.length && !documents.query) {
       return (
@@ -410,6 +408,7 @@ class DocumentList extends Component {
       collection,
       group,
       referencedField,
+      onPageTitle,
       order,
       selectLimit,
       sort,
@@ -443,6 +442,10 @@ class DocumentList extends Component {
           />
         )
       }
+
+      onPageTitle(`Select ${(fieldSchema.label || referencedField).toLowerCase()}`)
+    } else {
+      onPageTitle(this.currentCollection.settings.description || this.currentCollection.name)
     }
 
     const tableColumns = Object.keys(filterHiddenFields(this.currentCollection.fields, 'list'))

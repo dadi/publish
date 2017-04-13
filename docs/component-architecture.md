@@ -31,11 +31,12 @@ App
 │ │ │ │ └── Button
 │ │ │ └── Toolbar
 │ │ ├─┬ FieldImage
-│ │ │ └─┬ FieldImageEdit
-│ │ │   ├── Button
-│ │ │   ├── FileUploadEdit
-│ │ │   ├── Label
-│ │ │   └── LazyLoader
+│ │ │ ├─┬ FieldImageEdit
+│ │ │ │ ├── Button
+│ │ │ │ ├── FileUploadEdit
+│ │ │ │ ├── Label
+│ │ │ │ └── LazyLoader
+│ │ │ └── FieldImageReferenceSelect
 │ │ ├─┬ FieldBoolean
 │ │ │ ├─┬ FieldBooleanEdit
 │ │ │ │ ├── Checkbox
@@ -85,11 +86,12 @@ App
 │ │ │ │ └── Button
 │ │ │ └── Toolbar
 │ │ ├─┬ FieldImage
-│ │ │ └─┬ FieldImageEdit
-│ │ │   ├── Button
-│ │ │   ├── FileUploadEdit
-│ │ │   ├── Label
-│ │ │   └── LazyLoader
+│ │ │ ├─┬ FieldImageEdit
+│ │ │ │ ├── Button
+│ │ │ │ ├── FileUploadEdit
+│ │ │ │ ├── Label
+│ │ │ │ └── LazyLoader
+│ │ │ └── FieldImageReferenceSelect
 │ │ ├─┬ FieldBoolean
 │ │ │ ├─┬ FieldBooleanEdit
 │ │ │ │ ├── Checkbox

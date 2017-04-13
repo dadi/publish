@@ -40,6 +40,7 @@ A callback to be fired if the container wants to attempt changing the
 page title.
 
 - type: `func`
+- default value: `function () {}`
 
 
 ### `order`
