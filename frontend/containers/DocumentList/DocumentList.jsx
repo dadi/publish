@@ -435,6 +435,8 @@ class DocumentList extends Component {
         return (
           <FieldComponentReferenceSelect
             data={documents}
+            onSelect={this.handleRowSelect.bind(this)}
+            onSort={this.handleTableSort.bind(this)}
             selectedRows={selectedRows}
             selectLimit={selectLimit}
             sortBy={sort}

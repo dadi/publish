@@ -90,11 +90,26 @@ export default class FieldImageEdit extends Component {
   }
 
   render() {
-    const {config, schema, value} = this.props
+    const {
+      collection,
+      config,
+      documentId,
+      group,
+      schema,
+      value
+    } = this.props
     const src = this.getImageSrc(value)
     const isReference = schema.type === 'Reference'
     const fieldLocalType = schema.publish && schema.publish.subType ? schema.publish.subType : schema.type
-    const href = buildUrl(window.location.pathname, schema._id)
+    const href = buildUrl(
+      group,
+      collection,
+      'document',
+      'edit',
+      documentId,
+      'select',
+      schema._id
+    )
 
     return (
       <Label label="Image">
