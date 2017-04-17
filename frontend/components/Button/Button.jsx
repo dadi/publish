@@ -39,6 +39,12 @@ export default class Button extends Component {
     disabled: proptypes.bool,
 
     /**
+     * When present, renders the button as a `<label>` with the `for` attribute
+     * linked to the given ID.
+     */
+    forId: proptypes.string,
+
+    /**
      * When present, the button will be rendered as an `a` element with the given
      * href.
      */
@@ -74,18 +80,13 @@ export default class Button extends Component {
     type: 'button'
   }
 
-  constructor(props) {
-    super(props)
-
-    this.optionsExpanded = false
-  }
-
   render() {
     const {
       accent, 
       className, 
       children, 
       disabled,
+      forId,
       href,
       inGroup, 
       onClick,
@@ -99,6 +100,15 @@ export default class Button extends Component {
       .addIf('button-mock', type === 'mock')
       .addIf(`button-${size}`, size !== 'normal')
       .addResolved(className)
+
+    if (forId) {
+      return (
+        <label
+          class={buttonStyle.getClasses()}
+          for={forId}
+        >{children}</label>
+      )
+    }
 
     if (type === 'mock') {
       return (

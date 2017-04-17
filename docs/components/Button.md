@@ -37,6 +37,14 @@ Whether the button is disabled.
 - default value: `false`
 
 
+### `forId`
+
+When present, renders the button as a `<label>` with the `for` attribute
+linked to the given ID.
+
+- type: `string`
+
+
 ### `href`
 
 When present, the button will be rendered as an `a` element with the given
