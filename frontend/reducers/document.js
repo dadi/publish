@@ -44,10 +44,6 @@ export default function document (state = initialState, action = {}) {
 
       return state
 
-    // Document action: user leaving document
-    case Types.USER_LEAVING_DOCUMENT:
-      return state
-
     // Document action: save document
     case Types.SAVE_DOCUMENT:
       return {
@@ -120,7 +116,8 @@ export default function document (state = initialState, action = {}) {
         loadedFromLocalStorage: action.loadedFromLocalStorage,
         local: action.local,
         remote: action.remote,
-        remoteStatus: Constants.STATUS_IDLE
+        remoteStatus: Constants.STATUS_IDLE,
+        saveAttempts: 0
       }
 
     // Document action: set remote document status
@@ -157,6 +154,10 @@ export default function document (state = initialState, action = {}) {
       }
 
       return newState
+
+    // Document action: user leaving document
+    case Types.USER_LEAVING_DOCUMENT:
+      return state
 
     default:
       return state
