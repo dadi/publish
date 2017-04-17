@@ -40,7 +40,7 @@ class Header extends Component {
   render() {
     const {state} = this.props
     const compact = state.app.breakpoint === null
-    const user = state.user.local
+    const user = state.user.remote
 
     if (!user) return null
 
