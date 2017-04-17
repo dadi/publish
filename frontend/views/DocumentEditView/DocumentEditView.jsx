@@ -3,6 +3,7 @@
 import {h, Component} from 'preact'
 
 import DocumentEdit from 'containers/DocumentEdit/DocumentEdit'
+import DocumentEditToolbar from 'containers/DocumentEditToolbar/DocumentEditToolbar'
 import Header from 'containers/Header/Header'
 import Main from 'components/Main/Main'
 import Page from 'components/Page/Page'
@@ -33,6 +34,14 @@ export default class DocumentEditView extends Component {
             section={section}
           />
         </Main>
+
+        <DocumentEditToolbar
+          collection={collection}
+          documentId={documentId}
+          group={group}
+          referencedField={referencedField}
+          section={section}
+        />
       </Page>
     )
   }

@@ -16,13 +16,11 @@ import * as documentsActions from 'actions/documentsActions'
 import * as fieldComponents from 'lib/field-components'
 
 import APIBridge from 'lib/api-bridge-client'
-import {batchActions} from 'lib/redux'
 import {buildUrl, createRoute} from 'lib/router'
 import {connectHelper, filterHiddenFields, slugify, Case} from 'lib/util'
 import {getApiForUrlParams, getCollectionForUrlParams} from 'lib/collection-lookup'
 
 import Button from 'components/Button/Button'
-import DocumentEditToolbar from 'components/DocumentEditToolbar/DocumentEditToolbar'
 import FieldImage from 'components/FieldImage/FieldImage'
 import FieldBoolean from 'components/FieldBoolean/FieldBoolean'
 import FieldReference from 'components/FieldReference/FieldReference'
@@ -87,7 +85,6 @@ class DocumentEdit extends Component {
     super(props)
 
     this.hasFetched = false
-    this.state.saveAttempt = null
   }
 
   shouldComponentUpdate(nextProps, nextState) {
@@ -146,13 +143,13 @@ class DocumentEdit extends Component {
       state
     } = this.props
     const document = state.document
-    const {saveAttempt} = this.state
     const previousDocument = previousProps.state.document
     const status = document.remoteStatus
 
+    // Are there unsaved changes?
     if (!previousDocument.local && document.local && document.loadedFromLocalStorage) {
       const notification = {
-        message: 'This document has unsaved changes',
+        message: 'You have unsaved changes',
         options: {
           'Discard': this.handleDiscardUnsavedChanges.bind(this)
         }
@@ -161,25 +158,9 @@ class DocumentEdit extends Component {
       dispatch(actions.setNotification(notification))
     }
 
-    if (previousDocument.remote && !document.remote) {
-      // Redirect to document list view
-      route(buildUrl(group, collection, 'documents'))
-
-      dispatch(actions.setNotification({
-        message: 'The documents have been deleted'
-      }))
-    }
-
     // If there's an error, stop here.
     if (this.hasFetched && (status === Constants.STATUS_NOT_FOUND)) {
       return
-    }
-
-    const wasSaving = previousDocument.remoteStatus === Constants.STATUS_SAVING
-
-    // Have we just saved a document?
-    if (wasSaving && (status === Constants.STATUS_IDLE)) {
-      this.processSaveResult()
     }
 
     // There's no document ID, so it means we're creating a new document.
@@ -207,11 +188,6 @@ class DocumentEdit extends Component {
 
     if (notLoading && needsFetch && allApisHaveCollections && this.currentCollection) {
       this.fetchDocument()
-    }
-
-    // Are we trying to save the document?
-    if (!previousState.saveAttempt && saveAttempt) {
-      this.processSave(saveAttempt)
     }
   }
 
@@ -282,10 +258,6 @@ class DocumentEdit extends Component {
     }]
     const activeSection = section || sections[0].slug
     const hasValidationErrors = document.validationErrors
-      && Object.keys(document.validationErrors)
-          .filter(field => document.validationErrors[field])
-          .length
-    const hasConnectionIssues = state.app.networkStatus !== Constants.NETWORK_OK
     const method = documentId ? 'edit' : 'new'
 
     let documentData = Object.assign({}, document.remote, document.local)
@@ -346,46 +318,8 @@ class DocumentEdit extends Component {
             </section>
           )
         })}
-
-        <DocumentEditToolbar
-          document={documentData}
-          hasConnectionIssues={hasConnectionIssues}
-          hasValidationErrors={hasValidationErrors}
-          method={method}
-          onDelete={this.handleDelete.bind(this)}
-          onSave={this.handleSave.bind(this)}
-          peers={document.peers}
-        />
       </div>
     )
-  }
-
-  // Boolean fields are a bit special. Any required field that hasn't
-  // been touched by the user in the UI should generate a validation error,
-  // except for Boolean fields, as these don't have a "neutral" state.
-  // You can start editing a document and see a Boolean field set to
-  // "false" and that may be exactly how you want it, but at that point the
-  // field doesn't exist in the document store yet because there wasn't a
-  // change event. To get around this, we check for any required Boolean
-  // fields in the collection that aren't in the document object and
-  // set those to `false`.
-  addRequiredBooleanFieldsToDocument(document) {
-    const collectionSchema = this.currentCollection
-    const booleanFields = Object.keys(collectionSchema.fields).filter(fieldName => {
-      const field = collectionSchema.fields[fieldName]
-
-      return field.required && field.type === 'Boolean'
-    })
-
-    let newDocument = Object.assign({}, document)
-
-    booleanFields.forEach(booleanField => {
-      if (typeof newDocument[booleanField] === 'undefined') {
-        newDocument[booleanField] = false
-      }
-    })
-
-    return newDocument
   }
 
   // Fetches a document from the remote API
@@ -466,25 +400,6 @@ class DocumentEdit extends Component {
     }
   }
 
-  handleDelete() {
-    const {
-      collection,
-      dispatch,
-      group,
-      state
-    } = this.props
-    const document = state.document.remote
-    const query = {
-      api: this.currentApi,
-      collection: this.currentCollection,
-      ids: [document._id]
-    }
-
-    if (document._id) {
-      dispatch(actions.deleteDocuments(query))
-    }
-  }
-
   handleDiscardUnsavedChanges() {
     const {dispatch} = this.props
 
@@ -514,24 +429,6 @@ class DocumentEdit extends Component {
     dispatch(actions.setFieldErrorStatus(fieldName, value, hasError))
   }
 
-  // Handles a click on the save button
-  handleSave(saveMode) {
-    const {saveAttempt} = this.state
-
-    // If we've tried to save before, then the initial validation step
-    // has been done, so we can process the save straight away.
-    if (saveAttempt) {
-      this.processSave(saveMode)
-    } else {
-      // Otherwise, we set the `saveAttempt` state, which will force
-      // fields to validate. The save will be processed on the next update
-      // call.
-      this.setState({
-        saveAttempt: saveMode
-      })
-    }
-  }
-
   handleUserLeavingDocument() {
     const {
       dispatch,
@@ -546,87 +443,6 @@ class DocumentEdit extends Component {
     }))
   }
 
-  // Processes the save of the document
-  processSave(saveMode) {
-    const {
-      collection,
-      documentId,
-      group,
-      section,
-      state
-    } = this.props
-    const document = state.document
-    const {validationErrors} = document
-    const hasValidationErrors = validationErrors && Object.keys(validationErrors)
-      .filter(field => validationErrors[field])
-      .length
-
-    // If there are any validation errors, we abort the save operation.
-    if (hasValidationErrors) return
-
-    this.saveDocument(saveMode !== 'saveAsDuplicate' ? documentId : null)
-  }
-
-  processSaveResult() {
-    const {
-      collection,
-      dispatch,
-      group,
-      section,
-      state
-    } = this.props
-    const newDocument = !Boolean(this.props.documentId)
-    const documentId = state.document.remote._id
-    const saveMode = this.state.saveAttempt
-
-    switch (saveMode) {
-      // Save
-      case 'save':
-        route(buildUrl(group, collection, 'document', 'edit', documentId, section))
-
-        dispatch(actions.setNotification({
-          message:`The document has been ${newDocument ? 'created' : 'updated'}`
-        }))
-
-        break
-
-      // Save and create new
-      case 'saveAndCreateNew':
-        route(buildUrl(group, collection, 'document', 'new'))
-
-        dispatch(
-          batchActions(
-            actions.setNotification({
-              message: `The document has been ${newDocument ? 'created' : 'updated'}`
-            }),
-            actions.clearRemoteDocument()
-          )
-        )
-
-        break
-
-      // Save and go back
-      case 'saveAndGoBack':
-        route(buildUrl(group, collection, 'documents'))
-
-        dispatch(actions.setNotification({
-          message: `The document has been ${newDocument ? 'created' : 'updated'}`
-        }))
-
-        break
-
-      // Save as duplicate
-      case 'saveAsDuplicate':
-        route(buildUrl(group, collection, 'document', 'edit', documentId, section))
-
-        dispatch(actions.setNotification({
-          message: `The document has been created`
-        }))
-
-        break
-    }
-  }
-
   // Renders a field, deciding which component to use based on the field type
   renderField(field, value) {
     const {
@@ -636,9 +452,9 @@ class DocumentEdit extends Component {
       state
     } = this.props
     const {app, document} = state
+    const hasAttemptedSaving = Boolean(document.saveAttempts)
     const hasError = document.validationErrors
       && document.validationErrors[field._id]
-    const {saveAttempt} = this.state
 
     // As per API docs, validation messages are in the format "must be xxx", which
     // assumes that something (probably the name of the field) will be prepended to
@@ -665,7 +481,7 @@ class DocumentEdit extends Component {
           currentCollection={this.currentCollection}
           documentId={documentId}
           error={error}
-          forceValidation={saveAttempt}
+          forceValidation={hasAttemptedSaving}
           group={group}
           onChange={this.handleFieldChange.bind(this)}
           onError={this.handleFieldError.bind(this)}
@@ -674,31 +490,6 @@ class DocumentEdit extends Component {
         />
       </div>
     )
-  }
-
-  saveDocument(documentId) {
-    const {
-      collection,
-      dispatch,
-      group,
-      section,
-      state
-    } = this.props
-    let document = state.document.local
-
-    // If we're creating a new document, we need to inject any required Boolean
-    // fields.
-    if (!documentId) {
-      document = Object.assign({}, state.document.remote, state.document.local)
-      document = this.addRequiredBooleanFieldsToDocument(document)
-    }
-
-    dispatch(actions.saveDocument({
-      api: this.currentApi,
-      collection: this.currentCollection,
-      document,
-      documentId
-    }))
   }
 }
 
