@@ -9,11 +9,19 @@ const initialState = {
   peers: null,
   remote: null,
   remoteStatus: Constants.STATUS_IDLE,
+  saveAttempts: 0,
   validationErrors: null
 }
 
 export default function document (state = initialState, action = {}) {
   switch (action.type) {
+
+    // Document action: attempt to save document
+    case Types.ATTEMPT_SAVE_DOCUMENT:
+      return {
+        ...state,
+        saveAttempts: state.saveAttempts + 1
+      }
 
     // Document action: clear remote document
     case Types.CLEAR_REMOTE_DOCUMENT:
