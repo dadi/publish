@@ -53,7 +53,7 @@ class App extends Component {
     const path = state.router.locationBeforeTransitions.pathname
 
     // State change: user has signed in
-    if (!previousState.user.local && state.user.local) {
+    if (!previousState.user.remote && state.user.remote) {
       const {actions} = this.props
 
       actions.loadAppConfig()
@@ -64,16 +64,26 @@ class App extends Component {
       // Start socket logic
       this.initialiseSocket(state.app.config)
 
-      // Load api collections
-      //this.getApiCollections(state.app.config)
-
       actions.loadApis()
     }
 
     // State change: user has signed out
-    if (previousState.user.local && !state.user.local) {
+    if (previousState.user.remote && !state.user.remote) {
       route('/sign-in')
     }
+
+    // State change: app now has APIs
+    if (!previousState.api.apis.length && state.api.apis.length) {
+      // If the user has been loaded from session, it's possible that some of
+      // their details aren't up-to-date, so we get the remote from the API
+      // and update the local version.
+      //
+      // (!) TO DO: update session contents
+      if (this.userLoadedFromSession) {
+        actions.updateLocalUser()
+      }
+    }
+
     if (this.socket && this.socket.getUser() && (this.socket.getRoom() !== path)) {
       this.socket.setRoom(path)
     }
@@ -133,7 +143,7 @@ class App extends Component {
   initialiseSocket(config) {
     const {actions, state} = this.props
     const pathname = state.router.locationBeforeTransitions.pathname
-    const user = state.user.local
+    const user = state.user.remote
     const session = new Session()
 
     this.socket = new Socket(config.server.port)
@@ -191,6 +201,8 @@ class App extends Component {
     new Session().getSession().then(user => {
       if (user && !user.err) {
         actions.setRemoteUser(user)
+
+        this.userLoadedFromSession = true
       } else {
         actions.signOut()
         route('/sign-in')
