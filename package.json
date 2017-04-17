@@ -56,7 +56,6 @@
     "passport-restify": "^1.0.1",
     "passport-strategy": "^1.0.0",
     "path": "^0.12.7",
-    "preact-router": "github:eduardoboucas/preact-router",
     "request-promise": "^4.1.1",
     "restify": "^4.3.0",
     "restify-cookies": "^0.2.2",
