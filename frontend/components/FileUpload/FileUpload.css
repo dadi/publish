@@ -5,6 +5,10 @@
   flex-wrap: nowrap;
 }
 
+.file-input {
+  display: none;
+}
+
 .or {
   margin: 0 10px;
 }
