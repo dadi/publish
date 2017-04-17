@@ -45,7 +45,7 @@ export default class FieldImageReferenceSelect extends Component {
     const {
       data
     } = this.props
-
+console.log(data)
     return this.renderColumns(data)
   }
 

@@ -10,7 +10,7 @@ import Style from 'lib/Style'
 import styles from './FieldImage.css'
 
 import Button from 'components/Button/Button'
-import FileUpload from 'components/FileUpload/FileUploadEdit'
+import FileUpload from 'components/FileUpload/FileUpload'
 import Label from 'components/Label/Label'
 import LazyLoader from 'containers/LazyLoader/LazyLoader'
 
@@ -98,6 +98,8 @@ export default class FieldImageEdit extends Component {
       schema,
       value
     } = this.props
+    const displayName = schema.label || schema._id
+
     const src = this.getImageSrc(value)
     const isReference = schema.type === 'Reference'
     const fieldLocalType = schema.publish && schema.publish.subType ? schema.publish.subType : schema.type
@@ -112,45 +114,43 @@ export default class FieldImageEdit extends Component {
     )
 
     return (
-      <Label label="Image">
-        {src && (
-          <div class={styles.container}>
-            <LazyLoader
-              loadWhenIdle={true}
-              >
-              <img class={styles['image-thumb']} src={src} />
-              <Button
-                accent="destruct"
-                size="small"
-                className={styles['remove-existing']}
-                onClick={this.handleRemoveFile.bind(this)}
-              >Delete</Button>
-            </LazyLoader>
-          </div>
-        )}
-        {!src && (
+      <Label label={displayName}>
+        {value &&
+          <div class={styles['value-container']}>
+            <img
+              class={styles.preview}
+              src={src}
+            />
+            
+            <Button
+              accent="destruct"
+              size="small"
+              className={styles['remove-existing']}
+              onClick={this.handleRemoveFile.bind(this)}
+            >Delete</Button>
+          </div>          
+        }
+
+        {!value &&
           <div>
-            {isReference && (
-              <div class={styles['reference-options']}>
-                <Button
-                  accent="data"
-                  size="small"
-                  href={href}
-                  className={styles['select-existing']}
-                >Select existing {fieldLocalType}</Button>
-              </div>
-            )}
-            {config && (
-              <div class={styles['upload-options']}>
-                <FileUpload
-                  allowDrop={true}
-                  accept={config.accept}
-                  onChange={this.handleFileChange.bind(this)}
-                />
-              </div>
-            )}
+            <div class={styles.placeholder}>
+              <Button
+                accent="data"
+                size="small"
+                href={href}
+                className={styles['select-existing']}
+              >Select existing {fieldLocalType.toLowerCase()}</Button>
+            </div>
+
+            <div class={styles['upload-options']}>
+              <FileUpload
+                allowDrop={true}
+                accept={config.accept}
+                onChange={this.handleFileChange.bind(this)}
+              />
+            </div>
           </div>
-        )}
+        }
       </Label>
     )
   }
@@ -158,16 +158,13 @@ export default class FieldImageEdit extends Component {
   getImageSrc(value) {
     const {config} = this.props
     const cdn = config ? config.cdn : null
-
+//console.log('------>', value)
     if (!value) return null
-    if (value.raw) return value.raw
 
-    if (value.fileName) {
-      if (cdn) {
-        return buildUrl(`${cdn.host}:${cdn.port || 80}`, cdn.path, fileName)
-      } else {
-        return value.awsUrl  
-      }
+    if (value._previewData) return value._previewData
+
+    if (value.path) {
+      return value.path
     }
   }
   
@@ -179,15 +176,22 @@ export default class FieldImageEdit extends Component {
     }
   }
 
-  handleFileChange (file) {
-    const {config, onChange, schema} = this.props
-    let reader = new FileReader()
+  handleFileChange(file) {
+    const {
+      config,
+      onChange,
+      schema
+    } = this.props
+    const reader = new FileReader()
     
-    reader.onload = () => {
+    reader.onload = event => {
       if (typeof onChange === 'function') {
         onChange.call(this, schema._id, {
+          _file: file,
+          _previewData: reader.result,
+          contentLength: file.size,
           fileName: file.name,
-          raw: reader.result
+          mimetype: file.type
         })
       }
     }
