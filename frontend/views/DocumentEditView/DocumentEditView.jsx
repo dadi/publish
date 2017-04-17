@@ -29,6 +29,7 @@ export default class DocumentEditView extends Component {
             collection={collection}
             documentId={documentId}
             group={group}
+            onBuildSectionUrl={this.handleBuildSectionUrl.bind(this)}
             onPageTitle={this.handlePageTitle}
             referencedField={referencedField}
             section={section}
@@ -44,6 +45,17 @@ export default class DocumentEditView extends Component {
         />
       </Page>
     )
+  }
+
+  handleBuildSectionUrl() {
+    const {
+      collection,
+      documentId,
+      group,
+      section
+    } = this.props
+
+    return [group, collection, 'document', 'edit', documentId]
   }
 
   handlePageTitle(title) {

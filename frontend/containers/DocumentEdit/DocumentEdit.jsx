@@ -60,6 +60,12 @@ class DocumentEdit extends Component {
     group: proptypes.string,
 
     /**
+    * A callback to be used to build the URLs for the various sections. It must
+    * return an array of URL parts, to be prepended to the section slug.
+    */
+    onBuildSectionUrl: proptypes.func,
+
+    /**
     * A callback to be fired if the container wants to attempt changing the
     * page title.
     */
@@ -92,6 +98,7 @@ class DocumentEdit extends Component {
       collection,
       documentId,
       group,
+      onBuildSectionUrl,
       onPageTitle,
       referencedField,
       section,
@@ -122,8 +129,9 @@ class DocumentEdit extends Component {
 
         if (!sectionMatch) {
           const firstSection = fields.sections[0]
+          const sectionUrlBase = onBuildSectionUrl()
 
-          route(buildUrl(group, currentCollection.name, 'document', method, documentId, firstSection.slug))
+          route(buildUrl(...sectionUrlBase, documentId, firstSection.slug))
 
           return false
         }
@@ -225,6 +233,7 @@ class DocumentEdit extends Component {
       collection,
       documentId,
       group,
+      onBuildSectionUrl,
       referencedField,
       section,
       state
@@ -272,8 +281,9 @@ class DocumentEdit extends Component {
         {fields.sections &&
           <div class={styles.navigation}>
             {fields.sections.map(collectionSection => {
-              let isActive = activeSection === collectionSection.slug
-              let href = buildUrl(group, collection, 'document', method, documentId, collectionSection.slug)
+              const isActive = activeSection === collectionSection.slug
+              const sectionUrlBase = onBuildSectionUrl()
+              const href = buildUrl(...sectionUrlBase, collectionSection.slug)
 
               return (
                 <SubNavItem
@@ -497,6 +507,7 @@ export default connectHelper(
   state => ({
     api: state.api,
     app: state.app,
-    document: state.document
+    document: state.document,
+    user: state.user
   })
 )(DocumentEdit)
