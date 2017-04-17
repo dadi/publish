@@ -20,9 +20,15 @@ class CollectionNav extends Component {
       let apiCollections = {}
       let displayNames = {}
 
-      api.collections.forEach(collection => {
-        // We start by adding all the collections that are referenced in the menu
-        // object.
+      // There are some collections that we don't want to display on the menu,
+      // like auth or media collections.
+      const filteredCollections = api.collections.filter(collection => {
+        return !collection._isAuthCollection
+      })
+
+      // We start by adding all the collections that are referenced in the menu
+      // object.
+      filteredCollections.forEach(collection => {
         (api.menu || []).forEach(menuEntry => {
           if (menuEntry === collection.name) {
             apiCollections[collection.name] = null
@@ -30,12 +36,12 @@ class CollectionNav extends Component {
             apiCollections[collection.name] = menuEntry.title
           }
         })
+      })
 
-        // Then we loop through all collections and add any that is missing from the
-        // menu.
-        api.collections.forEach(collection => {
-          apiCollections[collection.name] = apiCollections[collection.name] || null
-        })
+      // Then we loop through all collections and add any that is missing from the
+      // menu.
+      filteredCollections.forEach(collection => {
+        apiCollections[collection.name] = apiCollections[collection.name] || null
 
         const displayName = (collection.settings && collection.settings.description) || collection.name
 
