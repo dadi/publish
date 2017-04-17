@@ -48,6 +48,7 @@ Holds the current active document (for document edit view)
 | `peers`            | Object   | Other users connected through socket and observing or editing the current document | `null`        |
 | `remote`           | Object   | The object representing the state of the document in the remote API                | `null`        |
 | `remoteStatus`     | Constant | The status of the document, representing whether it's idle, loading or erroing     | `STATUS_IDLE` |
+| `saveAttempts`     | Number   | The number of times the user has attempted to save the current document.           | `0`           |
 | `validationErrors` | Object   | Document field validation errors                                                   | `{}`          |
 
 ### 1.4. Documents
@@ -66,7 +67,6 @@ Holds state about the current user
 
 | Property  | Type   | Description                                                        | Initial state |
 |-----------|--------|--------------------------------------------------------------------|---------------|
-| `local`   | Object | The object representing the state of the user as it's being edited | `null`        |
 | `remote`  | Object | The object representing the state of the user on the remote API    | `null`        |
 
 ## 2. Actions
