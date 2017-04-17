@@ -67,14 +67,19 @@ export default class ButtonWithOptions extends Component {
     super(props)
 
     this.state.optionsExpanded = false
-  }
-
-  componentDidMount() {
-    document.body.addEventListener('click', event => {
+    this.toggleExpandedStateHandler = event => {
       this.setState({
         optionsExpanded: false
       })
-    })
+    }
+  }
+
+  componentDidMount() {
+    document.body.addEventListener('click', this.toggleExpandedStateHandler)
+  }
+
+  componentWillUnmount() {
+    document.body.removeEventListener('click', this.toggleExpandedStateHandler)
   }
 
   render() {
@@ -86,6 +91,7 @@ export default class ButtonWithOptions extends Component {
       options,
       type
     } = this.props
+    const {optionsExpanded} = this.state
 
     let launcherStyle = new Style(styles, 'launcher')
 
@@ -112,13 +118,13 @@ export default class ButtonWithOptions extends Component {
           onClick={this.toggleOptions.bind(this)}
         >
           <IconArrow
-            direction={this.state.optionsExpanded ? 'down' : 'up'}
+            direction={optionsExpanded ? 'down' : 'up'}
             width={10}
             height={6}
           />
         </Button>
 
-        {this.state.optionsExpanded &&
+        {optionsExpanded &&
           <div class={styles.options}>
             <Dropdown tooltip="right">
               {Object.keys(options).map(option => {
