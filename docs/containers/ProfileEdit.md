@@ -6,10 +6,10 @@ The interface for editing a user profile.
 Props
 -----
 
-### `onPageTitle`
+### `onBuildSectionUrl`
 
-A callback to be fired if the container wants to attempt changing the
-page title.
+A callback to be used to build the URLs for the various sections. It must
+return an array of URL parts, to be prepended to the section slug.
 
 - type: `func`
 
@@ -26,18 +26,4 @@ The current active section (if any).
 All available sections.
 
 - type: `array`
-- default value: `[
-  {
-    slug: 'account',
-    value: 'Account'
-  },
-  {
-    slug: 'settings',
-    value: 'Settings'
-  },
-  {
-    slug: 'security',
-    value: 'Security'
-  }
-]`
 

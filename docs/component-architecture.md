@@ -15,25 +15,11 @@ App
 ├─┬ DocumentCreateView
 │ ├─┬ DocumentEdit
 │ │ ├── Button
-│ │ ├─┬ DocumentEditToolbar
-│ │ │ ├── Button
-│ │ │ ├─┬ ButtonWithOptions
-│ │ │ │ ├── Button
-│ │ │ │ ├── Dropdown
-│ │ │ │ ├── DropdownItem
-│ │ │ │ └── IconArrow
-│ │ │ ├─┬ ButtonWithPrompt
-│ │ │ │ ├── Button
-│ │ │ │ └─┬ Prompt
-│ │ │ │   └── Button
-│ │ │ ├── DateTime
-│ │ │ ├─┬ Peer
-│ │ │ │ └── Button
-│ │ │ └── Toolbar
 │ │ ├─┬ FieldImage
 │ │ │ ├─┬ FieldImageEdit
 │ │ │ │ ├── Button
-│ │ │ │ ├── FileUploadEdit
+│ │ │ │ ├─┬ FileUpload
+│ │ │ │ │ └── Button
 │ │ │ │ ├── Label
 │ │ │ │ └── LazyLoader
 │ │ │ └── FieldImageReferenceSelect
@@ -54,6 +40,21 @@ App
 │ │ │ └── FieldStringList
 │ │ ├── HeroMessage
 │ │ └── SubNavItem
+│ ├─┬ DocumentEditToolbar
+│ │ ├── Button
+│ │ ├─┬ ButtonWithOptions
+│ │ │ ├── Button
+│ │ │ ├── Dropdown
+│ │ │ ├── DropdownItem
+│ │ │ └── IconArrow
+│ │ ├─┬ ButtonWithPrompt
+│ │ │ ├── Button
+│ │ │ └─┬ Prompt
+│ │ │   └── Button
+│ │ ├── DateTime
+│ │ ├─┬ Peer
+│ │ │ └── Button
+│ │ └── Toolbar
 │ ├─┬ Header
 │ │ ├─┬ CollectionNav
 │ │ │ └─┬ Nav
@@ -70,25 +71,11 @@ App
 ├─┬ DocumentEditView
 │ ├─┬ DocumentEdit
 │ │ ├── Button
-│ │ ├─┬ DocumentEditToolbar
-│ │ │ ├── Button
-│ │ │ ├─┬ ButtonWithOptions
-│ │ │ │ ├── Button
-│ │ │ │ ├── Dropdown
-│ │ │ │ ├── DropdownItem
-│ │ │ │ └── IconArrow
-│ │ │ ├─┬ ButtonWithPrompt
-│ │ │ │ ├── Button
-│ │ │ │ └─┬ Prompt
-│ │ │ │   └── Button
-│ │ │ ├── DateTime
-│ │ │ ├─┬ Peer
-│ │ │ │ └── Button
-│ │ │ └── Toolbar
 │ │ ├─┬ FieldImage
 │ │ │ ├─┬ FieldImageEdit
 │ │ │ │ ├── Button
-│ │ │ │ ├── FileUploadEdit
+│ │ │ │ ├─┬ FileUpload
+│ │ │ │ │ └── Button
 │ │ │ │ ├── Label
 │ │ │ │ └── LazyLoader
 │ │ │ └── FieldImageReferenceSelect
@@ -109,6 +96,21 @@ App
 │ │ │ └── FieldStringList
 │ │ ├── HeroMessage
 │ │ └── SubNavItem
+│ ├─┬ DocumentEditToolbar
+│ │ ├── Button
+│ │ ├─┬ ButtonWithOptions
+│ │ │ ├── Button
+│ │ │ ├── Dropdown
+│ │ │ ├── DropdownItem
+│ │ │ └── IconArrow
+│ │ ├─┬ ButtonWithPrompt
+│ │ │ ├── Button
+│ │ │ └─┬ Prompt
+│ │ │   └── Button
+│ │ ├── DateTime
+│ │ ├─┬ Peer
+│ │ │ └── Button
+│ │ └── Toolbar
 │ ├─┬ Header
 │ │ ├─┬ CollectionNav
 │ │ │ └─┬ Nav
@@ -224,7 +226,49 @@ App
   │ └─┬ NotificationCentre
   │   └── Notification
   ├── Page
-  └─┬ ProfileEdit
-    └── SubNavItem
+  ├─┬ ProfileEdit
+  │ ├─┬ DocumentEdit
+  │ │ ├── Button
+  │ │ ├─┬ FieldImage
+  │ │ │ ├─┬ FieldImageEdit
+  │ │ │ │ ├── Button
+  │ │ │ │ ├─┬ FileUpload
+  │ │ │ │ │ └── Button
+  │ │ │ │ ├── Label
+  │ │ │ │ └── LazyLoader
+  │ │ │ └── FieldImageReferenceSelect
+  │ │ ├─┬ FieldBoolean
+  │ │ │ ├─┬ FieldBooleanEdit
+  │ │ │ │ ├── Checkbox
+  │ │ │ │ └── Label
+  │ │ │ └── FieldBooleanList
+  │ │ ├─┬ FieldReference
+  │ │ │ └─┬ FieldReferenceEdit
+  │ │ │   ├── Button
+  │ │ │   ├── Label
+  │ │ │   └── TextInput
+  │ │ ├─┬ FieldString
+  │ │ │ ├─┬ FieldStringEdit
+  │ │ │ │ ├── Label
+  │ │ │ │ └── TextInput
+  │ │ │ └── FieldStringList
+  │ │ ├── HeroMessage
+  │ │ └── SubNavItem
+  │ └── SubNavItem
+  └─┬ ProfileEditToolbar
+    ├── Button
+    ├─┬ ButtonWithOptions
+    │ ├── Button
+    │ ├── Dropdown
+    │ ├── DropdownItem
+    │ └── IconArrow
+    ├─┬ ButtonWithPrompt
+    │ ├── Button
+    │ └─┬ Prompt
+    │   └── Button
+    ├── DateTime
+    ├─┬ Peer
+    │ └── Button
+    └── Toolbar
 
 ```

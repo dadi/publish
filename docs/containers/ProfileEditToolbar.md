@@ -1,7 +1,7 @@
-`DocumentEdit`
-==============
+`ProfileEditToolbar`
+====================
 
-The interface for editing a document.
+A toolbar used in a document edit view.
 
 Props
 -----
@@ -32,22 +32,6 @@ The ID of the document being edited.
 The name of the group where the current collection belongs (if any).
 
 - type: `string`
-
-
-### `onBuildSectionUrl`
-
-A callback to be used to build the URLs for the various sections. It must
-return an array of URL parts, to be prepended to the section slug.
-
-- type: `func`
-
-
-### `onPageTitle`
-
-A callback to be fired if the container wants to attempt changing the
-page title.
-
-- type: `func`
 
 
 ### `referencedField`
