@@ -134,6 +134,7 @@ export default class FieldStringEdit extends Component {
         <TextInput
           onChange={this.handleOnChange.bind(this)}
           onKeyUp={this.handleOnKeyUp.bind(this)}
+          placeholder={schema.placeholder}
           readonly={readOnly}
           type={type}
           value={value}
