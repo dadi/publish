@@ -18,6 +18,11 @@ export function getApiForUrlParams (apis, filter) {
   const urlCollection = filter.collection
   const urlGroup = filter.group
 
+  // Are we after the auth API?
+  if (urlCollection === Constants.AUTH_COLLECTION) {
+    return apis.find(api => api._isAuthApi)
+  }
+
   // Are we looking at a collection name with a prefix (e.g. 'users-2')?
   const urlCollectionParts = urlCollection.match(/(.*)-([0-9]+)/)
   const urlCollectionName = urlCollectionParts ? urlCollectionParts[1] : urlCollection
@@ -53,25 +58,6 @@ export function getApiForUrlParams (apis, filter) {
 }
 
 /**
- * Returns the collection to be used for authentication.
- *
- * @param {array} apis - The list of available APIs.
- * @param {object} auth - The auth config block.
- *   the URL.
- *
- * @return {object} The schema for the auth collection.
- */
-export function getAuthCollection (apis, auth) {
-  const api = apis.find(api => api.host === auth.host && api.port === auth.port)
-
-  if (!api || !api.collections) return null
-
-  const collection = api.collections.find(collection => collection.name === auth.collection)
-
-  return collection
-}
-
-/**
  * Returns the collection to be used given a group and collection name
  * present in the URL.
  *
@@ -95,6 +81,11 @@ export function getCollectionForUrlParams (apis, {
   const api = useApi || getApiForUrlParams(apis, {collection, group})
 
   if (!api || !api.collections) return null
+
+  // Are we after the auth collection?
+  if (collection === Constants.AUTH_COLLECTION) {
+    return api.collections.find(collection => collection._isAuthCollection)
+  }
 
   const collectionParts = collection.match(/(.*)-([0-9]+)/)
   const collectionName = collectionParts ? collectionParts[1] : collection
