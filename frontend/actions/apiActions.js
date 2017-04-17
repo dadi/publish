@@ -4,7 +4,10 @@ import apiBridgeClient from 'lib/api-bridge-client'
 
 export function loadApis () {
   return (dispatch, getState) => {
-    const apis = getState().app.config.apis
+    const {
+      apis,
+      auth
+    } = getState().app.config
 
     if (!apis) return
 
@@ -28,13 +31,17 @@ export function loadApis () {
         })
 
         collectionBundler.run().then(apiCollections => {
+          const isAuthApi = auth.host === api.host && auth.port === api.port
           const mergedCollections = apiCollections.map((schema, index) => {
-            return Object.assign({}, schema, collections[index])
+            return Object.assign({}, schema, collections[index], {
+              _isAuthCollection: isAuthApi && (auth.collection === collections[index].name)
+            })
           }).filter(collection => {
             return !(collection.settings.publish && collection.settings.publish.hidden)
           })
 
           const apiWithCollections = Object.assign({}, api, {
+            _isAuthApi: isAuthApi,
             collections: mergedCollections,
             media: mediaCollections
           })
