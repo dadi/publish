@@ -6,10 +6,6 @@ import * as Types from 'actions/actionTypes'
 
 import apiBridgeClient from 'lib/api-bridge-client'
 
-function getLocalStorageKeyFromState (state) {
-  return state.router.locationBeforeTransitions.pathname
-}
-
 export function clearRemoteDocument () {
   return {
     type: Types.CLEAR_REMOTE_DOCUMENT
@@ -53,6 +49,10 @@ export function fetchDocument ({api, collection, id, fields}) {
   }
 }
 
+function getLocalStorageKeyFromState (state) {
+  return state.router.locationBeforeTransitions.pathname
+}
+
 export function registerSaveAttempt () {
   return {
     type: Types.ATTEMPT_SAVE_DOCUMENT
@@ -61,12 +61,7 @@ export function registerSaveAttempt () {
 
 export function registerUserLeavingDocument () {
   return (dispatch, getState) => {
-    let localStorageKey = getLocalStorageKeyFromState(getState())
-    let localDocument = getState().document.local
-
-    if (localDocument && Object.keys(localDocument).length > 0) {
-      LocalStorage.writeDocument(localStorageKey, localDocument)
-    }
+    writeDocumentToLocalStorage(getState())
 
     dispatch({
       type: Types.USER_LEAVING_DOCUMENT
@@ -226,7 +221,10 @@ export function saveDocument ({api, collection, document, documentId}) {
 
         return apiBridge.then(response => {
           if (response.results && response.results.length) {
-            dispatch(setRemoteDocument(response.results[0], true, true))
+            dispatch(setRemoteDocument(response.results[0], {
+              clearLocal: true,
+              forceUpdate: true
+            }))
           } else {
             dispatch(setRemoteDocumentStatus(Constants.STATUS_FAILED))
           }
@@ -263,7 +261,11 @@ export function setFieldErrorStatus (field, value, error) {
   }
 }
 
-export function setRemoteDocument (remote, forceUpdate = true, clearLocal = false) {
+export function setRemoteDocument (remote, {
+  clearLocal = false,
+  fieldsNotInLocalStorage = [],
+  forceUpdate = true
+} = {}) {
   return (dispatch, getState) => {
     let localDocument = null
     let localStorageKey = getLocalStorageKeyFromState(getState())
@@ -275,6 +277,7 @@ export function setRemoteDocument (remote, forceUpdate = true, clearLocal = fals
     }
 
     dispatch({
+      fieldsNotInLocalStorage,
       forceUpdate,
       loadedFromLocalStorage: Boolean(localDocument),
       local: localDocument || {},
@@ -303,15 +306,23 @@ export function startNewDocument () {
   }
 }
 
-export function updateLocalDocument (change) {
+export function updateLocalDocument (change, {
+  persistInLocalStorage = true
+} = {}) {
   return (dispatch, getState) => {
-    let localStorageKey = getLocalStorageKeyFromState(getState())
     let newLocal = Object.assign({}, getState().document.local, change)
+    let newFieldsNotPersistedInLocalStorage = persistInLocalStorage ?
+      getState().document.fieldsNotPersistedInLocalStorage :
+      getState().document.fieldsNotPersistedInLocalStorage.concat(Object.keys(change))
 
-    LocalStorage.writeDocument(localStorageKey, newLocal)
+    writeDocumentToLocalStorage(getState(), {
+      document: newLocal,
+      fieldsNotPersistedInLocalStorage: newFieldsNotPersistedInLocalStorage
+    })
 
     dispatch({
       change,
+      persistInLocalStorage,
       type: Types.UPDATE_LOCAL_DOCUMENT
     })
   }
@@ -327,4 +338,29 @@ function uploadMedia (api, signedUrl, content) {
     body: payload,
     method: 'POST'
   }).then(response => response.json())
+}
+
+function writeDocumentToLocalStorage (state, {
+  document,
+  fieldsNotPersistedInLocalStorage
+} = {}) {
+  fieldsNotPersistedInLocalStorage = fieldsNotPersistedInLocalStorage ||
+    state.document.fieldsNotPersistedInLocalStorage
+  document = document || state.document.local
+
+  const localStorageKey = getLocalStorageKeyFromState(state)
+
+  if (!document) return
+
+  let filteredDocument = {}
+
+  Object.keys(document).forEach(field => {
+    if (!fieldsNotPersistedInLocalStorage.includes(field)) {
+      filteredDocument[field] = document[field]
+    }
+  })
+
+  if (Object.keys(filteredDocument).length > 0) {
+    LocalStorage.writeDocument(localStorageKey, filteredDocument)
+  }
 }

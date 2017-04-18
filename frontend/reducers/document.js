@@ -4,6 +4,7 @@ import * as Constants from 'lib/constants'
 import * as Types from 'actions/actionTypes'
 
 const initialState = {
+  fieldsNotPersistedInLocalStorage: [],
   loadedFromLocalStorage: false,
   local: null,
   peers: null,
@@ -113,6 +114,7 @@ export default function document (state = initialState, action = {}) {
 
       return {
         ...state,
+        fieldsNotPersistedInLocalStorage: action.fieldsNotPersistedInLocalStorage || [],
         loadedFromLocalStorage: action.loadedFromLocalStorage,
         local: action.local,
         remote: action.remote,
@@ -137,6 +139,7 @@ export default function document (state = initialState, action = {}) {
 
       return {
         ...state,
+        fieldsNotPersistedInLocalStorage: [],
         loadedFromLocalStorage,
         local: action.document,
         remote: null,
@@ -145,8 +148,19 @@ export default function document (state = initialState, action = {}) {
 
     // Document action: update local document
     case Types.UPDATE_LOCAL_DOCUMENT:
+      let newFieldsNotPersistedInLocalStorage = state.fieldsNotPersistedInLocalStorage
+
+      if (!action.persistInLocalStorage) {
+        Object.keys(action.change).forEach(fieldName => {
+          if (!newFieldsNotPersistedInLocalStorage.includes(fieldName)) {
+            newFieldsNotPersistedInLocalStorage.push(fieldName)
+          }
+        })
+      }
+
       const newState = {
         ...state,
+        fieldsNotPersistedInLocalStorage: newFieldsNotPersistedInLocalStorage,
         local: {
           ...state.local,
           ...action.change

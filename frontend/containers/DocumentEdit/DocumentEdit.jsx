@@ -187,14 +187,12 @@ class DocumentEdit extends Component {
     // - We're not already in the process of fetching one AND
     // - There is no document in the store OR the document id has changed AND
     // - All APIs have collections
-    const notLoading = document.remoteStatus !== Constants.STATUS_LOADING
-      && document.remoteStatus !== Constants.STATUS_SAVING
+    const isIdle = document.remoteStatus === Constants.STATUS_IDLE
     const remoteDocumentHasChanged = document.remote &&
       (documentId !== document.remote._id)
     const needsFetch = !document.remote || remoteDocumentHasChanged
-    const allApisHaveCollections = state.api.apis.filter(api => !api.collections).length === 0
 
-    if (notLoading && needsFetch && allApisHaveCollections && this.currentCollection) {
+    if (isIdle && needsFetch && this.currentCollection) {
       this.fetchDocument()
     }
   }
@@ -418,7 +416,7 @@ class DocumentEdit extends Component {
 
   // Handles the callback that fires whenever a field changes and the new value
   // is ready to be sent to the store.
-  handleFieldChange(fieldName, value) {
+  handleFieldChange(fieldName, value, persistInLocalStorage = true) {
     const {
       collection,
       dispatch,
@@ -428,6 +426,8 @@ class DocumentEdit extends Component {
 
     dispatch(actions.updateLocalDocument({
       [fieldName]: value
+    }, {
+      persistInLocalStorage
     }))
   }
 
