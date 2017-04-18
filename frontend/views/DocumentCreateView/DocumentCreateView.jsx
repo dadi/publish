@@ -27,6 +27,7 @@ export default class DocumentCreateView extends Component {
           <DocumentEdit
             collection={collection}
             group={group}
+            onBuildSectionUrl={this.handleBuildSectionUrl.bind(this)}
             onPageTitle={this.handlePageTitle}
             section={section}
           />
@@ -40,6 +41,18 @@ export default class DocumentCreateView extends Component {
       </Page>
     )    
   }
+
+  handleBuildSectionUrl() {
+    const {
+      collection,
+      documentId,
+      group,
+      section
+    } = this.props
+
+    return [group, collection, 'document', 'new']
+  }
+
   handlePageTitle(title) {
     // View should always control page title, as it has a direct relationship to route
     setPageTitle(title)
