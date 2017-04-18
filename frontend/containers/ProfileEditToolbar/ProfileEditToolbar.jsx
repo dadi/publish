@@ -114,6 +114,7 @@ class ProfileEditToolbar extends Component {
         <div class={styles.container}>
           <Button
             accent="save"
+            disabled={hasValidationErrors}
             onClick={this.handleSave.bind(this)}
           >Save settings</Button>
         </div>
