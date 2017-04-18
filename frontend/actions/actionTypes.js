@@ -14,7 +14,7 @@ export const REGISTER_NETWORK_CALL = 'REGISTER_NETWORK_CALL'
 // User
 //
 export const SET_REMOTE_USER = 'SET_REMOTE_USER'
-export const SET_USER_STATUS = 'SET_USER_STATUS'
+export const SET_USER_ERRORS = 'SET_USER_ERRORS'
 export const SIGN_OUT = 'SIGN_OUT'
 export const UPDATE_LOCAL_USER = 'UPDATE_LOCAL_USER'
 

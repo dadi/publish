@@ -85,13 +85,6 @@ export function saveUser ({api, collection, user}) {
   }
 }
 
-export function setUserErrors (errors) {
-  return {
-    errors,
-    type: Types.SET_USER_ERRORS
-  }
-}
-
 export function signOut () {
   return {
     type: Types.SIGN_OUT
