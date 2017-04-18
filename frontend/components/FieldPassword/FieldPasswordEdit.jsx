@@ -216,10 +216,16 @@ export default class FieldPasswordEdit extends Component {
     this.validate(event.target.value)
 
     if (typeof onChange === 'function') {
-      onChange.call(this, schema._id, {
-        currentPassword,
-        newPassword
-      }, false)
+      // When updating the password, we need to send two values: the current
+      // password and the new one, and the API hook needs to confirm the former
+      // is correct before updating the document. To achieve this, we send both
+      // values as a JSON-stringified object and decode them on API-side.
+      const combinedValue = JSON.stringify({
+        current: currentPassword,
+        new: newPassword
+      })
+
+      onChange.call(this, schema._id, combinedValue, false)
     }
   }
 

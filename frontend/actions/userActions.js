@@ -47,13 +47,6 @@ export function saveUser ({api, collection, user}) {
       .whereFieldIsEqualTo('_id', currentUser._id)
       .whereFieldIsEqualTo('email', currentUser.email)
 
-    // Are we changing the password?
-    if (user.password) {
-      apiBridge = apiBridge.whereFieldIsEqualTo('password', user.password.currentPassword)
-
-      user.password = user.password.newPassword
-    }
-
     apiBridge.update(user).then(response => {
       if (response.results && response.results.length) {
         const newUser = response.results[0]
