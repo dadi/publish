@@ -459,6 +459,7 @@ class DocumentEdit extends Component {
       collection,
       documentId,
       group,
+      onBuildSectionUrl,
       state
     } = this.props
     const {app, document} = state
@@ -493,6 +494,7 @@ class DocumentEdit extends Component {
           error={error}
           forceValidation={hasAttemptedSaving}
           group={group}
+          onBuildSectionUrl={onBuildSectionUrl}
           onChange={this.handleFieldChange.bind(this)}
           onError={this.handleFieldError.bind(this)}
           schema={field}

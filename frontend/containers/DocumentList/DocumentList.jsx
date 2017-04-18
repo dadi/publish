@@ -18,7 +18,6 @@ import {connectHelper, filterHiddenFields, isValidJSON, slugify} from 'lib/util'
 import {getApiForUrlParams, getCollectionForUrlParams} from 'lib/collection-lookup'
 
 import Button from 'components/Button/Button'
-import DocumentListToolbar from 'components/DocumentListToolbar/DocumentListToolbar'
 import HeroMessage from 'components/HeroMessage/HeroMessage'
 import SyncTable from 'components/SyncTable/SyncTable'
 
@@ -119,20 +118,6 @@ class DocumentList extends Component {
       }
     }
 
-    // Have we just deleted a single document?
-    if (isIdle && (previousStatus === Constants.STATUS_DELETING_SINGLE)) {
-      actions.setNotification({
-        message: 'The document has been deleted'
-      })
-    }
-
-    // Have we just deleted multiple documents?
-    if (isIdle && (previousStatus === Constants.STATUS_DELETING_MULTIPLE)) {
-      actions.setNotification({
-        message: 'The documents have been deleted'
-      })
-    }
-
     // State check: reject when missing config, session, or apis
     if (!state.app.config || !state.api.apis.length || !state.user) return
 
@@ -183,21 +168,7 @@ class DocumentList extends Component {
       )
     }
 
-    return (
-      <div>
-        {this.renderDocumentList()}
-
-        <DocumentListToolbar
-          collection={collection}
-          group={group}
-          isReferencedField={Boolean(referencedField)}
-          metadata={documentsList.metadata}
-          onBulkAction={this.handleBulkAction.bind(this)}
-          onReferenceDocumentSelect={this.handleReferenceDocumentSelect.bind(this)}
-          selectedDocuments={documents.selected}
-        />
-      </div>
-    )
+    return this.renderDocumentList()
   }
 
   componentWillUnmount() {
@@ -296,76 +267,6 @@ class DocumentList extends Component {
     }
 
     return renderedValue
-  }
-
-  handleBulkAction(actionType) {
-    const {
-      actions,
-      collection,
-      group,
-      state
-    } = this.props
-    const currentApi = getApiForUrlParams(state.api.apis, {
-      collection,
-      group
-    })
-    const currentCollection = getCollectionForUrlParams(state.api.apis, {
-      collection,
-      group,
-      useApi: currentApi
-    })
-
-    if (actionType === 'delete') {
-      actions.deleteDocuments({
-        api: currentApi,
-        collection: currentCollection,
-        ids: state.documents.selected
-      })
-    }
-  }
-
-  handleReferenceDocumentSelect() {
-    const {
-      actions,
-      collection,
-      group,
-      parentDocumentId,
-      referencedField,
-      state
-    } = this.props
-    const referencedCollection = getCollectionForUrlParams(state.api.apis, {
-      collection,
-      group,
-      referencedField
-    })
-    const documentsList = state.documents.list.results
-
-    // We might want to change this when we allow a field to reference multiple
-    // documents. For now, we just get the first selected document.
-    const selectedDocumentId = state.documents.selected[0]
-    const selectedDocument = documentsList.find(document => {
-      return document._id === selectedDocumentId
-    })
-
-    actions.updateLocalDocument({
-      [referencedField]: selectedDocument
-    })
-
-    const parentCollection = getCollectionForUrlParams(state.api.apis, {
-      collection,
-      group
-    })
-    const referenceFieldSchema = parentCollection.fields[referencedField]
-    const referenceFieldSection = referenceFieldSchema &&
-      referenceFieldSchema.publish &&
-      referenceFieldSchema.publish.section &&
-      slugify(referenceFieldSchema.publish.section)
-
-    if (parentDocumentId) {
-      route(buildUrl(group, collection, 'document', 'edit', parentDocumentId, referenceFieldSection))
-    } else {
-      route(buildUrl(group, collection, 'document', 'new', referenceFieldSection))
-    }
   }
 
   handleRowSelect(selectedRows) {

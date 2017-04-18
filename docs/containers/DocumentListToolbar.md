@@ -6,6 +6,13 @@ A toolbar used in a document list view.
 Props
 -----
 
+### `actions`
+
+The global actions object.
+
+- type: `object`
+
+
 ### `collection`
 
 The name of the collection being used.
@@ -18,22 +25,6 @@ The name of the collection being used.
 The name of the group where the current collection belongs (if any).
 
 - type: `string`
-
-
-### `isReferencedField`
-
-Whether the current list of documents refers to a nested document.
-
-- type: `bool`
-- default value: `false`
-
-
-### `metadata`
-
-The object containing metadata about the current query, as defined
-in DADI API.
-
-- type: `object`
 
 
 ### `onBulkAction`
@@ -51,9 +42,16 @@ A callback to be fired when a reference document has been selected.
 - type: `func`
 
 
-### `selectedDocuments`
+### `referencedField`
 
-A list of the IDs of the currently selected documents.
+The name of a reference field currently being edited.
 
-- type: `array`
+- type: `string`
+
+
+### `state`
+
+The global state object.
+
+- type: `object`
 

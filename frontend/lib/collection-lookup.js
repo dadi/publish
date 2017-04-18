@@ -82,17 +82,19 @@ export function getCollectionForUrlParams (apis, {
 
   if (!api || !api.collections) return null
 
+  let collectionMatch
+
   // Are we after the auth collection?
   if (collection === Constants.AUTH_COLLECTION) {
-    return api.collections.find(collection => collection._isAuthCollection)
+    collectionMatch = api.collections.find(collection => collection._isAuthCollection)
+  } else {
+    const collectionParts = collection.match(/(.*)-([0-9]+)/)
+    const collectionName = collectionParts ? collectionParts[1] : collection
+
+    collectionMatch = api.collections.find(collection => {
+      return collection.name === collectionName
+    })
   }
-
-  const collectionParts = collection.match(/(.*)-([0-9]+)/)
-  const collectionName = collectionParts ? collectionParts[1] : collection
-
-  let collectionMatch = api.collections.find(collection => {
-    return collection.name === collectionName
-  })
 
   // If we have a referenced referencedField with a valid referenced collection,
   // we need to return the schema of that collection instead.

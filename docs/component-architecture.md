@@ -125,30 +125,8 @@ App
 │ │   └── Notification
 │ └── Page
 ├─┬ DocumentListView
-│ ├─┬ DocumentListController
-│ │ ├── Button
-│ │ ├─┬ DocumentFilters
-│ │ │ ├─┬ DocumentFilter
-│ │ │ │ ├── TextInput
-│ │ │ │ └── Button
-│ │ │ └── Button
-│ │ └─┬ ListController
-│ │   └─┬ DocumentSearch
-│ │     └── TextInput
 │ ├─┬ DocumentList
 │ │ ├── Button
-│ │ ├─┬ DocumentListToolbar
-│ │ │ ├── Button
-│ │ │ ├─┬ ButtonWithPrompt
-│ │ │ │ ├── Button
-│ │ │ │ └─┬ Prompt
-│ │ │ │   └── Button
-│ │ │ ├── Checkbox
-│ │ │ ├─┬ Paginator
-│ │ │ │ └── Button
-│ │ │ ├── Toolbar
-│ │ │ └─┬ ToolbarTextInput
-│ │ │   └── TextInput
 │ │ ├── HeroMessage
 │ │ └─┬ SyncTable
 │ │   ├── Table
@@ -160,6 +138,28 @@ App
 │ │   ├─┬ TableRow
 │ │   │ └── TableRowCell
 │ │   └── TableRowCell
+│ ├─┬ DocumentListController
+│ │ ├── Button
+│ │ ├─┬ DocumentFilters
+│ │ │ ├─┬ DocumentFilter
+│ │ │ │ ├── TextInput
+│ │ │ │ └── Button
+│ │ │ └── Button
+│ │ └─┬ ListController
+│ │   └─┬ DocumentSearch
+│ │     └── TextInput
+│ ├─┬ DocumentListToolbar
+│ │ ├── Button
+│ │ ├─┬ ButtonWithPrompt
+│ │ │ ├── Button
+│ │ │ └─┬ Prompt
+│ │ │   └── Button
+│ │ ├── Checkbox
+│ │ ├─┬ Paginator
+│ │ │ └── Button
+│ │ ├── Toolbar
+│ │ └─┬ ToolbarTextInput
+│ │   └── TextInput
 │ ├─┬ Header
 │ │ ├─┬ CollectionNav
 │ │ │ └─┬ Nav

@@ -7,8 +7,9 @@ import styles from './DocumentListView.css'
 
 import {isValidJSON, setPageTitle} from 'lib/util'
 
-import DocumentListController from 'containers/DocumentListController/DocumentListController'
 import DocumentList from 'containers/DocumentList/DocumentList'
+import DocumentListController from 'containers/DocumentListController/DocumentListController'
+import DocumentListToolbar from 'containers/DocumentListToolbar/DocumentListToolbar'
 import Header from 'containers/Header/Header'
 import Main from 'components/Main/Main'
 import Page from 'components/Page/Page'
@@ -75,6 +76,12 @@ export default class DocumentListView extends Component {
             />
           </div>        
         </Main>
+
+        <DocumentListToolbar
+          collection={collection}
+          group={group}
+          referencedField={referencedField}
+        />
       </Page>
     )
   }

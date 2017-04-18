@@ -93,6 +93,7 @@ export default class FieldReferenceEdit extends Component {
       error,
       group,
       forceValidation,
+      onBuildSectionUrl,
       onChange,
       onError,
       value,
