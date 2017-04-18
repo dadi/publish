@@ -51,17 +51,13 @@ export function fetchDocuments ({
 
     // This is the main one, where we retrieve the list of documents.
     let parentQuery = apiBridgeClient(api, true)
+      .in(collection.name)
       .goToPage(page)
       .sortBy(sortBy || 'createdAt', sortOrder || 'desc')
       .where(filters)
+      .find()
 
-    if (collection.isMediaCollection) {
-      parentQuery = parentQuery.inMedia()
-    } else {
-      parentQuery = parentQuery.in(collection.name)
-    }
-
-    bundler.add(parentQuery.find())
+    bundler.add(parentQuery)
 
     // If we're on a nested document, we need to retrieve the parent too.
     if (referencedField && parentCollection) {

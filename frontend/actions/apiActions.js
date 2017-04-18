@@ -17,7 +17,7 @@ export function loadApis () {
     let apisWithCollections = []
 
     apis.forEach(api => {
-      apiBridgeClient(api).getCollections().then(({collections, mediaCollections}) => {
+      apiBridgeClient(api).getCollections().then(({collections}) => {
         // This bundler will be used to get all the collections schemas for
         // this API in bulk.
         const collectionBundler = apiBridgeClient.getBundler()
@@ -42,8 +42,7 @@ export function loadApis () {
 
           const apiWithCollections = Object.assign({}, api, {
             _isAuthApi: isAuthApi,
-            collections: mergedCollections,
-            media: mediaCollections
+            collections: mergedCollections
           })
 
           apisWithCollections.push(apiWithCollections)

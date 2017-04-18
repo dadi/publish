@@ -23,7 +23,10 @@ class CollectionNav extends Component {
       // There are some collections that we don't want to display on the menu,
       // like auth or media collections.
       const filteredCollections = api.collections.filter(collection => {
-        return !collection._isAuthCollection
+        const isMediaCollection = collection.settings &&
+          collection.settings.type === 'media'
+
+        return !collection._isAuthCollection && !isMediaCollection
       })
 
       // We start by adding all the collections that are referenced in the menu

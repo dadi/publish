@@ -125,9 +125,13 @@ export function saveDocument ({api, collection, document, documentId}) {
       if (!fieldSchema) return
 
       const referencedCollection = fieldSchema.settings && fieldSchema.settings.collection
+      const referencedCollectionSchema = referencedCollection &&
+        api.collections.find(collection => {
+          return collection.name === referencedCollection
+        })
 
-      // If the referenced collection isn't defined, there's nothing we can do.
-      if (!referencedCollection) return
+      // If the referenced collection doesn't exist, there's nothing we can do.
+      if (!referencedCollectionSchema) return
 
       // We're only interested in the field if its value is truthy. If it's
       // null, it's good as it is.
@@ -135,9 +139,8 @@ export function saveDocument ({api, collection, document, documentId}) {
         const referencedDocument = payload[field]
 
         // Is this a reference to a media collection?
-        const isMediaDocument = api.media.some(mediaCollection => {
-          return mediaCollection.name === referencedCollection
-        })
+        const isMediaDocument = referencedCollectionSchema.settings &&
+          referencedCollectionSchema.settings.type === 'media'
 
         if (isMediaDocument) {
           const mediaDocument = payload[field]
@@ -149,7 +152,7 @@ export function saveDocument ({api, collection, document, documentId}) {
             // Otherwise, we need to upload the file.
             referenceBundler.add(
               apiBridgeClient(api, true)
-                .inMedia()
+                .in(referencedCollection)
                 .getSignedUrl({
                   contentLength: mediaDocument.contentLength,
                   fileName: mediaDocument.fileName,

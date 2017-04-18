@@ -87,6 +87,7 @@ class DocumentEditToolbar extends Component {
     const document = state.document
     const previousDocument = prevProps.state.document
     const status = document.remoteStatus
+    const wasFirstValidated = !previousDocument.validationErrors && document.validationErrors
     const wasSaving = previousDocument.remoteStatus === Constants.STATUS_SAVING
 
     // Have we just saved a document?
@@ -97,7 +98,8 @@ class DocumentEditToolbar extends Component {
     }
 
     // Are we trying to save the document?
-    if (previousDocument.saveAttempts < document.saveAttempts) {
+    if ((previousDocument.saveAttempts < document.saveAttempts) ||
+        (wasFirstValidated && document.saveAttempts > 0)) {
       this.saveDocument()
     }
 
