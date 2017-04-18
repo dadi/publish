@@ -85,7 +85,9 @@ export function fetchDocuments ({
       if (referencedField) {
         const document = response[1].results[0]
 
-        actions.push(setRemoteDocument(document, false))
+        actions.push(setRemoteDocument(document, {
+          forceUpdate: false
+        }))
       }
 
       dispatch(batchActions(actions))
