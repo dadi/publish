@@ -6,6 +6,8 @@ import proptypes from 'proptypes'
 import Style from 'lib/Style'
 import styles from './FieldPassword.css'
 
+import * as Constants from 'lib/constants'
+
 import Label from 'components/Label/Label'
 import TextInput from 'components/TextInput/TextInput'
 
@@ -87,6 +89,16 @@ export default class FieldPasswordEdit extends Component {
     value: ''
   }
 
+  constructor(props) {
+    super(props)
+
+    this.state = {
+      currentPassword: '',
+      newPassword: '',
+      newPasswordConfirm: ''
+    }
+  }
+
   componentDidMount() {
     const {forceValidation, value} = this.props
 
@@ -104,69 +116,156 @@ export default class FieldPasswordEdit extends Component {
   }
 
   render() {
-    const {error, schema} = this.props
+    const {
+      error,
+      schema
+    } = this.props
+    const {
+      currentPassword,
+      forceValidation,
+      newPassword,
+      newPasswordConfirm
+    } = this.state
     const publishBlock = schema.publish || {}
+    const wrongPassword = error && error.includes(Constants.ERROR_WRONG_PASSWORD)
+    const passwordMismatch = error && error.includes(Constants.ERROR_PASSWORD_MISMATCH)
+    const missingFields = error && error.includes(Constants.ERROR_MISSING_FIELDS)
 
     return (
       <div>
         <Label
           className={styles.label}
-          error={error}
-          errorMessage={typeof error === 'string' ? error : null}
+          error={wrongPassword || (missingFields && currentPassword.length === 0)}
+          errorMessage={wrongPassword && 'This password is incorrect'}
           label={`Current ${schema.label.toLowerCase()}`}
         >
           <TextInput
-            onChange={this.handleOnChange.bind(this)}
+            onChange={this.handleOnChange.bind(this, 'currentPassword')}
+            onKeyUp={this.handleKeyUp.bind(this, 'currentPassword')}
             placeholder={schema.placeholder}
             type="password"
+            value={currentPassword}
           />
         </Label>
 
         <Label
           className={styles.label}
-          error={error}
-          errorMessage={typeof error === 'string' ? error : null}
+          error={missingFields && newPassword.length === 0}
           label={`New ${schema.label.toLowerCase()}`}
         >
           <TextInput
-            onChange={this.handleOnChange.bind(this)}
-            onKeyUp={this.validate.bind(this)}
+            onChange={this.handleOnChange.bind(this, 'newPassword')}
+            onKeyUp={this.handleKeyUp.bind(this, 'newPassword')}
             placeholder={schema.placeholder}
             ref={element => this.newPasswordRef = element}
             type="password"
+            value={newPassword}
           />
         </Label>
 
         <Label
           className={styles.label}
-          error={error}
-          errorMessage={typeof error === 'string' ? error : null}
+          error={passwordMismatch || (missingFields && newPasswordConfirm.length === 0)}
+          errorMessage={passwordMismatch && 'The passwords must match'}
           label={`New ${schema.label.toLowerCase()} (confirm)`}
         >
           <TextInput
-            onChange={this.handleOnChange.bind(this)}
-            onKeyUp={this.validate.bind(this)}
+            onChange={this.handleOnChange.bind(this, 'newPasswordConfirm')}
+            onKeyUp={this.handleKeyUp.bind(this, 'newPasswordConfirm')}
             placeholder={schema.placeholder}
             ref={element => this.newPasswordConfirmRef = element}
             type="password"
+            value={newPasswordConfirm}
           />
         </Label>
       </div>
     )
   }
 
-  handleOnChange(event) {
-    const {onChange, schema} = this.props
-    const value = event.target.value
+  handleKeyUp(field, event) {
+    const {
+      error,
+      onError,
+      schema
+    } = this.props
+    const {
+      newPassword
+    } = this.state
+    const wrongPassword = error && error.includes(Constants.ERROR_WRONG_PASSWORD)
 
-    this.validate(value)
+    this.setState({
+      [field]: event.target.value
+    })
+
+    this.validate()
+
+    if (wrongPassword && field === 'currentPassword') {
+      onError.call(this, schema._id, false, newPassword)
+    }
+  }
+
+  handleOnChange(field, event) {
+    const {onChange, schema} = this.props
+    const {
+      currentPassword,
+      forceValidation,
+      newPassword,
+      newPasswordConfirm
+    } = this.state
+
+    this.validate(event.target.value)
 
     if (typeof onChange === 'function') {
-      onChange.call(this, schema._id, value)
+      onChange.call(this, schema._id, {
+        currentPassword,
+        newPassword
+      }, false)
     }
   }
 
   validate() {
-    //console.log('*** HI', this.newPasswordRef)
+    const {
+      error,
+      onError,
+      schema
+    } = this.props
+    const {
+      currentPassword,
+      forceValidation,
+      newPassword,
+      newPasswordConfirm
+    } = this.state
+
+    let validationErrors = error && error.includes(Constants.ERROR_WRONG_PASSWORD) ?
+      [Constants.ERROR_WRONG_PASSWORD] : []
+
+    if ((forceValidation || (newPasswordConfirm.length > 0)) &&
+        (newPassword !== newPasswordConfirm)) {
+      validationErrors.push(Constants.ERROR_PASSWORD_MISMATCH)
+    }
+
+    let lengths = 0
+
+    if (currentPassword.length) {
+      lengths++
+    }
+
+    if (newPassword.length) {
+      lengths++
+    }
+
+    if (newPasswordConfirm.length) {
+      lengths++
+    }
+
+    if (lengths > 0 && lengths < 3) {
+      validationErrors.push(Constants.ERROR_MISSING_FIELDS)
+    }
+
+    const hasValidationErrors = (validationErrors.length > 0) && validationErrors
+
+    if (typeof onError === 'function') {
+      onError.call(this, schema._id, hasValidationErrors, newPassword)
+    }
   }
 }
