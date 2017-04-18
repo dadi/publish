@@ -42,27 +42,53 @@ export function saveUser ({api, collection, user}) {
 
     dispatch(documentActions.setRemoteDocumentStatus(Constants.STATUS_SAVING))
 
-    apiBridgeClient(api)
+    let apiBridge = apiBridgeClient(api)
       .in(collection.name)
       .whereFieldIsEqualTo('_id', currentUser._id)
-      .update(user)
-      .then(response => {
-        if (response.results && response.results.length) {
-          const newUser = response.results[0]
+      .whereFieldIsEqualTo('email', currentUser.email)
 
-          dispatch(documentActions.setRemoteDocument(newUser, true, true))
-          dispatch(setRemoteUser(newUser))
-        } else {
-          dispatch(documentActions.setRemoteDocumentStatus(Constants.STATUS_FAILED))
-        }
-      })
+    // Are we changing the password?
+    if (user.password) {
+      apiBridge = apiBridge.whereFieldIsEqualTo('password', user.password.currentPassword)
+
+      user.password = user.password.newPassword
+    }
+
+    apiBridge.update(user).then(response => {
+      if (response.results && response.results.length) {
+        const newUser = response.results[0]
+
+        dispatch(documentActions.setRemoteDocument(newUser, {
+          clearLocal: true
+        }))
+        dispatch(setRemoteUser(newUser))
+      } else {
+        dispatch(documentActions.setRemoteDocumentStatus(Constants.STATUS_FAILED))
+      }
+    }).catch(errors => {
+      let validationErrors = getState().document.validationErrors.password || []
+
+      if (errors instanceof Array) {
+        errors.forEach(error => {
+          if (error.details && error.details.includes('\'WRONG_PASSWORD\'')) {
+            validationErrors.push(Constants.ERROR_WRONG_PASSWORD)
+          }
+        })
+
+        dispatch(documentActions.setFieldErrorStatus(
+          'password',
+          null,
+          validationErrors
+        ))
+      }
+    })
   }
 }
 
-export function setUserStatus (status) {
+export function setUserErrors (errors) {
   return {
-    status,
-    type: Types.SET_USER_STATUS
+    errors,
+    type: Types.SET_USER_ERRORS
   }
 }
 
