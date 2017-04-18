@@ -12,7 +12,7 @@ import Page from 'components/Page/Page'
 class HomeView extends Component {
   render() {
     const {state} = this.props
-    const user = state.user.local
+    const user = state.user.remote
 
     if (!user) return null
 
