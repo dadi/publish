@@ -96,6 +96,7 @@ class App extends Component {
     return (
       <Router history={history}>
         <HomeView path="/" authenticate />
+
         <PasswordReset path="/reset" authenticate/>
 
         {hasRoutes && (
@@ -124,9 +125,12 @@ class App extends Component {
         <DocumentListView path="/:collection/documents/:page?" authenticate />
 
         <ProfileEditView path="/profile/:section?" authenticate />
-        <DocumentListView path="/profile/select/:referencedField?/:page?" authenticate />
+        <ProfileEditView path="/profile/select/:referencedField?/:page?" authenticate />
+
         <SignInView path="/sign-in" />
+
         <SignOutView path="/sign-out" />
+
         <ErrorView type="404" default />
       </Router>
     )
