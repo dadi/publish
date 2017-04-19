@@ -59,6 +59,12 @@ export default class FieldReferenceEdit extends Component {
     group: proptypes.string,
 
     /**
+    * A callback to be used to obtain the base URL for the given page, as
+    * determined by the view.
+    */
+    onBuildBaseUrl: proptypes.func,
+
+    /**
      * A callback to be fired whenever the field wants to update its value to
      * a successful state. The function receives the name of the field and the
      * new value as arguments.
@@ -93,7 +99,7 @@ export default class FieldReferenceEdit extends Component {
       error,
       group,
       forceValidation,
-      onBuildSectionUrl,
+      onBuildBaseUrl,
       onChange,
       onError,
       value,
@@ -112,22 +118,7 @@ export default class FieldReferenceEdit extends Component {
     const displayName = schema.label || schema._id
     const displayField = value &&
       Object.keys(filterHiddenFields(referencedCollection.fields, 'list'))[0]
-    const selectLink = documentId ? buildUrl(
-      group,
-      collection,
-      'document',
-      'edit',
-      documentId,
-      'select',
-      schema._id
-    ) : buildUrl(
-      group,
-      collection,
-      'document',
-      'new',
-      'select',
-      schema._id
-    )
+    const href = buildUrl(...onBuildBaseUrl(), 'select', schema._id)
 
     return (
       <Label
@@ -150,7 +141,7 @@ export default class FieldReferenceEdit extends Component {
             <div class={styles.placeholder}>
               <Button
                 accent="data"
-                href={selectLink}
+                href={href}
                 size="small"
               >Select existing {displayName.toLowerCase()}</Button>
             </div>
