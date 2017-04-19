@@ -13,7 +13,7 @@ import * as documentsActions from 'actions/documentsActions'
 
 import {bindActionCreators} from 'redux'
 import {buildUrl} from 'lib/router'
-import {connectHelper} from 'lib/util'
+import {connectHelper, slugify} from 'lib/util'
 import {getApiForUrlParams, getCollectionForUrlParams} from 'lib/collection-lookup'
 import {route} from 'preact-router'
 
@@ -43,6 +43,12 @@ class DocumentListToolbar extends Component {
      * The name of the group where the current collection belongs (if any).
      */
     group: proptypes.string,
+
+    /**
+    * A callback to be used to obtain the base URL for the given page, as
+    * determined by the view.
+    */
+    onBuildBaseUrl: proptypes.func,
 
     /**
      * A callback to be fired when the "Apply" button on the bulk actions
@@ -98,6 +104,7 @@ class DocumentListToolbar extends Component {
     const {
       collection,
       group,
+      onBuildBaseUrl,
       onBulkAction,
       referencedField,
       state
@@ -133,7 +140,7 @@ class DocumentListToolbar extends Component {
         <div class={styles.section}>
           <Paginator
             currentPage={metadata.page}
-            linkCallback={page => buildUrl(group, collection, 'documents', page)}
+            linkCallback={page => buildUrl(...onBuildBaseUrl(), page)}
             maxPages={8}
             totalPages={metadata.totalPages}
           />
@@ -232,9 +239,18 @@ class DocumentListToolbar extends Component {
   }
 
   handleGoToPage(event) {
-    const {collection, group, metadata} = this.props
+    const {
+      collection,
+      group,
+      onBuildBaseUrl,
+      state
+    } = this.props
+    const documentsList = state.documents.list
+    const {metadata} = documentsList
     const inputValue = event.target.value
     const parsedValue = parseInt(inputValue)
+
+    if (!documentsList) return null
 
     // If the input is not a valid positive integer number, we return.
     if ((parsedValue.toString() !== inputValue) || (parsedValue <= 0)) return
@@ -243,14 +259,15 @@ class DocumentListToolbar extends Component {
     // we return.
     if (parsedValue > metadata.totalPages) return
 
-    route(buildUrl(group, collection, 'documents', parsedValue))
+    route(buildUrl(...onBuildBaseUrl(), parsedValue))
   }
 
-  handleReferenceDocumentSelect() {
+  handleReferencedDocumentSelect() {
     const {
       actions,
       collection,
       group,
+      onBuildBaseUrl,
       parentDocumentId,
       referencedField,
       state
@@ -283,11 +300,7 @@ class DocumentListToolbar extends Component {
       referenceFieldSchema.publish.section &&
       slugify(referenceFieldSchema.publish.section)
 
-    if (parentDocumentId) {
-      route(buildUrl(group, collection, 'document', 'edit', parentDocumentId, referenceFieldSection))
-    } else {
-      route(buildUrl(group, collection, 'document', 'new', referenceFieldSection))
-    }
+    route(buildUrl(...onBuildBaseUrl({section: referenceFieldSection})))
   }
 }
 
