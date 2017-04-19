@@ -42,7 +42,7 @@ export function saveUser ({api, collection, user}) {
 
     dispatch(documentActions.setRemoteDocumentStatus(Constants.STATUS_SAVING))
 
-    let apiBridge = apiBridgeClient(api)
+    const apiBridge = apiBridgeClient(api)
       .in(collection.name)
       .whereFieldIsEqualTo('_id', currentUser._id)
       .whereFieldIsEqualTo('email', currentUser.email)
@@ -59,7 +59,14 @@ export function saveUser ({api, collection, user}) {
         dispatch(documentActions.setRemoteDocumentStatus(Constants.STATUS_FAILED))
       }
     }).catch(errors => {
-      let validationErrors = getState().document.validationErrors.password || []
+      const passwordField = Object.keys(collection.fields).find(fieldName => {
+        return collection.fields[fieldName].publish &&
+          collection.fields[fieldName].publish.subType === 'Password'
+      })
+
+      if (!passwordField) return
+
+      let validationErrors = getState().document.validationErrors[passwordField] || []
 
       if (errors instanceof Array) {
         errors.forEach(error => {
@@ -69,7 +76,7 @@ export function saveUser ({api, collection, user}) {
         })
 
         dispatch(documentActions.setFieldErrorStatus(
-          'password',
+          passwordField,
           null,
           validationErrors
         ))
