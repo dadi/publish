@@ -10,6 +10,13 @@ import {bindActionCreators} from 'redux'
 import * as userActions from 'actions/userActions'
 
 import DocumentEdit from 'containers/DocumentEdit/DocumentEdit'
+import DocumentList from 'containers/DocumentList/DocumentList'
+import DocumentListToolbar from 'containers/DocumentListToolbar/DocumentListToolbar'
+import Header from 'containers/Header/Header'
+import Main from 'components/Main/Main'
+import Page from 'components/Page/Page'
+import ProfileEditToolbar from 'containers/ProfileEditToolbar/ProfileEditToolbar'
+import ReferencedDocumentHeader from 'containers/ReferencedDocumentHeader/ReferencedDocumentHeader'
 import SubNavItem from 'components/SubNavItem/SubNavItem'
 
 /**
@@ -18,10 +25,15 @@ import SubNavItem from 'components/SubNavItem/SubNavItem'
 class ProfileEdit extends Component {
   static propTypes = {
     /**
-    * A callback to be used to build the URLs for the various sections. It must
-    * return an array of URL parts, to be prepended to the section slug.
+    * A callback to be used to obtain the base URL for the given page, as
+    * determined by the view.
     */
-    onBuildSectionUrl: proptypes.func,
+    onBuildBaseUrl: proptypes.func,
+
+    /**
+     * The name of a reference field currently being edited.
+     */
+    referencedField: proptypes.string,
 
     /**
      * The current active section (if any).
@@ -36,7 +48,8 @@ class ProfileEdit extends Component {
 
   render() {
     const {
-      onBuildSectionUrl,
+      onBuildBaseUrl,
+      referencedField,
       section,
       state
     } = this.props
@@ -44,13 +57,52 @@ class ProfileEdit extends Component {
 
     if (!userDocument) return null
 
+    // Are we selecting a reference field?
+    if (referencedField) {
+      return (
+        <Page>
+          <ReferencedDocumentHeader
+            collection={Constants.AUTH_COLLECTION}
+            onBuildBaseUrl={onBuildBaseUrl}
+            parentDocumentId={userDocument._id}
+            referencedField={referencedField}
+          />
+
+          <Main>
+            <DocumentList
+              collection={Constants.AUTH_COLLECTION}
+              documentId={userDocument._id}
+              onBuildBaseUrl={onBuildBaseUrl}
+              referencedField={referencedField}
+              section={section}
+              selectLimit={1}
+            />
+
+            <DocumentListToolbar
+              collection={Constants.AUTH_COLLECTION}
+              onBuildBaseUrl={onBuildBaseUrl}
+              referencedField={referencedField}
+            />
+          </Main>
+        </Page>
+      )
+    }
+
     return (
-      <DocumentEdit
-        collection={Constants.AUTH_COLLECTION}
-        documentId={userDocument._id}
-        onBuildSectionUrl={onBuildSectionUrl}
-        section={section}
-      />
+      <Page>
+        <Header />
+
+        <Main>
+          <DocumentEdit
+            collection={Constants.AUTH_COLLECTION}
+            documentId={userDocument._id}
+            onBuildBaseUrl={onBuildBaseUrl}
+            section={section}
+          />
+
+          <ProfileEditToolbar />
+        </Main>
+      </Page>
     )
   }
 }
