@@ -93,6 +93,12 @@ class App extends Component {
     const {history, state} = this.props
     const hasRoutes = state.app && state.app.config ? this.hasRoutes() : null
 
+    if (state.api.status === Constants.STATUS_FAILED) {
+      return (
+        <ErrorView type={Constants.STATUS_FAILED} default />
+      )
+    }
+
     return (
       <Router history={history}>
         <HomeView path="/" authenticate />
