@@ -76,6 +76,7 @@ export default class Button extends Component {
     accent: 'neutral',
     className: '',
     disabled: false,
+    inGroup: null,
     size: 'normal',
     type: 'button'
   }
@@ -96,7 +97,7 @@ export default class Button extends Component {
     const buttonStyle = new Style(styles, 'button')
 
     buttonStyle.add(`button-${accent}`)
-      .add(`button-in-group-${inGroup}`)
+      .addIf(`button-in-group-${inGroup}`, inGroup)
       .addIf('button-mock', type === 'mock')
       .addIf(`button-${size}`, size !== 'normal')
       .addResolved(className)
