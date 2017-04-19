@@ -60,10 +60,10 @@ class DocumentEdit extends Component {
     group: proptypes.string,
 
     /**
-    * A callback to be used to build the URLs for the various sections. It must
-    * return an array of URL parts, to be prepended to the section slug.
+    * A callback to be used to obtain the base URL for the given page, as
+    * determined by the view.
     */
-    onBuildSectionUrl: proptypes.func,
+    onBuildBaseUrl: proptypes.func,
 
     /**
     * A callback to be fired if the container wants to attempt changing the
@@ -98,7 +98,7 @@ class DocumentEdit extends Component {
       collection,
       documentId,
       group,
-      onBuildSectionUrl,
+      onBuildBaseUrl,
       onPageTitle,
       referencedField,
       section,
@@ -129,7 +129,7 @@ class DocumentEdit extends Component {
 
         if (!sectionMatch) {
           const firstSection = fields.sections[0]
-          const sectionUrlBase = onBuildSectionUrl()
+          const sectionUrlBase = onBuildBaseUrl()
 
           route(buildUrl(...sectionUrlBase, documentId, firstSection.slug))
 
@@ -231,7 +231,7 @@ class DocumentEdit extends Component {
       collection,
       documentId,
       group,
-      onBuildSectionUrl,
+      onBuildBaseUrl,
       referencedField,
       section,
       state
@@ -280,7 +280,7 @@ class DocumentEdit extends Component {
           <div class={styles.navigation}>
             {fields.sections.map(collectionSection => {
               const isActive = activeSection === collectionSection.slug
-              const sectionUrlBase = onBuildSectionUrl()
+              const sectionUrlBase = onBuildBaseUrl()
               const href = buildUrl(...sectionUrlBase, collectionSection.slug)
 
               return (
@@ -459,7 +459,7 @@ class DocumentEdit extends Component {
       collection,
       documentId,
       group,
-      onBuildSectionUrl,
+      onBuildBaseUrl,
       state
     } = this.props
     const {app, document} = state
@@ -494,7 +494,7 @@ class DocumentEdit extends Component {
           error={error}
           forceValidation={hasAttemptedSaving}
           group={group}
-          onBuildSectionUrl={onBuildSectionUrl}
+          onBuildBaseUrl={onBuildBaseUrl}
           onChange={this.handleFieldChange.bind(this)}
           onError={this.handleFieldError.bind(this)}
           schema={field}

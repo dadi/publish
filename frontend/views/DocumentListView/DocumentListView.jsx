@@ -45,6 +45,7 @@ export default class DocumentListView extends Component {
           <ReferencedDocumentHeader
             collection={collection}
             group={group}
+            onBuildBaseUrl={this.handleBuildBaseUrl.bind(this)}
             parentDocumentId={documentId}
             referencedField={referencedField}
           /> : <Header />
@@ -80,6 +81,7 @@ export default class DocumentListView extends Component {
         <DocumentListToolbar
           collection={collection}
           group={group}
+          onBuildBaseUrl={this.handleBuildBaseUrl.bind(this)}
           referencedField={referencedField}
         />
       </Page>
@@ -98,6 +100,21 @@ export default class DocumentListView extends Component {
     this.setState({
       newFilter: isNewFilter
     })
+  }
+
+  handleBuildBaseUrl(data = {}) {
+    const {
+      collection,
+      documentId,
+      group,
+      referencedField
+    } = this.props
+
+    if (documentId && referencedField) {
+      return [group, collection, 'document', 'edit', documentId, data.section]
+    }
+
+    return [group, collection, 'documents']
   }
 
   handlePageTitle(title) {

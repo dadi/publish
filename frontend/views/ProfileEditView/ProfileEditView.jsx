@@ -2,11 +2,7 @@
 
 import {h, Component} from 'preact'
 
-import Header from 'containers/Header/Header'
-import Main from 'components/Main/Main'
-import Page from 'components/Page/Page'
 import ProfileEdit from 'containers/ProfileEdit/ProfileEdit'
-import ProfileEditToolbar from 'containers/ProfileEditToolbar/ProfileEditToolbar'
 
 import {setPageTitle} from 'lib/util'
 
@@ -15,26 +11,20 @@ export default class ProfileEditView extends Component {
     const {
       collection,
       group,
+      referencedField,
       section
     } = this.props
 
     return (
-      <Page>
-        <Header />
-
-        <Main>
-          <ProfileEdit
-            onBuildSectionUrl={this.handleBuildSectionUrl.bind(this)}
-            section={section}
-          />
-        </Main>
-
-        <ProfileEditToolbar />
-      </Page>
+      <ProfileEdit
+        onBuildBaseUrl={this.handleBuildBaseUrl.bind(this)}
+        referencedField={referencedField}
+        section={section}
+      />
     ) 
   }
 
-  handleBuildSectionUrl() {
+  handleBuildBaseUrl() {
     const {
       collection,
       documentId,

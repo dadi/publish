@@ -29,7 +29,7 @@ export default class DocumentEditView extends Component {
             collection={collection}
             documentId={documentId}
             group={group}
-            onBuildSectionUrl={this.handleBuildSectionUrl.bind(this)}
+            onBuildBaseUrl={this.handleBuildBaseUrl.bind(this)}
             onPageTitle={this.handlePageTitle}
             referencedField={referencedField}
             section={section}
@@ -47,7 +47,7 @@ export default class DocumentEditView extends Component {
     )
   }
 
-  handleBuildSectionUrl() {
+  handleBuildBaseUrl() {
     const {
       collection,
       documentId,

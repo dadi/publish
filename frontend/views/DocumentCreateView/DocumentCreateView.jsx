@@ -27,7 +27,7 @@ export default class DocumentCreateView extends Component {
           <DocumentEdit
             collection={collection}
             group={group}
-            onBuildSectionUrl={this.handleBuildSectionUrl.bind(this)}
+            onBuildBaseUrl={this.handleBuildBaseUrl.bind(this)}
             onPageTitle={this.handlePageTitle}
             section={section}
           />
@@ -42,7 +42,7 @@ export default class DocumentCreateView extends Component {
     )    
   }
 
-  handleBuildSectionUrl() {
+  handleBuildBaseUrl() {
     const {
       collection,
       documentId,
