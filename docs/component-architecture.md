@@ -176,6 +176,7 @@ App
 │ └─┬ ReferencedDocumentHeader
 │   └── Button
 ├─┬ ErrorView
+│ ├── Button
 │ ├─┬ Header
 │ │ ├─┬ CollectionNav
 │ │ │ └─┬ Nav
