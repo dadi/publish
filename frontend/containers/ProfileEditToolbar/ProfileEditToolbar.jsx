@@ -80,17 +80,19 @@ class ProfileEditToolbar extends Component {
     const previousDocument = prevProps.state.document
     const previousUser = prevProps.state.user
     const status = document.remoteStatus
+    const wasFirstValidated = !previousDocument.validationErrors && document.validationErrors
     const wasSaving = previousDocument.remoteStatus === Constants.STATUS_SAVING
 
-    // Have we just saved a document?
+    // Have we just saved?
     if (wasSaving && (status === Constants.STATUS_IDLE)) {
       dispatch(actions.setNotification({
         message: 'Your profile has been updated'
       }))
     }
 
-    // Are we trying to save the document?
-    if (previousDocument.saveAttempts < document.saveAttempts) {
+    // Are we trying to save?
+    if ((previousDocument.saveAttempts < document.saveAttempts) ||
+        (wasFirstValidated && document.saveAttempts > 0)) {
       this.saveUser()
     }    
   }
