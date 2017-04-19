@@ -58,6 +58,12 @@ export default class FieldImageEdit extends Component {
     group: proptypes.string,
 
     /**
+    * A callback to be used to obtain the base URL for the given page, as
+    * determined by the view.
+    */
+    onBuildBaseUrl: proptypes.func,
+
+    /**
      * A callback to be fired whenever the field wants to update its value to
      * a successful state. The function receives the name of the field and the
      * new value as arguments.
@@ -95,7 +101,7 @@ export default class FieldImageEdit extends Component {
       config,
       documentId,
       group,
-      onBuildSectionUrl,
+      onBuildBaseUrl,
       schema,
       value
     } = this.props
@@ -103,7 +109,7 @@ export default class FieldImageEdit extends Component {
     const src = this.getImageSrc(value)
     const isReference = schema.type === 'Reference'
     const fieldLocalType = schema.publish && schema.publish.subType ? schema.publish.subType : schema.type
-    const baseUrl = onBuildSectionUrl()
+    const baseUrl = onBuildBaseUrl()
     const href = buildUrl(...baseUrl, 'select', schema._id)
 
     return (

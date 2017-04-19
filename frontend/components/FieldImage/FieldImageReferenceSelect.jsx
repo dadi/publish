@@ -42,10 +42,28 @@ export default class FieldImageReferenceSelect extends Component {
   }
 
   render() {
-    const {
-      data
-    } = this.props
-console.log(data)
+    const {data} = this.props
+    const numberOfColumns = this.getNumberOfColumns()
+
+    let columns = Array.apply(null, {length: numberOfColumns}).map(i => [])
+
+    data.forEach((document, index) => {
+      columns[index % numberOfColumns][index] = document
+    })
+
+    return (
+      <div class={styles.columns}>
+        {columns.map(column => (
+          <div
+            class={styles.column}
+            style={`width: ${100 / numberOfColumns}%`}
+          >
+            {column.map(this.renderItem.bind(this))}
+          </div>
+        ))}
+      </div>
+    )
+
     return this.renderColumns(data)
   }
 
@@ -67,7 +85,7 @@ console.log(data)
       selectLimit,
       selectedRows
     } = this.props
-    const selected = event.target.checked
+    const selected = !Boolean(selectedRows[index])
     const selectedRowsIndices = Object.keys(selectedRows)
 
     let newSelectedRows = {}
@@ -92,29 +110,6 @@ console.log(data)
     }
   }
 
-  renderColumns(documents) {
-    const numberOfColumns = this.getNumberOfColumns()
-
-    let columns = Array.apply(null, {length: numberOfColumns}).map(i => [])
-
-    documents.forEach((document, index) => {
-      columns[index % numberOfColumns][index] = document
-    })
-
-    return (
-      <div class={styles.columns}>
-        {columns.map(column => (
-          <div
-            class={styles.column}
-            style={`width: ${100 / numberOfColumns}%`}
-          >
-            {column.map(this.renderItem.bind(this))}
-          </div>
-        ))}
-      </div>
-    )
-  }
-
   renderItem(item, index) {
     const {
       selectedRows,
@@ -133,7 +128,6 @@ console.log(data)
         <input
           class={styles['item-select']}
           checked={isSelected}
-          onChange={this.handleItemSelect.bind(this, index)}
           type={selectLimit === 1 ? 'radio' : 'checkbox'}
         />
 
