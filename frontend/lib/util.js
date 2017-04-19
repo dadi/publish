@@ -163,7 +163,7 @@ export function throttle (func, threshold) {
 }
 
 export function setPageTitle (title) {
-  document.title = `${title} / DADI Publish`
+  document.title = (title ? title + ' / ' : '') + 'DADI Publish'
 }
 
 export function filterHiddenFields (fields, type) {

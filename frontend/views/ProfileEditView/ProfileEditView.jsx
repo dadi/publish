@@ -15,6 +15,8 @@ export default class ProfileEditView extends Component {
       section
     } = this.props
 
+    setPageTitle('Profile')
+
     return (
       <ProfileEdit
         onBuildBaseUrl={this.handleBuildBaseUrl.bind(this)}
@@ -33,10 +35,5 @@ export default class ProfileEditView extends Component {
     } = this.props
 
     return ['profile']
-  }
-
-  handlePageTitle(title) {
-    // View should always control page title, as it has a direct relationship to route
-    setPageTitle(title)
   }
 }
