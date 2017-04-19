@@ -16,7 +16,9 @@
     "precommit": "npm run lint",
     "snyk-protect": "snyk protect",
     "start": "NODE_ENV=development node index.js",
-    "test": "standard --fix && env NODE_ENV=development mocha --colors --webpack-config webpack.config.js \"test/**/*.js\" && npm run lint",
+    "test": "npm-run-all test:backend test:frontend lint",
+    "test:frontend": "jest",
+    "test:backend": "standard --fix && env NODE_ENV=development mocha --colors --webpack-config webpack.config.js \"test/**/*.js\"",
     "watch": "NODE_ENV=development npm-run-all --parallel watch:server watch:build",
     "watch:build": "webpack --watch",
     "watch:server": "nodemon \"./index.js\" --watch \"./app\""
@@ -71,6 +73,7 @@
     "babel": "^6.23.0",
     "babel-core": "^6.14.0",
     "babel-eslint": "^7.2.0",
+    "babel-jest": "^19.0.0",
     "babel-loader": "^6.4.1",
     "babel-plugin-transform-decorators-legacy": "^1.3.4",
     "babel-plugin-transform-es2015-template-literals": "^6.22.0",
@@ -88,8 +91,11 @@
     "file-loader": "^0.9.0",
     "file-size": "^1.0.0",
     "fs": "0.0.1-security",
+    "html-looks-like": "^1.0.2",
     "husky": "^0.13.3",
+    "identity-obj-proxy": "^3.0.0",
     "inquirer": "^3.0.6",
+    "jest": "^19.0.2",
     "json-loader": "^0.5.4",
     "mkdirp": "^0.5.1",
     "mocha": "^3.2.0",
@@ -105,10 +111,12 @@
     "preact": "^6.4.0",
     "preact-compat": "^3.0.0",
     "preact-redux": "^1.2.0",
+    "preact-render-to-string": "^3.6.0",
     "preact-router": "^2.4.5",
     "preact-router-redux": "^4.1.0",
     "proptypes": "^0.14.3",
     "react-docgen": "github:eduardoboucas/react-docgen",
+    "react-test-renderer": "^15.5.4",
     "redux": "^3.6.0",
     "redux-thunk": "^2.2.0",
     "socketcluster-client": "^5.3.0",
@@ -135,6 +143,27 @@
       "public",
       "test",
       "frontend"
+    ]
+  },
+  "jest": {
+    "collectCoverageFrom": [
+      "**/frontend/**/*.{js,jsx}"
+    ],
+    "moduleDirectories": [
+      "node_modules"
+    ],
+    "moduleNameMapper": {
+      "^lib/(.*)": "<rootDir>/frontend/lib/$1",
+      "\\.css$": "identity-obj-proxy",
+      "^react$": "preact-compat",
+      "^react-dom$": "preact-compat"
+    },
+    "moduleFileExtensions": [
+      "js",
+      "jsx"
+    ],
+    "testMatch": [
+      "**/frontend/**/*.test.jsx"
     ]
   },
   "directories": {
