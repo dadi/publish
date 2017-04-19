@@ -63,6 +63,14 @@ If defined, specifies a group where the current collection belongs.
 - type: `string`
 
 
+### `onBuildBaseUrl`
+
+A callback to be used to obtain the base URL for the given page, as
+determined by the view.
+
+- type: `func`
+
+
 ### `onChange`
 
 A callback to be fired whenever the field wants to update its value to

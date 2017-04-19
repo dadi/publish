@@ -34,10 +34,10 @@ The name of the group where the current collection belongs (if any).
 - type: `string`
 
 
-### `onBuildSectionUrl`
+### `onBuildBaseUrl`
 
-A callback to be used to build the URLs for the various sections. It must
-return an array of URL parts, to be prepended to the section slug.
+A callback to be used to obtain the base URL for the given page, as
+determined by the view.
 
 - type: `func`
 

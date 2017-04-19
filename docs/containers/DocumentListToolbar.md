@@ -27,6 +27,14 @@ The name of the group where the current collection belongs (if any).
 - type: `string`
 
 
+### `onBuildBaseUrl`
+
+A callback to be used to obtain the base URL for the given page, as
+determined by the view.
+
+- type: `func`
+
+
 ### `onBulkAction`
 
 A callback to be fired when the "Apply" button on the bulk actions
