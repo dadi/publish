@@ -52,6 +52,12 @@ export function loadApis () {
             dispatch(setApiList(apisWithCollections))
           }
         })
+        .catch(err => {
+          dispatch(setApiStatus(Constants.STATUS_FAILED))
+        })
+      })
+      .catch(err => {
+        dispatch(setApiStatus(Constants.STATUS_FAILED))
       })
     })
   }
