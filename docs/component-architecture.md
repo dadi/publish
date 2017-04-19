@@ -15,38 +15,46 @@ App
 ├─┬ DocumentCreateView
 │ ├─┬ DocumentEdit
 │ │ ├── Button
-│ │ ├─┬ DocumentEditToolbar
-│ │ │ ├── Button
-│ │ │ ├─┬ ButtonWithOptions
-│ │ │ │ ├── Button
-│ │ │ │ ├── Dropdown
-│ │ │ │ ├── DropdownItem
-│ │ │ │ └── IconArrow
-│ │ │ ├─┬ ButtonWithPrompt
-│ │ │ │ ├── Button
-│ │ │ │ └─┬ Prompt
-│ │ │ │   └── Button
-│ │ │ ├── DateTime
-│ │ │ ├─┬ Peer
-│ │ │ │ └── Button
-│ │ │ └── Toolbar
 │ │ ├─┬ FieldImage
-│ │ │ ├── Button
-│ │ │ ├── FileUpload
-│ │ │ ├── Label
-│ │ │ └── LazyLoader
+│ │ │ ├─┬ FieldImageEdit
+│ │ │ │ ├── Button
+│ │ │ │ ├─┬ FileUpload
+│ │ │ │ │ └── Button
+│ │ │ │ ├── Label
+│ │ │ │ └── LazyLoader
+│ │ │ └── FieldImageReferenceSelect
 │ │ ├─┬ FieldBoolean
-│ │ │ ├── Checkbox
-│ │ │ └── Label
+│ │ │ ├─┬ FieldBooleanEdit
+│ │ │ │ ├── Checkbox
+│ │ │ │ └── Label
+│ │ │ └── FieldBooleanList
 │ │ ├─┬ FieldReference
-│ │ │ ├── Button
-│ │ │ ├── Label
-│ │ │ └── TextInput
+│ │ │ └─┬ FieldReferenceEdit
+│ │ │   ├── Button
+│ │ │   ├── Label
+│ │ │   └── TextInput
 │ │ ├─┬ FieldString
-│ │ │ ├── Label
-│ │ │ └── TextInput
+│ │ │ ├─┬ FieldStringEdit
+│ │ │ │ ├── Label
+│ │ │ │ └── TextInput
+│ │ │ └── FieldStringList
 │ │ ├── HeroMessage
 │ │ └── SubNavItem
+│ ├─┬ DocumentEditToolbar
+│ │ ├── Button
+│ │ ├─┬ ButtonWithOptions
+│ │ │ ├── Button
+│ │ │ ├── Dropdown
+│ │ │ ├── DropdownItem
+│ │ │ └── IconArrow
+│ │ ├─┬ ButtonWithPrompt
+│ │ │ ├── Button
+│ │ │ └─┬ Prompt
+│ │ │   └── Button
+│ │ ├── DateTime
+│ │ ├─┬ Peer
+│ │ │ └── Button
+│ │ └── Toolbar
 │ ├─┬ Header
 │ │ ├─┬ CollectionNav
 │ │ │ └─┬ Nav
@@ -63,38 +71,46 @@ App
 ├─┬ DocumentEditView
 │ ├─┬ DocumentEdit
 │ │ ├── Button
-│ │ ├─┬ DocumentEditToolbar
-│ │ │ ├── Button
-│ │ │ ├─┬ ButtonWithOptions
-│ │ │ │ ├── Button
-│ │ │ │ ├── Dropdown
-│ │ │ │ ├── DropdownItem
-│ │ │ │ └── IconArrow
-│ │ │ ├─┬ ButtonWithPrompt
-│ │ │ │ ├── Button
-│ │ │ │ └─┬ Prompt
-│ │ │ │   └── Button
-│ │ │ ├── DateTime
-│ │ │ ├─┬ Peer
-│ │ │ │ └── Button
-│ │ │ └── Toolbar
 │ │ ├─┬ FieldImage
-│ │ │ ├── Button
-│ │ │ ├── FileUpload
-│ │ │ ├── Label
-│ │ │ └── LazyLoader
+│ │ │ ├─┬ FieldImageEdit
+│ │ │ │ ├── Button
+│ │ │ │ ├─┬ FileUpload
+│ │ │ │ │ └── Button
+│ │ │ │ ├── Label
+│ │ │ │ └── LazyLoader
+│ │ │ └── FieldImageReferenceSelect
 │ │ ├─┬ FieldBoolean
-│ │ │ ├── Checkbox
-│ │ │ └── Label
+│ │ │ ├─┬ FieldBooleanEdit
+│ │ │ │ ├── Checkbox
+│ │ │ │ └── Label
+│ │ │ └── FieldBooleanList
 │ │ ├─┬ FieldReference
-│ │ │ ├── Button
-│ │ │ ├── Label
-│ │ │ └── TextInput
+│ │ │ └─┬ FieldReferenceEdit
+│ │ │   ├── Button
+│ │ │   ├── Label
+│ │ │   └── TextInput
 │ │ ├─┬ FieldString
-│ │ │ ├── Label
-│ │ │ └── TextInput
+│ │ │ ├─┬ FieldStringEdit
+│ │ │ │ ├── Label
+│ │ │ │ └── TextInput
+│ │ │ └── FieldStringList
 │ │ ├── HeroMessage
 │ │ └── SubNavItem
+│ ├─┬ DocumentEditToolbar
+│ │ ├── Button
+│ │ ├─┬ ButtonWithOptions
+│ │ │ ├── Button
+│ │ │ ├── Dropdown
+│ │ │ ├── DropdownItem
+│ │ │ └── IconArrow
+│ │ ├─┬ ButtonWithPrompt
+│ │ │ ├── Button
+│ │ │ └─┬ Prompt
+│ │ │   └── Button
+│ │ ├── DateTime
+│ │ ├─┬ Peer
+│ │ │ └── Button
+│ │ └── Toolbar
 │ ├─┬ Header
 │ │ ├─┬ CollectionNav
 │ │ │ └─┬ Nav
@@ -109,32 +125,8 @@ App
 │ │   └── Notification
 │ └── Page
 ├─┬ DocumentListView
-│ ├─┬ DocumentListController
-│ │ ├── Button
-│ │ ├─┬ DocumentFilters
-│ │ │ ├─┬ DocumentFilter
-│ │ │ │ ├── TextInput
-│ │ │ │ └── Button
-│ │ │ └── Button
-│ │ └─┬ ListController
-│ │   └─┬ DocumentSearch
-│ │     └── TextInput
 │ ├─┬ DocumentList
 │ │ ├── Button
-│ │ ├─┬ DocumentListToolbar
-│ │ │ ├── Button
-│ │ │ ├─┬ ButtonWithPrompt
-│ │ │ │ ├── Button
-│ │ │ │ └─┬ Prompt
-│ │ │ │   └── Button
-│ │ │ ├── Checkbox
-│ │ │ ├─┬ Paginator
-│ │ │ │ └── Button
-│ │ │ ├── Toolbar
-│ │ │ └─┬ ToolbarTextInput
-│ │ │   └── TextInput
-│ │ ├── FieldBooleanListView
-│ │ ├── FieldStringListView
 │ │ ├── HeroMessage
 │ │ └─┬ SyncTable
 │ │   ├── Table
@@ -146,6 +138,28 @@ App
 │ │   ├─┬ TableRow
 │ │   │ └── TableRowCell
 │ │   └── TableRowCell
+│ ├─┬ DocumentListController
+│ │ ├── Button
+│ │ ├─┬ DocumentFilters
+│ │ │ ├─┬ DocumentFilter
+│ │ │ │ ├── TextInput
+│ │ │ │ └── Button
+│ │ │ └── Button
+│ │ └─┬ ListController
+│ │   └─┬ DocumentSearch
+│ │     └── TextInput
+│ ├─┬ DocumentListToolbar
+│ │ ├── Button
+│ │ ├─┬ ButtonWithPrompt
+│ │ │ ├── Button
+│ │ │ └─┬ Prompt
+│ │ │   └── Button
+│ │ ├── Checkbox
+│ │ ├─┬ Paginator
+│ │ │ └── Button
+│ │ ├── Toolbar
+│ │ └─┬ ToolbarTextInput
+│ │   └── TextInput
 │ ├─┬ Header
 │ │ ├─┬ CollectionNav
 │ │ │ └─┬ Nav
@@ -199,20 +213,89 @@ App
 │ └── TextInput
 ├── SignOutView
 └─┬ ProfileEditView
-  ├─┬ Header
-  │ ├─┬ CollectionNav
-  │ │ └─┬ Nav
-  │ │   ├── Dropdown
-  │ │   ├── DropdownItem
-  │ │   └── NavItem
-  │ ├── IconBurger
-  │ └── IconCross
-  ├─┬ Main
-  │ ├── LoadingBar
-  │ └─┬ NotificationCentre
-  │   └── Notification
-  ├── Page
   └─┬ ProfileEdit
+    ├─┬ DocumentEdit
+    │ ├── Button
+    │ ├─┬ FieldImage
+    │ │ ├─┬ FieldImageEdit
+    │ │ │ ├── Button
+    │ │ │ ├─┬ FileUpload
+    │ │ │ │ └── Button
+    │ │ │ ├── Label
+    │ │ │ └── LazyLoader
+    │ │ └── FieldImageReferenceSelect
+    │ ├─┬ FieldBoolean
+    │ │ ├─┬ FieldBooleanEdit
+    │ │ │ ├── Checkbox
+    │ │ │ └── Label
+    │ │ └── FieldBooleanList
+    │ ├─┬ FieldReference
+    │ │ └─┬ FieldReferenceEdit
+    │ │   ├── Button
+    │ │   ├── Label
+    │ │   └── TextInput
+    │ ├─┬ FieldString
+    │ │ ├─┬ FieldStringEdit
+    │ │ │ ├── Label
+    │ │ │ └── TextInput
+    │ │ └── FieldStringList
+    │ ├── HeroMessage
+    │ └── SubNavItem
+    ├─┬ DocumentList
+    │ ├── Button
+    │ ├── HeroMessage
+    │ └─┬ SyncTable
+    │   ├── Table
+    │   ├─┬ TableHead
+    │   │ └─┬ TableHeadCell
+    │   │   └── IconArrow
+    │   ├─┬ TableHeadCell
+    │   │ └── IconArrow
+    │   ├─┬ TableRow
+    │   │ └── TableRowCell
+    │   └── TableRowCell
+    ├─┬ DocumentListToolbar
+    │ ├── Button
+    │ ├─┬ ButtonWithPrompt
+    │ │ ├── Button
+    │ │ └─┬ Prompt
+    │ │   └── Button
+    │ ├── Checkbox
+    │ ├─┬ Paginator
+    │ │ └── Button
+    │ ├── Toolbar
+    │ └─┬ ToolbarTextInput
+    │   └── TextInput
+    ├─┬ Header
+    │ ├─┬ CollectionNav
+    │ │ └─┬ Nav
+    │ │   ├── Dropdown
+    │ │   ├── DropdownItem
+    │ │   └── NavItem
+    │ ├── IconBurger
+    │ └── IconCross
+    ├─┬ Main
+    │ ├── LoadingBar
+    │ └─┬ NotificationCentre
+    │   └── Notification
+    ├── Page
+    ├─┬ ProfileEditToolbar
+    │ ├── Button
+    │ ├─┬ ButtonWithOptions
+    │ │ ├── Button
+    │ │ ├── Dropdown
+    │ │ ├── DropdownItem
+    │ │ └── IconArrow
+    │ ├─┬ ButtonWithPrompt
+    │ │ ├── Button
+    │ │ └─┬ Prompt
+    │ │   └── Button
+    │ ├── DateTime
+    │ ├─┬ Peer
+    │ │ └── Button
+    │ └── Toolbar
+    ├─┬ ReferencedDocumentHeader
+    │ └── Button
     └── SubNavItem
 
 ```

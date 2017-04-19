@@ -6,8 +6,8 @@ import {bindActionCreators} from 'redux'
 import {buildUrl} from 'lib/router'
 
 import * as apiActions from 'actions/apiActions'
-import {connectHelper} from 'lib/util'
-import {getCurrentCollection} from 'lib/app-config'
+import {connectHelper, slugify} from 'lib/util'
+import {getApiForUrlParams, getCollectionForUrlParams} from 'lib/collection-lookup'
 
 import Style from 'lib/Style'
 import styles from './ReferencedDocumentHeader.css'
@@ -35,6 +35,12 @@ class ReferencedDocumentHeader extends Component {
     group: proptypes.string,
 
     /**
+    * A callback to be used to obtain the base URL for the given page, as
+    * determined by the view.
+    */
+    onBuildBaseUrl: proptypes.func,
+
+    /**
      * The name of a reference field currently being edited.
      */
     referencedField: proptypes.string,
@@ -49,33 +55,29 @@ class ReferencedDocumentHeader extends Component {
     const {
       collection,
       group,
+      onBuildBaseUrl,
       parentDocumentId,
       referencedField,
       state
     } = this.props
-    const currentCollection = getCurrentCollection(state.api.apis, group, collection)
+    const parentCollection = getCollectionForUrlParams(state.api.apis, {
+      collection,
+      group
+    })
 
     // Render nothing if we don't have the collection schema available.
-    if (!currentCollection) return null
+    if (!parentCollection) return null
 
-    const fieldSchema = currentCollection.fields[referencedField]
+    const fieldSchema = parentCollection.fields[referencedField]
     
     // Render nothing if we don't have a matching field in the collection.
     if (!fieldSchema) return null
 
     const displayName = fieldSchema.label || referencedField
-    const backToDocumentLink = parentDocumentId ? buildUrl(
-      group,
-      collection,
-      'document',
-      'edit',
-      parentDocumentId
-    ) : buildUrl(
-      group,
-      collection,
-      'document',
-      'new'
-    )
+    const fieldSection = fieldSchema.publish &&
+      fieldSchema.publish.section &&
+      slugify(fieldSchema.publish.section)
+    const backToDocumentLink = buildUrl(...onBuildBaseUrl({section: fieldSection}))
 
     return (
       <div class={styles.container}>

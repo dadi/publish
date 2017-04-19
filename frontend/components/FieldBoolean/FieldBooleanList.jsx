@@ -6,7 +6,7 @@ import proptypes from 'proptypes'
 /**
  * Component for rendering API fields of type Boolean on a list view.
  */
-export default class FieldBooleanListView extends Component {
+export default class FieldBooleanList extends Component {
   static propTypes = {
     /**
      * The field value.

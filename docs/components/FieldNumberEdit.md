@@ -1,7 +1,7 @@
-`FieldBoolean`
-==============
+`FieldNumberEdit`
+=================
 
-Component for API fields of type Boolean.
+Component for API fields of type Number.
 
 Props
 -----
@@ -94,5 +94,4 @@ The field schema.
 The field value.
 
 - type: `bool`
-- default value: `false`
 

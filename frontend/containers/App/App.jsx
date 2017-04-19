@@ -26,7 +26,6 @@ import {connectHelper, debounce, isEmpty, slugify, throttle} from 'lib/util'
 import Socket from 'lib/socket'
 import ConnectionMonitor from 'lib/status'
 import Session from 'lib/session'
-import {getAppConfig, getCurrentApi} from 'lib/app-config'
 import apiBridgeClient from 'lib/api-bridge-client'
 
 class App extends Component {
@@ -54,24 +53,37 @@ class App extends Component {
     const path = state.router.locationBeforeTransitions.pathname
 
     // State change: user has signed in
-    if (!previousState.user.local && state.user.local) {
+    if (!previousState.user.remote && state.user.remote) {
       const {actions} = this.props
 
-      getAppConfig().then(config => {
-        actions.setAppConfig(config)
+      actions.loadAppConfig()
+    }
 
-        // Start socket logic
-        this.initialiseSocket(config)
+    // State change: app now has config
+    if (!previousState.app.config && state.app.config) {
+      // Start socket logic
+      this.initialiseSocket(state.app.config)
 
-        // Load api collections
-        this.getApiCollections(config)
-      })
+      actions.loadApis()
     }
 
     // State change: user has signed out
-    if (previousState.user.local && !state.user.local) {
+    if (previousState.user.remote && !state.user.remote) {
       route('/sign-in')
     }
+
+    // State change: app now has APIs
+    if (!previousState.api.apis.length && state.api.apis.length) {
+      // If the user has been loaded from session, it's possible that some of
+      // their details aren't up-to-date, so we get the remote from the API
+      // and update the local version.
+      //
+      // (!) TO DO: update session contents
+      if (this.userLoadedFromSession) {
+        actions.updateLocalUser()
+      }
+    }
+
     if (this.socket && this.socket.getUser() && (this.socket.getRoom() !== path)) {
       this.socket.setRoom(path)
     }
@@ -84,6 +96,7 @@ class App extends Component {
     return (
       <Router history={history}>
         <HomeView path="/" authenticate />
+
         <PasswordReset path="/reset" authenticate/>
 
         {hasRoutes && (
@@ -112,8 +125,12 @@ class App extends Component {
         <DocumentListView path="/:collection/documents/:page?" authenticate />
 
         <ProfileEditView path="/profile/:section?" authenticate />
+        <ProfileEditView path="/profile/select/:referencedField?/:page?" authenticate />
+
         <SignInView path="/sign-in" />
+
         <SignOutView path="/sign-out" />
+
         <ErrorView type="404" default />
       </Router>
     )
@@ -131,7 +148,7 @@ class App extends Component {
   initialiseSocket(config) {
     const {actions, state} = this.props
     const pathname = state.router.locationBeforeTransitions.pathname
-    const user = state.user.local
+    const user = state.user.remote
     const session = new Session()
 
     this.socket = new Socket(config.server.port)
@@ -189,6 +206,8 @@ class App extends Component {
     new Session().getSession().then(user => {
       if (user && !user.err) {
         actions.setRemoteUser(user)
+
+        this.userLoadedFromSession = true
       } else {
         actions.signOut()
         route('/sign-in')

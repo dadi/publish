@@ -6,7 +6,7 @@ import proptypes from 'proptypes'
 /**
  * Component for rendering API fields of type String on a list view.
  */
-export default class FieldStringListView extends Component {
+export default class FieldStringList extends Component {
   static propTypes = {
     /**
      * The field value.

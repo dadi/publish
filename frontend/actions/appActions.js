@@ -1,3 +1,4 @@
+import 'fetch'
 import * as Constants from 'lib/constants'
 import * as Types from 'actions/actionTypes'
 
@@ -17,10 +18,33 @@ export function registerNetworkCall (status, onComplete) {
   }
 }
 
-export function setAppConfig (config) {
+export function loadAppConfig (config) {
+  return (dispatch, getState) => {
+    dispatch(setAppStatus(Constants.STATUS_LOADING))
+
+    fetch('/config', {
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      method: 'GET'
+    }).then(response => {
+      return response.json()
+    }).then(parsedResponse => {
+      dispatch({
+        config: parsedResponse,
+        type: Types.SET_APP_CONFIG
+      })
+    })
+    .catch(err => {
+      dispatch(setAppStatus(Constants.STATUS_FAILED))
+    })
+  }
+}
+
+export function setAppStatus (status) {
   return {
-    config,
-    type: Types.SET_APP_CONFIG
+    status,
+    type: Types.SET_APP_STATUS
   }
 }
 

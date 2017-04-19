@@ -122,14 +122,14 @@ export default class TextInput extends Component {
         <textarea
           class={inputStyle.getClasses()}
           id={id}
-          placeholder={placeholder}
-          required={required}
-          rows={10}
-          readonly={readonly}
           onBlur={this.handleEvent.bind(this, 'onBlur')}
           onChange={this.handleChange.bind(this)}
           onFocus={this.handleEvent.bind(this, 'onFocus')}
           onKeyUp={this.handleChange.bind(this)}
+          placeholder={placeholder}
+          readonly={readonly}
+          required={required}
+          rows={10}
         >
           {value}
         </textarea>
@@ -140,16 +140,16 @@ export default class TextInput extends Component {
     return (
       <input
         class={inputStyle.getClasses()}
-        type={type}
-        value={value}
         id={id}
-        placeholder={placeholder}
-        readonly={readonly}
-        required={required}
         onBlur={this.handleEvent.bind(this, 'onBlur')}
         onChange={this.handleChange.bind(this)}
         onFocus={this.handleEvent.bind(this, 'onFocus')}
         onKeyUp={this.handleChange.bind(this)}
+        placeholder={placeholder}
+        readonly={readonly}
+        required={required}
+        type={type}
+        value={value}
       />
     )
   }

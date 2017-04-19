@@ -4,16 +4,25 @@ import * as Constants from 'lib/constants'
 import * as Types from 'actions/actionTypes'
 
 const initialState = {
+  fieldsNotPersistedInLocalStorage: [],
   loadedFromLocalStorage: false,
   local: null,
   peers: null,
   remote: null,
   remoteStatus: Constants.STATUS_IDLE,
+  saveAttempts: 0,
   validationErrors: null
 }
 
 export default function document (state = initialState, action = {}) {
   switch (action.type) {
+
+    // Document action: attempt to save document
+    case Types.ATTEMPT_SAVE_DOCUMENT:
+      return {
+        ...state,
+        saveAttempts: state.saveAttempts + 1
+      }
 
     // Document action: clear remote document
     case Types.CLEAR_REMOTE_DOCUMENT:
@@ -34,10 +43,6 @@ export default function document (state = initialState, action = {}) {
         return initialState
       }
 
-      return state
-
-    // Document action: user leaving document
-    case Types.USER_LEAVING_DOCUMENT:
       return state
 
     // Document action: save document
@@ -109,10 +114,12 @@ export default function document (state = initialState, action = {}) {
 
       return {
         ...state,
+        fieldsNotPersistedInLocalStorage: action.fieldsNotPersistedInLocalStorage || [],
         loadedFromLocalStorage: action.loadedFromLocalStorage,
         local: action.local,
         remote: action.remote,
-        remoteStatus: Constants.STATUS_IDLE
+        remoteStatus: Constants.STATUS_IDLE,
+        saveAttempts: 0
       }
 
     // Document action: set remote document status
@@ -132,6 +139,7 @@ export default function document (state = initialState, action = {}) {
 
       return {
         ...state,
+        fieldsNotPersistedInLocalStorage: [],
         loadedFromLocalStorage,
         local: action.document,
         remote: null,
@@ -140,8 +148,19 @@ export default function document (state = initialState, action = {}) {
 
     // Document action: update local document
     case Types.UPDATE_LOCAL_DOCUMENT:
+      let newFieldsNotPersistedInLocalStorage = state.fieldsNotPersistedInLocalStorage
+
+      if (!action.persistInLocalStorage) {
+        Object.keys(action.change).forEach(fieldName => {
+          if (!newFieldsNotPersistedInLocalStorage.includes(fieldName)) {
+            newFieldsNotPersistedInLocalStorage.push(fieldName)
+          }
+        })
+      }
+
       const newState = {
         ...state,
+        fieldsNotPersistedInLocalStorage: newFieldsNotPersistedInLocalStorage,
         local: {
           ...state.local,
           ...action.change
@@ -149,6 +168,10 @@ export default function document (state = initialState, action = {}) {
       }
 
       return newState
+
+    // Document action: user leaving document
+    case Types.USER_LEAVING_DOCUMENT:
+      return state
 
     default:
       return state

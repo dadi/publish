@@ -5,6 +5,9 @@ import proptypes from 'proptypes'
 
 import Style from 'lib/Style'
 import styles from './FileUpload.css'
+import {getUniqueId} from 'lib/util'
+
+import Button from 'components/Button/Button'
 
 export default class FileUpload extends Component {
 
@@ -25,8 +28,8 @@ export default class FileUpload extends Component {
     onChange: proptypes.func
   }
 
-  constructor(props) {
-    super(props)
+  componentWillMount() {
+    this.fileInputId = getUniqueId()
   }
 
   render() {
@@ -46,27 +49,38 @@ export default class FileUpload extends Component {
         {allowDrop && (
           <span class={styles.or}>or</span>
         )}
+
         <input 
-          type="file"
           accept={accept}
+          class={styles['file-input']}
+          id={this.fileInputId}
+          type="file"
           onChange={this.handleFileSelect.bind(this)}
         />
+
+        <Button
+          accent="data"
+          forId={this.fileInputId}
+          size="small"
+        >Select from device</Button>
       </div>
     )
   }
 
   handleFileSelect(event) {
-    event.preventDefault()
     const {onChange} = this.props
 
     onChange(event.target.files[0])
+
+    event.preventDefault()
   }
 
   handleDrop(event) {
     const {onChange} = this.props
 
-    event.preventDefault()
     onChange(event.dataTransfer.files[0])
+
+    event.preventDefault()
   }
 
   handleDragOver(event) {

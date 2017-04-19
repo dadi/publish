@@ -10,7 +10,7 @@ import * as documentsActions from 'actions/documentsActions'
 
 import {buildUrl, createRoute, router} from 'lib/router'
 import {connectHelper} from 'lib/util'
-import {getCurrentApi, getCurrentCollection} from 'lib/app-config'
+import {getApiForUrlParams, getCollectionForUrlParams} from 'lib/collection-lookup'
 
 import Button from 'components/Button/Button'
 import DocumentFilters from 'components/DocumentFilters/DocumentFilters'
@@ -67,8 +67,11 @@ class DocumentListController extends Component {
       referencedField,
       state
     } = this.props
-
-    const currentCollection = getCurrentCollection(state.api.apis, group, collection, referencedField)
+    const currentCollection = getCollectionForUrlParams(state.api.apis, {
+      collection,
+      group,
+      referencedField
+    })
     const hasDocuments = state.documents.list && state.documents.list.results && (state.documents.list.results.length > 0)
     const params = state.router.params
     const filters = params && params.filter ? params.filter : null

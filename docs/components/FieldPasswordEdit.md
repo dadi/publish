@@ -1,7 +1,7 @@
-`FieldString`
-=============
+`FieldPasswordEdit`
+===================
 
-Component for API fields of type String
+Component for API fields of type Password
 
 Props
 -----

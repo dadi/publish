@@ -1,5 +1,5 @@
-`FieldDateTime`
-===============
+`FieldDateTimeEdit`
+===================
 
 Component for API fields of type DateTime
 

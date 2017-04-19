@@ -50,21 +50,20 @@ export function fetchDocuments ({
     const bundler = apiBridgeClient.getBundler()
 
     // This is the main one, where we retrieve the list of documents.
-    bundler.add(
-      apiBridgeClient(api, true)
-        .in(collection)
-        .limitTo(count)
-        .goToPage(page)
-        .sortBy(sortBy || 'createdAt', sortOrder || 'desc')
-        .where(filters)
-        .find()
-    )
+    let parentQuery = apiBridgeClient(api, true)
+      .in(collection.name)
+      .goToPage(page)
+      .sortBy(sortBy || 'createdAt', sortOrder || 'desc')
+      .where(filters)
+      .find()
+
+    bundler.add(parentQuery)
 
     // If we're on a nested document, we need to retrieve the parent too.
-    if (referencedField) {
+    if (referencedField && parentCollection) {
       bundler.add(
         apiBridgeClient(api, true)
-          .in(parentCollection)
+          .in(parentCollection.name)
           .whereFieldIsEqualTo('_id', parentDocumentId)
           .find()
       )
@@ -82,7 +81,9 @@ export function fetchDocuments ({
       if (referencedField) {
         const document = response[1].results[0]
 
-        actions.push(setRemoteDocument(document, false))
+        actions.push(setRemoteDocument(document, {
+          forceUpdate: false
+        }))
       }
 
       dispatch(batchActions(actions))

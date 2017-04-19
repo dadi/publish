@@ -3,11 +3,19 @@
 import {h, Component} from 'preact'
 import proptypes from 'proptypes'
 
-import {buildUrl, createRoute} from 'lib/router'
-import {route} from 'preact-router'
-
 import Style from 'lib/Style'
 import styles from './DocumentListToolbar.css'
+
+import * as Constants from 'lib/constants'
+import * as appActions from 'actions/appActions'
+import * as documentActions from 'actions/documentActions'
+import * as documentsActions from 'actions/documentsActions'
+
+import {bindActionCreators} from 'redux'
+import {buildUrl} from 'lib/router'
+import {connectHelper, slugify} from 'lib/util'
+import {getApiForUrlParams, getCollectionForUrlParams} from 'lib/collection-lookup'
+import {route} from 'preact-router'
 
 import Button from 'components/Button/Button'
 import ButtonWithPrompt from 'components/ButtonWithPrompt/ButtonWithPrompt'
@@ -19,8 +27,13 @@ import ToolbarTextInput from 'components/Toolbar/ToolbarTextInput'
 /**
  * A toolbar used in a document list view.
  */
-export default class DocumentListToolbar extends Component {
+class DocumentListToolbar extends Component {
   static propTypes = {
+    /**
+     * The global actions object.
+     */
+    actions: proptypes.object,
+
     /**
      * The name of the collection being used.
      */
@@ -32,15 +45,10 @@ export default class DocumentListToolbar extends Component {
     group: proptypes.string,
 
     /**
-     * Whether the current list of documents refers to a nested document.
-     */
-    isReferencedField: proptypes.bool,
-
-    /**
-     * The object containing metadata about the current query, as defined
-     * in DADI API.
-     */
-    metadata: proptypes.object,
+    * A callback to be used to obtain the base URL for the given page, as
+    * determined by the view.
+    */
+    onBuildBaseUrl: proptypes.func,
 
     /**
      * A callback to be fired when the "Apply" button on the bulk actions
@@ -54,13 +62,14 @@ export default class DocumentListToolbar extends Component {
     onReferenceDocumentSelect: proptypes.func,
 
     /**
-     * A list of the IDs of the currently selected documents.
+     * The name of a reference field currently being edited.
      */
-    selectedDocuments: proptypes.array
-  }
+    referencedField: proptypes.string,
 
-  static defaultProps = {
-    isReferencedField: false
+    /**
+     * The global state object.
+     */
+    state: proptypes.object
   }
 
   constructor(props) {
@@ -70,16 +79,41 @@ export default class DocumentListToolbar extends Component {
     this.state.bulkActionSelected = this.BULK_ACTIONS_PLACEHOLDER
   }
 
+  componentDidUpdate(prevProps, prevState) {
+    const {actions, state} = this.props
+    const {list, status} = state.documents
+    const isIdle = status === Constants.STATUS_IDLE
+    const previousStatus = prevProps.state.documents.status
+
+    // Have we just deleted a single document?
+    if (isIdle && (previousStatus === Constants.STATUS_DELETING_SINGLE)) {
+      actions.setNotification({
+        message: 'The document has been deleted'
+      })
+    }
+
+    // Have we just deleted multiple documents?
+    if (isIdle && (previousStatus === Constants.STATUS_DELETING_MULTIPLE)) {
+      actions.setNotification({
+        message: 'The documents have been deleted'
+      })
+    }
+  }
+
   render() {
     const {
       collection,
       group,
-      isReferencedField,
-      metadata,
+      onBuildBaseUrl,
       onBulkAction,
-      selectedDocuments
+      referencedField,
+      state
     } = this.props
-    const {bulkActionSelected} = this.state
+    const documentsList = state.documents.list
+
+    if (!documentsList) return null
+
+    const {metadata} = documentsList
 
     return (
       <Toolbar>
@@ -106,14 +140,14 @@ export default class DocumentListToolbar extends Component {
         <div class={styles.section}>
           <Paginator
             currentPage={metadata.page}
-            linkCallback={page => buildUrl(group, collection, 'documents', page)}
+            linkCallback={page => buildUrl(...onBuildBaseUrl(), page)}
             maxPages={8}
             totalPages={metadata.totalPages}
           />
         </div>
 
         <div class={styles.section}>
-          {isReferencedField
+          {Boolean(referencedField)
             ? this.renderReferencedDocumentActions()
             : this.renderBulkActions()
           }
@@ -124,7 +158,8 @@ export default class DocumentListToolbar extends Component {
 
   renderBulkActions() {
     const {bulkActionSelected} = this.state
-    const {selectedDocuments} = this.props
+    const {state} = this.props
+    const selectedDocuments = state.documents.selected
 
     return (
       <div class={styles.actions}>
@@ -151,7 +186,8 @@ export default class DocumentListToolbar extends Component {
   }
 
   renderReferencedDocumentActions() {
-    const {selectedDocuments} = this.props
+    const {state} = this.props
+    const selectedDocuments = state.documents.selected
 
     return (
       <div class={styles.actions}>
@@ -164,14 +200,35 @@ export default class DocumentListToolbar extends Component {
     )
   }
 
-  handleBulkActionApply(event) {
-    const {onBulkAction} = this.props
+  handleBulkActionApply(actionType) {
     const {bulkActionSelected} = this.state
     const validBulkActionSelected = bulkActionSelected &&
       (bulkActionSelected !== this.BULK_ACTIONS_PLACEHOLDER)
 
-    if (validBulkActionSelected && (typeof onBulkAction === 'function')) {
-      onBulkAction.call(this, bulkActionSelected)
+    if (!validBulkActionSelected) return
+
+    const {
+      actions,
+      collection,
+      group,
+      state
+    } = this.props
+    const currentApi = getApiForUrlParams(state.api.apis, {
+      collection,
+      group
+    })
+    const currentCollection = getCollectionForUrlParams(state.api.apis, {
+      collection,
+      group,
+      useApi: currentApi
+    })
+
+    if (bulkActionSelected === 'delete') {
+      actions.deleteDocuments({
+        api: currentApi,
+        collection: currentCollection,
+        ids: state.documents.selected
+      })
     }
   }
 
@@ -182,9 +239,18 @@ export default class DocumentListToolbar extends Component {
   }
 
   handleGoToPage(event) {
-    const {collection, group, metadata} = this.props
+    const {
+      collection,
+      group,
+      onBuildBaseUrl,
+      state
+    } = this.props
+    const documentsList = state.documents.list
+    const {metadata} = documentsList
     const inputValue = event.target.value
     const parsedValue = parseInt(inputValue)
+
+    if (!documentsList) return null
 
     // If the input is not a valid positive integer number, we return.
     if ((parsedValue.toString() !== inputValue) || (parsedValue <= 0)) return
@@ -193,17 +259,59 @@ export default class DocumentListToolbar extends Component {
     // we return.
     if (parsedValue > metadata.totalPages) return
 
-    route(buildUrl(group, collection, 'documents', parsedValue))
+    route(buildUrl(...onBuildBaseUrl(), parsedValue))
   }
 
   handleReferencedDocumentSelect() {
     const {
-      onReferenceDocumentSelect,
-      selectedDocuments
+      actions,
+      collection,
+      group,
+      onBuildBaseUrl,
+      parentDocumentId,
+      referencedField,
+      state
     } = this.props
+    const referencedCollection = getCollectionForUrlParams(state.api.apis, {
+      collection,
+      group,
+      referencedField
+    })
+    const documentsList = state.documents.list.results
 
-    if (typeof onReferenceDocumentSelect === 'function') {
-      onReferenceDocumentSelect()
-    }
+    // We might want to change this when we allow a field to reference multiple
+    // documents. For now, we just get the first selected document.
+    const selectedDocumentId = state.documents.selected[0]
+    const selectedDocument = documentsList.find(document => {
+      return document._id === selectedDocumentId
+    })
+
+    actions.updateLocalDocument({
+      [referencedField]: selectedDocument
+    })
+
+    const parentCollection = getCollectionForUrlParams(state.api.apis, {
+      collection,
+      group
+    })
+    const referenceFieldSchema = parentCollection.fields[referencedField]
+    const referenceFieldSection = referenceFieldSchema &&
+      referenceFieldSchema.publish &&
+      referenceFieldSchema.publish.section &&
+      slugify(referenceFieldSchema.publish.section)
+
+    route(buildUrl(...onBuildBaseUrl({section: referenceFieldSection})))
   }
 }
+
+export default connectHelper(
+  state => ({
+    api: state.api,
+    documents: state.documents
+  }),
+  dispatch => bindActionCreators({
+    ...appActions,
+    ...documentActions,
+    ...documentsActions
+  }, dispatch)
+)(DocumentListToolbar)

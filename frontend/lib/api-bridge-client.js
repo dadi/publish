@@ -45,110 +45,69 @@ const apiBridgeFetch = function (requestObject) {
   })
 }
 
-const buildAPIBridgeClient = function (api, inBundle) {
+const apiBridgeFactory = function (api, inBundle) {
   if (!api) {
-    throw 'buildAPIBridgeClient: Missing API'
+    throw 'apiBridgeFactory: Missing API'
   }
 
-  const {_publishId, host, port, version, database} = api
-
-  const APIBridgeClient = function () {
-    this._publishId = _publishId
-    this.inBundle = inBundle
-
-    if (onUpdate) {
-      this.onUpdate = onUpdate
-    }
-  }
-
-  APIBridgeClient.prototype = new APIWrapper({
+  const {
+    _publishId,
     database,
+    host,
     port,
-    uri: host,
     version
-  })
+  } = api
 
-  APIBridgeClient.prototype._create = APIBridgeClient.prototype.create
-  APIBridgeClient.prototype._delete = APIBridgeClient.prototype.delete
-  APIBridgeClient.prototype._find = APIBridgeClient.prototype.find
-  APIBridgeClient.prototype._getCollections = APIBridgeClient.prototype.getCollections
-  APIBridgeClient.prototype._getConfig = APIBridgeClient.prototype.getConfig
-  APIBridgeClient.prototype._getStatus = APIBridgeClient.prototype.getStatus
-  APIBridgeClient.prototype._update = APIBridgeClient.prototype.update
+  const callback = requestObject => {
+    let requestObjectWithPublishId = Object.assign({}, requestObject, {
+      _publishId
+    })
 
-  APIBridgeClient.prototype.create = function (document) {
-    return this.serveQuery(this._create(document))
-  }
-
-  APIBridgeClient.prototype.delete = function (document) {
-    return this.serveQuery(this._delete(document))
-  }
-
-  APIBridgeClient.prototype.find = function () {
-    return this.serveQuery(this._find(Array.prototype.slice.call(arguments)))
-  }
-
-  APIBridgeClient.prototype.getCollections = function () {
-    return this.serveQuery(this._getCollections())
-  }
-  APIBridgeClient.prototype.getStatus = function () {
-    return this.serveQuery(this._getStatus())
-  }
-
-  APIBridgeClient.prototype.getConfig = function () {
-    return this.serveQuery(this._getConfig())
-  }
-
-  APIBridgeClient.prototype.getQuery = function () {
-    return this.query
-  }
-
-  APIBridgeClient.prototype.serveQuery = function (query) {
-    let queryWithIndex = Object.assign({}, query, {_publishId: this._publishId})
-
-    if (this.inBundle) return queryWithIndex
-
-    if (typeof this.onUpdate === 'function') {
-      this.onUpdate.call(this, Constants.STATUS_LOADING)
+    if (inBundle) {
+      return requestObjectWithPublishId
     }
 
-    return apiBridgeFetch(queryWithIndex).then(response => {
-      if (typeof this.onUpdate === 'function') {
-        const onComplete = this.onUpdate.bind(this, Constants.STATUS_COMPLETE)
+    return serveQuery(requestObjectWithPublishId)
+  }
 
-        this.onUpdate.call(this, Constants.STATUS_IDLE, onComplete)
+  const serveQuery = query => {
+    if (typeof onUpdate === 'function') {
+      onUpdate.call(this, Constants.STATUS_LOADING)
+    }
+
+    return apiBridgeFetch(query).then(response => {
+      if (typeof onUpdate === 'function') {
+        const onComplete = onUpdate.bind(this, Constants.STATUS_COMPLETE)
+
+        onUpdate.call(this, Constants.STATUS_IDLE, onComplete)
       }
 
       return response
     }).catch(err => {
-      if (typeof this.onUpdate === 'function') {
-        this.onUpdate.call(this, Constants.STATUS_FAILED)
+      if (typeof onUpdate === 'function') {
+        onUpdate.call(this, Constants.STATUS_FAILED)
       }
 
       return Promise.reject(err)
     })
   }
 
-  APIBridgeClient.prototype.update = function (document) {
-    return this.serveQuery(this._update(document))
+  const apiWrapperOptions = {
+    callback,
+    database,
+    port,
+    uri: host,
+    version
   }
 
-  return new APIBridgeClient()
+  return new APIWrapper(apiWrapperOptions)
 }
 
-module.exports = (api, inBundle) => buildAPIBridgeClient(api, inBundle)
-
-module.exports.registerProgressCallback = callback => {
-  onUpdate = callback
-}
+module.exports = apiBridgeFactory
 
 module.exports.getBundler = () => {
   const APIBridgeBundler = function (api) {
     this.queries = []
-
-    if (onUpdate) {
-      this.onUpdate = onUpdate
-    }
   }
 
   APIBridgeBundler.prototype.add = function (query) {
@@ -156,8 +115,8 @@ module.exports.getBundler = () => {
   }
 
   APIBridgeBundler.prototype.run = function () {
-    if (typeof this.onUpdate === 'function') {
-      this.onUpdate.call(this, Constants.STATUS_LOADING)
+    if (typeof onUpdate === 'function') {
+      onUpdate.call(this, Constants.STATUS_LOADING)
     }
 
     if (this.queries.length === 0) {
@@ -165,16 +124,16 @@ module.exports.getBundler = () => {
     }
 
     return apiBridgeFetch(this.queries).then(response => {
-      if (typeof this.onUpdate === 'function') {
-        const onComplete = this.onUpdate.bind(this, Constants.STATUS_COMPLETE)
+      if (typeof onUpdate === 'function') {
+        const onComplete = onUpdate.bind(this, Constants.STATUS_COMPLETE)
 
-        this.onUpdate.call(this, Constants.STATUS_IDLE, onComplete)
+        onUpdate.call(this, Constants.STATUS_IDLE, onComplete)
       }
 
       return response
     }).catch(err => {
-      if (typeof this.onUpdate === 'function') {
-        this.onUpdate.call(this, Constants.STATUS_FAILED)
+      if (typeof onUpdate === 'function') {
+        onUpdate.call(this, Constants.STATUS_FAILED)
       }
 
       return Promise.reject(err)
@@ -182,4 +141,8 @@ module.exports.getBundler = () => {
   }
 
   return new APIBridgeBundler()
+}
+
+module.exports.registerProgressCallback = callback => {
+  onUpdate = callback
 }

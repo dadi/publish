@@ -1,5 +1,5 @@
-`FieldBooleanListView`
-======================
+`FieldBooleanList`
+==================
 
 Component for rendering API fields of type Boolean on a list view.
 

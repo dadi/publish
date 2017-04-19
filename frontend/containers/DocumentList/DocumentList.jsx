@@ -10,16 +10,14 @@ import * as Constants from 'lib/constants'
 import * as appActions from 'actions/appActions'
 import * as documentActions from 'actions/documentActions'
 import * as documentsActions from 'actions/documentsActions'
+import * as fieldComponents from 'lib/field-components'
 
 import APIBridge from 'lib/api-bridge-client'
 import {buildUrl, createRoute} from 'lib/router'
-import {connectHelper, filterHiddenFields, isValidJSON, slugify} from 'lib/util'
-import {getCurrentApi, getCurrentCollection} from 'lib/app-config'
+import {connectHelper, filterHiddenFields} from 'lib/util'
+import {getApiForUrlParams, getCollectionForUrlParams} from 'lib/collection-lookup'
 
 import Button from 'components/Button/Button'
-import DocumentListToolbar from 'components/DocumentListToolbar/DocumentListToolbar'
-import FieldBooleanListView from 'components/FieldBoolean/FieldBooleanListView'
-import FieldStringListView from 'components/FieldString/FieldStringListView'
 import HeroMessage from 'components/HeroMessage/HeroMessage'
 import SyncTable from 'components/SyncTable/SyncTable'
 
@@ -90,6 +88,10 @@ class DocumentList extends Component {
     state: proptypes.object
   }
 
+  static defaultProps = {
+    onPageTitle: (function () {})
+  }
+
   componentDidUpdate(prevProps) {
     const {
       actions,
@@ -100,7 +102,6 @@ class DocumentList extends Component {
     const pathKey = prevProps.state.router.locationBeforeTransitions.key
     const previousPathKey = state.router.locationBeforeTransitions.key
     const historyKeyMatch = pathKey === previousPathKey
-    const apisWithoutCollections = state.api.apis.filter(api => !api.hasCollections).length
     const isIdle = status === Constants.STATUS_IDLE
     const previousStatus = prevProps.state.documents.status
     const wasLoading = previousStatus === Constants.STATUS_LOADING
@@ -117,25 +118,8 @@ class DocumentList extends Component {
       }
     }
 
-    // Have we just deleted a single document?
-    if (isIdle && (previousStatus === Constants.STATUS_DELETING_SINGLE)) {
-      actions.setNotification({
-        message: 'The document has been deleted'
-      })
-    }
-
-    // Have we just deleted multiple documents?
-    if (isIdle && (previousStatus === Constants.STATUS_DELETING_MULTIPLE)) {
-      actions.setNotification({
-        message: 'The documents have been deleted'
-      })
-    }
-
     // State check: reject when missing config, session, or apis
     if (!state.app.config || !state.api.apis.length || !state.user) return
-
-    // State check: reject when there are still APIs without collections
-    if (apisWithoutCollections) return
 
     // State check: reject when path matches and document list loaded
     if (list && historyKeyMatch) return
@@ -151,39 +135,26 @@ class DocumentList extends Component {
       collection,
       filter,
       group,
-      onPageTitle,
       order,
       referencedField,
-      selectLimit,
       sort,
       state
     } = this.props
-    const currentCollection = getCurrentCollection(state.api.apis, group, collection, referencedField)
     const documents = state.documents
 
-    if (!documents.list || documents.status === Constants.STATUS_LOADING || !currentCollection) {
+    this.currentCollection = getCollectionForUrlParams(state.api.apis, {
+      collection,
+      group,
+      referencedField
+    })
+
+    if (!documents.list || documents.status === Constants.STATUS_LOADING || !this.currentCollection) {
       return null
     }
 
-    const collectionFields = currentCollection.fields
-    const tableColumns = Object.keys(filterHiddenFields(collectionFields, 'list'))
-      .map(field => {
-        return {
-          id: field,
-          label: collectionFields[field].label
-        }
-      })
-    const selectedRows = this.getSelectedRows()
-    const documentsList = documents.list.results
-    const metadata = documents.list.metadata
-    const query = documents.query
+    const documentsList = documents.list
 
-    // Setting page title
-    if (typeof onPageTitle === 'function') {
-      onPageTitle.call(this, currentCollection.settings.description || currentCollection.name)
-    }
-
-    if (!documentsList.length && !query) {
+    if (!documentsList.results.length && !documents.query) {
       return (
         <HeroMessage
           title="No documents yet."
@@ -197,39 +168,7 @@ class DocumentList extends Component {
       )
     }
 
-    return (
-      <div>
-        {documentsList.length > 0 && (
-          <SyncTable
-            columns={tableColumns}
-            data={documents.list.results}
-            onRender={this.handleAnchorRender.bind(this)}
-            onSelect={this.handleRowSelect.bind(this)}
-            onSort={this.handleTableSort.bind(this)}
-            selectedRows={selectedRows}
-            selectLimit={selectLimit}
-            sortable={true}
-            sortBy={sort}
-            sortOrder={order}
-          />
-        )}
-        <DocumentListToolbar
-          collection={collection}
-          group={group}
-          isReferencedField={Boolean(referencedField)}
-          metadata={metadata}
-          onBulkAction={this.handleBulkAction.bind(this)}
-          onReferenceDocumentSelect={this.handleReferenceDocumentSelect.bind(this)}
-          selectedDocuments={documents.selected}
-        />
-        {query && !documentsList.length && (
-          <div>
-            <h1>0 results</h1>
-            <p>There are no documents that match these filters</p>
-          </div>
-        )}
-      </div>
-    )
+    return this.renderDocumentList()
   }
 
   componentWillUnmount() {
@@ -251,20 +190,33 @@ class DocumentList extends Component {
       sort,
       state
     } = this.props
-    const currentApi = getCurrentApi(state.api.apis, group, collection)
-    const currentCollection = getCurrentCollection(state.api.apis, group, collection, referencedField)
+    const currentApi = getApiForUrlParams(state.api.apis, {
+      collection,
+      group
+    })
+    const currentCollection = getCollectionForUrlParams(state.api.apis, {
+      collection,
+      group,
+      referencedField,
+      useApi: currentApi
+    })
+
     const count = currentCollection.settings && currentCollection.settings.count || 20
     const filterValue = state.router.params ? state.router.params.filter : null
-    const parentCollection = referencedField && getCurrentCollection(state.api.apis, group, collection)
+    const parentCollection = referencedField && getCollectionForUrlParams(state.api.apis, {
+      collection,
+      group,
+      useApi: currentApi
+    })
 
     actions.fetchDocuments({
       api: currentApi,
-      collection: currentCollection.name,
+      collection: currentCollection,
       count,
       filters: filterValue,
       page,
       parentDocumentId,
-      parentCollection: parentCollection && parentCollection.name,
+      parentCollection,
       referencedField,
       sortBy: sort,
       sortOrder: order
@@ -301,7 +253,10 @@ class DocumentList extends Component {
       return value
     }
 
-    const currentCollection = getCurrentCollection(state.api.apis, group, collection)
+    const currentCollection = getCollectionForUrlParams(state.api.apis, {
+      collection,
+      group
+    })
     const fieldSchema = currentCollection.fields[column.id]
     const renderedValue = this.renderField(column.id, fieldSchema, value)
 
@@ -312,62 +267,6 @@ class DocumentList extends Component {
     }
 
     return renderedValue
-  }
-
-  handleBulkAction(actionType) {
-    const {
-      actions,
-      collection,
-      group,
-      state
-    } = this.props
-    const currentApi = getCurrentApi(state.api.apis, group, collection)
-    const currentCollection = getCurrentCollection(state.api.apis, group, collection)
-
-    if (actionType === 'delete') {
-      actions.deleteDocuments({
-        api: currentApi,
-        collection: currentCollection,
-        ids: state.documents.selected
-      })
-    }
-  }
-
-  handleReferenceDocumentSelect() {
-    const {
-      actions,
-      collection,
-      group,
-      parentDocumentId,
-      referencedField,
-      state
-    } = this.props
-    const referencedCollection = getCurrentCollection(state.api.apis, group, collection, referencedField)
-    const documentsList = state.documents.list.results
-
-    // We might want to change this when we allow a field to reference multiple
-    // documents. For now, we just get the first selected document.
-    const selectedDocumentId = state.documents.selected[0]
-    const selectedDocument = documentsList.find(document => {
-      return document._id === selectedDocumentId
-    })
-
-    actions.updateLocalDocument({
-      [referencedField]: selectedDocument
-    })
-
-    const parentCollection = getCurrentCollection(state.api.apis, group, collection)
-    const referenceFieldSchema = parentCollection.fields[referencedField]
-    const referenceFieldSection = referenceFieldSchema &&
-      referenceFieldSchema.publish &&
-      referenceFieldSchema.publish.section &&
-      slugify(referenceFieldSchema.publish.section)
-
-    if (parentDocumentId) {
-      route(buildUrl(group, collection, 'document', 'edit', parentDocumentId, referenceFieldSection))
-    } else {
-      route(buildUrl(group, collection, 'document', 'new', referenceFieldSection))
-    }
   }
 
   handleRowSelect(selectedRows) {
@@ -405,23 +304,98 @@ class DocumentList extends Component {
     )
   }
 
-  renderField(fieldName, schema, value) {
-    switch (schema.type) {
-      case 'Boolean':
-        return (
-          <FieldBooleanListView
-            schema={schema}
-            value={value}
-          />
-        )
+  renderDocumentList() {
+    const {
+      collection,
+      group,
+      referencedField,
+      onPageTitle,
+      order,
+      selectLimit,
+      sort,
+      state
+    } = this.props
+    const documents = state.documents.list.results
+    const selectedRows = this.getSelectedRows()
 
-      case 'String':
+    // If we're on a reference field select view, we'll see if there's a field
+    // component for the referenced field type that exports a `referenceSelect`
+    // context. If it does, we'll use that instead of the default `SyncTable`
+    // to render the results.
+    if (referencedField) {
+      const parentCollection = getCollectionForUrlParams(state.api.apis, {
+        collection,
+        group
+      })
+      const fieldSchema = parentCollection.fields[referencedField]
+      const fieldType = (fieldSchema.publish && fieldSchema.publish.subType) || fieldSchema.type
+      const fieldComponentName = `Field${fieldType}`
+      const FieldComponentReferenceSelect = fieldComponents[fieldComponentName].referenceSelect
+
+      if (FieldComponentReferenceSelect) {
         return (
-          <FieldStringListView
-            schema={schema}
-            value={value}
+          <FieldComponentReferenceSelect
+            data={documents}
+            onSelect={this.handleRowSelect.bind(this)}
+            onSort={this.handleTableSort.bind(this)}
+            selectedRows={selectedRows}
+            selectLimit={selectLimit}
+            sortBy={sort}
+            sortOrder={order}
           />
         )
+      }
+
+      onPageTitle(`Select ${(fieldSchema.label || referencedField).toLowerCase()}`)
+    } else {
+      onPageTitle(this.currentCollection.settings.description || this.currentCollection.name)
+    }
+
+    const tableColumns = Object.keys(filterHiddenFields(this.currentCollection.fields, 'list'))
+      .map(field => {
+        return {
+          id: field,
+          label: this.currentCollection.fields[field].label
+        }
+      })
+
+    if (documents.length > 0) {
+      return (
+        <SyncTable
+          columns={tableColumns}
+          data={documents}
+          onRender={this.handleAnchorRender.bind(this)}
+          onSelect={this.handleRowSelect.bind(this)}
+          onSort={this.handleTableSort.bind(this)}
+          selectedRows={selectedRows}
+          selectLimit={selectLimit}
+          sortable={true}
+          sortBy={sort}
+          sortOrder={order}
+        />
+      )
+    }
+
+    return (
+      <div>
+        <h1>0 results</h1>
+        <p>There are no documents that match these filters</p>
+      </div>
+    )
+  }
+
+  renderField(fieldName, schema, value) {
+    const fieldType = schema.publish && schema.publish.subType ? schema.publish.subType : schema.type
+    const fieldComponentName = `Field${fieldType}`
+    const FieldComponentList = fieldComponents[fieldComponentName] && fieldComponents[fieldComponentName].list
+
+    if (FieldComponentList) {
+      return (
+        <FieldComponentList
+          schema={schema}
+          value={value}
+        />
+      )
     }
 
     return value

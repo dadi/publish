@@ -14,6 +14,11 @@ import styles from './Label.css'
 export default class Label extends Component {
   static propTypes = {
     /**
+     * Classes to append to the label container.
+     */
+    className: proptypes.string,
+
+    /**
      * The text to be rendered on the top-right corner of the label.
      */
     comment: proptypes.string,
@@ -53,16 +58,12 @@ export default class Label extends Component {
     required: false
   }
 
-  constructor(props) {
-    super(props)
-  }
-
   componentWillMount() {
     this.id = getUniqueId()
   }
 
   // This will render all children and inject an `id` prop
-  // with the generated unique id
+  // with the generated unique id.
   renderChildren() {
     const {children, error, required} = this.props
 
@@ -88,14 +89,20 @@ export default class Label extends Component {
   }  
 
   render() {
-    const {comment, compact, error, errorMessage} = this.props
-
-    let labelStyle = new Style(styles, 'container')
-
-    labelStyle.addIf('container-compact', compact)
-    labelStyle.addIf('container-with-comment', comment)
-    labelStyle.addIf('container-error', error)
-    labelStyle.addIf('container-error-message', errorMessage)
+    const {
+      className,
+      comment,
+      compact,
+      label,
+      error,
+      errorMessage
+    } = this.props
+    const labelStyle = new Style(styles, 'container')
+      .addIf('container-compact', compact)
+      .addIf('container-error', error)
+      .addIf('container-error-message', errorMessage)
+      .addIf('container-with-comment', comment)
+      .addResolved(className)
 
     return (
       <div class={labelStyle.getClasses()}>
@@ -105,7 +112,7 @@ export default class Label extends Component {
           for={this.id}
           class={styles.label}
         >
-          {this.props.label}
+          {label}
         </label>
 
         {comment &&

@@ -13,6 +13,13 @@ The input element to be rendered inside the label.
 - type: `node`
 
 
+### `className`
+
+Classes to append to the label container.
+
+- type: `string`
+
+
 ### `comment`
 
 The text to be rendered on the top-right corner of the label.
