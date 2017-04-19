@@ -66,10 +66,10 @@ export default class ButtonWithOptions extends Component {
   constructor(props) {
     super(props)
 
-    this.state.optionsExpanded = false
+    this.state.open = false
     this.toggleExpandedStateHandler = event => {
       this.setState({
-        optionsExpanded: false
+        open: false
       })
     }
   }
@@ -91,7 +91,7 @@ export default class ButtonWithOptions extends Component {
       options,
       type
     } = this.props
-    const {optionsExpanded} = this.state
+    const {open} = this.state
 
     let launcherStyle = new Style(styles, 'launcher')
 
@@ -118,13 +118,13 @@ export default class ButtonWithOptions extends Component {
           onClick={this.toggleOptions.bind(this)}
         >
           <IconArrow
-            direction={optionsExpanded ? 'down' : 'up'}
+            direction={open ? 'down' : 'up'}
             width={10}
             height={6}
           />
         </Button>
 
-        {optionsExpanded &&
+        {open &&
           <div class={styles.options}>
             <Dropdown tooltip="right">
               {Object.keys(options).map(option => {
@@ -144,7 +144,7 @@ export default class ButtonWithOptions extends Component {
     event.stopPropagation()
 
     this.setState({
-      optionsExpanded: !this.state.optionsExpanded
+      open: !this.state.open
     })
   }
 }
