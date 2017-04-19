@@ -46,7 +46,9 @@ Style.prototype.addIf = function (className, condition) {
  * @return {Style} The Style instance.
  */
 Style.prototype.addResolved = function (className) {
-  this.classes.push(className)
+  if (className && className.length) {
+    this.classes.push(className)
+  }
 
   return this
 }
