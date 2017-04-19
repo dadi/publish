@@ -14,7 +14,7 @@ import * as fieldComponents from 'lib/field-components'
 
 import APIBridge from 'lib/api-bridge-client'
 import {buildUrl, createRoute} from 'lib/router'
-import {connectHelper, filterHiddenFields, isValidJSON, slugify} from 'lib/util'
+import {connectHelper, filterHiddenFields} from 'lib/util'
 import {getApiForUrlParams, getCollectionForUrlParams} from 'lib/collection-lookup'
 
 import Button from 'components/Button/Button'
