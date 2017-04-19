@@ -109,8 +109,7 @@ export default class FieldImageEdit extends Component {
     const src = this.getImageSrc(value)
     const isReference = schema.type === 'Reference'
     const fieldLocalType = schema.publish && schema.publish.subType ? schema.publish.subType : schema.type
-    const baseUrl = onBuildBaseUrl()
-    const href = buildUrl(...baseUrl, 'select', schema._id)
+    const href = buildUrl(...onBuildBaseUrl(), 'select', schema._id)
 
     return (
       <Label label={displayName}>
@@ -157,7 +156,7 @@ export default class FieldImageEdit extends Component {
   getImageSrc(value) {
     const {config} = this.props
     const cdn = config ? config.cdn : null
-//console.log('------>', value)
+
     if (!value) return null
 
     if (value._previewData) return value._previewData
