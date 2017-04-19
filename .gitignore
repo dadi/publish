@@ -1,6 +1,7 @@
 node_modules/
 build/
 log/
+coverage/
 
 config/config.*.json
 
@@ -15,8 +16,7 @@ frontend/views/**/*.json
 public/bundle.js
 public/main.css
 
-# Webpack
-stats.json
-
+# Webpack-generated files
 component-map.json
 frontend/lib/field-components.js
+stats.json
