@@ -12,7 +12,7 @@ class ErrorView extends Component {
   render() {
     const {state, type} = this.props
     const hasConfig = state.app && state.app.config
-console.log('*** HI!')    
+
     // We only treat this as an actual error, and therefore display the error
     // message, if the config has already been loaded. This prevents us from
     // showing a flashing 404 page whilst routes are still being loaded.
