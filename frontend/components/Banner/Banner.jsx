@@ -27,12 +27,11 @@ export default class Banner extends Component {
   }
 
   render() {
-    let bannerClass = new Style(styles, 'banner')
-
-    bannerClass.add(`banner-${this.props.accent}`)
+    const bannerStyle = new Style(styles, 'banner')
+      .add(`banner-${this.props.accent}`)
 
     return (
-      <p class={bannerClass.getClasses()}>
+      <p class={bannerStyle.getClasses()}>
         {this.props.children}
       </p>
     )
