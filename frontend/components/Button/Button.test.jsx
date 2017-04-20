@@ -4,6 +4,15 @@ import {expect} from 'chai'
 import Button from './Button'
 
 describe('Button component', () => {
+  it('has propTypes', () => {
+    const button = (
+      <Button>Click me</Button>
+    )
+
+    expect(button.nodeName.propTypes).to.exist
+    expect(Object.keys(button.nodeName.propTypes)).to.have.length.above(0)
+  })
+
   it('renders as a `<a>` element when given a `href` prop', () => {
     const button = (
       <Button
