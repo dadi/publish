@@ -58,6 +58,7 @@ href.
 Whether the button is part of a group of buttons, and which position this particular button takes in the group. This is used to collapse the border-radius accordingly.
 
 - type: `enum('left'|'middle'|'right')`
+- default value: `null`
 
 
 ### `onClick`

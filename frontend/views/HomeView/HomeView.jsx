@@ -1,6 +1,6 @@
 import {Component, h} from 'preact'
 import {bindActionCreators} from 'redux'
-import {connectHelper} from 'lib/util'
+import {connectHelper, setPageTitle} from 'lib/util'
 
 import * as userActions from 'actions/userActions'
 
@@ -15,6 +15,8 @@ class HomeView extends Component {
     const user = state.user.remote
 
     if (!user) return null
+
+    setPageTitle()
 
     return (
       <Page>
