@@ -94,7 +94,7 @@ class App extends Component {
 
     if (state.api.status === Constants.STATUS_FAILED) {
       return (
-        <ErrorView type={Constants.STATUS_FAILED} default />
+        <ErrorView type={Constants.STATUS_FAILED} />
       )
     }
 
