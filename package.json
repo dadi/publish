@@ -83,6 +83,7 @@
     "babel-preset-react": "^6.16.0",
     "babel-preset-stage-0": "^6.24.1",
     "babel-preset-stage-2": "^6.18.0",
+    "chai": "^3.5.0",
     "component-tree-webpack-plugin": "^1.0.0",
     "css-loader": "^0.26.0",
     "eslint": "^3.18.0",
@@ -91,7 +92,6 @@
     "file-loader": "^0.9.0",
     "file-size": "^1.0.0",
     "fs": "0.0.1-security",
-    "html-looks-like": "^1.0.2",
     "husky": "^0.13.3",
     "identity-obj-proxy": "^3.0.0",
     "inquirer": "^3.0.6",
@@ -111,12 +111,14 @@
     "pre-build-webpack": "^0.1.0",
     "preact": "^6.4.0",
     "preact-compat": "^3.0.0",
+    "preact-jsx-chai": "^2.2.1",
     "preact-redux": "^1.2.0",
     "preact-render-to-string": "^3.6.0",
     "preact-router": "^2.4.5",
     "preact-router-redux": "^4.1.0",
     "proptypes": "^0.14.3",
     "react-docgen": "github:eduardoboucas/react-docgen",
+    "react-dom": "^15.5.4",
     "react-test-renderer": "^15.5.4",
     "redux": "^3.6.0",
     "redux-thunk": "^2.2.0",
@@ -166,6 +168,9 @@
     "moduleFileExtensions": [
       "js",
       "jsx"
+    ],
+    "setupFiles": [
+      "./test/jestSetup.js"
     ],
     "testMatch": [
       "**/frontend/**/*.test.jsx"

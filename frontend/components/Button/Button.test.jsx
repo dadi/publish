@@ -1,156 +1,144 @@
 import {h} from 'preact'
-import render from 'preact-render-to-string'
-import htmlLooksLike from 'html-looks-like'
+import {expect} from 'chai'
 
 import Button from './Button'
 
-describe('Button', () => {
+describe('Button component', () => {
   it('renders as a `<a>` element when given a `href` prop', () => {
-    const actual = render(
+    const button = (
       <Button
         accent="neutral"
         href="/foobar"
-      >Click me</Button>
+      >Click me</Button>      
     )
-    const expected = `
+    
+    expect(button).to.contain(
       <a href="/foobar" class="button button-neutral">Click me</a>
-    `
-
-    htmlLooksLike(actual, expected)
+    )
   })
 
   it('renders as a `<label>` element when given a `forId` prop', () => {
-    const actual = render(
+    const button = (
       <Button
         accent="neutral"
         forId="otherelement1"
       >Click me</Button>
     )
-    const expected = `
+    
+    expect(button).to.contain(
       <label class="button button-neutral" for="otherelement1">Click me</label>
-    `
-
-    htmlLooksLike(actual, expected)
+    )
   })
 
   it('renders as a `<span>` element when the prop `type` is `mock`', () => {
-    const actual = render(
+    const button = (
       <Button
         accent="neutral"
         type="mock"
       >Do not click me</Button>
     )
-    const expected = `
+    
+    expect(button).to.contain(
       <span class="button button-neutral button-mock">Do not click me</span>
-    `
-
-    htmlLooksLike(actual, expected)
+    )
   })
 
   it('renders as a `<button>` element by default', () => {
-    const actual = render(
+    const button = (
       <Button
         accent="neutral"
       >Click me</Button>
     )
-    const expected = `
-      <button class="button button-neutral">Click me</button>
-    `
-
-    htmlLooksLike(actual, expected)
+    
+    expect(button).to.contain(
+      <button class="button button-neutral" type="button">Click me</button>
+    )
   })
 
   it('adds a `onClick` attribute when given the `onClick` prop', () => {
-    const actual = render(
+    const button = (
       <Button
         accent="neutral"
         onClick="doSomething()"
       >Click me</Button>
     )
-    const expected = `
-      <button class="button button-neutral" onClick="doSomething()">Click me</button>
-    `
-
-    htmlLooksLike(actual, expected)
+    
+    expect(button).to.contain(
+      <button class="button button-neutral" type="button" onClick="doSomething()">Click me</button>
+    )
   })
 
   it('adds a `disabled` attribute when given the `disabled` prop', () => {
-    const actual = render(
+    const button = (
       <Button
         accent="neutral"
         disabled={true}
       >I am disabled</Button>
     )
-    const expected = `
-      <button class="button button-neutral" disabled>I am disabled</button>
-    `
-
-    htmlLooksLike(actual, expected)
+    
+    expect(button).to.contain(
+      <button class="button button-neutral" type="button" disabled>I am disabled</button>
+    )
   })
 
   it('defaults to the `neutral` accent', () => {
-    const actual = render(
+    const button = (
       <Button>Click me</Button>
     )
-    const expected = `
-      <button class="button button-neutral">Click me</button>
-    `
-
-    htmlLooksLike(actual, expected)
+    
+    expect(button).to.contain(
+      <button class="button button-neutral" type="button">Click me</button>
+    )
   })
 
   it('adds an accent class based on the `accent` prop', () => {
-    const actual = render(
+    const button = (
       <Button
         accent="system"
       >Click me</Button>
     )
-    const expected = `
-      <button class="button button-system">Click me</button>
-    `
-
-    htmlLooksLike(actual, expected)
+    
+    expect(button).to.contain(
+      <button class="button button-system" type="button">Click me</button>
+    )
   })
 
   it('adds a group position class based on the `inGroup` prop', () => {
-    const actual = render(
+    const button = (
       <Button
         accent="neutral"
         inGroup="left"
       >Click me</Button>
     )
-    const expected = `
-      <button class="button button-neutral button-in-group-left">Click me</button>
-    `
-
-    htmlLooksLike(actual, expected)
+    
+    expect(button).to.contain(
+      <button class="button button-neutral button-in-group-left" type="button">Click me</button>
+    )
   })
 
   it('adds a size class based on the `size` prop', () => {
-    const actual = render(
+    const button = (
       <Button
         accent="neutral"
         size="small"
       >Click me</Button>
     )
-    const expected = `
-      <button class="button button-neutral button-small">Click me</button>
-    `
-
-    htmlLooksLike(actual, expected)
+    
+    expect(button).to.contain(
+      <button class="button button-neutral button-small" type="button">Click me</button>
+    )
   })
 
   it('accepts additional class names via the `className` prop', () => {
-    const actual = render(
+    const button = (
       <Button
         accent="neutral"
         className="class-one class-two"
       >Click me</Button>
     )
-    const expected = `
-      <button class="button button-neutral class-one class-two">Click me</button>
-    `
-
-    htmlLooksLike(actual, expected)
-  })
+    
+    expect(button).to.contain(
+      <button class="button button-neutral class-one class-two" type="button">Click me</button>
+    )
+  })  
 })
