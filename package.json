@@ -18,7 +18,7 @@
     "start": "NODE_ENV=development node index.js",
     "test": "npm-run-all test:backend test:frontend lint",
     "test:frontend": "jest && node scripts/coverage/coverage.js",
-    "test:backend": "env NODE_ENV=development mocha --colors --webpack-config webpack.config.js \"test/**/*.js\"",
+    "test:backend": "env NODE_ENV=development mocha --colors --webpack-config webpack.config.js \"test/unit/**/*.js\"",
     "watch": "NODE_ENV=development npm-run-all --parallel watch:server watch:build",
     "watch:build": "webpack --watch",
     "watch:server": "nodemon \"./index.js\" --watch \"./app\""
