@@ -43,7 +43,7 @@ describe('Button component', () => {
     )
   })
 
-  it('renders as a `<button>` element by default', () => {
+  it('renders as a `<button>` element with `type="button"` by default', () => {
     const button = (
       <Button
         accent="neutral"
@@ -52,6 +52,19 @@ describe('Button component', () => {
     
     expect(button).to.contain(
       <button class="button button-neutral" type="button">Click me</button>
+    )
+  })
+
+  it('sets the `<button>`\'s `attribute` based on the `type` prop', () => {
+    const button = (
+      <Button
+        accent="neutral"
+        type="submit"
+      >Click me</Button>
+    )
+    
+    expect(button).to.contain(
+      <button class="button button-neutral" type="submit">Click me</button>
     )
   })
 
