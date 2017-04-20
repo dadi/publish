@@ -18,6 +18,7 @@ import {connectHelper, filterHiddenFields} from 'lib/util'
 import {getApiForUrlParams, getCollectionForUrlParams} from 'lib/collection-lookup'
 
 import Button from 'components/Button/Button'
+import ErrorMessage from 'components/ErrorMessage/ErrorMessage'
 import HeroMessage from 'components/HeroMessage/HeroMessage'
 import SyncTable from 'components/SyncTable/SyncTable'
 
@@ -127,7 +128,9 @@ class DocumentList extends Component {
     // State check: reject when documents are still loading
     if (status === Constants.STATUS_LOADING) return
 
-    this.fetchDocuments()
+    if (status === Constants.STATUS_IDLE) {
+      this.fetchDocuments()  
+    }
   }
 
   render() {
@@ -147,6 +150,14 @@ class DocumentList extends Component {
       group,
       referencedField
     })
+
+    if (documents.status === Constants.STATUS_NOT_FOUND) {
+      return (
+        <ErrorMessage
+          type={Constants.ERROR_ROUTE_NOT_FOUND}
+        />
+      )      
+    }
 
     if (!documents.list || documents.status === Constants.STATUS_LOADING || !this.currentCollection) {
       return null
@@ -200,6 +211,12 @@ class DocumentList extends Component {
       referencedField,
       useApi: currentApi
     })
+
+    if (!currentCollection) {
+      actions.setDocumentListStatus(Constants.STATUS_NOT_FOUND)
+
+      return
+    }
 
     const count = currentCollection.settings && currentCollection.settings.count || 20
     const filterValue = state.router.params ? state.router.params.filter : null

@@ -126,7 +126,7 @@ class App extends Component {
 
         <SignOutView path="/sign-out" />
 
-        <ErrorView type="404" default />
+        <ErrorView type={Constants.ERROR_ROUTE_NOT_FOUND} default />
       </Router>
     )
   }
