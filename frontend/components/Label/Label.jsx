@@ -68,20 +68,22 @@ export default class Label extends Component {
     const {children, error, required} = this.props
 
     return children.map(child => {
-      child.attributes = child.attributes || {}
-      child.attributes.id = child.attributes.id || this.id
+      if (child) {
+        child.attributes = child.attributes || {}
+        child.attributes.id = child.attributes.id || this.id
 
-      // Inject 'inLabel' to children
-      child.attributes.inLabel = true
+        // Inject 'inLabel' to children
+        child.attributes.inLabel = true
 
-      // Inject 'error' to children
-      if (error) {
-        child.attributes.error = true
-      }
+        // Inject 'error' to children
+        if (error) {
+          child.attributes.error = true
+        }
 
-      // Inject 'required' to children
-      if (required) {
-        child.attributes.required = true
+        // Inject 'required' to children
+        if (required) {
+          child.attributes.required = true
+        }
       }
 
       return child
