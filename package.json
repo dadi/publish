@@ -12,7 +12,7 @@
     "lint": "eslint frontend && standard --fix",
     "prebuild": "mkdirp build",
     "prepublish": "npm run snyk-protect",
-    "prepush": "npm-run-all build-docs test",
+    "prepush": "npm run build-docs",
     "precommit": "npm run lint",
     "snyk-protect": "snyk protect",
     "start": "NODE_ENV=development node index.js",
