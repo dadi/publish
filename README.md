@@ -1,6 +1,6 @@
 <img src="http://stage.dadi.tech/assets/products/dadi-publish-full.png" alt="DADI Publish" height="65"/>
 
-[![coverage](https://img.shields.io/badge/coverage-0%25-red.svg?style=flat?style=flat-square)](https://github.com/dadi/publish)
+[![coverage](https://img.shields.io/badge/coverage-1%25-red.svg?style=flat?style=flat-square)](https://github.com/dadi/publish)
 [![Build Status](https://travis-ci.org/dadi/publish.svg?branch=master)](https://travis-ci.org/dadi/publish)
 
 ## Overview

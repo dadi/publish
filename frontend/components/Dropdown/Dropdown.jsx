@@ -29,10 +29,10 @@ export default class Dropdown extends Component {
   render() {
     const {tooltip} = this.props
 
-    let containerClass = new Style(styles, 'container')
+    let containerClass = new Style(styles, 'dropdown')
 
-    containerClass.addIf(`container-tooltip`, tooltip)
-      .addIf(`container-tooltip-${tooltip}`, tooltip)
+    containerClass.addIf(`dropdown-tooltip`, tooltip)
+      .addIf(`dropdown-tooltip-${tooltip}`, tooltip)
 
     return (
       <ul class={containerClass.getClasses()}>

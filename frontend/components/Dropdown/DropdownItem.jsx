@@ -49,9 +49,9 @@ export default class DropdownItem extends Component {
   }
 
   render() {
-    let itemStyle = new Style(styles, 'item')
+    let itemStyle = new Style(styles, 'dropdown-item')
 
-    itemStyle.addIf('item-active', this.props.active)
+    itemStyle.addIf('dropdown-item-active', this.props.active)
 
     // Should we render an achor?
     if (this.props.href) {

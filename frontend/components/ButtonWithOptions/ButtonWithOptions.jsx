@@ -32,6 +32,12 @@ export default class ButtonWithOptions extends Component {
     disabled: proptypes.bool,
 
     /**
+     * When present, the button will be rendered as an `a` element with the given
+     * href.
+     */
+    href: proptypes.string,
+
+    /**
      * Callback to be executed when the main button is clicked.
      */
     onClick: proptypes.func,
@@ -87,6 +93,7 @@ export default class ButtonWithOptions extends Component {
       accent,
       children,
       disabled,
+      href,
       onClick,
       options,
       type
@@ -102,6 +109,7 @@ export default class ButtonWithOptions extends Component {
         <Button
           accent={accent}
           disabled={disabled}
+          href={href}
           inGroup="left"
           onClick={onClick}
           type={type}
@@ -123,7 +131,7 @@ export default class ButtonWithOptions extends Component {
           />
         </Button>
 
-        {open &&
+        {open && !disabled &&
           <div class={styles.options}>
             <Dropdown tooltip="right">
               {Object.keys(options).map(option => {

@@ -1,28 +1,22 @@
-import {h, render} from 'preact'
+import {h, options, render} from 'preact'
 import {expect} from 'chai'
 
 import Button from './Button'
 
 // DOM setup
-let rootEl, $, mount
+let $, mount, root, scratch
+
+options.debounceRendering = f => f()
 
 beforeAll(() => {
-  rootEl = document.createElement('div')
-  document.body.appendChild(rootEl)
-
-  $ = s => rootEl.querySelector(s)
-
-  mount = jsx => render(jsx, rootEl, rootEl.firstChild)
+  $ = (sel, all) => all ? scratch.querySelectorAll(sel) : scratch.querySelector(sel)
+  mount = jsx => root = render(jsx, scratch, root)
+  scratch = document.createElement('div')
 })
 
 afterEach(() => {
-  mount(() => null)
-
-  rootEl.innerHTML = ''
-})
-
-afterAll(() => {
-  document.body.removeChild(rootEl)
+  mount(<div />).remove()
+  root = null
 })
 
 describe('Button component', () => {

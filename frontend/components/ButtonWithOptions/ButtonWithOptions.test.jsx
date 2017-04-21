@@ -1,31 +1,26 @@
-import {h, render} from 'preact'
+import {h, options, render} from 'preact'
 import {expect} from 'chai'
 
+import Button from 'components/Button/Button'
 import ButtonWithOptions from './ButtonWithOptions'
 
 // DOM setup
-let rootEl, $, mount
+let $, mount, root, scratch
+
+options.debounceRendering = f => f()
 
 beforeAll(() => {
-  rootEl = document.createElement('div')
-  document.body.appendChild(rootEl)
-
-  $ = s => rootEl.querySelector(s)
-
-  mount = jsx => render(jsx, rootEl, rootEl.firstChild)
+  $ = (sel, all) => all ? scratch.querySelectorAll(sel) : scratch.querySelector(sel)
+  mount = jsx => root = render(jsx, scratch, root)
+  scratch = document.createElement('div')
 })
 
 afterEach(() => {
-  mount(() => null)
-
-  rootEl.innerHTML = ''
+  mount(<div />).remove()
+  root = null
 })
 
-afterAll(() => {
-  document.body.removeChild(rootEl)
-})
-
-describe('ButtonWithOptions component', () => {
+describe.only('ButtonWithOptions component', () => {
   it('has propTypes', () => {
     const button = (
       <ButtonWithOptions>Click me</ButtonWithOptions>
@@ -35,30 +30,156 @@ describe('ButtonWithOptions component', () => {
     expect(Object.keys(button.nodeName.propTypes)).to.have.length.above(0)
   })
 
-  // it('renders as a `<a>` element when given a `href` prop', () => {
-  //   const button = (
-  //     <Button
-  //       accent="neutral"
-  //       href="/foobar"
-  //     >Click me</Button>      
-  //   )
-    
-  //   expect(button).to.contain(
-  //     <a href="/foobar" class="button button-neutral">Click me</a>
-  //   )
-  // })
+  it('renders a container with a Button component and a launcher', () => {
+    const ctaText = 'Click me'
+    const button = (
+      <Button
+        accent="neutral"
+        href="/foobar"
+        inGroup="left"
+      >{ctaText}</Button>
+    )
 
-  // it('executes the `onClick` callback when clicked, with the event as argument', () => {
-  //   const onClick = jest.fn()
+    const buttonWithOptions = (
+      <ButtonWithOptions
+        accent="neutral"
+        href="/foobar"
+      >{ctaText}</ButtonWithOptions>      
+    )
 
-  //   mount(
-  //     <Button onClick={onClick}>Click me</Button>
-  //   )
+    mount(buttonWithOptions)
 
-  //   $('button').click()
+    expect(buttonWithOptions).to.contain(button)
+    expect($('.launcher')).to.exist
+  })
 
-  //   expect(onClick.mock.calls.length).to.equal(1)
-  //   expect(onClick.mock.calls[0].length).to.equal(1)
-  //   expect(onClick.mock.calls[0][0].constructor.name).to.equal('MouseEvent')
-  // })
+  it('starts collapsed and with no dropdown visible', () => {
+    const options = {
+      'Option 1': () => {}
+    }
+
+    let component
+
+    mount(
+      <ButtonWithOptions
+        options={options}
+        ref={el => component = el}
+      >Click me</ButtonWithOptions>
+    )
+
+    expect(component.state.open).to.equal(false)
+    expect($('.dropdown')).not.to.exist
+  })
+
+  it('renders a dropdown with an item for each of the options supplied when the launcher is clicked', () => {
+    const options = {
+      'Option 1': () => {},
+      'Option 2': () => {},
+      'Option 3': () => {}
+    }
+
+    let component
+
+    mount(
+      <ButtonWithOptions
+        options={options}
+        ref={el => component = el}
+      >Click me</ButtonWithOptions>
+    )
+
+    $('.launcher').click()
+
+    expect(component.state.open).to.equal(true)
+    expect($('.dropdown')).to.exist
+    expect($('.dropdown-item', true).length).to.eql(Object.keys(options).length)
+  })
+
+  it('executes the `onClick` callback, with the mouse event as argument, when the main button is clicked', () => {
+    const mainCallback = jest.fn()
+
+    mount(
+      <ButtonWithOptions
+        onClick={mainCallback}
+        options={options}
+      >Click me</ButtonWithOptions>
+    )
+
+    $('button').click()
+
+    expect(mainCallback.mock.calls.length).to.equal(1)
+    expect(mainCallback.mock.calls[0].length).to.equal(1)
+    expect(mainCallback.mock.calls[0][0].constructor.name).to.equal('MouseEvent')
+  })
+
+  it('executes an option\'s callback, with the mouse event as argument, when the option is clicked', () => {
+    const option1Callback = jest.fn()
+    const options = {
+      'Option 1': option1Callback
+    }
+
+    let component
+
+    mount(
+      <ButtonWithOptions
+        options={options}
+        ref={el => component = el}
+      >Click me</ButtonWithOptions>
+    )
+
+    $('.launcher').click()
+    $('.dropdown-item').click()
+
+    expect(option1Callback.mock.calls.length).to.equal(1)
+    expect(option1Callback.mock.calls[0].length).to.equal(1)
+    expect(option1Callback.mock.calls[0][0].constructor.name).to.equal('MouseEvent')
+  })
+
+  it('collapses the options dropdown when clicking anywhere outside of the component', () => {
+    const options = {
+      'Option 1': () => {}
+    }
+
+    let component
+
+    mount(
+      <ButtonWithOptions
+        options={options}
+        ref={el => component = el}
+      >Click me</ButtonWithOptions>
+    )
+
+    $('.launcher').click()
+
+    expect(component.state.open).to.equal(true)
+    expect($('.dropdown')).to.exist
+
+    document.body.click()
+
+    expect(component.state.open).to.equal(false)
+    expect($('.dropdown')).not.to.exist
+  })
+
+  it('disables the button and the launcher when the `disabled` prop is truthy', () => {
+    const options = {
+      'Option 1': () => {}
+    }
+
+    let component
+
+    mount(
+      <ButtonWithOptions
+        disabled={true}
+        options={options}
+        ref={el => component = el}
+      >Click me</ButtonWithOptions>
+    )
+
+    expect($('.button[disabled]')).to.exist
+    expect($('.launcher[disabled]')).to.exist
+    expect($('.dropdown')).not.to.exist
+
+    $('.launcher').click()
+
+    expect($('.dropdown')).not.to.exist
+  })
 })
