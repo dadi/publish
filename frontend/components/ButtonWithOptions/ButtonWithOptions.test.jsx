@@ -1,7 +1,7 @@
 import {h, render} from 'preact'
 import {expect} from 'chai'
 
-import Button from './Button'
+import ButtonWithOptions from './ButtonWithOptions'
 
 // DOM setup
 let rootEl, $, mount
@@ -35,30 +35,30 @@ describe('ButtonWithOptions component', () => {
     expect(Object.keys(button.nodeName.propTypes)).to.have.length.above(0)
   })
 
-  it('renders as a `<a>` element when given a `href` prop', () => {
-    const button = (
-      <Button
-        accent="neutral"
-        href="/foobar"
-      >Click me</Button>      
-    )
+  // it('renders as a `<a>` element when given a `href` prop', () => {
+  //   const button = (
+  //     <Button
+  //       accent="neutral"
+  //       href="/foobar"
+  //     >Click me</Button>      
+  //   )
     
-    expect(button).to.contain(
-      <a href="/foobar" class="button button-neutral">Click me</a>
-    )
-  })
+  //   expect(button).to.contain(
+  //     <a href="/foobar" class="button button-neutral">Click me</a>
+  //   )
+  // })
 
-  it('executes the `onClick` callback when clicked, with the event as argument', () => {
-    const onClick = jest.fn()
+  // it('executes the `onClick` callback when clicked, with the event as argument', () => {
+  //   const onClick = jest.fn()
 
-    mount(
-      <Button onClick={onClick}>Click me</Button>
-    )
+  //   mount(
+  //     <Button onClick={onClick}>Click me</Button>
+  //   )
 
-    $('button').click()
+  //   $('button').click()
 
-    expect(onClick.mock.calls.length).to.equal(1)
-    expect(onClick.mock.calls[0].length).to.equal(1)
-    expect(onClick.mock.calls[0][0].constructor.name).to.equal('MouseEvent')
-  })
+  //   expect(onClick.mock.calls.length).to.equal(1)
+  //   expect(onClick.mock.calls[0].length).to.equal(1)
+  //   expect(onClick.mock.calls[0][0].constructor.name).to.equal('MouseEvent')
+  // })
 })
