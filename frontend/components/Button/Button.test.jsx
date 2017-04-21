@@ -1,7 +1,29 @@
-import {h} from 'preact'
+import {h, render} from 'preact'
 import {expect} from 'chai'
 
 import Button from './Button'
+
+// DOM setup
+let rootEl, $, mount
+
+beforeAll(() => {
+  rootEl = document.createElement('div')
+  document.body.appendChild(rootEl)
+
+  $ = s => rootEl.querySelector(s)
+
+  mount = jsx => render(jsx, rootEl, rootEl.firstChild)
+})
+
+afterEach(() => {
+  mount(() => null)
+
+  rootEl.innerHTML = ''
+})
+
+afterAll(() => {
+  document.body.removeChild(rootEl)
+})
 
 describe('Button component', () => {
   it('has propTypes', () => {
@@ -162,5 +184,19 @@ describe('Button component', () => {
     expect(button).to.contain(
       <button class="button button-neutral class-one class-two" type="button">Click me</button>
     )
-  })  
+  })
+
+  it('executes the `onClick` callback when clicked, with the event as argument', () => {
+    const onClick = jest.fn()
+
+    mount(
+      <Button onClick={onClick}>Click me</Button>
+    )
+
+    $('button').click()
+
+    expect(onClick.mock.calls.length).to.equal(1)
+    expect(onClick.mock.calls[0].length).to.equal(1)
+    expect(onClick.mock.calls[0][0].constructor.name).to.equal('MouseEvent')
+  })
 })
