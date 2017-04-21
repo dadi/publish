@@ -15,8 +15,7 @@ beforeAll(() => {
 })
 
 afterEach(() => {
-  mount(<div />).remove()
-  root = null
+  mount(null).remove()
 })
 
 describe('Button component', () => {

@@ -16,11 +16,10 @@ beforeAll(() => {
 })
 
 afterEach(() => {
-  mount(<div />).remove()
-  root = null
+  mount(null).remove()
 })
 
-describe.only('ButtonWithOptions component', () => {
+describe('ButtonWithOptions component', () => {
   it('has propTypes', () => {
     const button = (
       <ButtonWithOptions>Click me</ButtonWithOptions>
