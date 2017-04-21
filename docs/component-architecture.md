@@ -15,6 +15,9 @@ App
 ├─┬ DocumentCreateView
 │ ├─┬ DocumentEdit
 │ │ ├── Button
+│ │ ├─┬ ErrorMessage
+│ │ │ ├── Button
+│ │ │ └── HeroMessage
 │ │ ├─┬ FieldImage
 │ │ │ ├─┬ FieldImageEdit
 │ │ │ │ ├── Button
@@ -71,6 +74,9 @@ App
 ├─┬ DocumentEditView
 │ ├─┬ DocumentEdit
 │ │ ├── Button
+│ │ ├─┬ ErrorMessage
+│ │ │ ├── Button
+│ │ │ └── HeroMessage
 │ │ ├─┬ FieldImage
 │ │ │ ├─┬ FieldImageEdit
 │ │ │ │ ├── Button
@@ -127,6 +133,9 @@ App
 ├─┬ DocumentListView
 │ ├─┬ DocumentList
 │ │ ├── Button
+│ │ ├─┬ ErrorMessage
+│ │ │ ├── Button
+│ │ │ └── HeroMessage
 │ │ ├── HeroMessage
 │ │ └─┬ SyncTable
 │ │   ├── Table
@@ -176,7 +185,6 @@ App
 │ └─┬ ReferencedDocumentHeader
 │   └── Button
 ├─┬ ErrorView
-│ ├── Button
 │ ├─┬ Header
 │ │ ├─┬ CollectionNav
 │ │ │ └─┬ Nav
@@ -185,7 +193,9 @@ App
 │ │ │   └── NavItem
 │ │ ├── IconBurger
 │ │ └── IconCross
-│ ├── HeroMessage
+│ ├─┬ ErrorMessage
+│ │ ├── Button
+│ │ └── HeroMessage
 │ ├─┬ Main
 │ │ ├── LoadingBar
 │ │ └─┬ NotificationCentre
@@ -217,6 +227,9 @@ App
   └─┬ ProfileEdit
     ├─┬ DocumentEdit
     │ ├── Button
+    │ ├─┬ ErrorMessage
+    │ │ ├── Button
+    │ │ └── HeroMessage
     │ ├─┬ FieldImage
     │ │ ├─┬ FieldImageEdit
     │ │ │ ├── Button
@@ -244,6 +257,9 @@ App
     │ └── SubNavItem
     ├─┬ DocumentList
     │ ├── Button
+    │ ├─┬ ErrorMessage
+    │ │ ├── Button
+    │ │ └── HeroMessage
     │ ├── HeroMessage
     │ └─┬ SyncTable
     │   ├── Table

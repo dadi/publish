@@ -93,9 +93,8 @@ export default class ButtonWithOptions extends Component {
     } = this.props
     const {open} = this.state
 
-    let launcherStyle = new Style(styles, 'launcher')
-
-    launcherStyle.add(`launcher-${accent}`)
+    const launcherStyle = new Style(styles, 'launcher')
+      .add(`launcher-${accent}`)
       .addIf('launcher-disabled', disabled)
 
     return (
