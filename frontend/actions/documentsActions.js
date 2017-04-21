@@ -13,9 +13,10 @@ export function clearDocumentList () {
 
 export function deleteDocuments ({api, collection, ids}) {
   return (dispatch) => {
-    const apiBridge = apiBridgeClient(api)
-      .in(collection.name)
-      .whereFieldIsOneOf('_id', ids)
+    const apiBridge = apiBridgeClient({
+      api,
+      collection
+    }).whereFieldIsOneOf('_id', ids)
 
     const newStatus = ids.length > 1 ?
       Constants.STATUS_DELETING_MULTIPLE :
@@ -50,9 +51,11 @@ export function fetchDocuments ({
     const bundler = apiBridgeClient.getBundler()
 
     // This is the main one, where we retrieve the list of documents.
-    let parentQuery = apiBridgeClient(api, true)
-      .in(collection.name)
-      .goToPage(page)
+    let parentQuery = apiBridgeClient({
+      api,
+      collection,
+      inBundle: true
+    }).goToPage(page)
       .sortBy(sortBy || 'createdAt', sortOrder || 'desc')
       .where(filters)
       .find()
@@ -62,9 +65,11 @@ export function fetchDocuments ({
     // If we're on a nested document, we need to retrieve the parent too.
     if (referencedField && parentCollection) {
       bundler.add(
-        apiBridgeClient(api, true)
-          .in(parentCollection.name)
-          .whereFieldIsEqualTo('_id', parentDocumentId)
+        apiBridgeClient({
+          api,
+          collection: parentCollection,
+          inBundle: true
+        }).whereFieldIsEqualTo('_id', parentDocumentId)
           .find()
       )
     }

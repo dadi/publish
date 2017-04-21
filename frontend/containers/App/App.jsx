@@ -168,44 +168,6 @@ class App extends Component {
       .setRoom(pathname)
   }
 
-  getApiCollections(config) {
-    const {actions, state} = this.props
-
-    actions.setApiStatus(Constants.STATUS_LOADING)
-
-    let apisToProcess = config.apis
-    let processedApis = []
-
-    apisToProcess.forEach((api, apiIndex) => {
-      let bundler = apiBridgeClient.getBundler()
-
-      return apiBridgeClient(api).getCollections().then(({collections}) => {
-        collections.forEach(collection => {
-          const query = apiBridgeClient(api, true).in(collection.slug).getConfig()
-
-          // Add query to bundler
-          bundler.add(query)
-        })
-
-        // Run all queries in bundler
-        bundler.run().then(collectionConfigs => {
-          const mergedCollections = collectionConfigs.map((config, index) => {
-            return Object.assign({}, config, collections[index])
-          }).filter(collection => {
-            return !(collection.settings.publish && collection.settings.publish.hidden)
-          })
-
-          const apiWithCollections = Object.assign({}, api, {
-            collections: mergedCollections,
-            hasCollections: true
-          })
-
-          actions.setApi(apiWithCollections)
-        })
-      })
-    })
-  }
-
   sessionStart() {
     const {actions, state} = this.props
 

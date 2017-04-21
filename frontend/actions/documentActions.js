@@ -26,9 +26,10 @@ export function discardUnsavedChanges () {
 
 export function fetchDocument ({api, collection, id, fields}) {
   return (dispatch) => {
-    const apiBridge = apiBridgeClient(api)
-      .in(collection)
-      .whereFieldIsEqualTo('_id', id)
+    const apiBridge = apiBridgeClient({
+      api,
+      collection
+    }).whereFieldIsEqualTo('_id', id)
 
     if (fields) {
       apiBridge.useFields(fields)
@@ -83,7 +84,10 @@ export function saveDocument ({api, collection, document, documentId}) {
     const isUpdate = Boolean(documentId)
 
     let payload = {}
-    let apiBridge = apiBridgeClient(api).in(collection.name)
+    let apiBridge = apiBridgeClient({
+      api,
+      collection
+    })
 
     dispatch(setRemoteDocumentStatus(Constants.STATUS_SAVING))
 
@@ -151,13 +155,15 @@ export function saveDocument ({api, collection, document, documentId}) {
           } else {
             // Otherwise, we need to upload the file.
             referenceBundler.add(
-              apiBridgeClient(api, true)
-                .in(referencedCollection)
-                .getSignedUrl({
-                  contentLength: mediaDocument.contentLength,
-                  fileName: mediaDocument.fileName,
-                  mimetype: mediaDocument.mimetype
-                })
+              apiBridgeClient({
+                api,
+                collection: referencedCollection,
+                inBundle: true
+              }).getSignedUrl({
+                contentLength: mediaDocument.contentLength,
+                fileName: mediaDocument.fileName,
+                mimetype: mediaDocument.mimetype
+              })
             )
 
             referenceBundlerMap.push({
@@ -169,9 +175,11 @@ export function saveDocument ({api, collection, document, documentId}) {
           // The document already exists, we need to update it.
           if (referencedDocument._id) {
             referenceBundler.add(
-              apiBridgeClient(api, true)
-                .in(referencedCollection)
-                .whereFieldIsEqualTo('_id', referencedDocument._id)
+              apiBridgeClient({
+                api,
+                collection: referencedCollection,
+                inBundle: true
+              }).whereFieldIsEqualTo('_id', referencedDocument._id)
                 .update(referencedDocument)
             )
 

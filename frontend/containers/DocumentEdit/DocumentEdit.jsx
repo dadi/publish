@@ -351,7 +351,7 @@ class DocumentEdit extends Component {
 
     const query = {
       api: this.currentApi,
-      collection: documentCollection.name,
+      collection: documentCollection,
       id: documentId,
       fields: collectionFields
     }
