@@ -27,6 +27,14 @@ Whether the button is disabled.
 - type: `bool`
 
 
+### `href`
+
+When present, the button will be rendered as an `a` element with the given
+href.
+
+- type: `string`
+
+
 ### `onClick`
 
 Callback to be executed when the main button is clicked.
