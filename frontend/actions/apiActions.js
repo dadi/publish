@@ -38,7 +38,7 @@ export function loadApis () {
             if (schema._apiBridgeError) return null
 
             return Object.assign({}, schema, collections[index], {
-              _isAuthCollection: isAuthApi && (auth.collection === collections[index].name)
+              _isAuthCollection: isAuthApi && (auth.collection === collections[index].slug)
             })
           }).filter(Boolean).filter(collection => {
             return !(collection.settings.publish && collection.settings.publish.hidden)

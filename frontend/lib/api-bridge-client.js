@@ -37,10 +37,14 @@ const apiBridgeFetch = function (requestObject) {
       return response.json()
     }
 
-    return response.json().then(response => {
-      const error = response.error || ''
+    return response.json().then(parsedResponse => {
+      let error = parsedResponse.error || ''
 
-      return Promise.reject(JSON.parse(error))
+      try {
+        error = JSON.parse(error)
+      } catch (parsingError) {}
+
+      return Promise.reject(error)
     })
   })
 }
@@ -109,8 +113,8 @@ const apiBridgeFactory = function ({
   let apiWrapperInstance = new APIWrapper(apiWrapperOptions)
 
   // If we were given a collection, we might as well run the `.in()` filter.
-  if (collection.name) {
-    apiWrapperInstance = apiWrapperInstance.in(collection.name)
+  if (collection.slug) {
+    apiWrapperInstance = apiWrapperInstance.in(collection.slug)
   }
 
   return apiWrapperInstance

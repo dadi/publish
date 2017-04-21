@@ -32,7 +32,7 @@ export function getApiForUrlParams (apis, filter) {
 
   const api = apis.find(api => {
     const collection = api.collections && api.collections.find(collection => {
-      return collection.name === urlCollectionName
+      return collection.slug === urlCollectionName
     })
 
     if (collection) {
@@ -92,7 +92,7 @@ export function getCollectionForUrlParams (apis, {
     const collectionName = collectionParts ? collectionParts[1] : collection
 
     collectionMatch = api.collections.find(collection => {
-      return collection.name === collectionName
+      return collection.slug === collectionName
     })
   }
 
@@ -106,7 +106,7 @@ export function getCollectionForUrlParams (apis, {
 
     if (referencedCollection) {
       const mediaCollection = api.media && api.media.find(mediaCollection => {
-        return mediaCollection.name === referencedCollection
+        return mediaCollection.slug === referencedCollection
       })
 
       // Is this field referencing a media collection?
@@ -116,7 +116,7 @@ export function getCollectionForUrlParams (apis, {
         })
       } else {
         collectionMatch = api.collections.find(collection => {
-          return collection.name === referencedCollection
+          return collection.slug === referencedCollection
         })
       }
     }

@@ -33,10 +33,10 @@ class CollectionNav extends Component {
       // object.
       filteredCollections.forEach(collection => {
         (api.menu || []).forEach(menuEntry => {
-          if (menuEntry === collection.name) {
-            apiCollections[collection.name] = null
-          } else if (menuEntry.collections && menuEntry.collections.includes(collection.name)) {
-            apiCollections[collection.name] = menuEntry.title
+          if (menuEntry === collection.slug) {
+            apiCollections[collection.slug] = null
+          } else if (menuEntry.collections && menuEntry.collections.includes(collection.slug)) {
+            apiCollections[collection.slug] = menuEntry.title
           }
         })
       })
@@ -44,11 +44,11 @@ class CollectionNav extends Component {
       // Then we loop through all collections and add any that is missing from the
       // menu.
       filteredCollections.forEach(collection => {
-        apiCollections[collection.name] = apiCollections[collection.name] || null
+        apiCollections[collection.slug] = apiCollections[collection.slug] || null
 
-        const displayName = (collection.settings && collection.settings.description) || collection.name
+        const displayName = (collection.settings && collection.settings.displayName) || collection.name
 
-        displayNames[collection.name] = displayName
+        displayNames[collection.slug] = displayName
       })
 
       // We then merge the collections map for this API with the global map.
