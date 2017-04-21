@@ -39,8 +39,8 @@ APIBridgeController.prototype.post = function (req, res, next) {
   res.header('Content-Type', 'application/json')
 
   try {
-    let multiple = Array.isArray(req.body)
-    const requestObjects = multiple ? req.body : [req.body]
+    let isBundle = Array.isArray(req.body)
+    const requestObjects = isBundle ? req.body : [req.body]
 
     let queue = []
 
@@ -71,12 +71,22 @@ APIBridgeController.prototype.post = function (req, res, next) {
 
         return request(payload).then(response => {
           return response.length ? JSON.parse(response) : response
+        }).catch(err => {
+          if (isBundle) {
+            console.log('(*) API Bridge error:', err)
+
+            return Promise.resolve({
+              _apiBridgeError: true
+            })
+          }
+
+          return Promise.reject(err)
         })
       }))
     })
 
     Promise.all(queue).then(response => {
-      let output = multiple ? response : response[0]
+      let output = isBundle ? response : response[0]
 
       res.end(JSON.stringify(output))
     }).catch(err => {

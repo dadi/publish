@@ -35,14 +35,17 @@ export function loadApis () {
         collectionBundler.run().then(apiCollections => {
           const isAuthApi = auth.host === api.host && auth.port === api.port
           const mergedCollections = apiCollections.map((schema, index) => {
+            if (schema._apiBridgeError) return null
+
             return Object.assign({}, schema, collections[index], {
               _isAuthCollection: isAuthApi && (auth.collection === collections[index].name)
             })
-          }).filter(collection => {
+          }).filter(Boolean).filter(collection => {
             return !(collection.settings.publish && collection.settings.publish.hidden)
           })
 
           const apiWithCollections = Object.assign({}, api, {
+            _failedCollections: apiCollections.length - mergedCollections.length,
             _isAuthApi: isAuthApi,
             collections: mergedCollections
           })
