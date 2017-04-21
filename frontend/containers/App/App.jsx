@@ -91,11 +91,10 @@ class App extends Component {
 
   render() {
     const {history, state} = this.props
-    const hasRoutes = state.app && state.app.config ? this.hasRoutes() : null
 
     if (state.api.status === Constants.STATUS_FAILED) {
       return (
-        <ErrorView type={Constants.STATUS_FAILED} default />
+        <ErrorView type={Constants.STATUS_FAILED} />
       )
     }
 
@@ -105,29 +104,19 @@ class App extends Component {
 
         <PasswordReset path="/reset" authenticate/>
 
-        {hasRoutes && (
-          <DocumentListView path="/:group/:collection/document/edit/:documentId?/select/:referencedField?/:page?" authenticate />
-        )}
+        <DocumentListView path="/:group/:collection/document/edit/:documentId?/select/:referencedField?/:page?" authenticate />
         <DocumentListView path="/:collection/document/edit/:documentId?/select/:referencedField?/:page?" authenticate />
 
-        {hasRoutes && (
-          <DocumentEditView path="/:group/:collection/document/edit/:documentId?/:section?" authenticate />
-        )}
+        <DocumentEditView path="/:group/:collection/document/edit/:documentId?/:section?" authenticate />
         <DocumentEditView path="/:collection/document/edit/:documentId?/:section?" authenticate />
 
-        {hasRoutes && (
-          <DocumentListView path="/:group/:collection/document/new/:section?/:referencedField?/:page?" authenticate />
-        )}
+        <DocumentListView path="/:group/:collection/document/new/:section?/:referencedField?/:page?" authenticate />
         <DocumentListView path="/:collection/document/new/:section?/:referencedField?/:page?" authenticate />
 
-        {hasRoutes && (
-          <DocumentCreateView path="/:group/:collection/document/new/:section?" authenticate />
-        )}
+        <DocumentCreateView path="/:group/:collection/document/new/:section?" authenticate />
         <DocumentCreateView path="/:collection/document/new/:section?" authenticate />
 
-        {hasRoutes && (
-          <DocumentListView path="/:group/:collection/documents/:page?" authenticate />
-        )}
+        <DocumentListView path="/:group/:collection/documents/:page?" authenticate />
         <DocumentListView path="/:collection/documents/:page?" authenticate />
 
         <ProfileEditView path="/profile/:section?" authenticate />
@@ -137,18 +126,9 @@ class App extends Component {
 
         <SignOutView path="/sign-out" />
 
-        <ErrorView type="404" default />
+        <ErrorView type={Constants.ERROR_ROUTE_NOT_FOUND} default />
       </Router>
     )
-  }
-
-  hasRoutes() {
-    const {state} = this.props
-    const foundMenus = state.app.config.apis.some(api => {
-      return typeof api.menu !== 'undefined'
-    })
-
-    return foundMenus
   }
 
   initialiseSocket(config) {

@@ -21,6 +21,7 @@ import {connectHelper, filterHiddenFields, slugify, Case} from 'lib/util'
 import {getApiForUrlParams, getCollectionForUrlParams} from 'lib/collection-lookup'
 
 import Button from 'components/Button/Button'
+import ErrorMessage from 'components/ErrorMessage/ErrorMessage'
 import FieldImage from 'components/FieldImage/FieldImage'
 import FieldBoolean from 'components/FieldBoolean/FieldBoolean'
 import FieldReference from 'components/FieldReference/FieldReference'
@@ -241,19 +242,20 @@ class DocumentEdit extends Component {
 
     if (status === Constants.STATUS_NOT_FOUND) {
       return (
-        <HeroMessage
-          title="Oops!"
-          subtitle="You're looking for a document that doesn't seem to exist."
-        >
-          <Button
-            accent="data"
-            href={buildUrl(group, collection, 'documents')}
-          >List documents</Button>
-        </HeroMessage>
+        <ErrorMessage
+          data={{href: buildUrl(group, collection, 'documents')}}
+          type={Constants.ERROR_DOCUMENT_NOT_FOUND}
+        />
       )
     }
 
-    if (status === Constants.STATUS_LOADING || !this.currentCollection || !document.local) {
+    if (status === Constants.STATUS_IDLE && !this.currentCollection && this.hasFetched) {
+      return (
+        <ErrorMessage type={Constants.ERROR_ROUTE_NOT_FOUND} />
+      )
+    }
+
+    if (status === Constants.STATUS_LOADING || !document.local) {
       return null
     }
 

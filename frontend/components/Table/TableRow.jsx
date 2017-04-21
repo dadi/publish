@@ -70,8 +70,10 @@ export default class TableRow extends Component {
 
   renderChildren() {
     return this.props.children.map(child => {
-      child.attributes = child.attributes || {}
-      child.attributes.fillBlanks = child.attributes.fillBlanks || this.props.fillBlanks
+      if (child) {
+        child.attributes = child.attributes || {}
+        child.attributes.fillBlanks = child.attributes.fillBlanks || this.props.fillBlanks
+      }
 
       return child
     })
