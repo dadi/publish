@@ -24,9 +24,10 @@ export function updateLocalUser () {
       useApi: authApi
     })
 
-    apiBridgeClient(authApi)
-      .in(authCollection.name)
-      .whereFieldIsEqualTo('_id', currentUser._id)
+    apiBridgeClient({
+      api: authApi,
+      collection: authCollection
+    }).whereFieldIsEqualTo('_id', currentUser._id)
       .find()
       .then(response => {
         if (response.results && response.results.length) {
@@ -42,9 +43,10 @@ export function saveUser ({api, collection, user}) {
 
     dispatch(documentActions.setRemoteDocumentStatus(Constants.STATUS_SAVING))
 
-    const apiBridge = apiBridgeClient(api)
-      .in(collection.name)
-      .whereFieldIsEqualTo('_id', currentUser._id)
+    const apiBridge = apiBridgeClient({
+      api,
+      collection
+    }).whereFieldIsEqualTo('_id', currentUser._id)
       .whereFieldIsEqualTo('email', currentUser.email)
 
     apiBridge.update(user).then(response => {

@@ -45,18 +45,24 @@ const apiBridgeFetch = function (requestObject) {
   })
 }
 
-const apiBridgeFactory = function (api, inBundle) {
+const apiBridgeFactory = function ({
+  api,
+  collection = {},
+  inBundle = false
+}) {
   if (!api) {
     throw 'apiBridgeFactory: Missing API'
   }
 
   const {
     _publishId,
-    database,
     host,
-    port,
-    version
+    port
   } = api
+  const {
+    database,
+    version
+  } = collection
 
   const callback = requestObject => {
     let requestObjectWithPublishId = Object.assign({}, requestObject, {
@@ -100,7 +106,14 @@ const apiBridgeFactory = function (api, inBundle) {
     version
   }
 
-  return new APIWrapper(apiWrapperOptions)
+  let apiWrapperInstance = new APIWrapper(apiWrapperOptions)
+
+  // If we were given a collection, we might as well run the `.in()` filter.
+  if (collection.name) {
+    apiWrapperInstance = apiWrapperInstance.in(collection.name)
+  }
+
+  return apiWrapperInstance
 }
 
 module.exports = apiBridgeFactory

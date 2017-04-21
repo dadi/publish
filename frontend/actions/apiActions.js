@@ -17,15 +17,17 @@ export function loadApis () {
     let apisWithCollections = []
 
     apis.forEach(api => {
-      apiBridgeClient(api).getCollections().then(({collections}) => {
+      apiBridgeClient({api}).getCollections().then(({collections}) => {
         // This bundler will be used to get all the collections schemas for
         // this API in bulk.
         const collectionBundler = apiBridgeClient.getBundler()
 
         collections.forEach(collection => {
-          const collectionQuery = apiBridgeClient(api, true)
-            .in(collection.slug)
-            .getConfig()
+          const collectionQuery = apiBridgeClient({
+            api,
+            collection,
+            inBundle: true
+          }).getConfig()
 
           collectionBundler.add(collectionQuery)
         })
