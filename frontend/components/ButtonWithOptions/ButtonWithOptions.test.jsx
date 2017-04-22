@@ -10,7 +10,7 @@ let $, mount, root, scratch
 options.debounceRendering = f => f()
 
 beforeAll(() => {
-  $ = (sel, all) => all ? scratch.querySelectorAll(sel) : scratch.querySelector(sel)
+  $ = sel => scratch.querySelectorAll(sel)
   mount = jsx => root = render(jsx, scratch, root)
   scratch = document.createElement('div')
 })
@@ -67,7 +67,7 @@ describe('ButtonWithOptions component', () => {
     )
 
     expect(component.state.open).to.equal(false)
-    expect($('.dropdown')).not.to.exist
+    expect($('.dropdown').length).to.equal(0)
   })
 
   it('renders a dropdown with an item for each of the options supplied when the launcher is clicked', () => {
@@ -86,11 +86,11 @@ describe('ButtonWithOptions component', () => {
       >Click me</ButtonWithOptions>
     )
 
-    $('.launcher').click()
+    $('.launcher')[0].click()
 
     expect(component.state.open).to.equal(true)
-    expect($('.dropdown')).to.exist
-    expect($('.dropdown-item', true).length).to.eql(Object.keys(options).length)
+    expect($('.dropdown').length).to.equal(1)
+    expect($('.dropdown-item').length).to.eql(Object.keys(options).length)
   })
 
   it('executes the `onClick` callback, with the mouse event as argument, when the main button is clicked', () => {
@@ -103,7 +103,7 @@ describe('ButtonWithOptions component', () => {
       >Click me</ButtonWithOptions>
     )
 
-    $('button').click()
+    $('button')[0].click()
 
     expect(mainCallback.mock.calls.length).to.equal(1)
     expect(mainCallback.mock.calls[0].length).to.equal(1)
@@ -125,8 +125,8 @@ describe('ButtonWithOptions component', () => {
       >Click me</ButtonWithOptions>
     )
 
-    $('.launcher').click()
-    $('.dropdown-item').click()
+    $('.launcher')[0].click()
+    $('.dropdown-item')[0].click()
 
     expect(option1Callback.mock.calls.length).to.equal(1)
     expect(option1Callback.mock.calls[0].length).to.equal(1)
@@ -147,15 +147,15 @@ describe('ButtonWithOptions component', () => {
       >Click me</ButtonWithOptions>
     )
 
-    $('.launcher').click()
+    $('.launcher')[0].click()
 
     expect(component.state.open).to.equal(true)
-    expect($('.dropdown')).to.exist
+    expect($('.dropdown').length).to.equal(1)
 
     document.body.click()
 
     expect(component.state.open).to.equal(false)
-    expect($('.dropdown')).not.to.exist
+    expect($('.dropdown').length).to.equal(0)
   })
 
   it('disables the button and the launcher when the `disabled` prop is truthy', () => {
@@ -173,12 +173,11 @@ describe('ButtonWithOptions component', () => {
       >Click me</ButtonWithOptions>
     )
 
-    expect($('.button[disabled]')).to.exist
-    expect($('.launcher[disabled]')).to.exist
-    expect($('.dropdown')).not.to.exist
+    expect($('button[disabled]').length).to.equal(2)
+    expect($('.dropdown').length).to.equal(0)
 
-    $('.launcher').click()
+    $('.launcher')[0].click()
 
-    expect($('.dropdown')).not.to.exist
+    expect($('.dropdown').length).to.equal(0)
   })
 })

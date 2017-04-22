@@ -9,7 +9,7 @@ let $, mount, root, scratch
 options.debounceRendering = f => f()
 
 beforeAll(() => {
-  $ = (sel, all) => all ? scratch.querySelectorAll(sel) : scratch.querySelector(sel)
+  $ = sel => scratch.querySelectorAll(sel)
   mount = jsx => root = render(jsx, scratch, root)
   scratch = document.createElement('div')
 })
@@ -186,7 +186,7 @@ describe('Button component', () => {
       <Button onClick={onClick}>Click me</Button>
     )
 
-    $('button').click()
+    $('button')[0].click()
 
     expect(onClick.mock.calls.length).to.equal(1)
     expect(onClick.mock.calls[0].length).to.equal(1)

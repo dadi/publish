@@ -10,7 +10,7 @@ let $, mount, root, scratch
 options.debounceRendering = f => f()
 
 beforeAll(() => {
-  $ = (sel, all) => all ? scratch.querySelectorAll(sel) : scratch.querySelector(sel)
+  $ = sel => scratch.querySelectorAll(sel)
   mount = jsx => root = render(jsx, scratch, root)
   scratch = document.createElement('div')
 })
@@ -76,12 +76,12 @@ describe('ButtonWithPrompt component', () => {
       >Go</ButtonWithPrompt>
     )
 
-    expect($('.prompt')).not.to.exist
+    expect($('.prompt').length).to.equal(0)
 
-    $('button').click()
+    $('button')[0].click()
 
     expect(component.state.visible).to.equal(true)
-    expect($('.prompt')).to.exist
+    expect($('.prompt').length).to.equal(1)
   })
 
   it('closes the prompt when clicking anywhere outside the component', () => {
@@ -96,15 +96,15 @@ describe('ButtonWithPrompt component', () => {
       >Go</ButtonWithPrompt>
     )
 
-    $('button').click()
+    $('button')[0].click()
 
     expect(component.state.visible).to.equal(true)
-    expect($('.prompt')).to.exist
+    expect($('.prompt').length).to.equal(1)
 
     document.body.click()
 
     expect(component.state.visible).to.equal(false)
-    expect($('.prompt')).not.to.exist
+    expect($('.prompt').length).to.equal(0)
   })
 
   it('calls the `onClick` callback when the prompt button is clicked', () => {
@@ -119,8 +119,8 @@ describe('ButtonWithPrompt component', () => {
       >Go</ButtonWithPrompt>
     )
 
-    $('button').click()
-    $('.prompt button').click()
+    $('button')[0].click()
+    $('.prompt button')[0].click()
 
     expect(callback.mock.calls.length).to.equal(1)
     expect(callback.mock.calls[0].length).to.equal(1)

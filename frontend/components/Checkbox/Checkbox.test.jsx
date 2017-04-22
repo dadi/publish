@@ -9,7 +9,7 @@ let $, mount, root, scratch
 options.debounceRendering = f => f()
 
 beforeAll(() => {
-  $ = (sel, all) => all ? scratch.querySelectorAll(sel) : scratch.querySelector(sel)
+  $ = sel => scratch.querySelectorAll(sel)
   mount = jsx => root = render(jsx, scratch, root)
   scratch = document.createElement('div')
 })
@@ -69,7 +69,7 @@ describe.only('Checkbox component', () => {
       />
     )
 
-    $('input').click()
+    $('input')[0].click()
 
     expect(callback.mock.calls.length).to.equal(1)
     expect(callback.mock.calls[0].length).to.equal(1)
