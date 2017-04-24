@@ -171,10 +171,12 @@ class DocumentList extends Component {
           title="No documents yet."
           subtitle="Once created, they will appear here."
         >
-          <Button
-            accent="save"
-            href={buildUrl(group, collection, 'document', 'new')}
-          >Create new document</Button>
+          {!referencedField && (
+            <Button
+              accent="save"
+              href={buildUrl(group, collection, 'document', 'new')}
+            >Create new document</Button>
+          )}
         </HeroMessage>
       )
     }
