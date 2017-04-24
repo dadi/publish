@@ -157,7 +157,7 @@ export function saveDocument ({api, collection, document, documentId}) {
             referenceBundler.add(
               apiBridgeClient({
                 api,
-                collection: referencedCollection,
+                collection: referencedCollectionSchema,
                 inBundle: true
               }).getSignedUrl({
                 contentLength: mediaDocument.contentLength,
