@@ -8,6 +8,7 @@
     "profile": "webpack --progress --profile --json > stats.json",
     "build-docs": "rm -rf docs/components/* && react-docgen --exclude ['/^(ConfigSchema$)/g'] frontend/components | node scripts/build-docs/build-docs.js docs/components; rm -rf docs/containers/* && react-docgen --exclude ['/^(ConfigSchema$)/g'] frontend/containers | node scripts/build-docs/build-docs.js docs/containers; cat component-map.json | node scripts/build-component-tree/build-tree.js docs/component-architecture.md",
     "create-component": "node scripts/create-component/create-component.js",
+    "create-user": "node scripts/create-user/create-user.js",
     "init": "validate-commit-msg",
     "lint": "eslint frontend && standard --fix",
     "prebuild": "mkdirp build",
