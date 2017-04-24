@@ -122,7 +122,6 @@ CreateUser.prototype.query = function (question) {
 }
 
 CreateUser.prototype.insertNewUser = function () {
-
   console.log(this.results)
   ui.log.write('Saved!')
 
