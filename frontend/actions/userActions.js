@@ -1,9 +1,49 @@
+import 'fetch'
+
 import * as Constants from 'lib/constants'
 import * as Types from 'actions/actionTypes'
 import * as documentActions from './documentActions'
 
 import {getApiForUrlParams, getCollectionForUrlParams} from 'lib/collection-lookup'
 import apiBridgeClient from 'lib/api-bridge-client'
+
+function runSessionQuery ({
+  method = 'GET',
+  path = '/session',
+  payload = null
+} = {}) {
+  let request = {
+    credentials: 'same-origin',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    method: method
+  }
+
+  if (payload) {
+    request.body = JSON.stringify(payload)
+  }
+
+  return fetch(path, request).then(response => {
+    if (response.status !== 200) {
+      return response.json().then(parsedResponse => {
+        return Promise.reject(parsedResponse)
+      })
+    }
+
+    return response.json()
+  })
+}
+
+export function loadUserFromSession () {
+  return (dispatch, getState) => {
+    runSessionQuery().then(user => {
+      dispatch(setRemoteUser(user))
+    }).catch(err => {
+      dispatch(setUserStatus(Constants.STATUS_FAILED))
+    })
+  }
+}
 
 export function setRemoteUser (user) {
   return {
@@ -12,28 +52,10 @@ export function setRemoteUser (user) {
   }
 }
 
-export function updateLocalUser () {
-  return (dispatch, getState) => {
-    const apis = getState().api.apis
-    const currentUser = getState().user.remote
-    const authApi = getApiForUrlParams(apis, {
-      collection: Constants.AUTH_COLLECTION
-    })
-    const authCollection = getCollectionForUrlParams(apis, {
-      collection: Constants.AUTH_COLLECTION,
-      useApi: authApi
-    })
-
-    apiBridgeClient({
-      api: authApi,
-      collection: authCollection
-    }).whereFieldIsEqualTo('_id', currentUser._id)
-      .find()
-      .then(response => {
-        if (response.results && response.results.length) {
-          dispatch(setRemoteUser(response.results[0]))
-        }
-      })
+export function setUserStatus (status) {
+  return {
+    status,
+    type: Types.SET_USER_STATUS
   }
 }
 
@@ -90,5 +112,30 @@ export function saveUser ({api, collection, user}) {
 export function signOut () {
   return {
     type: Types.SIGN_OUT
+  }
+}
+
+export function updateLocalUser () {
+  return (dispatch, getState) => {
+    const apis = getState().api.apis
+    const currentUser = getState().user.remote
+    const authApi = getApiForUrlParams(apis, {
+      collection: Constants.AUTH_COLLECTION
+    })
+    const authCollection = getCollectionForUrlParams(apis, {
+      collection: Constants.AUTH_COLLECTION,
+      useApi: authApi
+    })
+
+    apiBridgeClient({
+      api: authApi,
+      collection: authCollection
+    }).whereFieldIsEqualTo('_id', currentUser._id)
+      .find()
+      .then(response => {
+        if (response.results && response.results.length) {
+          dispatch(setRemoteUser(response.results[0]))
+        }
+      })
   }
 }
