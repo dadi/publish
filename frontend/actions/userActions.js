@@ -131,7 +131,7 @@ export function signIn (email, password) {
       method: 'POST',
       payload: {
         password,
-        username: email
+        username: email // Passport needs this property to be called username!
       }
     }).then(user => {
       dispatch(setRemoteUser(user))
