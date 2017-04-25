@@ -7,6 +7,7 @@ import Style from 'lib/Style'
 import styles from './DocumentEditToolbar.css'
 
 import * as Constants from 'lib/constants'
+import {Keyboard} from 'lib/keyboard'
 import * as appActions from 'actions/appActions'
 import * as documentActions from 'actions/documentActions'
 import * as documentsActions from 'actions/documentsActions'
@@ -74,7 +75,12 @@ class DocumentEditToolbar extends Component {
   constructor(props) {
     super(props)
 
+    this.keyboard = new Keyboard()
     this.onSave = null
+  }
+
+  componentDidMount() {
+    this.keyboard.on('cmd+s').do(this.saveDocument.bind(this))
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -310,6 +316,10 @@ class DocumentEditToolbar extends Component {
   }
 
   saveDocument() {
+    if (!this.onSave) {
+      // Apply default
+      this.handleSave('save')
+    }
     const {
       collection,
       dispatch,
@@ -318,7 +328,7 @@ class DocumentEditToolbar extends Component {
       referencedField,
       state
     } = this.props
-    const creatingNew = this.onSave && this.onSave.createNew
+    const creatingNew = this.onSave.createNew
     const validationErrors = state.document.validationErrors
     const hasValidationErrors = !validationErrors || Object.keys(validationErrors)
       .filter(field => validationErrors[field])
