@@ -6,8 +6,6 @@ import {connectHelper, isEmpty} from 'lib/util'
 
 import * as userActions from 'actions/userActions'
 
-import Session from 'lib/session'
-
 class SignOutView extends Component {
   componentWillMount() {
     const {state, actions} = this.props

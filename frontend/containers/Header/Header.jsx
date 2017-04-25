@@ -6,7 +6,6 @@ import {bindActionCreators} from 'redux'
 import * as userActions from 'actions/userActions'
 import {connectHelper} from 'lib/util'
 import * as Constants from 'lib/constants'
-import Session from 'lib/session'
 
 import CollectionNav from 'containers/CollectionNav/CollectionNav'
 import IconBurger from 'components/IconBurger/IconBurger'
@@ -92,20 +91,9 @@ class Header extends Component {
   }
 
   handleSignOut() {
-    const {actions, state} = this.props
-    const session = new Session()
+    const {actions} = this.props
 
-    session.getSession().then(user => {
-      if (user) {
-        session.destroy().then(success => {
-          // (!) TO DO: Handle failure of session destroy
-          if (success) {
-            actions.signOut()
-            route('/sign-in')
-          }
-        })
-      }
-    })
+    actions.signOut()
   }
 
   toggleCollapsed(expanded, event) {

@@ -25,7 +25,6 @@ import ProfileEditView from 'views/ProfileEditView/ProfileEditView'
 import {connectHelper, debounce, isEmpty, slugify, throttle} from 'lib/util'
 import Socket from 'lib/socket'
 import ConnectionMonitor from 'lib/status'
-import Session from 'lib/session'
 import apiBridgeClient from 'lib/api-bridge-client'
 
 class App extends Component {
@@ -58,6 +57,11 @@ class App extends Component {
       const {actions} = this.props
 
       actions.loadAppConfig()
+    }
+
+    // State change: user has signed out
+    if (previousState.user.remote && !state.user.remote) {
+      route('/sign-in')
     }
 
     // State change: app now has config
@@ -128,7 +132,6 @@ class App extends Component {
     const {actions, state} = this.props
     const pathname = state.router.locationBeforeTransitions.pathname
     const user = state.user.remote
-    const session = new Session()
 
     this.socket = new Socket(config.server.port)
       .on('userListChange', data => {

@@ -5,13 +5,12 @@ import {bindActionCreators} from 'redux'
 import {connectHelper, isEmpty} from 'lib/util'
 
 import * as userActions from 'actions/userActions'
+import * as Constants from 'lib/constants'
 
 import Banner from 'components/Banner/Banner'
 import Button from 'components/Button/Button'
 import Label from 'components/Label/Label'
 import TextInput from 'components/TextInput/TextInput'
-
-import Session from 'lib/session'
 
 import styles from './SignInView.css'
 
@@ -25,12 +24,25 @@ class SignInView extends Component {
     this.state.error = false
   }
 
-  componentWillUpdate() {
-    const {state, actions} = this.props
+  componentWillUpdate(nextProps, nextState) {
+    const {actions, state} = this.props
+    const {user} = state
+    const nextUser = nextProps.state.user
 
-    if (state.user) {
-      // Redirect signed-in user
+    // If the user is signed in, redirect to the home view.
+    if (user.remote) {
       route('/')
+    }
+
+    const hasFailed = nextUser.status === Constants.STATUS_FAILED &&
+      nextUser.failedSignInAttempts > 0
+
+    if (nextUser.status === Constants.STATUS_NOT_FOUND) {
+      this.error = 'Authentication API unreachable'
+    } else if (hasFailed) {
+      this.error = 'Email not found or password incorrect'
+    } else {
+      this.error = null
     }
   }
 
@@ -41,11 +53,15 @@ class SignInView extends Component {
       <div class={styles.wrapper}>
         <div class={styles.overlay}>
           <div class={styles.container}>
-            <form method="POST" action="/profile" onSubmit={this.signIn.bind(this)}>
+            <form
+              action="/profile"
+              method="POST"
+              onSubmit={this.handleSignIn.bind(this)}
+            >
               <img class={styles.logo} src="/images/publish.png" />
 
-              {this.state.error &&
-                <Banner>{this.state.message}</Banner>
+              {this.error &&
+                <Banner>{this.error}</Banner>
               }
 
               <div class={styles.inputs}>
@@ -82,37 +98,25 @@ class SignInView extends Component {
     )
   }
 
-  signIn(event) {
-    event.preventDefault()
-
-    const {actions, state} = this.props
-
-    new Session().createSession({
-      email: this.state.email,
-      password: this.state.password
-    }).then(user => {
-      if (user && !user.err) {
-        actions.setRemoteUser(user)
-
-        route('/')
-      } else {
-        actions.signOut()
-        this.setState({
-          error: true,
-          message: user.err ? Session.errors[user.err] : null // Move to lang when ready
-        })
-      }
-    })
-  }
-
   handleInputChange(name, event) {
     this.setState({
       [name]: event.target.value
     })
   }
+
+  handleSignIn(event) {
+    const {actions} = this.props
+    const {email, password} = this.state
+
+    actions.signIn(email, password)
+
+    event.preventDefault()
+  }
 }
 
 export default connectHelper(
-  state => state.user,
+  state => ({
+    user: state.user
+  }),
   dispatch => bindActionCreators(userActions, dispatch)
 )(SignInView)

@@ -65,9 +65,11 @@ Holds the current list of documents (for document list view)
 
 Holds state about the current user
 
-| Property  | Type   | Description                                                        | Initial state |
-|-----------|--------|--------------------------------------------------------------------|---------------|
-| `remote`  | Object | The object representing the state of the user on the remote API    | `null`        |
+| Property  | Type     | Description                                                        | Initial state |
+|-----------|----------|--------------------------------------------------------------------|---------------|
+| `failedSignInAttempts`  | Number   | The object of failed signed in attempts before the last successful one    | `0`        |
+| `remote`  | Object   | The object representing the state of the user on the remote API    | `null`        |
+| `status`  | Constant | The status of the user                                             | `STATUS_IDLE` |
 
 ## 2. Actions
 
