@@ -46,7 +46,7 @@ Session.prototype.createSession = function ({email, password}) {
  * @return {object} The corresponding user object.
  */
 Session.prototype.destroy = function () {
-  return this.query({method: 'POST', path: '/session/destroy'})
+  return this.query({method: 'DELETE', path: '/session'})
 }
 
 /**

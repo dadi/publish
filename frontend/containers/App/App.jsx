@@ -17,7 +17,7 @@ import DocumentEditView from 'views/DocumentEditView/DocumentEditView'
 import DocumentListView from 'views/DocumentListView/DocumentListView'
 import ErrorView from 'views/ErrorView/ErrorView'
 import HomeView from 'views/HomeView/HomeView'
-import PasswordReset from 'views/PasswordReset/PasswordReset'
+import PasswordResetView from 'views/PasswordResetView/PasswordResetView'
 import SignInView from 'views/SignInView/SignInView'
 import SignOutView from 'views/SignOutView/SignOutView'
 import ProfileEditView from 'views/ProfileEditView/ProfileEditView'
@@ -35,7 +35,8 @@ class App extends Component {
     apiBridgeClient.registerProgressCallback(actions.registerNetworkCall)
     ConnectionMonitor(2000).registerStatusChangeCallback(actions.setNetworkStatus)
 
-    this.sessionStart()
+    // Attempt to load user from session
+    actions.loadUserFromSession()
   }
 
   componentDidMount() {
@@ -67,21 +68,13 @@ class App extends Component {
       actions.loadApis()
     }
 
-    // State change: user has signed out
-    if (previousState.user.remote && !state.user.remote) {
-      route('/sign-in')
-    }
+    // State change: user has signed out or session validation has failed.
+    const userWasIdle = previousProps.state.user.status === Constants.STATUS_IDLE
+    const userHasFailed = state.user.status === Constants.STATUS_FAILED
 
-    // State change: app now has APIs
-    if (!previousState.api.apis.length && state.api.apis.length) {
-      // If the user has been loaded from session, it's possible that some of
-      // their details aren't up-to-date, so we get the remote from the API
-      // and update the local version.
-      //
-      // (!) TO DO: update session contents
-      if (this.userLoadedFromSession) {
-        actions.updateLocalUser()
-      }
+    if ((previousState.user.remote && !state.user.remote) ||
+        (userWasIdle && userHasFailed)) {
+      route('/sign-in')
     }
 
     if (this.socket && this.socket.getUser() && (this.socket.getRoom() !== path)) {
@@ -102,7 +95,7 @@ class App extends Component {
       <Router history={history}>
         <HomeView path="/" authenticate />
 
-        <PasswordReset path="/reset" authenticate/>
+        <PasswordResetView path="/reset" />
 
         <DocumentListView path="/:group/:collection/document/edit/:documentId?/select/:referencedField?/:page?" authenticate />
         <DocumentListView path="/:collection/document/edit/:documentId?/select/:referencedField?/:page?" authenticate />
@@ -146,21 +139,6 @@ class App extends Component {
       })
       .setUser(user)
       .setRoom(pathname)
-  }
-
-  sessionStart() {
-    const {actions, state} = this.props
-
-    new Session().getSession().then(user => {
-      if (user && !user.err) {
-        actions.setRemoteUser(user)
-
-        this.userLoadedFromSession = true
-      } else {
-        actions.signOut()
-        route('/sign-in')
-      }
-    })
   }
 }
 
