@@ -88,9 +88,9 @@ export default class FileUpload extends Component {
 
   handleDrop(event) {
     const {onChange} = this.props
+
     this.setState({dragOver: false})
     onChange(event.dataTransfer.files[0])
-
     event.preventDefault()
   }
 
