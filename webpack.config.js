@@ -1,4 +1,5 @@
 'use strict'
+process.traceDeprecation = true
 
 const fs = require('fs')
 const path = require('path')
@@ -28,7 +29,7 @@ const PATHS = {
 module.exports = {
   entry: path.resolve(__dirname, 'frontend/index.jsx'),
 
-  devtool: ((ENV === 'development') && ENABLE_SOURCE_MAP) ? 'eval-cheap-module-source-map' : null,
+  devtool: (ENV === 'development') && ENABLE_SOURCE_MAP && 'eval-cheap-module-source-map',
 
   module: {
     rules: [
@@ -36,19 +37,13 @@ module.exports = {
         test: /\.jsx|js?$/,
         exclude: /node_modules/,
         use: {
-          loader: 'babel-loader',
-          options: {
-            cacheDirectory: true
-          }
+          loader: 'babel-loader'
         }
       },
       {
         test: /\.(png|woff|woff2|eot|ttf|svg)(\?.*$|$)/,
         use: {
-          loader: 'url-loader',
-          options: {
-            limit: 100000
-          }
+          loader: 'url-loader'
         }
       },
       {
