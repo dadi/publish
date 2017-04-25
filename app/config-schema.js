@@ -25,7 +25,7 @@ module.exports = {
     doc: 'Connected APIs',
     format: Array,
     default: [],
-    _publishId: {
+    publishId: {
       availableInFrontend: true,
       type: String,
       default: ''

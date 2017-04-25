@@ -16,7 +16,7 @@ const getApisBlockWithUUIDs = (apis) => {
   return apis.map(api => {
     let uuid = md5(api.host + api.port + api.credentials.clientId)
 
-    return Object.assign({}, api, {_publishId: uuid})
+    return Object.assign({}, api, {publishId: uuid})
   })
 }
 
