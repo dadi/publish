@@ -16,7 +16,7 @@ Auth.prototype.attach = function (scServer, socket) {
         name: `${data.user.first_name} ${data.user.last_name}`,
         email: data.user.email,
         handle: data.user.handle,
-        username: data.user.username
+        username: data.user._id
       })
       socket.setAuthToken(token)
       respond()
