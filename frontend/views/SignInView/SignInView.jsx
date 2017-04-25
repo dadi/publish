@@ -88,7 +88,7 @@ class SignInView extends Component {
     const {actions, state} = this.props
 
     new Session().createSession({
-      username: this.state.email,
+      email: this.state.email,
       password: this.state.password
     }).then(user => {
       if (user && !user.err) {

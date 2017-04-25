@@ -24,12 +24,18 @@ Session.prototype.buildUserObject = function (user) {
 /**
  * Issues a request to the app endpoint to create a session.
  *
- * @param {object} Object containing the username and password.
+ * @param {object} Object containing the email and password.
  *
  * @return {object} The corresponding user object.
  */
-Session.prototype.createSession = function ({password, username}) {
-  return this.query({method: 'POST', payload: {password, username}}).then(response => {
+Session.prototype.createSession = function ({email, password}) {
+  return this.query({
+    method: 'POST',
+    payload: {
+      password,
+      username: email
+    }
+  }).then(response => {
     return response.json().then(this.buildUserObject)
   })
 }
