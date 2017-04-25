@@ -7,6 +7,7 @@ import Style from 'lib/Style'
 import styles from './DocumentEditToolbar.css'
 
 import * as Constants from 'lib/constants'
+import {Keyboard} from 'lib/keyboard'
 import * as appActions from 'actions/appActions'
 import * as documentActions from 'actions/documentActions'
 import * as documentsActions from 'actions/documentsActions'
@@ -74,7 +75,12 @@ class DocumentEditToolbar extends Component {
   constructor(props) {
     super(props)
 
+    this.keyboard = new Keyboard()
     this.onSave = null
+  }
+
+  componentDidMount() {
+    this.keyboard.on('cmd+s').do(this.handleSave.bind(this, 'save'))
   }
 
   componentDidUpdate(prevProps, prevState) {
