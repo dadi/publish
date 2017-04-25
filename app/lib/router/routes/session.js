@@ -42,61 +42,13 @@ module.exports = function (app) {
   app.get({
     name: 'session', // This allows us to reuse the auth request
     path: '/session'
-  },
-  (req, res, next) => {
-    res.header('Content-Type', 'application/json')
-    if (req.isAuthenticated()) {
-      res.write(JSON.stringify(req.session.passport.user))
-      res.end()
+  }, sessionController.get)
 
-      return next()
-    } else {
-      res.statusCode = 401
-      res.write(JSON.stringify({err: 'AUTH_FAILED'}))
-      res.end()
-
-      return next()
-    }
-  })
-
-  // Move to sessionController
   app.post('/session', (req, res, next) => {
-    passport.authenticate('local', (err, user, info) => {
-      if (err) { return next(err) }
-      if (user.err) {
-        res.write(JSON.stringify(user))
-        res.end()
-        return next()
-      }
-      req.login(user, {}, (err) => {
-        if (err) {
-          res.write(JSON.stringify({err: 'AUTH_FAILED'}))
-        } else {
-          res.write(JSON.stringify(user))
-        }
-        res.end()
-
-        return next()
-      })
-    })(req, res, next)
+    return sessionController.post(req, res, next, passport)
   })
 
-  app.put('/session', (req, res, next) => {
-    let user = req.body
+  app.put('/session', sessionController.put)
 
-    console.log('--> User:', user, typeof user)
-
-    res.write(JSON.stringify({authenticated: req.isAuthenticated()}))
-    res.end()
-
-    return next()
-  })
-
-  app.del('/session', (req, res, next) => {
-    req.logout()
-    res.write(JSON.stringify({authenticated: req.isAuthenticated()}))
-    res.end()
-
-    return next()
-  })
+  app.del('/session', sessionController.delete)
 }

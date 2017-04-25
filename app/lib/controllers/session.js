@@ -20,9 +20,94 @@ Session.prototype.authorise = function (email, password, next) {
       } else {
         return next(null)
       }
-    }).catch(err => {
-      return next(null, {err: 'MISSING_AUTH_API', value: err})
+    }).catch(response => {
+      if ((response.error instanceof Array) && (response.error[0].details.includes('WRONG_CREDENTIALS'))) {
+        return next('WRONG_CREDENTIALS')
+      }
+
+      return next('MISSING_AUTH_API')
     })
+}
+
+Session.prototype.delete = function (req, res, next) {
+  req.logout()
+  res.write(JSON.stringify({authenticated: req.isAuthenticated()}))
+  res.end()
+
+  return next()
+}
+
+Session.prototype.get = function (req, res, next) {
+  res.header('Content-Type', 'application/json')
+
+  if (req.isAuthenticated()) {
+    res.write(JSON.stringify(req.session.passport.user))
+    res.end()
+
+    return next()
+  } else {
+    res.statusCode = 401
+    res.write(JSON.stringify({err: 'AUTH_FAILED'}))
+    res.end()
+
+    return next()
+  }
+}
+
+Session.prototype.post = function (req, res, next, passport) {
+  passport.authenticate('local', (err, user, info) => {
+    if (err) {
+      switch (err) {
+        case 'MISSING_AUTH_API':
+          res.statusCode = 503
+          res.write(JSON.stringify(err))
+
+          break
+
+        case 'WRONG_CREDENTIALS':
+          res.statusCode = 401
+          res.write(JSON.stringify(err))
+
+          break
+
+        default:
+          res.statusCode = 500
+          res.write(JSON.stringify('UNKNOWN_ERROR'))
+
+          break
+      }
+
+      res.end()
+
+      return next()
+    } else {
+      req.login(user, {}, (err) => {
+        if (err) {
+          res.statusCode = 401
+          res.write(JSON.stringify('AUTH_FAILED'))
+        } else {
+          res.write(JSON.stringify(user))
+        }
+
+        res.end()
+
+        return next()
+      })
+    }
+  })(req, res, next)
+}
+
+Session.prototype.put = function (req, res, next) {
+  req.login(req.body, {}, err => {
+    if (err) {
+      res.statusCode = 500
+    }
+
+    res.write(JSON.stringify({}))
+    res.end()
+  })
+
+  return next()
 }
 
 module.exports = function () {
