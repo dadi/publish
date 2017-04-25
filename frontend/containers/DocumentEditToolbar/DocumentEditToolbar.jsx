@@ -324,7 +324,7 @@ class DocumentEditToolbar extends Component {
       referencedField,
       state
     } = this.props
-    const creatingNew = this.onSave.createNew
+    const creatingNew = this.onSave && this.onSave.createNew
     const validationErrors = state.document.validationErrors
     const hasValidationErrors = !validationErrors || Object.keys(validationErrors)
       .filter(field => validationErrors[field])
