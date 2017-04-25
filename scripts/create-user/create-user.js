@@ -1,5 +1,10 @@
 'use strict'
 
+const path = require('path')
+const global = require(path.resolve(path.join(__dirname, '../../app/globals'))) // eslint-disable-line
+const config = require(paths.config)
+const Api = require(`${paths.lib.models}/api`)
+
 const inquirer = require('inquirer')
 const ui = new inquirer.ui.BottomBar()
 
@@ -20,16 +25,6 @@ const CreateUser = function () {
       type: 'input',
       name: 'last_name',
       message: 'What is your last name?',
-      callback: (answer) => {
-        Object.assign(this.results, answer)
-        this.query(questions.username)
-      }
-    },
-    username: {
-      type: 'input',
-      name: 'username',
-      message: 'Choose a unique username',
-      validate: this.checkForDuplicate.bind(this),
       callback: (answer) => {
         Object.assign(this.results, answer)
         this.query(questions.email)
@@ -88,32 +83,28 @@ CreateUser.prototype.passwordMatch = function (str) {
   return true
 }
 
-CreateUser.prototype.checkForDuplicate = function (str) {
-  let match
-
-  if (match) {
-    ui.log.write(`${str} already in use!`)
-    return
-  }
-
-  return true
-}
-
 CreateUser.prototype.validateEmail = function (str) {
-  let match
+  let authAPI = config.get('auth')
 
-  // let isDuplicate = this.checkForDuplicate(str)
-  // if (isDuplicate) {
-  //   return
-  // }
+  if (!authAPI.enabled) return
 
-  // Check address
-  if (match) {
-    ui.log.write(`${str} is not a valid email address!`)
-    return
-  }
-
-  return true
+  return new Api(authAPI)
+    .in(authAPI.collection)
+    .whereFieldIsEqualTo('email', str)
+    .find({extractResults: true}).then(user => {
+      if (user.length > 0) {
+        ui.log.write(`${str} is already in use!`)
+        return
+      }
+      let isValidEmail = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/.test(str)
+      if (!isValidEmail) {
+        ui.log.write(`${str} is not a valid email address!`)
+        return
+      }
+      return true
+    }).catch(err => {
+      return err
+    })
 }
 
 CreateUser.prototype.query = function (question) {
@@ -122,32 +113,25 @@ CreateUser.prototype.query = function (question) {
 }
 
 CreateUser.prototype.insertNewUser = function () {
-  console.log(this.results)
-  ui.log.write('Saved!')
+  let authAPI = config.get('auth')
 
-  // let fileContent = ''
-  // switch (this.results.type) {
-  //   case 'component':
-  //     fileContent = this.component()
-  //     break
-  //   case 'container':
-  //     fileContent = this.container()
-  //     break
-  //   case 'view':
-  //     fileContent = this.view()
-  //     break
-  // }
-  // let writePath = path.resolve(__dirname, `../../frontend/${this.results.type}s/${this.results.name}`)
-  // mkdirp(writePath, err => {
-  //   if (err) {
-  //     return console.log('ERROR! Couldn\'t create output path.')
-  //   }
+  if (!authAPI.enabled) return false
 
-  //   fs.writeFile(path.join(writePath, `${this.results.name}.jsx`), fileContent, (err) => {
-  //     if (err) throw err
-  //     ui.log.write('Saved!')
-  //   })
-  // })
+  Reflect.deleteProperty(this.results, 'password_match')
+
+  return new Api(authAPI)
+    .in(authAPI.collection)
+    .create(this.results)
+    .then(user => {
+      if (user) {
+        ui.log.write(`Created ${JSON.stringify(user, null, 2)}`)
+      } else {
+        ui.log.write(`Failed to created. ${JSON.stringify(this.results, null, 2)}`)
+      }
+    }).catch(err => {
+      ui.log.write(`err. ${JSON.stringify(err, null, 2)}`)
+      return false
+    })
 }
 
 module.exports = function () {
