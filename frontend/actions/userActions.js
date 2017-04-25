@@ -1,3 +1,5 @@
+import 'fetch'
+
 import * as Constants from 'lib/constants'
 import * as Types from 'actions/actionTypes'
 import * as documentActions from './documentActions'
@@ -5,36 +7,54 @@ import * as documentActions from './documentActions'
 import {getApiForUrlParams, getCollectionForUrlParams} from 'lib/collection-lookup'
 import apiBridgeClient from 'lib/api-bridge-client'
 
-export function setRemoteUser (user) {
+export function clearRemoteUser () {
   return {
-    type: Types.SET_REMOTE_USER,
-    user
+    type: Types.CLEAR_REMOTE_USER
   }
 }
 
-export function updateLocalUser () {
+export function loadUserFromSession () {
   return (dispatch, getState) => {
-    const apis = getState().api.apis
-    const currentUser = getState().user.remote
-    const authApi = getApiForUrlParams(apis, {
-      collection: Constants.AUTH_COLLECTION
+    runSessionQuery().then(user => {
+      dispatch(setRemoteUser(user))
+    }).catch(err => {
+      dispatch(setUserStatus(Constants.STATUS_FAILED))
     })
-    const authCollection = getCollectionForUrlParams(apis, {
-      collection: Constants.AUTH_COLLECTION,
-      useApi: authApi
-    })
-
-    apiBridgeClient({
-      api: authApi,
-      collection: authCollection
-    }).whereFieldIsEqualTo('_id', currentUser._id)
-      .find()
-      .then(response => {
-        if (response.results && response.results.length) {
-          dispatch(setRemoteUser(response.results[0]))
-        }
-      })
   }
+}
+
+export function registerFailedSignInAttempt () {
+  return {
+    type: Types.REGISTER_FAILED_SIGN_IN
+  }
+}
+
+function runSessionQuery ({
+  method = 'GET',
+  path = '/session',
+  payload = null
+} = {}) {
+  let request = {
+    credentials: 'same-origin',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    method: method
+  }
+
+  if (payload) {
+    request.body = JSON.stringify(payload)
+  }
+
+  return fetch(path, request).then(response => {
+    return response.json().then(parsedResponse => {
+      if (response.status === 200) {
+        return parsedResponse
+      }
+
+      return Promise.reject(parsedResponse)
+    })
+  })
 }
 
 export function saveUser ({api, collection, user}) {
@@ -53,10 +73,14 @@ export function saveUser ({api, collection, user}) {
       if (response.results && response.results.length) {
         const newUser = response.results[0]
 
+        // Update store
         dispatch(documentActions.setRemoteDocument(newUser, {
           clearLocal: true
         }))
         dispatch(setRemoteUser(newUser))
+
+        // Update session user
+        updateLocalUser(newUser)
       } else {
         dispatch(documentActions.setRemoteDocumentStatus(Constants.STATUS_FAILED))
       }
@@ -87,8 +111,57 @@ export function saveUser ({api, collection, user}) {
   }
 }
 
-export function signOut () {
+export function setRemoteUser (user) {
   return {
-    type: Types.SIGN_OUT
+    type: Types.SET_REMOTE_USER,
+    user
   }
+}
+
+export function setUserStatus (status) {
+  return {
+    status,
+    type: Types.SET_USER_STATUS
+  }
+}
+
+export function signIn (email, password) {
+  return (dispatch, getState) => {
+    runSessionQuery({
+      method: 'POST',
+      payload: {
+        password,
+        username: email // Passport needs this property to be called username!
+      }
+    }).then(user => {
+      dispatch(setRemoteUser(user))
+    }).catch(err => {
+      switch (err) {
+        case 'MISSING_AUTH_API':
+          dispatch(setUserStatus(Constants.STATUS_NOT_FOUND))
+
+          break
+
+        default:
+          dispatch(registerFailedSignInAttempt())
+      }
+    })
+  }
+}
+
+export function signOut () {
+  return (dispatch, getState) => {
+    runSessionQuery({
+      method: 'DELETE'
+    }).then(response => {
+      dispatch(clearRemoteUser())
+    })
+  }
+}
+
+function updateLocalUser (newUser) {
+  return runSessionQuery({
+    method: 'PUT',
+    payload: newUser
+  })
 }
