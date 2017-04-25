@@ -28,21 +28,32 @@ export default class FileUpload extends Component {
     onChange: proptypes.func
   }
 
+  constructor (props) {
+    super(props)
+    this.state.dragOver = false
+  }
+
   componentWillMount() {
     this.fileInputId = getUniqueId()
   }
 
   render() {
     const {allowDrop, accept} = this.props
+    const {dragOver} = this.state
+
     const dropStyles = new Style(styles, 'container')
       .addIf('dropzone', allowDrop)
+      .addIf('dropzone-active', dragOver)
 
     return (
       <div class={dropStyles.getClasses()}>
         {allowDrop && (
           <div
-            ondrop={this.handleDrop.bind(this)} 
-            ondragover={this.handleDragOver.bind(this)}>
+            onDrop={this.handleDrop.bind(this)} 
+            onDragEnter={this.handleDrag.bind(this)}
+            onDragLeave={this.handleDrag.bind(this)}
+            onDragOver={this.handleDrag.bind(this)}
+          >
             <p>Drop files to upload</p>
           </div>
         )}
@@ -77,13 +88,14 @@ export default class FileUpload extends Component {
 
   handleDrop(event) {
     const {onChange} = this.props
-
+    this.setState({dragOver: false})
     onChange(event.dataTransfer.files[0])
 
     event.preventDefault()
   }
 
-  handleDragOver(event) {
+  handleDrag(event) {
+    this.setState({dragOver: event.type !== 'dragleave'})
     event.preventDefault()
   }
 }
