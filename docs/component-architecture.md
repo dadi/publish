@@ -216,7 +216,7 @@ App
 │ │ └─┬ NotificationCentre
 │ │   └── Notification
 │ └── Page
-├── PasswordReset
+├── PasswordResetView
 ├─┬ SignInView
 │ ├── Banner
 │ ├── Button
