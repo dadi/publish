@@ -51,6 +51,7 @@ module.exports = function (app) {
 
       return next()
     } else {
+      res.statusCode = 401
       res.write(JSON.stringify({err: 'AUTH_FAILED'}))
       res.end()
 
@@ -80,7 +81,18 @@ module.exports = function (app) {
     })(req, res, next)
   })
 
-  app.post('/session/destroy', (req, res, next) => {
+  app.put('/session', (req, res, next) => {
+    let user = req.body
+
+    console.log('--> User:', user, typeof user)
+
+    res.write(JSON.stringify({authenticated: req.isAuthenticated()}))
+    res.end()
+
+    return next()
+  })
+
+  app.del('/session', (req, res, next) => {
     req.logout()
     res.write(JSON.stringify({authenticated: req.isAuthenticated()}))
     res.end()
