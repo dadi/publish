@@ -35,7 +35,7 @@ export function loadApis () {
         collectionBundler.run().then(apiCollections => {
           const isAuthApi = auth.host === api.host && auth.port === api.port
           const mergedCollections = apiCollections.map((schema, index) => {
-            if (schema._apiBridgeError) return null
+            if (schema.apiBridgeError) return null
 
             return Object.assign({}, schema, collections[index], {
               _isAuthCollection: isAuthApi && (auth.collection === collections[index].slug)

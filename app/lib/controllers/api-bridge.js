@@ -7,7 +7,7 @@ const slugify = require(`${paths.lib.helpers}/string`).Slugify
 
 const APIBridgeController = function () {}
 
-const _createPassport = function ({host, port, clientId, secret}) {
+const createPassport = ({host, port, clientId, secret}) => {
   return passport({
     issuer: {
       uri: host,
@@ -20,12 +20,12 @@ const _createPassport = function ({host, port, clientId, secret}) {
     },
     wallet: 'file',
     walletOptions: {
-      path: `${paths.wallet}/${_generateTokenWalletFilename(host, port, clientId)}`
+      path: `${paths.wallet}/${generateTokenWalletFilename(host, port, clientId)}`
     }
   }, request)
 }
 
-const _generateTokenWalletFilename = function (host, port, clientId) {
+const generateTokenWalletFilename = (host, port, clientId) => {
   return `token.${slugify(host + port)}.${slugify(clientId)}.json`
 }
 
@@ -46,12 +46,12 @@ APIBridgeController.prototype.post = function (req, res, next) {
 
     requestObjects.forEach(requestObject => {
       const apiConfig = config.get('apis').find(api => {
-        return api._publishId === requestObject._publishId
+        return api.publishId === requestObject.publishId
       })
 
       if (!apiConfig) return
 
-      queue.push(_createPassport({
+      queue.push(createPassport({
         host: `${requestObject.uri.protocol}//${requestObject.uri.hostname}`,
         port: Number(requestObject.uri.port),
         clientId: apiConfig.credentials.clientId,
@@ -76,7 +76,7 @@ APIBridgeController.prototype.post = function (req, res, next) {
             console.log('(*) API Bridge error:', err)
 
             return Promise.resolve({
-              _apiBridgeError: true
+              apiBridgeError: true
             })
           }
 

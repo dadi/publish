@@ -59,7 +59,7 @@ const apiBridgeFactory = function ({
   }
 
   const {
-    _publishId,
+    publishId,
     host,
     port
   } = api
@@ -70,7 +70,7 @@ const apiBridgeFactory = function ({
 
   const callback = requestObject => {
     let requestObjectWithPublishId = Object.assign({}, requestObject, {
-      _publishId
+      publishId
     })
 
     if (inBundle) {
