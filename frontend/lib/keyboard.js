@@ -157,7 +157,7 @@ export class Keyboard extends Keys {
 
   keydown (event) {
     if (event.keyCode) {
-      let hasNext = this.findShortcut(event.keyCode)
+      const hasNext = this.findShortcut(event.keyCode)
       if (hasNext) {
         event.preventDefault()
       }
