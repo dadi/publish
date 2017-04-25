@@ -80,7 +80,7 @@ class DocumentEditToolbar extends Component {
   }
 
   componentDidMount() {
-    this.keyboard.on('cmd+s').do(this.saveDocument.bind(this))
+    this.keyboard.on('cmd+s').do(this.handleSave.bind(this, 'save'))
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -316,10 +316,6 @@ class DocumentEditToolbar extends Component {
   }
 
   saveDocument() {
-    if (!this.onSave) {
-      // Apply default
-      this.handleSave('save')
-    }
     const {
       collection,
       dispatch,
