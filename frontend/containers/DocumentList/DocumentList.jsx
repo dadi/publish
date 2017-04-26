@@ -396,10 +396,15 @@ class DocumentList extends Component {
     }
 
     return (
-      <div>
-        <h1>0 results</h1>
-        <p>There are no documents that match these filters</p>
-      </div>
+      <HeroMessage
+        title="No documents found."
+        subtitle="We can't find anything matching those filters."
+      >
+        <Button
+          accent="system"
+          href={buildUrl(group, collection, 'documents')}
+        >Clear filters</Button>
+      </HeroMessage>
     )
   }
 
