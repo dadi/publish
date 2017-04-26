@@ -86,6 +86,7 @@ Socket.prototype.onError = function (err) {
  * @param {Sting} room Room identifier.
  */
 Socket.prototype.setRoom = function (room) {
+  if (this.room === room) return this
   this.leaveRoom()
   this.room = room
 

@@ -102,7 +102,7 @@ class App extends Component {
       route('/sign-in')
     }
 
-    if (room && this.socket.getRoom() !== room) {
+    if (this.socket.getRoom() !== room) {
       this.socket.setRoom(room)
     }
     // TO-TO Handle leaving a room when the component changes

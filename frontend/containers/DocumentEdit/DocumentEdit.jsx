@@ -133,11 +133,15 @@ class DocumentEdit extends Component {
     this.currentCollection = currentCollection
   }
 
-  componentWillUpdate(nextProps, nextState) {
+  handleRoomChange() {
     const {state, actions, documentId} = this.props
     if (documentId && state.router.room !== documentId) {
       actions.roomChange(documentId)
     }
+  }
+
+  componentWillUpdate(nextProps, nextState) {
+    this.handleRoomChange()
   }
 
   componentDidUpdate(previousProps, previousState) {
@@ -191,6 +195,7 @@ class DocumentEdit extends Component {
     const needsFetch = !document.remote || remoteDocumentHasChanged
 
     if (isIdle && needsFetch && this.currentCollection) {
+      this.handleRoomChange()
       this.fetchDocument()
     }
   }
@@ -223,6 +228,7 @@ class DocumentEdit extends Component {
   componentWillUnmount() {
     const {actions} = this.props
     window.removeEventListener('beforeunload', this.userLeavingDocumentHandler)
+    actions.roomChange(null)
   }
 
   render() {
