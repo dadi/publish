@@ -27,7 +27,7 @@ export default function router (state = initialState, {
     case Types.ROOM_CHANGE:
       return {
         ...state,
-        room: room
+        room
       }
     default:
       return state
