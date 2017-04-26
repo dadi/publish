@@ -25,13 +25,5 @@
     border: 1px solid var(--theme-colour-data, #4A91FF);
     background-color: #e3eeff;
     box-shadow: 0 0 14px rgba(0,0,0,.1) inset;
-    -webkit-transition: box-shadow 300ms linear;
-    -ms-transition: box-shadow 300ms linear;
-    transition: box-shadow 300ms linear;
-    -webkit-transition: background-color 300ms linear;
-    -ms-transition: background-color 300ms linear;
-    transition: background-color 300ms linear;
-    -webkit-transition: border 300ms linear;
-    -ms-transition: border 300ms linear;
-    transition: border 300ms linear;
+    transition: box-shadow 300ms linear, background-color 300ms linear, border 300ms linear;
 }
