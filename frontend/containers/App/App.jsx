@@ -69,8 +69,6 @@ class App extends Component {
 
     const {state, actions} = this.props
     const previousState = previousProps.state
-    const previousPath = previousState.router.locationBeforeTransitions.pathname
-    const path = state.router.locationBeforeTransitions.pathname
     const room = previousState.router.room
 
     // State change: user has signed in
@@ -107,6 +105,7 @@ class App extends Component {
     if (room && this.socket.getRoom() !== room) {
       this.socket.setRoom(room)
     }
+    // TO-TO Handle leaving a room when the component changes
   }
 
   render() {

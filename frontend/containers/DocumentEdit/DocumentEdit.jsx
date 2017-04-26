@@ -221,6 +221,7 @@ class DocumentEdit extends Component {
   }
 
   componentWillUnmount() {
+    const {actions} = this.props
     window.removeEventListener('beforeunload', this.userLeavingDocumentHandler)
   }
 
@@ -411,6 +412,7 @@ class DocumentEdit extends Component {
   // is ready to be sent to the store.
   handleFieldChange(fieldName, value, persistInLocalStorage = true) {
     const {
+      actions,
       collection,
       documentId,
       group
@@ -426,11 +428,13 @@ class DocumentEdit extends Component {
   // Handles the callback that fires whenever there's a new validation error
   // in a field or when a validation error has been cleared.
   handleFieldError(fieldName, hasError, value) {
+    const {actions} = this.props
     actions.setFieldErrorStatus(fieldName, value, hasError)
   }
 
   handleUserLeavingDocument() {
     const {
+      actions,
       documentId,
       group
     } = this.props
