@@ -1,9 +1,8 @@
 import * as Types from 'actions/actionTypes'
 
-export function locationChange (locationBeforeTransitions, params, action, component) {
+export function locationChange (locationBeforeTransitions, params, action) {
   return {
     action,
-    component,
     locationBeforeTransitions,
     params,
     type: Types.LOCATION_CHANGE
