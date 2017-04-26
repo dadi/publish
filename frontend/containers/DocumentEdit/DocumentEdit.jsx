@@ -35,6 +35,12 @@ import SubNavItem from 'components/SubNavItem/SubNavItem'
  */
 class DocumentEdit extends Component {
   static propTypes = {
+
+    /**
+      * The global actions object.
+    */
+    actions: proptypes.object,
+
     /**
      * The name of the collection currently being listed.
      */
@@ -135,6 +141,7 @@ class DocumentEdit extends Component {
 
   handleRoomChange() {
     const {state, actions, documentId} = this.props
+
     if (documentId && state.router.room !== documentId) {
       actions.roomChange(documentId)
     }
@@ -146,11 +153,11 @@ class DocumentEdit extends Component {
 
   componentDidUpdate(previousProps, previousState) {
     const {
+      actions,
       collection,
       documentId,
       group,
-      state,
-      actions
+      state
     } = this.props
     const document = state.document
     const previousDocument = previousProps.state.document
@@ -227,6 +234,7 @@ class DocumentEdit extends Component {
 
   componentWillUnmount() {
     const {actions} = this.props
+    
     window.removeEventListener('beforeunload', this.userLeavingDocumentHandler)
     actions.roomChange(null)
   }
@@ -339,11 +347,11 @@ class DocumentEdit extends Component {
   // Fetches a document from the remote API
   fetchDocument() {
     const {
+      actions,
       collection,
       documentId,
       group,
-      state,
-      actions
+      state
     } = this.props
 
     // As far as the fetch method is concerned, we're only interested in the

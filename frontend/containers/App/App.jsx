@@ -39,8 +39,9 @@ class App extends Component {
 
   handleUserListChange (data) {
     const {state, actions} = this.props
+
     // Store connected users in state.
-    // Filter current user
+    // Filter current user.
     if (state.user && state.user.remote) {
       actions.setDocumentPeers(data.body.users
         .filter(socketUser => socketUser.handle !== state.user.remote.handle))
@@ -66,7 +67,6 @@ class App extends Component {
   }
 
   componentDidUpdate(previousProps) {
-
     const {state, actions} = this.props
     const previousState = previousProps.state
     const room = previousState.router.room

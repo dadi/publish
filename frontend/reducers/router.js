@@ -21,7 +21,7 @@ export default function router (state = initialState, {
       return {
         ...state,
         action: action,
-        locationBeforeTransitions: locationBeforeTransitions,
+        locationBeforeTransitions,
         params: params || {}
       }
     case Types.ROOM_CHANGE:
