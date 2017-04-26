@@ -5,14 +5,11 @@ import {connect} from 'socketcluster-client'
 /**
  * @constructor
  */
-const Socket = function (port) {
-  this.options = {
-    port
-  }
+const Socket = function () {
   this.queuedTasks = []
   this.listeners = {}
   this.onConnectListeners = []
-  this.socket = connect(this.options)
+  this.socket = connect({port: location.port || 80})
   this.registerListeners()
 
   return this
@@ -89,6 +86,7 @@ Socket.prototype.onError = function (err) {
  * @param {Sting} room Room identifier.
  */
 Socket.prototype.setRoom = function (room) {
+  if (this.room === room) return this
   this.leaveRoom()
   this.room = room
 
@@ -186,8 +184,8 @@ Socket.prototype.onRoomSubscribeFail = function (err) {
   return this
 }
 
-module.exports = function (port) {
-  return new Socket(port)
+module.exports = function () {
+  return new Socket()
 }
 
 module.Socket = Socket

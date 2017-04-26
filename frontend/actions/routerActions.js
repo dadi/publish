@@ -8,3 +8,10 @@ export function locationChange (locationBeforeTransitions, params, action) {
     type: Types.LOCATION_CHANGE
   }
 }
+
+export function roomChange (room) {
+  return {
+    room,
+    type: Types.ROOM_CHANGE
+  }
+}

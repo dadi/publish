@@ -1,26 +1,33 @@
 'use strict'
 
-import * as types from 'actions/actionTypes'
+import * as Types from 'actions/actionTypes'
 
 const initialState = {
   action: null,
   locationBeforeTransitions: null,
-  params: {}
+  params: {},
+  room: null
 }
 
 export default function router (state = initialState, {
   type,
   locationBeforeTransitions,
   params,
-  action
+  action,
+  room
 } = {}) {
   switch (type) {
-    case types.LOCATION_CHANGE:
+    case Types.LOCATION_CHANGE:
       return {
         ...state,
         action: action,
-        locationBeforeTransitions: locationBeforeTransitions,
+        locationBeforeTransitions,
         params: params || {}
+      }
+    case Types.ROOM_CHANGE:
+      return {
+        ...state,
+        room
       }
     default:
       return state
