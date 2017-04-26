@@ -55,3 +55,4 @@ export const USER_LEAVING_DOCUMENT = 'USER_LEAVING_DOCUMENT'
 // Router
 //
 export const LOCATION_CHANGE = 'LOCATION_CHANGE'
+export const ROOM_CHANGE = 'ROOM_CHANGE'

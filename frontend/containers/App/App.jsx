@@ -1,7 +1,8 @@
 import {Component, h} from 'preact'
-import {Router, route} from 'preact-router'
+import {Router, route, subscribers} from 'preact-router'
 import {connect} from 'preact-redux'
 import {bindActionCreators} from 'redux'
+import Socket from 'lib/socket'
 
 import * as userActions from 'actions/userActions'
 import * as apiActions from 'actions/apiActions'
@@ -23,11 +24,29 @@ import SignOutView from 'views/SignOutView/SignOutView'
 import ProfileEditView from 'views/ProfileEditView/ProfileEditView'
 
 import {connectHelper, debounce, isEmpty, slugify, throttle} from 'lib/util'
-import Socket from 'lib/socket'
 import ConnectionMonitor from 'lib/status'
 import apiBridgeClient from 'lib/api-bridge-client'
 
 class App extends Component {
+
+  constructor (props) {
+    super(props)
+    const {actions, state} = this.props
+
+    this.socket = new Socket()
+      .on('userListChange', this.handleUserListChange.bind(this))
+  }
+
+  handleUserListChange (data) {
+    const {state, actions} = this.props
+    // Store connected users in state.
+    // Filter current user
+    if (state.user && state.user.remote) {
+      actions.setDocumentPeers(data.body.users
+        .filter(socketUser => socketUser.handle !== state.user.remote.handle))
+    }
+  }
+
   componentWillMount() {
     const {actions} = this.props
 
@@ -47,10 +66,12 @@ class App extends Component {
   }
 
   componentDidUpdate(previousProps) {
+
     const {state, actions} = this.props
     const previousState = previousProps.state
     const previousPath = previousState.router.locationBeforeTransitions.pathname
     const path = state.router.locationBeforeTransitions.pathname
+    const room = previousState.router.room
 
     // State change: user has signed in
     if (!previousState.user.remote && state.user.remote) {
@@ -64,10 +85,12 @@ class App extends Component {
       route('/sign-in')
     }
 
+    if (previousState.user.remote !== this.socket.getUser()) {
+      this.socket.setUser(previousState.user.remote)
+    }
+
     // State change: app now has config
     if (!previousState.app.config && state.app.config) {
-      // Start socket logic
-      this.initialiseSocket(state.app.config)
 
       actions.loadApis()
     }
@@ -81,8 +104,8 @@ class App extends Component {
       route('/sign-in')
     }
 
-    if (this.socket && this.socket.getUser() && (this.socket.getRoom() !== path)) {
-      this.socket.setRoom(path)
+    if (room && this.socket.getRoom() !== room) {
+      this.socket.setRoom(room)
     }
   }
 
@@ -127,25 +150,14 @@ class App extends Component {
       </Router>
     )
   }
-
-  initialiseSocket(config) {
-    const {actions, state} = this.props
-    const pathname = state.router.locationBeforeTransitions.pathname
-    const user = state.user.remote
-
-    this.socket = new Socket(config.server.port)
-      .on('userListChange', data => {
-        // Store connected users in state.
-        // Filter current user
-        actions.setDocumentPeers(data.body.users
-          .filter(socketUser => socketUser.handle !== user.handle))
-      })
-      .setUser(user)
-      .setRoom(pathname)
-  }
 }
 
 export default connectHelper(
   state => state,
-  dispatch => bindActionCreators({...userActions, ...apiActions, ...appActions, ...documentActions}, dispatch)
+  dispatch => bindActionCreators({
+    ...userActions, 
+    ...apiActions, 
+    ...appActions, 
+    ...documentActions
+  }, dispatch)
 )(App)

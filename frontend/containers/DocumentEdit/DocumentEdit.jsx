@@ -13,6 +13,7 @@ import * as Constants from 'lib/constants'
 import * as appActions from 'actions/appActions'
 import * as documentActions from 'actions/documentActions'
 import * as documentsActions from 'actions/documentsActions'
+import * as routerActions from 'actions/routerActions'
 import * as fieldComponents from 'lib/field-components'
 
 import APIBridge from 'lib/api-bridge-client'
@@ -29,12 +30,6 @@ import FieldString from 'components/FieldString/FieldString'
 import HeroMessage from 'components/HeroMessage/HeroMessage'
 import SubNavItem from 'components/SubNavItem/SubNavItem'
 
-const actions = {
-  ...appActions,
-  ...documentActions,
-  ...documentsActions
-}
-
 /**
  * The interface for editing a document.
  */
@@ -44,11 +39,6 @@ class DocumentEdit extends Component {
      * The name of the collection currently being listed.
      */
     collection: proptypes.string,
-
-    /**
-     * The global actions dispatcher.
-     */
-    dispatch: proptypes.func,
 
     /**
      * The ID of the document being edited.
@@ -143,13 +133,20 @@ class DocumentEdit extends Component {
     this.currentCollection = currentCollection
   }
 
+  componentWillUpdate(nextProps, nextState) {
+    const {state, actions, documentId} = this.props
+    if (documentId && state.router.room !== documentId) {
+      actions.roomChange(documentId)
+    }
+  }
+
   componentDidUpdate(previousProps, previousState) {
     const {
       collection,
-      dispatch,
       documentId,
       group,
-      state
+      state,
+      actions
     } = this.props
     const document = state.document
     const previousDocument = previousProps.state.document
@@ -160,11 +157,11 @@ class DocumentEdit extends Component {
       const notification = {
         message: 'You have unsaved changes',
         options: {
-          'Discard': this.handleDiscardUnsavedChanges.bind(this)
+          'Discard': actions.discardUnsavedChanges()
         }
       }
 
-      dispatch(actions.setNotification(notification))
+      actions.setNotification(notification)
     }
 
     // If there's an error, stop here.
@@ -176,7 +173,7 @@ class DocumentEdit extends Component {
     if (!documentId) {
       // If there isn't a document in `document.local`, we start a new one.
       if (!document.local && this.currentCollection) {
-        dispatch(actions.startNewDocument())
+        actions.startNewDocument()
       }
 
       return
@@ -336,10 +333,10 @@ class DocumentEdit extends Component {
   fetchDocument() {
     const {
       collection,
-      dispatch,
       documentId,
       group,
-      state
+      state,
+      actions
     } = this.props
 
     // As far as the fetch method is concerned, we're only interested in the
@@ -358,7 +355,7 @@ class DocumentEdit extends Component {
       fields: collectionFields
     }
 
-    dispatch(actions.fetchDocument(query))
+    actions.fetchDocument(query)
 
     this.hasFetched = true
   }
@@ -410,49 +407,39 @@ class DocumentEdit extends Component {
     }
   }
 
-  handleDiscardUnsavedChanges() {
-    const {dispatch} = this.props
-
-    dispatch(actions.discardUnsavedChanges())
-  }
-
   // Handles the callback that fires whenever a field changes and the new value
   // is ready to be sent to the store.
   handleFieldChange(fieldName, value, persistInLocalStorage = true) {
     const {
       collection,
-      dispatch,
       documentId,
       group
     } = this.props
 
-    dispatch(actions.updateLocalDocument({
+    actions.updateLocalDocument({
       [fieldName]: value
     }, {
       persistInLocalStorage
-    }))
+    })
   }
 
   // Handles the callback that fires whenever there's a new validation error
   // in a field or when a validation error has been cleared.
   handleFieldError(fieldName, hasError, value) {
-    const {dispatch} = this.props
-
-    dispatch(actions.setFieldErrorStatus(fieldName, value, hasError))
+    actions.setFieldErrorStatus(fieldName, value, hasError)
   }
 
   handleUserLeavingDocument() {
     const {
-      dispatch,
       documentId,
       group
     } = this.props
 
-    dispatch(actions.registerUserLeavingDocument({
+    actions.registerUserLeavingDocument({
       collection: this.currentCollection,
       documentId,
       group
-    }))
+    })
   }
 
   // Renders a field, deciding which component to use based on the field type
@@ -512,6 +499,13 @@ export default connectHelper(
     api: state.api,
     app: state.app,
     document: state.document,
-    user: state.user
-  })
+    user: state.user,
+    router: state.router
+  }),
+  dispatch => bindActionCreators({
+    ...appActions,
+    ...documentActions,
+    ...documentsActions,
+    ...routerActions
+  }, dispatch)
 )(DocumentEdit)
