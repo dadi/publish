@@ -22,7 +22,6 @@ import PasswordResetView from 'views/PasswordResetView/PasswordResetView'
 import SignInView from 'views/SignInView/SignInView'
 import SignOutView from 'views/SignOutView/SignOutView'
 import ProfileEditView from 'views/ProfileEditView/ProfileEditView'
-import View from 'views/View/View'
 
 import {connectHelper, debounce, isEmpty, slugify, throttle} from 'lib/util'
 import ConnectionMonitor from 'lib/status'
@@ -84,10 +83,6 @@ class App extends Component {
 
       actions.loadApis()
     }
-
-    // State change: user has signed out or session validation has failed.
-    const userWasIdle = previousProps.state.user.status === Constants.STATUS_IDLE
-    const userHasFailed = state.user.status === Constants.STATUS_FAILED
 
     if (this.socket.getRoom() !== room) {
       this.socket.setRoom(room)
