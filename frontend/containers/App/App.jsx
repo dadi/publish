@@ -1,5 +1,5 @@
 import {Component, h} from 'preact'
-import {Router, route, subscribers} from 'preact-router'
+import {Router, route} from 'preact-router'
 import {connect} from 'preact-redux'
 import {bindActionCreators} from 'redux'
 import Socket from 'lib/socket'
@@ -22,6 +22,7 @@ import PasswordResetView from 'views/PasswordResetView/PasswordResetView'
 import SignInView from 'views/SignInView/SignInView'
 import SignOutView from 'views/SignOutView/SignOutView'
 import ProfileEditView from 'views/ProfileEditView/ProfileEditView'
+import View from 'containers/View/View'
 
 import {connectHelper, debounce, isEmpty, slugify, throttle} from 'lib/util'
 import ConnectionMonitor from 'lib/status'
@@ -78,15 +79,6 @@ class App extends Component {
       actions.loadAppConfig()
     }
 
-    // State change: user has signed out
-    if (previousState.user.remote && !state.user.remote) {
-      route('/sign-in')
-    }
-
-    if (previousState.user.remote !== this.socket.getUser()) {
-      this.socket.setUser(previousState.user.remote)
-    }
-
     // State change: app now has config
     if (!previousState.app.config && state.app.config) {
 
@@ -96,11 +88,6 @@ class App extends Component {
     // State change: user has signed out or session validation has failed.
     const userWasIdle = previousProps.state.user.status === Constants.STATUS_IDLE
     const userHasFailed = state.user.status === Constants.STATUS_FAILED
-
-    if ((previousState.user.remote && !state.user.remote) ||
-        (userWasIdle && userHasFailed)) {
-      route('/sign-in')
-    }
 
     if (this.socket.getRoom() !== room) {
       this.socket.setRoom(room)
@@ -171,9 +158,9 @@ class App extends Component {
 export default connectHelper(
   state => state,
   dispatch => bindActionCreators({
-    ...userActions, 
-    ...apiActions, 
-    ...appActions, 
-    ...documentActions
+    ...apiActions,
+    ...appActions,
+    ...documentActions,
+    ...userActions
   }, dispatch)
 )(App)
