@@ -45,7 +45,7 @@
   "homepage": "https://github.com/dadi/publish#readme",
   "dependencies": {
     "@dadi/api-wrapper": "^1.4.0",
-    "@dadi/api-wrapper-core": "^1.2.0",
+    "@dadi/api-wrapper-core": "dadi/api-wrapper-core#feat/media-endpoint",
     "@dadi/logger": "^1.1.4",
     "@dadi/passport": "^1.2.0",
     "aws-sdk": "^2.19.0",

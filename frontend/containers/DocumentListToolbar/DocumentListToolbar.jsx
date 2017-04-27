@@ -51,17 +51,6 @@ class DocumentListToolbar extends Component {
     onBuildBaseUrl: proptypes.func,
 
     /**
-     * A callback to be fired when the "Apply" button on the bulk actions
-     * control is clicked.
-     */
-    onBulkAction: proptypes.func,
-
-    /**
-     * A callback to be fired when a reference document has been selected.
-     */
-    onReferenceDocumentSelect: proptypes.func,
-
-    /**
      * The name of a reference field currently being edited.
      */
     referencedField: proptypes.string,
@@ -105,7 +94,6 @@ class DocumentListToolbar extends Component {
       collection,
       group,
       onBuildBaseUrl,
-      onBulkAction,
       referencedField,
       state
     } = this.props
@@ -272,11 +260,6 @@ class DocumentListToolbar extends Component {
       referencedField,
       state
     } = this.props
-    const referencedCollection = getCollectionForUrlParams(state.api.apis, {
-      collection,
-      group,
-      referencedField
-    })
     const documentsList = state.documents.list.results
 
     // We might want to change this when we allow a field to reference multiple

@@ -105,15 +105,9 @@ export function getCollectionForUrlParams (apis, {
       fieldSchema.settings.collection
 
     if (referencedCollection) {
-      const mediaCollection = api.media && api.media.find(mediaCollection => {
-        return mediaCollection.slug === referencedCollection
-      })
-
       // Is this field referencing a media collection?
-      if (mediaCollection) {
-        collectionMatch = Object.assign({}, mediaCollection, {
-          isMediaCollection: true
-        })
+      if (referencedCollection === Constants.MEDIA_COLLECTION) {
+        collectionMatch = Constants.MEDIA_COLLECTION
       } else {
         collectionMatch = api.collections.find(collection => {
           return collection.slug === referencedCollection

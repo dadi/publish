@@ -51,11 +51,22 @@ export function fetchDocuments ({
     const bundler = apiBridgeClient.getBundler()
 
     // This is the main one, where we retrieve the list of documents.
-    let parentQuery = apiBridgeClient({
-      api,
-      collection,
-      inBundle: true
-    }).goToPage(page)
+    let parentQuery
+
+    if (collection === Constants.MEDIA_COLLECTION) {
+      parentQuery = apiBridgeClient({
+        api,
+        inBundle: true
+      }).inMedia()
+    } else {
+      parentQuery = apiBridgeClient({
+        api,
+        collection,
+        inBundle: true
+      })
+    }
+
+    parentQuery = parentQuery.goToPage(page)
       .sortBy(sortBy || 'createdAt', sortOrder || 'desc')
       .where(filters)
       .find()
