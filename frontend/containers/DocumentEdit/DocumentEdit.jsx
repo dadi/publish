@@ -21,13 +21,7 @@ import {buildUrl, createRoute} from 'lib/router'
 import {connectHelper, filterHiddenFields, slugify, Case} from 'lib/util'
 import {getApiForUrlParams, getCollectionForUrlParams} from 'lib/collection-lookup'
 
-import Button from 'components/Button/Button'
 import ErrorMessage from 'components/ErrorMessage/ErrorMessage'
-import FieldImage from 'components/FieldImage/FieldImage'
-import FieldBoolean from 'components/FieldBoolean/FieldBoolean'
-import FieldReference from 'components/FieldReference/FieldReference'
-import FieldString from 'components/FieldString/FieldString'
-import HeroMessage from 'components/HeroMessage/HeroMessage'
 import SubNavItem from 'components/SubNavItem/SubNavItem'
 
 /**
