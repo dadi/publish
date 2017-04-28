@@ -52,6 +52,8 @@ class SignInView extends Component {
 
     setPageTitle('Sign-in')
 
+    setPageTitle('Sign-in')
+
     return (
       <div class={styles.wrapper}>
         <div class={styles.overlay}>
