@@ -43,3 +43,17 @@
     width: 50%;
   }
 }
+
+.link {
+  display: inline-block;
+  color: var(--theme-colour-secondary, #ffffff);
+  line-height: 1.25;
+  font-family: var(--theme-font-family, sans-serif);
+  font-size: 15px;
+  text-decoration: none;
+  margin-left: 13px;
+}
+
+.link:hover {
+  color: var(--theme-colour-system, #ffbf0d);
+}
