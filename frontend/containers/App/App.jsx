@@ -1,9 +1,5 @@
 import {Component, h} from 'preact'
-<<<<<<< HEAD
 import {Router, route, subscribers} from 'preact-router'
-=======
-import {Route, Router, route} from 'preact-router'
->>>>>>> feat: password reset view (WIP)
 import {connect} from 'preact-redux'
 import {bindActionCreators} from 'redux'
 import Socket from 'lib/socket'
@@ -212,16 +208,9 @@ class App extends Component {
 export default connectHelper(
   state => state,
   dispatch => bindActionCreators({
-<<<<<<< HEAD
-    ...userActions, 
-    ...apiActions, 
-    ...appActions, 
-    ...documentActions
-=======
     ...apiActions,
     ...appActions,
     ...documentActions,
     ...userActions
->>>>>>> feat: password reset view (WIP)
   }, dispatch)
 )(App)
