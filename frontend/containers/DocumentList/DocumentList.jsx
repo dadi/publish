@@ -99,7 +99,7 @@ class DocumentList extends Component {
       referencedField,
       state
     } = this.props
-    const {list, status} = state.documents
+    const {list} = state.documents
     const pathKey = prevProps.state.router.locationBeforeTransitions.key
     const previousPathKey = state.router.locationBeforeTransitions.key
     const historyKeyMatch = pathKey === previousPathKey
@@ -119,18 +119,10 @@ class DocumentList extends Component {
       }
     }
 
-    // State check: reject when missing config, session, or apis
-    if (!state.app.config || !state.api.apis.length || !state.user) return
-
     // State check: reject when path matches and document list loaded
     if (list && historyKeyMatch) return
 
-    // State check: reject when documents are still loading
-    if (status === Constants.STATUS_LOADING) return
-
-    if (status === Constants.STATUS_IDLE) {
-      this.fetchDocuments()  
-    }
+    this.checkStatusAndLoad()
   }
 
   render() {
@@ -182,6 +174,22 @@ class DocumentList extends Component {
     }
 
     return this.renderDocumentList()
+  }
+
+  componentWillMount() {
+    this.checkStatusAndLoad()
+  }
+
+  checkStatusAndLoad() {
+    const {state} = this.props
+    const {list, status} = state.documents
+
+    // State check: reject when missing config, session, or apis
+    if (!state.app.config || !state.api.apis.length || !state.user) return
+
+    if (status === Constants.STATUS_IDLE) {
+      this.fetchDocuments()  
+    }
   }
 
   componentWillUnmount() {
