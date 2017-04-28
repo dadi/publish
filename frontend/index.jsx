@@ -20,7 +20,8 @@ import App from 'containers/App/App'
 
 const browserHistory = createHistory()
 const reducer = combineReducers(reducers)
-const store = compose(applyMiddleware(thunk))(createStore)(enableBatching(reducer))
+const storeComposer = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose
+const store = storeComposer(applyMiddleware(thunk))(createStore)(enableBatching(reducer))
 const history = syncRouteWithStore(browserHistory, store)
 
 render((
