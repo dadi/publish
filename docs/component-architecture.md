@@ -216,103 +216,108 @@ App
 │ │ └─┬ NotificationCentre
 │ │   └── Notification
 │ └── Page
-├── PasswordResetView
+├─┬ PasswordResetView
+│ ├── Banner
+│ ├── Button
+│ ├── Label
+│ └── TextInput
 ├─┬ SignInView
 │ ├── Banner
 │ ├── Button
 │ ├── Label
 │ └── TextInput
 ├── SignOutView
-└─┬ ProfileEditView
-  └─┬ ProfileEdit
-    ├─┬ DocumentEdit
-    │ ├── Button
-    │ ├─┬ ErrorMessage
-    │ │ ├── Button
-    │ │ └── HeroMessage
-    │ ├─┬ FieldImage
-    │ │ ├─┬ FieldImageEdit
-    │ │ │ ├── Button
-    │ │ │ ├─┬ FileUpload
-    │ │ │ │ └── Button
-    │ │ │ ├── Label
-    │ │ │ └── LazyLoader
-    │ │ └── FieldImageReferenceSelect
-    │ ├─┬ FieldBoolean
-    │ │ ├─┬ FieldBooleanEdit
-    │ │ │ ├── Checkbox
-    │ │ │ └── Label
-    │ │ └── FieldBooleanList
-    │ ├─┬ FieldReference
-    │ │ └─┬ FieldReferenceEdit
-    │ │   ├── Button
-    │ │   ├── Label
-    │ │   └── TextInput
-    │ ├─┬ FieldString
-    │ │ ├─┬ FieldStringEdit
-    │ │ │ ├── Label
-    │ │ │ └── TextInput
-    │ │ └── FieldStringList
-    │ ├── HeroMessage
-    │ └── SubNavItem
-    ├─┬ DocumentList
-    │ ├── Button
-    │ ├─┬ ErrorMessage
-    │ │ ├── Button
-    │ │ └── HeroMessage
-    │ ├── HeroMessage
-    │ └─┬ SyncTable
-    │   ├── Table
-    │   ├─┬ TableHead
-    │   │ └─┬ TableHeadCell
-    │   │   └── IconArrow
-    │   ├─┬ TableHeadCell
-    │   │ └── IconArrow
-    │   ├─┬ TableRow
-    │   │ └── TableRowCell
-    │   └── TableRowCell
-    ├─┬ DocumentListToolbar
-    │ ├── Button
-    │ ├─┬ ButtonWithPrompt
-    │ │ ├── Button
-    │ │ └─┬ Prompt
-    │ │   └── Button
-    │ ├── Checkbox
-    │ ├─┬ Paginator
-    │ │ └── Button
-    │ ├── Toolbar
-    │ └─┬ ToolbarTextInput
-    │   └── TextInput
-    ├─┬ Header
-    │ ├─┬ CollectionNav
-    │ │ └─┬ Nav
-    │ │   ├── Dropdown
-    │ │   ├── DropdownItem
-    │ │   └── NavItem
-    │ ├── IconBurger
-    │ └── IconCross
-    ├─┬ Main
-    │ ├── LoadingBar
-    │ └─┬ NotificationCentre
-    │   └── Notification
-    ├── Page
-    ├─┬ ProfileEditToolbar
-    │ ├── Button
-    │ ├─┬ ButtonWithOptions
-    │ │ ├── Button
-    │ │ ├── Dropdown
-    │ │ ├── DropdownItem
-    │ │ └── IconArrow
-    │ ├─┬ ButtonWithPrompt
-    │ │ ├── Button
-    │ │ └─┬ Prompt
-    │ │   └── Button
-    │ ├── DateTime
-    │ ├─┬ Peer
-    │ │ └── Button
-    │ └── Toolbar
-    ├─┬ ReferencedDocumentHeader
-    │ └── Button
-    └── SubNavItem
+├─┬ ProfileEditView
+│ └─┬ ProfileEdit
+│   ├─┬ DocumentEdit
+│   │ ├── Button
+│   │ ├─┬ ErrorMessage
+│   │ │ ├── Button
+│   │ │ └── HeroMessage
+│   │ ├─┬ FieldImage
+│   │ │ ├─┬ FieldImageEdit
+│   │ │ │ ├── Button
+│   │ │ │ ├─┬ FileUpload
+│   │ │ │ │ └── Button
+│   │ │ │ ├── Label
+│   │ │ │ └── LazyLoader
+│   │ │ └── FieldImageReferenceSelect
+│   │ ├─┬ FieldBoolean
+│   │ │ ├─┬ FieldBooleanEdit
+│   │ │ │ ├── Checkbox
+│   │ │ │ └── Label
+│   │ │ └── FieldBooleanList
+│   │ ├─┬ FieldReference
+│   │ │ └─┬ FieldReferenceEdit
+│   │ │   ├── Button
+│   │ │   ├── Label
+│   │ │   └── TextInput
+│   │ ├─┬ FieldString
+│   │ │ ├─┬ FieldStringEdit
+│   │ │ │ ├── Label
+│   │ │ │ └── TextInput
+│   │ │ └── FieldStringList
+│   │ ├── HeroMessage
+│   │ └── SubNavItem
+│   ├─┬ DocumentList
+│   │ ├── Button
+│   │ ├─┬ ErrorMessage
+│   │ │ ├── Button
+│   │ │ └── HeroMessage
+│   │ ├── HeroMessage
+│   │ └─┬ SyncTable
+│   │   ├── Table
+│   │   ├─┬ TableHead
+│   │   │ └─┬ TableHeadCell
+│   │   │   └── IconArrow
+│   │   ├─┬ TableHeadCell
+│   │   │ └── IconArrow
+│   │   ├─┬ TableRow
+│   │   │ └── TableRowCell
+│   │   └── TableRowCell
+│   ├─┬ DocumentListToolbar
+│   │ ├── Button
+│   │ ├─┬ ButtonWithPrompt
+│   │ │ ├── Button
+│   │ │ └─┬ Prompt
+│   │ │   └── Button
+│   │ ├── Checkbox
+│   │ ├─┬ Paginator
+│   │ │ └── Button
+│   │ ├── Toolbar
+│   │ └─┬ ToolbarTextInput
+│   │   └── TextInput
+│   ├─┬ Header
+│   │ ├─┬ CollectionNav
+│   │ │ └─┬ Nav
+│   │ │   ├── Dropdown
+│   │ │   ├── DropdownItem
+│   │ │   └── NavItem
+│   │ ├── IconBurger
+│   │ └── IconCross
+│   ├─┬ Main
+│   │ ├── LoadingBar
+│   │ └─┬ NotificationCentre
+│   │   └── Notification
+│   ├── Page
+│   ├─┬ ProfileEditToolbar
+│   │ ├── Button
+│   │ ├─┬ ButtonWithOptions
+│   │ │ ├── Button
+│   │ │ ├── Dropdown
+│   │ │ ├── DropdownItem
+│   │ │ └── IconArrow
+│   │ ├─┬ ButtonWithPrompt
+│   │ │ ├── Button
+│   │ │ └─┬ Prompt
+│   │ │   └── Button
+│   │ ├── DateTime
+│   │ ├─┬ Peer
+│   │ │ └── Button
+│   │ └── Toolbar
+│   ├─┬ ReferencedDocumentHeader
+│   │ └── Button
+│   └── SubNavItem
+└── View
 
 ```
