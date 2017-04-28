@@ -122,7 +122,7 @@ class DocumentList extends Component {
     // State check: reject when path matches and document list loaded
     if (list && historyKeyMatch) return
 
-    this.checkStatusAndLoad()
+    this.checkStatusAndFetch()
   }
 
   render() {
@@ -177,10 +177,10 @@ class DocumentList extends Component {
   }
 
   componentWillMount() {
-    this.checkStatusAndLoad()
+    this.checkStatusAndFetch()
   }
 
-  checkStatusAndLoad() {
+  checkStatusAndFetch() {
     const {state} = this.props
     const {list, status} = state.documents
 
