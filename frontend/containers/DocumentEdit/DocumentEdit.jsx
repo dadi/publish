@@ -168,7 +168,7 @@ class DocumentEdit extends Component {
       const notification = {
         message: 'You have unsaved changes',
         options: {
-          'Discard': actions.discardUnsavedChanges()
+          'Discard': actions.discardUnsavedChanges
         }
       }
 
