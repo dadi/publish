@@ -7,12 +7,6 @@ import * as documentActions from './documentActions'
 import {getApiForUrlParams, getCollectionForUrlParams} from 'lib/collection-lookup'
 import apiBridgeClient from 'lib/api-bridge-client'
 
-export function clearRemoteUser () {
-  return {
-    type: Types.CLEAR_REMOTE_USER
-  }
-}
-
 export function loadUserFromSession () {
   return (dispatch, getState) => {
     runSessionQuery().then(user => {
@@ -154,7 +148,9 @@ export function signOut () {
     runSessionQuery({
       method: 'DELETE'
     }).then(response => {
-      dispatch(clearRemoteUser())
+      dispatch({
+        type: Types.SIGN_OUT
+      })
     })
   }
 }

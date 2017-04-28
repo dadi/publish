@@ -12,10 +12,6 @@ const initialState = {
 export default function user (state = initialState, action = {}) {
   switch (action.type) {
 
-    // Action: clear user
-    case Types.CLEAR_REMOTE_USER:
-      return initialState
-
     // Action: register failed sign-in attempt
     case Types.REGISTER_FAILED_SIGN_IN:
       return {
@@ -39,6 +35,10 @@ export default function user (state = initialState, action = {}) {
         ...state,
         status: action.status
       }
+
+    // Action: clear user
+    case Types.SIGN_OUT:
+      return initialState
 
     default:
       return state

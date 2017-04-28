@@ -35,21 +35,6 @@ determined by the view.
 - type: `func`
 
 
-### `onBulkAction`
-
-A callback to be fired when the "Apply" button on the bulk actions
-control is clicked.
-
-- type: `func`
-
-
-### `onReferenceDocumentSelect`
-
-A callback to be fired when a reference document has been selected.
-
-- type: `func`
-
-
 ### `referencedField`
 
 The name of a reference field currently being edited.

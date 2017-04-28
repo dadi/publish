@@ -6,18 +6,18 @@ The interface for editing a document.
 Props
 -----
 
+### `actions`
+
+The global actions object.
+
+- type: `object`
+
+
 ### `collection`
 
 The name of the collection currently being listed.
 
 - type: `string`
-
-
-### `dispatch`
-
-The global actions dispatcher.
-
-- type: `func`
 
 
 ### `documentId`

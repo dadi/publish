@@ -129,13 +129,6 @@ export function saveDocument ({api, collection, document, documentId}) {
       if (!fieldSchema) return
 
       const referencedCollection = fieldSchema.settings && fieldSchema.settings.collection
-      const referencedCollectionSchema = referencedCollection &&
-        api.collections.find(collection => {
-          return collection.name === referencedCollection
-        })
-
-      // If the referenced collection doesn't exist, there's nothing we can do.
-      if (!referencedCollectionSchema) return
 
       // We're only interested in the field if its value is truthy. If it's
       // null, it's good as it is.
@@ -143,10 +136,7 @@ export function saveDocument ({api, collection, document, documentId}) {
         const referencedDocument = payload[field]
 
         // Is this a reference to a media collection?
-        const isMediaDocument = referencedCollectionSchema.settings &&
-          referencedCollectionSchema.settings.type === 'media'
-
-        if (isMediaDocument) {
+        if (referencedCollection === Constants.MEDIA_COLLECTION) {
           const mediaDocument = payload[field]
 
           // If this is an existing media item, we simply grab its ID.
@@ -157,9 +147,8 @@ export function saveDocument ({api, collection, document, documentId}) {
             referenceBundler.add(
               apiBridgeClient({
                 api,
-                collection: referencedCollectionSchema,
                 inBundle: true
-              }).getSignedUrl({
+              }).inMedia().getSignedUrl({
                 contentLength: mediaDocument.contentLength,
                 fileName: mediaDocument.fileName,
                 mimetype: mediaDocument.mimetype
@@ -172,12 +161,20 @@ export function saveDocument ({api, collection, document, documentId}) {
             })
           }
         } else {
+          const referencedCollectionSchema = referencedCollection &&
+            api.collections.find(collection => {
+              return collection.name === referencedCollection
+            })
+
+          // If the referenced collection doesn't exist, there's nothing we can do.
+          if (!referencedCollectionSchema) return
+
           // The document already exists, we need to update it.
           if (referencedDocument._id) {
             referenceBundler.add(
               apiBridgeClient({
                 api,
-                collection: referencedCollection,
+                collection: referencedCollectionSchema,
                 inBundle: true
               }).whereFieldIsEqualTo('_id', referencedDocument._id)
                 .update(referencedDocument)
