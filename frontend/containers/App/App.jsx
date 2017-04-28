@@ -113,6 +113,7 @@ class App extends Component {
     const {authenticate} = event.current.attributes
     const {user} = state
     const notAuthenticated = user.status === Constants.STATUS_FAILED
+    
     if (authenticate && notAuthenticated) {
        route('/sign-in')
 
