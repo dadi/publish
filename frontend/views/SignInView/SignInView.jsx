@@ -48,6 +48,7 @@ class SignInView extends Component {
 
   render() {
     const {state, actions} = this.props
+    const hasConnectionIssues = state.app.networkStatus !== Constants.NETWORK_OK
 
     return (
       <div class={styles.wrapper}>
@@ -89,6 +90,7 @@ class SignInView extends Component {
 
               <Button
                 accent="system"
+                disabled={hasConnectionIssues}
                 type="submit"
               >Sign In</Button>
             </form>
@@ -116,7 +118,8 @@ class SignInView extends Component {
 
 export default connectHelper(
   state => ({
-    user: state.user
+    user: state.user,
+    app: state.app
   }),
   dispatch => bindActionCreators(userActions, dispatch)
 )(SignInView)
