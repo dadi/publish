@@ -2,7 +2,7 @@ import {Component, h} from 'preact'
 import {connect} from 'preact-redux'
 import {route} from 'preact-router'
 import {bindActionCreators} from 'redux'
-import {connectHelper, isEmpty} from 'lib/util'
+import {connectHelper, isEmpty, setPageTitle} from 'lib/util'
 
 import * as userActions from 'actions/userActions'
 import * as Constants from 'lib/constants'
@@ -15,39 +15,25 @@ import TextInput from 'components/TextInput/TextInput'
 import styles from './PasswordResetView.css'
 
 class PasswordResetView extends Component {
-
   constructor(props) {
     super(props)
 
     this.state.email = ''
-    this.state.password = ''
-    this.state.error = false
-  }
-
-  componentWillUpdate(nextProps, nextState) {
-    const {actions, state} = this.props
-    const {user} = state
-    const nextUser = nextProps.state.user
-
-    // If the user is signed in, redirect to the home view.
-    if (user.remote) {
-      route('/')
-    }
-
-    const hasFailed = nextUser.status === Constants.STATUS_FAILED &&
-      nextUser.failedSignInAttempts > 0
-
-    if (nextUser.status === Constants.STATUS_NOT_FOUND) {
-      this.error = 'Authentication API unreachable'
-    } else if (hasFailed) {
-      this.error = 'Email not found or password incorrect'
-    } else {
-      this.error = null
-    }
   }
 
   render() {
     const {state, actions} = this.props
+    const {user} = state
+
+    // If the user is signed in, redirect to the reset password panel of the
+    // profile page.
+    if (user.remote) {
+      route('/profile/password-reset')
+
+      return null
+    }
+
+    setPageTitle('Reset password')
 
     return (
       <div class={styles.wrapper}>
@@ -56,7 +42,7 @@ class PasswordResetView extends Component {
             <form
               action="/profile"
               method="POST"
-              onSubmit={this.handleSignIn.bind(this)}
+              onSubmit={this.handleResetPassword.bind(this)}
             >
               <img class={styles.logo} src="/images/publish.png" />
 
@@ -80,6 +66,8 @@ class PasswordResetView extends Component {
                 accent="system"
                 type="submit"
               >Reset password</Button>
+
+              <a class={styles.link} href="/sign-in">Sign-in</a>
             </form>
           </div>
         </div>
@@ -93,11 +81,12 @@ class PasswordResetView extends Component {
     })
   }
 
-  handleSignIn(event) {
+  handleResetPassword(event) {
     const {actions} = this.props
-    const {email, password} = this.state
+    const {email} = this.state
 
-    actions.signIn(email, password)
+    // Some action will go here
+    console.log('* Reset password for email', email)
 
     event.preventDefault()
   }
