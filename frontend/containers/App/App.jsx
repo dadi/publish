@@ -108,6 +108,22 @@ class App extends Component {
     // TO-TO Handle leaving a room when the component changes
   }
 
+  handleRouteChange(event) {
+    const {state} = this.props
+    const {authenticate} = event.current.attributes
+    const {user} = state
+    const notAuthenticated = user.status === Constants.STATUS_FAILED
+    if (authenticate && notAuthenticated) {
+       route('/sign-in')
+
+       return null
+     }
+ 
+     if (user.status === Constants.STATUS_LOADING) {
+       return null
+     }
+  }
+
   render() {
     const {history, state} = this.props
 
@@ -118,7 +134,7 @@ class App extends Component {
     }
 
     return (
-      <Router history={history}>
+      <Router history={history} onChange={this.handleRouteChange.bind(this)}>
         <HomeView path="/" authenticate />
 
         <PasswordResetView path="/reset" />
