@@ -67,15 +67,24 @@ class App extends Component {
     }, 500))
   }
 
+  handleAuthenticationRedirect () {
+    const {state} = this.props
+    const failedSignIn = (state.user.status === Constants.STATUS_FAILED)
+    const isSigninPage = state.router.locationBeforeTransitions.pathname === '/sign-in'
+
+    // Redirect to sign-in if we're not already there and authentication failed.
+    if (!isSigninPage
+      && failedSignIn) {
+      route('/sign-in')
+    }
+  }
+
   componentDidUpdate(previousProps) {
     const {state, actions} = this.props
     const previousState = previousProps.state
     const room = previousState.router.room
 
-    if (state.router.locationBeforeTransitions.pathname !== '/sign-in' // Not on the sign in page
-      && (state.user.status === Constants.STATUS_FAILED || state.user.status === Constants.STATUS_IDLE)) {
-      route('/sign-in')
-    }
+    this.handleAuthenticationRedirect()
 
     // State change: user has signed in
     if (state.user.remote && state.app.status === Constants.STATUS_IDLE && !state.app.config) {

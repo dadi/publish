@@ -39,6 +39,7 @@ APIBridgeController.prototype.post = function (req, res, next) {
   res.header('Content-Type', 'application/json')
 
   if (!req.isAuthenticated()) {
+    // Currently always returning false. Needs review
     // res.write(JSON.stringify({err: 'AUTH_FAILED'}))
     // res.end()
   }
