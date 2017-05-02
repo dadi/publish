@@ -19,6 +19,7 @@ const Router = function () {
  */
 Router.prototype.addRoutes = function (app) {
   this.app = app
+  this.publicDir = path.resolve(__dirname, '../../../public')
 
   this.pre()
   this.use()
@@ -43,11 +44,12 @@ Router.prototype.getRoutes = function () {
  * @param  {restify} app Restify web server instance
  */
 Router.prototype.webRoutes = function () {
-  this.app.pre(serveStatic(path.resolve(__dirname, '../../../public'), {'index': ['index.html'], 'dotfiles': 'ignore'}))
-  this.app.get(/.*/, restify.serveStatic({
-    directory: path.resolve(__dirname, '../../../public'),
+  const staticRoute = restify.serveStatic({
+    directory: this.publicDir,
     file: 'index.html'
-  }))
+  })
+
+  this.app.get(/.*/, staticRoute)
 }
 
 /**
@@ -91,9 +93,9 @@ Router.prototype.setHeaders = function () {
  */
 Router.prototype.use = function () {
   this.app.use(restify.gzipResponse())
-  this.app.use(restify.requestLogger())
-  this.app.use(restify.queryParser())
-  this.app.use(restify.bodyParser({mapParams: true})) // Changing to false throws issues with auth. Needs addressing
+    .use(restify.requestLogger())
+    .use(restify.queryParser())
+    .use(restify.bodyParser({mapParams: true})) // Changing to false throws issues with auth. Needs addressing
 }
 
 /**
@@ -101,6 +103,7 @@ Router.prototype.use = function () {
  * @param  {restify} app Restify web server instance
  */
 Router.prototype.pre = function () {
+  this.app.pre(serveStatic(this.publicDir, {index: ['index.html'], 'dotfiles': 'ignore'}))
   this.app.pre(restify.pre.sanitizePath())
 }
 

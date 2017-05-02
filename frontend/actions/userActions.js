@@ -45,7 +45,6 @@ function runSessionQuery ({
       if (response.status === 200) {
         return parsedResponse
       }
-
       return Promise.reject(parsedResponse)
     })
   })

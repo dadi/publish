@@ -26,7 +26,7 @@ export default function user (state = initialState, action = {}) {
         ...state,
         failedSignInAttempts: 0,
         remote: action.user,
-        status: Constants.STATUS_IDLE
+        status: Constants.STATUS_LOADED
       }
 
     // Action: set user status
