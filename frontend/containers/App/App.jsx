@@ -95,8 +95,8 @@ class App extends Component {
     const {state} = this.props
     const {authenticate} = event.current.attributes
     const {user} = state
-    const notAuthenticated = user.status === Constants.STATUS_FAILED
-    
+    const notAuthenticated = user.status !== Constants.STATUS_IDLE
+
     if (authenticate && notAuthenticated) {
        route('/sign-in')
 
