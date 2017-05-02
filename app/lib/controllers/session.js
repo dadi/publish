@@ -63,11 +63,11 @@ Session.prototype.post = function (req, res, next, passport) {
         case 'MISSING_AUTH_API':
           res.statusCode = 503
           res.write(JSON.stringify(err))
-
+        break
         case 'WRONG_CREDENTIALS':
           res.statusCode = 401
           res.write(JSON.stringify(err))
-
+        break
         default:
           res.statusCode = 500
           res.write(JSON.stringify({err: 'UNKNOWN_ERROR'}))
