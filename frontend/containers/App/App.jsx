@@ -22,6 +22,7 @@ import PasswordResetView from 'views/PasswordResetView/PasswordResetView'
 import SignInView from 'views/SignInView/SignInView'
 import SignOutView from 'views/SignOutView/SignOutView'
 import ProfileEditView from 'views/ProfileEditView/ProfileEditView'
+import View from 'views/View/View'
 
 import {connectHelper, debounce, isEmpty, slugify, throttle} from 'lib/util'
 import ConnectionMonitor from 'lib/status'
