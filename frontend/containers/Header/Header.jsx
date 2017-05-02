@@ -92,7 +92,6 @@ class Header extends Component {
 
   handleSignOut() {
     const {actions} = this.props
-
     actions.signOut()
   }
 

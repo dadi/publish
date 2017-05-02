@@ -72,16 +72,18 @@ class App extends Component {
     const previousState = previousProps.state
     const room = previousState.router.room
 
-    // State change: user has signed in
-    if (!previousState.user.remote && state.user.remote) {
-      const {actions} = this.props
+    if (state.router.locationBeforeTransitions.pathname !== '/sign-in' // Not on the sign in page
+      && (state.user.status === Constants.STATUS_FAILED || state.user.status === Constants.STATUS_IDLE)) {
+      route('/sign-in')
+    }
 
+    // State change: user has signed in
+    if (state.user.remote && state.app.status === Constants.STATUS_IDLE && !state.app.config) {
       actions.loadAppConfig()
     }
 
     // State change: app now has config
     if (!previousState.app.config && state.app.config) {
-
       actions.loadApis()
     }
 
@@ -89,23 +91,6 @@ class App extends Component {
       this.socket.setRoom(room)
     }
     // TO-TO Handle leaving a room when the component changes
-  }
-
-  handleRouteChange(event) {
-    const {state} = this.props
-    const {authenticate} = event.current.attributes
-    const {user} = state
-    const notAuthenticated = user.status !== Constants.STATUS_IDLE
-
-    if (authenticate && notAuthenticated) {
-       route('/sign-in')
-
-       return null
-     }
- 
-     if (user.status === Constants.STATUS_LOADING) {
-       return null
-     }
   }
 
   render() {
@@ -118,7 +103,7 @@ class App extends Component {
     }
 
     return (
-      <Router history={history} onChange={this.handleRouteChange.bind(this)}>
+      <Router history={history}>
         <HomeView path="/" authenticate />
 
         <PasswordResetView path="/reset" />

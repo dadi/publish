@@ -6,7 +6,7 @@ import * as Types from 'actions/actionTypes'
 const initialState = {
   failedSignInAttempts: 0,
   remote: null,
-  status: Constants.STATUS_LOADING
+  status: Constants.STATUS_IDLE
 }
 
 export default function user (state = initialState, action = {}) {
@@ -26,7 +26,7 @@ export default function user (state = initialState, action = {}) {
         ...state,
         failedSignInAttempts: 0,
         remote: action.user,
-        status: Constants.STATUS_IDLE
+        status: Constants.STATUS_LOADED
       }
 
     // Action: set user status
