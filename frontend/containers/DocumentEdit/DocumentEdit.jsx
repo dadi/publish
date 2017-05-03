@@ -230,6 +230,8 @@ class DocumentEdit extends Component {
     const {actions} = this.props
     
     window.removeEventListener('beforeunload', this.userLeavingDocumentHandler)
+
+    actions.clearRemoteDocument()
     actions.roomChange(null)
   }
 
