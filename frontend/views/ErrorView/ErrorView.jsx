@@ -28,8 +28,6 @@ class ErrorView extends Component {
       </Page>
     ) 
   }
-
-  
 }
 
 export default connectHelper(
