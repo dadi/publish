@@ -1,5 +1,5 @@
 import {Component, h} from 'preact'
-import {Router, route, subscribers} from 'preact-router'
+import {Router, route} from 'preact-router'
 import {connect} from 'preact-redux'
 import {bindActionCreators} from 'redux'
 import Socket from 'lib/socket'
@@ -22,6 +22,7 @@ import PasswordResetView from 'views/PasswordResetView/PasswordResetView'
 import SignInView from 'views/SignInView/SignInView'
 import SignOutView from 'views/SignOutView/SignOutView'
 import ProfileEditView from 'views/ProfileEditView/ProfileEditView'
+import View from 'views/View/View'
 
 import {connectHelper, debounce, isEmpty, slugify, throttle} from 'lib/util'
 import ConnectionMonitor from 'lib/status'
@@ -72,34 +73,13 @@ class App extends Component {
     const room = previousState.router.room
 
     // State change: user has signed in
-    if (!previousState.user.remote && state.user.remote) {
-      const {actions} = this.props
-
+    if (state.user.remote && state.app.status === Constants.STATUS_IDLE && !state.app.config) {
       actions.loadAppConfig()
-    }
-
-    // State change: user has signed out
-    if (previousState.user.remote && !state.user.remote) {
-      route('/sign-in')
-    }
-
-    if (previousState.user.remote !== this.socket.getUser()) {
-      this.socket.setUser(previousState.user.remote)
     }
 
     // State change: app now has config
     if (!previousState.app.config && state.app.config) {
-
       actions.loadApis()
-    }
-
-    // State change: user has signed out or session validation has failed.
-    const userWasIdle = previousProps.state.user.status === Constants.STATUS_IDLE
-    const userHasFailed = state.user.status === Constants.STATUS_FAILED
-
-    if ((previousState.user.remote && !state.user.remote) ||
-        (userWasIdle && userHasFailed)) {
-      route('/sign-in')
     }
 
     if (this.socket.getRoom() !== room) {
@@ -119,33 +99,105 @@ class App extends Component {
 
     return (
       <Router history={history}>
-        <HomeView path="/" authenticate />
+        <View
+          authenticate
+          component={HomeView}
+          path="/"
+        />
 
-        <PasswordResetView path="/reset" />
+        <View
+          component={PasswordResetView}
+          path="/reset"
+        />
 
-        <DocumentListView path="/:group/:collection/document/edit/:documentId?/select/:referencedField?/:page?" authenticate />
-        <DocumentListView path="/:collection/document/edit/:documentId?/select/:referencedField?/:page?" authenticate />
+        <View
+          authenticate
+          component={DocumentListView}
+          path="/:group/:collection/document/edit/:documentId?/select/:referencedField?/:page?"
+        />
 
-        <DocumentEditView path="/:group/:collection/document/edit/:documentId?/:section?" authenticate />
-        <DocumentEditView path="/:collection/document/edit/:documentId?/:section?" authenticate />
+        <View
+          authenticate
+          component={DocumentListView}
+          path="/:collection/document/edit/:documentId?/select/:referencedField?/:page?"
+        />
 
-        <DocumentListView path="/:group/:collection/document/new/:section?/:referencedField?/:page?" authenticate />
-        <DocumentListView path="/:collection/document/new/:section?/:referencedField?/:page?" authenticate />
+        <View
+          authenticate
+          component={DocumentEditView}
+          path="/:group/:collection/document/edit/:documentId?/:section?"
+        />
 
-        <DocumentCreateView path="/:group/:collection/document/new/:section?" authenticate />
-        <DocumentCreateView path="/:collection/document/new/:section?" authenticate />
+        <View
+          authenticate
+          component={DocumentEditView}
+          path="/:collection/document/edit/:documentId?/:section?"
+        />
 
-        <DocumentListView path="/:group/:collection/documents/:page?" authenticate />
-        <DocumentListView path="/:collection/documents/:page?" authenticate />
+        <View
+          authenticate
+          component={DocumentListView}
+          path="/:group/:collection/document/new/:section?/:referencedField?/:page?"
+        />
 
-        <ProfileEditView path="/profile/:section?" authenticate />
-        <ProfileEditView path="/profile/select/:referencedField?/:page?" authenticate />
+        <View
+          authenticate
+          component={DocumentListView}
+          path="/:collection/document/new/:section?/:referencedField?/:page?"
+        />
 
-        <SignInView path="/sign-in" />
+        <View
+          authenticate
+          component={DocumentCreateView}
+          path="/:group/:collection/document/new/:section?"
+        />
 
-        <SignOutView path="/sign-out" />
+        <View
+          authenticate
+          component={DocumentCreateView}
+          path="/:collection/document/new/:section?"
+        />
 
-        <ErrorView type={Constants.ERROR_ROUTE_NOT_FOUND} default />
+        <View
+          authenticate
+          component={DocumentListView}
+          path="/:group/:collection/documents/:page?"
+        />
+
+        <View
+          authenticate
+          component={DocumentListView}
+          path="/:collection/documents/:page?"
+        />
+
+        <View
+          authenticate
+          component={ProfileEditView}
+          path="/profile/:section?"
+        />
+
+        <View
+          authenticate
+          component={ProfileEditView}
+          path="/profile/select/:referencedField?/:page?"
+        />
+
+        <View
+          component={SignInView}
+          path="/sign-in"
+        />
+
+        <View
+          component={SignOutView}
+          path="/sign-out"
+        />
+
+        <View
+          authenticate
+          component={ErrorView}
+          default
+          type={Constants.ERROR_ROUTE_NOT_FOUND}
+        />
       </Router>
     )
   }
@@ -154,9 +206,9 @@ class App extends Component {
 export default connectHelper(
   state => state,
   dispatch => bindActionCreators({
-    ...userActions, 
-    ...apiActions, 
-    ...appActions, 
-    ...documentActions
+    ...apiActions,
+    ...appActions,
+    ...documentActions,
+    ...userActions
   }, dispatch)
 )(App)

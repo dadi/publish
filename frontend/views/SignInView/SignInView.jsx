@@ -2,7 +2,7 @@ import {Component, h} from 'preact'
 import {connect} from 'preact-redux'
 import {route} from 'preact-router'
 import {bindActionCreators} from 'redux'
-import {connectHelper, isEmpty} from 'lib/util'
+import {connectHelper, isEmpty, setPageTitle} from 'lib/util'
 
 import * as userActions from 'actions/userActions'
 import * as Constants from 'lib/constants'
@@ -48,6 +48,9 @@ class SignInView extends Component {
 
   render() {
     const {state, actions} = this.props
+    const hasConnectionIssues = state.app.networkStatus !== Constants.NETWORK_OK
+
+    setPageTitle('Sign-in')
 
     return (
       <div class={styles.wrapper}>
@@ -89,8 +92,11 @@ class SignInView extends Component {
 
               <Button
                 accent="system"
+                disabled={hasConnectionIssues}
                 type="submit"
               >Sign In</Button>
+
+              <a class={styles.link} href="/reset">Reset password</a>
             </form>
           </div>
         </div>
@@ -116,7 +122,8 @@ class SignInView extends Component {
 
 export default connectHelper(
   state => ({
-    user: state.user
+    user: state.user,
+    app: state.app
   }),
   dispatch => bindActionCreators(userActions, dispatch)
 )(SignInView)
