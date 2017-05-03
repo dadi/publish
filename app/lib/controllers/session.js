@@ -55,24 +55,26 @@ Session.prototype.get = function (req, res, next) {
 }
 
 Session.prototype.post = function (req, res, next, passport) {
+  res.header('Content-Type', 'application/json')
+
   passport.authenticate('local', (err, user, info) => {
     if (err) {
       switch (err) {
         case 'MISSING_AUTH_API':
           res.statusCode = 503
-          res.write(JSON.stringify(err))
+          res.write(JSON.stringify({err}))
 
           break
 
         case 'WRONG_CREDENTIALS':
           res.statusCode = 401
-          res.write(JSON.stringify(err))
+          res.write(JSON.stringify({err}))
 
           break
 
         default:
           res.statusCode = 500
-          res.write(JSON.stringify('UNKNOWN_ERROR'))
+          res.write(JSON.stringify({err: 'UNKNOWN_ERROR'}))
 
           break
       }
@@ -84,7 +86,7 @@ Session.prototype.post = function (req, res, next, passport) {
       req.login(user, {}, (err) => {
         if (err) {
           res.statusCode = 401
-          res.write(JSON.stringify('AUTH_FAILED'))
+          res.write(JSON.stringify({err: 'AUTH_FAILED'}))
         } else {
           res.write(JSON.stringify(user))
         }
