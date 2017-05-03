@@ -45,6 +45,7 @@ function runSessionQuery ({
       if (response.status === 200) {
         return parsedResponse
       }
+
       return Promise.reject(parsedResponse)
     })
   })
@@ -128,8 +129,8 @@ export function signIn (email, password) {
       }
     }).then(user => {
       dispatch(setRemoteUser(user))
-    }).catch(err => {
-      switch (err) {
+    }).catch(response => {
+      switch (response.err) {
         case 'MISSING_AUTH_API':
           dispatch(setUserStatus(Constants.STATUS_NOT_FOUND))
 
