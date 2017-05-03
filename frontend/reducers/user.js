@@ -5,6 +5,7 @@ import * as Types from 'actions/actionTypes'
 
 const initialState = {
   failedSignInAttempts: 0,
+  hasSignedOut: false,
   remote: null,
   status: Constants.STATUS_IDLE
 }
@@ -25,6 +26,7 @@ export default function user (state = initialState, action = {}) {
       return {
         ...state,
         failedSignInAttempts: 0,
+        hasSignedOut: false,
         remote: action.user,
         status: Constants.STATUS_LOADED
       }
@@ -38,7 +40,10 @@ export default function user (state = initialState, action = {}) {
 
     // Action: clear user
     case Types.SIGN_OUT:
-      return initialState
+      return {
+        ...initialState,
+        hasSignedOut: true
+      }
 
     default:
       return state
