@@ -67,7 +67,9 @@ export function registerSaveAttempt () {
 
 export function registerUserLeavingDocument () {
   return (dispatch, getState) => {
-    writeDocumentToLocalStorage(getState())
+    writeDocumentToLocalStorage({
+      state: getState()
+    })
 
     dispatch({
       type: Types.USER_LEAVING_DOCUMENT
@@ -168,7 +170,7 @@ export function saveDocument ({api, collection, document, documentId}) {
         } else {
           const referencedCollectionSchema = referencedCollection &&
             api.collections.find(collection => {
-              return collection.name === referencedCollection
+              return collection.slug === referencedCollection
             })
 
           // If the referenced collection doesn't exist, there's nothing we can do.
@@ -280,20 +282,18 @@ export function setRemoteDocument (remote, {
   forceUpdate = true
 } = {}) {
   return (dispatch, getState) => {
-    let localDocument = getState().local
-    let localStorageKey = getLocalStorageKeyFromState(getState())
+    let localStorageKey = remote._id
 
-    if (clearLocal) {
+    if (clearLocal && localStorageKey) {
       LocalStorage.clearDocument(localStorageKey)
-    } else {
-      localDocument = LocalStorage.readDocument(localStorageKey)
     }
+
+    let fromLocalStorage = LocalStorage.readDocument(localStorageKey)
 
     dispatch({
       fieldsNotInLocalStorage,
       forceUpdate,
-      loadedFromLocalStorage: Boolean(localDocument),
-      local: localDocument,
+      fromLocalStorage,
       remote,
       type: Types.SET_REMOTE_DOCUMENT
     })
@@ -328,9 +328,17 @@ export function updateLocalDocument (change, {
       getState().document.fieldsNotPersistedInLocalStorage :
       getState().document.fieldsNotPersistedInLocalStorage.concat(Object.keys(change))
 
-    writeDocumentToLocalStorage(getState(), {
+    let localStorageKey
+
+    if (getState().document.remote) {
+      localStorageKey = getState().document.remote._id
+    }
+
+    writeDocumentToLocalStorage({
       document: newLocal,
-      fieldsNotPersistedInLocalStorage: newFieldsNotPersistedInLocalStorage
+      fieldsNotPersistedInLocalStorage: newFieldsNotPersistedInLocalStorage,
+      key: localStorageKey,
+      state: getState()
     })
 
     dispatch({
@@ -353,15 +361,16 @@ function uploadMedia (api, signedUrl, content) {
   }).then(response => response.json())
 }
 
-function writeDocumentToLocalStorage (state, {
+function writeDocumentToLocalStorage ({
   document,
-  fieldsNotPersistedInLocalStorage
+  fieldsNotPersistedInLocalStorage,
+  key,
+  state
 } = {}) {
+  document = document || state.document.local
   fieldsNotPersistedInLocalStorage = fieldsNotPersistedInLocalStorage ||
     state.document.fieldsNotPersistedInLocalStorage
-  document = document || state.document.local
-
-  const localStorageKey = getLocalStorageKeyFromState(state)
+  key = key || getLocalStorageKeyFromState(state)
 
   if (!document) return
 
@@ -374,6 +383,6 @@ function writeDocumentToLocalStorage (state, {
   })
 
   if (Object.keys(filteredDocument).length > 0) {
-    LocalStorage.writeDocument(localStorageKey, filteredDocument)
+    LocalStorage.writeDocument(key, filteredDocument)
   }
 }

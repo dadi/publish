@@ -112,11 +112,13 @@ export default function document (state = initialState, action = {}) {
         return state
       }
 
+      let local = state.local || action.fromLocalStorage || {}
+
       return {
         ...state,
         fieldsNotPersistedInLocalStorage: action.fieldsNotPersistedInLocalStorage || [],
-        loadedFromLocalStorage: action.loadedFromLocalStorage,
-        local: action.local || state.local || {},
+        loadedFromLocalStorage: Boolean(action.fromLocalStorage),
+        local,
         remote: action.remote,
         remoteStatus: Constants.STATUS_IDLE,
         saveAttempts: 0

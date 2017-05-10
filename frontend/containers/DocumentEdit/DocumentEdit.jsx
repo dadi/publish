@@ -203,7 +203,9 @@ class DocumentEdit extends Component {
 
   componentWillMount() {
     const {
+      actions,
       collection,
+      documentId,
       group,
       referencedField,
       state
@@ -224,14 +226,20 @@ class DocumentEdit extends Component {
     this.userLeavingDocumentHandler = this.handleUserLeavingDocument.bind(this)
 
     window.addEventListener('beforeunload', this.userLeavingDocumentHandler)
+
+    if (state.document.remote && state.document.remote._id !== documentId) {
+      actions.clearRemoteDocument()
+    }
   }
 
   componentWillUnmount() {
-    const {actions} = this.props
+    const {
+      actions,
+      documentId
+    } = this.props
     
     window.removeEventListener('beforeunload', this.userLeavingDocumentHandler)
 
-    actions.clearRemoteDocument()
     actions.roomChange(null)
   }
 
