@@ -24,7 +24,12 @@ export function discardUnsavedChanges () {
   }
 }
 
-export function fetchDocument ({api, collection, id, fields}) {
+export function fetchDocument ({
+  api,
+  collection,
+  id,
+  fields
+}) {
   return (dispatch) => {
     const apiBridge = apiBridgeClient({
       api,
@@ -275,7 +280,7 @@ export function setRemoteDocument (remote, {
   forceUpdate = true
 } = {}) {
   return (dispatch, getState) => {
-    let localDocument = null
+    let localDocument = getState().local
     let localStorageKey = getLocalStorageKeyFromState(getState())
 
     if (clearLocal) {
@@ -288,7 +293,7 @@ export function setRemoteDocument (remote, {
       fieldsNotInLocalStorage,
       forceUpdate,
       loadedFromLocalStorage: Boolean(localDocument),
-      local: localDocument || {},
+      local: localDocument,
       remote,
       type: Types.SET_REMOTE_DOCUMENT
     })

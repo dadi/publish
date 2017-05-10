@@ -116,7 +116,7 @@ export default function document (state = initialState, action = {}) {
         ...state,
         fieldsNotPersistedInLocalStorage: action.fieldsNotPersistedInLocalStorage || [],
         loadedFromLocalStorage: action.loadedFromLocalStorage,
-        local: action.local,
+        local: action.local || state.local || {},
         remote: action.remote,
         remoteStatus: Constants.STATUS_IDLE,
         saveAttempts: 0
