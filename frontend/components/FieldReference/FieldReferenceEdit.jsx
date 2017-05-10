@@ -106,11 +106,10 @@ export default class FieldReferenceEdit extends Component {
       schema
     } = this.props
     const referencedCollectionName = schema.settings && schema.settings.collection
-
     if (!referencedCollectionName) return null
 
     const referencedCollection = currentApi.collections.find(collection => {
-      return collection.name === referencedCollectionName
+      return collection.slug === referencedCollectionName
     })
 
     if (!referencedCollection) return null
