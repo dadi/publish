@@ -23,7 +23,10 @@ export function registerFailedSignInAttempt () {
   }
 }
 
-export function requestPasswordReset (resetEmail) {
+export function requestPasswordReset ({
+  resetEmail,
+  expiresAt
+} = {}) {
   return {
     resetEmail,
     type: Types.REQUEST_PASSWORD_RESET
@@ -32,11 +35,12 @@ export function requestPasswordReset (resetEmail) {
 
 export function resetPassword (resetEmail) {
   return (dispatch, getState) => {
-    console.log("UPDATE", resetEmail, getState())
 
-    // Make API call with email address
-    // Use expiresBy from response in state, to be displayed after redirect to reset sign-in
-    dispatch(requestPasswordReset(resetEmail))
+    return runSessionQuery({path: '/session/password-reset', payload: {email: resetEmail}})
+      .then(response => {
+        const resetExpiresAt = response.expiresAt
+        dispatch(requestPasswordReset({resetEmail, resetExpiresAt}))
+      })
   }
 }
 
@@ -54,6 +58,7 @@ function runSessionQuery ({
   }
 
   if (payload) {
+    request.method = 'POST' // Force POST method of there is a payload
     request.body = JSON.stringify(payload)
   }
 

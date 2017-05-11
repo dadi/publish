@@ -8,7 +8,8 @@ const initialState = {
   hasSignedOut: false,
   remote: null,
   status: Constants.STATUS_IDLE,
-  resetEmail: null
+  resetEmail: null,
+  resetExpiresAt: null
 }
 
 export default function user (state = initialState, action = {}) {
