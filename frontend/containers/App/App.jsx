@@ -67,24 +67,10 @@ class App extends Component {
     }, 500))
   }
 
-  handleAuthenticationRedirect () {
-    const {state} = this.props
-    const failedSignIn = (state.user.status === Constants.STATUS_FAILED)
-    const isSigninPage = state.router.locationBeforeTransitions.pathname === '/sign-in'
-
-    // Redirect to sign-in if we're not already there and authentication failed.
-    if (!isSigninPage
-      && failedSignIn) {
-      route('/sign-in')
-    }
-  }
-
   componentDidUpdate(previousProps) {
     const {state, actions} = this.props
     const previousState = previousProps.state
     const room = previousState.router.room
-
-    this.handleAuthenticationRedirect()
 
     // State change: user has signed in
     if (state.user.remote && state.app.status === Constants.STATUS_IDLE && !state.app.config) {
@@ -113,33 +99,105 @@ class App extends Component {
 
     return (
       <Router history={history}>
-        <HomeView path="/" authenticate />
+        <View
+          authenticate
+          component={HomeView}
+          path="/"
+        />
 
-        <PasswordResetView path="/reset" />
+        <View
+          component={PasswordResetView}
+          path="/reset"
+        />
 
-        <DocumentListView path="/:group/:collection/document/edit/:documentId?/select/:referencedField?/:page?" authenticate />
-        <DocumentListView path="/:collection/document/edit/:documentId?/select/:referencedField?/:page?" authenticate />
+        <View
+          authenticate
+          component={DocumentListView}
+          path="/:group/:collection/document/edit/:documentId?/select/:referencedField?/:page?"
+        />
 
-        <DocumentEditView path="/:group/:collection/document/edit/:documentId?/:section?" authenticate />
-        <DocumentEditView path="/:collection/document/edit/:documentId?/:section?" authenticate />
+        <View
+          authenticate
+          component={DocumentListView}
+          path="/:collection/document/edit/:documentId?/select/:referencedField?/:page?"
+        />
 
-        <DocumentListView path="/:group/:collection/document/new/:section?/:referencedField?/:page?" authenticate />
-        <DocumentListView path="/:collection/document/new/:section?/:referencedField?/:page?" authenticate />
+        <View
+          authenticate
+          component={DocumentEditView}
+          path="/:group/:collection/document/edit/:documentId?/:section?"
+        />
 
-        <DocumentCreateView path="/:group/:collection/document/new/:section?" authenticate />
-        <DocumentCreateView path="/:collection/document/new/:section?" authenticate />
+        <View
+          authenticate
+          component={DocumentEditView}
+          path="/:collection/document/edit/:documentId?/:section?"
+        />
 
-        <DocumentListView path="/:group/:collection/documents/:page?" authenticate />
-        <DocumentListView path="/:collection/documents/:page?" authenticate />
+        <View
+          authenticate
+          component={DocumentListView}
+          path="/:group/:collection/document/new/:section?/:referencedField?/:page?"
+        />
 
-        <ProfileEditView path="/profile/:section?" authenticate />
-        <ProfileEditView path="/profile/select/:referencedField?/:page?" authenticate />
+        <View
+          authenticate
+          component={DocumentListView}
+          path="/:collection/document/new/:section?/:referencedField?/:page?"
+        />
 
-        <SignInView path="/sign-in" />
+        <View
+          authenticate
+          component={DocumentCreateView}
+          path="/:group/:collection/document/new/:section?"
+        />
 
-        <SignOutView path="/sign-out" />
+        <View
+          authenticate
+          component={DocumentCreateView}
+          path="/:collection/document/new/:section?"
+        />
 
-        <ErrorView type={Constants.ERROR_ROUTE_NOT_FOUND} default />
+        <View
+          authenticate
+          component={DocumentListView}
+          path="/:group/:collection/documents/:page?"
+        />
+
+        <View
+          authenticate
+          component={DocumentListView}
+          path="/:collection/documents/:page?"
+        />
+
+        <View
+          authenticate
+          component={ProfileEditView}
+          path="/profile/:section?"
+        />
+
+        <View
+          authenticate
+          component={ProfileEditView}
+          path="/profile/select/:referencedField?/:page?"
+        />
+
+        <View
+          component={SignInView}
+          path="/sign-in"
+        />
+
+        <View
+          component={SignOutView}
+          path="/sign-out"
+        />
+
+        <View
+          authenticate
+          component={ErrorView}
+          default
+          type={Constants.ERROR_ROUTE_NOT_FOUND}
+        />
       </Router>
     )
   }

@@ -8,16 +8,19 @@ class View extends Component {
   render(props) {
     const {authenticate, state} = this.props
     const {user} = state
-    const notAuthenticated = user.status === Constants.STATUS_FAILED
+    const isAuthenticating = user.status === Constants.STATUS_IDLE ||
+      user.status === Constants.STATUS_LOADING
+    const isNotAuthenticated = user.status === Constants.STATUS_FAILED ||
+      user.hasSignedOut
     const Handler = props.component
 
-    if (authenticate && notAuthenticated) {
+    if (authenticate && isNotAuthenticated) {
       route('/sign-in')
 
       return null
     }
 
-    if (user.status === Constants.STATUS_LOADING) {
+    if (authenticate && isAuthenticating) {
       return null
     }
 
