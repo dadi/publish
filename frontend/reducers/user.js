@@ -36,7 +36,8 @@ export default function user (state = initialState, action = {}) {
     case Types.REQUEST_PASSWORD_RESET:
       return {
         ...state,
-        resetEmail: action.resetEmail
+        resetEmail: action.resetEmail,
+        resetExpiresAt: action.resetExpiresAt
       }
 
     // Action: set user status
