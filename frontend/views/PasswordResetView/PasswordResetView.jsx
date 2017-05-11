@@ -25,6 +25,12 @@ class PasswordResetView extends Component {
     const {state, actions} = this.props
     const {user} = state
 
+    if (user.resetEmail && user.resetExpiresAt) {
+      route('/sign-in/reset')
+
+      return null
+    }
+
     // If the user is signed in, redirect to the reset password panel of the
     // profile page.
     if (user.remote) {
