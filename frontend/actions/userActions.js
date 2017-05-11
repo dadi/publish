@@ -25,10 +25,11 @@ export function registerFailedSignInAttempt () {
 
 export function requestPasswordReset ({
   resetEmail,
-  expiresAt
+  resetExpiresAt
 } = {}) {
   return {
     resetEmail,
+    resetExpiresAt,
     type: Types.REQUEST_PASSWORD_RESET
   }
 }
