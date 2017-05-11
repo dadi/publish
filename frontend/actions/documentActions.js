@@ -78,8 +78,11 @@ export function registerUserLeavingDocument () {
 }
 
 export function saveDocument ({api, collection, document, documentId}) {
-  // A method that returns `true` if the objects are different and `false`
-  // if they are identical. At the moment, we're using JSON.stringify() to
+  // A method that returns `true`:
+  // 1) If the objects are different and `false`
+  // 2) If they are identical. 
+  // 
+  // At the moment, we're using JSON.stringify() to
   // create a hash of each object and compare that literally, but we can
   // change this method later if we want to.
   const diff = (object1, object2) => {
@@ -276,6 +279,14 @@ export function setFieldErrorStatus (field, value, error) {
   }
 }
 
+/**
+ * Set Remove Document
+ * Apply remote document to LocalStorage
+ * @param {Object} remote Remote document
+ * @param {Boolean} options.clearLocal 
+ * @param {Array}   options.fieldsNotInLocalStorage A list of new fields
+ * @param {[type]}  options.forceUpdate Force an update
+ */
 export function setRemoteDocument (remote, {
   clearLocal = false,
   fieldsNotInLocalStorage = [],
@@ -300,6 +311,10 @@ export function setRemoteDocument (remote, {
   }
 }
 
+/**
+ * Set Remote document status
+ * @param {String} status Status from Constants
+ */
 export function setRemoteDocumentStatus (status) {
   return {
     status,
@@ -307,6 +322,10 @@ export function setRemoteDocumentStatus (status) {
   }
 }
 
+/**
+ * Start New Document
+ * @return {Function} State dispatcher
+ */
 export function startNewDocument () {
   return (dispatch, getState) => {
     let localStorageKey = getLocalStorageKeyFromState(getState())
