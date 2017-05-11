@@ -77,11 +77,18 @@ export function registerUserLeavingDocument () {
   }
 }
 
-export function saveDocument ({api, collection, document, documentId}) {
+export function saveDocument ({
+  api,
+  collection,
+  document,
+  documentId,
+  group,
+  urlCollection
+}) {
   // A method that returns `true`:
   // 1) If the objects are different and `false`
-  // 2) If they are identical. 
-  // 
+  // 2) If they are identical.
+  //
   // At the moment, we're using JSON.stringify() to
   // create a hash of each object and compare that literally, but we can
   // change this method later if we want to.
@@ -243,6 +250,14 @@ export function saveDocument ({api, collection, document, documentId}) {
               clearLocal: true,
               forceUpdate: true
             }))
+
+            // We've successfully saved the document, so we now need to clear
+            // the local storage key corresponding to the unsaved document for
+            // the given group/collection pair.
+            LocalStorage.clearDocument(JSON.stringify({
+              collection: urlCollection,
+              group
+            }))
           } else {
             dispatch(setRemoteDocumentStatus(Constants.STATUS_FAILED))
           }
@@ -283,7 +298,7 @@ export function setFieldErrorStatus (field, value, error) {
  * Set Remove Document
  * Apply remote document to LocalStorage
  * @param {Object} remote Remote document
- * @param {Boolean} options.clearLocal 
+ * @param {Boolean} options.clearLocal
  * @param {Array}   options.fieldsNotInLocalStorage A list of new fields
  * @param {[type]}  options.forceUpdate Force an update
  */
@@ -326,9 +341,12 @@ export function setRemoteDocumentStatus (status) {
  * Start New Document
  * @return {Function} State dispatcher
  */
-export function startNewDocument () {
+export function startNewDocument ({
+  collection,
+  group
+} = {}) {
   return (dispatch, getState) => {
-    let localStorageKey = getLocalStorageKeyFromState(getState())
+    let localStorageKey = JSON.stringify({collection, group})
     let document = LocalStorage.readDocument(localStorageKey) || {}
 
     dispatch({
@@ -339,6 +357,8 @@ export function startNewDocument () {
 }
 
 export function updateLocalDocument (change, {
+  collection,
+  group,
   persistInLocalStorage = true
 } = {}) {
   return (dispatch, getState) => {
@@ -347,11 +367,12 @@ export function updateLocalDocument (change, {
       getState().document.fieldsNotPersistedInLocalStorage :
       getState().document.fieldsNotPersistedInLocalStorage.concat(Object.keys(change))
 
-    let localStorageKey
-
-    if (getState().document.remote) {
-      localStorageKey = getState().document.remote._id
-    }
+    // If we're editing an existing document, its ID is used as the local
+    // storage key. Otherwise, we'll use a hash of the current group and
+    // collection.
+    let localStorageKey = getState().document.remote ?
+      getState().document.remote._id :
+      JSON.stringify({collection, group})
 
     writeDocumentToLocalStorage({
       document: newLocal,
