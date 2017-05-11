@@ -23,6 +23,19 @@ export function registerFailedSignInAttempt () {
   }
 }
 
+export function requestPasswordReset (resetEmail) {
+  return {
+    resetEmail,
+    type: Types.REQUEST_PASSWORD_RESET
+  }
+}
+
+export function resetPassword (resetEmail) {
+  return (dispatch, getState) => {
+    dispatch(requestPasswordReset(resetEmail))
+  }
+}
+
 function runSessionQuery ({
   method = 'GET',
   path = '/session',
@@ -45,6 +58,7 @@ function runSessionQuery ({
       if (response.status === 200) {
         return parsedResponse
       }
+
       return Promise.reject(parsedResponse)
     })
   })
@@ -128,8 +142,8 @@ export function signIn (email, password) {
       }
     }).then(user => {
       dispatch(setRemoteUser(user))
-    }).catch(err => {
-      switch (err) {
+    }).catch(response => {
+      switch (response.err) {
         case 'MISSING_AUTH_API':
           dispatch(setUserStatus(Constants.STATUS_NOT_FOUND))
 
