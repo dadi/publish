@@ -25,6 +25,7 @@ class PasswordResetView extends Component {
     const {state, actions} = this.props
     const {user} = state
 
+    console.log(user)
     if (user.resetEmail && user.resetExpiresAt) {
       route('/sign-in/reset')
 
