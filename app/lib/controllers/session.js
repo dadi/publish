@@ -100,6 +100,8 @@ Session.prototype.post = function (req, res, next, passport) {
 }
 
 Session.prototype.put = function (req, res, next) {
+  res.header('Content-Type', 'application/json')
+
   req.login(req.body, {}, err => {
     if (err) {
       res.statusCode = 500
@@ -108,6 +110,15 @@ Session.prototype.put = function (req, res, next) {
     res.write(JSON.stringify({}))
     res.end()
   })
+
+  return next()
+}
+
+Session.prototype.reset = function (req, res, next) {
+  res.header('Content-Type', 'application/json')
+
+  res.write(JSON.stringify({expiresAt: 1494516108}))
+  res.end()
 
   return next()
 }

@@ -39,8 +39,13 @@ module.exports = function (app) {
     return done(null, user)
   })
 
+  app.post({
+    name: 'session-password-reset',
+    path: '/session/password-reset'
+  }, sessionController.reset)
+
   app.get({
-    name: 'session', // This allows us to reuse the auth request
+    name: 'session',
     path: '/session'
   }, sessionController.get)
 

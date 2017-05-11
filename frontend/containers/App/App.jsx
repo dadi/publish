@@ -72,7 +72,7 @@ class App extends Component {
     const previousState = previousProps.state
     const room = previousState.router.room
 
-    // State change: user has signed in
+    // State change: user has signed in. Load app config
     if (state.user.remote && state.app.status === Constants.STATUS_IDLE && !state.app.config) {
       actions.loadAppConfig()
     }
