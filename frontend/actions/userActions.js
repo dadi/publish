@@ -32,6 +32,10 @@ export function requestPasswordReset (resetEmail) {
 
 export function resetPassword (resetEmail) {
   return (dispatch, getState) => {
+    console.log("UPDATE", resetEmail, getState())
+
+    // Make API call with email address
+    // Use expiresBy from response in state, to be displayed after redirect to reset sign-in
     dispatch(requestPasswordReset(resetEmail))
   }
 }
