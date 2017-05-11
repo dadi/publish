@@ -355,7 +355,9 @@ class DocumentEditToolbar extends Component {
       api: currentApi,
       collection: currentCollection,
       document,
-      documentId: creatingNew ? null : documentId
+      documentId: creatingNew ? null : documentId,
+      group,
+      urlCollection: collection
     }))
   }
 }

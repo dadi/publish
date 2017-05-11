@@ -271,6 +271,9 @@ class DocumentListToolbar extends Component {
 
     actions.updateLocalDocument({
       [referencedField]: selectedDocument
+    }, {
+      collection,
+      group
     })
 
     const parentCollection = getCollectionForUrlParams(state.api.apis, {

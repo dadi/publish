@@ -178,7 +178,10 @@ class DocumentEdit extends Component {
     if (!documentId) {
       // If there isn't a document in `document.local`, we start a new one.
       if (!document.local && this.currentCollection) {
-        actions.startNewDocument()
+        actions.startNewDocument({
+          collection,
+          group
+        })
       }
 
       return
@@ -439,6 +442,8 @@ class DocumentEdit extends Component {
     actions.updateLocalDocument({
       [fieldName]: value
     }, {
+      collection,
+      group,
       persistInLocalStorage
     })
   }
