@@ -85,8 +85,7 @@ class PasswordResetView extends Component {
     const {actions} = this.props
     const {email} = this.state
 
-    // Some action will go here
-    console.log('* Reset password for email', email)
+    actions.resetPassword(email)
 
     event.preventDefault()
   }

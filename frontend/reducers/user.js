@@ -7,7 +7,8 @@ const initialState = {
   failedSignInAttempts: 0,
   hasSignedOut: false,
   remote: null,
-  status: Constants.STATUS_IDLE
+  status: Constants.STATUS_IDLE,
+  resetEmail: null
 }
 
 export default function user (state = initialState, action = {}) {
@@ -29,6 +30,12 @@ export default function user (state = initialState, action = {}) {
         hasSignedOut: false,
         remote: action.user,
         status: Constants.STATUS_LOADED
+      }
+
+    case Types.REQUEST_PASSWORD_RESET:
+      return {
+        ...state,
+        resetEmail: action.resetEmail
       }
 
     // Action: set user status

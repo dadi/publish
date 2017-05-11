@@ -23,6 +23,19 @@ export function registerFailedSignInAttempt () {
   }
 }
 
+export function requestPasswordReset (resetEmail) {
+  return {
+    resetEmail,
+    type: Types.REQUEST_PASSWORD_RESET
+  }
+}
+
+export function resetPassword (resetEmail) {
+  return (dispatch, getState) => {
+    dispatch(requestPasswordReset(resetEmail))
+  }
+}
+
 function runSessionQuery ({
   method = 'GET',
   path = '/session',
