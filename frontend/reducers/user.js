@@ -7,8 +7,8 @@ const initialState = {
   failedSignInAttempts: 0,
   hasSignedOut: false,
   remote: null,
-  status: Constants.STATUS_IDLE,
   resetEmail: null,
+  status: Constants.STATUS_IDLE,
   resetExpiresAt: null
 }
 
