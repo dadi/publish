@@ -103,7 +103,7 @@ class SignIn extends Component {
                   </Label>
                 </div>
 
-                {isTokenSignin ? (
+                {isTokenSignin && (
                   <div class={styles.input}>
                     <Label label="Token">
                       <TextInput
@@ -114,14 +114,25 @@ class SignIn extends Component {
                       />
                     </Label>
                   </div>
-                ) : (
+                )}
+                <div class={styles.input}>
+                  <Label label={isTokenSignin ? 'New Password' : 'Password'}>
+                    <TextInput
+                      type="password"
+                      placeholder={isTokenSignin ? 'Your new Password' : 'Your Password'}
+                      onChange={this.handleInputChange.bind(this, 'password')}
+                      value={this.state.password}
+                    />
+                  </Label>
+                </div>
+                {isTokenSignin && (
                   <div class={styles.input}>
-                    <Label label="Password">
+                    <Label label="Confirm new Password">
                       <TextInput
                         type="password"
-                        placeholder="Your password"
-                        onChange={this.handleInputChange.bind(this, 'password')}
-                        value={this.state.password}
+                        placeholder="Confirm new Password"
+                        onChange={this.handleInputChange.bind(this, 'passwordConfirm')}
+                        value={this.state.passwordConfirm}
                       />
                     </Label>
                   </div>
@@ -133,7 +144,7 @@ class SignIn extends Component {
                 disabled={hasConnectionIssues || !formDataIsValid}
                 type="submit"
                 label={isTokenSignin ? 'Reset password': 'Sign In'}
-              ></Button>
+              />
               {!isTokenSignin && (
                 <a class={styles.link} href="/reset">Reset password</a>
               )}
