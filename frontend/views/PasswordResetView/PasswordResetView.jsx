@@ -20,11 +20,13 @@ class PasswordResetView extends Component {
     super(props)
 
     this.state.email = ''
+    this.state.formDataIsValid = false
   }
 
   render() {
     const {state, actions} = this.props
     const {user} = state
+    const {formDataIsValid} = this.state
 
     if (user.resetEmail && user.resetExpiresAt) {
       // route('/sign-in/reset')
@@ -63,6 +65,7 @@ class PasswordResetView extends Component {
                     <TextInput
                       placeholder="Your email address"
                       onChange={this.handleInputChange.bind(this, 'email')}
+                      onKeyUp={this.handleInputChange.bind(this, 'email')}
                       validation={Validation.email}
                       value={this.state.email}
                     />
@@ -73,6 +76,7 @@ class PasswordResetView extends Component {
               <Button
                 accent="system"
                 type="submit"
+                disabled={!formDataIsValid}
               >Reset password</Button>
 
               <a class={styles.link} href="/sign-in">Sign-in</a>
@@ -85,7 +89,8 @@ class PasswordResetView extends Component {
 
   handleInputChange(name, event) {
     this.setState({
-      [name]: event.target.value
+      [name]: event.target.value,
+      formDataIsValid: event.isValid
     })
   }
 
