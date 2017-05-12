@@ -42,7 +42,7 @@ class SignIn extends Component {
   }
 
   componentWillUpdate(nextProps, nextState) {
-    const {actions, state} = this.props
+    const {actions, state, token} = this.props
     const {user} = state
     const nextUser = nextProps.state.user
 
@@ -57,7 +57,7 @@ class SignIn extends Component {
     if (nextUser.status === Constants.STATUS_NOT_FOUND) {
       this.error = 'Authentication API unreachable'
     } else if (hasFailed) {
-      this.error = `Email not found or ${token ? 'token invalid' : 'password incorrect'}`
+      this.error = `${token ? 'Passwords don\'t match or invalid token' : 'Email not found or password incorrect'}.`
     } else {
       this.error = null
     }
