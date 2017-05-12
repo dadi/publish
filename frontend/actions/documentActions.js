@@ -151,6 +151,8 @@ export function saveDocument ({
       // null, it's good as it is.
       if (payload[field] && fieldSchema.type === 'Reference') {
         const referencedDocument = payload[field]
+        const referencedDocuments = referencedDocument instanceof Array ?
+            referencedDocument : [referencedDocument]
         const referenceLimit = (
           fieldSchema.settings &&
           typeof fieldSchema.settings.limit !== 'undefined' &&
@@ -159,29 +161,32 @@ export function saveDocument ({
 
         // Is this a reference to a media collection?
         if (referencedCollection === Constants.MEDIA_COLLECTION) {
-          const mediaDocument = payload[field]
+          payload[field] = referencedDocuments.map((document, index) => {
+            // If this is an existing media item, we simply grab its ID.
+            if (document._id) {
+              return document._id
+            }
 
-          // If this is an existing media item, we simply grab its ID.
-          if (mediaDocument._id) {
-            payload[field] = mediaDocument._id
-          } else {
             // Otherwise, we need to upload the file.
             referenceBundler.add(
               apiBridgeClient({
                 api,
                 inBundle: true
               }).inMedia().getSignedUrl({
-                contentLength: mediaDocument.contentLength,
-                fileName: mediaDocument.fileName,
-                mimetype: mediaDocument.mimetype
+                contentLength: document.contentLength,
+                fileName: document.fileName,
+                mimetype: document.mimetype
               })
             )
 
             referenceBundlerMap.push({
               field,
+              index,
               mediaUpload: true
             })
-          }
+
+            return document
+          })
         } else {
           const referencedCollectionSchema = referencedCollection &&
             api.collections.find(collection => {
@@ -190,9 +195,6 @@ export function saveDocument ({
 
           // If the referenced collection doesn't exist, there's nothing we can do.
           if (!referencedCollectionSchema) return
-
-          const referencedDocuments = referencedDocument instanceof Array ?
-            referencedDocument : [referencedDocument]
 
           payload[field] = referenceLimit > 1 ? [] : null
 
@@ -236,12 +238,15 @@ export function saveDocument ({
         // bundle response gave us a signed URL, but we still need to upload
         // the file and add the resulting ID to the final payload.
         if (bundlerMapEntry.mediaUpload) {
-          const mediaUpload = uploadMedia(api, response.url, payload[referenceField])
-            .then(uploadResponse => {
-              if (uploadResponse.results && uploadResponse.results.length) {
-                payload[referenceField] = uploadResponse.results[0]._id
-              }
-            })
+          const mediaUpload = uploadMedia(
+            api,
+            response.url,
+            payload[referenceField][bundlerMapEntry.index]
+          ).then(uploadResponse => {
+            if (uploadResponse.results && uploadResponse.results.length) {
+              payload[referenceField][bundlerMapEntry.index] = uploadResponse.results[0]._id
+            }
+          })
 
           uploadQueue.push(mediaUpload)
         } else if (response.results) {
