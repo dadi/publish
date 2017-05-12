@@ -3,7 +3,7 @@ import {connect} from 'preact-redux'
 import {route} from 'preact-router'
 import {bindActionCreators} from 'redux'
 import {connectHelper, isEmpty, setPageTitle} from 'lib/util'
-import {Validation} from 'lib/util/validation'
+import Validation from 'lib/util/validation'
 
 import * as userActions from 'actions/userActions'
 import * as Constants from 'lib/constants'
@@ -19,6 +19,8 @@ class PasswordResetView extends Component {
   constructor(props) {
     super(props)
 
+    this.validation = new Validation()
+
     this.state.email = ''
     this.state.formDataIsValid = false
   }
@@ -31,7 +33,7 @@ class PasswordResetView extends Component {
     if (user.resetEmail && user.resetExpiresAt) {
       // route('/sign-in/reset')
 
-      return null
+      // return null
     }
 
     // If the user is signed in, redirect to the reset password panel of the
@@ -66,7 +68,7 @@ class PasswordResetView extends Component {
                       placeholder="Your email address"
                       onChange={this.handleInputChange.bind(this, 'email')}
                       onKeyUp={this.handleInputChange.bind(this, 'email')}
-                      validation={Validation.email}
+                      validation={this.validation.email}
                       value={this.state.email}
                     />
                   </Label>

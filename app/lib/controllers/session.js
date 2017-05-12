@@ -117,12 +117,35 @@ Session.prototype.put = function (req, res, next) {
 Session.prototype.reset = function (req, res, next) {
   res.header('Content-Type', 'application/json')
 
-  // Check for required email value
-  if (req.body && req.body.email) {
+  let authAPI = config.get('auth')
 
+  // No authentication.
+  if (!authAPI.enabled) {
+    res.write(JSON.stringify({error: 'AUTH_DISABLED'}))
+    res.end()
+    return next()
   }
 
-  res.write(JSON.stringify({expiresAt: 1494516108}))
+  // Check for required email value.
+  if (req.body && req.body.email) {
+    return new Api(authAPI)
+      .in(authAPI.collection)
+      .whereFieldIsEqualTo('email', req.body.email)
+      .update({
+        loginWithToken: true
+      })
+      .then(resp => {
+        console.log('RESP', resp)
+        res.write(JSON.stringify({expiresAt: 1494516108}))
+
+        res.end()
+
+        return next()
+      })
+  }
+
+  // Default: email address missing error.
+  res.write(JSON.stringify({error: 'MISSING_EMAIL_ADDRESS'}))
   res.end()
 
   return next()
