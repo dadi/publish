@@ -10,8 +10,7 @@ import Page from 'components/Page/Page'
 
 export default class SignInView extends Component {
   render() {
-    const {method, token} = this.props
-    const isTokenSignin = (method === 'reset')
+    const {token} = this.props
 
     return (
       <Page>
@@ -19,7 +18,6 @@ export default class SignInView extends Component {
         <Main>
           <SignIn 
             setPagetTitle={this.handlePageTitleChange}
-            isTokenSignin={isTokenSignin}
             token={token}
           />
         </Main>

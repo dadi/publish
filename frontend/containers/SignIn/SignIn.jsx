@@ -26,11 +26,6 @@ class SignIn extends Component {
      setPagetTitle: proptypes.func,
 
      /**
-      * Whether this is a token signin.
-      */
-     isTokenSignin: proptypes.bool,
-
-     /**
       * Sign in token.
       */
      token: proptypes.string
@@ -47,7 +42,7 @@ class SignIn extends Component {
   }
 
   componentWillUpdate(nextProps, nextState) {
-    const {actions, state, isTokenSignin} = this.props
+    const {actions, state} = this.props
     const {user} = state
     const nextUser = nextProps.state.user
 
@@ -62,14 +57,14 @@ class SignIn extends Component {
     if (nextUser.status === Constants.STATUS_NOT_FOUND) {
       this.error = 'Authentication API unreachable'
     } else if (hasFailed) {
-      this.error = `Email not found or ${isTokenSignin ? 'token invalid' : 'password incorrect'}`
+      this.error = `Email not found or ${token ? 'token invalid' : 'password incorrect'}`
     } else {
       this.error = null
     }
   }
 
   render() {
-    const {state, actions, isTokenSignin, setPagetTitle, token} = this.props
+    const {state, actions, setPagetTitle, token} = this.props
     const hasConnectionIssues = state.app.networkStatus !== Constants.NETWORK_OK
     const {formDataIsValid} = this.state
 
@@ -91,41 +86,31 @@ class SignIn extends Component {
               }
 
               <div class={styles.inputs}>
-                <div class={styles.input}>
-                  <Label label="Email">
-                    <TextInput
-                      placeholder="Your email address"
-                      validation={this.validation.email}
-                      onChange={this.handleInputChange.bind(this, 'email')}
-                      onKeyUp={this.handleInputChange.bind(this, 'email')}
-                      value={this.state.email}
-                    />
-                  </Label>
-                </div>
-
-                {isTokenSignin && (
+                {!token && (
                   <div class={styles.input}>
-                    <Label label="Token">
+                    <Label label="Email">
                       <TextInput
-                        type="text"
-                        placeholder="Password reset Token"
-                        onChange={this.handleInputChange.bind(this, 'token')}
-                        value={token}
+                        placeholder="Your email address"
+                        validation={this.validation.email}
+                        onChange={this.handleInputChange.bind(this, 'email')}
+                        onKeyUp={this.handleInputChange.bind(this, 'email')}
+                        value={this.state.email}
                       />
                     </Label>
                   </div>
                 )}
+
                 <div class={styles.input}>
-                  <Label label={isTokenSignin ? 'New Password' : 'Password'}>
+                  <Label label={token ? 'New Password' : 'Password'}>
                     <TextInput
                       type="password"
-                      placeholder={isTokenSignin ? 'Your new Password' : 'Your Password'}
+                      placeholder={token ? 'Your new Password' : 'Your Password'}
                       onChange={this.handleInputChange.bind(this, 'password')}
                       value={this.state.password}
                     />
                   </Label>
                 </div>
-                {isTokenSignin && (
+                {token && (
                   <div class={styles.input}>
                     <Label label="Confirm new Password">
                       <TextInput
@@ -141,11 +126,11 @@ class SignIn extends Component {
 
               <Button
                 accent="system"
-                disabled={hasConnectionIssues || !formDataIsValid}
+                disabled={hasConnectionIssues || (!formDataIsValid && !token)}
                 type="submit"
-                label={isTokenSignin ? 'Reset password': 'Sign In'}
+                label={token ? 'Reset password': 'Sign In'}
               />
-              {!isTokenSignin && (
+              {!token && (
                 <a class={styles.link} href="/reset">Reset password</a>
               )}
             </form>

@@ -184,7 +184,7 @@ class App extends Component {
 
         <View
           component={SignInView}
-          path="/sign-in/:method?/:token?"
+          path="/sign-in/:token?"
         />
 
         <View
