@@ -18,9 +18,8 @@ import styles from './PasswordResetView.css'
 class PasswordResetView extends Component {
   constructor(props) {
     super(props)
-
+    
     this.validation = new Validation()
-
     this.state.email = ''
     this.state.formDataIsValid = false
   }
