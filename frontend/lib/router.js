@@ -1,7 +1,7 @@
 'use strict'
 
 import {route} from 'preact-router'
-import {urlHelper} from 'lib/util'
+import {urlHelper} from 'lib/util/url-helper'
 
 export function router ({path, params, update}) {
   let newRoute = createRoute(...arguments)

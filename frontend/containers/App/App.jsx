@@ -24,7 +24,7 @@ import SignOutView from 'views/SignOutView/SignOutView'
 import ProfileEditView from 'views/ProfileEditView/ProfileEditView'
 import View from 'views/View/View'
 
-import {connectHelper, debounce, isEmpty, slugify, throttle} from 'lib/util'
+import {connectHelper, debounce} from 'lib/util'
 import ConnectionMonitor from 'lib/status'
 import apiBridgeClient from 'lib/api-bridge-client'
 

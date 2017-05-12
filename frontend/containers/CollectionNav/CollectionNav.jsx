@@ -9,7 +9,8 @@ import * as appActions from 'actions/appActions'
 import Nav from 'components/Nav/Nav'
 
 import {buildUrl} from 'lib/router'
-import {connectHelper, slugify} from 'lib/util'
+import {connectHelper} from 'lib/util'
+import {Format} from 'lib/util/string'
 
 class CollectionNav extends Component {
   buildCollectionMap(apis) {
@@ -79,7 +80,7 @@ class CollectionNav extends Component {
   buildGroups(collectionMap) {
     const grouped = Object.keys(collectionMap.groups).map(groupTitle => {
       const group = collectionMap.groups[groupTitle]
-      const groupSlug = slugify(groupTitle)
+      const groupSlug = Format.slugify(groupTitle)
 
       let subItems = []
 

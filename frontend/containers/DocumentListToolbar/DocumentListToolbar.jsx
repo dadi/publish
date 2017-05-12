@@ -13,7 +13,8 @@ import * as documentsActions from 'actions/documentsActions'
 
 import {bindActionCreators} from 'redux'
 import {buildUrl} from 'lib/router'
-import {connectHelper, slugify} from 'lib/util'
+import {connectHelper} from 'lib/util'
+import {Format} from 'lib/util/string'
 import {getApiForUrlParams, getCollectionForUrlParams} from 'lib/collection-lookup'
 import {route} from 'preact-router'
 
@@ -281,7 +282,7 @@ class DocumentListToolbar extends Component {
     const referenceFieldSection = referenceFieldSchema &&
       referenceFieldSchema.publish &&
       referenceFieldSchema.publish.section &&
-      slugify(referenceFieldSchema.publish.section)
+      Format.slugify(referenceFieldSchema.publish.section)
 
     route(buildUrl(...onBuildBaseUrl({section: referenceFieldSection})))
   }

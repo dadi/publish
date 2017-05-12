@@ -117,6 +117,11 @@ Session.prototype.put = function (req, res, next) {
 Session.prototype.reset = function (req, res, next) {
   res.header('Content-Type', 'application/json')
 
+  // Check for required email value
+  if (req.body && req.body.email) {
+
+  }
+
   res.write(JSON.stringify({expiresAt: 1494516108}))
   res.end()
 
