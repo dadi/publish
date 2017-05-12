@@ -74,11 +74,6 @@ class DocumentList extends Component {
     referencedField: proptypes.string,
 
     /**
-     * The maximum number of documents that can be selected at the same time.
-     */
-    selectLimit: proptypes.number,
-
-    /**
      * The name of the field currently being used to sort the documents.
      */
     sort: proptypes.string,
@@ -338,12 +333,13 @@ class DocumentList extends Component {
       referencedField,
       onPageTitle,
       order,
-      selectLimit,
       sort,
       state
     } = this.props
     const documents = state.documents.list.results
     const selectedRows = this.getSelectedRows()
+
+    let selectLimit = Infinity
 
     // If we're on a reference field select view, we'll see if there's a field
     // component for the referenced field type that exports a `referenceSelect`
@@ -358,6 +354,14 @@ class DocumentList extends Component {
       const fieldType = (fieldSchema.publish && fieldSchema.publish.subType) || fieldSchema.type
       const fieldComponentName = `Field${fieldType}`
       const FieldComponentReferenceSelect = fieldComponents[fieldComponentName].referenceSelect
+
+      if (
+        fieldSchema.settings &&
+        fieldSchema.settings.limit &&
+        fieldSchema.settings.limit > 0
+      ) {
+        selectLimit = fieldSchema.settings.limit
+      }
 
       if (FieldComponentReferenceSelect) {
         return (
@@ -417,9 +421,11 @@ class DocumentList extends Component {
   }
 
   renderField(fieldName, schema, value) {
-    const fieldType = schema.publish && schema.publish.subType ? schema.publish.subType : schema.type
+    const fieldType = schema.publish && schema.publish.subType ?
+      schema.publish.subType : schema.type
     const fieldComponentName = `Field${fieldType}`
-    const FieldComponentList = fieldComponents[fieldComponentName] && fieldComponents[fieldComponentName].list
+    const FieldComponentList = fieldComponents[fieldComponentName] &&
+      fieldComponents[fieldComponentName].list
 
     if (FieldComponentList) {
       return (

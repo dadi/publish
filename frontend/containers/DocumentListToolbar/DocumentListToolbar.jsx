@@ -176,6 +176,8 @@ class DocumentListToolbar extends Component {
   renderReferencedDocumentActions() {
     const {state} = this.props
     const selectedDocuments = state.documents.selected
+    const ctaText = selectedDocuments.length > 1 ?
+      'Add selected documents' : 'Add selected document'
 
     return (
       <div class={styles.actions}>
@@ -183,7 +185,7 @@ class DocumentListToolbar extends Component {
           accent="save"
           disabled={!selectedDocuments.length}
           onClick={this.handleReferencedDocumentSelect.bind(this)}
-        >Add selected document</Button>
+        >{ctaText}</Button>
       </div>
     )
   }
@@ -264,13 +266,14 @@ class DocumentListToolbar extends Component {
 
     // We might want to change this when we allow a field to reference multiple
     // documents. For now, we just get the first selected document.
-    const selectedDocumentId = state.documents.selected[0]
-    const selectedDocument = documentsList.find(document => {
-      return document._id === selectedDocumentId
-    })
+    const selectedDocuments = state.documents.selected.map(documentId => {
+      return documentsList.find(document => {
+        return document._id === documentId
+      })
+    }).filter(Boolean)
 
     actions.updateLocalDocument({
-      [referencedField]: selectedDocument
+      [referencedField]: selectedDocuments
     }, {
       collection,
       group

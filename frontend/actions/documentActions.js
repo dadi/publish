@@ -151,6 +151,11 @@ export function saveDocument ({
       // null, it's good as it is.
       if (payload[field] && fieldSchema.type === 'Reference') {
         const referencedDocument = payload[field]
+        const referenceLimit = (
+          fieldSchema.settings &&
+          typeof fieldSchema.settings.limit !== 'undefined' &&
+          fieldSchema.settings.limit > 0
+        ) ? fieldSchema.settings.limit : Infinity
 
         // Is this a reference to a media collection?
         if (referencedCollection === Constants.MEDIA_COLLECTION) {
@@ -186,24 +191,32 @@ export function saveDocument ({
           // If the referenced collection doesn't exist, there's nothing we can do.
           if (!referencedCollectionSchema) return
 
-          // The document already exists, we need to update it.
-          if (referencedDocument._id) {
-            referenceBundler.add(
-              apiBridgeClient({
-                api,
-                collection: referencedCollectionSchema,
-                inBundle: true
-              }).whereFieldIsEqualTo('_id', referencedDocument._id)
-                .update(referencedDocument)
-            )
+          const referencedDocuments = referencedDocument instanceof Array ?
+            referencedDocument : [referencedDocument]
 
-            referenceBundlerMap.push({
-              field
-            })
-          } else {
+          payload[field] = referenceLimit > 1 ? [] : null
 
-            // The document does not exist, we need to create it.
-          }
+          referencedDocuments.forEach(document => {
+            // The document already exists, we need to update it.
+            if (document._id) {
+              referenceBundler.add(
+                apiBridgeClient({
+                  api,
+                  collection: referencedCollectionSchema,
+                  inBundle: true
+                }).whereFieldIsEqualTo('_id', document._id)
+                  .update(document)
+              )
+
+              referenceBundlerMap.push({
+                field,
+                limit: referenceLimit
+              })
+            } else {
+
+              // The document does not exist, we need to create it.
+            }
+          })
         }
       }
     })
@@ -217,6 +230,7 @@ export function saveDocument ({
       responses.forEach((response, index) => {
         const bundlerMapEntry = referenceBundlerMap[index]
         const referenceField = bundlerMapEntry.field
+        const referenceLimit = bundlerMapEntry.limit
 
         // If this bundle entry is a media upload, we're not done yet. The
         // bundle response gave us a signed URL, but we still need to upload
@@ -230,8 +244,12 @@ export function saveDocument ({
             })
 
           uploadQueue.push(mediaUpload)
-        } else if (response.results && response.results[0]) {
-          payload[referenceField] = response.results[0]._id
+        } else if (response.results) {
+          payload[referenceField] = referenceLimit === 1 ?
+            response.results[0]._id :
+            payload[referenceField].concat(response.results.map(document => {
+              return document._id
+            }))
         }
       })
 
