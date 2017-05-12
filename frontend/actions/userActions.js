@@ -36,10 +36,10 @@ export function requestPasswordReset ({
 
 export function resetPassword (resetEmail) {
   return (dispatch, getState) => {
-
     return runSessionQuery({path: '/session/password-reset', payload: {email: resetEmail}})
       .then(response => {
         const resetExpiresAt = response.expiresAt
+
         dispatch(requestPasswordReset({resetEmail, resetExpiresAt}))
       })
   }
@@ -68,7 +68,8 @@ function runSessionQuery ({
   if (payload) {
     // Force POST method of there is a payload
     request.method = 'POST'
-    // JSON stringify payload
+
+    // JSON stringify payload.
     request.body = JSON.stringify(payload)
   }
 
@@ -80,7 +81,7 @@ function runSessionQuery ({
         }
 
         return Promise.reject(parsedResponse)
-    })
+      })
   })
 }
 
@@ -89,7 +90,7 @@ function runSessionQuery ({
  * @param  {String} options.api API handle
  * @param  {String} options.collection Collection handle
  * @param  {Object} options.user User payload body
- * @return {Promise} API request Promise callback 
+ * @return {Promise} API request Promise callback
  */
 export function saveUser ({api, collection, user}) {
   return (dispatch, getState) => {

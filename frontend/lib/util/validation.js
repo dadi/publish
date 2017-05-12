@@ -13,6 +13,7 @@ export default class Validation {
     // TO-DO :
     // Based on rules, pass value through chain of rules to determin validity.
   }
+
   /**
    * Email
    * @param  {String} value Email value

@@ -2,6 +2,18 @@
 
 export const Format = {
   /**
+   * Camel case
+   * @param  {String} value String to format
+   * @return {String} Formatted result
+   */
+  camelCase (value) {
+    return value
+      .replace(/\s(.)/g, $1 => $1.toUpperCase())
+      .replace(/\s/g, '')
+      .replace(/^(.)/, $1 => $1.toUpperCase())
+  },
+
+  /**
    * Sentence case
    * @param  {String} value String to format
    * @return {String} Formatted result
@@ -16,17 +28,7 @@ export const Format = {
       })
       .join('.')
   },
-  /**
-   * Camel case
-   * @param  {String} value String to format
-   * @return {String} Formatted result
-   */
-  camelCase (value) {
-    return value
-      .replace(/\s(.)/g, $1 => { return $1.toUpperCase() })
-      .replace(/\s/g, '')
-      .replace(/^(.)/, $1 => { return $1.toUpperCase() })
-  },
+
   /**
    * Slugify
    * @param  {String} value String to format
