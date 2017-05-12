@@ -1,22 +1,25 @@
 'use strict'
 
 /**
- * Validation
- * @param {Object} options.validation} Validation rules
+ * @class  Valication
  */
-export default function Validation ({
-  validation
-} = {}) {
+export default class Validation {
   /**
-   * Email validation
-   * @param  {String} value Value of the email field
-   * @return {Boolean} Successful validation
+   * @contructor
+   * @param  {Object} rules [description]
+   * @param  {Object|String|Array} value Value to be validated
    */
-  return {
-    email (value) {
-      if (!value) return false
+  constructor (rules, value) {
 
-      return /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(value)
-    }
+  }
+  /**
+   * Email
+   * @param  {String} value Email value
+   * @return {Boolean} Regular expression test result
+   */
+  email (value) {
+    if (!value) return false
+
+    return /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(value)
   }
 }
