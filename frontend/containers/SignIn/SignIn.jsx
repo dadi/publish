@@ -62,7 +62,7 @@ class SignIn extends Component {
     if (nextUser.status === Constants.STATUS_NOT_FOUND) {
       this.error = 'Authentication API unreachable'
     } else if (hasFailed) {
-      this.error = `Email not found or ${isTokenSignin ? 'token' : 'password'} incorrect`
+      this.error = `Email not found or ${isTokenSignin ? 'token invalid' : 'password incorrect'}`
     } else {
       this.error = null
     }
