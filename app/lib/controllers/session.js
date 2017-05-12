@@ -135,7 +135,7 @@ Session.prototype.reset = function (req, res, next) {
         loginWithToken: true
       })
       .then(resp => {
-        console.log('RESP', resp)
+        // console.log('RESP', resp)
         res.write(JSON.stringify({expiresAt: 1494516108}))
 
         res.end()

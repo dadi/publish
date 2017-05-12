@@ -6,6 +6,7 @@ import {bindActionCreators} from 'redux'
 import {connect} from 'preact-redux'
 import {connectHelper} from 'lib/util'
 import {route} from 'preact-router'
+import Validation from 'lib/util/validation'
 
 import * as userActions from 'actions/userActions'
 import * as Constants from 'lib/constants'
@@ -22,19 +23,31 @@ class SignIn extends Component {
     /**
      * The method used to update the current page title.
      */
-     setPagetTitle: proptypes.func
+     setPagetTitle: proptypes.func,
+
+     /**
+      * Whether this is a token signin.
+      */
+     isTokenSignin: proptypes.bool,
+
+     /**
+      * Sign in token.
+      */
+     token: proptypes.string
   }
 
   constructor(props) {
     super(props)
 
+    this.validation = new Validation()
     this.state.email = ''
     this.state.password = ''
+    this.state.formDataIsValid = false
     this.state.error = false
   }
 
   componentWillUpdate(nextProps, nextState) {
-    const {actions, state} = this.props
+    const {actions, state, isTokenSignin} = this.props
     const {user} = state
     const nextUser = nextProps.state.user
 
@@ -49,16 +62,16 @@ class SignIn extends Component {
     if (nextUser.status === Constants.STATUS_NOT_FOUND) {
       this.error = 'Authentication API unreachable'
     } else if (hasFailed) {
-      this.error = 'Email not found or password incorrect'
+      this.error = `Email not found or ${isTokenSignin ? 'token' : 'password'} incorrect`
     } else {
       this.error = null
     }
   }
 
   render() {
-
-    const {state, actions, setPagetTitle} = this.props
+    const {state, actions, isTokenSignin, setPagetTitle, token} = this.props
     const hasConnectionIssues = state.app.networkStatus !== Constants.NETWORK_OK
+    const {formDataIsValid} = this.state
 
     setPagetTitle('Sign In')
 
@@ -82,31 +95,48 @@ class SignIn extends Component {
                   <Label label="Email">
                     <TextInput
                       placeholder="Your email address"
+                      validation={this.validation.email}
                       onChange={this.handleInputChange.bind(this, 'email')}
+                      onKeyUp={this.handleInputChange.bind(this, 'email')}
                       value={this.state.email}
                     />
                   </Label>
                 </div>
 
-                <div class={styles.input}>
-                  <Label label="Password">
-                    <TextInput
-                      type="password"
-                      placeholder="Your password"
-                      onChange={this.handleInputChange.bind(this, 'password')}
-                      value={this.state.password}
-                    />
-                  </Label>
-                </div>
+                {isTokenSignin ? (
+                  <div class={styles.input}>
+                    <Label label="Token">
+                      <TextInput
+                        type="text"
+                        placeholder="Password reset Token"
+                        onChange={this.handleInputChange.bind(this, 'token')}
+                        value={token}
+                      />
+                    </Label>
+                  </div>
+                ) : (
+                  <div class={styles.input}>
+                    <Label label="Password">
+                      <TextInput
+                        type="password"
+                        placeholder="Your password"
+                        onChange={this.handleInputChange.bind(this, 'password')}
+                        value={this.state.password}
+                      />
+                    </Label>
+                  </div>
+                )}
               </div>
 
               <Button
                 accent="system"
-                disabled={hasConnectionIssues}
+                disabled={hasConnectionIssues || !formDataIsValid}
                 type="submit"
-              >Sign In</Button>
-
-              <a class={styles.link} href="/reset">Reset password</a>
+                label={isTokenSignin ? 'Reset password': 'Sign In'}
+              ></Button>
+              {!isTokenSignin && (
+                <a class={styles.link} href="/reset">Reset password</a>
+              )}
             </form>
           </div>
         </div>
@@ -116,7 +146,8 @@ class SignIn extends Component {
 
   handleInputChange(name, event) {
     this.setState({
-      [name]: event.target.value
+      [name]: event.target.value,
+      formDataIsValid: event.isValid
     })
   }
 

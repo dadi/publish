@@ -30,9 +30,9 @@ class PasswordResetView extends Component {
     const {formDataIsValid} = this.state
 
     if (user.resetEmail && user.resetExpiresAt) {
-      // route('/sign-in/reset')
+      route('/sign-in/reset')
 
-      // return null
+      return null
     }
 
     // If the user is signed in, redirect to the reset password panel of the
