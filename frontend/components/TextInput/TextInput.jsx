@@ -162,6 +162,9 @@ export default class TextInput extends Component {
   handleChange(event) {
     const {onChange, onKeyUp, validation} = this.props
 
+    // Attach validation outcome to event.
+    event.isValid = validation? validation(event.target.value): true
+
     if (event.type === 'change' && typeof onChange === 'function') {
       onChange.call(this, event)
     }
