@@ -35,54 +35,6 @@ export function getUniqueId () {
   return `${ID_PREFIX}-${lastId++}`
 }
 
-export function urlHelper () {
-  return {
-    paramsToObject (source) {
-      if (!source || typeof source === 'undefined') return null
-      let params = JSON.parse('{"' + decodeURI(source.replace(/^(\?)/, ''))
-        .replace(/"/g, '\\"')
-        .replace(/&/g, '","')
-        .replace(/=/g, '":"') + '"}')
-
-      Object.keys(params).forEach(param => {
-        try {
-          params[param] = JSON.parse(params[param])
-        } catch (e) {
-          return
-        }
-      })
-
-      return params
-    },
-    paramsToString (params) {
-      return Object.keys(params)
-        .filter(key => params[key])
-        .map(key => {
-          if (typeof params[key] === 'object') {
-            try {
-              return key + '=' + JSON.stringify(params[key])
-            } catch (e) {
-              return key + '=' + params[key]
-            }
-          } else {
-            return key + '=' + params[key]
-          }
-        })
-        .join('&')
-    }
-  }
-}
-
-export const Case = {
-  sentence (value) {
-    if (!value) return ''
-
-    return value.split('.').map(sentence => {
-      return sentence[0].toUpperCase() + sentence.slice(1)
-    }).join('.')
-  }
-}
-
 export function objectToArray (obj, keyField) {
   if (!obj) return []
 
@@ -110,17 +62,6 @@ export function isValidJSON (string) {
 
 export function isEmpty (subject) {
   return !subject || (typeof subject === 'object' && subject.length < 1)
-}
-
-export function slugify (str) {
-  return str.toString()
-    .toLowerCase()
-    .replace(/\s+/g, '-')     // Replace spaces with -
-    .replace(/\/+/g, '-')     // Replace slashes with -
-    .replace(/[^\w-]+/g, '')  // Remove all non-word chars
-    .replace(/--+/g, '-')     // Replace multiple - with single -
-    .replace(/^-+/, '')       // Trim - from start of text
-    .replace(/-+$/, '')       // Trim - from end of text
 }
 
 export function debounce (func, wait, immediate) {

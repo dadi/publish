@@ -18,7 +18,8 @@ import * as fieldComponents from 'lib/field-components'
 
 import APIBridge from 'lib/api-bridge-client'
 import {buildUrl, createRoute} from 'lib/router'
-import {connectHelper, filterHiddenFields, slugify, Case} from 'lib/util'
+import {connectHelper, filterHiddenFields} from 'lib/util'
+import {Format} from 'lib/util/string'
 import {getApiForUrlParams, getCollectionForUrlParams} from 'lib/collection-lookup'
 
 import ErrorMessage from 'components/ErrorMessage/ErrorMessage'
@@ -108,7 +109,7 @@ class DocumentEdit extends Component {
     const method = documentId ? 'edit' : 'new'
 
     if (typeof onPageTitle === 'function') {
-      onPageTitle(`${Case.sentence(method)} document`)  
+      onPageTitle(`${Format.sentenceCase(method)} document`)  
     }
 
     if (currentCollection) {
@@ -416,7 +417,7 @@ class DocumentEdit extends Component {
           fields,
           hasErrors: sectionHasErrors,
           name: sectionName,
-          slug: slugify(sectionName)
+          slug: Format.slugify(sectionName)
         }
 
         return section

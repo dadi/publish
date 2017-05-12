@@ -3,6 +3,7 @@ import {connect} from 'preact-redux'
 import {route} from 'preact-router'
 import {bindActionCreators} from 'redux'
 import {connectHelper, isEmpty, setPageTitle} from 'lib/util'
+import {Validation} from 'lib/util/validation'
 
 import * as userActions from 'actions/userActions'
 import * as Constants from 'lib/constants'
@@ -25,9 +26,8 @@ class PasswordResetView extends Component {
     const {state, actions} = this.props
     const {user} = state
 
-    console.log(user)
     if (user.resetEmail && user.resetExpiresAt) {
-      route('/sign-in/reset')
+      // route('/sign-in/reset')
 
       return null
     }
@@ -63,6 +63,7 @@ class PasswordResetView extends Component {
                     <TextInput
                       placeholder="Your email address"
                       onChange={this.handleInputChange.bind(this, 'email')}
+                      validation={Validation.email}
                       value={this.state.email}
                     />
                   </Label>

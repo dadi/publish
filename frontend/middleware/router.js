@@ -1,7 +1,7 @@
 'use strict'
 
 import * as Types from 'actions/actionTypes'
-import {urlHelper} from 'lib/util'
+import {urlHelper} from 'lib/util/url-helper'
 
 const defaultSelectLocationState = state => state.router
 
