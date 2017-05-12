@@ -10,7 +10,8 @@ export default class Validation {
    * @param  {Object|String|Array} value Value to be validated
    */
   constructor (rules, value) {
-
+    // TO-DO :
+    // Based on rules, pass value through chain of rules to determin validity.
   }
   /**
    * Email
