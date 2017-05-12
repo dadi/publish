@@ -18,6 +18,12 @@ import TextInput from 'components/TextInput/TextInput'
 import styles from './SignIn.css'
 
 class SignIn extends Component {
+  static propTypes = {
+    /**
+     * The method used to update the current page title.
+     */
+     setPagetTitle: proptypes.func
+  }
 
   constructor(props) {
     super(props)
@@ -51,8 +57,10 @@ class SignIn extends Component {
 
   render() {
 
-    const {state, actions} = this.props
+    const {state, actions, setPagetTitle} = this.props
     const hasConnectionIssues = state.app.networkStatus !== Constants.NETWORK_OK
+
+    setPagetTitle('Sign In')
 
     return (
       <div class={styles.wrapper}>
