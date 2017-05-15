@@ -151,7 +151,7 @@ export function saveDocument ({
       // null, it's good as it is.
       if (payload[field] && fieldSchema.type === 'Reference') {
         const referencedDocument = payload[field]
-        const referencedDocuments = referencedDocument instanceof Array ?
+        const referencedDocuments = Array.isArray(referencedDocument) ?
             referencedDocument : [referencedDocument]
         const referenceLimit = (
           fieldSchema.settings &&

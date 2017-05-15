@@ -16,6 +16,15 @@ File type acceptance.
 ### `allowDrop`
 
 - type: `bool`
+- default value: `false`
+
+
+### `multiple`
+
+Whether to accept multiple files.
+
+- type: `bool`
+- default value: `false`
 
 
 ### `onChange`

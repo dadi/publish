@@ -421,7 +421,7 @@ class DocumentList extends Component {
   }
 
   renderField(fieldName, schema, value) {
-    const fieldType = schema.publish && schema.publish.subType ?
+    const fieldType = (schema.publish && schema.publish.subType) ?
       schema.publish.subType : schema.type
     const fieldComponentName = `Field${fieldType}`
     const FieldComponentList = fieldComponents[fieldComponentName] &&

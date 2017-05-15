@@ -110,7 +110,7 @@ export default class FieldImageEdit extends Component {
     const href = buildUrl(...onBuildBaseUrl(), 'select', schema._id)
     const isReference = schema.type === 'Reference'
     const singleFile = schema.settings && schema.settings.limit === 1
-    const values = value && !(value instanceof Array) ? [value] : value
+    const values = (value && !Array.isArray(value)) ? [value] : value
 
     return (
       <Label label={displayName}>

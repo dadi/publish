@@ -21,7 +21,7 @@ Session.prototype.authorise = function (email, password, next) {
         return next(null)
       }
     }).catch(response => {
-      if ((response.error instanceof Array) && (response.error[0].details.includes('WRONG_CREDENTIALS'))) {
+      if (Array.isArray(response.error) && (response.error[0].details.includes('WRONG_CREDENTIALS'))) {
         return next('WRONG_CREDENTIALS')
       }
 
