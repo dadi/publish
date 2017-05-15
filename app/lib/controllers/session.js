@@ -6,11 +6,12 @@ const Api = require(`${paths.lib.models}/api`)
 const Session = function () {}
 
 /**
- * [authorise description]
- * @param  {[type]}   email    [description]
- * @param  {[type]}   password [description]
- * @param  {Function} next     [description]
- * @return {[type]}            [description]
+ * Authorise
+ * User email/password authorisation through API request.
+ * @param  {Object} req server request.
+ * @param  {Object} res server response.
+ * @param  {Function} next Next middleware process.
+ * @return {Function} Next method call.
  */
 Session.prototype.authorise = function (email, password, next) {
   let authAPI = config.get('auth')
@@ -37,11 +38,12 @@ Session.prototype.authorise = function (email, password, next) {
 }
 
 /**
- * [delete description]
- * @param  {[type]}   req  [description]
- * @param  {[type]}   res  [description]
- * @param  {Function} next [description]
- * @return {[type]}        [description]
+ * Delete
+ * Remove user.
+ * @param  {Object} req server request.
+ * @param  {Object} res server response.
+ * @param  {Function} next Next middleware process.
+ * @return {Function} Next method call.
  */
 Session.prototype.delete = function (req, res, next) {
   req.logout()
@@ -52,11 +54,12 @@ Session.prototype.delete = function (req, res, next) {
 }
 
 /**
- * [get description]
- * @param  {[type]}   req  [description]
- * @param  {[type]}   res  [description]
- * @param  {Function} next [description]
- * @return {[type]}        [description]
+ * Get
+ * Fetch user if isAuthenticated.
+ * @param  {Object} req server request.
+ * @param  {Object} res server response.
+ * @param  {Function} next Next middleware process.
+ * @return {Function} Next method call.
  */
 Session.prototype.get = function (req, res, next) {
   res.header('Content-Type', 'application/json')
@@ -76,12 +79,12 @@ Session.prototype.get = function (req, res, next) {
 }
 
 /**
- * [post description]
- * @param  {[type]}   req      [description]
- * @param  {[type]}   res      [description]
- * @param  {Function} next     [description]
- * @param  {[type]}   passport [description]
- * @return {[type]}            [description]
+ * Post
+ * Create user record.
+ * @param  {Object} req server request.
+ * @param  {Object} res server response.
+ * @param  {Function} next Next middleware process.
+ * @return {Function} Next method call.
  */
 Session.prototype.post = function (req, res, next, passport) {
   res.header('Content-Type', 'application/json')
@@ -129,11 +132,12 @@ Session.prototype.post = function (req, res, next, passport) {
 }
 
 /**
- * [put description]
- * @param  {[type]}   req  [description]
- * @param  {[type]}   res  [description]
- * @param  {Function} next [description]
- * @return {[type]}        [description]
+ * Put
+ * Update user record.
+ * @param  {Object} req server request.
+ * @param  {Object} res server response.
+ * @param  {Function} next Next middleware process.
+ * @return {Function} Next method call.
  */
 Session.prototype.put = function (req, res, next) {
   res.header('Content-Type', 'application/json')
@@ -150,6 +154,14 @@ Session.prototype.put = function (req, res, next) {
   return next()
 }
 
+/**
+ * Reset
+ * Reset password.
+ * @param  {Object} req server request.
+ * @param  {Object} res server response.
+ * @param  {Function} next Next middleware process.
+ * @return {Function} Next method call.
+ */
 Session.prototype.reset = function (req, res, next) {
   res.header('Content-Type', 'application/json')
 
@@ -188,11 +200,12 @@ Session.prototype.reset = function (req, res, next) {
 }
 
 /**
- * Reset Token
- * @param  {[type]}   req  [description]
- * @param  {[type]}   res  [description]
- * @param  {Function} next [description]
- * @return {[type]}        [description]
+ * Reset token
+ * Fetch password reset token.
+ * @param  {Object} req server request.
+ * @param  {Object} res server response.
+ * @param  {Function} next Next middleware process.
+ * @return {Function} Next method call.
  */
 Session.prototype.resetToken = function (req, res, next) {
   res.header('Content-Type', 'application/json')
