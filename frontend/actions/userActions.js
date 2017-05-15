@@ -38,8 +38,8 @@ export function setPasswordResetSuccess ({
   response
 } = {}) {
   return {
-    success: response.success,
     error: response.error,
+    success: response.success,
     type: Types.REQUEST_PASSWORD_RESET_SUCCESS
   }
 }
@@ -57,8 +57,11 @@ export function requestPasswordReset (resetEmail) {
 
 export function passwordReset (token, password) {
   return (dispatch, getState) =>
-    runSessionQuery({path: '/session/password-reset', payload: {token, password}})
-      .then(response => dispatch(setPasswordResetSuccess({response})))
+    runSessionQuery({path: '/session/password-reset', payload: {
+      password,
+      token
+    }})
+    .then(response => dispatch(setPasswordResetSuccess({response})))
 }
 
 /**
