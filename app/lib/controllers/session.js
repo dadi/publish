@@ -171,6 +171,7 @@ Session.prototype.reset = function (req, res, next) {
   if (!authAPI.enabled) {
     res.write(JSON.stringify({error: 'AUTH_DISABLED'}))
     res.end()
+
     return next()
   }
 
@@ -178,6 +179,7 @@ Session.prototype.reset = function (req, res, next) {
   if (!authAPI.enabled) {
     res.write(JSON.stringify({error: 'AUTH_DISABLED'}))
     res.end()
+
     return next()
   }
 
@@ -216,6 +218,7 @@ Session.prototype.resetToken = function (req, res, next) {
   if (!authAPI.enabled) {
     res.write(JSON.stringify({error: 'AUTH_DISABLED'}))
     res.end()
+
     return next()
   }
 

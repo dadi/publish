@@ -9,7 +9,6 @@ const initialState = {
   remote: null,
   resetEmail: null,
   resetError: null,
-  resetExpiresAt: null,
   resetSuccess: null,
   status: Constants.STATUS_IDLE
 }
@@ -38,8 +37,7 @@ export default function user (state = initialState, action = {}) {
     case Types.REQUEST_PASSWORD_RESET:
       return {
         ...state,
-        resetEmail: action.resetEmail,
-        resetExpiresAt: action.resetExpiresAt
+        resetEmail: action.resetEmail
       }
 
     case Types.REQUEST_PASSWORD_RESET_SUCCESS:

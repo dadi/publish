@@ -24,12 +24,10 @@ export function registerFailedSignInAttempt () {
 }
 
 export function setPasswordReset ({
-  resetEmail,
-  resetExpiresAt
+  resetEmail
 } = {}) {
   return {
     resetEmail,
-    resetExpiresAt,
     type: Types.REQUEST_PASSWORD_RESET
   }
 }
@@ -48,9 +46,7 @@ export function requestPasswordReset (resetEmail) {
   return (dispatch, getState) => {
     return runSessionQuery({path: '/session/reset-token', payload: {email: resetEmail}})
       .then(response => {
-        const resetExpiresAt = response.expiresAt
-
-        dispatch(setPasswordReset({resetEmail, resetExpiresAt}))
+        dispatch(setPasswordReset({resetEmail}))
       })
   }
 }
@@ -66,8 +62,8 @@ export function passwordReset (token, password) {
 
 /**
  * Run Session Query
- * @param  {String} options.method  Request method
- * @param  {String} options.path    Relative path
+ * @param  {String} options.method Request method
+ * @param  {String} options.path Relative path
  * @param  {Object} options.payload Optional data payload (POST only)
  * @return {Promise} Fetch callback Promise
  */
@@ -85,7 +81,7 @@ function runSessionQuery ({
   }
 
   if (payload) {
-    // Force POST method of there is a payload
+    // Force POST method if there is a payload.
     request.method = 'POST'
 
     // JSON stringify payload.

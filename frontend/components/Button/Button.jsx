@@ -56,11 +56,6 @@ export default class Button extends Component {
     inGroup: proptypes.oneOf(['left', 'middle', 'right']),
 
     /**
-     * Button label.
-     */
-    label: proptypes.string,
-
-    /**
      * Callback to be executed when the button is clicked.
      */
     onClick: proptypes.func,
@@ -95,7 +90,6 @@ export default class Button extends Component {
       forId,
       href,
       inGroup,
-      label,
       onClick,
       size,
       type
@@ -113,13 +107,13 @@ export default class Button extends Component {
         <label
           class={buttonStyle.getClasses()}
           for={forId}
-        >{label}{children}</label>
+        >{children}</label>
       )
     }
 
     if (type === 'mock') {
       return (
-        <span class={buttonStyle.getClasses()}>{label}{children}</span>
+        <span class={buttonStyle.getClasses()}>{children}</span>
       )
     }
 
@@ -128,7 +122,7 @@ export default class Button extends Component {
         <a
           class={buttonStyle.getClasses()}
           href={href}
-        >{label}{children}</a>
+        >{children}</a>
       )
     }
 
@@ -138,7 +132,7 @@ export default class Button extends Component {
         disabled={disabled}
         onClick={onClick}
         type={type}
-      >{label}{children}</button>
+      >{children}</button>
     )
   }
 }

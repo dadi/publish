@@ -35,8 +35,8 @@ class SignIn extends Component {
   constructor(props) {
     super(props)
 
-    // Is there is a token in the URL.
     this.validation = new Validation()
+    // Is there is a token in the URL.
     this.state.isPasswordReset = typeof props.token === 'string' && props.token.length
     this.state.email = ''
     this.state.password = ''
@@ -78,6 +78,7 @@ class SignIn extends Component {
     const {state, actions, setPagetTitle} = this.props
     const hasConnectionIssues = state.app.networkStatus !== Constants.NETWORK_OK
     const {formDataIsValid, error, isPasswordReset} = this.state
+    const formActionLabel = isPasswordReset ? 'Reset password' : 'Sign In'
 
     setPagetTitle('Sign In')
 
@@ -101,10 +102,10 @@ class SignIn extends Component {
                   <div class={styles.input}>
                     <Label label="Email">
                       <TextInput
-                        placeholder="Your email address"
-                        validation={this.validation.email}
                         onChange={this.handleInputChange.bind(this, 'email')}
                         onKeyUp={this.handleInputChange.bind(this, 'email')}
+                        placeholder="Your email address"
+                        validation={this.validation.email}
                         value={this.state.email}
                       />
                     </Label>
@@ -114,9 +115,9 @@ class SignIn extends Component {
                 <div class={styles.input}>
                   <Label label={isPasswordReset ? 'New Password' : 'Password'}>
                     <TextInput
-                      type="password"
-                      placeholder={isPasswordReset ? 'Your new Password' : 'Your Password'}
                       onChange={this.handleInputChange.bind(this, 'password')}
+                      placeholder={isPasswordReset ? 'Your new Password' : 'Your Password'}
+                      type="password"
                       value={this.state.password}
                     />
                   </Label>
@@ -125,9 +126,9 @@ class SignIn extends Component {
                   <div class={styles.input}>
                     <Label label="Confirm new Password">
                       <TextInput
-                        type="password"
-                        placeholder="Confirm new Password"
                         onChange={this.handleInputChange.bind(this, 'passwordConfirm')}
+                        placeholder="Confirm new Password"
+                        type="password"
                         value={this.state.passwordConfirm}
                       />
                     </Label>
@@ -139,8 +140,8 @@ class SignIn extends Component {
                 accent="system"
                 disabled={hasConnectionIssues || (!formDataIsValid && !isPasswordReset)}
                 type="submit"
-                label={isPasswordReset ? 'Reset password': 'Sign In'}
-              />
+              >formActionLabel</Button>
+
               {!isPasswordReset && (
                 <a class={styles.link} href="/reset">Reset password</a>
               )}
@@ -161,6 +162,7 @@ class SignIn extends Component {
   handleSignIn(event) {
     const {actions, token} = this.props
     const {email, password, isPasswordReset, passwordConfirm} = this.state
+
     if (isPasswordReset) {
       if (password === passwordConfirm) {
         actions.passwordReset(token, password)
