@@ -5,6 +5,13 @@ const Api = require(`${paths.lib.models}/api`)
 
 const Session = function () {}
 
+/**
+ * [authorise description]
+ * @param  {[type]}   email    [description]
+ * @param  {[type]}   password [description]
+ * @param  {Function} next     [description]
+ * @return {[type]}            [description]
+ */
 Session.prototype.authorise = function (email, password, next) {
   let authAPI = config.get('auth')
 
@@ -29,6 +36,13 @@ Session.prototype.authorise = function (email, password, next) {
     })
 }
 
+/**
+ * [delete description]
+ * @param  {[type]}   req  [description]
+ * @param  {[type]}   res  [description]
+ * @param  {Function} next [description]
+ * @return {[type]}        [description]
+ */
 Session.prototype.delete = function (req, res, next) {
   req.logout()
   res.write(JSON.stringify({authenticated: req.isAuthenticated()}))
@@ -37,6 +51,13 @@ Session.prototype.delete = function (req, res, next) {
   return next()
 }
 
+/**
+ * [get description]
+ * @param  {[type]}   req  [description]
+ * @param  {[type]}   res  [description]
+ * @param  {Function} next [description]
+ * @return {[type]}        [description]
+ */
 Session.prototype.get = function (req, res, next) {
   res.header('Content-Type', 'application/json')
 
@@ -54,6 +75,14 @@ Session.prototype.get = function (req, res, next) {
   }
 }
 
+/**
+ * [post description]
+ * @param  {[type]}   req      [description]
+ * @param  {[type]}   res      [description]
+ * @param  {Function} next     [description]
+ * @param  {[type]}   passport [description]
+ * @return {[type]}            [description]
+ */
 Session.prototype.post = function (req, res, next, passport) {
   res.header('Content-Type', 'application/json')
 
@@ -99,6 +128,13 @@ Session.prototype.post = function (req, res, next, passport) {
   })(req, res, next)
 }
 
+/**
+ * [put description]
+ * @param  {[type]}   req  [description]
+ * @param  {[type]}   res  [description]
+ * @param  {Function} next [description]
+ * @return {[type]}        [description]
+ */
 Session.prototype.put = function (req, res, next) {
   res.header('Content-Type', 'application/json')
 
@@ -126,6 +162,50 @@ Session.prototype.reset = function (req, res, next) {
     return next()
   }
 
+  // No authentication.
+  if (!authAPI.enabled) {
+    res.write(JSON.stringify({error: 'AUTH_DISABLED'}))
+    res.end()
+    return next()
+  }
+
+  if (req.body && (req.body.token && req.body.password)) {
+    return new Api(authAPI)
+      .in(authAPI.collection)
+      .whereFieldIsEqualTo('loginToken', req.body.token)
+      .update({password: req.body.password})
+      .then(resp => {
+        if (resp.results.length) {
+          res.write(JSON.stringify({success: true}))
+        } else {
+          res.write(JSON.stringify({err: 'PASSWORD_RESET_FAILED'}))
+        }
+        res.end()
+
+        return next()
+      })
+  }
+}
+
+/**
+ * Reset Token
+ * @param  {[type]}   req  [description]
+ * @param  {[type]}   res  [description]
+ * @param  {Function} next [description]
+ * @return {[type]}        [description]
+ */
+Session.prototype.resetToken = function (req, res, next) {
+  res.header('Content-Type', 'application/json')
+
+  let authAPI = config.get('auth')
+
+  // No authentication.
+  if (!authAPI.enabled) {
+    res.write(JSON.stringify({error: 'AUTH_DISABLED'}))
+    res.end()
+    return next()
+  }
+
   // Check for required email value.
   if (req.body && req.body.email) {
     return new Api(authAPI)
@@ -135,9 +215,7 @@ Session.prototype.reset = function (req, res, next) {
         loginWithToken: true
       })
       .then(resp => {
-        // console.log('RESP', resp)
-        res.write(JSON.stringify({expiresAt: 1494516108}))
-
+        res.write(JSON.stringify({expiresAt: 1494516108})) // TO-DO: Remove temporary expiration param.
         res.end()
 
         return next()

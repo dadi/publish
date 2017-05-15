@@ -23,7 +23,7 @@ export function registerFailedSignInAttempt () {
   }
 }
 
-export function requestPasswordReset ({
+export function setPasswordReset ({
   resetEmail,
   resetExpiresAt
 } = {}) {
@@ -34,15 +34,31 @@ export function requestPasswordReset ({
   }
 }
 
-export function resetPassword (resetEmail) {
+export function setPasswordResetSuccess ({
+  response
+} = {}) {
+  return {
+    success: response.success,
+    error: response.error,
+    type: Types.REQUEST_PASSWORD_RESET_SUCCESS
+  }
+}
+
+export function requestPasswordReset (resetEmail) {
   return (dispatch, getState) => {
-    return runSessionQuery({path: '/session/password-reset', payload: {email: resetEmail}})
+    return runSessionQuery({path: '/session/reset-token', payload: {email: resetEmail}})
       .then(response => {
         const resetExpiresAt = response.expiresAt
 
-        dispatch(requestPasswordReset({resetEmail, resetExpiresAt}))
+        dispatch(setPasswordReset({resetEmail, resetExpiresAt}))
       })
   }
+}
+
+export function passwordReset (token, password) {
+  return (dispatch, getState) =>
+    runSessionQuery({path: '/session/password-reset', payload: {token, password}})
+      .then(response => dispatch(setPasswordResetSuccess({response})))
 }
 
 /**

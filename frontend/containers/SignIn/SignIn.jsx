@@ -35,37 +35,49 @@ class SignIn extends Component {
   constructor(props) {
     super(props)
 
+    // Is there is a token in the URL.
     this.validation = new Validation()
+    this.state.isPasswordReset = typeof props.token === 'string' && props.token.length
     this.state.email = ''
     this.state.password = ''
+    this.state.passwordConfirm = ''
     this.state.formDataIsValid = false
     this.state.error = false
   }
 
   componentWillUpdate(nextProps, nextState) {
-    const {actions, state, token} = this.props
-    const {user} = state
+    const {actions, state} = this.props
+    const {user, isPasswordReset} = state
     const nextUser = nextProps.state.user
+    const {resetSuccess} = nextUser
 
     // If the user is signed in, redirect to the home view.
     redirectIf(user.remote, '/')
+
+    // Redirect if `resetSuccess` true
+    redirectIf(!user.resetSuccess && (resetSuccess && isPasswordReset), '/sign-in')
+
+    // Reset `isPasswordReset`
+    if (!user.resetSuccess && resetSuccess) {
+      this.setState({isPasswordReset: false})
+    }
 
     const hasFailed = nextUser.status === Constants.STATUS_FAILED &&
       nextUser.failedSignInAttempts > 0
 
     if (nextUser.status === Constants.STATUS_NOT_FOUND) {
-      this.error = 'Authentication API unreachable'
+      this.setState({error: 'Authentication API unreachable'})
     } else if (hasFailed) {
-      this.error = `${token ? 'Passwords don\'t match or invalid token' : 'Email not found or password incorrect'}.`
+      this.setState({error:`${isPasswordReset ? 'Passwords don\'t match or invalid token' : 'Email not found or password incorrect'}.`})
     } else {
-      this.error = null
+      this.setState({error: false})
     }
   }
 
   render() {
-    const {state, actions, setPagetTitle, token} = this.props
+    const {state, actions, setPagetTitle} = this.props
     const hasConnectionIssues = state.app.networkStatus !== Constants.NETWORK_OK
-    const {formDataIsValid} = this.state
+    const {formDataIsValid, error, isPasswordReset} = this.state
 
     setPagetTitle('Sign In')
 
@@ -80,12 +92,12 @@ class SignIn extends Component {
             >
               <img class={styles.logo} src="/images/publish.png" />
 
-              {this.error &&
-                <Banner>{this.error}</Banner>
+              {error &&
+                <Banner>{error}</Banner>
               }
 
               <div class={styles.inputs}>
-                {!token && (
+                {!isPasswordReset && (
                   <div class={styles.input}>
                     <Label label="Email">
                       <TextInput
@@ -100,16 +112,16 @@ class SignIn extends Component {
                 )}
 
                 <div class={styles.input}>
-                  <Label label={token ? 'New Password' : 'Password'}>
+                  <Label label={isPasswordReset ? 'New Password' : 'Password'}>
                     <TextInput
                       type="password"
-                      placeholder={token ? 'Your new Password' : 'Your Password'}
+                      placeholder={isPasswordReset ? 'Your new Password' : 'Your Password'}
                       onChange={this.handleInputChange.bind(this, 'password')}
                       value={this.state.password}
                     />
                   </Label>
                 </div>
-                {token && (
+                {isPasswordReset && (
                   <div class={styles.input}>
                     <Label label="Confirm new Password">
                       <TextInput
@@ -125,11 +137,11 @@ class SignIn extends Component {
 
               <Button
                 accent="system"
-                disabled={hasConnectionIssues || (!formDataIsValid && !token)}
+                disabled={hasConnectionIssues || (!formDataIsValid && !isPasswordReset)}
                 type="submit"
-                label={token ? 'Reset password': 'Sign In'}
+                label={isPasswordReset ? 'Reset password': 'Sign In'}
               />
-              {!token && (
+              {!isPasswordReset && (
                 <a class={styles.link} href="/reset">Reset password</a>
               )}
             </form>
@@ -147,10 +159,17 @@ class SignIn extends Component {
   }
 
   handleSignIn(event) {
-    const {actions} = this.props
-    const {email, password} = this.state
-
-    actions.signIn(email, password)
+    const {actions, token} = this.props
+    const {email, password, isPasswordReset, passwordConfirm} = this.state
+    if (isPasswordReset) {
+      if (password === passwordConfirm) {
+        actions.passwordReset(token, password)
+      } else {
+        this.setState({error: Constants.PASSWORD_MISMATCH})
+      }
+    } else {
+      actions.signIn(email, password)
+    }
 
     event.preventDefault()
   }

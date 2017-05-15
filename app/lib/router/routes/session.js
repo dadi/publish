@@ -39,10 +39,17 @@ module.exports = function (app) {
     return done(null, user)
   })
 
+  // Reset token request endpoint.
   app.post({
     name: 'session-password-reset',
     path: '/session/password-reset'
   }, sessionController.reset)
+
+  // Reset token request endpoint.
+  app.post({
+    name: 'session-reset-token',
+    path: '/session/reset-token'
+  }, sessionController.resetToken)
 
   app.get({
     name: 'session',
