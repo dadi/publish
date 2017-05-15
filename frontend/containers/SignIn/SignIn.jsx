@@ -6,6 +6,7 @@ import {bindActionCreators} from 'redux'
 import {connect} from 'preact-redux'
 import {connectHelper} from 'lib/util'
 import {route} from 'preact-router'
+import {redirectIf} from 'lib/router'
 import Validation from 'lib/util/validation'
 
 import * as userActions from 'actions/userActions'
@@ -47,9 +48,7 @@ class SignIn extends Component {
     const nextUser = nextProps.state.user
 
     // If the user is signed in, redirect to the home view.
-    if (user.remote) {
-      route('/')
-    }
+    redirectIf(user.remote, '/')
 
     const hasFailed = nextUser.status === Constants.STATUS_FAILED &&
       nextUser.failedSignInAttempts > 0
