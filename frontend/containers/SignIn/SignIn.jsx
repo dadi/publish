@@ -140,7 +140,7 @@ class SignIn extends Component {
                 accent="system"
                 disabled={hasConnectionIssues || (!formDataIsValid && !isPasswordReset)}
                 type="submit"
-              >formActionLabel</Button>
+              >{formActionLabel}</Button>
 
               {!isPasswordReset && (
                 <a class={styles.link} href="/reset">Reset password</a>
