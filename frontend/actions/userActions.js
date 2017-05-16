@@ -88,7 +88,7 @@ export function saveUser ({api, collection, user}) {
 
       let validationErrors = getState().document.validationErrors[passwordField] || []
 
-      if (errors instanceof Array) {
+      if (Array.isArray(errors)) {
         errors.forEach(error => {
           if (error.details && error.details.includes('\'WRONG_PASSWORD\'')) {
             validationErrors.push(Constants.ERROR_WRONG_PASSWORD)

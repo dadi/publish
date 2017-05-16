@@ -31,7 +31,7 @@ export default class FieldStringList extends Component {
     if (!value) return null
 
     // If the value is an array, we render each option individually.
-    if (value instanceof Array) {
+    if (Array.isArray(value)) {
       return this.renderOptions(value, schema)
     }
 

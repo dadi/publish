@@ -72,7 +72,6 @@ export default class DocumentListView extends Component {
               page={page}
               parentDocumentId={documentId}
               referencedField={referencedField}
-              selectLimit={referencedField ? 1 : undefined}
               sort={sort}
             />
           </div>        

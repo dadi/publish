@@ -151,32 +151,42 @@ export function saveDocument ({
       // null, it's good as it is.
       if (payload[field] && fieldSchema.type === 'Reference') {
         const referencedDocument = payload[field]
+        const referencedDocuments = Array.isArray(referencedDocument) ?
+            referencedDocument : [referencedDocument]
+        const referenceLimit = (
+          fieldSchema.settings &&
+          typeof fieldSchema.settings.limit !== 'undefined' &&
+          fieldSchema.settings.limit > 0
+        ) ? fieldSchema.settings.limit : Infinity
 
         // Is this a reference to a media collection?
         if (referencedCollection === Constants.MEDIA_COLLECTION) {
-          const mediaDocument = payload[field]
+          payload[field] = referencedDocuments.map((document, index) => {
+            // If this is an existing media item, we simply grab its ID.
+            if (document._id) {
+              return document._id
+            }
 
-          // If this is an existing media item, we simply grab its ID.
-          if (mediaDocument._id) {
-            payload[field] = mediaDocument._id
-          } else {
             // Otherwise, we need to upload the file.
             referenceBundler.add(
               apiBridgeClient({
                 api,
                 inBundle: true
               }).inMedia().getSignedUrl({
-                contentLength: mediaDocument.contentLength,
-                fileName: mediaDocument.fileName,
-                mimetype: mediaDocument.mimetype
+                contentLength: document.contentLength,
+                fileName: document.fileName,
+                mimetype: document.mimetype
               })
             )
 
             referenceBundlerMap.push({
               field,
+              index,
               mediaUpload: true
             })
-          }
+
+            return document
+          })
         } else {
           const referencedCollectionSchema = referencedCollection &&
             api.collections.find(collection => {
@@ -186,24 +196,29 @@ export function saveDocument ({
           // If the referenced collection doesn't exist, there's nothing we can do.
           if (!referencedCollectionSchema) return
 
-          // The document already exists, we need to update it.
-          if (referencedDocument._id) {
-            referenceBundler.add(
-              apiBridgeClient({
-                api,
-                collection: referencedCollectionSchema,
-                inBundle: true
-              }).whereFieldIsEqualTo('_id', referencedDocument._id)
-                .update(referencedDocument)
-            )
+          payload[field] = referenceLimit > 1 ? [] : null
 
-            referenceBundlerMap.push({
-              field
-            })
-          } else {
+          referencedDocuments.forEach(document => {
+            // The document already exists, we need to update it.
+            if (document._id) {
+              referenceBundler.add(
+                apiBridgeClient({
+                  api,
+                  collection: referencedCollectionSchema,
+                  inBundle: true
+                }).whereFieldIsEqualTo('_id', document._id)
+                  .update(document)
+              )
 
-            // The document does not exist, we need to create it.
-          }
+              referenceBundlerMap.push({
+                field,
+                limit: referenceLimit
+              })
+            } else {
+
+              // The document does not exist, we need to create it.
+            }
+          })
         }
       }
     })
@@ -217,21 +232,29 @@ export function saveDocument ({
       responses.forEach((response, index) => {
         const bundlerMapEntry = referenceBundlerMap[index]
         const referenceField = bundlerMapEntry.field
+        const referenceLimit = bundlerMapEntry.limit
 
         // If this bundle entry is a media upload, we're not done yet. The
         // bundle response gave us a signed URL, but we still need to upload
         // the file and add the resulting ID to the final payload.
         if (bundlerMapEntry.mediaUpload) {
-          const mediaUpload = uploadMedia(api, response.url, payload[referenceField])
-            .then(uploadResponse => {
-              if (uploadResponse.results && uploadResponse.results.length) {
-                payload[referenceField] = uploadResponse.results[0]._id
-              }
-            })
+          const mediaUpload = uploadMedia(
+            api,
+            response.url,
+            payload[referenceField][bundlerMapEntry.index]
+          ).then(uploadResponse => {
+            if (uploadResponse.results && uploadResponse.results.length) {
+              payload[referenceField][bundlerMapEntry.index] = uploadResponse.results[0]._id
+            }
+          })
 
           uploadQueue.push(mediaUpload)
-        } else if (response.results && response.results[0]) {
-          payload[referenceField] = response.results[0]._id
+        } else if (response.results) {
+          payload[referenceField] = referenceLimit === 1 ?
+            response.results[0]._id :
+            payload[referenceField].concat(response.results.map(document => {
+              return document._id
+            }))
         }
       })
 

@@ -118,6 +118,7 @@ export default class FieldReferenceEdit extends Component {
     const displayField = value &&
       Object.keys(filterHiddenFields(referencedCollection.fields, 'list'))[0]
     const href = buildUrl(...onBuildBaseUrl(), 'select', schema._id)
+    const values = value && !(value instanceof Array) ? [value] : value
 
     return (
       <Label
@@ -126,7 +127,11 @@ export default class FieldReferenceEdit extends Component {
         {value
           ? (
             <div class={styles['value-container']}>
-              <p class={styles.value}>{displayField && value[displayField]}</p>
+              <div>
+                {values.map(value => (
+                  <p class={styles.value}>{displayField && value[displayField]}</p>
+                ))}
+              </div>
 
               <Button
                 accent="destruct"

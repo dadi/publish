@@ -290,7 +290,7 @@ export default class FieldStringEdit extends Component {
     let hasValidationErrors = false
 
     // Are we dealing with multiple values?
-    if (value instanceof Array) {
+    if (Array.isArray(value)) {
       // If the field is required and we don't have any values selected,
       // there's a validation error.
       hasValidationErrors = schema.required && (value.length === 0)

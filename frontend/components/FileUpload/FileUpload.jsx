@@ -12,15 +12,20 @@ import Button from 'components/Button/Button'
 export default class FileUpload extends Component {
 
   static propTypes = {
+    /**
+     * File type acceptance.
+     */
+    accept: proptypes.string,
+
     /*
      * Allow drag and drop upload.
      */
     allowDrop: proptypes.bool,
 
     /**
-     * File type acceptance.
+     * Whether to accept multiple files.
      */
-    accept: proptypes.string,
+    multiple: proptypes.bool,
 
     /**
      * Callback to be executed when there is a change in the value of the field.
@@ -28,8 +33,14 @@ export default class FileUpload extends Component {
     onChange: proptypes.func
   }
 
-  constructor (props) {
+  static defaultProps = {
+    allowDrop: false,
+    multiple: false
+  }
+
+  constructor(props) {
     super(props)
+
     this.state.dragOver = false
   }
 
@@ -38,7 +49,11 @@ export default class FileUpload extends Component {
   }
 
   render() {
-    const {allowDrop, accept} = this.props
+    const {
+      accept,
+      allowDrop,
+      multiple
+    } = this.props
     const {dragOver} = this.state
 
     const dropStyles = new Style(styles, 'container')
@@ -65,6 +80,7 @@ export default class FileUpload extends Component {
           accept={accept}
           class={styles['file-input']}
           id={this.fileInputId}
+          multiple={multiple}
           type="file"
           onChange={this.handleFileSelect.bind(this)}
         />
@@ -81,7 +97,7 @@ export default class FileUpload extends Component {
   handleFileSelect(event) {
     const {onChange} = this.props
 
-    onChange(event.target.files[0])
+    onChange(event.target.files)
 
     event.preventDefault()
   }
@@ -90,7 +106,8 @@ export default class FileUpload extends Component {
     const {onChange} = this.props
 
     this.setState({dragOver: false})
-    onChange(event.dataTransfer.files[0])
+
+    onChange(event.dataTransfer.files)
     event.preventDefault()
   }
 

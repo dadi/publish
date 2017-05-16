@@ -8,13 +8,19 @@
   padding: 8px 10px;
 }
 
-.preview {
+.thumbnails {
+  margin-right: 20px;
+}
+
+.thumbnail {
+  display: block;
   border-radius: 3px;
-  width: auto;
-  height: auto;
-  max-height: 110px;
-  max-width: 50%;
-  margin-right: 10px;
+  max-width: 250px;
+  width: 100%;
+}
+
+.thumbnail + .thumbnail {
+  margin-top: 5px;
 }
 
 .placeholder {

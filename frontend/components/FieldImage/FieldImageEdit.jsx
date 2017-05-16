@@ -106,20 +106,25 @@ export default class FieldImageEdit extends Component {
       value
     } = this.props
     const displayName = schema.label || schema._id
-    const src = this.getImageSrc(value)
-    const isReference = schema.type === 'Reference'
     const fieldLocalType = schema.publish && schema.publish.subType ? schema.publish.subType : schema.type
     const href = buildUrl(...onBuildBaseUrl(), 'select', schema._id)
+    const isReference = schema.type === 'Reference'
+    const singleFile = schema.settings && schema.settings.limit === 1
+    const values = (value && !Array.isArray(value)) ? [value] : value
 
     return (
       <Label label={displayName}>
-        {value &&
+        {values &&
           <div class={styles['value-container']}>
-            <img
-              class={styles.preview}
-              src={src}
-            />
-            
+            <div class={styles.thumbnails}>
+              {values.map(value => (
+                <img
+                  class={styles.thumbnail}
+                  src={this.getImageSrc(value)}
+                />
+              ))}
+            </div>
+
             <Button
               accent="destruct"
               size="small"
@@ -129,7 +134,7 @@ export default class FieldImageEdit extends Component {
           </div>          
         }
 
-        {!value &&
+        {!values &&
           <div>
             <div class={styles.placeholder}>
               <Button
@@ -144,6 +149,7 @@ export default class FieldImageEdit extends Component {
               <FileUpload
                 allowDrop={true}
                 accept={config.accept}
+                multiple={!singleFile}
                 onChange={this.handleFileChange.bind(this)}
               />
             </div>
@@ -174,26 +180,40 @@ export default class FieldImageEdit extends Component {
     }
   }
 
-  handleFileChange(file) {
+  handleFileChange(files) {
     const {
       config,
       onChange,
       schema
     } = this.props
-    const reader = new FileReader()
-    
-    reader.onload = event => {
-      if (typeof onChange === 'function') {
-        onChange.call(this, schema._id, {
+    const singleFile = schema.settings && schema.settings.limit === 1
+
+    let processedFiles = []
+
+    for (let index = 0; index < files.length; index++) {
+      const file = files[index]
+      const reader = new FileReader()
+
+      reader.onload = event => {
+        processedFiles[index] = {
           _file: file,
           _previewData: reader.result,
           contentLength: file.size,
           fileName: file.name,
           mimetype: file.type
-        })
-      }
-    }
+        }
 
-    reader.readAsDataURL(file)
+        if (
+          processedFiles.length === files.length &&
+          typeof onChange === 'function'
+        ) {
+          const finalFiles = singleFile ? processedFiles[0] : processedFiles
+
+          onChange.call(this, schema._id, finalFiles)
+        }
+      }
+
+      reader.readAsDataURL(file)
+    }
   }
 }
