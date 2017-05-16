@@ -6,7 +6,8 @@ import {bindActionCreators} from 'redux'
 import {buildUrl} from 'lib/router'
 
 import * as apiActions from 'actions/apiActions'
-import {connectHelper, slugify} from 'lib/util'
+import {connectHelper} from 'lib/util'
+import {Format} from 'lib/util/string'
 import {getApiForUrlParams, getCollectionForUrlParams} from 'lib/collection-lookup'
 
 import Style from 'lib/Style'
@@ -76,7 +77,7 @@ class ReferencedDocumentHeader extends Component {
     const displayName = fieldSchema.label || referencedField
     const fieldSection = fieldSchema.publish &&
       fieldSchema.publish.section &&
-      slugify(fieldSchema.publish.section)
+      Format.slugify(fieldSchema.publish.section)
     const backToDocumentLink = buildUrl(...onBuildBaseUrl({section: fieldSection}))
 
     return (

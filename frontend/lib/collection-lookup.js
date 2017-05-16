@@ -1,7 +1,7 @@
 'use strict'
 
 import * as Constants from 'lib/constants'
-import {slugify} from 'lib/util'
+import {Format} from 'lib/util/string'
 
 /**
  * Returns the API to be used given a group and collection name
@@ -48,7 +48,7 @@ export function getApiForUrlParams (apis, filter) {
 
       // If there is a group in the URL and that matches the group of the candidate
       // collection, then it's a match.
-      if (urlGroup && group && (slugify(group.title) === urlGroup)) {
+      if (urlGroup && group && (Format.slugify(group.title) === urlGroup)) {
         return (++matchesFound === urlCollectionNumber)
       }
     }

@@ -81,6 +81,11 @@ export default class TextInput extends Component {
     ]),
 
     /**
+     * Callback to be executed onChange to validate field value.
+     */
+    validation: proptypes.func,
+
+    /**
      * Current value of the input field.
      */
     value: proptypes.string
@@ -155,7 +160,10 @@ export default class TextInput extends Component {
   }
 
   handleChange(event) {
-    const {onChange, onKeyUp} = this.props
+    const {onChange, onKeyUp, validation} = this.props
+
+    // Attach validation outcome to event.
+    event.isValid = validation ? validation(event.target.value) : true
 
     if (event.type === 'change' && typeof onChange === 'function') {
       onChange.call(this, event)

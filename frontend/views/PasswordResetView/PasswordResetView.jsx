@@ -3,6 +3,7 @@ import {connect} from 'preact-redux'
 import {route} from 'preact-router'
 import {bindActionCreators} from 'redux'
 import {connectHelper, isEmpty, setPageTitle} from 'lib/util'
+import Validation from 'lib/util/validation'
 
 import * as userActions from 'actions/userActions'
 import * as Constants from 'lib/constants'
@@ -17,13 +18,20 @@ import styles from './PasswordResetView.css'
 class PasswordResetView extends Component {
   constructor(props) {
     super(props)
-
+    
+    this.validation = new Validation()
     this.state.email = ''
+    this.state.formDataIsValid = false
   }
 
   render() {
     const {state, actions} = this.props
     const {user} = state
+    const {formDataIsValid} = this.state
+
+    if (user.resetEmail && user.resetExpiresAt) {
+      this.error = 'Please check your inbox for a password reset email.'
+    }
 
     // If the user is signed in, redirect to the reset password panel of the
     // profile page.
@@ -56,6 +64,8 @@ class PasswordResetView extends Component {
                     <TextInput
                       placeholder="Your email address"
                       onChange={this.handleInputChange.bind(this, 'email')}
+                      onKeyUp={this.handleInputChange.bind(this, 'email')}
+                      validation={this.validation.email}
                       value={this.state.email}
                     />
                   </Label>
@@ -65,6 +75,7 @@ class PasswordResetView extends Component {
               <Button
                 accent="system"
                 type="submit"
+                disabled={!formDataIsValid}
               >Reset password</Button>
 
               <a class={styles.link} href="/sign-in">Sign-in</a>
@@ -77,7 +88,8 @@ class PasswordResetView extends Component {
 
   handleInputChange(name, event) {
     this.setState({
-      [name]: event.target.value
+      [name]: event.target.value,
+      formDataIsValid: event.isValid
     })
   }
 
@@ -85,8 +97,7 @@ class PasswordResetView extends Component {
     const {actions} = this.props
     const {email} = this.state
 
-    // Some action will go here
-    console.log('* Reset password for email', email)
+    actions.requestPasswordReset(email)
 
     event.preventDefault()
   }

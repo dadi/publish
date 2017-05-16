@@ -24,7 +24,7 @@ import SignOutView from 'views/SignOutView/SignOutView'
 import ProfileEditView from 'views/ProfileEditView/ProfileEditView'
 import View from 'views/View/View'
 
-import {connectHelper, debounce, isEmpty, slugify, throttle} from 'lib/util'
+import {connectHelper, debounce} from 'lib/util'
 import ConnectionMonitor from 'lib/status'
 import apiBridgeClient from 'lib/api-bridge-client'
 
@@ -55,7 +55,7 @@ class App extends Component {
     apiBridgeClient.registerProgressCallback(actions.registerNetworkCall)
     ConnectionMonitor(2000).registerStatusChangeCallback(actions.setNetworkStatus)
 
-    // Attempt to load user from session
+    // Attempt to load user from session.
     actions.loadUserFromSession()
   }
 
@@ -72,12 +72,12 @@ class App extends Component {
     const previousState = previousProps.state
     const room = previousState.router.room
 
-    // State change: user has signed in
+    // State change: user has signed in. Load app config.
     if (state.user.remote && state.app.status === Constants.STATUS_IDLE && !state.app.config) {
       actions.loadAppConfig()
     }
 
-    // State change: app now has config
+    // State change: app now has config.
     if (!previousState.app.config && state.app.config) {
       actions.loadApis()
     }
@@ -85,7 +85,7 @@ class App extends Component {
     if (this.socket.getRoom() !== room) {
       this.socket.setRoom(room)
     }
-    // TO-TO Handle leaving a room when the component changes
+    // TO-TO Handle leaving a room when the component changes.
   }
 
   render() {
@@ -184,7 +184,7 @@ class App extends Component {
 
         <View
           component={SignInView}
-          path="/sign-in"
+          path="/sign-in/:token?"
         />
 
         <View

@@ -5,6 +5,14 @@ const Api = require(`${paths.lib.models}/api`)
 
 const Session = function () {}
 
+/**
+ * Authorise
+ * User email/password authorisation through API request.
+ * @param  {Object} req server request.
+ * @param  {Object} res server response.
+ * @param  {Function} next Next middleware process.
+ * @return {Function} Next method call.
+ */
 Session.prototype.authorise = function (email, password, next) {
   let authAPI = config.get('auth')
 
@@ -29,6 +37,14 @@ Session.prototype.authorise = function (email, password, next) {
     })
 }
 
+/**
+ * Delete
+ * Remove user.
+ * @param  {Object} req server request.
+ * @param  {Object} res server response.
+ * @param  {Function} next Next middleware process.
+ * @return {Function} Next method call.
+ */
 Session.prototype.delete = function (req, res, next) {
   req.logout()
   res.write(JSON.stringify({authenticated: req.isAuthenticated()}))
@@ -37,6 +53,14 @@ Session.prototype.delete = function (req, res, next) {
   return next()
 }
 
+/**
+ * Get
+ * Fetch user if isAuthenticated.
+ * @param  {Object} req server request.
+ * @param  {Object} res server response.
+ * @param  {Function} next Next middleware process.
+ * @return {Function} Next method call.
+ */
 Session.prototype.get = function (req, res, next) {
   res.header('Content-Type', 'application/json')
 
@@ -54,6 +78,14 @@ Session.prototype.get = function (req, res, next) {
   }
 }
 
+/**
+ * Post
+ * Create user record.
+ * @param  {Object} req server request.
+ * @param  {Object} res server response.
+ * @param  {Function} next Next middleware process.
+ * @return {Function} Next method call.
+ */
 Session.prototype.post = function (req, res, next, passport) {
   res.header('Content-Type', 'application/json')
 
@@ -99,7 +131,17 @@ Session.prototype.post = function (req, res, next, passport) {
   })(req, res, next)
 }
 
+/**
+ * Put
+ * Update user record.
+ * @param  {Object} req server request.
+ * @param  {Object} res server response.
+ * @param  {Function} next Next middleware process.
+ * @return {Function} Next method call.
+ */
 Session.prototype.put = function (req, res, next) {
+  res.header('Content-Type', 'application/json')
+
   req.login(req.body, {}, err => {
     if (err) {
       res.statusCode = 500
@@ -108,6 +150,97 @@ Session.prototype.put = function (req, res, next) {
     res.write(JSON.stringify({}))
     res.end()
   })
+
+  return next()
+}
+
+/**
+ * Reset
+ * Reset password.
+ * @param  {Object} req server request.
+ * @param  {Object} res server response.
+ * @param  {Function} next Next middleware process.
+ * @return {Function} Next method call.
+ */
+Session.prototype.reset = function (req, res, next) {
+  res.header('Content-Type', 'application/json')
+
+  let authAPI = config.get('auth')
+
+  // No authentication.
+  if (!authAPI.enabled) {
+    res.write(JSON.stringify({error: 'AUTH_DISABLED'}))
+    res.end()
+
+    return next()
+  }
+
+  // No authentication.
+  if (!authAPI.enabled) {
+    res.write(JSON.stringify({error: 'AUTH_DISABLED'}))
+    res.end()
+
+    return next()
+  }
+
+  if (req.body && (req.body.token && req.body.password)) {
+    return new Api(authAPI)
+      .in(authAPI.collection)
+      .whereFieldIsEqualTo('loginToken', req.body.token)
+      .update({password: req.body.password})
+      .then(resp => {
+        if (resp.results.length) {
+          res.write(JSON.stringify({success: true}))
+        } else {
+          res.write(JSON.stringify({err: 'PASSWORD_RESET_FAILED'}))
+        }
+        res.end()
+
+        return next()
+      })
+  }
+}
+
+/**
+ * Reset token
+ * Fetch password reset token.
+ * @param  {Object} req server request.
+ * @param  {Object} res server response.
+ * @param  {Function} next Next middleware process.
+ * @return {Function} Next method call.
+ */
+Session.prototype.resetToken = function (req, res, next) {
+  res.header('Content-Type', 'application/json')
+
+  let authAPI = config.get('auth')
+
+  // No authentication.
+  if (!authAPI.enabled) {
+    res.write(JSON.stringify({error: 'AUTH_DISABLED'}))
+    res.end()
+
+    return next()
+  }
+
+  // Check for required email value.
+  if (req.body && req.body.email) {
+    return new Api(authAPI)
+      .in(authAPI.collection)
+      .whereFieldIsEqualTo('email', req.body.email)
+      .update({
+        loginWithToken: true
+      })
+      .then(resp => {
+        res.write(JSON.stringify({expiresAt: 1494516108})) // TO-DO: Remove temporary expiration param.
+        res.end()
+
+        return next()
+      })
+  }
+
+  // Default: email address missing error.
+  res.write(JSON.stringify({error: 'MISSING_EMAIL_ADDRESS'}))
+  res.end()
 
   return next()
 }

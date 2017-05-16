@@ -23,6 +23,50 @@ export function registerFailedSignInAttempt () {
   }
 }
 
+export function setPasswordReset ({
+  resetEmail
+} = {}) {
+  return {
+    resetEmail,
+    type: Types.REQUEST_PASSWORD_RESET
+  }
+}
+
+export function setPasswordResetSuccess ({
+  response
+} = {}) {
+  return {
+    error: response.error,
+    success: response.success,
+    type: Types.REQUEST_PASSWORD_RESET_SUCCESS
+  }
+}
+
+export function requestPasswordReset (resetEmail) {
+  return (dispatch, getState) => {
+    return runSessionQuery({path: '/session/reset-token', payload: {email: resetEmail}})
+      .then(response => {
+        dispatch(setPasswordReset({resetEmail}))
+      })
+  }
+}
+
+export function passwordReset (token, password) {
+  return (dispatch, getState) =>
+    runSessionQuery({path: '/session/password-reset', payload: {
+      password,
+      token
+    }})
+    .then(response => dispatch(setPasswordResetSuccess({response})))
+}
+
+/**
+ * Run Session Query
+ * @param  {String} options.method Request method
+ * @param  {String} options.path Relative path
+ * @param  {Object} options.payload Optional data payload (POST only)
+ * @return {Promise} Fetch callback Promise
+ */
 function runSessionQuery ({
   method = 'GET',
   path = '/session',
@@ -37,20 +81,32 @@ function runSessionQuery ({
   }
 
   if (payload) {
+    // Force POST method if there is a payload.
+    request.method = 'POST'
+
+    // JSON stringify payload.
     request.body = JSON.stringify(payload)
   }
 
   return fetch(path, request).then(response => {
-    return response.json().then(parsedResponse => {
-      if (response.status === 200) {
-        return parsedResponse
-      }
+    return response.json()
+      .then(parsedResponse => {
+        if (response.status === 200) {
+          return parsedResponse
+        }
 
-      return Promise.reject(parsedResponse)
-    })
+        return Promise.reject(parsedResponse)
+      })
   })
 }
 
+/**
+ * Save User
+ * @param  {String} options.api API handle
+ * @param  {String} options.collection Collection handle
+ * @param  {Object} options.user User payload body
+ * @return {Promise} API request Promise callback
+ */
 export function saveUser ({api, collection, user}) {
   return (dispatch, getState) => {
     const currentUser = getState().user.remote
@@ -105,6 +161,10 @@ export function saveUser ({api, collection, user}) {
   }
 }
 
+/**
+ * Set Remote User
+ * @param {Object} user User data
+ */
 export function setRemoteUser (user) {
   return {
     type: Types.SET_REMOTE_USER,
@@ -112,6 +172,10 @@ export function setRemoteUser (user) {
   }
 }
 
+/**
+ * Set User Status
+ * @param {String} status Status of user
+ */
 export function setUserStatus (status) {
   return {
     status,

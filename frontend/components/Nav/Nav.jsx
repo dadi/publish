@@ -1,6 +1,5 @@
 import {h, Component} from 'preact'
 import proptypes from 'proptypes'
-import {slugify} from 'lib/util'
 
 import Dropdown from 'components/Dropdown/Dropdown'
 import DropdownItem from 'components/Dropdown/DropdownItem'

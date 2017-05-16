@@ -89,7 +89,7 @@ export default class Button extends Component {
       disabled,
       forId,
       href,
-      inGroup, 
+      inGroup,
       onClick,
       size,
       type
