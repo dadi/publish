@@ -109,8 +109,12 @@ export default class DocumentListView extends Component {
       referencedField
     } = this.props
 
-    if (documentId && referencedField) {
-      return [group, collection, 'document', 'edit', documentId, data.section]
+    if (referencedField) {
+      if (documentId) {
+        return [group, collection, 'document', 'edit', documentId, data.section]
+      }
+
+      return [group, collection, 'document', 'new', data.section]
     }
 
     return [group, collection, 'documents']
