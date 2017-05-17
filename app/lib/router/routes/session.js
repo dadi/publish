@@ -1,7 +1,6 @@
 'use strict'
 
 const passport = require('passport-restify')
-
 const SessionController = require(`${paths.lib.controllers}/session`)
 
 module.exports = function (app) {

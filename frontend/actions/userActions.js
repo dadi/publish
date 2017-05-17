@@ -90,7 +90,7 @@ function runSessionQuery ({
 
   return fetch(path, request).then(response =>
     response.json()
-      .then(parsedResponse => 
+      .then(parsedResponse =>
         response.status === 200 ? parsedResponse : Promise.reject(parsedResponse)
       )
   )
