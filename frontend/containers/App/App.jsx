@@ -65,6 +65,24 @@ class App extends Component {
     window.addEventListener('resize', debounce(() => {
       actions.setScreenWidth(window.innerWidth)
     }, 500))
+    
+
+    document.addEventListener("dragstart", this.handleDragDropEvents, false)
+    document.addEventListener("dragend", this.handleDragDropEvents, false)
+    document.addEventListener("dragover", this.handleDragDropEvents, false)
+    document.addEventListener("dragenter", this.handleDragDropEvents, false)
+    document.addEventListener("dragleave", this.handleDragDropEvents, false)
+    document.addEventListener("drop", this.handleDragDropEvents, false)
+  }
+
+  /**
+   * Handle Drag Drop Events
+   * Block and drag and drop actions to handle accidental 
+   * drop outside of FileUpload and other asset drop handlers.
+   * @param  {Event} event Event listener object.
+   */
+  handleDragDropEvents(event) {
+    event.preventDefault()
   }
 
   componentDidUpdate(previousProps) {
