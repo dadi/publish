@@ -76,7 +76,7 @@ class DocumentListController extends Component {
     const params = state.router.params
     const filters = params && params.filter ? params.filter : null
 
-    if (!currentCollection || !hasDocuments) {
+    if (!currentCollection) {
       return null
     }
 

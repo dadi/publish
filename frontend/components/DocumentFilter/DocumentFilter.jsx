@@ -131,6 +131,7 @@ export default class DocumentFilter extends Component {
             className={styles.input}
             value={value}
             onChange={this.handleChange.bind(this, 'value')}
+            onKeyUp={this.handleChange.bind(this, 'value')}
             placeholder="Search value"
           />
         </div>

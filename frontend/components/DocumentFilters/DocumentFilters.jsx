@@ -37,7 +37,10 @@ export default class DocumentFilters extends Component {
 
     const {collection} = this.props
     const paramFilters = this.getFiltersFromParams()
-    this.state.filters = paramFilters
+    this.state = {
+      filters: paramFilters,
+      dirty: false
+    }
   }
 
   getFiltersFromParams () {
@@ -72,7 +75,7 @@ export default class DocumentFilters extends Component {
   }
 
   render() {
-    const {filters} = this.state
+    const {dirty, filters} = this.state
     const {collection} = this.props
 
     return (
@@ -88,6 +91,14 @@ export default class DocumentFilters extends Component {
             onRemove={this.handleRemoveFilter.bind(this)}
           />
         ))}
+        {filters && collection && (
+          <Button
+            accent="system"
+            disabled={!dirty}
+            onClick={this.updateUrl.bind(this)}
+            type="submit"
+          >Update</Button>
+        )}
       </form>
     )
   }
@@ -130,7 +141,7 @@ export default class DocumentFilters extends Component {
     this.setState({filters: newFilters})
 
     if (filter.value) {
-      this.updateUrl()
+      this.setState({dirty: true})
     }
   }
 
@@ -140,9 +151,8 @@ export default class DocumentFilters extends Component {
     const {updateUrlParams} = this.props
 
     let validFilters = filters.filter(entry => {
-      let isValid = Object.keys(entry).filter(key => {
-        return Object.is(entry[key], null)
-      })
+      let isValid = Object.keys(entry)
+        .filter(key => Object.is(entry[key], null))
 
       return isValid.length < 1
     })
@@ -152,6 +162,8 @@ export default class DocumentFilters extends Component {
     if (filterObj || clear) {
       updateUrlParams(filterObj)
     }
+
+    this.setState({dirty: false})
   }
 
   addFilter() {
