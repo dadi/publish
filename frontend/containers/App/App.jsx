@@ -65,8 +65,6 @@ class App extends Component {
     window.addEventListener('resize', debounce(() => {
       actions.setScreenWidth(window.innerWidth)
     }, 500))
-    
-
     document.addEventListener("dragstart", this.handleDragDropEvents, false)
     document.addEventListener("dragend", this.handleDragDropEvents, false)
     document.addEventListener("dragover", this.handleDragDropEvents, false)
