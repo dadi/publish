@@ -85,7 +85,9 @@ class App extends Component {
     if (this.socket.getRoom() !== room) {
       this.socket.setRoom(room)
     }
-    // TO-TO Handle leaving a room when the component changes.
+    if (previousState.user.remote !== this.socket.getUser()) {
+      this.socket.setUser(previousState.user.remote)
+    }
   }
 
   render() {

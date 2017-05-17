@@ -55,11 +55,11 @@ Router.prototype.setPassportStrategies = function () {
   // Passport Local stategy selected
   passport.use(new LocalStrategy(sessionController.authorise))
 
-  passport.serializeUser((user, done) => 
+  passport.serializeUser((user, done) =>
     done(!user ? {err: 'User not found'} : null, user || null)
   )
 
-  passport.deserializeUser((user, done) => 
+  passport.deserializeUser((user, done) =>
     done(!user ? {err: 'User not found'} : null, user || null)
   )
 }
