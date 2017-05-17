@@ -87,6 +87,7 @@ export default class DocumentFilters extends Component {
             type={filter.type}
             value={filter.value}
             fields={collection.fields}
+            filters={filters}
             onUpdate={this.handleUpdateFilter.bind(this)}
             onRemove={this.handleRemoveFilter.bind(this)}
           />

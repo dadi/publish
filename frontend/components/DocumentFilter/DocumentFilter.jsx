@@ -26,6 +26,11 @@ export default class DocumentFilter extends Component {
     fields: proptypes.object,
 
     /**
+     * An object containing the current applied filters.
+     */
+    filters: proptypes.object,
+
+    /**
      * The index of the current filter within a list of filters.
      */
     index: proptypes.number,
@@ -77,12 +82,20 @@ export default class DocumentFilter extends Component {
   }
 
   render() {
-    const {field, fields, type, value} = this.props
+    const {
+      field, 
+      fields, 
+      filters,
+      type, 
+      value
+    } = this.props
     const controlFieldStyle = new Style(styles, 'control', 'control-field')
     const controlAnalyserStyle = new Style(styles, 'control', 'control-analyser')
     const controlValueStyle = new Style(styles, 'control', 'control-value')
     const controlButtonsStyle = new Style(styles, 'control', 'control-button')
-    
+    let remainingFields = Object.keys(fields)
+      .filter(collectionField => collectionField === field || filters.find(filter => filter.field === collectionField) === undefined)
+
     return (
       <div class={styles.filter}>
         <div class={controlFieldStyle.getClasses()}>
@@ -92,7 +105,7 @@ export default class DocumentFilter extends Component {
           >
             <option disabled selected value>Select a field</option>
 
-            {Object.keys(fields).map(key => (
+            {remainingFields.map(key => (
               <option
                 selected={field === key}
                 key={key}
