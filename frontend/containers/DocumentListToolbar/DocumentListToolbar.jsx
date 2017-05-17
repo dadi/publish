@@ -129,7 +129,7 @@ class DocumentListToolbar extends Component {
         <div class={styles.section}>
           <Paginator
             currentPage={metadata.page}
-            linkCallback={page => buildUrl(...onBuildBaseUrl(), page)}
+            linkCallback={this.handleBuildPageUrl.bind(this)}
             maxPages={8}
             totalPages={metadata.totalPages}
           />
@@ -191,6 +191,19 @@ class DocumentListToolbar extends Component {
     )
   }
 
+  handleBuildPageUrl(page) {
+    const {
+      onBuildBaseUrl,
+      referencedField
+    } = this.props
+
+    if (referencedField) {
+      return buildUrl(...onBuildBaseUrl(), 'select', referencedField, page)
+    }
+
+    return buildUrl(...onBuildBaseUrl(), page)
+  }
+
   handleBulkActionApply(actionType) {
     const {bulkActionSelected} = this.state
     const validBulkActionSelected = bulkActionSelected &&
@@ -250,7 +263,7 @@ class DocumentListToolbar extends Component {
     // we return.
     if (parsedValue > metadata.totalPages) return
 
-    route(buildUrl(...onBuildBaseUrl(), parsedValue))
+    route(this.handleBuildPageUrl(parsedValue))
   }
 
   handleReferencedDocumentSelect() {
