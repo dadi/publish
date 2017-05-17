@@ -1,9 +1,15 @@
 'use strict'
 
+const cookieParser = require('restify-cookies')
+const session = require('cookie-session')
+const flash = require('connect-flash')
+const fs = require('fs')
+const path = require('path')
+const passport = require('passport-restify')
+const LocalStrategy = require('passport-local')
 const restify = require('restify')
 const serveStatic = require('serve-static-restify')
-const path = require('path')
-const fs = require('fs')
+const SessionController = require(`${paths.lib.controllers}/session`)
 
 /**
  * @constructor
@@ -23,6 +29,7 @@ Router.prototype.addRoutes = function (app) {
 
   this.pre()
   this.use()
+  this.setPassportStrategies()
   this.setHeaders() // Only run when no redirects
   this.getRoutes()
   this.componentRoutes(path.resolve(`${paths.frontend.components}`), /Routes$/g)
@@ -36,6 +43,25 @@ Router.prototype.getRoutes = function () {
 
     controller(this.app)
   })
+}
+
+/**
+ * Set Passport Strategies
+ * Add local sessionController strategies to passport.
+ */
+Router.prototype.setPassportStrategies = function () {
+  const sessionController = new SessionController()
+
+  // Passport Local stategy selected
+  passport.use(new LocalStrategy(sessionController.authorise))
+
+  passport.serializeUser((user, done) =>
+    done(!user ? {err: 'User not found'} : null, user || null)
+  )
+
+  passport.deserializeUser((user, done) =>
+    done(!user ? {err: 'User not found'} : null, user || null)
+  )
 }
 
 /**
@@ -96,6 +122,18 @@ Router.prototype.use = function () {
     .use(restify.requestLogger())
     .use(restify.queryParser())
     .use(restify.bodyParser({mapParams: true})) // Changing to false throws issues with auth. Needs addressing
+    .use(cookieParser.parse)
+    // Add session.
+    .use(session({
+      key: 'dadi-publish',
+      secret: 'keyboard cat',
+      saveUninitialized: true,
+      resave: true
+    }))
+    // Initialise passport session.
+    .use(passport.initialize())
+    .use(passport.session())
+    .use(flash())
 }
 
 /**

@@ -88,16 +88,12 @@ function runSessionQuery ({
     request.body = JSON.stringify(payload)
   }
 
-  return fetch(path, request).then(response => {
-    return response.json()
-      .then(parsedResponse => {
-        if (response.status === 200) {
-          return parsedResponse
-        }
-
-        return Promise.reject(parsedResponse)
-      })
-  })
+  return fetch(path, request).then(response =>
+    response.json()
+      .then(parsedResponse =>
+        response.status === 200 ? parsedResponse : Promise.reject(parsedResponse)
+      )
+  )
 }
 
 /**
