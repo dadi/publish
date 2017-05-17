@@ -24,7 +24,15 @@ Session.prototype.authorise = function (email, password, next) {
     .whereFieldIsEqualTo('password', password)
     .find({extractResults: true}).then(user => {
       if (user.length > 0) {
-        return next(null, user[0])
+        // Return only required fields
+        const authUser = {
+          first_name: user[0].first_name,
+          last_name: user[0].last_name,
+          email: user[0].email,
+          _id: user[0]._id,
+          handle: user[0].handle
+        }
+        return next(null, authUser)
       } else {
         return next(null)
       }
