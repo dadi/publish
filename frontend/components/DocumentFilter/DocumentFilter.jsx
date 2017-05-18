@@ -3,10 +3,10 @@
 import {h, Component} from 'preact'
 import proptypes from 'proptypes'
 
+import * as fieldComponents from 'lib/field-components'
 import Style from 'lib/Style'
 import styles from './DocumentFilter.css'
 
-import TextInput from 'components/TextInput/TextInput'
 import Button from 'components/Button/Button'
 
 /**
@@ -71,14 +71,48 @@ export default class DocumentFilter extends Component {
     // {!} To do - reduce by filter type
     this.filterTypes = {
       '$eq': 'Equals',
-      '$ne': 'Not Equal to',
-      '$nin': 'Not in',
-      '$in': 'In',
       '$gt': 'Greater than',
       '$gte': 'Greater than or Equal to',
+      '$in': 'Is one of',
       '$lt': 'Less than',
-      '$lte': 'Less than or Equal to'
+      '$lt': 'Less than',
+      '$ne': 'Is not',
+      '$nin': 'Is not one of',
+      '$regex': 'Contains'
     }
+    // this.fieldFilters = {
+    //   'Reference': {
+    //     filters: {
+    //       '$eq': 'Equals',
+    //       '$in': 'Is one of',
+    //       '$ne': 'Is not',
+    //       '$nin': 'Is not one of'
+    //     }
+    //   },
+    //   'String': {
+    //     filters: {
+    //       '$eq': 'Equals',
+    //       '$ne': 'Is not',
+    //       '$regex': 'Contains'
+    //     }
+    //   },
+    //   'Boolean': {
+    //     options: {
+    //       'true': 'true',
+    //       'false': false
+    //     }
+    //   },
+    //   'Number': {
+    //     filters: {
+    //       '$eq': 'Is',
+    //       ''
+    //     }
+    //   }
+    //   'String': ['$eq', '$ne'],
+    //   'Boolean': ['$eq', '$ne'],
+    //   'Number': ['$eq', '$ne', '$gt', '$gte', '$lt', '$lte'],
+    //   'DateTime': ['$eq']
+    // }
   }
 
   render() {
@@ -89,65 +123,49 @@ export default class DocumentFilter extends Component {
       type, 
       value
     } = this.props
-    const controlFieldStyle = new Style(styles, 'control', 'control-field')
-    const controlAnalyserStyle = new Style(styles, 'control', 'control-analyser')
-    const controlValueStyle = new Style(styles, 'control', 'control-value')
     const controlButtonsStyle = new Style(styles, 'control', 'control-button')
-    let remainingFields = Object.keys(fields)
+    const controlFieldStyle = new Style(styles, 'control', 'control-field', 'select')
+    const controlAnalyserStyle = new Style(styles, 'select', 'control', 'control-analyser')
+    const controlValueStyle = new Style(styles, 'input', 'control', 'control-value')
+    // const controlButtonsStyle = new Style(styles, 'control', 'control-button')
+    const currentField = fields[field]
+    const fieldComponentName = `Field${currentField.type}`
+    const FieldFilter = fieldComponents[fieldComponentName] && fieldComponents[fieldComponentName].filter
+    const handleTypeChange = this.handleChange.bind(this, 'type')
+    const handleValueChange = this.handleChange.bind(this, 'value')
+    const remainingFields = Object.keys(fields)
       .filter(collectionField => collectionField === field || !filters.find(filter => filter.field === collectionField))
 
     return (
       <div class={styles.filter}>
-        <div class={controlFieldStyle.getClasses()}>
-          <select
-            class={styles.select}
-            onChange={this.handleChange.bind(this, 'field')}
-          >
-            <option disabled selected value>Select a field</option>
-
-            {remainingFields.map(key => (
-              <option
-                selected={field === key}
-                key={key}
-                value={key}
-              >
-                {fields[key].label}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        <div class={controlAnalyserStyle.getClasses()}>
-          <select
-            class={styles.select}
-            onChange={this.handleChange.bind(this, 'type')}
-          >
-            <option disabled selected value>Select a type</option>
-
-            {Object.keys(this.filterTypes).map(key => (
-              <option
-                selected={type === key}
-                key={key}
-                value={key}
-              >
-                {this.filterTypes[key]}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        <div
-          class={controlValueStyle.getClasses()}
-          style={!(field && type) && "display: none;"}
+        <select
+          class={controlFieldStyle.getClasses()}
+          onChange={this.handleChange.bind(this, 'field')}
         >
-          <TextInput
-            className={styles.input}
+          <option disabled selected value>Select a field</option>
+
+          {remainingFields.map(key => (
+            <option
+              selected={field === key}
+              key={key}
+              value={key}
+            >
+              {fields[key].label}
+            </option>
+          ))}
+        </select>
+
+        {(field && type) && (
+          <FieldFilter
+            containerStyles={styles['filter-container']}
+            onTypeChange={handleTypeChange}
+            onValueChange={handleValueChange}
+            valueStyles={controlValueStyle.getClasses()}
+            analyserStyles={controlAnalyserStyle.getClasses()}
+            type={type}
             value={value}
-            onChange={this.handleChange.bind(this, 'value')}
-            onKeyUp={this.handleChange.bind(this, 'value')}
-            placeholder="Search value"
           />
-        </div>
+        )}
 
         <div class={controlButtonsStyle.getClasses()}>
           <Button
@@ -161,18 +179,11 @@ export default class DocumentFilter extends Component {
 
   handleChange(elementId, event) {
     const {onUpdate, index} = this.props
+    const val = event.target ? event.target.value : event
 
     onUpdate({
-      [elementId]: event.target.value
+      [elementId]: val
     }, index)
-  }
-
-  filterValue(value) {
-    if (typeof value === 'string') {
-      return value
-    }
-
-    return value[Object.keys(value)[0]] || ''
   }
 
   handleRemove() {

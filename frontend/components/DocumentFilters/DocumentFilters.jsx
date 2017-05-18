@@ -46,7 +46,7 @@ export default class DocumentFilters extends Component {
   getFiltersFromParams () {
     const {filters} = this.props
     return (filters ? objectToArray(filters, 'field') : [])
-      .map(this.deconstructFilters)
+      .map(this.deconstructFilters.bind(this))
   }
 
   componentWillUpdate(nextProps, nextState) {
@@ -67,7 +67,7 @@ export default class DocumentFilters extends Component {
   }
 
   createDefaultFilter(collection, filters) {
-    let remainingFields = Object.keys(collection.fields)
+    const remainingFields = Object.keys(collection.fields)
       .filter(collectionField => !(filters) || !Object.keys(filters).find(filter => filter === collectionField))
 
     return {
@@ -113,8 +113,9 @@ export default class DocumentFilters extends Component {
       return Object.assign(filter, {type: '$eq'})
     } else {
       const type = Object.keys(filter.value)[0]
+      const value = filter.value[type]
 
-      return Object.assign(filter, {type: type, value: filter.value[type]})
+      return Object.assign(filter, {type: type, value: value})
     }
   }
 
@@ -144,7 +145,7 @@ export default class DocumentFilters extends Component {
     Object.assign(newFilters[index], filter)
     this.setState({filters: newFilters})
 
-    if (filter.value) {
+    if (filter.value !== undefined) {
       this.setState({dirty: true})
     }
   }
