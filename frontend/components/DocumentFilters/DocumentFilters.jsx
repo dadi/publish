@@ -60,22 +60,25 @@ export default class DocumentFilters extends Component {
       // If we aren't changing collection
       let paramFilters = this.getFiltersFromParams()
       if (newFilter) {
-        paramFilters.push(this.createDefaultFilter(collection))
+        paramFilters.push(this.createDefaultFilter(collection, filters))
       }
       this.setState({filters: paramFilters})
     }
   }
 
-  createDefaultFilter(collection) {
+  createDefaultFilter(collection, filters) {
+    let remainingFields = Object.keys(collection.fields)
+      .filter(collectionField => !(filters) || !Object.keys(filters).find(filter => filter === collectionField))
+
     return {
-      field: Object.keys(collection.fields)[0],
+      field: remainingFields[0],
       type: '$eq',
       value: null
     }   
   }
 
   render() {
-    const {dirty, filters} = this.state
+    const {dirty, filters, newFilter} = this.state
     const {collection} = this.props
 
     return (

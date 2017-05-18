@@ -94,7 +94,7 @@ export default class DocumentFilter extends Component {
     const controlValueStyle = new Style(styles, 'control', 'control-value')
     const controlButtonsStyle = new Style(styles, 'control', 'control-button')
     let remainingFields = Object.keys(fields)
-      .filter(collectionField => collectionField === field || filters.find(filter => filter.field === collectionField) === undefined)
+      .filter(collectionField => collectionField === field || !filters.find(filter => filter.field === collectionField))
 
     return (
       <div class={styles.filter}>
