@@ -10,7 +10,30 @@ import TextInput from 'components/TextInput/TextInput'
  */
 export default class FieldBooleanFilter extends Component {
   static propTypes = {
-   
+    /**
+     * Classes for the analyser selection.
+     */
+    analyserStyles: proptypes.string,
+
+    /**
+     * Classes for the container.
+     */
+    containerStyles: proptypes.string,
+
+    /**
+     * Type change callback.
+     */
+    onTypeChange: proptypes.func,
+
+    /**
+     * Value change callback.
+     */
+    onValueChange: proptypes.func,
+
+    /**
+     * Field value.
+     */
+    value: proptypes.string
   }
 
   constructor(props) {
@@ -24,9 +47,7 @@ export default class FieldBooleanFilter extends Component {
       onTypeChange,
       onValueChange,
       handleValueChange,
-      type,
-      value,
-      valueStyles
+      value
     } = this.props
 
     return (
@@ -52,7 +73,7 @@ export default class FieldBooleanFilter extends Component {
   handleValueChange(event) {
     const {onValueChange} = this.props
     const value = !Boolean(event.target.selectedIndex)
-    
+
     onValueChange(value)
   }
 }

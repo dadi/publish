@@ -65,56 +65,6 @@ export default class DocumentFilter extends Component {
     value: proptypes.string
   }
 
-  constructor(props) {
-    super(props)
-
-    // {!} To do - reduce by filter type
-    this.filterTypes = {
-      '$eq': 'Equals',
-      '$gt': 'Greater than',
-      '$gte': 'Greater than or Equal to',
-      '$in': 'Is one of',
-      '$lt': 'Less than',
-      '$lt': 'Less than',
-      '$ne': 'Is not',
-      '$nin': 'Is not one of',
-      '$regex': 'Contains'
-    }
-    // this.fieldFilters = {
-    //   'Reference': {
-    //     filters: {
-    //       '$eq': 'Equals',
-    //       '$in': 'Is one of',
-    //       '$ne': 'Is not',
-    //       '$nin': 'Is not one of'
-    //     }
-    //   },
-    //   'String': {
-    //     filters: {
-    //       '$eq': 'Equals',
-    //       '$ne': 'Is not',
-    //       '$regex': 'Contains'
-    //     }
-    //   },
-    //   'Boolean': {
-    //     options: {
-    //       'true': 'true',
-    //       'false': false
-    //     }
-    //   },
-    //   'Number': {
-    //     filters: {
-    //       '$eq': 'Is',
-    //       ''
-    //     }
-    //   }
-    //   'String': ['$eq', '$ne'],
-    //   'Boolean': ['$eq', '$ne'],
-    //   'Number': ['$eq', '$ne', '$gt', '$gte', '$lt', '$lte'],
-    //   'DateTime': ['$eq']
-    // }
-  }
-
   render() {
     const {
       field, 
@@ -127,7 +77,6 @@ export default class DocumentFilter extends Component {
     const controlFieldStyle = new Style(styles, 'control', 'control-field', 'select')
     const controlAnalyserStyle = new Style(styles, 'select', 'control', 'control-analyser')
     const controlValueStyle = new Style(styles, 'input', 'control', 'control-value')
-    // const controlButtonsStyle = new Style(styles, 'control', 'control-button')
     const currentField = fields[field]
     const fieldComponentName = `Field${currentField.type}`
     const FieldFilter = fieldComponents[fieldComponentName] && fieldComponents[fieldComponentName].filter

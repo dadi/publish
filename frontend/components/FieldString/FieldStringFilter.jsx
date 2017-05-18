@@ -10,7 +10,40 @@ import TextInput from 'components/TextInput/TextInput'
  */
 export default class FieldStringFilter extends Component {
   static propTypes = {
-   
+    /**
+     * Classes for the analyser selection.
+     */
+    analyserStyles: proptypes.string,
+
+    /**
+     * Classes for the container.
+     */
+    containerStyles: proptypes.string,
+
+    /**
+     * Type change callback.
+     */
+    onTypeChange: proptypes.func,
+
+    /**
+     * Value change callback.
+     */
+    onValueChange: proptypes.func,
+
+    /**
+     * Field type.
+     */
+    type: proptypes.string
+
+    /**
+     * Field value.
+     */
+    value: proptypes.string,
+
+    /**
+     * Classes for the value input.
+     */
+    valueStyles: proptypes.string
   }
 
   constructor(props) {
@@ -29,7 +62,6 @@ export default class FieldStringFilter extends Component {
       containerStyles,
       onTypeChange,
       onValueChange,
-      handleValueChange,
       type,
       value,
       valueStyles
