@@ -14,7 +14,9 @@ export function clearRemoteDocument () {
 
 export function discardUnsavedChanges () {
   return (dispatch, getState) => {
-    let localStorageKey = getLocalStorageKeyFromState(getState())
+    let localStorageKey = getState().document.remote ?
+      getState().document.remote._id :
+      JSON.stringify({collection, group})
 
     LocalStorage.clearDocument(localStorageKey)
 
