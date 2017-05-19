@@ -3,8 +3,6 @@
 import {h, Component} from 'preact'
 import proptypes from 'proptypes'
 
-import TextInput from 'components/TextInput/TextInput'
-
 /**
  * Component for rendering API fields of type Boolean in a filter.
  */

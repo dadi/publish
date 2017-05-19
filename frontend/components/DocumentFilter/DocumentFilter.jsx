@@ -15,6 +15,11 @@ import Button from 'components/Button/Button'
 export default class DocumentFilter extends Component {
   static propTypes = {
     /**
+     * App config.
+     */
+    config: proptypes.object,
+
+    /**
      * The slug of the field being filtered.
      */
     field: proptypes.string,
@@ -67,6 +72,7 @@ export default class DocumentFilter extends Component {
 
   render() {
     const {
+      config,
       field, 
       fields, 
       filters,
@@ -108,6 +114,7 @@ export default class DocumentFilter extends Component {
 
         {(field && type) && (
           <FieldFilter
+            config={config}
             index={index}
             containerStyles={styles['filter-container']}
             onUpdate={onUpdate}

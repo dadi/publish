@@ -22,6 +22,11 @@ export default class DocumentFilters extends Component {
     collection: proptypes.object,
 
     /**
+     * App config.
+     */
+    config: proptypes.object,
+
+    /**
      * The JSON-stringified object of filters currently applied.
      */
     filter: proptypes.string,
@@ -80,20 +85,21 @@ export default class DocumentFilters extends Component {
 
   render() {
     const {dirty, filters, newFilter} = this.state
-    const {collection} = this.props
+    const {collection, config} = this.props
 
     return (
       <form class={styles.filters} onSubmit={e => e.preventDefault()}>
         {filters && collection && filters.map((filter, index) => (
           <DocumentFilter
-            index={index}
+            config={config}
             field={filter.field}
-            type={filter.type}
-            value={filter.value}
             fields={collection.fields}
             filters={filters}
+            index={index}
             onUpdate={this.handleUpdateFilter.bind(this)}
             onRemove={this.handleRemoveFilter.bind(this)}
+            type={filter.type}
+            value={filter.value}
           />
         ))}
 

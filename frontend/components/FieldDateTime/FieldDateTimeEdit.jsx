@@ -89,11 +89,6 @@ export default class FieldDateTimeEdit extends Component {
 
     this.state.pickerVisible = false
 
-    // We're using this format for all DateTime fields for now, but we could
-    // introduce a property in the publish block that allows DateTime fields
-    // to choose how they're formatted.
-    this.DEFAULT_DATE_FORMAT = 'DD/MM/YY HH:mm'
-
     this.picker = false
     this.pickerEventHandler = this.handlePickerClick.bind(this, true)
     this.pickerOutsideEventHandler = this.handlePickerClick.bind(this, false)
@@ -101,7 +96,12 @@ export default class FieldDateTimeEdit extends Component {
   }
 
   render() {
-    const {error, schema, value} = this.props
+    const {
+      config,
+      error, 
+      schema, 
+      value
+    } = this.props
     const {pickerVisible} = this.state
     const publishBlock = schema.publish || {}
 
@@ -128,7 +128,7 @@ export default class FieldDateTimeEdit extends Component {
           onFocus={this.handleFocus.bind(this, true)}
           readonly={publishBlock.readonly === true}
           type="text"
-          value={dateObj && dateObj.format(this.DEFAULT_DATE_FORMAT)}
+          value={dateObj && dateObj.format(config.formats.date.long)}
         />
 
         <div ref={this.handlePickerRef.bind(this)}>
@@ -157,10 +157,10 @@ export default class FieldDateTimeEdit extends Component {
   }
 
   handleChange(event) {
-    const {onChange, schema, value} = this.props
-    const newDate = new DateTime(event.target.value, this.DEFAULT_DATE_FORMAT)
+    const {config, onChange, schema, value} = this.props
+    const newDate = new DateTime(event.target.value, config.formats.date.long)
 
-    let newValue
+    let newValue = null
 
     if (event.target.value.length > 0) {
       if (newDate.isValid()) {
@@ -168,8 +168,6 @@ export default class FieldDateTimeEdit extends Component {
       } else {
         newValue = value
       }
-    } else {
-      newValue = null
     }
 
     if (typeof onChange === 'function') {
