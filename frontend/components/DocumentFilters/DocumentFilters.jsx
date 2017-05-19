@@ -37,6 +37,7 @@ export default class DocumentFilters extends Component {
 
     const {collection} = this.props
     const paramFilters = this.getFiltersFromParams()
+
     this.state = {
       filters: paramFilters,
       dirty: false
@@ -95,13 +96,16 @@ export default class DocumentFilters extends Component {
             onRemove={this.handleRemoveFilter.bind(this)}
           />
         ))}
-        {filters && collection && (
-          <Button
-            accent="system"
-            disabled={!dirty}
-            onClick={this.updateUrl.bind(this)}
-            type="submit"
-          >Update</Button>
+
+        {filters && collection && (filters.length > 0) && (
+          <div class={styles.submit}>
+            <Button
+              accent="data"
+              disabled={!dirty}
+              onClick={this.updateUrl.bind(this)}
+              type="submit"
+            >Update</Button>
+          </div>
         )}
       </form>
     )
