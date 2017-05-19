@@ -42,16 +42,10 @@ export default class DocumentFilters extends Component {
 
     const {collection} = this.props
     const paramFilters = this.getFiltersFromParams()
-<<<<<<< HEAD
-    this.state = {
-      filters: paramFilters,
-      dirty: false
-=======
 
     this.state = {
       dirty: false,
       filters: paramFilters
->>>>>>> 74625e221014cc3a85a534eb4ce71b91c11c4c63
     }
   }
 
@@ -91,13 +85,8 @@ export default class DocumentFilters extends Component {
   }
 
   render() {
-<<<<<<< HEAD
-    const {dirty, filters} = this.state
-    const {collection} = this.props
-=======
     const {dirty, filters, newFilter} = this.state
     const {collection, config} = this.props
->>>>>>> 74625e221014cc3a85a534eb4ce71b91c11c4c63
 
     return (
       <form class={styles.filters} onSubmit={e => e.preventDefault()}>
