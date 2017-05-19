@@ -82,13 +82,13 @@ export default class FieldStringFilter extends Component {
               </option>
             ))}
           </select>
-            <TextInput
-              className={valueStyles}
-              onChange={this.handleChange.bind(this, 'value')}
-              onKeyUp={this.handleChange.bind(this, 'value')}
-              placeholder="Search value"
-              value={value}
-            />
+          <TextInput
+            className={valueStyles}
+            onChange={this.handleChange.bind(this, 'value')}
+            onKeyUp={this.handleChange.bind(this, 'value')}
+            placeholder="Search value"
+            value={value}
+          />
         </div>
     )
   }
