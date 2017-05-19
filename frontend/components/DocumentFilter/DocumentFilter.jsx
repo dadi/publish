@@ -114,12 +114,12 @@ export default class DocumentFilter extends Component {
 
         {(field && type) && (
           <FieldFilter
+            analyserStyles={controlAnalyserStyle.getClasses()}
             config={config}
-            index={index}
             containerStyles={styles['filter-container']}
+            index={index}
             onUpdate={onUpdate}
             valueStyles={controlValueStyle.getClasses()}
-            analyserStyles={controlAnalyserStyle.getClasses()}
             type={type}
             value={value}
           />

@@ -44,13 +44,14 @@ export default class DocumentFilters extends Component {
     const paramFilters = this.getFiltersFromParams()
 
     this.state = {
-      filters: paramFilters,
-      dirty: false
+      dirty: false,
+      filters: paramFilters
     }
   }
 
   getFiltersFromParams () {
     const {filters} = this.props
+
     return (filters ? objectToArray(filters, 'field') : [])
       .map(this.deconstructFilters.bind(this))
   }
@@ -167,7 +168,7 @@ export default class DocumentFilters extends Component {
 
     let validFilters = filters.filter(entry => {
       let isValid = Object.keys(entry)
-        .filter(key => Object.is(entry[key], null))
+        .filter(key => !entry[key])
 
       return isValid.length < 1
     })

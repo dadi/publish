@@ -92,14 +92,14 @@ export default class FieldDateTimeFilter extends Component {
               </option>
             ))}
           </select>
-            <TextInput
-              type="date"
-              className={valueStyles}
-              value={value}
-              onChange={this.handleChange.bind(this, 'value')}
-              onKeyUp={this.handleChange.bind(this, 'value')}
-              placeholder="Search value"
-            />
+          <TextInput
+            className={valueStyles}
+            onChange={this.handleChange.bind(this, 'value')}
+            onKeyUp={this.handleChange.bind(this, 'value')}
+            placeholder="Search value"
+            type="date"
+            value={value}
+          />
         </div>
     )
   }

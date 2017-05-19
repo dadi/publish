@@ -53,10 +53,6 @@ input:focus {
   margin-right: 10px;
 }
 
-.control-value-select {
-
-}
-
 .filter-container {
   flex-grow: 70;
   display: flex;

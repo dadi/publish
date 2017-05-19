@@ -71,7 +71,7 @@ APIBridgeController.prototype.post = function (req, res, next) {
           }
         }
 
-        if (typeof requestObject.body !== 'undefined') {
+        if (requestObject.body !== undefined) {
           payload.body = JSON.stringify(requestObject.body)
         }
 

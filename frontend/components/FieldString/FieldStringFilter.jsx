@@ -84,10 +84,10 @@ export default class FieldStringFilter extends Component {
           </select>
             <TextInput
               className={valueStyles}
-              value={value}
               onChange={this.handleChange.bind(this, 'value')}
               onKeyUp={this.handleChange.bind(this, 'value')}
               placeholder="Search value"
+              value={value}
             />
         </div>
     )
