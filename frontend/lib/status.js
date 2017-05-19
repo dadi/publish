@@ -5,7 +5,7 @@ import * as Constants from 'lib/constants'
 
 export function isOnline () {
   // Return true when property undefined
-  return typeof window.navigator.onLine !== 'undefined' || window.navigator.onLine
+  return window.navigator.onLine !== undefined || window.navigator.onLine
 }
 
 export function isServerOnline () {

@@ -29,7 +29,7 @@ function generatePropType (type) {
     values = type.value
   }
 
-  return `- type: \`${type.name}${typeof values !== 'undefined' ? values : ''}\`\n`
+  return `- type: \`${type.name}${values !== undefined ? values : ''}\`\n`
 }
 
 function generatePropDefaultValue (value) {
@@ -50,7 +50,7 @@ function generateProp (propName, prop) {
 function generateProps (props) {
   var title = 'Props'
 
-  if (typeof props === 'undefined') {
+  if (props === undefined) {
     return ''
   }
 

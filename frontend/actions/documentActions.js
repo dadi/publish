@@ -130,7 +130,7 @@ export function saveDocument ({
       })
 
       booleanFields.forEach(booleanField => {
-        if (typeof payload[booleanField] === 'undefined') {
+        if (payload[booleanField] === undefined) {
           payload[booleanField] = false
         }
       })
@@ -157,7 +157,7 @@ export function saveDocument ({
             referencedDocument : [referencedDocument]
         const referenceLimit = (
           fieldSchema.settings &&
-          typeof fieldSchema.settings.limit !== 'undefined' &&
+          fieldSchema.settings.limit !== undefined &&
           fieldSchema.settings.limit > 0
         ) ? fieldSchema.settings.limit : Infinity
 

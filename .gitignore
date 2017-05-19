@@ -2,6 +2,7 @@ node_modules/
 build/
 log/
 coverage/
+jest/
 
 config/config.*.json
 

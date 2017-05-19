@@ -22,6 +22,11 @@ export default class DocumentFilters extends Component {
     collection: proptypes.object,
 
     /**
+     * App config.
+     */
+    config: proptypes.object,
+
+    /**
      * The JSON-stringified object of filters currently applied.
      */
     filter: proptypes.string,
@@ -37,13 +42,18 @@ export default class DocumentFilters extends Component {
 
     const {collection} = this.props
     const paramFilters = this.getFiltersFromParams()
-    this.state.filters = paramFilters
+
+    this.state = {
+      dirty: false,
+      filters: paramFilters
+    }
   }
 
   getFiltersFromParams () {
     const {filters} = this.props
+
     return (filters ? objectToArray(filters, 'field') : [])
-      .map(this.deconstructFilters)
+      .map(this.deconstructFilters.bind(this))
   }
 
   componentWillUpdate(nextProps, nextState) {
@@ -57,37 +67,53 @@ export default class DocumentFilters extends Component {
       // If we aren't changing collection
       let paramFilters = this.getFiltersFromParams()
       if (newFilter) {
-        paramFilters.push(this.createDefaultFilter(collection))
+        paramFilters.push(this.createDefaultFilter(collection, filters))
       }
       this.setState({filters: paramFilters})
     }
   }
 
-  createDefaultFilter(collection) {
+  createDefaultFilter(collection, filters) {
+    const remainingFields = Object.keys(collection.fields)
+      .filter(collectionField => !(filters) || !Object.keys(filters).find(filter => filter === collectionField))
+
     return {
-      field: Object.keys(collection.fields)[0],
+      field: remainingFields[0],
       type: '$eq',
       value: null
     }   
   }
 
   render() {
-    const {filters} = this.state
-    const {collection} = this.props
+    const {dirty, filters, newFilter} = this.state
+    const {collection, config} = this.props
 
     return (
       <form class={styles.filters} onSubmit={e => e.preventDefault()}>
         {filters && collection && filters.map((filter, index) => (
           <DocumentFilter
-            index={index}
+            config={config}
             field={filter.field}
-            type={filter.type}
-            value={filter.value}
             fields={collection.fields}
+            filters={filters}
+            index={index}
             onUpdate={this.handleUpdateFilter.bind(this)}
             onRemove={this.handleRemoveFilter.bind(this)}
+            type={filter.type}
+            value={filter.value}
           />
         ))}
+
+        {filters && collection && (filters.length > 0) && (
+          <div class={styles.submit}>
+            <Button
+              accent="data"
+              disabled={!dirty}
+              onClick={this.updateUrl.bind(this)}
+              type="submit"
+            >Update</Button>
+          </div>
+        )}
       </form>
     )
   }
@@ -98,8 +124,9 @@ export default class DocumentFilters extends Component {
       return Object.assign(filter, {type: '$eq'})
     } else {
       const type = Object.keys(filter.value)[0]
+      const value = filter.value[type]
 
-      return Object.assign(filter, {type: type, value: filter.value[type]})
+      return Object.assign(filter, {type: type, value: value})
     }
   }
 
@@ -129,8 +156,8 @@ export default class DocumentFilters extends Component {
     Object.assign(newFilters[index], filter)
     this.setState({filters: newFilters})
 
-    if (filter.value) {
-      this.updateUrl()
+    if (filter.value !== undefined) {
+      this.setState({dirty: true})
     }
   }
 
@@ -140,9 +167,8 @@ export default class DocumentFilters extends Component {
     const {updateUrlParams} = this.props
 
     let validFilters = filters.filter(entry => {
-      let isValid = Object.keys(entry).filter(key => {
-        return Object.is(entry[key], null)
-      })
+      let isValid = Object.keys(entry)
+        .filter(key => !entry[key])
 
       return isValid.length < 1
     })
@@ -152,6 +178,8 @@ export default class DocumentFilters extends Component {
     if (filterObj || clear) {
       updateUrlParams(filterObj)
     }
+
+    this.setState({dirty: false})
   }
 
   addFilter() {

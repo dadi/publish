@@ -504,7 +504,7 @@ class DocumentEdit extends Component {
       <div class={styles.field}>
         <FieldComponent
           collection={collection}
-          config={app.config[fieldComponentName]}
+          config={app.config}
           currentApi={this.currentApi}
           currentCollection={this.currentCollection}
           documentId={documentId}

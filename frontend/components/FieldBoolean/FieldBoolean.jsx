@@ -1,4 +1,5 @@
 import edit from './FieldBooleanEdit'
+import filter from './FieldBooleanFilter'
 import list from './FieldBooleanList'
 
-export {edit, list}
+export {edit, filter, list}

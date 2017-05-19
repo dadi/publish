@@ -3,7 +3,7 @@
 export function urlHelper () {
   return {
     paramsToObject (source) {
-      if (!source || typeof source === 'undefined') return null
+      if (!source || source === undefined) return null
       let params = JSON.parse('{"' + decodeURI(source.replace(/^(\?)/, ''))
         .replace(/"/g, '\\"')
         .replace(/&/g, '","')
