@@ -2,3 +2,8 @@
   background-color: var(--theme-colour-background-shade-3, #DDDDDD);
   padding: 1px 20px;
 }
+
+.submit {
+  padding-bottom: 10px;
+  text-align: right;
+}

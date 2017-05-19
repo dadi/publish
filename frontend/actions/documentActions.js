@@ -14,7 +14,9 @@ export function clearRemoteDocument () {
 
 export function discardUnsavedChanges () {
   return (dispatch, getState) => {
-    let localStorageKey = getLocalStorageKeyFromState(getState())
+    let localStorageKey = getState().document.remote ?
+      getState().document.remote._id :
+      JSON.stringify({collection, group})
 
     LocalStorage.clearDocument(localStorageKey)
 
@@ -128,7 +130,7 @@ export function saveDocument ({
       })
 
       booleanFields.forEach(booleanField => {
-        if (typeof payload[booleanField] === 'undefined') {
+        if (payload[booleanField] === undefined) {
           payload[booleanField] = false
         }
       })
@@ -155,7 +157,7 @@ export function saveDocument ({
             referencedDocument : [referencedDocument]
         const referenceLimit = (
           fieldSchema.settings &&
-          typeof fieldSchema.settings.limit !== 'undefined' &&
+          fieldSchema.settings.limit !== undefined &&
           fieldSchema.settings.limit > 0
         ) ? fieldSchema.settings.limit : Infinity
 

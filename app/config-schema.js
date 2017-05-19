@@ -230,6 +230,16 @@ module.exports = {
       db: path.join(__dirname, '/../workspace/db')
     }
   },
+  formats: {
+    availableInFrontend: true,
+    date: {
+      long: {
+        doc: 'Date Format',
+        format: String,
+        default: 'YYYY/MM/DD HH:mm'
+      }
+    }
+  },
   TZ: {
     availableInFrontend: true,
     doc: 'Process Timezone',

@@ -67,6 +67,7 @@ class DocumentListController extends Component {
       referencedField,
       state
     } = this.props
+
     const currentCollection = getCollectionForUrlParams(state.api.apis, {
       collection,
       group,
@@ -93,6 +94,7 @@ class DocumentListController extends Component {
           >Create new</Button>
         </ListController>
         <DocumentFilters
+          config={state.app.config}
           filters={filters}
           newFilter={newFilter}
           collection={currentCollection}
@@ -134,6 +136,7 @@ class DocumentListController extends Component {
 export default connectHelper(
   state => ({
     api: state.api,
+    app: state.app,
     documents: state.documents,
     router: state.router
   }),

@@ -97,7 +97,7 @@ class Header extends Component {
   }
 
   toggleCollapsed(expanded, event) {
-    if (typeof expanded === 'undefined') {
+    if (expanded === undefined) {
       expanded = !this.state.expanded
     }
 

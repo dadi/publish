@@ -173,11 +173,11 @@ export default class DateTimePicker extends Component {
     const {year, month, day, hours, minutes} = overrides
 
     return new Date(
-      typeof year !== 'undefined' ? year : date.getFullYear(),
-      typeof month !== 'undefined' ? month : date.getMonth() + monthOffset,
-      typeof day !== 'undefined' ? day : date.getDate(),
-      typeof hours !== 'undefined' ? hours : date.getHours(),
-      typeof minutes !== 'undefined' ? minutes : date.getMinutes()
+      year !== undefined ? year : date.getFullYear(),
+      month !== undefined ? month : date.getMonth() + monthOffset,
+      day !== undefined ? day : date.getDate(),
+      hours !== undefined ? hours : date.getHours(),
+      minutes !== undefined ? minutes : date.getMinutes()
     )
   }
 
@@ -212,7 +212,7 @@ export default class DateTimePicker extends Component {
     const padedDay = day >= 10 ? day : `0${day}`
 
     const fadedDayStyle = new Style(styles, 'calendar-day')
-      .addIf('calendar-day-faded', typeof monthOffset !== 'undefined')
+      .addIf('calendar-day-faded', monthOffset !== undefined)
       .addIf('calendar-day-current', dateTime.isSameDayAs(new Date()))
       .addIf('calendar-day-active', dateTime.isSameDayAs(valueDate))
 

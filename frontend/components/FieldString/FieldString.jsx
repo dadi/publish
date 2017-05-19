@@ -1,4 +1,5 @@
 import edit from './FieldStringEdit'
+import filter from './FieldStringFilter'
 import list from './FieldStringList'
 
-export {edit, list}
+export {edit, filter, list}
