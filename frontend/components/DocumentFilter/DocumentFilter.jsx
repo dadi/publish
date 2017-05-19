@@ -70,6 +70,8 @@ export default class DocumentFilter extends Component {
       field, 
       fields, 
       filters,
+      index,
+      onUpdate,
       type, 
       value
     } = this.props
@@ -106,9 +108,9 @@ export default class DocumentFilter extends Component {
 
         {(field && type) && (
           <FieldFilter
+            index={index}
             containerStyles={styles['filter-container']}
-            onTypeChange={handleTypeChange}
-            onValueChange={handleValueChange}
+            onUpdate={onUpdate}
             valueStyles={controlValueStyle.getClasses()}
             analyserStyles={controlAnalyserStyle.getClasses()}
             type={type}
@@ -128,10 +130,9 @@ export default class DocumentFilter extends Component {
 
   handleChange(elementId, event) {
     const {onUpdate, index} = this.props
-    const val = event.target ? event.target.value : event
 
     onUpdate({
-      [elementId]: val
+      [elementId]: event.target.value
     }, index)
   }
 

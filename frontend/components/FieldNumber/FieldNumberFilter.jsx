@@ -6,9 +6,9 @@ import proptypes from 'proptypes'
 import TextInput from 'components/TextInput/TextInput'
 
 /**
- * Component for rendering API fields of type String in a filter.
+ * Component for rendering API fields of type Number in a filter.
  */
-export default class FieldStringFilter extends Component {
+export default class FieldNumberFilter extends Component {
   static propTypes = {
     /**
      * Classes for the analyser selection.
@@ -51,8 +51,11 @@ export default class FieldStringFilter extends Component {
 
     this.filterTypes = {
       '$eq': 'Equals',
-      '$ne': 'Is not',
-      '$regex': 'Contains'
+      '$gt': 'Greater than',
+      '$gte': 'Greater than or equal to',
+      '$lt': 'Less than',
+      '$lte': 'Less than or equal to',
+      '$ne': 'Is not'
     }
   }
 
@@ -83,11 +86,12 @@ export default class FieldStringFilter extends Component {
             ))}
           </select>
             <TextInput
+              type="number"
               className={valueStyles}
               value={value}
               onChange={this.handleChange.bind(this, 'value')}
               onKeyUp={this.handleChange.bind(this, 'value')}
-              placeholder="Search value"
+              placeholder="Numberic value"
             />
         </div>
     )
@@ -95,9 +99,10 @@ export default class FieldStringFilter extends Component {
 
   handleChange(elementId, event) {
     const {onUpdate, index} = this.props
+    const value = isNaN(event.target.value) ? 0 : Number(event.target.value)
     
     onUpdate({
-      [elementId]: event.target.value
+      [elementId]: value
     }, index)
   }
 }

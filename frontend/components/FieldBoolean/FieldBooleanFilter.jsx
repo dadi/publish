@@ -6,7 +6,7 @@ import proptypes from 'proptypes'
 import TextInput from 'components/TextInput/TextInput'
 
 /**
- * Component for rendering API fields of type String in a filter.
+ * Component for rendering API fields of type Boolean in a filter.
  */
 export default class FieldBooleanFilter extends Component {
   static propTypes = {
@@ -21,14 +21,14 @@ export default class FieldBooleanFilter extends Component {
     containerStyles: proptypes.string,
 
     /**
-     * Type change callback.
+     * Filter array position.
      */
-    onTypeChange: proptypes.func,
+    index: proptypes.number,
 
     /**
-     * Value change callback.
+     * Input update callback.
      */
-    onValueChange: proptypes.func,
+    onUpdate: proptypes.func,
 
     /**
      * Field value.
@@ -44,9 +44,7 @@ export default class FieldBooleanFilter extends Component {
     const {
       analyserStyles,
       containerStyles,
-      onTypeChange,
-      onValueChange,
-      handleValueChange,
+      onUpdate,
       value
     } = this.props
 
@@ -54,7 +52,7 @@ export default class FieldBooleanFilter extends Component {
         <div class={containerStyles}>
           <select
             class={analyserStyles}
-            onChange={this.handleValueChange.bind(this)}
+            onChange={this.handleChange.bind(this, 'value')}
           >
             <option
               selected={value === true}
@@ -70,10 +68,12 @@ export default class FieldBooleanFilter extends Component {
     )
   }
 
-  handleValueChange(event) {
-    const {onValueChange} = this.props
+  handleChange(elementId, event) {
+    const {onUpdate, index} = this.props
     const value = !Boolean(event.target.selectedIndex)
 
-    onValueChange(value)
+    onUpdate({
+      [elementId]: value
+    }, index)
   }
 }
