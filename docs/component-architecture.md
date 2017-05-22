@@ -19,7 +19,6 @@ App
 │ │ │ └── HeroMessage
 │ │ └── SubNavItem
 │ ├─┬ DocumentEditToolbar
-│ │ ├── Button
 │ │ ├─┬ ButtonWithOptions
 │ │ │ ├── Button
 │ │ │ ├── Dropdown
@@ -53,7 +52,6 @@ App
 │ │ │ └── HeroMessage
 │ │ └── SubNavItem
 │ ├─┬ DocumentEditToolbar
-│ │ ├── Button
 │ │ ├─┬ ButtonWithOptions
 │ │ │ ├── Button
 │ │ │ ├── Dropdown
@@ -101,7 +99,6 @@ App
 │ │ ├── Button
 │ │ ├─┬ DocumentFilters
 │ │ │ ├─┬ DocumentFilter
-│ │ │ │ ├── TextInput
 │ │ │ │ └── Button
 │ │ │ └── Button
 │ │ └─┬ ListController
@@ -172,10 +169,24 @@ App
 │ ├── Label
 │ └── TextInput
 ├─┬ SignInView
-│ ├── Banner
-│ ├── Button
-│ ├── Label
-│ └── TextInput
+│ ├─┬ SignIn
+│ │ ├── Banner
+│ │ ├── Button
+│ │ ├── Label
+│ │ └── TextInput
+│ ├─┬ Header
+│ │ ├─┬ CollectionNav
+│ │ │ └─┬ Nav
+│ │ │   ├── Dropdown
+│ │ │   ├── DropdownItem
+│ │ │   └── NavItem
+│ │ ├── IconBurger
+│ │ └── IconCross
+│ ├─┬ Main
+│ │ ├── LoadingBar
+│ │ └─┬ NotificationCentre
+│ │   └── Notification
+│ └── Page
 ├── SignOutView
 ├─┬ ProfileEditView
 │ └─┬ ProfileEdit

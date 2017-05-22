@@ -13,6 +13,13 @@ The schema of the collection being filtered.
 - type: `object`
 
 
+### `config`
+
+App config.
+
+- type: `object`
+
+
 ### `filter`
 
 The JSON-stringified object of filters currently applied.
