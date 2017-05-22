@@ -312,10 +312,13 @@ export function saveDocument ({
             // We've successfully saved the document, so we now need to clear
             // the local storage key corresponding to the unsaved document for
             // the given group/collection pair.
-            LocalStorage.clearDocument(JSON.stringify({
-              collection: urlCollection,
-              group
-            }))
+            const localStorageKey = isUpdate ?
+              documentId : JSON.stringify({
+                collection: urlCollection,
+                group
+              })
+
+            LocalStorage.clearDocument(localStorageKey)
           } else {
             dispatch(setRemoteDocumentStatus(Constants.STATUS_FAILED))
           }
@@ -375,6 +378,7 @@ export function setRemoteDocument (remote, {
     let fromLocalStorage = LocalStorage.readDocument(localStorageKey)
 
     dispatch({
+      clearLocal,
       fieldsNotInLocalStorage,
       forceUpdate,
       fromLocalStorage,

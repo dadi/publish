@@ -112,7 +112,8 @@ export default function document (state = initialState, action = {}) {
         return state
       }
 
-      let local = state.local || action.fromLocalStorage || {}
+      let local = action.clearLocal ?
+        {} : state.local || action.fromLocalStorage || {}
 
       return {
         ...state,
