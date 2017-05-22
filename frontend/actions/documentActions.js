@@ -12,11 +12,16 @@ export function clearRemoteDocument () {
   }
 }
 
-export function discardUnsavedChanges () {
+export function discardUnsavedChanges ({
+  collection,
+  group
+}) {
   return (dispatch, getState) => {
-    let localStorageKey = getState().document.remote ?
-      getState().document.remote._id :
-      JSON.stringify({collection, group})
+    let localStorageKey = getLocalStorageKey({
+      collection,
+      group,
+      state: getState()
+    })
 
     LocalStorage.clearDocument(localStorageKey)
 
@@ -57,8 +62,24 @@ export function fetchDocument ({
   }
 }
 
-function getLocalStorageKeyFromState (state) {
-  return state.router.locationBeforeTransitions.pathname
+function getLocalStorageKey ({
+  collection,
+  documentId,
+  group,
+  state
+}) {
+  // If we're editing an existing document, its ID is used as the local
+  // storage key. Otherwise, we'll use a hash of the current group and
+  // collection.
+  if (documentId) {
+    return documentId
+  }
+
+  if (state.document.remote) {
+    return state.document.remote._id
+  }
+
+  return JSON.stringify({collection, group})
 }
 
 export function registerSaveAttempt () {
@@ -67,9 +88,21 @@ export function registerSaveAttempt () {
   }
 }
 
-export function registerUserLeavingDocument () {
+export function registerUserLeavingDocument ({
+  collection,
+  documentId,
+  group
+}) {
   return (dispatch, getState) => {
+    let localStorageKey = getLocalStorageKey({
+      collection,
+      documentId,
+      group,
+      state: getState()
+    })
+
     writeDocumentToLocalStorage({
+      key: localStorageKey,
       state: getState()
     })
 
@@ -391,13 +424,11 @@ export function updateLocalDocument (change, {
     let newFieldsNotPersistedInLocalStorage = persistInLocalStorage ?
       getState().document.fieldsNotPersistedInLocalStorage :
       getState().document.fieldsNotPersistedInLocalStorage.concat(Object.keys(change))
-
-    // If we're editing an existing document, its ID is used as the local
-    // storage key. Otherwise, we'll use a hash of the current group and
-    // collection.
-    let localStorageKey = getState().document.remote ?
-      getState().document.remote._id :
-      JSON.stringify({collection, group})
+    let localStorageKey = getLocalStorageKey({
+      collection,
+      group,
+      state: getState()
+    })
 
     writeDocumentToLocalStorage({
       document: newLocal,
@@ -435,7 +466,6 @@ function writeDocumentToLocalStorage ({
   document = document || state.document.local
   fieldsNotPersistedInLocalStorage = fieldsNotPersistedInLocalStorage ||
     state.document.fieldsNotPersistedInLocalStorage
-  key = key || getLocalStorageKeyFromState(state)
 
   if (!document) return
 
