@@ -82,7 +82,9 @@ function runSessionQuery ({
 
   if (payload) {
     // Force POST method if there is a payload.
-    request.method = 'POST'
+    if (request.method === 'GET') {
+      request.method = 'POST'
+    }
 
     // JSON stringify payload.
     request.body = JSON.stringify(payload)

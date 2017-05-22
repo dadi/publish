@@ -5,7 +5,7 @@ const SessionController = require(`${paths.lib.controllers}/session`)
 
 module.exports = function (app) {
   const sessionController = new SessionController()
-  // Reset token request endpoint.
+  // Reset password reset endpoint.
   app.post({
     name: 'session-password-reset',
     path: '/session/password-reset'
