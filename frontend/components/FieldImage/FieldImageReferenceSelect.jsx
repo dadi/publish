@@ -135,7 +135,7 @@ export default class FieldImageReferenceSelect extends Component {
           class={styles['item-image-holder']}
           style={`padding-bottom: ${aspectRatio}%`}
         >
-          <img class={styles['item-image']} src={item.path}/>
+          <img class={styles['item-image']} src={item.url}/>
         </div>
 
         <div class={styles['item-overlay']}>
