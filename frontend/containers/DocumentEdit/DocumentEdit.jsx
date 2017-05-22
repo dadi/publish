@@ -467,7 +467,7 @@ class DocumentEdit extends Component {
     } = this.props
 
     actions.registerUserLeavingDocument({
-      collection: this.currentCollection,
+      collection: this.currentCollection.name,
       documentId,
       group
     })
