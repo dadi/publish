@@ -167,8 +167,8 @@ export default class FieldImageEdit extends Component {
 
     if (value._previewData) return value._previewData
 
-    if (value.path) {
-      return value.path
+    if (value.url) {
+      return value.url
     }
   }
   
