@@ -6,6 +6,13 @@ A document filter.
 Props
 -----
 
+### `config`
+
+App config.
+
+- type: `object`
+
+
 ### `field`
 
 The slug of the field being filtered.
@@ -17,6 +24,13 @@ The slug of the field being filtered.
 
 An object containing the fields available for the given collection.
 Keys represent field slugs and values hold the field schema.
+
+- type: `object`
+
+
+### `filters`
+
+An object containing the current applied filters.
 
 - type: `object`
 

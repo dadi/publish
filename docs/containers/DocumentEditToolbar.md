@@ -6,18 +6,18 @@ A toolbar used in a document edit view.
 Props
 -----
 
+### `actions`
+
+The global actions object.
+
+- type: `object`
+
+
 ### `collection`
 
 The name of the collection currently being listed.
 
 - type: `string`
-
-
-### `dispatch`
-
-The global actions dispatcher.
-
-- type: `func`
 
 
 ### `documentId`
