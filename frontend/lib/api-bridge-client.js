@@ -7,7 +7,7 @@ const APIWrapper = require('@dadi/api-wrapper-core')
 
 // The maximum number of allowed API calls per second. Any API Bridge calls
 // past this limit will be blocked and the Promise will reject.
-const MAX_CALLS_PER_SECOND = 10
+const MAX_CALLS_PER_SECOND = 50
 
 let callCount = 0
 let onUpdate = null
@@ -111,6 +111,7 @@ const apiBridgeFactory = function ({
   }
 
   let apiWrapperInstance = new APIWrapper(apiWrapperOptions)
+    .withComposition() // Force composition
 
   // If we were given a collection, we might as well run the `.in()` filter.
   if (collection.slug) {
