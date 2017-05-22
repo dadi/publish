@@ -24,26 +24,20 @@ import DateTime from 'components/DateTime/DateTime'
 import Peer from 'components/Peer/Peer'
 import Toolbar from 'components/Toolbar/Toolbar'
 
-const actions = {
-  ...appActions,
-  ...documentActions,
-  ...documentsActions
-}
-
 /**
  * A toolbar used in a document edit view.
  */
 class DocumentEditToolbar extends Component {
   static propTypes = {
     /**
+     * The global actions object.
+     */
+    actions: proptypes.object,
+
+    /**
      * The name of the collection currently being listed.
      */
     collection: proptypes.string,
-
-    /**
-     * The global actions dispatcher.
-     */
-    dispatch: proptypes.func,
 
     /**
      * The ID of the document being edited.
@@ -84,7 +78,7 @@ class DocumentEditToolbar extends Component {
 
   componentDidUpdate(prevProps, prevState) {
     const {
-      dispatch,
+      actions,
       collection,
       group,
       state
@@ -113,9 +107,9 @@ class DocumentEditToolbar extends Component {
       // Redirect to document list view
       route(buildUrl(group, collection, 'documents'))
 
-      dispatch(actions.setNotification({
+      actions.setNotification({
         message: 'The documents have been deleted'
-      }))
+      })
     }
   }
 
@@ -209,8 +203,8 @@ class DocumentEditToolbar extends Component {
 
   handleDelete() {
     const {
+      actions,
       collection,
-      dispatch,
       group,
       referencedField,
       state
@@ -233,13 +227,13 @@ class DocumentEditToolbar extends Component {
     }
 
     if (document._id) {
-      dispatch(actions.deleteDocuments(query))
+      actions.deleteDocuments(query)
     }
   }
 
   handleSave(saveMode) {
     const {
-      dispatch,
+      actions,
       collection,
       group,
       section,
@@ -254,9 +248,9 @@ class DocumentEditToolbar extends Component {
           callback: documentId => {
             route(buildUrl(group, collection, 'document', 'edit', documentId, section))
 
-            dispatch(actions.setNotification({
+            actions.setNotification({
               message:`The document has been ${newDocument ? 'created' : 'updated'}`
-            }))
+            })
           }
         }
 
@@ -268,14 +262,11 @@ class DocumentEditToolbar extends Component {
           callback: documentId => {
             route(buildUrl(group, collection, 'document', 'new'))
 
-            dispatch(
-              batchActions(
-                actions.setNotification({
-                  message: `The document has been ${newDocument ? 'created' : 'updated'}`
-                }),
-                actions.clearRemoteDocument()
-              )
-            )          
+            actions.setNotification({
+              message: `The document has been ${newDocument ? 'created' : 'updated'}`
+            })
+
+            actions.clearRemoteDocument()
           }
         }
 
@@ -287,9 +278,9 @@ class DocumentEditToolbar extends Component {
           callback: documentId => {
             route(buildUrl(group, collection, 'documents'))
 
-            dispatch(actions.setNotification({
+            actions.setNotification({
               message: `The document has been ${newDocument ? 'created' : 'updated'}`
-            }))  
+            })
           }
         }
 
@@ -301,9 +292,9 @@ class DocumentEditToolbar extends Component {
           callback: documentId => {
             route(buildUrl(group, collection, 'document', 'edit', documentId, section))
 
-            dispatch(actions.setNotification({
+            actions.setNotification({
               message: `The document has been created`
-            }))  
+            })
           },
           createNew: true
         }
@@ -311,13 +302,13 @@ class DocumentEditToolbar extends Component {
         break
     }    
 
-    dispatch(actions.registerSaveAttempt())
+    actions.registerSaveAttempt()
   }
 
   saveDocument() {
     const {
+      actions,
       collection,
-      dispatch,
       documentId,
       group,
       referencedField,
@@ -350,14 +341,14 @@ class DocumentEditToolbar extends Component {
       document = Object.assign({}, state.document.remote, state.document.local)
     }
 
-    dispatch(actions.saveDocument({
+    actions.saveDocument({
       api: currentApi,
       collection: currentCollection,
       document,
       documentId: creatingNew ? null : documentId,
       group,
       urlCollection: collection
-    }))
+    })
   }
 }
 
@@ -366,5 +357,10 @@ export default connectHelper(
     api: state.api,
     app: state.app,
     document: state.document
-  })
+  }),
+  dispatch => bindActionCreators({
+    ...appActions,
+    ...documentActions,
+    ...documentsActions
+  }, dispatch)
 )(DocumentEditToolbar)
