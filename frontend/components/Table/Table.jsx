@@ -3,8 +3,6 @@
 import {h, Component} from 'preact'
 import proptypes from 'proptypes'
 
-import {Keyboard} from 'lib/keyboard'
-
 import Style from 'lib/Style'
 import styles from './Table.css'
 
@@ -53,12 +51,6 @@ export default class Table extends Component {
     selectable: true,
     selectLimit: Infinity,
     selectedRows: {}
-  }
-
-  constructor(props) {
-    super(props)
-
-    this.keyboard = new Keyboard()
   }
 
   handleHeadSelect(event) {
@@ -193,18 +185,6 @@ export default class Table extends Component {
       head,
       body
     }
-  }
-
-  componentDidMount() {
-    this.keyboard.on('space+a').do(cmd => {
-      console.log(cmd.pattern)
-      // Trigger something
-    })
-  }
-
-  componentWillUnmount() {
-    // Clear keyboard
-    this.keyboard.off()
   }
 
   render() {
