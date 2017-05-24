@@ -3,6 +3,8 @@
 import {h, Component} from 'preact'
 import proptypes from 'proptypes'
 
+import {Keyboard} from 'lib/keyboard'
+
 import Style from 'lib/Style'
 import styles from './Table.css'
 
@@ -53,20 +55,40 @@ export default class Table extends Component {
     selectedRows: {}
   }
 
-  handleHeadSelect(event) {
+  constructor(props) {
+    super(props)
+
+    this.keyboard = new Keyboard()
+  }
+
+  componentDidMount() {
+    this.keyboard.on('cmd+a')
+      .do(cmd => this.selectAll())
+  }
+
+  componentWillUnmount() {
+    this.keyboard.off()
+  }
+
+  selectAll() {
     const {children, onSelect} = this.props
-    const selected = event.target.checked
 
     let newSelectedRows = {}
 
-    if (selected) {
-      for (let i = 0; i < (children.length - 1); i++) {
-        newSelectedRows[i] = true
-      }
+    for (let i = 0; i < (children.length - 1); i++) {
+      newSelectedRows[i] = true
     }
 
     if (typeof onSelect === 'function') {
       onSelect.call(this, newSelectedRows)
+    }
+  }
+
+  handleHeadSelect(event) {
+    const selected = event.target.checked
+
+    if (selected) {
+      this.selectAll()
     }
   }
 
