@@ -112,13 +112,9 @@ class DocumentList extends Component {
     const previousPage = Math.abs(currentPage -1)
 
     this.keyboard.on('cmd+right')
-      .do(cmd =>
-        route(buildUrl(...onBuildBaseUrl(), nextPage))
-      )
+      .do(cmd => route(buildUrl(...onBuildBaseUrl(), nextPage)))
     this.keyboard.on('cmd+left')
-      .do(cmd =>
-        route(buildUrl(...onBuildBaseUrl(), previousPage))
-      )
+      .do(cmd => route(buildUrl(...onBuildBaseUrl(), previousPage)))
   }
 
   componentDidUpdate(prevProps) {
