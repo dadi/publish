@@ -144,8 +144,6 @@ module.exports.getBundler = () => {
     return apiBridgeFetch(this.queries).then(response => {
       if (typeof onUpdate === 'function') {
         const onComplete = onUpdate.bind(this, Constants.STATUS_COMPLETE)
-
-        onUpdate.call(this, Constants.STATUS_IDLE, onComplete)
       }
 
       return response
