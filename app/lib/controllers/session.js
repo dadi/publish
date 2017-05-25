@@ -73,7 +73,6 @@ Session.prototype.get = function (req, res, next) {
   const authAPI = config.get('auth')
 
   if (!authAPI.enabled) {
-    const err = 
     res.write(JSON.stringify({error: 'MISSING_AUTH_API'}))
     res.end()
 
