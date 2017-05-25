@@ -7,6 +7,7 @@ import Style from 'lib/Style'
 import styles from './ProfileEditToolbar.css'
 
 import * as Constants from 'lib/constants'
+import {Keyboard} from 'lib/keyboard'
 import * as appActions from 'actions/appActions'
 import * as documentActions from 'actions/documentActions'
 import * as userActions from 'actions/userActions'
@@ -71,6 +72,16 @@ class ProfileEditToolbar extends Component {
     state: proptypes.object
   }
 
+  constructor(props) {
+    super(props)
+
+    this.keyboard = new Keyboard()
+  }
+
+  componentDidMount() {
+    this.keyboard.on('cmd+s').do(this.handleSave.bind(this, 'save'))
+  }
+
   componentDidUpdate(prevProps, prevState) {
     const {
       dispatch,
@@ -122,6 +133,10 @@ class ProfileEditToolbar extends Component {
         </div>
       </Toolbar>
     )
+  }
+
+  componentWillUnmount() {
+    this.keyboard.off()
   }
 
   handleSave() {

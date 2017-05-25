@@ -7,6 +7,7 @@ import Style from 'lib/Style'
 import styles from './DocumentFilters.css'
 
 import {isValidJSON, objectToArray, arrayToObject} from 'lib/util'
+import {Keyboard} from 'lib/keyboard'
 
 import DocumentFilter from 'components/DocumentFilter/DocumentFilter'
 import Button from 'components/Button/Button'
@@ -43,6 +44,7 @@ export default class DocumentFilters extends Component {
     const {collection} = this.props
     const paramFilters = this.getFiltersFromParams()
 
+    this.keyboard = new Keyboard()
     this.state = {
       dirty: false,
       filters: paramFilters
@@ -56,21 +58,41 @@ export default class DocumentFilters extends Component {
       .map(this.deconstructFilters.bind(this))
   }
 
+  componentDidMount() {
+    this.keyboard.on('cmd+f')
+      .do(cmd => {
+        const {collection, filters} = this.props
+        
+        if (!filters) {
+          this.setState({filters: [this.createDefaultFilter(collection, filters)]})
+        }
+      })
+  }
+
   componentWillUpdate(nextProps, nextState) {
-    const {collection, filters} = this.props
+    const {collection} = this.props
     const {newFilter} = nextProps 
 
     if (nextProps.collection !== collection) {
       // If we're changing collection, reset all filters
       this.setState({filters: []})
     } else {
-      // If we aren't changing collection
-      let paramFilters = this.getFiltersFromParams()
-      if (newFilter) {
-        paramFilters.push(this.createDefaultFilter(collection, filters))
-      }
-      this.setState({filters: paramFilters})
+      this.createOrAppendFilters(newFilter)
     }
+  }
+
+  createOrAppendFilters(newFilter) {
+    const {collection, filters} = this.props
+    // If we aren't changing collection
+    let paramFilters = this.getFiltersFromParams()
+    if (newFilter) {
+      paramFilters.push(this.createDefaultFilter(collection, filters))
+    }
+    this.setState({filters: paramFilters})
+  }
+
+  componentWillUnmount() {
+    this.keyboard.off()
   }
 
   createDefaultFilter(collection, filters) {

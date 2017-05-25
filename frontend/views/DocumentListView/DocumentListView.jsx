@@ -67,6 +67,7 @@ export default class DocumentListView extends Component {
               collection={collection}
               filter={filter}
               group={group}
+              onBuildBaseUrl={this.handleBuildBaseUrl.bind(this)}
               onPageTitle={this.handlePageTitle}
               order={order}
               page={page}

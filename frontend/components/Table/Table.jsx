@@ -61,20 +61,34 @@ export default class Table extends Component {
     this.keyboard = new Keyboard()
   }
 
-  handleHeadSelect(event) {
+  componentDidMount() {
+    this.keyboard.on('cmd+a')
+      .do(cmd => this.selectAll())
+  }
+
+  componentWillUnmount() {
+    this.keyboard.off()
+  }
+
+  selectAll() {
     const {children, onSelect} = this.props
-    const selected = event.target.checked
 
     let newSelectedRows = {}
 
-    if (selected) {
-      for (let i = 0; i < (children.length - 1); i++) {
-        newSelectedRows[i] = true
-      }
+    for (let i = 0; i < (children.length - 1); i++) {
+      newSelectedRows[i] = true
     }
 
     if (typeof onSelect === 'function') {
       onSelect.call(this, newSelectedRows)
+    }
+  }
+
+  handleHeadSelect(event) {
+    const selected = event.target.checked
+
+    if (selected) {
+      this.selectAll()
     }
   }
 
@@ -193,18 +207,6 @@ export default class Table extends Component {
       head,
       body
     }
-  }
-
-  componentDidMount() {
-    this.keyboard.on('space+a').do(cmd => {
-      console.log(cmd.pattern)
-      // Trigger something
-    })
-  }
-
-  componentWillUnmount() {
-    // Clear keyboard
-    this.keyboard.off()
   }
 
   render() {

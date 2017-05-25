@@ -67,7 +67,7 @@ class DocumentEditToolbar extends Component {
 
   constructor(props) {
     super(props)
-
+    
     this.keyboard = new Keyboard()
     this.onSave = null
   }
@@ -199,6 +199,10 @@ class DocumentEditToolbar extends Component {
         </div>
       </Toolbar>
     )
+  }
+
+  componentWillUnmount() {
+    this.keyboard.off()
   }
 
   handleDelete() {

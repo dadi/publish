@@ -5,6 +5,7 @@ import proptypes from 'proptypes'
 import {connect} from 'preact-redux'
 import {bindActionCreators} from 'redux'
 import {route} from 'preact-router'
+import {Keyboard} from 'lib/keyboard'
 
 import * as Constants from 'lib/constants'
 import * as appActions from 'actions/appActions'
@@ -48,6 +49,12 @@ class DocumentList extends Component {
     group: proptypes.string,
 
     /**
+    * A callback to be used to obtain the base URL for the given page, as
+    * determined by the view.
+    */
+    onBuildBaseUrl: proptypes.func,
+
+    /**
      * A callback to be fired if the container wants to attempt changing the
      * page title.
      */
@@ -86,6 +93,28 @@ class DocumentList extends Component {
 
   static defaultProps = {
     onPageTitle: (function () {})
+  }
+
+  constructor(props) {
+    super(props)
+
+    this.keyboard = new Keyboard()
+  }
+
+  componentDidMount() {
+    const {
+      onBuildBaseUrl,
+      page,
+      state
+    } = this.props
+    const currentPage = Number(page)
+    const nextPage = currentPage + 1
+    const previousPage = Math.abs(currentPage -1)
+
+    this.keyboard.on('cmd+right')
+      .do(cmd => route(buildUrl(...onBuildBaseUrl(), nextPage)))
+    this.keyboard.on('cmd+left')
+      .do(cmd => route(buildUrl(...onBuildBaseUrl(), previousPage)))
   }
 
   componentDidUpdate(prevProps) {
@@ -190,6 +219,7 @@ class DocumentList extends Component {
   componentWillUnmount() {
     const {actions} = this.props
 
+    this.keyboard.off()
     actions.clearDocumentList()
   }
 
