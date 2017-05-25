@@ -73,15 +73,17 @@ class Header extends Component {
               <img class={styles.logo} src="/images/publish.png" />
             </a>
 
-            <div class={styles.controls}>
-              <button
-                class={styles.signout}
-                onClick={this.handleSignOut.bind(this)}
-              >
-                Sign out
-              </button>
-              <a href="/profile" class={styles.user}>{`${user.first_name} ${user.last_name}`}</a>
-            </div>
+              {user && !user.error && (
+                <div class={styles.controls}>
+                  <button
+                    class={styles.signout}
+                    onClick={this.handleSignOut.bind(this)}
+                  >
+                    Sign out
+                  </button>
+                  <a href="/profile" class={styles.user}>{`${user.first_name} ${user.last_name}`}</a>
+                </div>
+              )}
           </div>
 
           <CollectionNav />

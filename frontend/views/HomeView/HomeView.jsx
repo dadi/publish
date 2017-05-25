@@ -24,7 +24,7 @@ class HomeView extends Component {
 
         <Main>
           <HeroMessage
-            title={`Welcome, ${user.first_name}.`}
+            title={`Welcome, ${(user && !user.error) ? user.first_name : 'Guest'}.`}
             subtitle="You can use the menu to navigate collections and start editing documents."
           />
         </Main>

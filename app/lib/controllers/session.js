@@ -14,7 +14,7 @@ const Session = function () {}
  * @return {Function} Next method call.
  */
 Session.prototype.authorise = function (email, password, next) {
-  let authAPI = config.get('auth')
+  const authAPI = config.get('auth')
 
   if (!authAPI.enabled) return next(null)
 
@@ -70,6 +70,16 @@ Session.prototype.delete = function (req, res, next) {
  * @return {Function} Next method call.
  */
 Session.prototype.get = function (req, res, next) {
+  const authAPI = config.get('auth')
+
+  if (!authAPI.enabled) {
+    const err = 
+    res.write(JSON.stringify({error: 'MISSING_AUTH_API'}))
+    res.end()
+
+    return next()
+  }
+
   res.header('Content-Type', 'application/json')
 
   if (req.isAuthenticated()) {
@@ -173,7 +183,7 @@ Session.prototype.put = function (req, res, next) {
 Session.prototype.reset = function (req, res, next) {
   res.header('Content-Type', 'application/json')
 
-  let authAPI = config.get('auth')
+  const authAPI = config.get('auth')
 
   // No authentication.
   if (!authAPI.enabled) {
@@ -220,7 +230,7 @@ Session.prototype.reset = function (req, res, next) {
 Session.prototype.resetToken = function (req, res, next) {
   res.header('Content-Type', 'application/json')
 
-  let authAPI = config.get('auth')
+  const authAPI = config.get('auth')
 
   // No authentication.
   if (!authAPI.enabled) {

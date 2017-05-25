@@ -101,7 +101,7 @@ class App extends Component {
     if (this.socket.getRoom() !== room) {
       this.socket.setRoom(room)
     }
-    if (previousState.user.remote !== this.socket.getUser()) {
+    if ((previousState.user.remote && !previousState.user.remote.error) && previousState.user.remote !== this.socket.getUser()) {
       this.socket.setUser(previousState.user.remote)
     }
   }
