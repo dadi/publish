@@ -118,8 +118,8 @@ export default class FieldImageEdit extends Component {
           <div class={styles['value-container']}>
             <div class={styles.thumbnails}>
               {values.map(value => (
-                <img
-                  class={styles.thumbnail}
+                <LazyLoader
+                  styles={styles.thumbnail}
                   src={this.getImageSrc(value)}
                 />
               ))}
