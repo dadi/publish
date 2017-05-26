@@ -9,9 +9,7 @@ const userCollection = require('./collections/collection.users')
 
 const APIInstall = function () {
   this.checkAuthCollectionExists()
-    // .then(exists => {
-      
-    // })
+  // To-Do: check and create hooks
   // this.checkAuthHookExists()
   //   .then(exists => {
      
@@ -30,10 +28,12 @@ APIInstall.prototype.checkAuthCollectionExists = function () {
           return this.createUserCollection(authAPI)
         }
         this.validateCollectionConfig(authAPI).then(isInvalid => {
-          // if (isInvalid) {
-            console.log('Collection schema invalid')
+          if (!isInvalid) {
+            console.log('Collection schema invalid', isInvalid)
             return this.createUserCollection(authAPI)
-          // }
+          } else {
+            console.log('Collection is Valid')
+          }
         })
       })
   }
@@ -110,7 +110,7 @@ APIInstall.prototype.createUserCollection = function (authAPI) {
   return new Api(authAPI)
     .in('users')
     .setConfig(userCollection)
-    .then(res => console.log('response', res))
+    .then(res => console.log(`Create User Collection: ${res.result}`))
     .catch(e => console.log('error', e))
 }
 

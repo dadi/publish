@@ -200,16 +200,20 @@ module.exports = {
     "defaultFilters": null,
     "fieldLimiters": null,
     "count": 20,
-    "sort": "createdAt",
-    "sortOrder": 1,
     "storeRevisions": true,
     "revisionCollection": "usersHistory",
-    "index": {
-      "enabled": true,
-      "keys": {
-        "name": 1
+    "index": [
+      {
+        "keys": {
+          "createdAt" : 1
+        }
+      },
+      {
+        "keys": {
+          "name" : 1
+        }
       }
-    },
+     ],
     "displayName": "Publish authors",
     "hooks": {
       "beforeCreate": [
