@@ -93,9 +93,8 @@ Server.prototype.addListeners = function () {
  * @return {Restify} Restify server instance
  */
 Server.prototype.appListen = function () {
-  return new Promise((resolve, reject) => {
-    return this.app.listen(Number(this.options.port), this.options.host, resolve)
-  })
+  return new Promise((resolve, reject) => this.app
+    .listen(Number(this.options.port), this.options.host, resolve))
 }
 
 module.exports = function () {

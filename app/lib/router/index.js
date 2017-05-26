@@ -84,7 +84,7 @@ Router.prototype.webRoutes = function () {
  */
 Router.prototype.componentRoutes = function (dir, match) {
   // Fetch aditional component schema
-  fs.readdirSync(dir).forEach((folder) => {
+  fs.readdirSync(dir).forEach(folder => {
     let sub = path.resolve(dir, folder)
 
     if (fs.lstatSync(sub).isDirectory()) {
