@@ -231,29 +231,19 @@ export function saveDocument ({
           // If the referenced collection doesn't exist, there's nothing we can do.
           if (!referencedCollectionSchema) return
 
-          payload[field] = referenceLimit > 1 ? [] : null
+          let referenceDocumentIds = []
 
           referencedDocuments.forEach(document => {
             // The document already exists, we need to update it.
             if (document._id) {
-              referenceBundler.add(
-                apiBridgeClient({
-                  api,
-                  collection: referencedCollectionSchema,
-                  inBundle: true
-                }).whereFieldIsEqualTo('_id', document._id)
-                  .update(document)
-              )
-
-              referenceBundlerMap.push({
-                field,
-                limit: referenceLimit
-              })
+              referenceDocumentIds.push(document._id)
             } else {
 
               // The document does not exist, we need to create it.
             }
           })
+
+          payload[field] = referenceLimit > 1 ? referenceDocumentIds : referenceDocumentIds[0]
         }
       }
     })
