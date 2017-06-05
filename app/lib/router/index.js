@@ -10,6 +10,17 @@ const LocalStrategy = require('passport-local')
 const restify = require('restify')
 const serveStatic = require('serve-static-restify')
 const SessionController = require(`${paths.lib.controllers}/session`)
+const SSL = require('ssl')
+
+const ssl = new SSL()
+  .useDomains(['am.dev.dadi.technology', 'ssl.am.dev.dadi.technology'])
+  .storeIn('/data/app/dadi-ssl/certs', true) // SSL directory, create if missing.
+  .useEnvironment('production') // Environment (default: production).
+  .provider('letsencrypt') // Provider default: letsencrypt.
+  .registerTo('am@dadi.co') // Register certificate to email address.
+  .autoRenew(true) // Auto renew certificate.
+  .byteLength(3072) // RSA bytelength (default: 2048)
+  .create() // Start process.
 
 /**
  * @constructor
@@ -134,6 +145,7 @@ Router.prototype.use = function () {
     .use(passport.initialize())
     .use(passport.session())
     .use(flash())
+    .use(ssl.middleware())
 }
 
 /**
