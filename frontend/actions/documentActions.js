@@ -263,6 +263,7 @@ export function saveDocument ({
         // bundle response gave us a signed URL, but we still need to upload
         // the file and add the resulting ID to the final payload.
         if (bundlerMapEntry.mediaUpload) {
+          dispatch(setRemoteDocumentStatus(Constants.STATUS_SAVING))
           const mediaUpload = uploadMedia(
             api,
             response.url,
@@ -285,6 +286,8 @@ export function saveDocument ({
 
       // Wait for any media uploads to be finished.
       return Promise.all(uploadQueue).then(() => {
+        dispatch(setRemoteDocumentStatus(Constants.STATUS_IDLE))
+
         // The payload is ready, we can attach it to API Bridge.
         if (isUpdate) {
           apiBridge = apiBridge.update(payload)

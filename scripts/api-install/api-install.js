@@ -12,7 +12,7 @@ const APIInstall = function () {
   // To-Do: check and create hooks
   // this.checkAuthHookExists()
   //   .then(exists => {
-     
+
   //   })
 }
 
@@ -113,7 +113,6 @@ APIInstall.prototype.createUserCollection = function (authAPI) {
     .then(res => console.log(`Create User Collection: ${res.result}`))
     .catch(e => console.log('error', e))
 }
-
 
 module.exports = function () {
   return new APIInstall()

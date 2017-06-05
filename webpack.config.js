@@ -8,7 +8,7 @@ const postcssCustomMedia = require('postcss-custom-media')
 const postcssCustomProperties = require('postcss-custom-properties')
 const webpack = require('webpack')
 
-const BabiliPlugin = require("babili-webpack-plugin")
+const BabiliPlugin = require('babili-webpack-plugin')
 const ComponentTreePlugin = require('component-tree-webpack-plugin')
 const ExtractTextPlugin = require('extract-text-webpack-plugin')
 const WebpackOnBuildPlugin = require('on-build-webpack')
@@ -91,7 +91,7 @@ module.exports = {
     filename: 'bundle.js'
   },
 
-  plugins: ([    
+  plugins: ([
     new webpack.NoEmitOnErrorsPlugin(),
 
     new webpack.DefinePlugin({
