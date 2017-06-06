@@ -286,8 +286,6 @@ export function saveDocument ({
 
       // Wait for any media uploads to be finished.
       return Promise.all(uploadQueue).then(() => {
-        dispatch(setRemoteDocumentStatus(Constants.STATUS_IDLE))
-
         // The payload is ready, we can attach it to API Bridge.
         if (isUpdate) {
           apiBridge = apiBridge.update(payload)
