@@ -90,6 +90,12 @@ export default class FieldReferenceEdit extends Component {
     value: proptypes.bool
   }
 
+  findFirstStringField(fields) {
+    return Object.keys(fields)
+      .map(key => Object.assign({}, fields[key], {key}))
+      .find(field => field.type === 'String')
+  }
+
   render() {
     const {
       collection,
@@ -113,10 +119,10 @@ export default class FieldReferenceEdit extends Component {
     })
 
     if (!referencedCollection) return null
-
     const displayName = schema.label || schema._id
-    const displayField = value &&
-      Object.keys(filterHiddenFields(referencedCollection.fields, 'list'))[0]
+    const displayableFields = filterHiddenFields(referencedCollection.fields, 'list')
+    const firstStringField = this.findFirstStringField(displayableFields)
+    const displayField = value && firstStringField ? firstStringField.key : null
     const href = buildUrl(...onBuildBaseUrl(), 'select', schema._id)
     const values = value && !(value instanceof Array) ? [value] : value
 
@@ -129,7 +135,7 @@ export default class FieldReferenceEdit extends Component {
             <div class={styles['value-container']}>
               <div>
                 {values.map(value => (
-                  <p class={styles.value}>{displayField && value[displayField]}</p>
+                  <p class={styles.value}>{displayField && value[displayField] || `Referenced ${displayName}`}</p>
                 ))}
               </div>
 

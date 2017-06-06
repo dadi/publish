@@ -100,7 +100,9 @@ class LoadingBar extends Component {
     const {percentage, visible} = this.state
     const {state} = this.props
     const loading = Object.is(state.app.status, Constants.STATUS_LOADING)
+      || Object.is(state.document.remoteStatus, Constants.STATUS_SAVING)
     const prevLoading = Object.is(prevProps.state.app.status, Constants.STATUS_LOADING)
+      || Object.is(prevProps.state.document.remoteStatus, Constants.STATUS_SAVING)
 
     if (prevState.visible && !visible) {
       this.setState({
@@ -139,7 +141,8 @@ class LoadingBar extends Component {
 
 export default connectHelper(
   state => ({
-    app: state.app
+    app: state.app,
+    document: state.document
   }),
   dispatch => bindActionCreators(appActions, dispatch)
 )(LoadingBar)

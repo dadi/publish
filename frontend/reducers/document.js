@@ -21,7 +21,8 @@ export default function document (state = initialState, action = {}) {
     case Types.ATTEMPT_SAVE_DOCUMENT:
       return {
         ...state,
-        saveAttempts: state.saveAttempts + 1
+        saveAttempts: state.saveAttempts + 1,
+        validationErrors: state.validationErrors || {}
       }
 
     // Document action: clear remote document

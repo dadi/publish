@@ -29,12 +29,11 @@ const getAdditionalSchema = (dir, match) => {
   })
 }
 
-const getFrontendProps = (schema, prev) => {
-  return Object.assign(prev || {},
-    ...Object.keys(schema).filter(key => {
-      return Object.getOwnPropertyDescriptor(schema[key], 'availableInFrontend')
-    }).map(key => {
-      let val = getFrontendProps(schema[key], {})
+const getFrontendProps = (schema = {}, prev = {}) => {
+  return Object.assign(prev,
+    ...Object.keys(schema).filter(key => Object.is(schema[key].availableInFrontend, true))
+    .map(key => {
+      const val = getFrontendProps(schema[key], {})
       return {[`${key}`]: Object.keys(val).length > 0 ? val : true}
     })
   )
@@ -44,7 +43,6 @@ const getFrontendProps = (schema, prev) => {
 getAdditionalSchema(paths.frontend.components, /ConfigSchema$/g)
 
 let availableInFrontend = getFrontendProps(schema)
-
 const conf = convict(schema)
 
 conf.set('availableInFrontend', availableInFrontend)
@@ -62,3 +60,4 @@ try {
 conf.validate({})
 
 module.exports = conf
+module.exports.getFrontendProps = getFrontendProps

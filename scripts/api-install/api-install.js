@@ -8,41 +8,48 @@ const Api = require(`${paths.lib.models}/api`)
 const userCollection = require('./collections/collection.users')
 
 const APIInstall = function () {
-  this.checkAuthCollectionExists()
-  // To-Do: check and create hooks
-  // this.checkAuthHookExists()
-  //   .then(exists => {
-     
-  //   })
+  if (config.get('auth.enabled')) {
+    this.checkAuthCollectionExists()
+      .then(resp => this.checkHooksExist())
+  } else {
+    console.log('No Authentication block in config')
+  }
+}
+
+APIInstall.prototype.checkHooksExist = function () {
+  // const authAPI = config.get('auth')
+  // return this.getHooks(authAPI)
 }
 
 APIInstall.prototype.checkAuthCollectionExists = function () {
-  console.log('Check Auth Collection')
-  if (config.get('auth.enabled')) {
-    const authAPI = config.get('auth')
+  const authAPI = config.get('auth')
 
-    this.getCollection(authAPI)
-      .then(collection => {
-        if (!collection) {
-          console.log('Collection not found')
+  return this.getCollection(authAPI)
+    .then(collection => {
+      if (!collection) {
+        console.log('Collection not found')
+        return this.createUserCollection(authAPI)
+      }
+      return this.validateCollectionConfig(authAPI).then(isInvalid => {
+        if (!isInvalid) {
+          console.log('Collection schema invalid', isInvalid)
           return this.createUserCollection(authAPI)
+        } else {
+          console.log('Collection is Valid')
         }
-        this.validateCollectionConfig(authAPI).then(isInvalid => {
-          if (!isInvalid) {
-            console.log('Collection schema invalid', isInvalid)
-            return this.createUserCollection(authAPI)
-          } else {
-            console.log('Collection is Valid')
-          }
-        })
       })
-  }
+    })
 }
 
 APIInstall.prototype.getCollection = function (authAPI) {
   return new Api(authAPI)
     .getCollections()
     .then(result => result.collections.find(collection => Object.is(collection.slug, 'users')))
+}
+
+APIInstall.prototype.getHooks = function (authAPI) {
+  // return new Api(authAPI)
+    // .getHooks()
 }
 
 APIInstall.prototype.validateCollectionConfig = function (authAPI) {
@@ -53,49 +60,7 @@ APIInstall.prototype.validateCollectionConfig = function (authAPI) {
 }
 
 APIInstall.prototype.checkFields = function (fields) {
-  const expectedFields = {
-    first_name: {
-      type: 'String'
-    },
-    last_name: {
-      type: 'String'
-    },
-    email: {
-      type: 'String'
-    },
-    bio: {
-      type: 'String'
-    },
-    profileImage: {
-      type: 'Reference',
-      publish: {
-        subType: 'Image'
-      }
-    },
-    language: {
-      type: 'String'
-    },
-    loginWithToken: {
-      type: 'Boolean'
-    },
-    loginToken: {
-      type: 'String'
-    },
-    timezone: {
-      type: 'String'
-    },
-    datetimeFormat: {
-      type: 'String'
-    },
-    password: {
-      type: 'String'
-    },
-    handle: {
-      type: 'String'
-    }
-  }
-
-  const expectedFieldKeys = Object.keys(expectedFields)
+  const expectedFieldKeys = Object.keys(userCollection)
   const actualFieldKeys = Object.keys(fields)
 
   return Boolean(expectedFieldKeys
@@ -113,7 +78,6 @@ APIInstall.prototype.createUserCollection = function (authAPI) {
     .then(res => console.log(`Create User Collection: ${res.result}`))
     .catch(e => console.log('error', e))
 }
-
 
 module.exports = function () {
   return new APIInstall()

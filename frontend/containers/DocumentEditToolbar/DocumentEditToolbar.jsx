@@ -123,6 +123,7 @@ class DocumentEditToolbar extends Component {
       && Object.keys(document.validationErrors)
         .filter(field => document.validationErrors[field])
         .length
+    const isSaving = state.document.remoteStatus !== Constants.STATUS_IDLE
     const validationErrors = state.document.validationErrors
     const hasValidationErrors = validationErrors && Object.keys(validationErrors)
       .filter(field => validationErrors[field])
@@ -189,7 +190,7 @@ class DocumentEditToolbar extends Component {
           <div class={styles.button}>
             <ButtonWithOptions
               accent="save"
-              disabled={hasConnectionIssues || hasValidationErrors}
+              disabled={hasConnectionIssues || hasValidationErrors || isSaving}
               onClick={this.handleSave.bind(this, 'save')}
               options={saveOptions}
             >

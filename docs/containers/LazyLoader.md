@@ -6,13 +6,6 @@
 Props
 -----
 
-### `children`
-
-The asset to be loaded when appropriate.
-
-- type: `node`
-
-
 ### `idleOnly`
 
 Load only when app status is idle.
@@ -21,9 +14,10 @@ Load only when app status is idle.
 - default value: `true`
 
 
-### `placeholder`
+### `styles`
 
-The placeholder node to be rendered before load.
+Image style classes.
 
-- type: `node`
+- type: `string`
+- default value: `""`
 

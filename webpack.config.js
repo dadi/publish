@@ -8,9 +8,9 @@ const postcssCustomMedia = require('postcss-custom-media')
 const postcssCustomProperties = require('postcss-custom-properties')
 const webpack = require('webpack')
 
+const BabiliPlugin = require('babili-webpack-plugin')
 const ComponentTreePlugin = require('component-tree-webpack-plugin')
 const ExtractTextPlugin = require('extract-text-webpack-plugin')
-const UglifyJSPlugin = require('uglifyjs-webpack-plugin')
 const WebpackOnBuildPlugin = require('on-build-webpack')
 const WebpackPreBuildPlugin = require('pre-build-webpack')
 
@@ -138,23 +138,11 @@ module.exports = {
       })).use(postcssCustomMedia()).process(css).css
 
       fs.writeFileSync(fullCssPath, processedCss)
+    }),
+    new BabiliPlugin({
+      mangle: false
     })
-  ]).concat(ENV === 'production' ? [
-    new UglifyJSPlugin({
-      beautify: false,
-      mangle: {
-        screw_ie8: true,
-        keep_fnames: true
-      },
-      compress: {
-        screw_ie8: true,
-        warnings: false
-      },
-      comments: false,
-      minimize: true
-    })
-  ] : []),
-
+  ]),
   resolve: {
     alias: {
       lib: 'frontend/lib',
