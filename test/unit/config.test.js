@@ -2,7 +2,7 @@ const globals = require(`${__dirname}/../../app/globals`) // Always required
 const config = require(`${__dirname}/../../app/config`)
 
 describe('Config', () => {
-  it ('should export object', () => {
+  it('should export object', () => {
     expect(config).toBeInstanceOf(Object)
   })
   describe('#getFrontendProps()', () => {
@@ -76,14 +76,16 @@ describe('Config', () => {
         menu: true
       } 
     }
-    it ('should return object', () => {
+    it('should return object', () => {
       expect(config.getFrontendProps()).toBeInstanceOf(Object)
     })
+    // Create schema instance for all three tests
     const schema = config.getFrontendProps(input, {})
-    it ('should return only input props with true "availableInFrontend" key', () => {
+
+    it('should return only input props with true "availableInFrontend" key', () => {
       expect(schema).toMatchObject(out)
     })
-    it ('should return nested values', () => {
+    it('should return nested values', () => {
       expect(schema).toHaveProperty('apis.publishId')
       expect(schema).toHaveProperty('apis.name')
       expect(schema).toHaveProperty('apis.host')
@@ -92,7 +94,7 @@ describe('Config', () => {
       expect(schema).toHaveProperty('apis.version')
       expect(schema).toHaveProperty('apis.menu')
     })
-    it ('should filter hidden nested values', () => {
+    it('should filter hidden nested values', () => {
       expect(schema).not.toHaveProperty('apis.enabled')
       expect(schema).not.toHaveProperty('apis.credentials')
       expect(schema).not.toHaveProperty('apis.credentials.clientId')

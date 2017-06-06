@@ -150,7 +150,8 @@
   "jest": {
     "collectCoverage": true,
     "collectCoverageFrom": [
-      "**/frontend/**/*.{js,jsx}"
+      "**/frontend/**/*.{js,jsx}",
+      "**/app/**/*.{js}"
     ],
     "coverageReporters": [
       "cobertura"
