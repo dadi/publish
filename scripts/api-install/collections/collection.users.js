@@ -105,6 +105,32 @@ module.exports = {
         }
       }
     },
+    'loginWithToken': {
+      'type': 'Boolean',
+      'label': 'Login with Token',
+      'message': 'Login with token active',
+      'publish': {
+        'section': 'Settings',
+        'placement': 'main',
+        'display': {
+          'list': false,
+          'editor': false
+        }
+      }
+    },
+    'loginToken': {
+      'type': 'String',
+      'label': 'Login Token',
+      'message': 'Generated when password reset is active',
+      'publish': {
+        'section': 'Settings',
+        'placement': 'main',
+        'display': {
+          'list': false,
+          'editor': false
+        }
+      }
+    },
     'timezone': {
       'type': 'String',
       'label': 'Timezone',

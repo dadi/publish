@@ -16,6 +16,8 @@ frontend/views/**/*.json
 # Bundles
 public/bundle.js
 public/main.css
+public/bundle.js.map
+public/main.css.map
 
 # Webpack-generated files
 component-map.json
