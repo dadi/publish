@@ -40,3 +40,4 @@ App.prototype.stop = function () {
 }
 
 module.exports = new App()
+module.exports.app = App

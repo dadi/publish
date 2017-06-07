@@ -5,7 +5,7 @@ class StringHelper {
    Creates a URL/filename friendly version (slug) of any object that implements `toString()`
    @param {Object} input - object to be slugified
    */
-  Slugify (input) {
+  Slugify (input = '') {
     return input.toString()
       .toLowerCase()
       .replace(/\s+/g, '-')     // Replace spaces with -
