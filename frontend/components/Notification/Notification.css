@@ -1,13 +1,13 @@
 .container {
   position: fixed;
-  bottom: var(--theme-toolbar-height, 63px);
   left: 0;
+  top: 0;
   text-align: center;
   width: 100%;
   opacity: 0;
-  transform: translateY(100%);
-  transition: all 0.3s ease-out;
-  z-index: 100;
+  transform: translateY(-100%);
+  transition: all 0.2s ease-out;
+  z-index: 1000;
 }
 
 .container-visible {
@@ -20,8 +20,8 @@
   line-height: 1.25;
   font-family: var(--theme-font-family, sans-serif);
   padding: 10px 50px;
-  border-top-left-radius: 3px;
-  border-top-right-radius: 3px;
+  border-bottom-left-radius: 3px;
+  border-bottom-right-radius: 3px;
 }
 
 .notification-visible {

@@ -162,6 +162,7 @@ class DocumentEdit extends Component {
     if (!previousDocument.local && document.local && document.loadedFromLocalStorage) {
       const notification = {
         message: 'You have unsaved changes',
+        dismissAfterSeconds: false, // Persist
         options: {
           'Discard them?': actions.discardUnsavedChanges.bind(this, {
             collection,
