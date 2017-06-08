@@ -202,17 +202,4 @@ export default class DocumentFilters extends Component {
 
     this.setState({dirty: false})
   }
-
-  addFilter() {
-    const {filters} = this.state
-
-    // Add blank filter
-    this.setState({
-      filters: [...filters, {
-        field: null,
-        value: null,
-        type: '$eq'
-      }]
-    })
-  }
 }

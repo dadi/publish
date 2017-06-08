@@ -76,6 +76,9 @@ class DocumentListController extends Component {
     const hasDocuments = state.documents.list && state.documents.list.results && (state.documents.list.results.length > 0)
     const params = state.router.params
     const filters = params && params.filter ? params.filter : null
+    const filterLimitReached = filters 
+      && currentCollection 
+      && Object.keys(filters).length === Object.keys(currentCollection.fields).length
 
     if (!currentCollection) {
       return null
@@ -85,6 +88,7 @@ class DocumentListController extends Component {
       <div>
         <ListController collection={currentCollection}>
           <Button
+            disabled={filterLimitReached}
             accent="data"
             onClick={this.handleAddNewFilter.bind(this)}
           >Add Filter</Button>
