@@ -132,7 +132,7 @@ export default class DocumentFilters extends Component {
               disabled={!dirty}
               onClick={this.updateUrl.bind(this)}
               type="submit"
-            >Update</Button>
+            >Apply {filters.length > 1 ? 'filters' : 'filter'}</Button>
           </div>
         )}
       </form>
