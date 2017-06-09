@@ -53,7 +53,6 @@ export default class FileUpload extends Component {
       multiple
     } = this.props
     const {dragging} = this.state
-
     const dropStyles = new Style(styles, 'droparea')
       .addIf('droparea-active', dragging)
 
