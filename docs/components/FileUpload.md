@@ -13,10 +13,12 @@ File type acceptance.
 - type: `string`
 
 
-### `allowDrop`
+### `ctaText`
 
-- type: `bool`
-- default value: `false`
+The text to be displayed in the call-to-action button.
+
+- type: `string`
+- default value: `'Select from device'`
 
 
 ### `multiple`
