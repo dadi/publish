@@ -132,7 +132,7 @@ export default class DocumentFilters extends Component {
               disabled={!dirty}
               onClick={this.updateUrl.bind(this)}
               type="submit"
-            >Update</Button>
+            >Apply {filters.length > 1 ? 'filters' : 'filter'}</Button>
           </div>
         )}
       </form>
@@ -201,18 +201,5 @@ export default class DocumentFilters extends Component {
     }
 
     this.setState({dirty: false})
-  }
-
-  addFilter() {
-    const {filters} = this.state
-
-    // Add blank filter
-    this.setState({
-      filters: [...filters, {
-        field: null,
-        value: null,
-        type: '$eq'
-      }]
-    })
   }
 }

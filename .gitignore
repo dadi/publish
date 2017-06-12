@@ -23,3 +23,4 @@ public/main.css.map
 component-map.json
 frontend/lib/field-components.js
 stats.json
+jest*

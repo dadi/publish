@@ -2,16 +2,19 @@
 
 const DadiAPI = require('@dadi/api-wrapper')
 
-const Api = function () {}
+const Api = function (options) {
+  if (!options) return
+  return configure(options)
+}
 
 /**
  * Configure API
  * Configure new instance of api-wrapper
  * @param  {Object} conf Configuration settings object
- * @return {DadiAPI}      Configure instance of DADI api-wrapper
+ * @return {DadiAPI} Configure instance of DADI api-wrapper
  */
 const configure = ({host, port, credentials, version, database}) => {
-  return {
+  return new DadiAPI({
     appId: 'DADI Publish',
     uri: host,
     port: port,
@@ -19,11 +22,11 @@ const configure = ({host, port, credentials, version, database}) => {
      // debug: config.get('logging.level') === 'debug' ? true : false // Not yet set in config
     version: version || '1.0',
     database: database
-  }
+  })
 }
 
 module.exports = function (options) {
-  return new DadiAPI(configure(options))
+  return new Api(options)
 }
 
 module.exports.Api = Api

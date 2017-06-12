@@ -27,8 +27,10 @@ class NotificationCentre extends Component {
     super(props)
 
     this.enqueuedNotification = null
-    this.state.visible = false
     this.timeout = null
+
+    this.state.faded = false
+    this.state.visible = false
   }
 
   componentWillReceiveProps(nextProps) {
@@ -46,6 +48,10 @@ class NotificationCentre extends Component {
   shouldComponentUpdate(nextProps, nextState) {
     const notification = this.props.state.app.notification
     const nextNotification = nextProps.state.app.notification
+
+    if (this.state.faded !== nextState.faded) {
+      return true
+    }
 
     if (this.state.visible !== nextState.visible) {
       return true
@@ -92,22 +98,22 @@ class NotificationCentre extends Component {
 
   render() {
     const {state} = this.props
-    const {visible} = this.state
+    const {
+      faded,
+      visible
+    } = this.state
     const notification = this.enqueuedNotification || state.app.notification
 
     if (!notification) return null
 
     const {
-      dismissAfterRouteChange,
-      dismissAfterSeconds,
       message,
-      options,
-      timestamp,
-      type
+      options
     } = notification
 
     return (
       <Notification
+        faded={faded}
         message={message}
         onHover={this.handleOnHover.bind(this)}
         onOptionClick={this.handleOptionClick.bind(this)}
@@ -120,7 +126,8 @@ class NotificationCentre extends Component {
   start() {
     const notification = this.props.state.app.notification
     const {
-      dismissAfterSeconds
+      dismissAfterSeconds,
+      fadeAfterSeconds,
     } = notification
 
     clearTimeout(this.timeout)
@@ -129,8 +136,13 @@ class NotificationCentre extends Component {
       setTimeout(this.dismiss.bind(this), dismissAfterSeconds * 1000)
     }
 
+    if (fadeAfterSeconds) {
+      setTimeout(this.fade.bind(this), fadeAfterSeconds * 1000)
+    }
+
     setTimeout(() => {
       this.setState({
+        faded: false,
         visible: true
       })
     }, 10)
@@ -140,7 +152,14 @@ class NotificationCentre extends Component {
     clearTimeout(this.timeout)
 
     this.setState({
+      faded: false,
       visible: false
+    })
+  }
+
+  fade() {
+    this.setState({
+      faded: true
     })
   }
 

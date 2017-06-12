@@ -17,10 +17,10 @@ export default class FileUpload extends Component {
      */
     accept: proptypes.string,
 
-    /*
-     * Allow drag and drop upload.
+    /**
+     * The text to be displayed in the call-to-action button.
      */
-    allowDrop: proptypes.bool,
+    ctaText: proptypes.string,
 
     /**
      * Whether to accept multiple files.
@@ -34,14 +34,8 @@ export default class FileUpload extends Component {
   }
 
   static defaultProps = {
-    allowDrop: false,
+    ctaText: 'Select from device',
     multiple: false
-  }
-
-  constructor(props) {
-    super(props)
-
-    this.state.dragOver = false
   }
 
   componentWillMount() {
@@ -51,31 +45,12 @@ export default class FileUpload extends Component {
   render() {
     const {
       accept,
-      allowDrop,
+      ctaText,
       multiple
     } = this.props
-    const {dragOver} = this.state
-
-    const dropStyles = new Style(styles, 'container')
-      .addIf('dropzone', allowDrop)
-      .addIf('dropzone-active', dragOver)
 
     return (
-      <div class={dropStyles.getClasses()}>
-        {allowDrop && (
-          <div
-            onDrop={this.handleDrop.bind(this)} 
-            onDragEnter={this.handleDrag.bind(this)}
-            onDragLeave={this.handleDrag.bind(this)}
-            onDragOver={this.handleDrag.bind(this)}
-          >
-            <p>Drop files to upload</p>
-          </div>
-        )}
-        {allowDrop && (
-          <span class={styles.or}>or</span>
-        )}
-
+      <div>
         <input 
           accept={accept}
           class={styles['file-input']}
@@ -89,7 +64,7 @@ export default class FileUpload extends Component {
           accent="data"
           forId={this.fileInputId}
           size="small"
-        >Select from device</Button>
+        >{ctaText}</Button>
       </div>
     )
   }
@@ -99,20 +74,6 @@ export default class FileUpload extends Component {
 
     onChange(event.target.files)
 
-    event.preventDefault()
-  }
-
-  handleDrop(event) {
-    const {onChange} = this.props
-
-    this.setState({dragOver: false})
-
-    onChange(event.dataTransfer.files)
-    event.preventDefault()
-  }
-
-  handleDrag(event) {
-    this.setState({dragOver: event.type !== 'dragleave'})
     event.preventDefault()
   }
 }

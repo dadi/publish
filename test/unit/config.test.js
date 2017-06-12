@@ -101,4 +101,7 @@ describe('Config', () => {
       expect(schema).not.toHaveProperty('apis.credentials.secret')
     })
   })
+  // describe('#getAdditionalSchema()', () => {
+
+  // })
 })

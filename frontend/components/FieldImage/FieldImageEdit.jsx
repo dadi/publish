@@ -10,6 +10,7 @@ import Style from 'lib/Style'
 import styles from './FieldImage.css'
 
 import Button from 'components/Button/Button'
+import DropArea from 'components/DropArea/DropArea'
 import FileUpload from 'components/FileUpload/FileUpload'
 import Label from 'components/Label/Label'
 import LazyLoader from 'containers/LazyLoader/LazyLoader'
@@ -135,7 +136,10 @@ export default class FieldImageEdit extends Component {
         }
 
         {!values &&
-          <div>
+          <DropArea
+            draggingText={`Drop image${!singleFile && 's'} here`}
+            onDrop={this.handleFileChange.bind(this)}
+          >
             <div class={styles.placeholder}>
               <Button
                 accent="data"
@@ -146,6 +150,7 @@ export default class FieldImageEdit extends Component {
             </div>
 
             <div class={styles['upload-options']}>
+              <span>Drop file{!singleFile && 's'} to upload or</span>
               <FileUpload
                 allowDrop={true}
                 accept={config['FieldImage'].accept}
@@ -153,7 +158,7 @@ export default class FieldImageEdit extends Component {
                 onChange={this.handleFileChange.bind(this)}
               />
             </div>
-          </div>
+          </DropArea>
         }
       </Label>
     )

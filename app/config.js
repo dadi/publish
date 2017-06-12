@@ -8,7 +8,7 @@ const schema = require('./config-schema')
 
 /**
  * Get Adittional Schema
- * @param  {String} dir   Directory to searcg
+ * @param  {String} dir Directory to search
  * @param  {Regex} match Filename regular expression
  * @return {undefined}
  */
@@ -61,3 +61,4 @@ conf.validate({})
 
 module.exports = conf
 module.exports.getFrontendProps = getFrontendProps
+module.exports.getAdditionalSchema = getAdditionalSchema
