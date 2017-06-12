@@ -39,12 +39,15 @@
   font-weight: bold;
 }
 
-.main {
+body {
   min-height: 100vh;
   background-color: var(--theme-colour-background-shade-1, #FAFAFA);
   background-image: url(/images/bg.png);
   background-repeat: no-repeat;
   background-size: cover;
+}
+
+.main {
   border-bottom: 1px solid transparent;
 }
 
