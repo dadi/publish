@@ -64,6 +64,7 @@ export default class Notification extends Component {
   render() {
     const {
       accent,
+      faded,
       message,
       onHover,
       onOptionClick,
@@ -74,6 +75,7 @@ export default class Notification extends Component {
       .addIf('container-visible', visible)
     const notificationStyle = new Style(styles, 'notification')
       .add(`notification-${accent}`)
+      .addIf('notification-faded', faded)
 
     return (
       <div class={containerStyle.getClasses()}>
