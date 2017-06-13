@@ -22,7 +22,6 @@ import PasswordResetView from 'views/PasswordResetView/PasswordResetView'
 import SignInView from 'views/SignInView/SignInView'
 import SignOutView from 'views/SignOutView/SignOutView'
 import ProfileEditView from 'views/ProfileEditView/ProfileEditView'
-import View from 'views/View/View'
 
 import {connectHelper, debounce} from 'lib/util'
 import ConnectionMonitor from 'lib/status'
@@ -44,8 +43,6 @@ class App extends Component {
     apiBridgeClient.registerProgressCallback(actions.registerNetworkCall)
     ConnectionMonitor(2000).registerStatusChangeCallback(actions.setNetworkStatus)
 
-    // Attempt to load user from session.
-    //actions.loadUserFromSession()
     actions.loadAppConfig()
   }
 
