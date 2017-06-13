@@ -24,6 +24,11 @@ export default class TableHead extends Component {
     allSelected: proptypes.bool,
 
     /**
+     * Whether there are any selected rows.
+     */
+    hasSelected: proptypes.bool,
+
+    /**
      * Whether rows are selectable. When `true`, check boxes will automatically
      * be added to the table head and to each row.
      */
@@ -38,6 +43,7 @@ export default class TableHead extends Component {
   static defaultProps = {
     allowBulkSelection: true,
     allSelected: false,
+    hasSelected: false,
     selectable: false
   }
 
@@ -53,6 +59,7 @@ export default class TableHead extends Component {
     const {
       allowBulkSelection,
       allSelected,
+      hasSelected,
       selectable
     } = this.props
 
@@ -66,6 +73,7 @@ export default class TableHead extends Component {
                 class={styles.select}
                 type="checkbox"
                 onClick={this.handleSelectClick.bind(this)}
+                indeterminate={!allSelected && hasSelected}
                 style={!allowBulkSelection && 'display: none;'}
               />
             </TableHeadCell>
