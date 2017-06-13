@@ -90,9 +90,9 @@ class DocumentEditToolbar extends Component {
     const wasSaving = previousDocument.remoteStatus === Constants.STATUS_SAVING
 
     // Have we just saved a document?
-    if (wasSaving && (status === Constants.STATUS_IDLE)) {
+    if (wasSaving && (status !== Constants.STATUS_SAVING)) {
       if (typeof this.onSave.callback === 'function') {
-        this.onSave.callback(state.document.remote._id)
+        this.onSave.callback(state.document.remote ? state.document.remote._id : null)
       }
     }
 
@@ -123,7 +123,7 @@ class DocumentEditToolbar extends Component {
       && Object.keys(document.validationErrors)
         .filter(field => document.validationErrors[field])
         .length
-    const isSaving = state.document.remoteStatus !== Constants.STATUS_IDLE
+    const isSaving = state.document.remoteStatus === Constants.STATUS_SAVING
     const validationErrors = state.document.validationErrors
     const hasValidationErrors = validationErrors && Object.keys(validationErrors)
       .filter(field => validationErrors[field])
@@ -251,6 +251,12 @@ class DocumentEditToolbar extends Component {
       case 'save':
         this.onSave = {
           callback: documentId => {
+            if (!documentId) {
+              actions.setNotification({
+                message:`Document failed to save`
+              }) 
+              return
+            }
             route(buildUrl(group, collection, 'document', 'edit', documentId, section))
 
             actions.setNotification({

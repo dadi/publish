@@ -1,15 +1,15 @@
 const globals = require(`${__dirname}/../../../../app/globals`) // Always required
-// const Session = require(`${__dirname}/../../../../app/lib/controllers/session`).Session
+const Session = require(`${__dirname}/../../../../app/lib/controllers/session`).Session
 
-// let session
+let session
 
 beforeEach(() => {
-  // session = new Session()
+  session = new Session()
 })
 
 describe('Session', () => {
   it('should export function', () => {
-    // expect(session).toBeInstanceOf(Object)
+    expect(session).toBeInstanceOf(Object)
   })
 })
 

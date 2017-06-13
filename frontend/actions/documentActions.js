@@ -3,8 +3,8 @@ import 'fetch'
 import * as Constants from 'lib/constants'
 import * as LocalStorage from 'lib/local-storage'
 import * as Types from 'actions/actionTypes'
-
 import apiBridgeClient from 'lib/api-bridge-client'
+import {batchActions} from 'lib/redux'
 
 export function clearRemoteDocument () {
   return {
@@ -316,10 +316,15 @@ export function saveDocument ({
         })
       }).catch(response => {
         if (response.errors && response.errors.length) {
-          dispatch({
-            errors: response.errors,
-            type: Types.SET_ERRORS_FROM_REMOTE_API
-          })
+          dispatch(
+            batchActions(
+              {
+                errors: response.errors,
+                type: Types.SET_ERRORS_FROM_REMOTE_API
+              },
+              setRemoteDocumentStatus(Constants.STATUS_FAILED)
+            )
+          )
         } else {
           dispatch(setRemoteDocumentStatus(Constants.STATUS_FAILED))
         }

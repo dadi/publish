@@ -32,34 +32,35 @@ export function loadApis () {
           collectionBundler.add(collectionQuery)
         })
 
-        collectionBundler.run().then(apiCollections => {
-          const isAuthApi = auth.host === api.host && auth.port === api.port
-          const mergedCollections = apiCollections.map((schema, index) => {
-            if (schema.apiBridgeError) return null
+        collectionBundler.run()
+          .then(apiCollections => {
+            const isAuthApi = auth.host === api.host && auth.port === api.port
+            const mergedCollections = apiCollections.map((schema, index) => {
+              if (schema.apiBridgeError) return null
 
-            return Object.assign({}, schema, collections[index], {
-              _isAuthCollection: isAuthApi && (auth.collection === collections[index].slug)
+              return Object.assign({}, schema, collections[index], {
+                _isAuthCollection: isAuthApi && (auth.collection === collections[index].slug)
+              })
+            }).filter(Boolean).filter(collection => {
+              return !(collection.settings.publish && collection.settings.publish.hidden)
             })
-          }).filter(Boolean).filter(collection => {
-            return !(collection.settings.publish && collection.settings.publish.hidden)
+
+            const apiWithCollections = Object.assign({}, api, {
+              _failedCollections: apiCollections.length - mergedCollections.length,
+              _isAuthApi: isAuthApi,
+              collections: mergedCollections
+            })
+
+            apisWithCollections.push(apiWithCollections)
+            apisToProcess--
+
+            if (apisToProcess === 0) {
+              dispatch(setApiList(apisWithCollections))
+            }
           })
-
-          const apiWithCollections = Object.assign({}, api, {
-            _failedCollections: apiCollections.length - mergedCollections.length,
-            _isAuthApi: isAuthApi,
-            collections: mergedCollections
+          .catch(err => {
+            dispatch(setApiStatus(Constants.STATUS_FAILED))
           })
-
-          apisWithCollections.push(apiWithCollections)
-          apisToProcess--
-
-          if (apisToProcess === 0) {
-            dispatch(setApiList(apisWithCollections))
-          }
-        })
-        .catch(err => {
-          dispatch(setApiStatus(Constants.STATUS_FAILED))
-        })
       })
       .catch(err => {
         dispatch(setApiStatus(Constants.STATUS_FAILED))
