@@ -485,7 +485,7 @@ class DocumentEdit extends Component {
       state
     } = this.props
     const {app, document} = state
-    const hasAttemptedSaving = Boolean(document.saveAttempts)
+    const hasAttemptedSaving = document.saveAttempts > 0
     const hasError = document.validationErrors
       && document.validationErrors[field._id]
 

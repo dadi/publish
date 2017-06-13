@@ -4,13 +4,35 @@ import * as Constants from 'lib/constants'
 import * as Types from 'actions/actionTypes'
 
 const initialState = {
+  // An array of field names whose values will never be persisted to local
+  // storage. Useful for sensitive data like passwords.
   fieldsNotPersistedInLocalStorage: [],
+
+  // Whether some or all of the contents of `local` have been loaded from
+  // local storage, rather than filled in manually.
   loadedFromLocalStorage: false,
+
+  // A map of local changes to the remote document, with field names as keys.
   local: null,
+
+  // An array of people working on the current document.
   peers: null,
+
+  // The entire document being edited as it exists on the remote API.
   remote: null,
+
+  // The status of the fetch operation for the remote document.
   remoteStatus: Constants.STATUS_IDLE,
+
+  // The number of times the user has tried to save the current document.
   saveAttempts: 0,
+
+  // When `validationErrors` is `null`, it means that we don't know whether the
+  // document was validated successfully, because we haven't forced fields to
+  // validate themselves (with the `forceValidate` prop).
+  //
+  // When it's `{}`, however, it means we have validated the document and there
+  // are no errors found.
   validationErrors: null
 }
 
@@ -21,8 +43,7 @@ export default function document (state = initialState, action = {}) {
     case Types.ATTEMPT_SAVE_DOCUMENT:
       return {
         ...state,
-        saveAttempts: state.saveAttempts + 1,
-        validationErrors: state.validationErrors || {}
+        saveAttempts: state.saveAttempts + 1
       }
 
     // Document action: clear remote document
