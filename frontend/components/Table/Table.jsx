@@ -70,6 +70,14 @@ export default class Table extends Component {
     this.keyboard.off()
   }
 
+  deselectAll() {
+    const {onSelect} = this.props
+
+    if (typeof onSelect === 'function') {
+      onSelect.call(this, {})
+    }
+  }
+
   selectAll() {
     const {children, onSelect} = this.props
 
@@ -85,10 +93,15 @@ export default class Table extends Component {
   }
 
   handleHeadSelect(event) {
-    const selected = event.target.checked
+    const {selectLimit, selectedRows} = this.props
+    const countSelectedRows = Object.keys(selectedRows).length
+    const indeterminate = countSelectedRows < selectLimit && countSelectedRows > 0
+    const selected = event.target.checked && !indeterminate
 
     if (selected) {
       this.selectAll()
+    } else if (indeterminate) {
+      this.deselectAll()
     }
   }
 
@@ -172,6 +185,7 @@ export default class Table extends Component {
       if (child.nodeName && child.nodeName.name === 'TableHead') {
         childAttributes.allowBulkSelection = selectLimit > (children.length - 1)
         childAttributes.allSelected = selectedRowsIndices.length === (children.length - 1)
+        childAttributes.hasSelected = selectedRowsIndices.length > 0
         childAttributes.onSelect = this.handleHeadSelect.bind(this)
 
         child.attributes = childAttributes
