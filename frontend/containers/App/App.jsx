@@ -38,17 +38,6 @@ class App extends Component {
       .on('userListChange', this.handleUserListChange.bind(this))
   }
 
-  handleUserListChange (data) {
-    const {state, actions} = this.props
-
-    // Store connected users in state.
-    // Filter current user.
-    if (state.user && state.user.remote) {
-      actions.setDocumentPeers(data.body.users
-        .filter(socketUser => socketUser.handle !== state.user.remote.handle))
-    }
-  }
-
   componentWillMount() {
     const {actions} = this.props
 
@@ -56,7 +45,8 @@ class App extends Component {
     ConnectionMonitor(2000).registerStatusChangeCallback(actions.setNetworkStatus)
 
     // Attempt to load user from session.
-    actions.loadUserFromSession()
+    //actions.loadUserFromSession()
+    actions.loadAppConfig()
   }
 
   componentDidMount() {
@@ -73,24 +63,27 @@ class App extends Component {
     document.addEventListener("drop", this.handleDragDropEvents, false)
   }
 
-  /**
-   * Handle Drag Drop Events
-   * Block and drag and drop actions to handle accidental 
-   * drop outside of FileUpload and other asset drop handlers.
-   * @param  {Event} event Event listener object.
-   */
-  handleDragDropEvents(event) {
-    event.preventDefault()
-  }
-
   componentDidUpdate(previousProps) {
     const {state, actions} = this.props
     const previousState = previousProps.state
     const room = previousState.router.room
 
-    // State change: user has signed in. Load app config.
-    if (state.user.remote && state.app.status === Constants.STATUS_IDLE && !state.app.config) {
+    // State change: user has signed in.
+    if (
+      previousProps.state.user.status === Constants.STATUS_FAILED &&
+      state.user.status === Constants.STATUS_LOADED
+    ) {
       actions.loadAppConfig()
+
+      return route('/')
+    }
+
+    // State change: user has signed out.
+    if (
+      previousProps.state.user.status === Constants.STATUS_LOADED &&
+      state.user.hasSignedOut
+    ) {
+      return route('/sign-in')
     }
 
     // State change: app now has config.
@@ -101,7 +94,11 @@ class App extends Component {
     if (this.socket.getRoom() !== room) {
       this.socket.setRoom(room)
     }
-    if ((previousState.user.remote && !previousState.user.remote.error) && previousState.user.remote !== this.socket.getUser()) {
+
+    if (
+      previousState.user.remote && !previousState.user.remote.error &&
+      previousState.user.remote !== this.socket.getUser()
+    ) {
       this.socket.setUser(previousState.user.remote)
     }
   }
@@ -109,115 +106,136 @@ class App extends Component {
   render() {
     const {history, state} = this.props
 
-    if (state.api.status === Constants.STATUS_FAILED) {
+    if (
+      state.api.status === Constants.STATUS_FAILED &&
+      state.user.status === Constants.STATUS_LOADED
+    ) {
       return (
         <ErrorView type={Constants.STATUS_FAILED} />
       )
     }
 
     return (
-      <Router history={history}>
-        <View
+      <Router
+        history={history}
+        onChange={this.handleRouteChange.bind(this)}
+      >
+        <HomeView
           authenticate
-          component={HomeView}
           path="/"
         />
 
-        <View
-          component={PasswordResetView}
+        <PasswordResetView
           path="/reset"
         />
 
-        <View
+        <DocumentListView
           authenticate
-          component={DocumentListView}
           path="/:group/:collection/document/edit/:documentId?/select/:referencedField?/:page?"
         />
 
-        <View
+        <DocumentListView
           authenticate
-          component={DocumentListView}
           path="/:collection/document/edit/:documentId?/select/:referencedField?/:page?"
         />
 
-        <View
+        <DocumentEditView
           authenticate
-          component={DocumentEditView}
           path="/:group/:collection/document/edit/:documentId?/:section?"
         />
 
-        <View
+        <DocumentEditView
           authenticate
-          component={DocumentEditView}
           path="/:collection/document/edit/:documentId?/:section?"
         />
 
-        <View
+        <DocumentListView
           authenticate
-          component={DocumentListView}
           path="/:group/:collection/document/new/:section?/:referencedField?/:page?"
         />
 
-        <View
+        <DocumentListView
           authenticate
-          component={DocumentListView}
           path="/:collection/document/new/:section?/:referencedField?/:page?"
         />
 
-        <View
+        <DocumentCreateView
           authenticate
-          component={DocumentCreateView}
           path="/:group/:collection/document/new/:section?"
         />
 
-        <View
+        <DocumentCreateView
           authenticate
-          component={DocumentCreateView}
           path="/:collection/document/new/:section?"
         />
 
-        <View
+        <DocumentListView
           authenticate
-          component={DocumentListView}
           path="/:group/:collection/documents/:page?"
         />
 
-        <View
+        <DocumentListView
           authenticate
-          component={DocumentListView}
           path="/:collection/documents/:page?"
         />
 
-        <View
+        <ProfileEditView
           authenticate
-          component={ProfileEditView}
           path="/profile/:section?"
         />
 
-        <View
+        <ProfileEditView
           authenticate
-          component={ProfileEditView}
           path="/profile/select/:referencedField?/:page?"
         />
 
-        <View
-          component={SignInView}
+        <SignInView
           path="/sign-in/:token?"
         />
 
-        <View
-          component={SignOutView}
+        <SignOutView
           path="/sign-out"
         />
 
-        <View
+        <ErrorView
           authenticate
-          component={ErrorView}
           default
           type={Constants.ERROR_ROUTE_NOT_FOUND}
         />
       </Router>
     )
+  }
+
+  /**
+   * Handle Drag Drop Events
+   * Block and drag and drop actions to handle accidental
+   * drop outside of FileUpload and other asset drop handlers.
+   * @param  {Event} event Event listener object.
+   */
+  handleDragDropEvents(event) {
+    event.preventDefault()
+  }
+
+  handleRouteChange(event) {
+    const {state} = this.props
+    const isAuthenticatedRoute = event.current &&
+      event.current.attributes &&
+      event.current.attributes.authenticate
+
+    if (isAuthenticatedRoute && state.user.status !== Constants.STATUS_LOADED) {
+      route('/sign-in')
+    }
+  }
+
+  handleUserListChange(data) {
+    const {state, actions} = this.props
+
+    // Store connected users in state.
+    // Filter current user.
+    if (state.user && state.user.remote) {
+      actions.setDocumentPeers(data.body.users
+        .filter(socketUser => socketUser.handle !== state.user.remote.handle))
+    }
   }
 }
 
