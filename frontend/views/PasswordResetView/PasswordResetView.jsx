@@ -52,7 +52,7 @@ class PasswordResetView extends Component {
               method="POST"
               onSubmit={this.handleResetPassword.bind(this)}
             >
-              <img class={styles.logo} src="/images/publish.png" />
+              <img class={styles.logo} src="/public/images/publish.png" />
 
               {this.error &&
                 <Banner>{this.error}</Banner>
