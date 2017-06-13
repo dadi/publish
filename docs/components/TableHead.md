@@ -29,6 +29,14 @@ The contents of the table head.
 - type: `node`
 
 
+### `hasSelected`
+
+Whether there are any selected rows.
+
+- type: `bool`
+- default value: `false`
+
+
 ### `selectable`
 
 Whether rows are selectable. When `true`, check boxes will automatically
