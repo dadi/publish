@@ -75,6 +75,13 @@ Router.prototype.webRoutes = function () {
     directory: path.resolve(__dirname, '../../..')
   }))
 
+  // Respond to HEAD requests - this is used by ConnectionMonitor in App.jsx. 
+  this.app.head(/.*/, (req, res, next) => {
+    res.header('Content-Type', 'application/json')
+
+    return res.end(JSON.stringify({success: true}))
+  })
+
   this.app.get(/.*/, (req, res, next) => {
     const serialisedUser = req.session.passport.user
       ? JSON.stringify(req.session.passport.user)
