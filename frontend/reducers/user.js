@@ -2,15 +2,16 @@
 
 import * as Constants from 'lib/constants'
 import * as Types from 'actions/actionTypes'
+import {isValidJSON} from 'lib/util'
 
 const initialState = {
   failedSignInAttempts: 0,
   hasSignedOut: false,
-  remote: null,
+  remote: window.__userData__ || null,
   resetEmail: null,
   resetError: null,
   resetSuccess: null,
-  status: Constants.STATUS_IDLE
+  status: window.__userData__ ? Constants.STATUS_LOADED : Constants.STATUS_FAILED
 }
 
 export default function user (state = initialState, action = {}) {
@@ -58,7 +59,9 @@ export default function user (state = initialState, action = {}) {
     case Types.SIGN_OUT:
       return {
         ...initialState,
-        hasSignedOut: true
+        hasSignedOut: true,
+        remote: null,
+        status: Constants.STATUS_FAILED
       }
 
     default:

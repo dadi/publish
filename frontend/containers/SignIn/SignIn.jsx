@@ -91,7 +91,7 @@ class SignIn extends Component {
               method="POST"
               onSubmit={this.handleSignIn.bind(this)}
             >
-              <img class={styles.logo} src="/images/publish.png" />
+              <img class={styles.logo} src="/public/images/publish.png" />
 
               {error &&
                 <Banner>{error}</Banner>

@@ -70,7 +70,7 @@ class Header extends Component {
         <div class={contentStyle.getClasses()} onClick={this.toggleCollapsed.bind(this, false)}>
           <div class={styles.masthead}>
             <a href="/">
-              <img class={styles.logo} src="/images/publish.png" />
+              <img class={styles.logo} src="/public/images/publish.png" />
             </a>
 
               {user && !user.error && (
