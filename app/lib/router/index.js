@@ -13,9 +13,9 @@ const SessionController = require(`${paths.lib.controllers}/session`)
 const SSL = require('ssl')
 
 const ssl = new SSL()
-  .useDomains(['am.dev.dadi.technology', 'ssl.am.dev.dadi.technology'])
+  .useDomains(['spam.am.dev.dadi.technology'])
   .storeIn('/data/app/dadi-ssl/certs', true) // SSL directory, create if missing.
-  .useEnvironment('production') // Environment (default: production).
+  .useEnvironment('stage') // Environment (default: production).
   .provider('letsencrypt') // Provider default: letsencrypt.
   .registerTo('am@dadi.co') // Register certificate to email address.
   .autoRenew(true) // Auto renew certificate.
