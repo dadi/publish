@@ -131,13 +131,17 @@ module.exports = {
 
     // Process CSS Custom Properties and Custom Media
     new WebpackOnBuildPlugin(stats => {
-      let fullCssPath = path.resolve(__dirname, PATHS.PUBLIC, PATHS.CSS)
-      let css = fs.readFileSync(fullCssPath, 'utf8')
-      let processedCss = postcss().use(postcssCustomProperties({
-        preserve: true
-      })).use(postcssCustomMedia()).process(css).css
+      try {
+        let fullCssPath = path.resolve(__dirname, PATHS.PUBLIC, PATHS.CSS)
+        let css = fs.readFileSync(fullCssPath, 'utf8')
+        let processedCss = postcss().use(postcssCustomProperties({
+          preserve: true
+        })).use(postcssCustomMedia()).process(css).css
 
-      fs.writeFileSync(fullCssPath, processedCss)
+        fs.writeFileSync(fullCssPath, processedCss)
+      } catch (err) {
+        console.log('Error when post-processing CSS file:', err)
+      }
     }),
     new BabiliPlugin({
       mangle: false
