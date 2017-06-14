@@ -51,7 +51,7 @@ conf.set('availableInFrontend', availableInFrontend)
 const env = conf.get('env')
 
 try {
-  conf.loadFile(path.resolve(path.join(__dirname, '/../config/config.' + env + '.json')))
+  conf.loadFile(`./config/config.${env}.json`)
 } catch (e) {
   console.log('Failed to load config, dropping to defaults.')
 }
