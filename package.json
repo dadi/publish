@@ -16,6 +16,7 @@
     "prepublish": "npm run snyk-protect",
     "prepush": "npm run build-docs",
     "precommit": "npm run lint",
+    "postinstall": "postinstall-build --verbose public/bundle.js",
     "snyk-protect": "snyk protect",
     "start": "NODE_ENV=development node index.js",
     "test": "npm-run-all test-all lint",

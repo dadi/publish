@@ -9,7 +9,6 @@ const postcssCustomProperties = require('postcss-custom-properties')
 const webpack = require('webpack')
 
 const BabiliPlugin = require('babili-webpack-plugin')
-const ComponentTreePlugin = require('component-tree-webpack-plugin')
 const ExtractTextPlugin = require('extract-text-webpack-plugin')
 const WebpackOnBuildPlugin = require('on-build-webpack')
 const WebpackPreBuildPlugin = require('pre-build-webpack')
@@ -96,16 +95,6 @@ module.exports = {
 
     new webpack.DefinePlugin({
       'process.env': JSON.stringify({ NODE_ENV: ENV })
-    }),
-
-    new ComponentTreePlugin({
-      directories: [
-        path.resolve(__dirname, PATHS.COMPONENTS),
-        path.resolve(__dirname, PATHS.CONTAINERS),
-        path.resolve(__dirname, PATHS.VIEWS)
-      ],
-      extensions: ['.jsx'],
-      outputPath: PATHS.COMPONENT_TREE
     }),
 
     new ExtractTextPlugin({
