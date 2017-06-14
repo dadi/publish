@@ -35,7 +35,10 @@ module.exports = {
     rules: [
       {
         test: /\.jsx|js?$/,
-        exclude: /node_modules/,
+        include: [
+          path.resolve(__dirname, 'frontend'),
+          path.resolve(__dirname, 'node_modules', 'publish', 'frontend')
+        ],
         use: {
           loader: 'babel-loader'
         }
@@ -48,7 +51,9 @@ module.exports = {
       },
       {
         test: /\.css$/,
-        include: [path.resolve(__dirname, 'frontend')],
+        include: [
+          path.resolve(__dirname, 'frontend')
+        ],
         use: ExtractTextPlugin.extract({
           fallback: 'style-loader',
           use: [
