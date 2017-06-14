@@ -18,9 +18,7 @@ if (require.main === module) {
   module.exports = new Publish().run(true)
 } else {
   // App called as module
-  module.exports = function () {
-    return new Publish()
-  }
+  module.exports = new Publish()
   module.exports.Publish = Publish
 }
 
