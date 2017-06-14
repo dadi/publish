@@ -4,7 +4,7 @@ const app = require('./app')
 
 const Publish = function () {}
 
-Publish.prototype.start = function (options) {
+Publish.prototype.run = function (options) {
   app.start(options).then(() => {
     console.log('App started successfully')
   }).catch((err) => {
@@ -15,7 +15,7 @@ Publish.prototype.start = function (options) {
 // Run-type switch
 if (require.main === module) {
   // App called directly
-  module.exports = new Publish(true)
+  module.exports = new Publish().run(true)
 } else {
   // App called as module
   module.exports = function () {
