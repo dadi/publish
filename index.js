@@ -15,11 +15,11 @@ Publish.prototype.start = function (options) {
 // Run-type switch
 if (require.main === module) {
   // App called directly
-  module.exports = new Publish().start()
+  module.exports = new Publish(true)
 } else {
   // App called as module
   module.exports = function () {
-    return new Publish().start(true)
+    return new Publish()
   }
   module.exports.Publish = Publish
 }

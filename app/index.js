@@ -20,8 +20,8 @@ const App = function () {}
  * Start Publish App
  * @return {Server}        Server Instace
  */
-App.prototype.start = function (isModule) {
-  if (isModule) {
+App.prototype.run = function (isStandalone) {
+  if (isStandalone) {
     let watcher = new Watch().start()
 
     // Overwrite default config with app-specific module
