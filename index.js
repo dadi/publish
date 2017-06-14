@@ -15,7 +15,7 @@ Publish.prototype.run = function (options) {
 // Run-type switch
 if (require.main === module) {
   // App called directly
-  module.exports = new Publish().run(true)
+  module.exports = new Publish().run({isStandalone: true})
 } else {
   // App called as module
   module.exports = new Publish()
