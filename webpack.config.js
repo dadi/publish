@@ -37,7 +37,7 @@ module.exports = {
         test: /\.jsx|js?$/,
         include: [
           path.resolve(__dirname, 'frontend'),
-          path.resolve(__dirname, 'node_modules', '@dadi', 'publish', 'frontend')
+          path.resolve(__dirname, 'node_modules', 'publish', 'frontend')
         ],
         use: {
           loader: 'babel-loader'
