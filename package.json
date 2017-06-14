@@ -4,8 +4,8 @@
   "description": "DADI Publish",
   "main": "index.js",
   "scripts": {
-    "build": "webpack --progress",
-    "profile": "webpack --progress --profile --json > stats.json",
+    "build": "node_modules/.bin/webpack --progress",
+    "profile": "node_modules/.bin/webpack --progress --profile --json > stats.json",
     "build-docs": "rm -rf docs/components/* && react-docgen --exclude ['/^(ConfigSchema$)/g'] frontend/components | node scripts/build-docs/build-docs.js docs/components; rm -rf docs/containers/* && react-docgen --exclude ['/^(ConfigSchema$)/g'] frontend/containers | node scripts/build-docs/build-docs.js docs/containers; cat component-map.json | node scripts/build-component-tree/build-tree.js docs/component-architecture.md",
     "create-component": "node scripts/create-component/create-component.js",
     "create-user": "node scripts/create-user/create-user.js",
@@ -22,7 +22,7 @@
     "test": "npm-run-all test-all lint",
     "test-all": "jest && node scripts/coverage/coverage.js",
     "watch": "NODE_ENV=development npm-run-all --parallel watch:server watch:build",
-    "watch:build": "webpack --watch",
+    "watch:build": "node_modules/.bin/webpack --watch",
     "watch:server": "nodemon \"./index.js\" --watch \"./app\""
   },
   "repository": {
