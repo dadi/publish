@@ -35,7 +35,10 @@ module.exports = {
     rules: [
       {
         test: /\.jsx|js?$/,
-        exclude: /node_modules/,
+        include: [
+          path.resolve(__dirname, 'frontend'),
+          path.resolve(__dirname, 'node_modules', 'publish', 'frontend')
+        ],
         use: {
           loader: 'babel-loader'
         }
@@ -48,13 +51,16 @@ module.exports = {
       },
       {
         test: /\.css$/,
-        include: [path.resolve(__dirname, 'frontend')],
+        include: [
+          path.resolve(__dirname, 'frontend')
+        ],
         use: ExtractTextPlugin.extract({
           fallback: 'style-loader',
           use: [
             {
               loader: 'css-loader',
               options: {
+                minimize: true,
                 modules: true,
                 importLoaders: 1,
                 localIdentName: '[name]__[local]___[hash:base64:5]'
@@ -131,13 +137,17 @@ module.exports = {
 
     // Process CSS Custom Properties and Custom Media
     new WebpackOnBuildPlugin(stats => {
-      let fullCssPath = path.resolve(__dirname, PATHS.PUBLIC, PATHS.CSS)
-      let css = fs.readFileSync(fullCssPath, 'utf8')
-      let processedCss = postcss().use(postcssCustomProperties({
-        preserve: true
-      })).use(postcssCustomMedia()).process(css).css
+      try {
+        let fullCssPath = path.resolve(__dirname, PATHS.PUBLIC, PATHS.CSS)
+        let css = fs.readFileSync(fullCssPath, 'utf8')
+        let processedCss = postcss().use(postcssCustomProperties({
+          preserve: true
+        })).use(postcssCustomMedia()).process(css).css
 
-      fs.writeFileSync(fullCssPath, processedCss)
+        fs.writeFileSync(fullCssPath, processedCss)
+      } catch (err) {
+        console.log('Error when post-processing CSS file:', err)
+      }
     }),
     new BabiliPlugin({
       mangle: false
