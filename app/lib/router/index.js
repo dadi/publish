@@ -8,7 +8,6 @@ const path = require('path')
 const passport = require('passport-restify')
 const LocalStrategy = require('passport-local')
 const restify = require('restify')
-const serveStatic = require('serve-static-restify')
 const SessionController = require(`${paths.lib.controllers}/session`)
 const SSL = require('ssl')
 
@@ -27,7 +26,10 @@ const ssl = new SSL()
  * App Router
  */
 const Router = function () {
+  this.publicDir = path.resolve(__dirname, '../../../public')
   this.routesDir = path.join(__dirname, 'routes')
+
+  this.entryPointTemplate = fs.readFileSync(path.join(this.publicDir, 'index.html'), 'utf8')
 }
 
 /**
@@ -36,7 +38,6 @@ const Router = function () {
  */
 Router.prototype.addRoutes = function (app) {
   this.app = app
-  this.publicDir = path.resolve(__dirname, '../../../public')
 
   this.pre()
   this.use()
@@ -81,12 +82,28 @@ Router.prototype.setPassportStrategies = function () {
  * @param  {restify} app Restify web server instance
  */
 Router.prototype.webRoutes = function () {
-  const staticRoute = restify.serveStatic({
-    directory: this.publicDir,
-    file: 'index.html'
+  this.app.get(/\/public\/?.*/, restify.serveStatic({
+    directory: path.resolve(__dirname, '../../..')
+  }))
+
+  // Respond to HEAD requests - this is used by ConnectionMonitor in App.jsx.
+  this.app.head(/.*/, (req, res, next) => {
+    res.header('Content-Type', 'application/json')
+
+    return res.end()
   })
 
-  this.app.get(/.*/, staticRoute)
+  this.app.get(/.*/, (req, res, next) => {
+    const serialisedUser = req.session.passport.user
+      ? JSON.stringify(req.session.passport.user)
+      : null
+    const entryPointPage = this.entryPointTemplate
+      .replace('/*@@userData@@*/', `window.__userData__ = ${serialisedUser}`)
+
+    res.end(entryPointPage)
+
+    return next()
+  })
 }
 
 /**
@@ -153,7 +170,6 @@ Router.prototype.use = function () {
  * @param  {restify} app Restify web server instance
  */
 Router.prototype.pre = function () {
-  this.app.pre(serveStatic(this.publicDir, {index: ['index.html'], 'dotfiles': 'ignore'}))
   this.app.pre(restify.pre.sanitizePath())
 }
 

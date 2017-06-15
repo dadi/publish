@@ -7,16 +7,6 @@ import * as documentActions from './documentActions'
 import {getApiForUrlParams, getCollectionForUrlParams} from 'lib/collection-lookup'
 import apiBridgeClient from 'lib/api-bridge-client'
 
-export function loadUserFromSession () {
-  return (dispatch, getState) => {
-    runSessionQuery().then(user => {
-      dispatch(setRemoteUser(user))
-    }).catch(err => {
-      dispatch(setUserStatus(Constants.STATUS_FAILED))
-    })
-  }
-}
-
 export function registerFailedSignInAttempt () {
   return {
     type: Types.REGISTER_FAILED_SIGN_IN
