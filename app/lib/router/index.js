@@ -83,7 +83,7 @@ Router.prototype.webRoutes = function () {
   })
 
   this.app.get(/.*/, (req, res, next) => {
-    const serialisedUser = req.session.passport.user
+    const serialisedUser = (req.session.passport && req.session.passport.user)
       ? JSON.stringify(req.session.passport.user)
       : null
     const entryPointPage = this.entryPointTemplate
