@@ -5,8 +5,8 @@ const restify = require('restify')
 const config = require(paths.config)
 const Router = require(paths.lib.router)
 const Socket = require(`${paths.lib.server}/socket`)
+const SSL = require('ssl')
 const log = require('@dadi/logger')
-
 const md5 = require('md5')
 
 process.env.TZ = config.get('TZ')
@@ -25,9 +25,14 @@ const getApisBlockWithUUIDs = (apis) => {
  * Server initialisation
  */
 const Server = function () {
+  const ssl = new SSL()
+    .useDir(config.get('server.ssl.dir'), true)
+
   this.options = {
-    port: config.get('server.port'),
+    port: config.get('server.ssl.enabled') ? ssl.getPort() : config.get('server.port'),
     host: config.get('server.host'),
+    key: ssl.getKey(config.get('server.ssl.dir')),
+    certificate: ssl.getCertificate(config.get('server.ssl.dir')),
     formatters: {
       'text/plain': (req, res, body) => {
         if (body instanceof Error) {
@@ -50,7 +55,7 @@ Server.prototype.start = function () {
     config.set('apis', getApisBlockWithUUIDs(config.get('apis')))
 
     this.createServer()
-    new Router().addRoutes(this.app)
+    new Router(this.app).addRoutes()
     return this.addListeners().then(() => {
       this.socket = new Socket(this.app)
       resolve()
