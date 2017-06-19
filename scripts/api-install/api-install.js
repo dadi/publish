@@ -4,8 +4,11 @@ const path = require('path')
 const global = require(path.resolve(path.join(__dirname, '../../app/globals'))) // eslint-disable-line
 const config = require(paths.config)
 const Api = require(`${paths.lib.models}/api`)
+const fs = require('fs')
 
 const userCollection = require('./collections/collection.users')
+const slugifyHook = fs.readFileSync(path.resolve(path.join(__dirname, 'hooks/slugify.js')), 'utf8')
+const publishAuthHook = fs.readFileSync(path.resolve(path.join(__dirname, './hooks/publish-auth.js')), 'utf8')
 
 const APIInstall = function () {
   if (config.get('auth.enabled')) {
@@ -17,8 +20,47 @@ const APIInstall = function () {
 }
 
 APIInstall.prototype.checkHooksExist = function () {
-  // const authAPI = config.get('auth')
-  // return this.getHooks(authAPI)
+  this.checkOrCreateHook('slugify', slugifyHook)
+  this.checkOrCreateHook('publish-auth', publishAuthHook)
+}
+
+APIInstall.prototype.checkOrCreateHook = function (name, content) {
+  const authAPI = config.get('auth')
+
+  new Api(authAPI)
+    .inHooks()
+    .whereHookNameIs(name)
+    .find()
+    .then(resp => {
+      if (resp !== content) {
+        this.updateHook(name, content)
+      } else {
+        console.log(`${name} is already a valid hook!`)
+      }
+    })
+    .catch(err => {
+      this.createHook(name, content)
+    })
+}
+
+APIInstall.prototype.createHook = function (name, content) {
+  console.log(`Creating ${name}`)
+  const authAPI = config.get('auth')
+  new Api(authAPI)
+    .inHooks()
+    .whereHookNameIs(name)
+    .create(content)
+    .then(resp => console.log(`Successfully created ${name}`))
+}
+
+APIInstall.prototype.updateHook = function (name, content) {
+  console.log(`Updating ${name}`)
+  const authAPI = config.get('auth')
+  new Api(authAPI)
+    .inHooks()
+    .whereHookNameIs(name)
+    .update(content)
+    .then(resp => console.log(`Successfully updated ${name}`))
 }
 
 APIInstall.prototype.checkAuthCollectionExists = function () {
@@ -45,11 +87,6 @@ APIInstall.prototype.getCollection = function (authAPI) {
   return new Api(authAPI)
     .getCollections()
     .then(result => result.collections.find(collection => Object.is(collection.slug, 'users')))
-}
-
-APIInstall.prototype.getHooks = function (authAPI) {
-  // return new Api(authAPI)
-    // .getHooks()
 }
 
 APIInstall.prototype.validateCollectionConfig = function (authAPI) {
