@@ -32,9 +32,6 @@ class App extends Component {
   constructor (props) {
     super(props)
     const {actions, state} = this.props
-
-    this.socket = new Socket()
-      .on('userListChange', this.handleUserListChange.bind(this))
   }
 
   componentWillMount() {
@@ -86,13 +83,16 @@ class App extends Component {
     // State change: app now has config.
     if (!previousState.app.config && state.app.config) {
       actions.loadApis()
+      this.socket = new Socket(state.app.config.server.port)
+        .on('userListChange', this.handleUserListChange.bind(this))
     }
 
-    if (this.socket.getRoom() !== room) {
+    if (this.socket && this.socket.getRoom() !== room) {
       this.socket.setRoom(room)
     }
 
     if (
+      this.socket &&
       previousState.user.remote && !previousState.user.remote.error &&
       previousState.user.remote !== this.socket.getUser()
     ) {

@@ -5,11 +5,11 @@ import {connect} from 'socketcluster-client'
 /**
  * @constructor
  */
-const Socket = function () {
+const Socket = function (port = 80) { // Default to port 80
   this.queuedTasks = []
   this.listeners = {}
   this.onConnectListeners = []
-  this.socket = connect({port: location.port || 80})
+  this.socket = connect({port})
   this.registerListeners()
 
   return this
@@ -184,8 +184,8 @@ Socket.prototype.onRoomSubscribeFail = function (err) {
   return this
 }
 
-module.exports = function () {
-  return new Socket()
+module.exports = function (port) {
+  return new Socket(port)
 }
 
 module.Socket = Socket
