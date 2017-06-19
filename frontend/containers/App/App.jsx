@@ -38,12 +38,16 @@ class App extends Component {
   }
 
   componentWillMount() {
-    const {actions} = this.props
+    const {actions, state} = this.props
 
     apiBridgeClient.registerProgressCallback(actions.registerNetworkCall)
     ConnectionMonitor(2000).registerStatusChangeCallback(actions.setNetworkStatus)
 
-    actions.loadAppConfig()
+    // We only load the config at this point if the user is already signed in
+    // (existing session). Otherwise, it will be loaded upon successful login.
+    if (state.user.status === Constants.STATUS_LOADED) {
+      actions.loadAppConfig()
+    }
   }
 
   componentDidMount() {
@@ -61,7 +65,7 @@ class App extends Component {
   }
 
   componentDidUpdate(previousProps) {
-    const {state, actions} = this.props
+    const {actions, state} = this.props
     const previousState = previousProps.state
     const room = previousState.router.room
 
