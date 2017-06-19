@@ -89,11 +89,6 @@ APIInstall.prototype.getCollection = function (authAPI) {
     .then(result => result.collections.find(collection => Object.is(collection.slug, 'users')))
 }
 
-APIInstall.prototype.getHooks = function (authAPI) {
-  // return new Api(authAPI)
-    // .getHooks()
-}
-
 APIInstall.prototype.validateCollectionConfig = function (authAPI) {
   return new Api(authAPI)
     .in('users')
