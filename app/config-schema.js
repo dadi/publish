@@ -178,56 +178,25 @@ module.exports = {
       format: 'port',
       default: 3001
     },
-    protocol: {
-      doc: 'The protocol the web application will use',
-      format: String,
-      default: 'http',
-      env: 'PROTOCOL'
-    },
-    sslPassphrase: {
-      doc: 'The passphrase of the SSL private key',
-      format: String,
-      default: '',
-      env: 'SSL_PRIVATE_KEY_PASSPHRASE'
-    },
-    sslPrivateKeyPath: {
-      doc: 'The filename of the SSL private key',
-      format: String,
-      default: '',
-      env: 'SSL_PRIVATE_KEY_PATH'
-    },
-    sslCertificatePath: {
-      doc: 'The filename of the SSL certificate',
-      format: String,
-      default: '',
-      env: 'SSL_CERTIFICATE_PATH'
-    },
-    sslIntermediateCertificatePath: {
-      doc: 'The filename of an SSL intermediate certificate, if any',
-      format: String,
-      default: '',
-      env: 'SSL_INTERMEDIATE_CERTIFICATE_PATH'
-    },
-    sslIntermediateCertificatePaths: {
-      doc: 'The filenames of SSL intermediate certificates, overrides sslIntermediateCertificate (singular)',
-      format: Array,
-      default: [],
-      env: 'SSL_INTERMEDIATE_CERTIFICATE_PATHS'
-    },
-    authenticate: {
-      availableInFrontend: true,
-      doc: 'Enabled authentication layer',
-      format: Boolean,
-      default: true
-    }
-  },
-  paths: {
-    doc: 'Customisable asset paths',
-    format: Object,
-    default: {
-      language: path.join(__dirname, '/../language'),
-      workspace: path.join(__dirname, '/../workspace'),
-      db: path.join(__dirname, '/../workspace/db')
+    ssl: {
+      enabled: {
+        type: Boolean,
+        default: false
+      },
+      dir: {
+        doc: 'Directory for certificate store.',
+        type: String,
+        default: path.join(__dirname, '/../workspace/certs')
+      },
+      domains: {
+        doc: 'Domains to secure.',
+        format: Array,
+        default: []
+      },
+      email: {
+        format: String,
+        default: 'publish@dadi.co'
+      }
     }
   },
   formats: {

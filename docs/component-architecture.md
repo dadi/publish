@@ -188,72 +188,71 @@ App
 │ │   └── Notification
 │ └── Page
 ├── SignOutView
-├─┬ ProfileEditView
-│ └─┬ ProfileEdit
-│   ├─┬ DocumentEdit
-│   │ ├─┬ ErrorMessage
-│   │ │ ├── Button
-│   │ │ └── HeroMessage
-│   │ └── SubNavItem
-│   ├─┬ DocumentList
-│   │ ├── Button
-│   │ ├─┬ ErrorMessage
-│   │ │ ├── Button
-│   │ │ └── HeroMessage
-│   │ ├── HeroMessage
-│   │ └─┬ SyncTable
-│   │   ├── Table
-│   │   ├─┬ TableHead
-│   │   │ └─┬ TableHeadCell
-│   │   │   └── IconArrow
-│   │   ├─┬ TableHeadCell
-│   │   │ └── IconArrow
-│   │   ├─┬ TableRow
-│   │   │ └── TableRowCell
-│   │   └── TableRowCell
-│   ├─┬ DocumentListToolbar
-│   │ ├── Button
-│   │ ├─┬ ButtonWithPrompt
-│   │ │ ├── Button
-│   │ │ └─┬ Prompt
-│   │ │   └── Button
-│   │ ├── Checkbox
-│   │ ├─┬ Paginator
-│   │ │ └── Button
-│   │ ├── Toolbar
-│   │ └─┬ ToolbarTextInput
-│   │   └── TextInput
-│   ├─┬ Header
-│   │ ├─┬ CollectionNav
-│   │ │ └─┬ Nav
-│   │ │   ├── Dropdown
-│   │ │   ├── DropdownItem
-│   │ │   └── NavItem
-│   │ ├── IconBurger
-│   │ └── IconCross
-│   ├─┬ Main
-│   │ ├── LoadingBar
-│   │ └─┬ NotificationCentre
-│   │   └── Notification
-│   ├── Page
-│   ├─┬ ProfileEditToolbar
-│   │ ├── Button
-│   │ ├─┬ ButtonWithOptions
-│   │ │ ├── Button
-│   │ │ ├── Dropdown
-│   │ │ ├── DropdownItem
-│   │ │ └── IconArrow
-│   │ ├─┬ ButtonWithPrompt
-│   │ │ ├── Button
-│   │ │ └─┬ Prompt
-│   │ │   └── Button
-│   │ ├── DateTime
-│   │ ├─┬ Peer
-│   │ │ └── Button
-│   │ └── Toolbar
-│   ├─┬ ReferencedDocumentHeader
-│   │ └── Button
-│   └── SubNavItem
-└── View
+└─┬ ProfileEditView
+  └─┬ ProfileEdit
+    ├─┬ DocumentEdit
+    │ ├─┬ ErrorMessage
+    │ │ ├── Button
+    │ │ └── HeroMessage
+    │ └── SubNavItem
+    ├─┬ DocumentList
+    │ ├── Button
+    │ ├─┬ ErrorMessage
+    │ │ ├── Button
+    │ │ └── HeroMessage
+    │ ├── HeroMessage
+    │ └─┬ SyncTable
+    │   ├── Table
+    │   ├─┬ TableHead
+    │   │ └─┬ TableHeadCell
+    │   │   └── IconArrow
+    │   ├─┬ TableHeadCell
+    │   │ └── IconArrow
+    │   ├─┬ TableRow
+    │   │ └── TableRowCell
+    │   └── TableRowCell
+    ├─┬ DocumentListToolbar
+    │ ├── Button
+    │ ├─┬ ButtonWithPrompt
+    │ │ ├── Button
+    │ │ └─┬ Prompt
+    │ │   └── Button
+    │ ├── Checkbox
+    │ ├─┬ Paginator
+    │ │ └── Button
+    │ ├── Toolbar
+    │ └─┬ ToolbarTextInput
+    │   └── TextInput
+    ├─┬ Header
+    │ ├─┬ CollectionNav
+    │ │ └─┬ Nav
+    │ │   ├── Dropdown
+    │ │   ├── DropdownItem
+    │ │   └── NavItem
+    │ ├── IconBurger
+    │ └── IconCross
+    ├─┬ Main
+    │ ├── LoadingBar
+    │ └─┬ NotificationCentre
+    │   └── Notification
+    ├── Page
+    ├─┬ ProfileEditToolbar
+    │ ├── Button
+    │ ├─┬ ButtonWithOptions
+    │ │ ├── Button
+    │ │ ├── Dropdown
+    │ │ ├── DropdownItem
+    │ │ └── IconArrow
+    │ ├─┬ ButtonWithPrompt
+    │ │ ├── Button
+    │ │ └─┬ Prompt
+    │ │   └── Button
+    │ ├── DateTime
+    │ ├─┬ Peer
+    │ │ └── Button
+    │ └── Toolbar
+    ├─┬ ReferencedDocumentHeader
+    │ └── Button
+    └── SubNavItem
 
 ```

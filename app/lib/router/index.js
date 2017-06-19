@@ -1,6 +1,7 @@
 'use strict'
 
 const cookieParser = require('restify-cookies')
+const config = require(paths.config)
 const session = require('cookie-session')
 const flash = require('connect-flash')
 const fs = require('fs')
@@ -9,14 +10,27 @@ const passport = require('passport-restify')
 const LocalStrategy = require('passport-local')
 const restify = require('restify')
 const SessionController = require(`${paths.lib.controllers}/session`)
+const SSL = require('ssl')
 
 /**
  * @constructor
  * App Router
  */
-const Router = function () {
+const Router = function (app) {
   this.publicDir = path.resolve(__dirname, '../../../public')
   this.routesDir = path.join(__dirname, 'routes')
+  this.app = app
+
+  this.ssl = new SSL()
+    .useDomains(config.get('server.ssl.domains'))
+    .useDir(config.get('server.ssl.dir'), true)
+    .useEnvironment('production')
+    .provider('letsencrypt')
+    .registerTo(config.get('server.ssl.email'))
+    .autoRenew(true)
+    .byteLength(3072)
+    .server(app)
+    .create()
 
   this.entryPointTemplate = fs.readFileSync(path.join(this.publicDir, 'index.html'), 'utf8')
 }
@@ -25,9 +39,7 @@ const Router = function () {
  * Add Routes
  * @param {restify} app Restify web server instance
  */
-Router.prototype.addRoutes = function (app) {
-  this.app = app
-
+Router.prototype.addRoutes = function () {
   this.pre()
   this.use()
   this.setPassportStrategies()
@@ -151,6 +163,7 @@ Router.prototype.use = function () {
     .use(passport.initialize())
     .use(passport.session())
     .use(flash())
+    .use(this.ssl.middleware())
 }
 
 /**
@@ -161,8 +174,8 @@ Router.prototype.pre = function () {
   this.app.pre(restify.pre.sanitizePath())
 }
 
-module.exports = function () {
-  return new Router()
+module.exports = function (app) {
+  return new Router(app)
 }
 
 module.exports.Router = Router
