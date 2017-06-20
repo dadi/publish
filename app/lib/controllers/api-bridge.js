@@ -40,7 +40,7 @@ APIBridgeController.prototype.post = function (req, res, next) {
   }
 
   res.header('Content-Type', 'application/json')
-  
+
   // Block any API requests if there's no session
   if (authAPI.enabled && !req.isAuthenticated()) {
     res.write(JSON.stringify({err: 'AUTH_FAILED'}))
