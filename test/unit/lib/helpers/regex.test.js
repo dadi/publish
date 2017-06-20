@@ -10,15 +10,15 @@ describe('Regex: URL', () => {
     const http = 'http://example.com'
     const match = regex.url.exec(http)
     
-    it (`Should not return null for '${http}'`, () => {
+    it(`Should not return null for '${http}'`, () => {
       expect(match).not.toBeNull()
     })
     
-    it (`Should have a first argument of '${http}'`, () => {
+    it(`Should have a first argument of '${http}'`, () => {
       expect(match[0]).toBe('http://example.com')
     })
     
-    it (`Should have a first argument of 'http'`, () => {
+    it(`Should have a first argument of 'http'`, () => {
       expect(match[1]).toBe('http')
     })
   })
