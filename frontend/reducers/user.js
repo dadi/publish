@@ -5,13 +5,16 @@ import * as Types from 'actions/actionTypes'
 import {isValidJSON} from 'lib/util'
 
 const initialState = {
+  authEnabled: window.__auth__,
   failedSignInAttempts: 0,
   hasSignedOut: false,
   remote: window.__userData__ || null,
   resetEmail: null,
   resetError: null,
   resetSuccess: null,
-  status: window.__userData__ ? Constants.STATUS_LOADED : Constants.STATUS_FAILED
+  status: (window.__auth__ && !window.__userData__) ?
+    Constants.STATUS_FAILED :
+    Constants.STATUS_LOADED
 }
 
 export default function user (state = initialState, action = {}) {

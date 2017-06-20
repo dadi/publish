@@ -67,6 +67,7 @@ Holds state about the current user
 
 | Property  | Type     | Description                                                        | Initial state |
 |-----------|----------|--------------------------------------------------------------------|---------------|
+| `authEnabled`  | Boolean   | Whether this instance of Publish requires authentication    | `true/false`        |
 | `failedSignInAttempts`  | Number   | The object of failed signed in attempts before the last successful one    | `0`        |
 | `remote`  | Object   | The object representing the state of the user on the remote API    | `null`        |
 | `status`  | Constant | The status of the user                                             | `STATUS_IDLE` |
