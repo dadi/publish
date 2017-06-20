@@ -223,8 +223,15 @@ class App extends Component {
       event.current.attributes &&
       event.current.attributes.authenticate
 
+    if (
+      !state.user.authEnabled &&
+      (event.url === '/sign-in' || event.url === '/sign-out')
+    ) {
+      return route('/')
+    }
+
     if (isAuthenticatedRoute && state.user.status !== Constants.STATUS_LOADED) {
-      route('/sign-in')
+      return route('/sign-in')
     }
   }
 
