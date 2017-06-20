@@ -5,6 +5,7 @@ import * as Types from 'actions/actionTypes'
 import {isValidJSON} from 'lib/util'
 
 const initialState = {
+  authEnabled: window.__auth__,
   failedSignInAttempts: 0,
   hasSignedOut: false,
   remote: window.__userData__ || null,
