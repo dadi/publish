@@ -39,9 +39,10 @@ class Header extends Component {
   render() {
     const {state} = this.props
     const compact = state.app.breakpoint === null
-    const user = state.user.remote
 
-    if (!user) return null
+    if (state.user.status !== Constants.STATUS_LOADED) {
+      return null
+    }
 
     let contentStyle = new Style(styles, 'content')
 
@@ -73,7 +74,7 @@ class Header extends Component {
               <img class={styles.logo} src="/public/images/publish.png" />
             </a>
 
-              {user && !user.error && (
+              {state.user.remote && (
                 <div class={styles.controls}>
                   <button
                     class={styles.signout}
@@ -81,7 +82,7 @@ class Header extends Component {
                   >
                     Sign out
                   </button>
-                  <a href="/profile" class={styles.user}>{`${user.first_name} ${user.last_name}`}</a>
+                  <a href="/profile" class={styles.user}>{`${state.user.first_name} ${state.user.last_name}`}</a>
                 </div>
               )}
           </div>

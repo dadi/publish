@@ -2,6 +2,7 @@ import {Component, h} from 'preact'
 import {bindActionCreators} from 'redux'
 import {connectHelper, setPageTitle} from 'lib/util'
 
+import * as Constants from 'lib/constants'
 import * as userActions from 'actions/userActions'
 
 import Header from 'containers/Header/Header'
@@ -12,9 +13,11 @@ import Page from 'components/Page/Page'
 class HomeView extends Component {
   render() {
     const {state} = this.props
-    const user = state.user.remote
+    const {user} = state
 
-    if (!user) return null
+    if (user.status !== Constants.STATUS_LOADED) {
+      return null
+    }
 
     setPageTitle()
 
@@ -24,7 +27,7 @@ class HomeView extends Component {
 
         <Main>
           <HeroMessage
-            title={`Welcome, ${(user && !user.error) ? user.first_name : 'Guest'}.`}
+            title={`Welcome, ${(user.remote && !user.remote.error) ? user.remote.first_name : 'Guest'}.`}
             subtitle="You can use the menu to navigate collections and start editing documents."
           />
         </Main>

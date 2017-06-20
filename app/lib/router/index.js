@@ -99,7 +99,10 @@ Router.prototype.webRoutes = function () {
       ? JSON.stringify(req.session.passport.user)
       : null
     const entryPointPage = this.entryPointTemplate
-      .replace('/*@@userData@@*/', `window.__userData__ = ${serialisedUser}`)
+      .replace(
+        '/*@@userData@@*/',
+        `window.__userData__ = ${serialisedUser};window.__auth__ = ${config.get('auth.enabled')}`
+      )
 
     res.end(entryPointPage)
 

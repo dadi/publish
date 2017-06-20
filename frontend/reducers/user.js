@@ -11,7 +11,9 @@ const initialState = {
   resetEmail: null,
   resetError: null,
   resetSuccess: null,
-  status: window.__userData__ ? Constants.STATUS_LOADED : Constants.STATUS_FAILED
+  status: (window.__auth__ && !window.__userData__) ?
+    Constants.STATUS_FAILED :
+    Constants.STATUS_LOADED
 }
 
 export default function user (state = initialState, action = {}) {
