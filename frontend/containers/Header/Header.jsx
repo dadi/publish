@@ -44,6 +44,8 @@ class Header extends Component {
       return null
     }
 
+    const user = state.user.remote
+
     let contentStyle = new Style(styles, 'content')
 
     contentStyle.addIf('content-compact', compact)
@@ -74,7 +76,7 @@ class Header extends Component {
               <img class={styles.logo} src="/public/images/publish.png" />
             </a>
 
-              {state.user.remote && (
+              {user && (
                 <div class={styles.controls}>
                   <button
                     class={styles.signout}
@@ -82,7 +84,7 @@ class Header extends Component {
                   >
                     Sign out
                   </button>
-                  <a href="/profile" class={styles.user}>{`${state.user.first_name} ${state.user.last_name}`}</a>
+                  <a href="/profile" class={styles.user}>{`${user.first_name} ${user.last_name}`}</a>
                 </div>
               )}
           </div>
