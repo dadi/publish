@@ -64,6 +64,8 @@ export default class DateTime extends Component {
     // Default update interval is one second. This will be progressively
     // enlarged depending on the relative date diff.
     if (relative) {
+      this.updateInterval = SECOND
+
       this.resetInterval(SECOND)
     }
   }
@@ -77,7 +79,7 @@ export default class DateTime extends Component {
   componentDidUpdate(prevProps, prevState) {
     const {date, relative} = this.props
 
-    if (date !== prevProps.date) {
+    if (relative && (date !== prevProps.date)) {
       this.setUpdateInterval(SECOND)
     }
   }
@@ -170,7 +172,7 @@ export default class DateTime extends Component {
     if (diff < YEAR) {
       this.setUpdateInterval(DAY)
 
-      return `${Math.floor(diff / MONTH)} months ago`
+      return `${Math.round(diff / MONTH)} months ago`
     }
 
     this.setUpdateInterval(DAY)

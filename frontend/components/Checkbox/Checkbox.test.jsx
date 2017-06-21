@@ -18,7 +18,7 @@ afterEach(() => {
   mount(null).remove()
 })
 
-describe.only('Checkbox component', () => {
+describe('Checkbox component', () => {
   it('has propTypes', () => {
     const button = (
       <Checkbox />
