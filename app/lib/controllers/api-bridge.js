@@ -59,7 +59,8 @@ APIBridgeController.prototype.post = function (req, res, next) {
       })
 
       if (!apiConfig) return
-
+      console.log('GO')
+      console.log(requestObject)
       queue.push(createPassport({
         host: `${requestObject.uri.protocol}//${requestObject.uri.hostname}`,
         port: Number(requestObject.uri.port),
