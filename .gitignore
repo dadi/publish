@@ -1,15 +1,23 @@
+# NPM
 node_modules/
-build/
-log/
-coverage/
-jest/
 
+# Build
+build/
+
+# Logging
+log/
+npm-debug.log
+
+# Test suite
+coverage/
+
+# Config
 config/config.*.json
+# Except test config
 !config/config.test.json
 
 .wallet
 .tmp
-npm-debug.log
 frontend/components/**/*.json
 frontend/containers/**/*.json
 frontend/views/**/*.json
