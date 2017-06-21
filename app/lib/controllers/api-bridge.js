@@ -52,13 +52,12 @@ APIBridgeController.prototype.post = function (req, res, next) {
     const requestObjects = isBundle ? req.body : [req.body]
 
     let queue = []
-
     requestObjects.forEach(requestObject => {
-      const apiConfig = config.get('apis').find(api => {
-        return api.publishId === requestObject.publishId
-      })
+      const apiConfig = config.get('apis')
+        .find(api => api.publishId === requestObject.publishId)
 
       if (!apiConfig) return
+      if (!requestObject.uri) return
 
       queue.push(createPassport({
         host: `${requestObject.uri.protocol}//${requestObject.uri.hostname}`,
@@ -93,7 +92,6 @@ APIBridgeController.prototype.post = function (req, res, next) {
         })
       }))
     })
-
     Promise.all(queue).then(response => {
       let output = isBundle ? response : response[0]
 
@@ -105,6 +103,7 @@ APIBridgeController.prototype.post = function (req, res, next) {
       res.end(JSON.stringify(err))
     })
   } catch (err) {
+    console.log(err)
     res.statusCode = 500
     res.end(JSON.stringify(err))
   }
