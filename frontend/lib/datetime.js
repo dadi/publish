@@ -36,6 +36,10 @@ export default class DateTime {
     }
   }
 
+  _isValidDate (date) {
+    return (date instanceof Date) && !isNaN(date.getTime())
+  }
+
   format (format) {
     let output = null
 
@@ -53,14 +57,14 @@ export default class DateTime {
   }
 
   isSameDayAs (date) {
-    if (!this.isValid(date)) return false
+    if (!this.isValid() || !this._isValidDate(date)) return false
 
     return this.dateObj.getFullYear() === date.getFullYear() &&
       this.dateObj.getMonth() === date.getMonth() &&
       this.dateObj.getDate() === date.getDate()
   }
 
-  isValid (date = this.dateObj) {
-    return (date instanceof Date) && !isNaN(date.getTime())
+  isValid () {
+    return this._isValidDate(this.dateObj)
   }
 }
