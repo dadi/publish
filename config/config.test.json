@@ -1,0 +1,41 @@
+{
+  "app": {
+    "name": "DADI Publish Test",
+    "publisher": "DADI",
+    "baseUrl": "http://127.0.0.1"
+  },
+  "server": {
+    "host": "127.0.0.1",
+    "port": 3000,
+    "ssl": {
+      "enabled": true,
+      "domains": ["http://dadi.tech"],
+      "email": "publish@dadi.co"
+    }
+  },
+  "apis": [
+    {
+      "name": "Demo API",
+      "host": "http://127.0.0.1",
+      "port": 3001,
+      "database": "publish",
+      "version": "1.0",
+      "credentials": {
+        "clientId": "testClient",
+        "secret": "superSecret"
+      }
+    }
+  ],
+  "auth": {
+    "enabled": true,
+    "host": "http://127.0.0.1",
+    "port": 3001,
+    "database": "publish",
+    "collection": "users",
+    "version": "1.0",
+    "credentials": {
+      "clientId": "testClient",
+      "secret": "superSecret"
+    }
+  }
+}

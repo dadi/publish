@@ -5,6 +5,7 @@ coverage/
 jest/
 
 config/config.*.json
+!config/config.test.json
 
 .wallet
 .tmp
