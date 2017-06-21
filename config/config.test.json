@@ -2,10 +2,10 @@
   "app": {
     "name": "DADI Publish Test",
     "publisher": "DADI",
-    "baseUrl": "http://127.0.0.1"
+    "baseUrl": "http://0.0.0.0"
   },
   "server": {
-    "host": "127.0.0.1",
+    "host": "0.0.0.0",
     "port": 3000,
     "ssl": {
       "enabled": true,
@@ -16,7 +16,7 @@
   "apis": [
     {
       "name": "Demo API",
-      "host": "http://127.0.0.1",
+      "host": "http://0.0.0.0",
       "port": 3001,
       "database": "publish",
       "version": "1.0",
@@ -28,7 +28,7 @@
   ],
   "auth": {
     "enabled": true,
-    "host": "http://127.0.0.1",
+    "host": "http://0.0.0.0",
     "port": 3001,
     "database": "publish",
     "collection": "users",

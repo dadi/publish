@@ -1,15 +1,21 @@
 const globals = require(`${__dirname}/../../../../app/globals`) // Always required
 const ApiBridge = require(`${__dirname}/../../../../app/lib/controllers/api-bridge`).APIBridgeController
-const config = require(paths.config)
 
 const httpMocks = require('node-mocks-http')
 const nock = require('nock')
+const config = require(paths.config)
+const mockRequest = require('request-promise')
+
+jest.mock('@dadi/passport', () => {
+  return () => mockRequest
+})
 
 const publishId = 'foobar'
 let apiBridge
 let req
 let res
 let body
+const apis = config.get('apis')
 
 const headers = {
   'content-type': 'application/json',
@@ -17,12 +23,14 @@ const headers = {
 }
 
 beforeEach(() => {
+  config.set('apis', apis)
   req = httpMocks.createRequest({
     headers,
     method: 'POST'
   })
+  req.isAuthenticated = () => true
+
   res = httpMocks.createResponse({
-    req,
     eventEmitter: require('events').EventEmitter
   })
   if (config.get('apis').length) {
@@ -35,18 +43,31 @@ beforeEach(() => {
         path: `/${apiConfig.version}/${apiConfig.database}/foo`,
         port: apiConfig.port,
         protocol: 'http:' 
-      },
-      publishId: publishId
+      }//,
+      //publishId: publishId
     }]
     const server = nock(`${apiConfig.host}:${apiConfig.port}`)
-      .post(`${apiConfig.version}/${apiConfig.database}/foo`)
-      .reply(200, 
-        [{
-          results: []
-        }]
-      )
+      .post(`/${apiConfig.version}/${apiConfig.database}/foo`)
+      .reply(200, [{ 
+        results:[{}],
+        metadata:{
+          limit: 20,
+          page: 1,
+          fields: {},
+          sort: {},
+          offset: 0,
+          totalCount: 25,
+          totalPages: 2,
+          nextPage: 2
+        }
+      }])
+      .post('/token')
+      .reply(200, {
+        accessToken: "d08c2efb-c0d6-446a-ba84-4a4199c9e0c5",
+        tokenType: "Bearer",
+        expiresIn: 1800
+      })
   }
-  req.isAuthenticated = () => true
   apiBridge = new ApiBridge()
 })
 
@@ -83,9 +104,9 @@ describe('ApiBridge', () => {
   })
 
   describe('ApiBridge: POST Correct response code with authenticated empty request', () => {
-    it('should return 500 response code', (done) => {
+    it('should return 200 response code', (done) => {
       res.on('end', () => {
-        expect(res.statusCode).toBe(500)
+        expect(res.statusCode).toBe(200)
         done()
       })
       apiBridge.post(req, res, () => {})
@@ -109,6 +130,7 @@ describe('ApiBridge', () => {
 
     describe('ApiBridge: POST empty bundle query with authenticated request', () => {
       it('should return next', (done) => {
+        config.set('apis', [])
         res.on('end', () => {
           expect(res._getData()).toBe('')
           done()
@@ -128,13 +150,13 @@ describe('ApiBridge', () => {
       })
       req.isAuthenticated = () => true
       res.on('end', () => {
-        expect(res.statusCode).toBe(200)
+        expect(res.statusCode).toBe(500)
         done()
       })
       apiBridge.post(req, res, () => {})
     })
 
-    it('should return 500 response code', (done) => {
+    it('should ...', (done) => {
       req = httpMocks.createRequest({
         headers,
         method: 'POST',
@@ -142,10 +164,10 @@ describe('ApiBridge', () => {
       })
       req.isAuthenticated = () => true
       res.on('end', () => {
-        console.log(res._getData(), body)
-        // expect(res.statusCode).toBe(200)
+        console.log("DATA", res._getData())
         done()
       })
+      console.log("CALLED")
       apiBridge.post(req, res, () => {})
     })
   })
