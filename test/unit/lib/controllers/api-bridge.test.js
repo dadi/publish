@@ -4,6 +4,11 @@ const ApiBridge = require(`${__dirname}/../../../../app/lib/controllers/api-brid
 const httpMocks = require('node-mocks-http')
 const nock = require('nock')
 const config = require(paths.config)
+const mockRequest = require('request-promise')
+
+jest.mock('@dadi/passport', () => {
+  return () => mockRequest
+})
 
 const publishId = 'foobar'
 let apiBridge
@@ -56,7 +61,6 @@ beforeEach(() => {
           nextPage: 2
         }
       }])
-    const token = nock(`${apiConfig.host}:${apiConfig.port}`)
       .post('/token')
       .reply(200, {
         accessToken: "d08c2efb-c0d6-446a-ba84-4a4199c9e0c5",
@@ -152,7 +156,7 @@ describe('ApiBridge', () => {
       apiBridge.post(req, res, () => {})
     })
 
-    it('should return 500 response code', (done) => {
+    it('should ...', (done) => {
       req = httpMocks.createRequest({
         headers,
         method: 'POST',
