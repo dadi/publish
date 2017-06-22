@@ -63,7 +63,7 @@ describe('DateTimePicker component', () => {
       expect($('.current-date')[0].textContent).to.equal('January 2017')
     })
 
-    it.only('renders a label with the current month and year if no date is provided', () => {
+    it('renders a label with the current month and year if no date is provided', () => {
       const currentDate = new Date()
       const expectedLabel = fecha.format(currentDate, 'MMMM YYYY')
 
