@@ -69,7 +69,11 @@ Holds state about the current user
 |-----------|----------|--------------------------------------------------------------------|---------------|
 | `authEnabled`  | Boolean   | Whether this instance of Publish requires authentication    | `true/false`        |
 | `failedSignInAttempts`  | Number   | The object of failed signed in attempts before the last successful one    | `0`        |
+| `hasSignedOut`  | Boolean   | The user has signed out    | `false`        |
 | `remote`  | Object   | The object representing the state of the user on the remote API    | `null`        |
+| `resetEmail`  | String   | The recipient email address for a password reset    | `null`        |
+| `resetError`  | String   | Errors returned when resetting a password    | `null`        |
+| `resetSuccess`  | Boolean   | Password reset successfully sent    | `false`        |
 | `status`  | Constant | The status of the user                                             | `STATUS_IDLE` |
 
 ## 2. Actions

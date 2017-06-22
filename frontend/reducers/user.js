@@ -11,7 +11,7 @@ const initialState = {
   remote: window.__userData__ || null,
   resetEmail: null,
   resetError: null,
-  resetSuccess: null,
+  resetSuccess: false,
   status: (window.__auth__ && !window.__userData__) ?
     Constants.STATUS_FAILED :
     Constants.STATUS_LOADED
