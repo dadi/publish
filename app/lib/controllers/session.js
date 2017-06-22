@@ -41,11 +41,11 @@ Session.prototype.authorise = function (email, password, next) {
         return next(null)
       }
     }).catch(response => {
-      if (Array.isArray(response.error) && (response.error[0].details.includes('WRONG_CREDENTIALS'))) {
+      if (Array.isArray(response.error) && (response.error[0].code ==='WRONG_CREDENTIALS')) {
         return next('WRONG_CREDENTIALS')
       }
 
-      return next(Constants.AUTH_DISABLED)
+      return next(Constants.AUTH_UNREACHABLE)
     })
 }
 
