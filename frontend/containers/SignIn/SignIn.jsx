@@ -62,13 +62,15 @@ class SignIn extends Component {
       this.setState({isPasswordReset: false})
     }
 
-    const hasFailed = nextUser.status === Constants.STATUS_FAILED &&
+    const hasFailed = nextUser.status !== Constants.STATUS_LOADED &&
       nextUser.failedSignInAttempts > 0
 
-    if (nextUser.status === Constants.STATUS_NOT_FOUND) {
-      this.setState({error: 'Authentication API unreachable'})
-    } else if (hasFailed) {
-      this.setState({error:`${isPasswordReset ? 'Passwords don\'t match or invalid token' : 'Email not found or password incorrect'}.`})
+    if (hasFailed) {
+      if (nextUser.status === Constants.AUTH_UNREACHABLE) {
+        this.setState({error: 'Authentication API unreachable'})
+      } else {
+        this.setState({error:`${isPasswordReset ? 'Passwords don\'t match or invalid token' : 'Email not found or password incorrect'}.`})
+      }
     } else {
       this.setState({error: false})
     }
