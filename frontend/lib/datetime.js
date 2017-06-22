@@ -59,9 +59,9 @@ export default class DateTime {
   isSameDayAs (date) {
     if (!this.isValid() || !this._isValidDate(date)) return false
 
-    return this.dateObj.getFullYear() === date.getFullYear() &&
-      this.dateObj.getMonth() === date.getMonth() &&
-      this.dateObj.getDate() === date.getDate()
+    return (this.dateObj.getFullYear() === date.getFullYear()) &&
+      (this.dateObj.getMonth() === date.getMonth()) &&
+      (this.dateObj.getDate() === date.getDate())
   }
 
   isValid () {

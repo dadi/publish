@@ -23,9 +23,7 @@ export const Format = {
 
     return value
       .split('.')
-      .map(sentence => {
-        return sentence[0].toUpperCase() + sentence.slice(1)
-      })
+      .map(sentence => sentence[0].toUpperCase() + sentence.slice(1))
       .join('.')
   },
 

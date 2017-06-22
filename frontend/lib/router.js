@@ -33,7 +33,6 @@ export function createRoute ({
   update = false
 }) {
   let newParams
-
   let fullPath = typeof path === 'object' ? buildUrl(...path) : path
 
   if (update && window.location.search) {
@@ -61,9 +60,8 @@ export function createRoute ({
  * @return {String} Amalgamation of URL parts.
  */
 export function buildUrl (...parts) {
-  return (/^(http|https)/.test(parts[0]) ? '' : '/') + (parts.filter(part => {
-    return (typeof part === 'string' || typeof part === 'number') && part !== ''
-  })
+  return (/^(http|https)/.test(parts[0]) ? '' : '/') + (parts
+    .filter(part => (typeof part === 'string' || typeof part === 'number') && part !== '')
     .join('/')
     .replace(/^\/|\/$/g, ''))
 }

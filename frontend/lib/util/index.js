@@ -38,9 +38,8 @@ export function getUniqueId () {
 export function objectToArray (obj, keyField) {
   if (!obj) return []
 
-  return Object.keys(obj).map(key => {
-    return Object.assign({}, {[keyField || 'key']: key, value: obj[key]})
-  })
+  return Object.keys(obj)
+    .map(key => Object.assign({}, {[keyField || 'key']: key, value: obj[key]}))
 }
 
 export function arrayToObject (arr, keyField) {
@@ -55,9 +54,10 @@ export function arrayToObject (arr, keyField) {
 export function isValidJSON (string) {
   if (!string || typeof string !== 'string') return
 
-  return /^[\],:{}\s]*$/.test(string.replace(/\\["\\\/bfnrtu]/g, '@').
-    replace(/"[^"\\\n\r]*"|true|false|null|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?/g, ']').
-    replace(/(?:^|:|,)(?:\s*\[)+/g, ''))
+  return /^[\],:{}\s]*$/
+    .test(string.replace(/\\["\\\/bfnrtu]/g, '@')
+    .replace(/"[^"\\\n\r]*"|true|false|null|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?/g, ']')
+    .replace(/(?:^|:|,)(?:\s*\[)+/g, ''))
 }
 
 export function isEmpty (subject) {
@@ -67,7 +67,7 @@ export function isEmpty (subject) {
 export function debounce (func, wait, immediate) {
   let timeout
 
-  return function () {
+  return () => {
     let context = this
     let args = arguments
     let later = () => {
@@ -86,7 +86,7 @@ export function throttle (func, threshold) {
   let lastCall
   let timeout
 
-  return function () {
+  return () => {
     let now = new Date().getTime()
     let args = arguments
 
@@ -119,7 +119,8 @@ export function filterHiddenFields (fields, type) {
       return !fields[key].publish ||
         !fields[key].publish.display ||
         fields[key].publish.display[type]
-    }).map(key => {
+    })
+    .map(key => {
       return {[key]: fields[key]}
     })
   )
