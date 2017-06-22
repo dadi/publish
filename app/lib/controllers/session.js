@@ -41,7 +41,7 @@ Session.prototype.authorise = function (email, password, next) {
         return next(null)
       }
     }).catch(response => {
-      if (Array.isArray(response.error) && (response.error[0].code ==='WRONG_CREDENTIALS')) {
+      if (Array.isArray(response.error) && (response.error[0].code === 'WRONG_CREDENTIALS')) {
         return next('WRONG_CREDENTIALS')
       }
 
@@ -113,6 +113,12 @@ Session.prototype.post = function (req, res, next, passport) {
       switch (err) {
         case Constants.AUTH_DISABLED:
           res.statusCode = 503
+          res.write(JSON.stringify({err}))
+
+          break
+
+        case Constants.AUTH_UNREACHABLE:
+          res.statusCode = 404
           res.write(JSON.stringify({err}))
 
           break

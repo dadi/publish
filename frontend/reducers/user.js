@@ -25,7 +25,7 @@ export default function user (state = initialState, action = {}) {
       return {
         ...state,
         failedSignInAttempts: state.failedSignInAttempts + 1,
-        status: Constants.STATUS_FAILED
+        status: action.errorStatus || Constants.STATUS_FAILED
       }
 
     // Action: set user
