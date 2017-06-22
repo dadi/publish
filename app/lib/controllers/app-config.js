@@ -23,9 +23,7 @@ const assign = (subj, pre) => {
   }))
 }
 
-const AppConfigController = function () {
-
-}
+const AppConfigController = function () {}
 
 AppConfigController.prototype.get = function (req, res, next) {
   if (!req.is('application/json')) {
