@@ -7,8 +7,9 @@ import * as documentActions from './documentActions'
 import {getApiForUrlParams, getCollectionForUrlParams} from 'lib/collection-lookup'
 import apiBridgeClient from 'lib/api-bridge-client'
 
-export function registerFailedSignInAttempt () {
+export function registerFailedSignInAttempt (errorStatus) {
   return {
+    errorStatus,
     type: Types.REGISTER_FAILED_SIGN_IN
   }
 }
@@ -184,7 +185,12 @@ export function signIn (email, password) {
     }).catch(response => {
       switch (response.err) {
         case Constants.AUTH_DISABLED:
-          dispatch(setUserStatus(Constants.STATUS_NOT_FOUND))
+          dispatch(registerFailedSignInAttempt(Constants.STATUS_NOT_FOUND))
+
+          break
+
+        case Constants.AUTH_UNREACHABLE:
+          dispatch(registerFailedSignInAttempt(Constants.AUTH_UNREACHABLE))
 
           break
 
