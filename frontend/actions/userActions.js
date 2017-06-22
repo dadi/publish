@@ -183,7 +183,7 @@ export function signIn (email, password) {
       dispatch(setRemoteUser(user))
     }).catch(response => {
       switch (response.err) {
-        case 'MISSING_AUTH_API':
+        case Constants.AUTH_DISABLED:
           dispatch(setUserStatus(Constants.STATUS_NOT_FOUND))
 
           break

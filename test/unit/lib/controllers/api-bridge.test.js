@@ -164,10 +164,9 @@ describe('ApiBridge', () => {
       })
       req.isAuthenticated = () => true
       res.on('end', () => {
-        console.log("DATA", res._getData())
+        // console.log("DATA", res._getData())
         done()
       })
-      console.log("CALLED")
       apiBridge.post(req, res, () => {})
     })
   })

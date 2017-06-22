@@ -2,6 +2,7 @@
 
 const config = require(paths.config)
 const Api = require(`${paths.lib.models}/api`)
+const Constants = require(`${paths.lib.root}/constants`)
 
 const Session = function () {}
 
@@ -16,7 +17,10 @@ const Session = function () {}
 Session.prototype.authorise = function (email, password, next) {
   const authAPI = config.get('auth')
 
-  if (!authAPI.enabled) return next(null)
+  // No authentication.
+  if (!authAPI.enabled) {
+    this.returnAuthDisabled({next})
+  }
 
   return new Api(authAPI)
     .in(authAPI.collection)
@@ -41,7 +45,7 @@ Session.prototype.authorise = function (email, password, next) {
         return next('WRONG_CREDENTIALS')
       }
 
-      return next('MISSING_AUTH_API')
+      return next(Constants.AUTH_DISABLED)
     })
 }
 
@@ -72,11 +76,9 @@ Session.prototype.delete = function (req, res, next) {
 Session.prototype.get = function (req, res, next) {
   const authAPI = config.get('auth')
 
+  // No authentication.
   if (!authAPI.enabled) {
-    res.write(JSON.stringify({error: 'MISSING_AUTH_API'}))
-    res.end()
-
-    return next()
+    this.returnAuthDisabled({res, next})
   }
 
   res.header('Content-Type', 'application/json')
@@ -109,7 +111,7 @@ Session.prototype.post = function (req, res, next, passport) {
   passport.authenticate('local', (err, user, info) => {
     if (err) {
       switch (err) {
-        case 'MISSING_AUTH_API':
+        case Constants.AUTH_DISABLED:
           res.statusCode = 503
           res.write(JSON.stringify({err}))
 
@@ -186,18 +188,12 @@ Session.prototype.reset = function (req, res, next) {
 
   // No authentication.
   if (!authAPI.enabled) {
-    res.write(JSON.stringify({error: 'AUTH_DISABLED'}))
-    res.end()
-
-    return next()
+    this.returnAuthDisabled({res, next})
   }
 
   // No authentication.
   if (!authAPI.enabled) {
-    res.write(JSON.stringify({error: 'AUTH_DISABLED'}))
-    res.end()
-
-    return next()
+    this.returnAuthDisabled({res, next})
   }
 
   if (req.body && (req.body.token && req.body.password)) {
@@ -218,6 +214,18 @@ Session.prototype.reset = function (req, res, next) {
   }
 }
 
+Session.prototype.returnAuthDisabled = function ({
+  res = null,
+  next
+  }) {
+  if (!res) return next(null)
+
+  res.write(JSON.stringify({error: Constants.AUTH_DISABLED}))
+  res.end()
+
+  return next()
+}
+
 /**
  * Reset token
  * Fetch password reset token.
@@ -233,10 +241,7 @@ Session.prototype.resetToken = function (req, res, next) {
 
   // No authentication.
   if (!authAPI.enabled) {
-    res.write(JSON.stringify({error: 'AUTH_DISABLED'}))
-    res.end()
-
-    return next()
+    this.returnAuthDisabled({res, next})
   }
 
   // Check for required email value.

@@ -103,7 +103,7 @@ APIBridgeController.prototype.post = function (req, res, next) {
       res.end(JSON.stringify(err))
     })
   } catch (err) {
-    console.log('err', err)
+    // console.log('err', err)
     res.statusCode = 500
     res.end(JSON.stringify(err))
   }
