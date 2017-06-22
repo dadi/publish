@@ -67,7 +67,9 @@ export function isEmpty (subject) {
 export function debounce (func, wait, immediate) {
   let timeout
 
-  return () => {
+  // Must return standard function.
+  // An arrow function here would not use arguments.
+  return function () {
     let context = this
     let args = arguments
     let later = () => {
@@ -86,7 +88,9 @@ export function throttle (func, threshold) {
   let lastCall
   let timeout
 
-  return () => {
+  // Must return standard function.
+  // An arrow function here would not use arguments.
+  return function () {
     let now = new Date().getTime()
     let args = arguments
 
