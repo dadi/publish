@@ -20,42 +20,42 @@ afterEach(() => {
 
 describe('Checkbox component', () => {
   it('has propTypes', () => {
-    const button = (
+    const component = (
       <Checkbox />
     )
 
-    expect(button.nodeName.propTypes).to.exist
-    expect(Object.keys(button.nodeName.propTypes)).to.have.length.above(0)
+    expect(component.nodeName.propTypes).to.exist
+    expect(Object.keys(component.nodeName.propTypes)).to.have.length.above(0)
   })
 
   it('renders an input element with the type `checkbox`', () => {
-    const checkbox = (
+    const component = (
       <Checkbox />
     )
 
-    expect(checkbox).to.equal(
+    expect(component).to.equal(
       <input class="checkbox" type="checkbox" />
     )
   })
 
   it('applies the ID supplied in the `id` prop', () => {
-    const checkbox = (
+    const component = (
       <Checkbox id="foo" />
     )
 
-    expect(checkbox).to.equal(
+    expect(component).to.equal(
       <input id="foo" class="checkbox" type="checkbox" />
     )
   })
 
   it('is checked if the `value` prop is truthy', () => {
-    const checkbox = (
+    const component = (
       <Checkbox
         value={true}
       />
     )
 
-    expect(checkbox).to.equal(
+    expect(component).to.equal(
       <input class="checkbox" type="checkbox" checked />
     )
   })
