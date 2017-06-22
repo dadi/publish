@@ -1,4 +1,3 @@
-const Constants = require(`${__dirname}/../../../../app/lib/constants`)
 const globals = require(`${__dirname}/../../../../app/globals`) // Always required
 const AppConfigController = require(`${__dirname}/../../../../app/lib/controllers/app-config`).AppConfigController
 const httpMocks = require('node-mocks-http')
@@ -60,8 +59,6 @@ const headers = {
   'content-type': 'application/json',
   'content-length': '100'
 }
-
-const auth = config.get('auth')
 
 beforeEach(() => {
   appConfig = new AppConfigController()
