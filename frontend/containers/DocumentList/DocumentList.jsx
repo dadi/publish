@@ -411,9 +411,12 @@ class DocumentList extends Component {
     } else {
       onPageTitle(this.currentCollection.settings.description || this.currentCollection.name)
     }
+    const listableFields = filterHiddenFields(this.currentCollection.fields, 'list')
 
-    const tableColumns = Object.keys(filterHiddenFields(this.currentCollection.fields, 'list'))
+    const tableColumns = Object.keys(listableFields)
       .map(field => {
+        if (!this.currentCollection.fields[field]) return
+
         return {
           id: field,
           label: this.currentCollection.fields[field].label

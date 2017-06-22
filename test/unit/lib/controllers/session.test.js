@@ -90,10 +90,13 @@ describe('Session', () => {
   })
 })
 
-// Authorise
-// Delete
-// Get
-// Post
-// Put
-// Reset
-// resetToken
+/**
+ * TO-DO
+ * Authorise
+ * DELETE
+ * GET
+ * POST
+ * PUT
+ * reset
+ * resetToken
+ */
