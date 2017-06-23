@@ -7,6 +7,7 @@ const Room = require(`${paths.lib.server}/socket_auth/room`)
  * Web Socket instance
  */
 const Socket = function (app) {
+  if (!app) return
   this.server = scServer.attach(app)
   this.server.on('connection', this.onConnection.bind(this))
   this.addMiddleware()
@@ -20,7 +21,8 @@ const Socket = function (app) {
  * - SUBSCRIBE
  */
 Socket.prototype.addMiddleware = function () {
-  this.server.addMiddleware(this.server.MIDDLEWARE_PUBLISH_IN, this.onPublish.bind(this))
+  this.server.addMiddleware(this.server.MIDDLEWARE_PUBLISH_IN, this.onPublish)
+  return this
 }
 
 /**
@@ -28,7 +30,7 @@ Socket.prototype.addMiddleware = function () {
  * @param  {scServer} socket Socket Cluster socket
  */
 Socket.prototype.onConnection = function (socket) {
-  // console.log("User connected")
+  if (!this.server || !socket) return this
   new Auth().attach(this.server, socket)
   new Room().attach(this.server, socket)
   return this
@@ -46,8 +48,6 @@ Socket.prototype.onPublish = function (req, next) {
     switch (req.data.type) {
       case 'getUsersInRoom':
         let users = new Room().getUsers(req.channel, req.socket.server.clients)
-          // Send to single user (WIP)
-          // req.socket.exchange.publish(req.data.data.user, {type: 'userListChange', body: {users: users}})
         req.socket.exchange.publish(req.channel, {type: 'userListChange', body: {users: users}})
     }
   }

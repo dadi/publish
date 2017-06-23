@@ -44,18 +44,18 @@ const wrapperResponse =  {
 
 describe('API', () => {
   it('should export function', () => {
-    expect(new Api()).toBeInstanceOf(Object)
+    expect(new Api(options).options).toBeInstanceOf(Object)
   })
 
   describe('API with no options', () => {
     it('should return undefined', () => {
-      expect(Api()).toBeUndefined()
+      expect(new Api().options).toBeUndefined()
     })
   })
 
   describe('API with options', () => {
     it('should return API wrapper object', () => {
-      expect(JSON.stringify(Api(options))).toBe(JSON.stringify(wrapperResponse))
+      expect(JSON.stringify(new Api(options))).toBe(JSON.stringify(wrapperResponse))
     })
   })
 })
