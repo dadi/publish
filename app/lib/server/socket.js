@@ -30,7 +30,7 @@ Socket.prototype.addMiddleware = function () {
  * @param  {scServer} socket Socket Cluster socket
  */
 Socket.prototype.onConnection = function (socket) {
-  if (!this.server || !socket) return this
+  if (!this.server || !socket) return
   new Auth().attach(this.server, socket)
   new Room().attach(this.server, socket)
   return this
@@ -44,14 +44,16 @@ Socket.prototype.onConnection = function (socket) {
  * @return {Function}        next sequential method call
  */
 Socket.prototype.onPublish = function (req, next) {
-  if (req.data && req.data.type) {
+  if (req && req.data && req.data.type) {
     switch (req.data.type) {
       case 'getUsersInRoom':
-        let users = new Room().getUsers(req.channel, req.socket.server.clients)
+        const users = new Room().getUsers(req.channel, req.socket.server.clients)
         req.socket.exchange.publish(req.channel, {type: 'userListChange', body: {users: users}})
     }
   }
-  return next()
+  if (next) {
+    return next()
+  }
 }
 
 module.exports = function (app) {
