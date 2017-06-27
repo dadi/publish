@@ -20,7 +20,7 @@ const getApisBlockWithUUIDs = apis => {
   })
 }
 
-/** `
+/**
  * @constructor
  * Server initialisation
  */
