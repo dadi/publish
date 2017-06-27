@@ -12,7 +12,7 @@ const md5 = require('md5')
 process.env.TZ = config.get('TZ')
 
 // (!) This should probably be moved to a more suitable place
-const getApisBlockWithUUIDs = (apis) => {
+const getApisBlockWithUUIDs = apis => {
   return apis.map(api => {
     let uuid = md5(api.host + api.port + api.credentials.clientId)
 
@@ -20,7 +20,7 @@ const getApisBlockWithUUIDs = (apis) => {
   })
 }
 
-/**
+/** `
  * @constructor
  * Server initialisation
  */
@@ -61,13 +61,6 @@ Server.prototype.start = function () {
       resolve()
     })
   })
-}
-
-/**
- * Stop Server
- */
-Server.prototype.stop = function () {
-
 }
 
 /**

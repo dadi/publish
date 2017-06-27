@@ -150,7 +150,8 @@ Router.prototype.setHeaders = function () {
  * @param  {restify} app Restify web server instance
  */
 Router.prototype.use = function () {
-  this.app.use(restify.gzipResponse())
+  this.app
+    .use(restify.gzipResponse())
     .use(restify.requestLogger())
     .use(restify.queryParser())
     .use(restify.bodyParser({mapParams: true})) // Changing to false throws issues with auth. Needs addressing
