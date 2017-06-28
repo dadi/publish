@@ -26,22 +26,39 @@ const getApisBlockWithUUIDs = apis => {
  */
 const Server = function () {
   const ssl = new SSL()
-    .useDir(config.get('server.ssl.dir'), true)
+    .certificateDir(config.get('server.ssl.dir'), true)
 
-  this.options = {
-    port: config.get('server.ssl.enabled') ? ssl.getPort() : config.get('server.port'),
-    host: config.get('server.host'),
-    key: ssl.getKey(config.get('server.ssl.dir')),
-    certificate: ssl.getCertificate(config.get('server.ssl.dir')),
-    formatters: {
-      'text/plain': (req, res, body) => {
-        if (body instanceof Error) {
-          // catch our Error
-          log.error(body.stack)
-          return body.message
-        }
+  const key = ssl.getKey()
+  const certificate = ssl.getCertificate()
+  // Store valid in config
+  config.set('server.ssl.valid', (key && certificate))
+
+  const formatters = {
+    'text/plain': (req, res, body) => {
+      if (body instanceof Error) {
+        // catch our Error
+        log.error(body.stack)
+        return body.message
       }
     }
+  }
+  // To-do
+  // - If SSL enabled, create both apps
+  // - We always want middleware for certs, so always apply that to port 80 app
+  // - For port 80 app, either apply redirect or standard routes
+
+  this.options = {
+    port: config.get('server.ssl.enabled') ? 443 : config.get('server.port'),
+    host: config.get('server.host'),
+    formatters: formatters
+  }
+  this.redirectOptions = {
+    port: 80,
+    host: config.get('server.host')//,
+    // formatters: formatters
+  }
+  if (config.get('server.ssl.valid')) {
+    Object.assign(this.options, {key, certificate})
   }
 }
 
@@ -54,20 +71,18 @@ Server.prototype.start = function () {
     // Inject API UUIDs in config
     config.set('apis', getApisBlockWithUUIDs(config.get('apis')))
 
-    this.createServer()
-    new Router(this.app).addRoutes()
-    return this.addListeners().then(() => {
-      this.socket = new Socket(this.app)
-      resolve()
-    })
-  })
-}
+    this.app = restify.createServer(this.options)
+    if (config.get('server.ssl.enabled')) {
+      this.redirectApp = restify.createServer(this.redirectOptions)
+    }
+    new Router(this.app, this.redirectApp).addRoutes()
 
-/**
- * Create Restify server instance
- */
-Server.prototype.createServer = function () {
-  this.app = restify.createServer(this.options)
+    return this.addListeners()
+      .then(() => {
+        this.socket = new Socket(this.app)
+        resolve()
+      })
+  })
 }
 
 /**
@@ -75,24 +90,26 @@ Server.prototype.createServer = function () {
  * Set all listeners for Resify server instance
  */
 Server.prototype.addListeners = function () {
-  // this.app.on('NotFound', router.notFound())
+  let appListeners = []
+  appListeners.push(this.appListen(this.app, this.options.port, this.options.host))
 
-  this.app.on('listening', () => {
-    log.info(`Publish up on ${this.options.host}:${this.options.port}`)
-  })
-  this.app.on('close', () => {
-    console.log('Closing server connection.')
-  })
-  return this.appListen()
+  if (
+    config.get('server.ssl.enabled') && 
+     this.redirectApp
+  ) {
+    appListeners.push(this.appListen(this.redirectApp, this.redirectOptions.port, this.redirectOptions.host))
+  }
+
+  return Promise.all(appListeners)
 }
 
 /**
  * Begin Restify server listen
  * @return {Restify} Restify server instance
  */
-Server.prototype.appListen = function () {
-  return new Promise((resolve, reject) => this.app
-    .listen(Number(this.options.port), this.options.host, resolve))
+Server.prototype.appListen = function (app, port, host) {
+  return new Promise((resolve, reject) => app
+    .listen(Number(port), host, resolve))
 }
 
 module.exports = function () {

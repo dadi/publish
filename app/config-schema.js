@@ -17,7 +17,7 @@ module.exports = {
     baseUrl: {
       doc: 'The base URL of the application',
       format: 'url',
-      default: 'http://localhost:3001'
+      default: '127.0.0.1'
     }
   },
   apis: {

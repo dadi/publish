@@ -16,21 +16,25 @@ const SSL = require('ssl')
  * @constructor
  * App Router
  */
-const Router = function (app) {
+const Router = function (app, redirectApp=null) {
   this.publicDir = path.resolve(__dirname, '../../../public')
   this.routesDir = path.join(__dirname, 'routes')
   this.app = app
 
   this.ssl = new SSL()
     .useDomains(config.get('server.ssl.domains'))
-    .useDir(config.get('server.ssl.dir'), true)
+    .certificateDir(config.get('server.ssl.dir'), true)
     .useEnvironment('production')
     .provider('letsencrypt')
     .registerTo(config.get('server.ssl.email'))
     .autoRenew(true)
     .byteLength(3072)
-    .server(app)
     .create()
+
+  if (redirectApp) {
+    this.redirectApp = redirectApp
+    this.addRedirectMiddleware()
+  }
 
   this.entryPointTemplate = fs.readFileSync(path.join(this.publicDir, 'index.html'), 'utf8')
 }
@@ -167,7 +171,29 @@ Router.prototype.use = function () {
     .use(passport.initialize())
     .use(passport.session())
     .use(flash())
+}
+
+Router.prototype.addRedirectMiddleware = function () {
+  this.redirectApp
+    // .use(restify.gzipResponse())
+    // .use(restify.requestLogger())
+    // .use(restify.queryParser())
+    // .use(restify.bodyParser({mapParams: true})) // Changing to false throws issues with auth. Needs addressing
+    // // Initialise passport session.
+    // .use(flash())
     .use(this.ssl.middleware())
+    .pre(this.redirectMiddleware())
+}
+
+Router.prototype.redirectMiddleware = function () {
+  return (req, res, next) => {
+    console.log("THIS")
+      const hostname = req.headers.host.split(':')[0]
+      const location = `https://${hostname}${req.url}`
+      res.setHeader('Location', location)
+      res.statusCode = 301
+      res.end()
+  }
 }
 
 /**
@@ -178,8 +204,8 @@ Router.prototype.pre = function () {
   this.app.pre(restify.pre.sanitizePath())
 }
 
-module.exports = function (app) {
-  return new Router(app)
+module.exports = function (app, redirectApp) {
+  return new Router(app, redirectApp)
 }
 
 module.exports.Router = Router
