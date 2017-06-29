@@ -90,6 +90,10 @@ Server.prototype.createBaseServer = function () {
   // Add all routes to server
   new Router(server).addRoutes()
 
+  if (config.get('server.ssl.enabled')) {
+    this.ssl.useSecureServer(server)
+  }
+
   // Add listeners and initialise socket
   return this.addListeners(server, options)
     .then(() => this.socket = new Socket(server))
@@ -103,15 +107,15 @@ Server.prototype.createRedirectServer = function () {
 
   this.addSSL(server)
   new Router(server)
-    .addRoutes()
     .addSecureRedirect()
+    .addRoutes()
 
   return this.addListeners(server, options)
 }
 
 Server.prototype.addSSL = function (server) {
   this.ssl
-    .useServer(server)
+    .useListeningServer(server)
     .start()
 }
 

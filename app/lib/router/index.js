@@ -35,6 +35,25 @@ Router.prototype.addRoutes = function () {
   this.getRoutes()
   this.componentRoutes(path.resolve(`${paths.frontend.components}`), /Routes$/g)
   this.webRoutes()
+
+  return this
+}
+
+Router.prototype.addSecureRedirect = function () {
+  console.log('addSecureRedirect')
+  this.server.use(this.secureRedirect())
+  return this
+}
+
+Router.prototype.secureRedirect = function () {
+  return (req, res, next) => {
+    const hostname = req.headers.host.split(':')[0]
+    const location = `https://${hostname}${req.url}`
+    
+    res.setHeader('Location', location)
+    res.statusCode = 301
+    return res.end()
+  }
 }
 
 Router.prototype.getRoutes = function () {
@@ -152,29 +171,6 @@ Router.prototype.use = function () {
     .use(passport.initialize())
     .use(passport.session())
     .use(flash())
-}
-
-// Router.prototype.addRedirectMiddleware = function () {
-//   this.redirectApp
-//     // .use(restify.gzipResponse())
-//     // .use(restify.requestLogger())
-//     // .use(restify.queryParser())
-//     // .use(restify.bodyParser({mapParams: true})) // Changing to false throws issues with auth. Needs addressing
-//     // // Initialise passport session.
-//     // .use(flash())
-//     .use(this.ssl.middleware())
-//     .pre(this.redirectMiddleware())
-// }
-
-Router.prototype.redirectMiddleware = function () {
-  return (req, res, next) => {
-    console.log("THIS")
-    const hostname = req.headers.host.split(':')[0]
-    const location = `https://${hostname}${req.url}`
-    res.setHeader('Location', location)
-    res.statusCode = 301
-    res.end()
-  }
 }
 
 /**
