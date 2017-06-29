@@ -18,7 +18,7 @@
     "precommit": "npm run lint",
     "postinstall": "node scripts/deploy/deploy.js",
     "snyk-protect": "snyk protect",
-    "start": "NODE_ENV=production node index.js",
+    "start": "NODE_ENV=development node index.js",
     "test": "npm-run-all test-all lint",
     "test-all": "jest && node scripts/coverage/coverage.js",
     "watch": "NODE_ENV=development npm-run-all --parallel watch:server watch:build",
