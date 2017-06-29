@@ -16,32 +16,16 @@ const SSL = require('ssl')
  * @constructor
  * App Router
  */
-const Router = function (app, redirectApp=null) {
+const Router = function (server) {
   this.publicDir = path.resolve(__dirname, '../../../public')
   this.routesDir = path.join(__dirname, 'routes')
-  this.app = app
-
-  this.ssl = new SSL()
-    .useDomains(config.get('server.ssl.domains'))
-    .certificateDir(config.get('server.ssl.dir'), true)
-    .useEnvironment('production')
-    .provider('letsencrypt')
-    .registerTo(config.get('server.ssl.email'))
-    .autoRenew(true)
-    .byteLength(3072)
-    .create()
-
-  if (redirectApp) {
-    this.redirectApp = redirectApp
-    this.addRedirectMiddleware()
-  }
+  this.server = server
 
   this.entryPointTemplate = fs.readFileSync(path.join(this.publicDir, 'index.html'), 'utf8')
 }
 
 /**
  * Add Routes
- * @param {restify} app Restify web server instance
  */
 Router.prototype.addRoutes = function () {
   this.pre()
@@ -58,7 +42,7 @@ Router.prototype.getRoutes = function () {
     /* require module with its name (from filename), passing app */
     let controller = require(path.join(this.routesDir, file))
 
-    controller(this.app)
+    controller(this.server)
   })
 }
 
@@ -84,21 +68,20 @@ Router.prototype.setPassportStrategies = function () {
 /**
  * Web routes (Needs moving to controller?)
  * For use with isomorphic web application base route
- * @param  {restify} app Restify web server instance
  */
 Router.prototype.webRoutes = function () {
-  this.app.get(/\/public\/?.*/, restify.serveStatic({
+  this.server.get(/\/public\/?.*/, restify.serveStatic({
     directory: path.resolve(__dirname, '../../..')
   }))
 
   // Respond to HEAD requests - this is used by ConnectionMonitor in App.jsx.
-  this.app.head(/.*/, (req, res, next) => {
+  this.server.head(/.*/, (req, res, next) => {
     res.header('Content-Type', 'application/json')
 
     return res.end()
   })
 
-  this.app.get(/.*/, (req, res, next) => {
+  this.server.get(/.*/, (req, res, next) => {
     const serialisedUser = (req.session.passport && req.session.passport.user)
       ? JSON.stringify(req.session.passport.user)
       : null
@@ -116,7 +99,6 @@ Router.prototype.webRoutes = function () {
 
 /**
  * Add component routes
- * @param {restify} app Restify web server instance
  */
 Router.prototype.componentRoutes = function (dir, match) {
   // Fetch aditional component schema
@@ -131,7 +113,7 @@ Router.prototype.componentRoutes = function (dir, match) {
       if (file.ext === '.js' && file.name.match(match)) {
         let controller = require(sub)
 
-        controller(this.app)
+        controller(this.server)
       }
     }
   })
@@ -139,10 +121,9 @@ Router.prototype.componentRoutes = function (dir, match) {
 
 /**
  * Set headers
- * @param {restify} app Restify web server instance
  */
 Router.prototype.setHeaders = function () {
-  this.app.use((req, res, next) => {
+  this.server.use((req, res, next) => {
     res.header('ETag', 'publish-etag')
     res.header('Last-Modified', new Date())
     return next()
@@ -154,7 +135,7 @@ Router.prototype.setHeaders = function () {
  * @param  {restify} app Restify web server instance
  */
 Router.prototype.use = function () {
-  this.app
+  this.server
     .use(restify.gzipResponse())
     .use(restify.requestLogger())
     .use(restify.queryParser())
@@ -173,26 +154,26 @@ Router.prototype.use = function () {
     .use(flash())
 }
 
-Router.prototype.addRedirectMiddleware = function () {
-  this.redirectApp
-    // .use(restify.gzipResponse())
-    // .use(restify.requestLogger())
-    // .use(restify.queryParser())
-    // .use(restify.bodyParser({mapParams: true})) // Changing to false throws issues with auth. Needs addressing
-    // // Initialise passport session.
-    // .use(flash())
-    .use(this.ssl.middleware())
-    .pre(this.redirectMiddleware())
-}
+// Router.prototype.addRedirectMiddleware = function () {
+//   this.redirectApp
+//     // .use(restify.gzipResponse())
+//     // .use(restify.requestLogger())
+//     // .use(restify.queryParser())
+//     // .use(restify.bodyParser({mapParams: true})) // Changing to false throws issues with auth. Needs addressing
+//     // // Initialise passport session.
+//     // .use(flash())
+//     .use(this.ssl.middleware())
+//     .pre(this.redirectMiddleware())
+// }
 
 Router.prototype.redirectMiddleware = function () {
   return (req, res, next) => {
     console.log("THIS")
-      const hostname = req.headers.host.split(':')[0]
-      const location = `https://${hostname}${req.url}`
-      res.setHeader('Location', location)
-      res.statusCode = 301
-      res.end()
+    const hostname = req.headers.host.split(':')[0]
+    const location = `https://${hostname}${req.url}`
+    res.setHeader('Location', location)
+    res.statusCode = 301
+    res.end()
   }
 }
 
@@ -201,11 +182,11 @@ Router.prototype.redirectMiddleware = function () {
  * @param  {restify} app Restify web server instance
  */
 Router.prototype.pre = function () {
-  this.app.pre(restify.pre.sanitizePath())
+  this.server.pre(restify.pre.sanitizePath())
 }
 
-module.exports = function (app, redirectApp) {
-  return new Router(app, redirectApp)
+module.exports = function (server) {
+  return new Router(server)
 }
 
 module.exports.Router = Router
