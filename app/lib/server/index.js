@@ -59,22 +59,17 @@ Server.prototype.getOptions = function (override={}) {
  */
 Server.prototype.start = function () {
   let listenerQueue = []
-  return new Promise(resolve => {
     // Inject API UUIDs in config
-    config.set('apis', getApisBlockWithUUIDs(config.get('apis')))
-
-    listenerQueue.push(this.createBaseServer())
-
-    // If we're using ssl, create a server on port 80 to handle
-    // redirects and challenge authentication
-    if (config.get('server.ssl.enabled')) {
-      listenerQueue.push(this.createRedirectServer())
-    }
-
-    // Add all listeners
-    return Promise.all(listenerQueue)
-      .then(() => resolve())
-  })
+  config.set('apis', getApisBlockWithUUIDs(config.get('apis')))
+  listenerQueue.push(this.createBaseServer())
+  
+  // If we're using ssl, create a server on port 80 to handle
+  // redirects and challenge authentication
+  if (config.get('server.ssl.enabled')) {
+    listenerQueue.push(this.createRedirectServer())
+  }
+  // Add all listeners
+  return Promise.all(listenerQueue)
 }
 
 Server.prototype.createBaseServer = function () {
