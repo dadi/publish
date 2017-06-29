@@ -107,7 +107,7 @@ Server.prototype.createRedirectServer = function () {
 
   this.addSSL(server)
   new Router(server)
-    .addSecureRedirect()
+    .addSecureRedirect(this.ssl)
     .addRoutes()
 
   return this.addListeners(server, options)
