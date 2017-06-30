@@ -49,11 +49,10 @@ conf.set('availableInFrontend', availableInFrontend)
 
 // Load environment dependent configuration
 const env = conf.get('env')
-
 try {
-  conf.loadFile(`./config/config.${env}.json`)
+  conf.loadFile(`${paths.configDir}/config.${env}.json`)
 } catch (e) {
-  console.log('Failed to load config, dropping to defaults.')
+  console.log(`Failed to load config, dropping to defaults. Error: ${e}`)
 }
 
 // Perform validation

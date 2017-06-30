@@ -5,13 +5,13 @@ const path = require('path')
 const base = path.join(__dirname, '/../')
 const lib = path.join(__dirname, '/lib')
 const frontend = path.join(__dirname, '/../frontend')
-
 /**
  * Set Global parameters
  */
 const Globals = function () {
   global.paths = {
     config: path.resolve(`${__dirname}/config`),
+    configDir: path.resolve(`${process.env.PWD}/config`),
     lib: {
       root: lib,
       controllers: path.resolve(`${lib}/controllers`),

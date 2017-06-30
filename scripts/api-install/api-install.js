@@ -65,7 +65,6 @@ APIInstall.prototype.updateHook = function (name, content) {
 
 APIInstall.prototype.checkAuthCollectionExists = function () {
   const authAPI = config.get('auth')
-
   return this.getCollection(authAPI)
     .then(collection => {
       if (!collection) {
@@ -80,6 +79,10 @@ APIInstall.prototype.checkAuthCollectionExists = function () {
           console.log('Collection is Valid')
         }
       })
+    })
+    .catch(err => {
+      console.log("ERROR", err.message)
+      return this.createUserCollection(authAPI)
     })
 }
 
