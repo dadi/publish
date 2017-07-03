@@ -113,7 +113,7 @@ class DocumentEdit extends Component {
     }
 
     if (currentCollection) {
-      const collectionFields = filterHiddenFields(currentCollection.fields, 'editor')
+      const collectionFields = filterHiddenFields(currentCollection.fields, 'edit')
       const fields = this.groupFields(collectionFields)
 
       if (section) {
@@ -284,7 +284,7 @@ class DocumentEdit extends Component {
       return null
     }
 
-    const collectionFields = filterHiddenFields(this.currentCollection.fields, 'editor')
+    const collectionFields = filterHiddenFields(this.currentCollection.fields, 'edit')
     const fields = this.groupFields(collectionFields)
     const sections = fields.sections || [{
       slug: 'other',
@@ -329,8 +329,16 @@ class DocumentEdit extends Component {
           sectionClass.addIf('section-active', section.slug === activeSection)
 
           const fields = {
-            main: section.fields.filter(field => !field.publish || field.publish.placement === 'main'),
-            sidebar: section.fields.filter(field => field.publish && field.publish.placement === 'sidebar')
+            main: section.fields.filter(field => {
+              return !field.publish ||
+                !field.publish.placement ||
+                field.publish.placement === 'main'
+            }),
+            sidebar: section.fields.filter(field => {
+              return field.publish &&
+                field.publish.placement &&
+                field.publish.placement === 'sidebar'
+            })
           }
 
           const mainBodyStyle = new Style(styles, 'main')
@@ -373,7 +381,7 @@ class DocumentEdit extends Component {
       collection,
       group
     })
-    const collectionFields = Object.keys(filterHiddenFields(documentCollection.fields, 'editor'))
+    const collectionFields = Object.keys(filterHiddenFields(documentCollection.fields, 'edit'))
       .concat(['createdAt', 'createdBy', 'lastModifiedAt', 'lastModifiedBy'])
 
     const query = {
