@@ -1,10 +1,17 @@
 'use strict'
-
 const path = require('path')
-const global = require(path.resolve(path.join(__dirname, '../../app/globals'))) // eslint-disable-line
+const global = require(path.resolve(path.join(__dirname, '../../app/globals'))).Globals // eslint-disable-line
+
+// Set config path when configDir param is set.
+// E.g. NODE_ENV=development npm explore publish -- npm run api-install --configDir=/path/to/app/config
+if (process.env.npm_config_configDir) {
+  global.set({configDir: process.env.npm_config_configDir})
+}
+
 const config = require(paths.config)
 const Api = require(`${paths.lib.models}/api`)
 const fs = require('fs')
+
 
 const userCollection = require('./collections/collection.users')
 const slugifyHook = fs.readFileSync(path.resolve(path.join(__dirname, 'hooks/slugify.js')), 'utf8')

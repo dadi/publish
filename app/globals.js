@@ -8,6 +8,7 @@ const frontend = path.join(__dirname, '/../frontend')
 /**
  * Set Global parameters
  */
+
 const Globals = function () {
   global.paths = {
     config: path.resolve(`${__dirname}/config`),
@@ -27,6 +28,14 @@ const Globals = function () {
     },
     wallet: path.resolve(`${base}/.wallet`)
   }
+}
+
+/**
+ * Set
+ * @param {Object} newParams New parameters to be appended to global.paths.
+ */
+Globals.prototype.set = function (newParams) {
+  global.paths = Object.assign(global.paths, newParams)
 }
 
 // exports
