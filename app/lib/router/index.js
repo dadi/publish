@@ -10,7 +10,6 @@ const passport = require('passport-restify')
 const LocalStrategy = require('passport-local')
 const restify = require('restify')
 const SessionController = require(`${paths.lib.controllers}/session`)
-const SSL = require('ssl')
 
 /**
  * @constructor

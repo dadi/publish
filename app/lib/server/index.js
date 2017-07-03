@@ -35,7 +35,7 @@ const Server = function () {
     .byteLength(3072)
 }
 
-Server.prototype.getOptions = function (override={}) {
+Server.prototype.getOptions = function (override = {}) {
   const formatters = {
     'text/plain': (req, res, body) => {
       if (body instanceof Error) {
@@ -62,7 +62,7 @@ Server.prototype.start = function () {
     // Inject API UUIDs in config
   config.set('apis', getApisBlockWithUUIDs(config.get('apis')))
   listenerQueue.push(this.createBaseServer())
-  
+
   // If we're using ssl, create a server on port 80 to handle
   // redirects and challenge authentication
   if (config.get('server.ssl.enabled')) {
@@ -91,7 +91,11 @@ Server.prototype.createBaseServer = function () {
 
   // Add listeners and initialise socket
   return this.addListeners(server, options)
-    .then(() => this.socket = new Socket(server))
+    .then(() => {
+      this.socket = new Socket(server)
+
+      return this.socket
+    })
 }
 
 Server.prototype.createRedirectServer = function () {
