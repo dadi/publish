@@ -5,6 +5,7 @@ const restify = require('restify')
 const config = require(paths.config)
 const Router = require(paths.lib.router)
 const Socket = require(`${paths.lib.server}/socket`)
+const SSL = require('ssl')
 const log = require('@dadi/logger')
 const md5 = require('md5')
 
@@ -24,6 +25,14 @@ const getApisBlockWithUUIDs = apis => {
  * Server initialisation
  */
 const Server = function () {
+  this.ssl = new SSL()
+    .useDomains(config.get('server.ssl.domains'))
+    .certificateDir(config.get('server.ssl.dir'), true)
+    .useEnvironment('production')
+    .provider('letsencrypt')
+    .registerTo(config.get('server.ssl.email'))
+    .autoRenew(true)
+    .byteLength(3072)
 }
 
 Server.prototype.getOptions = function (override={}) {
@@ -54,21 +63,55 @@ Server.prototype.start = function () {
   config.set('apis', getApisBlockWithUUIDs(config.get('apis')))
   listenerQueue.push(this.createBaseServer())
   
+  // If we're using ssl, create a server on port 80 to handle
+  // redirects and challenge authentication
+  if (config.get('server.ssl.enabled')) {
+    listenerQueue.push(this.createRedirectServer())
+  }
   // Add all listeners
   return Promise.all(listenerQueue)
 }
 
 Server.prototype.createBaseServer = function () {
-  const options = this.getOptions()
+  // If we're using ssl, start a server on port 443
+  const options = config.get('server.ssl.enabled') ? this.getOptions({
+    port: 443,
+    key: this.ssl.getKey(),
+    certificate: this.ssl.getCertificate()
+  }) : this.getOptions()
 
   const server = restify.createServer(options)
 
   // Add all routes to server
   new Router(server).addRoutes()
 
+  if (config.get('server.ssl.enabled')) {
+    this.ssl.useSecureServer(server)
+  }
+
   // Add listeners and initialise socket
   return this.addListeners(server, options)
     .then(() => this.socket = new Socket(server))
+}
+
+Server.prototype.createRedirectServer = function () {
+  const options = this.getOptions({
+    port: 80
+  })
+  const server = restify.createServer(options)
+
+  this.addSSL(server)
+  new Router(server)
+    .addSecureRedirect(this.ssl)
+    .addRoutes()
+
+  return this.addListeners(server, options)
+}
+
+Server.prototype.addSSL = function (server) {
+  this.ssl
+    .useListeningServer(server)
+    .start()
 }
 
 /**
