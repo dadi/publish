@@ -10,7 +10,6 @@ const passport = require('passport-restify')
 const LocalStrategy = require('passport-local')
 const restify = require('restify')
 const SessionController = require(`${paths.lib.controllers}/session`)
-const SSL = require('ssl')
 
 /**
  * @constructor
@@ -37,25 +36,6 @@ Router.prototype.addRoutes = function () {
   this.webRoutes()
 
   return this
-}
-
-Router.prototype.addSecureRedirect = function (ssl) {
-  this.server.use(this.secureRedirect(ssl))
-  return this
-}
-
-Router.prototype.secureRedirect = function (ssl) {
-  return (req, res, next) => {
-    // Skip redirect if ssl is not present
-    if (!ssl.getKey() || !ssl.getCertificate()) return next()
-
-    const hostname = req.headers.host.split(':')[0]
-    const location = `https://${hostname}${req.url}`
-
-    res.setHeader('Location', location)
-    res.statusCode = 301
-    return res.end()
-  }
 }
 
 Router.prototype.getRoutes = function () {
