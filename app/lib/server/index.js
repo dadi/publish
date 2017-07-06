@@ -26,7 +26,7 @@ const getApisBlockWithUUIDs = apis => {
 const Server = function () {
 }
 
-Server.prototype.getOptions = function (override={}) {
+Server.prototype.getOptions = function (override = {}) {
   const formatters = {
     'text/plain': (req, res, body) => {
       if (body instanceof Error) {
@@ -53,7 +53,7 @@ Server.prototype.start = function () {
     // Inject API UUIDs in config
   config.set('apis', getApisBlockWithUUIDs(config.get('apis')))
   listenerQueue.push(this.createBaseServer())
-  
+
   // Add all listeners
   return Promise.all(listenerQueue)
 }
@@ -68,7 +68,9 @@ Server.prototype.createBaseServer = function () {
 
   // Add listeners and initialise socket
   return this.addListeners(server, options)
-    .then(() => this.socket = new Socket(server))
+    .then(() => {
+      this.socket = new Socket(server)
+    })
 }
 
 /**
