@@ -38,25 +38,6 @@ Router.prototype.addRoutes = function () {
   return this
 }
 
-Router.prototype.addSecureRedirect = function (ssl) {
-  this.server.use(this.secureRedirect(ssl))
-  return this
-}
-
-Router.prototype.secureRedirect = function (ssl) {
-  return (req, res, next) => {
-    // Skip redirect if ssl is not present
-    if (!ssl.getKey() || !ssl.getCertificate()) return next()
-
-    const hostname = req.headers.host.split(':')[0]
-    const location = `https://${hostname}${req.url}`
-
-    res.setHeader('Location', location)
-    res.statusCode = 301
-    return res.end()
-  }
-}
-
 Router.prototype.getRoutes = function () {
   fs.readdirSync(path.resolve(this.routesDir)).forEach((file) => {
     /* require module with its name (from filename), passing app */
