@@ -13,35 +13,6 @@ const options = {
   database: 'test'
 }
 
-const wrapperResponse =  { 
-  options: {
-    appId: 'DADI Publish',
-    uri: 'http://127.0.0.1',
-    port: 80,
-    credentials: { 
-      clientId: 'testClient', 
-      clientSecret: 'superSecret'
-    },
-    version: '1.0',
-    database: 'test',
-    tokenUrl: '/token'
-  },
-  passportOptions: {
-  issuer: {
-      uri: 'http://127.0.0.1', 
-      port: 80, 
-      endpoint: '/token'
-    },
-    credentials: {
-      clientId: 'testClient', clientSecret: 'superSecret'
-    },
-    wallet: 'file',
-    walletOptions: {
-      path: '/data/app/publish/node_modules/@dadi/api-wrapper/.wallet/token.http-12700180.testclient.json'
-    }
-  }
-}
-
 describe('API', () => {
   it('should export function', () => {
     expect(new Api(options).options).toBeInstanceOf(Object)
@@ -55,7 +26,28 @@ describe('API', () => {
 
   describe('API with options', () => {
     it('should return API wrapper object', () => {
-      expect(JSON.stringify(new Api(options))).toBe(JSON.stringify(wrapperResponse))
+
+      const apiInstance = new Api(options)
+      
+      expect(apiInstance).toHaveProperty('options')
+      expect(apiInstance).toHaveProperty('options.appId')
+      expect(apiInstance).toHaveProperty('options.uri')
+      expect(apiInstance).toHaveProperty('options.port')
+      expect(apiInstance).toHaveProperty('options.credentials')
+      expect(apiInstance).toHaveProperty('options.credentials.clientId')
+      expect(apiInstance).toHaveProperty('options.credentials.clientSecret')
+      expect(apiInstance).toHaveProperty('options.version')
+      expect(apiInstance).toHaveProperty('options.database')
+      expect(apiInstance).toHaveProperty('options.tokenUrl')
+      expect(apiInstance).toHaveProperty('passportOptions')
+      expect(apiInstance).toHaveProperty('passportOptions.issuer')
+      expect(apiInstance).toHaveProperty('passportOptions.issuer.uri')
+      expect(apiInstance).toHaveProperty('passportOptions.issuer.port')
+      expect(apiInstance).toHaveProperty('passportOptions.issuer.endpoint')
+      expect(apiInstance).toHaveProperty('passportOptions.credentials')
+      expect(apiInstance).toHaveProperty('passportOptions.credentials.clientId')
+      expect(apiInstance).toHaveProperty('passportOptions.credentials.clientSecret')
+      expect(apiInstance).toHaveProperty('passportOptions.wallet')
     })
   })
 })
