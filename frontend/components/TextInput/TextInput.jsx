@@ -135,9 +135,7 @@ export default class TextInput extends Component {
           readonly={readonly}
           required={required}
           rows={10}
-        >
-          {value}
-        </textarea>
+          value={value}/>
       )
     }
 
