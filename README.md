@@ -9,10 +9,6 @@ Publish provides beautiful editorial interfaces for the management of content wi
 
 It is part of DADI, a suite of components covering the full development stack, built for performance and scale.
 
-## Documentation
-
-Documentation can be found at the [DADI Docs site](http://docs.dadi.tech/publish/).
-
 ## Licence
 
 DADI is a data centric development and delivery stack, built specifically in support of the principles of API first and COPE.
