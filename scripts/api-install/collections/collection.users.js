@@ -15,7 +15,7 @@ module.exports = {
         'placement': 'main',
         'display': {
           'list': true,
-          'editor': true
+          'edit': true
         }
       }
     },
@@ -32,7 +32,7 @@ module.exports = {
         'placement': 'main',
         'display': {
           'list': true,
-          'editor': true
+          'edit': true
         }
       }
     },
@@ -51,7 +51,7 @@ module.exports = {
         'placement': 'main',
         'display': {
           'list': true,
-          'editor': true
+          'edit': true
         }
       },
       'required': true,
@@ -69,7 +69,7 @@ module.exports = {
         'placement': 'main',
         'display': {
           'list': false,
-          'editor': true
+          'edit': true
         }
       }
     },
@@ -87,7 +87,7 @@ module.exports = {
         'placement': 'sidebar',
         'display': {
           'list': false,
-          'editor': true
+          'edit': true
         }
       }
     },
@@ -101,7 +101,7 @@ module.exports = {
         'placement': 'main',
         'display': {
           'list': false,
-          'editor': true
+          'edit': true
         }
       }
     },
@@ -114,7 +114,7 @@ module.exports = {
         'placement': 'main',
         'display': {
           'list': false,
-          'editor': false
+          'edit': false
         }
       }
     },
@@ -127,7 +127,7 @@ module.exports = {
         'placement': 'main',
         'display': {
           'list': false,
-          'editor': false
+          'edit': false
         }
       }
     },
@@ -142,7 +142,7 @@ module.exports = {
         'placement': 'main',
         'display': {
           'list': false,
-          'editor': true
+          'edit': true
         }
       }
     },
@@ -162,7 +162,7 @@ module.exports = {
         'placement': 'main',
         'display': {
           'list': false,
-          'editor': true
+          'edit': true
         },
         'options': [
           {
@@ -197,7 +197,7 @@ module.exports = {
         'placement': 'main',
         'display': {
           'list': false,
-          'editor': true
+          'edit': true
         }
       }
     },
@@ -212,7 +212,7 @@ module.exports = {
       'publish': {
         'display': {
           'list': false,
-          'editor': true
+          'edit': true
         },
         'readonly': true
       }

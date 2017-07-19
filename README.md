@@ -1,6 +1,6 @@
 <img src="https://dadi.tech/assets/products/dadi-publish-full.png" alt="DADI Publish" height="65"/>
 
-[![coverage](https://img.shields.io/badge/coverage-8%25-red.svg?style=flat?style=flat-square)](https://github.com/dadi/publish)
+[![coverage](https://img.shields.io/badge/coverage-7%25-red.svg?style=flat?style=flat-square)](https://github.com/dadi/publish)
 [![Build Status](https://travis-ci.org/dadi/publish.svg?branch=master)](https://travis-ci.org/dadi/publish)
 
 ## Overview
@@ -8,10 +8,6 @@
 Publish provides beautiful editorial interfaces for the management of content within DADI API.
 
 It is part of DADI, a suite of components covering the full development stack, built for performance and scale.
-
-## Documentation
-
-Documentation can be found at the [DADI Docs site](http://docs.dadi.tech/publish/).
 
 ## Licence
 
