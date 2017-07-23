@@ -28,11 +28,9 @@ const Server = function () {
   this.ssl = new SSL()
     .useDomains(config.get('server.ssl.domains'))
     .certificateDir(config.get('server.ssl.dir'), true)
-    .useEnvironment('production')
-    .provider('letsencrypt')
+    // .useEnvironment(config.get('server.ssl.env'))
     .registerTo(config.get('server.ssl.email'))
-    .autoRenew(true)
-    .byteLength(3072)
+    // .autoRenew(true)
 }
 
 Server.prototype.getOptions = function (override = {}) {
@@ -75,6 +73,7 @@ Server.prototype.createBaseServer = function () {
   // If we're using ssl, start a server on port 443
   const options = config.get('server.ssl.enabled') ? this.getOptions({
     port: 443,
+    secure: true,
     key: this.ssl.getKey(),
     certificate: this.ssl.getCertificate()
   }) : this.getOptions()
