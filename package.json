@@ -172,6 +172,7 @@
       "^react$": "preact-compat",
       "^react-dom$": "preact-compat",
       "request-promise": "<rootDir>/test/mocks/request-promise",
+      "x509": "<rootDir>/test/mocks/x509",
       "fetch": "unfetch/polyfill"
     },
     "moduleFileExtensions": [

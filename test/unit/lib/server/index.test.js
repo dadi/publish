@@ -14,9 +14,9 @@ describe('Server', () => {
   })
 
   describe('Start server', () => {
-    it('', () => {
-      console.log(server.start)
-    })
+    // it('', () => {
+      
+    // })
   })
 })
 
