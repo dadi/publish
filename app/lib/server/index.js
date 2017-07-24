@@ -5,7 +5,7 @@ const restify = require('restify')
 const config = require(paths.config)
 const Router = require(paths.lib.router)
 const Socket = require(`${paths.lib.server}/socket`)
-const SSL = require('ssl')
+const SSL = require('@dadi/ssl')
 const log = require('@dadi/logger')
 const md5 = require('md5')
 
@@ -30,7 +30,6 @@ const Server = function () {
     .certificateDir(config.get('server.ssl.dir'), true)
     // .useEnvironment(config.get('server.ssl.env'))
     .registerTo(config.get('server.ssl.email'))
-    // .autoRenew(true)
 }
 
 Server.prototype.getOptions = function (override = {}) {
