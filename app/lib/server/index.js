@@ -58,7 +58,7 @@ Server.prototype.start = function () {
   let listenerQueue = []
     // Inject API UUIDs in config
   config.set('apis', getApisBlockWithUUIDs(config.get('apis')))
-  listenerQueue.push(this.createBaseServer())
+  listenerQueue.push(this.createPrimaryServer())
   // If we're using ssl, create a server on port 80 to handle
   // redirects and challenge authentication
   if (config.get('server.ssl.enabled')) {
@@ -68,7 +68,15 @@ Server.prototype.start = function () {
   return Promise.all(listenerQueue)
 }
 
-Server.prototype.createBaseServer = function () {
+Server.prototype.restartPrimaryServer = function () {
+  if (this.primaryServer) {
+    this.primaryServer.close((server) => {
+      this.createPrimaryServer()
+    })
+  }
+}
+
+Server.prototype.createPrimaryServer = function () {
   // If we're using ssl, start a server on port 443
   const options = config.get('server.ssl.enabled') ? this.getOptions({
     port: 443,
@@ -77,19 +85,15 @@ Server.prototype.createBaseServer = function () {
     certificate: this.ssl.getCertificate()
   }) : this.getOptions()
 
-  const server = restify.createServer(options)
+  this.primaryServer = restify.createServer(options)
 
   // Add all routes to server
-  new Router(server).addRoutes()
-
-  if (config.get('server.ssl.enabled')) {
-    this.ssl.useSecureServer(server)
-  }
+  new Router(this.primaryServer).addRoutes()
 
   // Add listeners and initialise socket
-  return this.addListeners(server, options)
+  return this.addListeners(this.primaryServer, options)
     .then(() => {
-      this.socket = new Socket(server)
+      this.socket = new Socket(this.primaryServer)
     })
 }
 
@@ -110,6 +114,9 @@ Server.prototype.createRedirectServer = function () {
 Server.prototype.addSSL = function (server) {
   this.ssl
     .useListeningServer(server)
+    .secureServerRestart(() => {
+      this.restartPrimaryServer()
+    })
     .start()
 }
 
@@ -129,7 +136,7 @@ Server.prototype.addListeners = function (server, options) {
  * @return {Restify} Restify server instance
  */
 Server.prototype.addServerListener = function (server, port, host) {
-  return new Promise((resolve, reject) => server
+  return new Promise(resolve => server
     .listen(Number(port), host, resolve))
 }
 
