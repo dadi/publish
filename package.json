@@ -49,7 +49,7 @@
     "@dadi/api-wrapper-core": "^1.6.0",
     "@dadi/logger": "^1.1.4",
     "@dadi/passport": "^1.2.0",
-    "@dadi/ssl": "dadi/ssl#feat/server-restart",
+    "@dadi/ssl": "^1.1.0",
     "archy": "^1.0.0",
     "autoprefixer": "^6.7.3",
     "aws-sdk": "^2.19.0",
