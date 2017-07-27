@@ -142,12 +142,12 @@ class App extends Component {
 
         <DocumentEditView
           authenticate
-          path="/:group/:collection/document/edit/:documentId?/:section?"
+          path="/:group/:collection/document/edit/:documentId/:section?"
         />
 
         <DocumentEditView
           authenticate
-          path="/:collection/document/edit/:documentId?/:section?"
+          path="/:collection/document/edit/:documentId/:section?"
         />
 
         <DocumentListView
