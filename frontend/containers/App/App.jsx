@@ -1,5 +1,6 @@
 import {Component, h} from 'preact'
 import {Router, route} from 'preact-router'
+import Match from 'preact-router/match'
 import {connect} from 'preact-redux'
 import {bindActionCreators} from 'redux'
 import Socket from 'lib/socket'
@@ -106,6 +107,7 @@ class App extends Component {
 
   render() {
     const {history, state} = this.props
+    let documentEditRoutes = null
 
     if (
       state.api.status === Constants.STATUS_FAILED &&
@@ -113,6 +115,15 @@ class App extends Component {
     ) {
       return (
         <ErrorView type={Constants.STATUS_FAILED} />
+      )
+    }
+
+    if (state.api.apis.length) {
+      return (
+        <HomeView
+          authenticate
+          path="/articles/document/edit/593fee8cd8ab693784c139ac/meta/value/another"
+        />
       )
     }
 
@@ -139,7 +150,6 @@ class App extends Component {
           authenticate
           path="/:collection/document/edit/:documentId?/select/:referencedField?/:page?"
         />
-
         <DocumentEditView
           authenticate
           path="/:group/:collection/document/edit/:documentId/:section?"

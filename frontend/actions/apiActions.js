@@ -1,6 +1,7 @@
 import * as Constants from 'lib/constants'
 import * as Types from 'actions/actionTypes'
 import apiBridgeClient from 'lib/api-bridge-client'
+import {buildCollectionUrls} from 'lib/collection-urls'
 
 export function loadApis () {
   return (dispatch, getState) => {
@@ -50,6 +51,9 @@ export function loadApis () {
               _isAuthApi: isAuthApi,
               collections: mergedCollections
             })
+
+            // Create URL structures for document edits
+            buildCollectionUrls(apiWithCollections.collections)
 
             apisWithCollections.push(apiWithCollections)
             apisToProcess--
