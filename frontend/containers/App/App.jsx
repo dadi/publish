@@ -119,7 +119,7 @@ class App extends Component {
     }
 
     if (state.api.paths.length) {
-      console.log(state.api.paths)
+      // console.log(state.api.paths)
     //   return (
     //     <HomeView
     //       authenticate
@@ -141,6 +141,13 @@ class App extends Component {
         <PasswordResetView
           path="/reset"
         />
+
+        {state.api.paths && (
+          <HomeView
+            authenticate
+            path="/"
+          />
+        )}
 
         <DocumentListView
           authenticate

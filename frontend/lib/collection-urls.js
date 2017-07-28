@@ -1,5 +1,7 @@
 'use strict'
 
+import {reduce} from 'lib/util/array'
+
 export function buildCollectionUrls (collections) {
   return reduce(collections.map(collection => {
     const slug = collection.slug
@@ -26,11 +28,6 @@ export function buildUrls (pathChains) {
         .map((piece, key) => reduce(subDocumentPaths(extendiblePrimaryPaths, chainElements, key)))
         .filter(Boolean))
     }))
-}
-
-// Reduce multiple arrays into single concatinated array.
-export function reduce (arrays) {
-  return arrays.reduce((a, b) => a.concat(b))
 }
 
 export function primaryDocumentPaths (collection) {
