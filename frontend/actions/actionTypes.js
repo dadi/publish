@@ -27,6 +27,7 @@ export const UPDATE_LOCAL_USER = 'UPDATE_LOCAL_USER'
 export const SET_API = 'SET_API'
 export const SET_API_LIST = 'SET_API_LIST'
 export const SET_API_STATUS = 'SET_API_STATUS'
+export const SET_COLLECTION_PATHS = 'SET_COLLECTION_PATHS'
 
 //
 // Documents

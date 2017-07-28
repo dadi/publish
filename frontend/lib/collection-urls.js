@@ -1,10 +1,65 @@
 'use strict'
 
 export function buildCollectionUrls (collections) {
-  collections.map(collection => {
-    const parts = getFieldCollections(collections, collection, collection.slug, [collection.slug])
+  return reduce(collections.map(collection => {
+    const slug = collection.slug
+    const pathChains = getFieldCollections(collections, collection, slug, [slug])
 
-    console.log('parts', parts)
+    return buildUrls(pathChains)
+  }))
+}
+
+export function buildUrls (pathChains) {
+  const primaryPathChain = pathChains.shift()
+  const primaryPaths = primaryDocumentPaths(primaryPathChain)
+  const extendiblePrimaryPaths = primaryExtendibleDocumentPaths(primaryPathChain)
+
+  if (!pathChains.length) return primaryPaths
+
+  return reduce(pathChains
+    .map(chain => {
+      const chainElements = chain.split('.')
+
+      chainElements.shift() // Remove first part of chain
+
+      return reduce(chainElements
+        .map((piece, key) => reduce(subDocumentPaths(extendiblePrimaryPaths, chainElements, key)))
+        .filter(Boolean))
+    }))
+}
+
+// Reduce multiple arrays into single concatinated array.
+export function reduce (arrays) {
+  return arrays.reduce((a, b) => a.concat(b))
+}
+
+export function primaryDocumentPaths (collection) {
+  return [
+    `/:group/${collection}/document/edit/:documentId/:section?`,
+    `/${collection}/document/edit/:documentId/:section?`
+  ]
+}
+
+export function primaryExtendibleDocumentPaths (collection) {
+  return [
+    `/:group/${collection}/document/edit/:documentId`,
+    `/${collection}/document/edit/:documentId`
+  ]
+}
+
+export function subDocumentPaths (primaryPaths, elements, key) {
+  return primaryPaths.map(primaryPath => {
+    const resolvedSubDocumentPaths = [
+      `${primaryPath}/select/${elements[key]}`,
+      `${primaryPath}/new/${elements[key]}`,
+      `${primaryPath}/edit/${elements[key]}/:childDocumentId`
+    ]
+
+    if (key + 1 < elements.length) {
+      return reduce(subDocumentPaths(resolvedSubDocumentPaths, elements, key + 1))
+    }
+
+    return resolvedSubDocumentPaths
   })
 }
 
@@ -14,7 +69,7 @@ export function getFieldCollections (collections, collection, previous, parts) {
   if (!fields.length) return parts
 
   const referenceInstances = fields.map(field => {
-    if (field.settings.collection === 'mediaStore') return [`${previous}.mediaCollection`]
+    if (field.settings.collection === 'mediaStore') return [`${previous}.mediaStore`]
     const subCollection = getCollectionBySlug(collections, field.settings.collection)
     const previousSlug = `${previous}.${field.settings.collection}`
 

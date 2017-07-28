@@ -46,14 +46,14 @@ export function loadApis () {
               return !(collection.settings.publish && collection.settings.publish.hidden)
             })
 
+            // Store collection paths
+            dispatch(setCollectionPaths(buildCollectionUrls(mergedCollections)))
+
             const apiWithCollections = Object.assign({}, api, {
               _failedCollections: apiCollections.length - mergedCollections.length,
               _isAuthApi: isAuthApi,
               collections: mergedCollections
             })
-
-            // Create URL structures for document edits
-            buildCollectionUrls(apiWithCollections.collections)
 
             apisWithCollections.push(apiWithCollections)
             apisToProcess--
@@ -77,6 +77,13 @@ export function setApiList (apis) {
   return {
     apis,
     type: Types.SET_API_LIST,
+  }
+}
+
+export function setCollectionPaths (paths) {
+  return {
+    paths,
+    type: Types.SET_COLLECTION_PATHS
   }
 }
 

@@ -118,13 +118,14 @@ class App extends Component {
       )
     }
 
-    if (state.api.apis.length) {
-      return (
-        <HomeView
-          authenticate
-          path="/articles/document/edit/593fee8cd8ab693784c139ac/meta/value/another"
-        />
-      )
+    if (state.api.paths.length) {
+      console.log(state.api.paths)
+    //   return (
+    //     <HomeView
+    //       authenticate
+    //       path="/articles/document/edit/593fee8cd8ab693784c139ac/meta/value/another"
+    //     />
+    //   )
     }
 
     return (

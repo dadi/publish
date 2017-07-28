@@ -5,6 +5,7 @@ import * as Types from 'actions/actionTypes'
 
 const initialState = {
   apis: [],
+  paths: [],
   status: Constants.STATUS_IDLE
 }
 
@@ -24,6 +25,13 @@ export default function api (state = initialState, action = {}) {
       return {
         ...state,
         status: action.status
+      }
+
+    // Action: Set collection paths
+    case Types.SET_COLLECTION_PATHS:
+      return {
+        ...state,
+        paths: action.paths
       }
 
     // Action: user signed out
