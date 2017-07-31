@@ -107,6 +107,7 @@ class App extends Component {
 
   render() {
     const {history, state} = this.props
+    const createPaths = state.api.paths ? state.api.paths.create : []
     const editPaths = state.api.paths ? state.api.paths.edit : []
     const listPaths = state.api.paths ? state.api.paths.list : []
     let documentEditRoutes = null
@@ -133,6 +134,13 @@ class App extends Component {
         <PasswordResetView
           path="/reset"
         />
+
+        {listPaths.map(path => (
+          <DocumentListView
+            authenticate
+            path={path}
+          />
+        ))}
         
         {editPaths.map(path => (
           <DocumentEditView
@@ -141,32 +149,12 @@ class App extends Component {
           />
         ))}
 
-        {listPaths.map(path => (
-          <DocumentListView
+        {createPaths.map(path => (
+          <DocumentCreateView
             authenticate
             path={path}
           />
         ))}
-
-        <DocumentCreateView
-          authenticate
-          path="/:group/:collection/document/new/:section?"
-        />
-
-        <DocumentCreateView
-          authenticate
-          path="/:collection/document/new/:section?"
-        />
-
-        <DocumentListView
-          authenticate
-          path="/:group/:collection/documents/:page?"
-        />
-
-        <DocumentListView
-          authenticate
-          path="/:collection/documents/:page?"
-        />
 
         <ProfileEditView
           authenticate

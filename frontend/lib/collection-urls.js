@@ -1,23 +1,31 @@
 'use strict'
 
-import {reduce} from 'lib/util/array'
+import {reduce, unique} from 'lib/util/array'
 
 export function buildCollectionUrls (collections) {
+  const createViewUrls = reduce(collections.map(collection => {
+    const slug = collection.slug
+    const pathChains = getFieldCollections(collections, collection, slug, [slug])
+
+    return buildUrls(pathChains, 'create')
+  })).filter(unique)
+
   const editViewUrls = reduce(collections.map(collection => {
     const slug = collection.slug
     const pathChains = getFieldCollections(collections, collection, slug, [slug])
 
     return buildUrls(pathChains, 'edit')
-  }))
+  })).filter(unique)
 
   const listViewUrls = reduce(collections.map(collection => {
     const slug = collection.slug
     const pathChains = getFieldCollections(collections, collection, slug, [slug])
 
     return buildUrls(pathChains, 'list')
-  }))
+  })).filter(unique)
 
   return {
+    create: createViewUrls,
     edit: editViewUrls,
     list: listViewUrls
   }
@@ -25,7 +33,7 @@ export function buildCollectionUrls (collections) {
 
 export function buildUrls (pathChains, type) {
   const primaryPathChain = pathChains.shift()
-  const primaryPaths = primaryDocumentPaths(primaryPathChain, type)
+  const primaryPaths = primaryDocumentPaths(type)
   const extendiblePrimaryPaths = primaryExtendibleDocumentPaths(primaryPathChain)
 
   if (!pathChains.length) return primaryPaths
@@ -46,13 +54,24 @@ export function buildUrls (pathChains, type) {
     }))
 }
 
-export function primaryDocumentPaths (collection, type) {
-  return [
-    '/:group/:collection/document/edit/:documentId/:section?',
-    '/:collection/document/edit/:documentId/:section?',
-    '/:group/:collection/document/new/:section?',
-    '/:collection/document/new/:section?'
-  ]
+export function primaryDocumentPaths (type) {
+  switch (type) {
+    case 'create':
+      return [
+        '/:group/:collection/document/new/:section?',
+        '/:collection/document/new/:section?'
+      ]
+    case 'edit':
+      return [
+        '/:group/:collection/document/edit/:documentId/:section?',
+        '/:collection/document/edit/:documentId/:section?'
+      ]
+    case 'list':
+      return [
+        '/:group/:collection/documents/:page?',
+        '/:collection/documents/:page?'
+      ]
+  }
 }
 
 export function primaryExtendibleDocumentPaths (collection) {
@@ -64,22 +83,44 @@ export function primaryExtendibleDocumentPaths (collection) {
   ]
 }
 
-export function subDocumentPaths (primaryPaths, elements, key, type) {
-  return primaryPaths.map(primaryPath => {
-    const resolvedSubDocumentPaths = type === 'edit' ? [
-      `${primaryPath}/new/:referencedField/`,
-      `${primaryPath}/edit/:referencedField/:referenceDocumentId`
-    ] : [
-      `${primaryPath}/select/:referencedField`,
-      `${primaryPath}/select/:referencedField/:page?`
-    ]
+export function subDocumentPaths (previousPaths, elements, key, type) {
+  return previousPaths.map(previousPath => {
+    const resolvePaths = subDocumentPathForType(previousPath, type)
 
     if (key + 1 < elements.length) {
-      return reduce(subDocumentPaths(resolvedSubDocumentPaths, elements, key + 1))
+      const documentPaths = (type === 'list') ? convertListToEdit(resolvePaths) : resolvePaths
+
+      return reduce(subDocumentPaths(documentPaths, elements, key + 1, type))
     }
 
-    return resolvedSubDocumentPaths
+    return resolvePaths
   })
+}
+
+export function subDocumentPathForType (previousPath, type) {
+  switch (type) {
+    case 'create':
+
+      return [`${previousPath}/new/:referencedField`]
+    case 'edit':
+
+      return [`${previousPath}/edit/:referencedField/:referenceDocumentId`]
+    case 'list':
+
+      return [
+        `${previousPath}/select/:referencedField`,
+        `${previousPath}/select/:referencedField/:page?`
+      ]
+  }
+}
+
+export function convertListToEdit (listUrls) {
+  return listUrls.map(listUrl => {
+    return listUrl
+      .replace('/select', '')
+      .replace(':page?', ':referenceDocumentId')
+      .replace('edit/:referencedField/select', 'edit/:referencedField/:referenceDocumentId/select')
+  }).filter(Boolean)
 }
 
 export function getFieldCollections (collections, collection, previous, parts) {
@@ -116,4 +157,8 @@ export function filterReferenceFields (collection) {
   return Object.keys(collection.fields)
     .filter(key => collection.fields[key].type === 'Reference')
     .map(key => Object.assign({key}, collection.fields[key]))
+}
+
+export function dismantleListUrl () {
+  console.log('dismantleListUrl')
 }
