@@ -5,7 +5,7 @@ import * as Types from 'actions/actionTypes'
 
 const initialState = {
   apis: [],
-  paths: [],
+  paths: null,
   status: Constants.STATUS_IDLE
 }
 

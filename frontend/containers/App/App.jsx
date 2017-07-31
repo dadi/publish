@@ -107,6 +107,8 @@ class App extends Component {
 
   render() {
     const {history, state} = this.props
+    const editPaths = state.api.paths ? state.api.paths.edit : []
+    const listPaths = state.api.paths ? state.api.paths.list : []
     let documentEditRoutes = null
 
     if (
@@ -116,16 +118,6 @@ class App extends Component {
       return (
         <ErrorView type={Constants.STATUS_FAILED} />
       )
-    }
-
-    if (state.api.paths.length) {
-      // console.log(state.api.paths)
-    //   return (
-    //     <HomeView
-    //       authenticate
-    //       path="/articles/document/edit/593fee8cd8ab693784c139ac/meta/value/another"
-    //     />
-    //   )
     }
 
     return (
@@ -141,42 +133,20 @@ class App extends Component {
         <PasswordResetView
           path="/reset"
         />
-
-        {state.api.paths && (
-          <HomeView
+        
+        {editPaths.map(path => (
+          <DocumentEditView
             authenticate
-            path="/"
+            path={path}
           />
-        )}
+        ))}
 
-        <DocumentListView
-          authenticate
-          path="/:group/:collection/document/edit/:documentId?/select/:referencedField?/:page?"
-        />
-
-        <DocumentListView
-          authenticate
-          path="/:collection/document/edit/:documentId?/select/:referencedField?/:page?"
-        />
-        <DocumentEditView
-          authenticate
-          path="/:group/:collection/document/edit/:documentId/:section?"
-        />
-
-        <DocumentEditView
-          authenticate
-          path="/:collection/document/edit/:documentId/:section?"
-        />
-
-        <DocumentListView
-          authenticate
-          path="/:group/:collection/document/new/:section?/:referencedField?/:page?"
-        />
-
-        <DocumentListView
-          authenticate
-          path="/:collection/document/new/:section?/:referencedField?/:page?"
-        />
+        {listPaths.map(path => (
+          <DocumentListView
+            authenticate
+            path={path}
+          />
+        ))}
 
         <DocumentCreateView
           authenticate

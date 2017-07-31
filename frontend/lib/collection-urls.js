@@ -3,17 +3,29 @@
 import {reduce} from 'lib/util/array'
 
 export function buildCollectionUrls (collections) {
-  return reduce(collections.map(collection => {
+  const editViewUrls = reduce(collections.map(collection => {
     const slug = collection.slug
     const pathChains = getFieldCollections(collections, collection, slug, [slug])
 
-    return buildUrls(pathChains)
+    return buildUrls(pathChains, 'edit')
   }))
+
+  const listViewUrls = reduce(collections.map(collection => {
+    const slug = collection.slug
+    const pathChains = getFieldCollections(collections, collection, slug, [slug])
+
+    return buildUrls(pathChains, 'list')
+  }))
+
+  return {
+    edit: editViewUrls,
+    list: listViewUrls
+  }
 }
 
-export function buildUrls (pathChains) {
+export function buildUrls (pathChains, type) {
   const primaryPathChain = pathChains.shift()
-  const primaryPaths = primaryDocumentPaths(primaryPathChain)
+  const primaryPaths = primaryDocumentPaths(primaryPathChain, type)
   const extendiblePrimaryPaths = primaryExtendibleDocumentPaths(primaryPathChain)
 
   if (!pathChains.length) return primaryPaths
@@ -25,31 +37,41 @@ export function buildUrls (pathChains) {
       chainElements.shift() // Remove first part of chain
 
       return reduce(chainElements
-        .map((piece, key) => reduce(subDocumentPaths(extendiblePrimaryPaths, chainElements, key)))
+        .map((piece, key) => {
+          const subPaths = subDocumentPaths(extendiblePrimaryPaths, chainElements, key, type)
+
+          return reduce(subPaths)
+        })
         .filter(Boolean))
     }))
 }
 
-export function primaryDocumentPaths (collection) {
+export function primaryDocumentPaths (collection, type) {
   return [
-    `/:group/${collection}/document/edit/:documentId/:section?`,
-    `/${collection}/document/edit/:documentId/:section?`
+    '/:group/:collection/document/edit/:documentId/:section?',
+    '/:collection/document/edit/:documentId/:section?',
+    '/:group/:collection/document/new/:section?',
+    '/:collection/document/new/:section?'
   ]
 }
 
 export function primaryExtendibleDocumentPaths (collection) {
   return [
-    `/:group/${collection}/document/edit/:documentId`,
-    `/${collection}/document/edit/:documentId`
+    '/:group/:collection/document/edit/:documentId',
+    '/:collection/document/edit/:documentId',
+    '/:group/:collection/document/new',
+    '/:collection/document/new'
   ]
 }
 
-export function subDocumentPaths (primaryPaths, elements, key) {
+export function subDocumentPaths (primaryPaths, elements, key, type) {
   return primaryPaths.map(primaryPath => {
-    const resolvedSubDocumentPaths = [
-      `${primaryPath}/select/${elements[key]}`,
-      `${primaryPath}/new/${elements[key]}`,
-      `${primaryPath}/edit/${elements[key]}/:childDocumentId`
+    const resolvedSubDocumentPaths = type === 'edit' ? [
+      `${primaryPath}/new/:referencedField/`,
+      `${primaryPath}/edit/:referencedField/:referenceDocumentId`
+    ] : [
+      `${primaryPath}/select/:referencedField`,
+      `${primaryPath}/select/:referencedField/:page?`
     ]
 
     if (key + 1 < elements.length) {
