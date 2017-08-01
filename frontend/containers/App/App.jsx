@@ -110,7 +110,6 @@ class App extends Component {
     const createPaths = state.api.paths ? state.api.paths.create : []
     const editPaths = state.api.paths ? state.api.paths.edit : []
     const listPaths = state.api.paths ? state.api.paths.list : []
-    let documentEditRoutes = null
 
     if (
       state.api.status === Constants.STATUS_FAILED &&

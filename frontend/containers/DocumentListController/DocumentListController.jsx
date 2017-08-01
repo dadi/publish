@@ -81,8 +81,8 @@ class DocumentListController extends Component {
       && currentCollection 
       && Object.keys(filters).length === Object.keys(currentCollection.fields).length
       const newHref = buildUrl(group, collection, 'document', 'new')
-      console.log(state.router.locationBeforeTransitions.pathname)
-      dismantleListUrl()
+
+      dismantleListUrl('list', state.router.locationBeforeTransitions.pathname)
     // const newHref = referencedField 
       // ? buildUrl(group, collection, 'new', referencedField) 
       // : buildUrl(group, collection, 'document', 'new')

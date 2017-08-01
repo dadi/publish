@@ -24,6 +24,12 @@ export function buildCollectionUrls (collections) {
     return buildUrls(pathChains, 'list')
   })).filter(unique)
 
+  console.log({
+    create: createViewUrls,
+    edit: editViewUrls,
+    list: listViewUrls
+  })
+
   return {
     create: createViewUrls,
     edit: editViewUrls,
@@ -38,6 +44,7 @@ export function buildUrls (pathChains, type) {
 
   if (!pathChains.length) return primaryPaths
 
+  // All reference fields are mapped.
   return reduce(pathChains
     .map(chain => {
       const chainElements = chain.split('.')
@@ -101,7 +108,21 @@ export function subDocumentPathForType (previousPath, type) {
   switch (type) {
     case 'create':
 
-      return [`${previousPath}/new/:referencedField`]
+      const paths = [
+        `${previousPath}/:referencedField/new`
+      ]
+
+      if (previousPath.indexOf(':referencedField/new') >= 0) {
+        const nestedCreate = previousPath
+          .replace(
+            ':referencedField/new',
+            ':referencedField/edit/:referenceDocumentId/:referencedField/new'
+          )
+
+        paths.push(nestedCreate)
+      }
+
+      return paths
     case 'edit':
 
       return [`${previousPath}/edit/:referencedField/:referenceDocumentId`]
@@ -118,7 +139,7 @@ export function convertListToEdit (listUrls) {
   return listUrls.map(listUrl => {
     return listUrl
       .replace('/select', '')
-      .replace(':page?', ':referenceDocumentId')
+      .replace(':page?', 'edit/:referenceDocumentId')
       .replace('edit/:referencedField/select', 'edit/:referencedField/:referenceDocumentId/select')
   }).filter(Boolean)
 }
@@ -159,6 +180,19 @@ export function filterReferenceFields (collection) {
     .map(key => Object.assign({key}, collection.fields[key]))
 }
 
-export function dismantleListUrl () {
-  console.log('dismantleListUrl')
+export function dismantleListUrl (type, path) {
+  const normPath = path
+    .replace(/^\/|\/$/g, '')
+
+  if (type === 'list') {
+    listPaths(normPath)
+  }
+}
+
+export function listPaths (path) {
+  const parts = path
+    .split('select')
+    .map(part => part.replace(/^\/|\/$/g, ''))
+
+  console.log(parts)
 }
