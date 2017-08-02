@@ -1,6 +1,6 @@
 'use strict'
 
-import {reduce, unique} from 'lib/util/array'
+import {reduce} from 'lib/util/array'
 
 const hiddenCollections = ['mediaStore']
 
