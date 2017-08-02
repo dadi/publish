@@ -4,80 +4,55 @@ import {reduce, unique} from 'lib/util/array'
 
 const hiddenCollections = ['mediaStore']
 
-const params = {
-  collection: ':collection',
-  docId: ':documentId',
-  fieldRef: ':referencedField',
-  fieldRefId: ':referencedFieldId',
-  group: ':group',
-  page: ':page',
-  pos: ':pos',
-  section: ':section'
-}
-
-const baseVarients = [
-  `/${params.group}/:collection/document`,
-  `/${params.collection}/document`
+const varients = [
+  '/:group/:collection/document',
+  '/:collection/document'
 ]
 
-const protocol = {
+const map = {
   create: {
-    ext: {
-      extend: `new/${params.fieldRef}/${params.pos}`,
-      initial: `new/${params.fieldRef}/${params.pos}`
-    },
-    extendable: {
-      create: true,
-      edit: false,
-      list: true
-    },
-    prim: {
-      extend: 'new',
-      initial: `new/${params.section}?`
-    }
+    create: true,
+    edit: true,
+    list: true
   },
   edit: {
-    ext: {
-      extend: `${params.fieldRef}`,
-      initial: `${params.fieldRef}/${params.fieldRefId}/${params.section}?`
-    },
-    extendable: {
-      create: true,
-      edit: true,
-      list: true
-    },
-    prim: {
-      extend: `edit/${params.docId}`,
-      initial: `edit/${params.docId}/${params.section}?`
-    }
+    create: true,
+    edit: true,
+    list: true
   },
   list: {
-    ext: {
-      extend: `select/${params.fieldRef}`,
-      initial: `select/${params.fieldRef}/${params.page}?`
-    },
-    extendable: {
-      create: false,
-      edit: false,
-      list: false
-    },
-    prim: {
-      initial: `${params.page}?`
-    }
+    create: false,
+    edit: false,
+    list: false
+  }
+}
+
+const parts = {
+  create: {
+    extend: ':section?',
+    primary: ':collection/document/new',
+    secondary: ':referencedField/new/:pos'
+  },
+  edit: {
+    extend: ':section?',
+    primary: ':collection/document/edit/:documentId',
+    secondary: ':referencedField/:referencedId'
+  },
+  list: {
+    extend: ':page?',
+    primary: ':collection/document',
+    secondary: 'select/:referencedField'
   }
 }
 
 export function buildCollectionUrls (collections) {
   const depth = getDeepestCollection(collections)
-  const edit = getPrimaryUrls(depth, 'edit')
-  const list = getPrimaryUrls(depth, 'list')
-  const create = getPrimaryUrls(depth, 'create')
 
-  console.log({
-    create,
-    edit,
-    list,
-  })
+  const depthMap = mapToDepth(depth, Object.keys(map))
+
+  const create = appendGroup(buildRoutes(depthMap, 'create'))
+  const edit = appendGroup(buildRoutes(depthMap, 'edit'))
+  const list = appendGroup(buildRoutes(depthMap, 'list'))
 
   return {
     create,
@@ -86,67 +61,53 @@ export function buildCollectionUrls (collections) {
   }
 }
 
-export function getPrimaryUrls (depth, type) {
-  const routes = baseVarients.map(extension => {
-    const base = `${extension}/${protocol[type].prim.initial}`
-    const sub = getSubUrls(base, type, depth).filter(unique)
-
-    return [base].concat(sub)
-  })
-
-  return reduce(routes)
+export function appendGroup (routes) {
+  return routes.concat(routes.map(route => `:group/${route}`))
 }
 
-export function getSubUrls (base, type, depth, level = 0) {
-  const proto = protocol[type]
-  let out = []
+export function buildRoutes (maps, type) {
+  return maps
+    .filter(map => map.split('.').pop() === type)
+    .map(map => {
+      return map
+        .split('.')
+        .map((part, ind, arr) => {
+          let out = (ind === 0) ? parts[part].primary : parts[part].secondary
 
-  if (level === 0) {
-    base = appendBase(base, type, proto.ext.initial)
-  } else {
-    base = appendSecondary(base, type, proto.ext.initial)
-  }
+          if (ind === 0) return parts[part].primary
+          if (ind === arr.length - 1) out += parts[part].extend
 
-  if (proto.extendable[type]) {
-    const secondaryValue = `${base}/${proto.ext.initial}`
-
-    out.push(secondaryValue)
-  }
-
-  if (level < depth - 1) {
-    const alternates = getAlternates(base, type, proto.ext.initial, level)
-
-    return out.concat(alternates)
-  }
-
-  return out
-}
-
-export function getAlternates (base, type, ext, level) {
-  return Object.keys(protocol)
-    .filter(key => key !== type)
-    .map(subType => {
-      const extension = level > 0 ? protocol[subType].ext : protocol[subType].prim
-
-      return protocol[subType].extendable[type] ? `${base}/${extension.extend}/${ext}` : null
+          return out
+        })
+        .join('/')
     })
-    .filter(Boolean)
 }
 
-export function appendBase (base, type) {
-  if (!protocol[type].extendable[type]) {
-    return base.replace(`/${protocol[type].prim.initial}`, '')
-  }
+export function mapToDepth (depth, nodes, limit = 0) {
+  if (limit === depth) return nodes
 
-  return base.replace(protocol[type].prim.initial, protocol[type].prim.extend)
+  const subNodes = reduce(nodes
+    .map(node => {
+      const subNodes = Object.keys(map)
+        .map(subNode => {
+          if (!canExtend(node, subNode)) return
+
+          return `${node}.${subNode}`
+        })
+        .filter(Boolean)
+
+      return subNodes.length ? mapToDepth(depth, subNodes, limit + 1) : subNodes
+    }))
+
+  return nodes.concat(subNodes)
 }
 
-export function appendSecondary (base, type) {
-  if (!protocol[type].extendable[type]) {
-    return base.replace(`/${protocol[type].ext.initial}`, '')
-  }
+export function canExtend (node, next) {
+  const prev = node
+    .split('.')
+    .pop()
 
-  return base.replace(protocol[type].ext.initial, protocol[type].ext.extend)
+  return map[prev][next]
 }
 
 export function getDeepestCollection (collections) {
