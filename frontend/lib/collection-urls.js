@@ -40,7 +40,7 @@ const parts = {
   },
   list: {
     extend: ':page?',
-    primary: ':collection/document',
+    primary: ':collection/documents',
     secondary: 'select/:referencedField'
   }
 }
@@ -74,8 +74,7 @@ export function buildRoutes (maps, type) {
         .map((part, ind, arr) => {
           let out = (ind === 0) ? parts[part].primary : parts[part].secondary
 
-          if (ind === 0) return parts[part].primary
-          if (ind === arr.length - 1) out += parts[part].extend
+          if (ind === arr.length - 1) out += `/${parts[part].extend}`
 
           return out
         })
