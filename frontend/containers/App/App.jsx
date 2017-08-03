@@ -225,12 +225,15 @@ class App extends Component {
 
     if (
       !state.user.authEnabled &&
-      (event.url === '/sign-in' || event.url === '/sign-out')
+      (event.url === '/sign-in')
     ) {
       return route('/')
     }
 
-    if (isAuthenticatedRoute && state.user.status !== Constants.STATUS_LOADED) {
+    if (
+      (isAuthenticatedRoute && state.user.status !== Constants.STATUS_LOADED) ||
+      event.url === '/sign-out'
+    ) {
       return route('/sign-in')
     }
   }
