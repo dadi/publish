@@ -31,10 +31,11 @@ const getAdditionalSchema = (dir, match) => {
 
 const getFrontendProps = (schema = {}, prev = {}) => {
   return Object.assign(prev,
-    ...Object.keys(schema).filter(key => Object.is(schema[key].availableInFrontend, true))
+    ...Object.keys(schema)
+    .filter(key => Object.is(schema[key].availableInFrontend, true))
     .map(key => {
       const val = getFrontendProps(schema[key], {})
-      return {[`${key}`]: Object.keys(val).length > 0 ? val : true}
+      return {[`${key}`]: (Object.keys(val).length > 0) ? val : true}
     })
   )
 }
@@ -47,12 +48,17 @@ const conf = convict(schema)
 
 conf.set('availableInFrontend', availableInFrontend)
 
-// Load environment dependent configuration
+// Load environment dependent configuration.
 const env = conf.get('env')
 try {
   conf.loadFile(`${paths.configDir}/config.${env}.json`)
 } catch (e) {
   console.log(`Failed to load config, dropping to defaults. Error: ${e}`)
+}
+
+// Force port 443 if ssl is enabled.
+if (conf.get('server.ssl.enabled')) {
+  conf.set('server.port', 443)
 }
 
 // Perform validation
