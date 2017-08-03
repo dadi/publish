@@ -8,9 +8,11 @@ const Room = require(`${paths.lib.server}/socket_auth/room`)
  */
 const Socket = function (app) {
   if (!app) return
+
   this.server = scServer.attach(app)
   this.server.on('connection', this.onConnection.bind(this))
   this.addMiddleware()
+
   return this
 }
 
@@ -22,6 +24,7 @@ const Socket = function (app) {
  */
 Socket.prototype.addMiddleware = function () {
   this.server.addMiddleware(this.server.MIDDLEWARE_PUBLISH_IN, this.onPublish)
+
   return this
 }
 
@@ -33,6 +36,7 @@ Socket.prototype.onConnection = function (socket) {
   if (!this.server || !socket) return
   new Auth().attach(this.server, socket)
   new Room().attach(this.server, socket)
+
   return this
 }
 
