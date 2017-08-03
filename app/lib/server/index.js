@@ -64,6 +64,7 @@ Server.prototype.start = function () {
   if (config.get('server.ssl.enabled')) {
     listenerQueue.push(this.createRedirectServer())
   }
+
   // Add all listeners
   return Promise.all(listenerQueue)
 }
