@@ -38,7 +38,6 @@ class App extends Component {
     const {actions, state} = this.props
 
     apiBridgeClient.registerProgressCallback(actions.registerNetworkCall)
-    ConnectionMonitor(2000).registerStatusChangeCallback(actions.setNetworkStatus)
 
     // We only load the config at this point if the user is already signed in
     // (existing session). Otherwise, it will be loaded upon successful login.
@@ -65,6 +64,14 @@ class App extends Component {
     const {actions, state} = this.props
     const previousState = previousProps.state
     const room = previousState.router.room
+
+    if (
+      (!previousProps.state.app.config && state.app.config) &&
+        state.app.config.server.healthcheck.enabled
+    ) {
+      ConnectionMonitor(state.app.config.server.healthcheck.frequency)
+        .registerStatusChangeCallback(actions.setNetworkStatus)
+    }
 
     // State change: user has signed in.
     if (
