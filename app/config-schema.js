@@ -197,6 +197,21 @@ module.exports = {
         format: String,
         default: 'publish@dadi.co'
       }
+    },
+    healthcheck: {
+      availableInFrontend: true,
+      enabled: {
+        availableInFrontend: true,
+        doc: 'Healthcheck is enabled',
+        format: Boolean,
+        default: true
+      },
+      frequency: {
+        availableInFrontend: true,
+        doc: 'Interval between checks (MS)',
+        format: Number,
+        default: 2000
+      }
     }
   },
   formats: {
