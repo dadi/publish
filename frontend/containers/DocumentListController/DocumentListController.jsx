@@ -10,7 +10,6 @@ import * as documentsActions from 'actions/documentsActions'
 
 import {buildUrl, createRoute, router} from 'lib/router'
 import {connectHelper} from 'lib/util'
-import {dismantleListUrl} from 'lib/collection-urls'
 
 import {getApiForUrlParams, getCollectionForUrlParams} from 'lib/collection-lookup'
 

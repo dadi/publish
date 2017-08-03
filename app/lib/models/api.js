@@ -4,7 +4,7 @@ const DadiAPI = require('@dadi/api-wrapper')
 
 const Api = function (options) {
   if (!options) return
-  return configure(options)
+  return this.configure(options)
 }
 
 /**
@@ -13,7 +13,7 @@ const Api = function (options) {
  * @param  {Object} conf Configuration settings object
  * @return {DadiAPI} Configure instance of DADI api-wrapper
  */
-const configure = ({host, port, credentials, version, database}) => {
+Api.prototype.configure = function ({host, port, credentials, version, database}) {
   return new DadiAPI({
     appId: 'DADI Publish',
     uri: host,

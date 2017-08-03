@@ -1,7 +1,6 @@
 import * as Constants from 'lib/constants'
 import * as Types from 'actions/actionTypes'
 import apiBridgeClient from 'lib/api-bridge-client'
-import {buildCollectionUrls} from 'lib/collection-urls'
 
 export function loadApis () {
   return (dispatch, getState) => {
@@ -46,9 +45,6 @@ export function loadApis () {
               return !(collection.settings.publish && collection.settings.publish.hidden)
             })
 
-            // Store collection paths
-            dispatch(setCollectionPaths(buildCollectionUrls(mergedCollections)))
-
             const apiWithCollections = Object.assign({}, api, {
               _failedCollections: apiCollections.length - mergedCollections.length,
               _isAuthApi: isAuthApi,
@@ -77,13 +73,6 @@ export function setApiList (apis) {
   return {
     apis,
     type: Types.SET_API_LIST,
-  }
-}
-
-export function setCollectionPaths (paths) {
-  return {
-    paths,
-    type: Types.SET_COLLECTION_PATHS
   }
 }
 

@@ -77,31 +77,33 @@ APIBridgeController.prototype.post = function (req, res, next) {
           payload.body = JSON.stringify(requestObject.body)
         }
 
-        return request(payload).then(response => {
-          return response.length ? JSON.parse(response) : response
-        }).catch(err => {
-          if (isBundle) {
-            console.log('(*) API Bridge error:', err)
+        return request(payload)
+          .then(response => response.length ? JSON.parse(response) : response)
+          .catch(err => {
+            if (isBundle) {
+              console.log('(*) API Bridge error:', err)
 
-            return Promise.resolve({
-              apiBridgeError: true
-            })
-          }
+              return Promise.resolve({
+                apiBridgeError: true
+              })
+            }
 
-          return Promise.reject(err)
-        })
+            return Promise.reject(err)
+          })
       }))
     })
-    Promise.all(queue).then(response => {
-      let output = isBundle ? response : response[0]
+    Promise.all(queue)
+      .then(response => {
+        let output = isBundle ? response : response[0]
 
-      res.end(JSON.stringify(output))
-    }).catch(err => {
-      console.log('(*) API Bridge error:', err)
+        res.end(JSON.stringify(output))
+      })
+      .catch(err => {
+        console.log('(*) API Bridge error:', err)
 
-      res.statusCode = 500
-      res.end(JSON.stringify(err))
-    })
+        res.statusCode = 500
+        res.end(JSON.stringify(err))
+      })
   } catch (err) {
     // console.log('err', err)
     res.statusCode = 500
