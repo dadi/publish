@@ -14,7 +14,6 @@ export default function syncRouteWithStore (history, store, {
   let currentLocation
   let initialLocation
   let isTimeTraveling
-
   let unsubscribeFromStore
   let unsubscribeFromHistory
 

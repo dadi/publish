@@ -73,7 +73,7 @@ class DocumentList extends Component {
     /**
      * When on a reference field, contains the ID of the parent document.
      */
-    parentDocumentId: proptypes.string,
+    documentId: proptypes.string,
 
     /**
      * The name of a reference field currently being edited.
@@ -110,6 +110,8 @@ class DocumentList extends Component {
     const currentPage = Number(page)
     const nextPage = currentPage + 1
     const previousPage = Math.abs(currentPage -1)
+
+    const links = this.getLinks()
 
     this.keyboard.on('cmd+right')
       .do(cmd => route(buildUrl(...onBuildBaseUrl(), nextPage)))
@@ -200,6 +202,48 @@ class DocumentList extends Component {
     return this.renderDocumentList()
   }
 
+  getLinks() {
+    const {state} = this.props
+    const {pathname} = state.router.locationBeforeTransitions
+    const {
+      create,
+      edit,
+      list
+    } = state.api.paths
+
+    const parts = pathname
+      .replace(/^\/|\/$/g, '')
+      .split('/')
+
+    // state.api.paths.list
+    const nextRoutes = list.map((path, pos) => {
+      // console.log('CHECK', path)
+      const match = path
+        .split('/')
+        .map((part, index) => {
+          const isVar = part.startsWith(':')
+          const isOptional = part.endsWith('?')
+          const varName = part
+            .replace(':', '')
+            .replace('?', '')
+
+          return (!isVar && (part === parts[index])) ||
+            (isVar && this.props[varName] === parts[index]) ||
+            isOptional            
+        })
+        .every(Boolean)
+
+        return match ? {
+          create: create[pos],
+          edit: edit[pos],
+          list: list[pos]
+        } : match
+
+    }).find(Boolean)
+
+    console.log('routes', nextRoutes)
+  }
+
   componentWillMount() {
     this.checkStatusAndFetch()
   }
@@ -231,7 +275,7 @@ class DocumentList extends Component {
       group,
       order,
       page,
-      parentDocumentId,
+      documentId,
       referencedField,
       sort,
       state
@@ -267,7 +311,7 @@ class DocumentList extends Component {
       count,
       filters: filterValue,
       page,
-      parentDocumentId,
+      documentId,
       parentCollection,
       referencedField,
       sortBy: sort,

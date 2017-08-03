@@ -114,6 +114,8 @@ class App extends Component {
   render() {
     const {history, state} = this.props
 
+    console.log(state.api.paths)
+
     if (
       state.api.status === Constants.STATUS_FAILED &&
       state.user.status === Constants.STATUS_LOADED

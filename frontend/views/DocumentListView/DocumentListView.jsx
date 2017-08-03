@@ -46,7 +46,7 @@ export default class DocumentListView extends Component {
             collection={collection}
             group={group}
             onBuildBaseUrl={this.handleBuildBaseUrl.bind(this)}
-            parentDocumentId={documentId}
+            documentId={documentId}
             referencedField={referencedField}
           /> : <Header />
         }
@@ -59,7 +59,7 @@ export default class DocumentListView extends Component {
               filter={filter}
               newFilter={newFilter}
               onAddNewFilter={this.handleAddNewFilter.bind(this)}
-              parentDocumentId={documentId}
+              documentId={documentId}
               referencedField={referencedField}
             />
 
@@ -71,7 +71,7 @@ export default class DocumentListView extends Component {
               onPageTitle={this.handlePageTitle}
               order={order}
               page={page}
-              parentDocumentId={documentId}
+              documentId={documentId}
               referencedField={referencedField}
               sort={sort}
             />
