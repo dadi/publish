@@ -33,7 +33,7 @@ const expectedConfig = {
   },
   server: {
     host: '0.0.0.0', 
-    port: 3000,
+    port: 443,
     healthcheck: {
       enabled: true,
       frequency: 2000
