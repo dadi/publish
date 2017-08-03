@@ -106,9 +106,6 @@ class App extends Component {
 
   render() {
     const {history, state} = this.props
-    const createPaths = state.api.paths ? state.api.paths.create : []
-    const editPaths = state.api.paths ? state.api.paths.edit : []
-    const listPaths = state.api.paths ? state.api.paths.list : []
 
     if (
       state.api.status === Constants.STATUS_FAILED &&
@@ -133,21 +130,21 @@ class App extends Component {
           path="/reset"
         />
 
-        {listPaths.map(path => (
+        {state.api.paths.list.map(path => (
           <DocumentListView
             authenticate
             path={path}
           />
         ))}
         
-        {editPaths.map(path => (
+        {state.api.paths.edit.map(path => (
           <DocumentEditView
             authenticate
             path={path}
           />
         ))}
 
-        {createPaths.map(path => (
+        {state.api.paths.create.map(path => (
           <DocumentCreateView
             authenticate
             path={path}
