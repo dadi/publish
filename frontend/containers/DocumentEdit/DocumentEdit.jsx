@@ -17,10 +17,11 @@ import * as routerActions from 'actions/routerActions'
 import * as fieldComponents from 'lib/field-components'
 
 import APIBridge from 'lib/api-bridge-client'
-import {buildUrl, createRoute} from 'lib/router'
+import {buildUrl} from 'lib/router'
 import {connectHelper, filterHiddenFields} from 'lib/util'
 import {Format} from 'lib/util/string'
 import {getApiForUrlParams, getCollectionForUrlParams} from 'lib/collection-lookup'
+import {DocumentRoutes} from 'lib/document-routes'
 
 import ErrorMessage from 'components/ErrorMessage/ErrorMessage'
 import SubNavItem from 'components/SubNavItem/SubNavItem'
@@ -106,6 +107,7 @@ class DocumentEdit extends Component {
       referencedField,
       useApi: currentApi
     })
+    const docRoutes = new DocumentRoutes(this.props)
     const method = documentId ? 'edit' : 'new'
 
     if (typeof onPageTitle === 'function') {
@@ -123,7 +125,19 @@ class DocumentEdit extends Component {
           const firstSection = fields.sections[0]
           const sectionUrlBase = onBuildBaseUrl()
 
-          route(buildUrl(...sectionUrlBase, documentId, firstSection.slug))
+          // Redirect to first edit section
+          if (method === 'edit') {
+            route(docRoutes.renderEditRoute({
+              collection,
+              documentId,
+              section: firstSection.slug
+            }))
+          } else {
+            route(docRoutes.renderCreateRoute({
+              collection,
+              section: firstSection.slug
+            }))
+          }
 
           return false
         }
@@ -263,6 +277,7 @@ class DocumentEdit extends Component {
       state
     } = this.props
     const document = state.document
+    const docRoutes = new DocumentRoutes(this.props)
     const status = document.remoteStatus
 
     if (status === Constants.STATUS_NOT_FOUND) {
@@ -300,7 +315,6 @@ class DocumentEdit extends Component {
     //if (referencedField) {
     //  documentData = documentData[referencedField]
     //}
-
     return (
       <div class={styles.container}>
         {fields.sections &&
@@ -308,13 +322,17 @@ class DocumentEdit extends Component {
             {fields.sections.map(collectionSection => {
               const isActive = activeSection === collectionSection.slug
               const sectionUrlBase = onBuildBaseUrl()
-              const href = buildUrl(...sectionUrlBase, collectionSection.slug)
+              const editHref = docRoutes.renderEditRoute({
+                collection,
+                documentId,
+                section: collectionSection.slug
+              })
 
               return (
                 <SubNavItem
                   active={isActive}
                   error={collectionSection.hasErrors}
-                  href={href}
+                  href={editHref}
                 >
                   {collectionSection.name}
                 </SubNavItem>
