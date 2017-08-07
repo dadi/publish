@@ -17,6 +17,7 @@ import APIBridge from 'lib/api-bridge-client'
 import {buildUrl, createRoute} from 'lib/router'
 import {connectHelper, filterHiddenFields} from 'lib/util'
 import {getApiForUrlParams, getCollectionForUrlParams} from 'lib/collection-lookup'
+import {DocumentRoutes} from 'lib/document-routes'
 
 import Button from 'components/Button/Button'
 import ErrorMessage from 'components/ErrorMessage/ErrorMessage'
@@ -111,8 +112,6 @@ class DocumentList extends Component {
     const nextPage = currentPage + 1
     const previousPage = Math.abs(currentPage -1)
 
-    const links = this.getLinks()
-
     this.keyboard.on('cmd+right')
       .do(cmd => route(buildUrl(...onBuildBaseUrl(), nextPage)))
     this.keyboard.on('cmd+left')
@@ -163,6 +162,12 @@ class DocumentList extends Component {
     } = this.props
     const documents = state.documents
 
+    const docRoutes = new DocumentRoutes(this.props)
+
+    const createHref = docRoutes.renderCreateRoute({
+      collection
+    })
+
     this.currentCollection = getCollectionForUrlParams(state.api.apis, {
       collection,
       group,
@@ -192,7 +197,7 @@ class DocumentList extends Component {
           {!referencedField && (
             <Button
               accent="save"
-              href={buildUrl(group, collection, 'document', 'new')}
+              href={createHref}
             >Create new document</Button>
           )}
         </HeroMessage>
@@ -200,48 +205,6 @@ class DocumentList extends Component {
     }
 
     return this.renderDocumentList()
-  }
-
-  getLinks() {
-    const {state} = this.props
-    const {pathname} = state.router.locationBeforeTransitions
-    const {
-      create,
-      edit,
-      list
-    } = state.api.paths
-
-    const parts = pathname
-      .replace(/^\/|\/$/g, '')
-      .split('/')
-
-    // state.api.paths.list
-    const nextRoutes = list.map((path, pos) => {
-      // console.log('CHECK', path)
-      const match = path
-        .split('/')
-        .map((part, index) => {
-          const isVar = part.startsWith(':')
-          const isOptional = part.endsWith('?')
-          const varName = part
-            .replace(':', '')
-            .replace('?', '')
-
-          return (!isVar && (part === parts[index])) ||
-            (isVar && this.props[varName] === parts[index]) ||
-            isOptional            
-        })
-        .every(Boolean)
-
-        return match ? {
-          create: create[pos],
-          edit: edit[pos],
-          list: list[pos]
-        } : match
-
-    }).find(Boolean)
-
-    console.log('routes', nextRoutes)
   }
 
   componentWillMount() {
@@ -343,6 +306,13 @@ class DocumentList extends Component {
       state
     } = this.props
 
+    const docRoutes = new DocumentRoutes(this.props)
+
+    const editHref = docRoutes.renderEditRoute({
+      collection,
+      documentId: data._id
+    })
+
     // If we're on a nested document view, we don't want to add links to
     // documents (for now).
     if (referencedField) {
@@ -358,7 +328,7 @@ class DocumentList extends Component {
 
     if (index === 0) {
       return (
-        <a href={buildUrl(group, collection, 'document/edit', data._id)}>{renderedValue}</a>
+        <a href={editHref}>{renderedValue}</a>
       )
     }
 

@@ -20,6 +20,13 @@ The name of the collection currently being listed.
 - type: `string`
 
 
+### `documentId`
+
+When on a reference field, contains the ID of the parent document.
+
+- type: `string`
+
+
 ### `filter`
 
 The JSON-stringified object of active filters.
@@ -63,13 +70,6 @@ The order used to sort the documents by the `sort` field.
 The number of the current active page.
 
 - type: `number`
-
-
-### `parentDocumentId`
-
-When on a reference field, contains the ID of the parent document.
-
-- type: `string`
 
 
 ### `referencedField`
