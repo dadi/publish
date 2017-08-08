@@ -128,18 +128,17 @@ class DocumentEdit extends Component {
 
         if (!sectionMatch) {
           const firstSection = fields.sections[0]
-          const sectionUrlBase = onBuildBaseUrl()
 
           // Redirect to first edit section
-          // if (method === 'edit') {
-          //   route(onGetRoutes(state.api.paths).editRoute({
-          //     section: firstSection.slug
-          //   }))
-          // } else {
-          //   route(onGetRoutes(state.api.paths).createRoute({
-          //     section: firstSection.slug
-          //   }))
-          // }
+          if (method === 'edit') {
+            route(onGetRoutes(state.api.paths).editRoute({
+              section: firstSection.slug
+            }))
+          } else {
+            route(onGetRoutes(state.api.paths).createRoute({
+              section: firstSection.slug
+            }))
+          }
 
           return false
         }
@@ -323,13 +322,7 @@ class DocumentEdit extends Component {
           <div class={styles.navigation}>
             {fields.sections.map(collectionSection => {
               const isActive = activeSection === collectionSection.slug
-              const sectionUrlBase = onBuildBaseUrl()
-              const editHref = method === 'new' ? 
-              onGetRoutes(state.api.paths).createRoute({
-                section: collectionSection.slug
-              }) : onGetRoutes(state.api.paths).editRoute({
-                section: collectionSection.slug
-              })
+              const editHref = this.buildHref(method, collectionSection)
 
               return (
                 <SubNavItem
@@ -384,6 +377,30 @@ class DocumentEdit extends Component {
         })}
       </div>
     )
+  }
+
+  buildHref(method, collectionSection) {
+    const {
+      collection,
+      onBuildBaseUrl,
+      onGetRoutes,
+      state
+    } = this.props
+    const sectionUrlBase = onBuildBaseUrl()
+
+    if (collection === Constants.AUTH_COLLECTION) {
+      return buildUrl(...sectionUrlBase, collectionSection.slug)
+    }
+    if (method === 'new') {
+      return onGetRoutes(state.api.paths).createRoute({
+        section: collectionSection.slug
+      })
+    }
+    if (method === 'edit') {
+      return onGetRoutes(state.api.paths).editRoute({
+        section: collectionSection.slug
+      })
+    }
   }
 
   // Fetches a document from the remote API
