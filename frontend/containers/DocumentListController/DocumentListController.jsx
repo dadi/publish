@@ -43,11 +43,6 @@ class DocumentListController extends Component {
     parentDocumentId: proptypes.string,
 
     /**
-     * The name of a reference field currently being edited.
-     */
-    referencedField: proptypes.string,
-
-    /**
      * The global state object.
      */
     state: proptypes.object,
@@ -55,7 +50,17 @@ class DocumentListController extends Component {
     /**
     * Whether a new filter has been added.
     */
-    onAddNewFilter: proptypes.func
+    onAddNewFilter: proptypes.func,
+
+    /**
+    * A callback to be used to obtain the sibling document routes (edit, create and list), as
+    * determined by the view.
+    */
+    onGetRoutes: proptypes.func
+  }
+
+  constructor(props) {
+    super(props)
   }
 
   render() {
@@ -65,13 +70,12 @@ class DocumentListController extends Component {
       group,
       newFilter,
       onAddNewFilter,
-      referencedField,
+      onGetRoutes,
       state
     } = this.props
     const currentCollection = getCollectionForUrlParams(state.api.apis, {
       collection,
-      group,
-      referencedField
+      group
     })
     const hasDocuments = state.documents.list && state.documents.list.results && (state.documents.list.results.length > 0)
     const params = state.router.params
@@ -79,7 +83,8 @@ class DocumentListController extends Component {
     const filterLimitReached = filters 
       && currentCollection 
       && Object.keys(filters).length === Object.keys(currentCollection.fields).length
-      const newHref = buildUrl(group, collection, 'document', 'new')
+
+    const newHref = onGetRoutes(state.api.paths).createRoute({pos: 1})
 
     if (!currentCollection) {
       return null

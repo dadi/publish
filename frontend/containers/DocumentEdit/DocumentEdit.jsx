@@ -21,7 +21,6 @@ import {buildUrl} from 'lib/router'
 import {connectHelper, filterHiddenFields} from 'lib/util'
 import {Format} from 'lib/util/string'
 import {getApiForUrlParams, getCollectionForUrlParams} from 'lib/collection-lookup'
-import {DocumentRoutes} from 'lib/document-routes'
 
 import ErrorMessage from 'components/ErrorMessage/ErrorMessage'
 import SubNavItem from 'components/SubNavItem/SubNavItem'
@@ -59,6 +58,12 @@ class DocumentEdit extends Component {
     onBuildBaseUrl: proptypes.func,
 
     /**
+    * A callback to be used to obtain the sibling document routes (edit, create and list), as
+    * determined by the view.
+    */
+    onGetRoutes: proptypes.func,
+
+    /**
     * A callback to be fired if the container wants to attempt changing the
     * page title.
     */
@@ -92,6 +97,7 @@ class DocumentEdit extends Component {
       documentId,
       group,
       onBuildBaseUrl,
+      onGetRoutes,
       onPageTitle,
       referencedField,
       section,
@@ -107,7 +113,6 @@ class DocumentEdit extends Component {
       referencedField,
       useApi: currentApi
     })
-    const docRoutes = new DocumentRoutes(this.props)
     const method = documentId ? 'edit' : 'new'
 
     if (typeof onPageTitle === 'function') {
@@ -127,14 +132,11 @@ class DocumentEdit extends Component {
 
           // Redirect to first edit section
           if (method === 'edit') {
-            route(docRoutes.renderEditRoute({
-              collection,
-              documentId,
+            route(onGetRoutes(state.api.paths).editRoute({
               section: firstSection.slug
             }))
           } else {
-            route(docRoutes.renderCreateRoute({
-              collection,
+            route(onGetRoutes(state.api.paths).createRoute({
               section: firstSection.slug
             }))
           }
@@ -272,12 +274,12 @@ class DocumentEdit extends Component {
       documentId,
       group,
       onBuildBaseUrl,
+      onGetRoutes,
       referencedField,
       section,
       state
     } = this.props
     const document = state.document
-    const docRoutes = new DocumentRoutes(this.props)
     const status = document.remoteStatus
 
     if (status === Constants.STATUS_NOT_FOUND) {
@@ -322,9 +324,10 @@ class DocumentEdit extends Component {
             {fields.sections.map(collectionSection => {
               const isActive = activeSection === collectionSection.slug
               const sectionUrlBase = onBuildBaseUrl()
-              const editHref = docRoutes.renderEditRoute({
-                collection,
-                documentId,
+              const editHref = method === 'new' ? 
+              onGetRoutes(state.api.paths).createRoute({
+                section: collectionSection.slug
+              }) : onGetRoutes(state.api.paths).editRoute({
                 section: collectionSection.slug
               })
 

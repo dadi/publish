@@ -17,7 +17,6 @@ import APIBridge from 'lib/api-bridge-client'
 import {buildUrl, createRoute} from 'lib/router'
 import {connectHelper, filterHiddenFields} from 'lib/util'
 import {getApiForUrlParams, getCollectionForUrlParams} from 'lib/collection-lookup'
-import {DocumentRoutes} from 'lib/document-routes'
 
 import Button from 'components/Button/Button'
 import ErrorMessage from 'components/ErrorMessage/ErrorMessage'
@@ -54,6 +53,12 @@ class DocumentList extends Component {
     * determined by the view.
     */
     onBuildBaseUrl: proptypes.func,
+
+    /**
+    * A callback to be used to obtain the sibling document routes (edit, create and list), as
+    * determined by the view.
+    */
+    onGetRoutes: proptypes.func,
 
     /**
      * A callback to be fired if the container wants to attempt changing the
@@ -155,6 +160,7 @@ class DocumentList extends Component {
       collection,
       filter,
       group,
+      onGetRoutes,
       order,
       referencedField,
       sort,
@@ -162,11 +168,7 @@ class DocumentList extends Component {
     } = this.props
     const documents = state.documents
 
-    const docRoutes = new DocumentRoutes(this.props)
-
-    const createHref = docRoutes.renderCreateRoute({
-      collection
-    })
+    const createHref = onGetRoutes(state.api.paths).createRoute()
 
     this.currentCollection = getCollectionForUrlParams(state.api.apis, {
       collection,
@@ -302,14 +304,12 @@ class DocumentList extends Component {
     const {
       collection,
       group,
+      onGetRoutes,
       referencedField,
       state
     } = this.props
 
-    const docRoutes = new DocumentRoutes(this.props)
-
-    const editHref = docRoutes.renderEditRoute({
-      collection,
+    const editHref = onGetRoutes(state.api.paths).editRoute({
       documentId: data._id
     })
 

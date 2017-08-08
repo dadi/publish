@@ -5,6 +5,7 @@ import {Component, h} from 'preact'
 import Style from 'lib/Style'
 import styles from './DocumentListView.css'
 
+import {DocumentRoutes} from 'lib/document-routes'
 import {isValidJSON, setPageTitle} from 'lib/util'
 
 import DocumentList from 'containers/DocumentList/DocumentList'
@@ -59,6 +60,7 @@ export default class DocumentListView extends Component {
               filter={filter}
               newFilter={newFilter}
               onAddNewFilter={this.handleAddNewFilter.bind(this)}
+              onGetRoutes={this.getRoutes.bind(this)}
               documentId={documentId}
               referencedField={referencedField}
             />
@@ -68,6 +70,7 @@ export default class DocumentListView extends Component {
               filter={filter}
               group={group}
               onBuildBaseUrl={this.handleBuildBaseUrl.bind(this)}
+              onGetRoutes={this.getRoutes.bind(this)}
               onPageTitle={this.handlePageTitle}
               order={order}
               page={page}
@@ -100,6 +103,10 @@ export default class DocumentListView extends Component {
     this.setState({
       newFilter: isNewFilter
     })
+  }
+
+  getRoutes(paths) {
+    return new DocumentRoutes(Object.assign(this.props, {paths}))
   }
 
   handleBuildBaseUrl(data = {}) {
