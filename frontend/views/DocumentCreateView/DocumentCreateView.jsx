@@ -58,7 +58,7 @@ export default class DocumentCreateView extends Component {
       section
     } = this.props
 
-    return [group, collection, 'document', 'new']
+    return [group, collection, 'new']
   }
 
   handlePageTitle(title) {

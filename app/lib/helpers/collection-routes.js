@@ -28,17 +28,17 @@ const map = {
 const parts = {
   create: {
     extend: ':section?',
-    primary: ':collection/document/new',
+    primary: ':collection/new',
     secondary: `:referencedField/new/:pos${numberRegex}`
   },
   edit: {
     extend: ':section?',
-    primary: `:collection/document/edit/:documentId${objectIdRegex}`,
+    primary: `:collection/edit/:documentId${objectIdRegex}`,
     secondary: `:referencedField/:referencedId${objectIdRegex}`
   },
   list: {
     extend: `:page?${numberRegex}`,
-    primary: ':collection/documents',
+    primary: ':collection',
     secondary: `select/:referencedField`
   }
 }

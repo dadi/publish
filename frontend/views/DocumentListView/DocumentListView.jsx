@@ -119,13 +119,13 @@ export default class DocumentListView extends Component {
 
     if (referencedField) {
       if (documentId) {
-        return [group, collection, 'document', 'edit', documentId, data.section]
+        return [group, collection, 'edit', documentId, data.section]
       }
 
-      return [group, collection, 'document', 'new', data.section]
+      return [group, collection, 'new', data.section]
     }
 
-    return [group, collection, 'documents']
+    return [group, collection]
   }
 
   handlePageTitle(title) {
