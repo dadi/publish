@@ -110,7 +110,7 @@
     "preact-jsx-chai": "^2.2.1",
     "preact-redux": "^1.2.0",
     "preact-render-to-string": "^3.6.0",
-    "preact-router": "^2.5.5",
+    "preact-router": "github:mingard/preact-router",
     "preact-router-redux": "^4.1.0",
     "proptypes": "^0.14.3",
     "react-docgen": "github:eduardoboucas/react-docgen",

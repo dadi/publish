@@ -4,6 +4,9 @@ const ArrayHelper = require(`${paths.lib.helpers}/array`)
 
 const hiddenCollections = ['mediaStore']
 
+const numberRegex = '[^\\d+$]'
+const objectIdRegex = '[^[a-fA-F0-9]{24}]'
+
 const map = {
   create: {
     create: true,
@@ -26,17 +29,17 @@ const parts = {
   create: {
     extend: ':section?',
     primary: ':collection/document/new',
-    secondary: ':referencedField/new/:pos'
+    secondary: `:referencedField/new/:pos${numberRegex}`
   },
   edit: {
     extend: ':section?',
-    primary: ':collection/document/edit/:documentId',
-    secondary: ':referencedField/:referencedId'
+    primary: `:collection/document/edit/:documentId${objectIdRegex}`,
+    secondary: `:referencedField/:referencedId${objectIdRegex}`
   },
   list: {
-    extend: ':page?',
+    extend: `:page?${numberRegex}`,
     primary: ':collection/documents',
-    secondary: 'select/:referencedField'
+    secondary: `select/:referencedField`
   }
 }
 

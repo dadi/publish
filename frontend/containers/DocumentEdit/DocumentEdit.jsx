@@ -131,15 +131,15 @@ class DocumentEdit extends Component {
           const sectionUrlBase = onBuildBaseUrl()
 
           // Redirect to first edit section
-          if (method === 'edit') {
-            route(onGetRoutes(state.api.paths).editRoute({
-              section: firstSection.slug
-            }))
-          } else {
-            route(onGetRoutes(state.api.paths).createRoute({
-              section: firstSection.slug
-            }))
-          }
+          // if (method === 'edit') {
+          //   route(onGetRoutes(state.api.paths).editRoute({
+          //     section: firstSection.slug
+          //   }))
+          // } else {
+          //   route(onGetRoutes(state.api.paths).createRoute({
+          //     section: firstSection.slug
+          //   }))
+          // }
 
           return false
         }

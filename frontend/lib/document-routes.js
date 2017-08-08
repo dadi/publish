@@ -62,6 +62,7 @@ export class DocumentRoutes {
       varName: part
         .replace(':', '')
         .replace('?', '')
+        .replace(/\[.*\]/g, '')
     }
   }
 

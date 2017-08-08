@@ -29,11 +29,6 @@ import apiBridgeClient from 'lib/api-bridge-client'
 
 class App extends Component {
 
-  constructor (props) {
-    super(props)
-    const {actions, state} = this.props
-  }
-
   componentWillMount() {
     const {actions, state} = this.props
 
@@ -144,15 +139,15 @@ class App extends Component {
           />
         ))}
         
-        {state.api.paths.edit.map(path => (
-          <DocumentEditView
+        {state.api.paths.create.map(path => (
+          <DocumentCreateView
             authenticate
             path={path}
           />
         ))}
 
-        {state.api.paths.create.map(path => (
-          <DocumentCreateView
+        {state.api.paths.edit.map(path => (
+          <DocumentEditView
             authenticate
             path={path}
           />
@@ -165,7 +160,7 @@ class App extends Component {
 
         <ProfileEditView
           authenticate
-          path="/profile/select/:referencedField?/:page?"
+          path="/profile/select/:referencedField?/:page?[^\d+$]"
         />
 
         <SignInView

@@ -308,7 +308,6 @@ class DocumentList extends Component {
       referencedField,
       state
     } = this.props
-
     const editHref = onGetRoutes(state.api.paths).editRoute({
       documentId: data._id
     })
