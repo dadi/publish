@@ -137,55 +137,26 @@ class App extends Component {
           path="/reset"
         />
 
-        <DocumentListView
-          authenticate
-          path="/:group/:collection/document/edit/:documentId?/select/:referencedField?/:page?"
-        />
+        {state.api.paths.list.map(path => (
+          <DocumentListView
+            authenticate
+            path={path}
+          />
+        ))}
+        
+        {state.api.paths.edit.map(path => (
+          <DocumentEditView
+            authenticate
+            path={path}
+          />
+        ))}
 
-        <DocumentListView
-          authenticate
-          path="/:collection/document/edit/:documentId?/select/:referencedField?/:page?"
-        />
-
-        <DocumentEditView
-          authenticate
-          path="/:group/:collection/document/edit/:documentId/:section?"
-        />
-
-        <DocumentEditView
-          authenticate
-          path="/:collection/document/edit/:documentId/:section?"
-        />
-
-        <DocumentListView
-          authenticate
-          path="/:group/:collection/document/new/:section?/:referencedField?/:page?"
-        />
-
-        <DocumentListView
-          authenticate
-          path="/:collection/document/new/:section?/:referencedField?/:page?"
-        />
-
-        <DocumentCreateView
-          authenticate
-          path="/:group/:collection/document/new/:section?"
-        />
-
-        <DocumentCreateView
-          authenticate
-          path="/:collection/document/new/:section?"
-        />
-
-        <DocumentListView
-          authenticate
-          path="/:group/:collection/documents/:page?"
-        />
-
-        <DocumentListView
-          authenticate
-          path="/:collection/documents/:page?"
-        />
+        {state.api.paths.create.map(path => (
+          <DocumentCreateView
+            authenticate
+            path={path}
+          />
+        ))}
 
         <ProfileEditView
           authenticate

@@ -16,6 +16,7 @@ export default class DocumentCreateView extends Component {
       collection,
       documentId,
       group,
+      referencedField,
       section
     } = this.props
 

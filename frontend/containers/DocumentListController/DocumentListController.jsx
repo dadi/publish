@@ -10,6 +10,7 @@ import * as documentsActions from 'actions/documentsActions'
 
 import {buildUrl, createRoute, router} from 'lib/router'
 import {connectHelper} from 'lib/util'
+
 import {getApiForUrlParams, getCollectionForUrlParams} from 'lib/collection-lookup'
 
 import Button from 'components/Button/Button'
@@ -67,7 +68,6 @@ class DocumentListController extends Component {
       referencedField,
       state
     } = this.props
-
     const currentCollection = getCollectionForUrlParams(state.api.apis, {
       collection,
       group,
@@ -79,6 +79,7 @@ class DocumentListController extends Component {
     const filterLimitReached = filters 
       && currentCollection 
       && Object.keys(filters).length === Object.keys(currentCollection.fields).length
+      const newHref = buildUrl(group, collection, 'document', 'new')
 
     if (!currentCollection) {
       return null
@@ -94,7 +95,7 @@ class DocumentListController extends Component {
           >Add Filter</Button>
           <Button
             accent="save"
-            href={buildUrl(group, collection, 'document', 'new')}
+            href={newHref}
           >Create new</Button>
         </ListController>
         <DocumentFilters

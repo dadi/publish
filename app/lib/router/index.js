@@ -10,6 +10,7 @@ const passport = require('passport-restify')
 const LocalStrategy = require('passport-local')
 const restify = require('restify')
 const SessionController = require(`${paths.lib.controllers}/session`)
+const Collection = require(`${paths.lib.models}/collection`)
 
 /**
  * @constructor
@@ -105,15 +106,25 @@ Router.prototype.webRoutes = function () {
     const serialisedUser = (req.isAuthenticated() && req.session.passport && req.session.passport.user)
       ? JSON.stringify(req.session.passport.user)
       : null
-    const entryPointPage = this.entryPointTemplate
+    let entryPointPage = this.entryPointTemplate
       .replace(
         '/*@@userData@@*/',
-        `window.__userData__ = ${serialisedUser};window.__auth__ = ${config.get('auth.enabled')}`
+        `window.__userData__ = ${serialisedUser};window.__auth__ = ${config.get('auth.enabled')};`
       )
 
-    res.end(entryPointPage)
+    return new Collection()
+      .buildCollectionRoutes()
+      .then(documentRoutes => {
+        if (documentRoutes) {
+          entryPointPage = entryPointPage.replace(
+            '/*@@documentRoutes@@*/',
+            `window.__documentRoutes__ = ${JSON.stringify(documentRoutes)};`
+          )
 
-    return next()
+          res.end(entryPointPage)
+          return next()
+        }
+      })
   })
 }
 
@@ -123,15 +134,18 @@ Router.prototype.webRoutes = function () {
 Router.prototype.componentRoutes = function (dir, match) {
   // Fetch aditional component schema
   fs.readdirSync(dir).forEach(folder => {
-    let sub = path.resolve(dir, folder)
+    const sub = path.resolve(dir, folder)
 
     if (fs.lstatSync(sub).isDirectory()) {
       this.componentRoutes(sub, match)
     } else if (fs.lstatSync(sub).isFile()) {
-      let file = path.parse(sub)
+      const file = path.parse(sub)
 
-      if (file.ext === '.js' && file.name.match(match)) {
-        let controller = require(sub)
+      if (
+        (file.ext === '.js') &&
+        file.name.match(match)
+      ) {
+        const controller = require(sub)
 
         controller(this.server)
       }
@@ -146,6 +160,7 @@ Router.prototype.setHeaders = function () {
   this.server.use((req, res, next) => {
     res.header('ETag', 'publish-etag')
     res.header('Last-Modified', new Date())
+
     return next()
   })
 }
