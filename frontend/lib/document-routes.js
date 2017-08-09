@@ -61,9 +61,9 @@ export class DocumentRoutes {
 
   analysePart (part, pos) {
     return {
-      pos,
       isOptional: part.endsWith('?'),
       isVar: part.startsWith(':'),
+      pos,
       varName: part
         .replace(':', '')
         .replace('?', '')
@@ -75,11 +75,14 @@ export class DocumentRoutes {
     const collections = this.getAllCollections(apis)
     const prev = collections.children && collections.children.length - 2
 
-    return (collections.children && collections.children.length > 1) ? collections.children[prev] : collections.parent
+    return (collections.children && collections.children.length > 1) ?
+      collections.children[prev] :
+      collections.parent
   }
 
   getCurrentCollection (apis) {
     const collections = this.getAllCollections(apis)
+
     return collections.children ? collections.children.pop() : collections.parent
   }
 
@@ -97,7 +100,6 @@ export class DocumentRoutes {
       .map(referencedField => urlParts[referencedField.pos])
     const collectionParam = parts
       .find(part => part.isVar && part.varName === 'collection')
-
     const collectionName = urlParts[collectionParam.pos]
     const groupName = groupParam ? urlParts[groupParam.pos] : null
     const api = this.getAPI(apis, collectionName, groupName)
@@ -105,8 +107,8 @@ export class DocumentRoutes {
 
     if (referencedFieldsParams.length) {
       return {
-        parent: collection,
-        children: this.deepCollectionSearch(api, collection, referencedFieldsParams)
+        children: this.deepCollectionSearch(api, collection, referencedFieldsParams),
+        parent: collection
       }
     } else {
       return {
@@ -124,11 +126,17 @@ export class DocumentRoutes {
 
     const apiCollection = this.collectionMatch(api, collectionName)
 
-    if (referencedFields.length -1 === index) {
+    if (referencedFields.length - 1 === index) {
       return collections.concat([apiCollection])
     }
 
-    return this.deepCollectionSearch(api, apiCollection, referencedFields, collections.concat([apiCollection]), index + 1)
+    return this.deepCollectionSearch(
+      api,
+      apiCollection,
+      referencedFields,
+      collections.concat([apiCollection]),
+      index + 1
+    )
   }
 
   findField (fields, referencedField) {
@@ -136,9 +144,8 @@ export class DocumentRoutes {
       .find(key => key === referencedField)
 
     return fields[field].settings.collection
-
   }
- 
+
   menuMatch (api, group) {
     if (!group) return true
 
@@ -152,18 +159,14 @@ export class DocumentRoutes {
 
   getCollection (api, collectionName) {
     if (!api) return
+
     return this.collectionMatch(api, collectionName)
   }
 
   getAPI (apis, collectionName, groupName) {
-      return apis
-        .filter(api => this.menuMatch(api, groupName))
-        .find(api => this.collectionMatch(api, collectionName))
-        
-    // Are we after the auth API?
-    // if (collectionHandle === Constants.AUTH_COLLECTION) {
-    //   return apis.find(api => api._isAuthApi)
-    // }
+    return apis
+      .filter(api => this.menuMatch(api, groupName))
+      .find(api => this.collectionMatch(api, collectionName))
   }
 
   get parts () {
