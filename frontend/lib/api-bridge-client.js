@@ -27,7 +27,7 @@ const apiBridgeFetch = function (requestObject) {
 
   return fetch('/api', {
     body: JSON.stringify(requestObject),
-    credentials: 'same-origin',
+    credentials: 'include',
     headers: {
       'Content-Type': 'application/json'
     },

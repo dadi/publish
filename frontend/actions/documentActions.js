@@ -447,6 +447,7 @@ export function updateLocalDocument (change, {
 
 function uploadMedia (api, signedUrl, content) {
   const url = `${api.host}:${api.port}${signedUrl}`
+  console.log(signedUrl)
   const payload = new FormData()
 
   payload.append('file', content._file)

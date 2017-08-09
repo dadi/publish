@@ -10,7 +10,7 @@ export function isOnline () {
 
 export function isServerOnline () {
   return fetch('/', {
-    credentials: 'same-origin',
+    credentials: 'include',
     method: 'HEAD'
   })
   .then(response => response.status === 200)

@@ -168,13 +168,11 @@ class DocumentList extends Component {
     } = this.props
     const documents = state.documents
 
-    const createHref = onGetRoutes(state.api.paths).createRoute()
+    if (state.api.apis.length) {
+      this.currentCollection = onGetRoutes(state.api.paths).getCurrentCollection(state.api.apis)
+    }
 
-    this.currentCollection = getCollectionForUrlParams(state.api.apis, {
-      collection,
-      group,
-      referencedField
-    })
+    const createHref = onGetRoutes(state.api.paths).createRoute()
 
     if (documents.status === Constants.STATUS_NOT_FOUND) {
       return (
@@ -238,6 +236,7 @@ class DocumentList extends Component {
       collection,
       filter,
       group,
+      onGetRoutes,
       order,
       page,
       documentId,
@@ -249,12 +248,7 @@ class DocumentList extends Component {
       collection,
       group
     })
-    const currentCollection = getCollectionForUrlParams(state.api.apis, {
-      collection,
-      group,
-      referencedField,
-      useApi: currentApi
-    })
+    const currentCollection = onGetRoutes(state.api.paths).getCurrentCollection(state.api.apis)
 
     if (!currentCollection) {
       actions.setDocumentListStatus(Constants.STATUS_NOT_FOUND)
@@ -264,11 +258,7 @@ class DocumentList extends Component {
 
     const count = currentCollection.settings && currentCollection.settings.count || 20
     const filterValue = state.router.params ? state.router.params.filter : null
-    const parentCollection = referencedField && getCollectionForUrlParams(state.api.apis, {
-      collection,
-      group,
-      useApi: currentApi
-    })
+    const parentCollection = referencedField && onGetRoutes(state.api.paths).getParentCollection(state.api.apis)
 
     actions.fetchDocuments({
       api: currentApi,
@@ -311,20 +301,9 @@ class DocumentList extends Component {
     const editHref = onGetRoutes(state.api.paths).editRoute({
       documentId: data._id
     })
-
-    // If we're on a nested document view, we don't want to add links to
-    // documents (for now).
-    if (referencedField) {
-      return value
-    }
-
-    const currentCollection = getCollectionForUrlParams(state.api.apis, {
-      collection,
-      group
-    })
+    const currentCollection = onGetRoutes(state.api.paths).getCurrentCollection(state.api.apis)
     const fieldSchema = currentCollection.fields[column.id]
     const renderedValue = this.renderField(column.id, fieldSchema, value)
-
     if (index === 0) {
       return (
         <a href={editHref}>{renderedValue}</a>
@@ -374,6 +353,7 @@ class DocumentList extends Component {
       collection,
       group,
       referencedField,
+      onGetRoutes,
       onPageTitle,
       order,
       sort,
@@ -389,15 +369,11 @@ class DocumentList extends Component {
     // context. If it does, we'll use that instead of the default `SyncTable`
     // to render the results.
     if (referencedField) {
-      const parentCollection = getCollectionForUrlParams(state.api.apis, {
-        collection,
-        group
-      })
+      const parentCollection = onGetRoutes(state.api.paths).getParentCollection(state.api.apis)
       const fieldSchema = parentCollection.fields[referencedField]
       const fieldType = (fieldSchema.publish && fieldSchema.publish.subType) || fieldSchema.type
       const fieldComponentName = `Field${fieldType}`
       const FieldComponentReferenceSelect = fieldComponents[fieldComponentName].referenceSelect
-
       if (
         fieldSchema.settings &&
         fieldSchema.settings.limit &&
@@ -467,6 +443,8 @@ class DocumentList extends Component {
   }
 
   renderField(fieldName, schema, value) {
+    if (!schema) return
+
     const fieldType = (schema.publish && schema.publish.subType) ?
       schema.publish.subType : schema.type
     const fieldComponentName = `Field${fieldType}`

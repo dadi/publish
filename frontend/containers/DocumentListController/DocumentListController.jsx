@@ -38,11 +38,6 @@ class DocumentListController extends Component {
     group: proptypes.string,
 
     /**
-     * When on a reference field, contains the ID of the parent document.
-     */
-    parentDocumentId: proptypes.string,
-
-    /**
      * The global state object.
      */
     state: proptypes.object,

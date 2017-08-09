@@ -64,7 +64,7 @@ function runSessionQuery ({
   payload = null
 } = {}) {
   let request = {
-    credentials: 'same-origin',
+    credentials: 'include',
     headers: {
       'Content-Type': 'application/json'
     },

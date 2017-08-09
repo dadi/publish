@@ -115,6 +115,5 @@ export function getCollectionForUrlParams (apis, {
       }
     }
   }
-
   return collectionMatch
 }
