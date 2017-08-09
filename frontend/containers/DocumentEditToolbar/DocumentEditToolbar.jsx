@@ -105,7 +105,7 @@ class DocumentEditToolbar extends Component {
     // Have we deleted a document?
     if (previousDocument.remote && !document.remote) {
       // Redirect to document list view
-      route(buildUrl(group, collection, 'documents'))
+      route(buildUrl(group, collection))
 
       actions.setNotification({
         message: 'The documents have been deleted'
@@ -257,7 +257,7 @@ class DocumentEditToolbar extends Component {
               }) 
               return
             }
-            route(buildUrl(group, collection, 'document', 'edit', documentId, section))
+            route(buildUrl(group, collection, 'edit', documentId, section))
 
             actions.setNotification({
               message:`The document has been ${newDocument ? 'created' : 'updated'}`
@@ -271,7 +271,7 @@ class DocumentEditToolbar extends Component {
       case 'saveAndCreateNew':
         this.onSave = {
           callback: documentId => {
-            route(buildUrl(group, collection, 'document', 'new'))
+            route(buildUrl(group, collection, 'new'))
 
             actions.setNotification({
               message: `The document has been ${newDocument ? 'created' : 'updated'}`
@@ -287,7 +287,7 @@ class DocumentEditToolbar extends Component {
       case 'saveAndGoBack':
         this.onSave = {
           callback: documentId => {
-            route(buildUrl(group, collection, 'documents'))
+            route(buildUrl(group, collection))
 
             actions.setNotification({
               message: `The document has been ${newDocument ? 'created' : 'updated'}`
@@ -301,7 +301,7 @@ class DocumentEditToolbar extends Component {
       case 'saveAsDuplicate':
         this.onSave = {
           callback: documentId => {
-            route(buildUrl(group, collection, 'document', 'edit', documentId, section))
+            route(buildUrl(group, collection, 'edit', documentId, section))
 
             actions.setNotification({
               message: `The document has been created`

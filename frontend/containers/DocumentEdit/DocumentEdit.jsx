@@ -284,7 +284,7 @@ class DocumentEdit extends Component {
     if (status === Constants.STATUS_NOT_FOUND) {
       return (
         <ErrorMessage
-          data={{href: buildUrl(group, collection, 'documents')}}
+          data={{href: buildUrl(group, collection)}}
           type={Constants.ERROR_DOCUMENT_NOT_FOUND}
         />
       )
