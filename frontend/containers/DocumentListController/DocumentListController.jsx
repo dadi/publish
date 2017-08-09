@@ -68,10 +68,7 @@ class DocumentListController extends Component {
       onGetRoutes,
       state
     } = this.props
-    const currentCollection = getCollectionForUrlParams(state.api.apis, {
-      collection,
-      group
-    })
+    const currentCollection = state.api.apis.length && onGetRoutes(state.api.paths).getCurrentCollection(state.api.apis)
     const hasDocuments = state.documents.list && state.documents.list.results && (state.documents.list.results.length > 0)
     const params = state.router.params
     const filters = params && params.filter ? params.filter : null
@@ -93,10 +90,12 @@ class DocumentListController extends Component {
             accent="data"
             onClick={this.handleAddNewFilter.bind(this)}
           >Add Filter</Button>
-          <Button
-            accent="save"
-            href={newHref}
-          >Create new</Button>
+          {!currentCollection._isAuthCollection && (
+            <Button
+              accent="save"
+              href={newHref}
+            >Create new</Button>
+          )}
         </ListController>
         <DocumentFilters
           config={state.app.config}

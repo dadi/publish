@@ -257,7 +257,7 @@ class DocumentEditToolbar extends Component {
               }) 
               return
             }
-            route(buildUrl(group, collection, 'edit', documentId, section))
+            route(buildUrl(group, collection, documentId, section))
 
             actions.setNotification({
               message:`The document has been ${newDocument ? 'created' : 'updated'}`
@@ -301,7 +301,7 @@ class DocumentEditToolbar extends Component {
       case 'saveAsDuplicate':
         this.onSave = {
           callback: documentId => {
-            route(buildUrl(group, collection, 'edit', documentId, section))
+            route(buildUrl(group, collection, documentId, section))
 
             actions.setNotification({
               message: `The document has been created`

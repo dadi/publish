@@ -62,7 +62,7 @@ export default class DocumentEditView extends Component {
       section
     } = this.props
 
-    return [group, collection, 'edit', documentId]
+    return [group, collection, documentId]
   }
 
   handlePageTitle(title) {

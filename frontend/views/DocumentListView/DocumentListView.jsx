@@ -119,7 +119,7 @@ export default class DocumentListView extends Component {
 
     if (referencedField) {
       if (documentId) {
-        return [group, collection, 'edit', documentId, data.section]
+        return [group, collection, documentId, data.section]
       }
 
       return [group, collection, 'new', data.section]

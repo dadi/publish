@@ -95,12 +95,12 @@ export class DocumentRoutes {
       .map(this.analysePart)
     const groupParam = parts
       .find(part => part.isVar && part.varName === 'group')
-    let referencedFieldsParams = parts
+    const referencedFieldsParams = parts
       .filter(part => part.isVar && part.varName === 'referencedField')
       .map(referencedField => urlParts[referencedField.pos])
     const collectionParam = parts
       .find(part => part.isVar && part.varName === 'collection')
-    const collectionName = urlParts[collectionParam.pos]
+    const collectionName = collectionParam ? urlParts[collectionParam.pos] : this.props.collection
     const groupName = groupParam ? urlParts[groupParam.pos] : null
     const api = this.getAPI(apis, collectionName, groupName)
     const collection = this.getCollection(api, collectionName)
@@ -122,6 +122,10 @@ export class DocumentRoutes {
 
     if (collectionName === Constants.MEDIA_COLLECTION) {
       return collections.concat([Constants.MEDIA_COLLECTION])
+    }
+
+    if (collectionName === Constants.AUTH_COLLECTION) {
+      return collections.concat([Constants.AUTH_COLLECTION])
     }
 
     const apiCollection = this.collectionMatch(api, collectionName)
@@ -153,6 +157,10 @@ export class DocumentRoutes {
       .filter(menu => menu.title && Format.slugify(menu.title) === group)
   }
 
+  authCollectionMatch (api) {
+    return api.collections.find(collection => collection._isAuthCollection)
+  }
+
   collectionMatch (api, collectionName) {
     return api.collections.find(collection => collection.slug === collectionName)
   }
@@ -160,10 +168,22 @@ export class DocumentRoutes {
   getCollection (api, collectionName) {
     if (!api) return
 
+    if (collectionName === Constants.MEDIA_COLLECTION) {
+      return Constants.MEDIA_COLLECTION
+    }
+
+    if (collectionName === Constants.AUTH_COLLECTION) {
+      return this.authCollectionMatch(api)
+    }
+
     return this.collectionMatch(api, collectionName)
   }
 
   getAPI (apis, collectionName, groupName) {
+    if (collectionName === Constants.AUTH_COLLECTION) {
+      return apis.find(api => api._isAuthApi)
+    }
+
     return apis
       .filter(api => this.menuMatch(api, groupName))
       .find(api => this.collectionMatch(api, collectionName))

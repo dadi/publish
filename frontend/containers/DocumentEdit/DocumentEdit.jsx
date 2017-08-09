@@ -107,12 +107,7 @@ class DocumentEdit extends Component {
       collection,
       group
     })
-    const currentCollection = getCollectionForUrlParams(state.api.apis, {
-      collection,
-      group,
-      referencedField,
-      useApi: currentApi
-    })
+    const currentCollection = state.api.apis.length && onGetRoutes(state.api.paths).getCurrentCollection(state.api.apis)
     const method = documentId ? 'edit' : 'new'
 
     if (typeof onPageTitle === 'function') {
@@ -231,6 +226,7 @@ class DocumentEdit extends Component {
       collection,
       documentId,
       group,
+      onGetRoutes,
       referencedField,
       state
     } = this.props
@@ -238,12 +234,7 @@ class DocumentEdit extends Component {
       collection,
       group
     })
-    const currentCollection = getCollectionForUrlParams(state.api.apis, {
-      collection,
-      group,
-      referencedField,
-      useApi: currentApi
-    })
+    const currentCollection = state.api.apis.length && onGetRoutes(state.api.paths).getCurrentCollection(state.api.apis)
 
     this.currentApi = currentApi
     this.currentCollection = currentCollection

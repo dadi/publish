@@ -33,7 +33,7 @@ const parts = {
   },
   edit: {
     extend: ':section?',
-    primary: `:collection/edit/:documentId${objectIdRegex}`,
+    primary: `:collection/:documentId${objectIdRegex}`,
     secondary: `:referencedField/:referencedId${objectIdRegex}`
   },
   list: {
