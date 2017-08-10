@@ -93,15 +93,11 @@ export class DocumentRoutes {
     const parts = this.props.path
       .split('/')
       .map(this.analysePart)
-    const groupParam = parts
-      .find(part => part.isVar && part.varName === 'group')
     const referencedFieldsParams = parts
       .filter(part => part.isVar && part.varName === 'referencedField')
       .map(referencedField => urlParts[referencedField.pos])
-    const collectionParam = parts
-      .find(part => part.isVar && part.varName === 'collection')
-    const collectionName = collectionParam ? urlParts[collectionParam.pos] : this.props.collection
-    const groupName = groupParam ? urlParts[groupParam.pos] : null
+    const collectionName = this.props.collection
+    const groupName = this.props.group || null
     const api = this.getAPI(apis, collectionName, groupName)
     const collection = this.getCollection(api, collectionName)
 

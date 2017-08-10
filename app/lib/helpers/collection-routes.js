@@ -6,6 +6,7 @@ const hiddenCollections = ['mediaStore']
 
 const numberRegex = '[^\\d+$]'
 const objectIdRegex = '[^[a-fA-F0-9]{24}]'
+const slugRegex = '[^[a-z-]]'
 
 const map = {
   create: {
@@ -28,17 +29,17 @@ const map = {
 const parts = {
   create: {
     extend: ':section?',
-    primary: ':collection/new',
+    primary: `:collection${slugRegex}/new`,
     secondary: `:referencedField/new/:pos${numberRegex}`
   },
   edit: {
     extend: ':section?',
-    primary: `:collection/:documentId${objectIdRegex}`,
+    primary: `:collection${slugRegex}/:documentId${objectIdRegex}`,
     secondary: `:referencedField/:referencedId${objectIdRegex}`
   },
   list: {
     extend: `:page?${numberRegex}`,
-    primary: ':collection',
+    primary: `:collection${slugRegex}`,
     secondary: `select/:referencedField`
   }
 }
@@ -142,7 +143,8 @@ CollectionRoutes.prototype.canExtend = function (node, next) {
 }
 
 CollectionRoutes.prototype.appendGroup = function (routes) {
-  return routes.concat(routes.map(route => `:group/${route}`))
+  return routes
+    .concat(routes.map(route => `:group${slugRegex}/${route}`))
 }
 
 CollectionRoutes.prototype.getCollectionBySlug = function (collections, collectionName) {
