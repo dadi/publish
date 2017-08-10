@@ -45,6 +45,10 @@ const expectedConfig = {
       long: 'YYYY/MM/DD HH:mm' 
     }
   },
+  ga: {
+    enabled: false,
+    trackingId: ''
+  },
   TZ: 'Europe/London',
   env: 'test',
   ui: { availableInFrontend: true, inputDelay: 100 },

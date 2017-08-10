@@ -24,6 +24,7 @@ import SignOutView from 'views/SignOutView/SignOutView'
 import ProfileEditView from 'views/ProfileEditView/ProfileEditView'
 
 import {connectHelper, debounce} from 'lib/util'
+import Analytics from 'lib/analytics'
 import ConnectionMonitor from 'lib/status'
 import apiBridgeClient from 'lib/api-bridge-client'
 
@@ -64,8 +65,15 @@ class App extends Component {
       (!previousProps.state.app.config && state.app.config) &&
         state.app.config.server.healthcheck.enabled
     ) {
-      ConnectionMonitor(state.app.config.server.healthcheck.frequency)
+      this.monitor = new ConnectionMonitor()
+        .watch(state.app.config.server.healthcheck.frequency)
         .registerStatusChangeCallback(actions.setNetworkStatus)
+
+      if (state.app.config.ga.enabled) {
+        this.analytics = new Analytics()
+          .register(state.app.config.ga.trackingId)
+          .pageview(state.router.locationBeforeTransitions.pathname)
+      }
     }
 
     // State change: user has signed in.
@@ -195,6 +203,10 @@ class App extends Component {
     const isAuthenticatedRoute = event.current &&
       event.current.attributes &&
       event.current.attributes.authenticate
+
+    if (this.analytics && this.analytics.isActive()) {
+      this.analytics.pageview(event.url)
+    }
 
     if (
       !state.user.authEnabled &&
