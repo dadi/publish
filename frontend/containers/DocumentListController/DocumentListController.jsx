@@ -76,7 +76,7 @@ class DocumentListController extends Component {
       && currentCollection 
       && Object.keys(filters).length === Object.keys(currentCollection.fields).length
 
-    const newHref = onGetRoutes(state.api.paths).createRoute({pos: 1})
+    const newHref = onGetRoutes(state.api.paths).createRoute({pos: 1}) // TO-DO: Change pos to match the number of new entries.
 
     if (!currentCollection) {
       return null

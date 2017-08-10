@@ -107,7 +107,7 @@ class DocumentEdit extends Component {
       collection,
       group
     })
-    const currentCollection = state.api.apis.length && onGetRoutes(state.api.paths).getCurrentCollection(state.api.apis)
+    const currentCollection = state.api.apis.length && this.routes.getCurrentCollection(state.api.apis)
     const method = documentId ? 'edit' : 'new'
 
     if (typeof onPageTitle === 'function') {
@@ -126,11 +126,11 @@ class DocumentEdit extends Component {
 
           // Redirect to first edit section
           if (method === 'edit') {
-            route(onGetRoutes(state.api.paths).editRoute({
+            route(this.routes.editRoute({
               section: firstSection.slug
             }))
           } else {
-            route(onGetRoutes(state.api.paths).createRoute({
+            route(this.routes.createRoute({
               section: firstSection.slug
             }))
           }
@@ -234,7 +234,8 @@ class DocumentEdit extends Component {
       collection,
       group
     })
-    const currentCollection = state.api.apis.length && onGetRoutes(state.api.paths).getCurrentCollection(state.api.apis)
+    this.routes = onGetRoutes(state.api.paths)
+    const currentCollection = state.api.apis.length && this.routes.getCurrentCollection(state.api.apis)
 
     this.currentApi = currentApi
     this.currentCollection = currentCollection
@@ -304,9 +305,9 @@ class DocumentEdit extends Component {
     let documentData = Object.assign({}, document.remote, document.local)
 
     // (!) This will be used once we add the ability to edit nested documents.
-    //if (referencedField) {
+    // if (referencedField) {
     //  documentData = documentData[referencedField]
-    //}
+    // }
     return (
       <div class={styles.container}>
         {fields.sections &&
@@ -383,12 +384,12 @@ class DocumentEdit extends Component {
       return buildUrl(...sectionUrlBase, collectionSection.slug)
     }
     if (method === 'new') {
-      return onGetRoutes(state.api.paths).createRoute({
+      return this.routes.createRoute({
         section: collectionSection.slug
       })
     }
     if (method === 'edit') {
-      return onGetRoutes(state.api.paths).editRoute({
+      return this.routes.editRoute({
         section: collectionSection.slug
       })
     }
@@ -406,16 +407,13 @@ class DocumentEdit extends Component {
 
     // As far as the fetch method is concerned, we're only interested in the
     // collection of the main document, not the referenced one.
-    const documentCollection = getCollectionForUrlParams(state.api.apis, {
-      collection,
-      group
-    })
-    const collectionFields = Object.keys(filterHiddenFields(documentCollection.fields, 'edit'))
+    const parentCollection = this.routes.getParentCollection(state.api.apis)
+    const collectionFields = Object.keys(filterHiddenFields(parentCollection.fields, 'edit'))
       .concat(['createdAt', 'createdBy', 'lastModifiedAt', 'lastModifiedBy'])
 
     const query = {
       api: this.currentApi,
-      collection: documentCollection,
+      collection: parentCollection,
       id: documentId,
       fields: collectionFields
     }
