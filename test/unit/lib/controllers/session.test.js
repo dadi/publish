@@ -22,6 +22,7 @@ beforeEach(() => {
   res = httpMocks.createResponse({
     eventEmitter: require('events').EventEmitter
   })
+  req.isAuthenticated = jest.fn()
 })
 
 describe('Session', () => {

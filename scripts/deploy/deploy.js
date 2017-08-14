@@ -1,6 +1,8 @@
 const child_process = require('child_process')
 
-console.log('POST INSTALL')
+// Post install build script
+
+console.log('Post Install starting...')
 
 child_process.exec("npm run build", (error, stdout, stderr) => {
   console.log(`stdout: ${stdout}`)
