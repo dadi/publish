@@ -1,6 +1,6 @@
 'use strict'
 
-import {route} from 'preact-router'
+import {route} from 'preact-router-regex'
 import {urlHelper} from 'lib/util/url-helper'
 
 /**

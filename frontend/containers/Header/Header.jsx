@@ -1,5 +1,5 @@
 import {h, Component} from 'preact'
-import {route} from 'preact-router'
+import {route} from 'preact-router-regex'
 import proptypes from 'proptypes'
 import {bindActionCreators} from 'redux'
 

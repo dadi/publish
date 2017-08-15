@@ -1,5 +1,5 @@
 import {Component, h} from 'preact'
-import {Router, route} from 'preact-router'
+import {Router, route} from 'preact-router-regex'
 import {connect} from 'preact-redux'
 import {bindActionCreators} from 'redux'
 import Socket from 'lib/socket'

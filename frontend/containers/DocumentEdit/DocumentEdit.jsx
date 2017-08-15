@@ -3,7 +3,7 @@
 import {h, Component} from 'preact'
 import proptypes from 'proptypes'
 import {connect} from 'preact-redux'
-import {route} from 'preact-router'
+import {route} from 'preact-router-regex'
 import {bindActionCreators} from 'redux'
 
 import Style from 'lib/Style'
