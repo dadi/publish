@@ -15,26 +15,7 @@ const mockServer = {
 let server
 
 beforeEach(() => {
-  const restartCalls = []
-  if (server && server.primaryServer && !server.primaryServer.close._isMockFunction) {
-    restartCalls.push(new Promise(resolve => {
-      server.primaryServer.close(() => {
-        resolve()
-      }) 
-    }))
-  }
-  if (server && server.redirectServer && !server.redirectServer.close._isMockFunction) {
-    restartCalls.push(new Promise(resolve => {
-      server.redirectServer.close(() => {
-        resolve()
-      }) 
-    }))
-  }
-
-  return Promise.all(restartCalls)
-    .then(() => {
-      server = new Server
-    })
+  server = new Server
 })
 
 afterEach(() => {
