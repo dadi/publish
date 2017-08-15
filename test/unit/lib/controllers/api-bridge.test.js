@@ -157,19 +157,19 @@ describe('ApiBridge', () => {
       apiBridge.post(req, res, () => {})
     })
 
-    it('should ...', (done) => {
-      req = httpMocks.createRequest({
-        headers,
-        method: 'POST',
-        body
-      })
-      req.isAuthenticated = () => true
-      res.on('end', () => {
+    // it('should ...', (done) => {
+      // req = httpMocks.createRequest({
+        // headers,
+        // method: 'POST',
+        // body
+      // })
+      // req.isAuthenticated = () => true
+      // res.on('end', () => {
         // console.log("DATA", res._getData())
-        done()
-      })
-      apiBridge.post(req, res, () => {})
-    })
+        // done()
+      // })
+      // apiBridge.post(req, res, () => {})
+    // })
   })
 
 })
