@@ -23,18 +23,14 @@ afterEach(() => {
   if (server && server.primaryServer && !server.primaryServer.close._isMockFunction) {
     restartCalls.push(new Promise(resolve => {
       server.primaryServer.close(() => {
-        setTimeout(() => {
-          resolve()
-        }, 1000)
+        resolve()
       }) 
     }))
   }
   if (server && server.redirectServer && !server.redirectServer.close._isMockFunction) {
     restartCalls.push(new Promise(resolve => {
       server.redirectServer.close(() => {
-        setTimeout(() => {
-          resolve()
-        }, 1000)
+        resolve()
       }) 
     }))
   }
