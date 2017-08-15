@@ -185,7 +185,7 @@ class DocumentList extends Component {
       )      
     }
 
-    if (!documents.list || documents.status === Constants.STATUS_LOADING || !this.currentCollection) {
+    if (!documents.list || !documents.list.results || documents.status === Constants.STATUS_LOADING || !this.currentCollection) {
       return null
     }
 
