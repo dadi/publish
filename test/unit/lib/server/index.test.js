@@ -45,7 +45,7 @@ describe('Server', () => {
     expect(server).toBeInstanceOf(Object)
   })
 
-  describe('Start server', () => {
+  // describe('Start server', () => {
     // it('Should return success', () => {
     //   expect.assertions(1)
 
@@ -74,13 +74,13 @@ describe('Server', () => {
     //     )
     // })
 
-    it('Should start one server if SSL is disabled', () => {
-      config.set('server.ssl.enabled', false)
-      expect.assertions(1)
+    // it('Should start one server if SSL is disabled', () => {
+    //   config.set('server.ssl.enabled', false)
+    //   expect.assertions(1)
 
-      return expect(server.start()).resolves.toBe('1 servers starter')
-    })
-  })
+    //   return expect(server.start()).resolves.toBe('1 servers starter')
+    // })
+  // })
 
   describe('Restart server', () => {
     it('Should not attempt to close an uninitiated primaryServer', () => {
