@@ -71,7 +71,6 @@ class DocumentListController extends Component {
     } = this.props
     const currentCollection = state.api.apis.length && onGetRoutes(state.api.paths).getCurrentCollection(state.api.apis)
     const hasDocuments = state.documents.list && state.documents.list.results && (state.documents.list.results.length > 0)
-    const isReference = referencedField // Temporary to disable create new in reference fields until reference save is ready.
     const params = state.router.params
     const filters = params && params.filter ? params.filter : null
     const filterLimitReached = filters 
@@ -92,7 +91,7 @@ class DocumentListController extends Component {
             accent="data"
             onClick={this.handleAddNewFilter.bind(this)}
           >Add Filter</Button>
-          {!currentCollection._isAuthCollection && (!isReference) && (
+          {!currentCollection._isAuthCollection && (
             <Button
               accent="save"
               href={newHref}

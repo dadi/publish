@@ -308,9 +308,9 @@ class DocumentList extends Component {
 
     // If we're on a nested document view, we don't want to add links to
     // documents (for now).
-    if (referencedField) {
-      return value
-    }
+    // if (referencedField) {
+    //   return value
+    // }
 
     const editHref = this.routes.editRoute({
       documentId: documentId || data._id,
