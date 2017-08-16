@@ -383,11 +383,13 @@ class DocumentEdit extends Component {
     if (collection === Constants.AUTH_COLLECTION) {
       return buildUrl(...sectionUrlBase, collectionSection.slug)
     }
+
     if (method === 'new') {
       return this.routes.createRoute({
         section: collectionSection.slug
       })
     }
+    
     if (method === 'edit') {
       return this.routes.editRoute({
         section: collectionSection.slug

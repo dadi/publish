@@ -18,20 +18,23 @@ Collection.prototype.getCollections = function () {
   return Promise.all(
     config
       .get('apis')
-      .map(api => new Api(api)
+      .map(api => {
+        return new Api(api)
         .getCollections()
         .then(res => this.getSchemas(api, res.collections))
-      )
+      })
   )
 }
 
 Collection.prototype.getSchemas = function (api, collections) {
   return Promise.all(
     collections
-      .map(collection => new Api(api)
+      .map(collection => {
+        return new Api(api)
         .in(collection.slug)
         .getConfig()
-        .then(schema => Object.assign(schema, {slug: collection.slug})))
+        .then(schema => Object.assign(schema, {slug: collection.slug}))
+      })
   )
 }
 
