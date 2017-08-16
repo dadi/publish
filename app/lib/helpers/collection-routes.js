@@ -114,7 +114,7 @@ CollectionRoutes.prototype.fieldReferenceDepth = function (collections, fields, 
       const colName = field.settings.collection
       const subCol = this.getCollectionBySlug(collections, colName)
 
-      // If the collection doesn't exist, or it is.
+      // If the collection doesn't exist, or it is hidden.
       if (!subCol || hiddenCollections.includes(colName)) return depth + 1
 
       // Check sub-collection for reference fields.
