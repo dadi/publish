@@ -34,18 +34,12 @@ Whether a new filter has been added.
 - type: `func`
 
 
-### `parentDocumentId`
+### `onGetRoutes`
 
-When on a reference field, contains the ID of the parent document.
+A callback to be used to obtain the sibling document routes (edit, create and list), as
+determined by the view.
 
-- type: `string`
-
-
-### `referencedField`
-
-The name of a reference field currently being edited.
-
-- type: `string`
+- type: `func`
 
 
 ### `state`

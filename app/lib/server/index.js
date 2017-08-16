@@ -67,12 +67,20 @@ Server.prototype.start = function () {
 
   // Add all listeners
   return Promise.all(listenerQueue)
+    .then(resolved => {
+      return `${resolved.length} servers starter`
+    })
 }
 
-Server.prototype.restartPrimaryServer = function () {
+Server.prototype.restartServers = function () {
   if (this.primaryServer) {
-    this.primaryServer.close((server) => {
+    this.primaryServer.close(server => {
       this.createPrimaryServer()
+    })
+  }
+  if (this.redirectServer) {
+    this.redirectServer.close(server => {
+      this.createRedirectServer()
     })
   }
 }
@@ -102,21 +110,21 @@ Server.prototype.createRedirectServer = function () {
   const options = this.getOptions({
     port: 80
   })
-  const server = restify.createServer(options)
+  this.redirectServer = restify.createServer(options)
 
-  this.addSSL(server)
-  new Router(server)
+  this.addSSL(this.redirectServer)
+  new Router(this.redirectServer)
     .addSecureRedirect(this.ssl)
     .addRoutes()
 
-  return this.addListeners(server, options)
+  return this.addListeners(this.redirectServer, options)
 }
 
 Server.prototype.addSSL = function (server) {
   this.ssl
     .useListeningServer(server)
     .secureServerRestart(() => {
-      this.restartPrimaryServer()
+      this.restartServers()
     })
     .start()
 }

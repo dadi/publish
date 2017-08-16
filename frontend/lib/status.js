@@ -10,17 +10,15 @@ export function isOnline () {
 
 export function isServerOnline () {
   return fetch('/', {
-    credentials: 'same-origin',
+    credentials: 'include',
     method: 'HEAD'
   })
   .then(response => response.status === 200)
   .catch(err => false)
 }
 
-class ConnectionStatus {
-  constructor (interval = 2000) {
-    this.watch(interval)
-
+export default class ConnectionMonitor {
+  constructor () {
     return this
   }
 
@@ -35,6 +33,8 @@ class ConnectionStatus {
           })
       }
     }, interval)
+
+    return this
   }
 
   get status () {
@@ -53,8 +53,4 @@ class ConnectionStatus {
   registerStatusChangeCallback (callback) {
     this.callback = callback
   }
-}
-
-export default function ConnectionMonitor (interval) {
-  return new ConnectionStatus(interval)
 }

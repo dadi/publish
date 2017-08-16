@@ -8,6 +8,7 @@ import Header from 'containers/Header/Header'
 import Main from 'components/Main/Main'
 import Page from 'components/Page/Page'
 
+import {DocumentRoutes} from 'lib/document-routes'
 import {setPageTitle} from 'lib/util'
 
 export default class DocumentEditView extends Component {
@@ -30,6 +31,7 @@ export default class DocumentEditView extends Component {
             documentId={documentId}
             group={group}
             onBuildBaseUrl={this.handleBuildBaseUrl.bind(this)}
+            onGetRoutes={this.getRoutes.bind(this)}
             onPageTitle={this.handlePageTitle}
             referencedField={referencedField}
             section={section}
@@ -40,11 +42,16 @@ export default class DocumentEditView extends Component {
           collection={collection}
           documentId={documentId}
           group={group}
+          onGetRoutes={this.getRoutes.bind(this)}
           referencedField={referencedField}
           section={section}
         />
       </Page>
     )
+  }
+
+  getRoutes(paths) {
+    return new DocumentRoutes(Object.assign(this.props, {paths}))
   }
 
   handleBuildBaseUrl() {
@@ -55,7 +62,7 @@ export default class DocumentEditView extends Component {
       section
     } = this.props
 
-    return [group, collection, 'document', 'edit', documentId]
+    return [group, collection, documentId]
   }
 
   handlePageTitle(title) {

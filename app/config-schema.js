@@ -224,6 +224,22 @@ module.exports = {
       }
     }
   },
+  ga: {
+    availableInFrontend: true,
+    doc: 'Google Analytics options',
+    enabled: {
+      availableInFrontend: true,
+      doc: 'GA events enabled',
+      format: Boolean,
+      default: false
+    },
+    trackingId: {
+      availableInFrontend: true,
+      doc: 'GA Tracking credentials',
+      format: String,
+      default: ''
+    }
+  },
   TZ: {
     availableInFrontend: true,
     doc: 'Process Timezone',

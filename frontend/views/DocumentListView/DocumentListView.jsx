@@ -5,6 +5,7 @@ import {Component, h} from 'preact'
 import Style from 'lib/Style'
 import styles from './DocumentListView.css'
 
+import {DocumentRoutes} from 'lib/document-routes'
 import {isValidJSON, setPageTitle} from 'lib/util'
 
 import DocumentList from 'containers/DocumentList/DocumentList'
@@ -46,7 +47,7 @@ export default class DocumentListView extends Component {
             collection={collection}
             group={group}
             onBuildBaseUrl={this.handleBuildBaseUrl.bind(this)}
-            parentDocumentId={documentId}
+            documentId={documentId}
             referencedField={referencedField}
           /> : <Header />
         }
@@ -59,7 +60,8 @@ export default class DocumentListView extends Component {
               filter={filter}
               newFilter={newFilter}
               onAddNewFilter={this.handleAddNewFilter.bind(this)}
-              parentDocumentId={documentId}
+              onGetRoutes={this.getRoutes.bind(this)}
+              documentId={documentId}
               referencedField={referencedField}
             />
 
@@ -68,10 +70,11 @@ export default class DocumentListView extends Component {
               filter={filter}
               group={group}
               onBuildBaseUrl={this.handleBuildBaseUrl.bind(this)}
+              onGetRoutes={this.getRoutes.bind(this)}
               onPageTitle={this.handlePageTitle}
               order={order}
               page={page}
-              parentDocumentId={documentId}
+              documentId={documentId}
               referencedField={referencedField}
               sort={sort}
             />
@@ -102,6 +105,10 @@ export default class DocumentListView extends Component {
     })
   }
 
+  getRoutes(paths) {
+    return new DocumentRoutes(Object.assign(this.props, {paths}))
+  }
+
   handleBuildBaseUrl(data = {}) {
     const {
       collection,
@@ -112,13 +119,13 @@ export default class DocumentListView extends Component {
 
     if (referencedField) {
       if (documentId) {
-        return [group, collection, 'document', 'edit', documentId, data.section]
+        return [group, collection, documentId, data.section]
       }
 
-      return [group, collection, 'document', 'new', data.section]
+      return [group, collection, 'new', data.section]
     }
 
-    return [group, collection, 'documents']
+    return [group, collection]
   }
 
   handlePageTitle(title) {

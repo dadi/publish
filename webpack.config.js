@@ -164,7 +164,7 @@ module.exports = {
       reducers: 'frontend/reducers',
       'react': 'preact/aliases',
       'react-dom': 'preact/aliases',
-      'react-router': 'preact-router',
+      'react-router': 'preact-router-regex',
       'react-redux': 'preact-redux',
       'fetch': 'unfetch/polyfill'
     },

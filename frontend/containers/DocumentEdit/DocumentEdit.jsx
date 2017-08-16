@@ -3,7 +3,7 @@
 import {h, Component} from 'preact'
 import proptypes from 'proptypes'
 import {connect} from 'preact-redux'
-import {route} from 'preact-router'
+import {route} from 'preact-router-regex'
 import {bindActionCreators} from 'redux'
 
 import Style from 'lib/Style'
@@ -17,7 +17,7 @@ import * as routerActions from 'actions/routerActions'
 import * as fieldComponents from 'lib/field-components'
 
 import APIBridge from 'lib/api-bridge-client'
-import {buildUrl, createRoute} from 'lib/router'
+import {buildUrl} from 'lib/router'
 import {connectHelper, filterHiddenFields} from 'lib/util'
 import {Format} from 'lib/util/string'
 import {getApiForUrlParams, getCollectionForUrlParams} from 'lib/collection-lookup'
@@ -58,6 +58,12 @@ class DocumentEdit extends Component {
     onBuildBaseUrl: proptypes.func,
 
     /**
+    * A callback to be used to obtain the sibling document routes (edit, create and list), as
+    * determined by the view.
+    */
+    onGetRoutes: proptypes.func,
+
+    /**
     * A callback to be fired if the container wants to attempt changing the
     * page title.
     */
@@ -91,6 +97,7 @@ class DocumentEdit extends Component {
       documentId,
       group,
       onBuildBaseUrl,
+      onGetRoutes,
       onPageTitle,
       referencedField,
       section,
@@ -100,12 +107,7 @@ class DocumentEdit extends Component {
       collection,
       group
     })
-    const currentCollection = getCollectionForUrlParams(state.api.apis, {
-      collection,
-      group,
-      referencedField,
-      useApi: currentApi
-    })
+    const currentCollection = state.api.apis.length && this.routes.getCurrentCollection(state.api.apis)
     const method = documentId ? 'edit' : 'new'
 
     if (typeof onPageTitle === 'function') {
@@ -121,9 +123,17 @@ class DocumentEdit extends Component {
 
         if (!sectionMatch) {
           const firstSection = fields.sections[0]
-          const sectionUrlBase = onBuildBaseUrl()
 
-          route(buildUrl(...sectionUrlBase, documentId, firstSection.slug))
+          // Redirect to first edit section
+          if (method === 'edit') {
+            route(this.routes.editRoute({
+              section: firstSection.slug
+            }))
+          } else {
+            route(this.routes.createRoute({
+              section: firstSection.slug
+            }))
+          }
 
           return false
         }
@@ -216,6 +226,7 @@ class DocumentEdit extends Component {
       collection,
       documentId,
       group,
+      onGetRoutes,
       referencedField,
       state
     } = this.props
@@ -223,12 +234,8 @@ class DocumentEdit extends Component {
       collection,
       group
     })
-    const currentCollection = getCollectionForUrlParams(state.api.apis, {
-      collection,
-      group,
-      referencedField,
-      useApi: currentApi
-    })
+    this.routes = onGetRoutes(state.api.paths)
+    const currentCollection = state.api.apis.length && this.routes.getCurrentCollection(state.api.apis)
 
     this.currentApi = currentApi
     this.currentCollection = currentCollection
@@ -258,6 +265,7 @@ class DocumentEdit extends Component {
       documentId,
       group,
       onBuildBaseUrl,
+      onGetRoutes,
       referencedField,
       section,
       state
@@ -268,7 +276,7 @@ class DocumentEdit extends Component {
     if (status === Constants.STATUS_NOT_FOUND) {
       return (
         <ErrorMessage
-          data={{href: buildUrl(group, collection, 'documents')}}
+          data={{href: buildUrl(group, collection)}}
           type={Constants.ERROR_DOCUMENT_NOT_FOUND}
         />
       )
@@ -297,24 +305,22 @@ class DocumentEdit extends Component {
     let documentData = Object.assign({}, document.remote, document.local)
 
     // (!) This will be used once we add the ability to edit nested documents.
-    //if (referencedField) {
+    // if (referencedField) {
     //  documentData = documentData[referencedField]
-    //}
-
+    // }
     return (
       <div class={styles.container}>
         {fields.sections &&
           <div class={styles.navigation}>
             {fields.sections.map(collectionSection => {
               const isActive = activeSection === collectionSection.slug
-              const sectionUrlBase = onBuildBaseUrl()
-              const href = buildUrl(...sectionUrlBase, collectionSection.slug)
+              const editHref = this.buildHref(method, collectionSection)
 
               return (
                 <SubNavItem
                   active={isActive}
                   error={collectionSection.hasErrors}
-                  href={href}
+                  href={editHref}
                 >
                   {collectionSection.name}
                 </SubNavItem>
@@ -365,6 +371,32 @@ class DocumentEdit extends Component {
     )
   }
 
+  buildHref(method, collectionSection) {
+    const {
+      collection,
+      onBuildBaseUrl,
+      onGetRoutes,
+      state
+    } = this.props
+    const sectionUrlBase = onBuildBaseUrl()
+
+    if (collection === Constants.AUTH_COLLECTION) {
+      return buildUrl(...sectionUrlBase, collectionSection.slug)
+    }
+
+    if (method === 'new') {
+      return this.routes.createRoute({
+        section: collectionSection.slug
+      })
+    }
+    
+    if (method === 'edit') {
+      return this.routes.editRoute({
+        section: collectionSection.slug
+      })
+    }
+  }
+
   // Fetches a document from the remote API
   fetchDocument() {
     const {
@@ -377,16 +409,13 @@ class DocumentEdit extends Component {
 
     // As far as the fetch method is concerned, we're only interested in the
     // collection of the main document, not the referenced one.
-    const documentCollection = getCollectionForUrlParams(state.api.apis, {
-      collection,
-      group
-    })
-    const collectionFields = Object.keys(filterHiddenFields(documentCollection.fields, 'edit'))
+    const parentCollection = this.routes.getParentCollection(state.api.apis)
+    const collectionFields = Object.keys(filterHiddenFields(parentCollection.fields, 'edit'))
       .concat(['createdAt', 'createdBy', 'lastModifiedAt', 'lastModifiedBy'])
 
     const query = {
       api: this.currentApi,
-      collection: documentCollection,
+      collection: parentCollection,
       id: documentId,
       fields: collectionFields
     }

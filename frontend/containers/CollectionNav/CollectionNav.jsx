@@ -1,5 +1,5 @@
 import {Component, h} from 'preact'
-import {Router} from 'preact-router'
+import {Router} from 'preact-router-regex'
 import {connect} from 'preact-redux'
 import {bindActionCreators} from 'redux'
 
@@ -91,7 +91,7 @@ class CollectionNav extends Component {
           subItems.push({
             id: `${groupSlug}/${collectionSlug}`,
             label: displayName,
-            href: buildUrl(groupSlug, collectionSlug, 'documents')
+            href: buildUrl(groupSlug, collectionSlug)
           })
         })
       })
@@ -115,7 +115,7 @@ class CollectionNav extends Component {
         ungrouped.push({
           id: collectionSlug,
           label: displayName,
-          href: buildUrl(null, collectionSlug, 'documents')
+          href: buildUrl(null, collectionSlug)
         })
       })
     })

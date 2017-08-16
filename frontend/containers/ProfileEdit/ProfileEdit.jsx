@@ -31,6 +31,12 @@ class ProfileEdit extends Component {
     onBuildBaseUrl: proptypes.func,
 
     /**
+    * A callback to be used to obtain the sibling document routes (edit, create and list), as
+    * determined by the view.
+    */
+    onGetRoutes: proptypes.func,
+
+    /**
      * The name of a reference field currently being edited.
      */
     referencedField: proptypes.string,
@@ -49,6 +55,7 @@ class ProfileEdit extends Component {
   render() {
     const {
       onBuildBaseUrl,
+      onGetRoutes,
       referencedField,
       section,
       state
@@ -64,6 +71,7 @@ class ProfileEdit extends Component {
           <ReferencedDocumentHeader
             collection={Constants.AUTH_COLLECTION}
             onBuildBaseUrl={onBuildBaseUrl}
+            onGetRoutes={onGetRoutes}
             parentDocumentId={userDocument._id}
             referencedField={referencedField}
           />
@@ -73,6 +81,7 @@ class ProfileEdit extends Component {
               collection={Constants.AUTH_COLLECTION}
               documentId={userDocument._id}
               onBuildBaseUrl={onBuildBaseUrl}
+              onGetRoutes={onGetRoutes}
               referencedField={referencedField}
               section={section}
               selectLimit={1}
@@ -81,6 +90,7 @@ class ProfileEdit extends Component {
             <DocumentListToolbar
               collection={Constants.AUTH_COLLECTION}
               onBuildBaseUrl={onBuildBaseUrl}
+              onGetRoutes={onGetRoutes}
               referencedField={referencedField}
             />
           </Main>
@@ -97,6 +107,7 @@ class ProfileEdit extends Component {
             collection={Constants.AUTH_COLLECTION}
             documentId={userDocument._id}
             onBuildBaseUrl={onBuildBaseUrl}
+            onGetRoutes={onGetRoutes}
             section={section}
           />
 

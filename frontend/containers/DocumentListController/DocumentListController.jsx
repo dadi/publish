@@ -10,6 +10,7 @@ import * as documentsActions from 'actions/documentsActions'
 
 import {buildUrl, createRoute, router} from 'lib/router'
 import {connectHelper} from 'lib/util'
+
 import {getApiForUrlParams, getCollectionForUrlParams} from 'lib/collection-lookup'
 
 import Button from 'components/Button/Button'
@@ -37,16 +38,6 @@ class DocumentListController extends Component {
     group: proptypes.string,
 
     /**
-     * When on a reference field, contains the ID of the parent document.
-     */
-    parentDocumentId: proptypes.string,
-
-    /**
-     * The name of a reference field currently being edited.
-     */
-    referencedField: proptypes.string,
-
-    /**
      * The global state object.
      */
     state: proptypes.object,
@@ -54,7 +45,17 @@ class DocumentListController extends Component {
     /**
     * Whether a new filter has been added.
     */
-    onAddNewFilter: proptypes.func
+    onAddNewFilter: proptypes.func,
+
+    /**
+    * A callback to be used to obtain the sibling document routes (edit, create and list), as
+    * determined by the view.
+    */
+    onGetRoutes: proptypes.func
+  }
+
+  constructor(props) {
+    super(props)
   }
 
   render() {
@@ -64,21 +65,20 @@ class DocumentListController extends Component {
       group,
       newFilter,
       onAddNewFilter,
+      onGetRoutes,
       referencedField,
       state
     } = this.props
-
-    const currentCollection = getCollectionForUrlParams(state.api.apis, {
-      collection,
-      group,
-      referencedField
-    })
+    const currentCollection = state.api.apis.length && onGetRoutes(state.api.paths).getCurrentCollection(state.api.apis)
     const hasDocuments = state.documents.list && state.documents.list.results && (state.documents.list.results.length > 0)
+    const isReference = referencedField // Temporary to disable create new in reference fields until reference save is ready.
     const params = state.router.params
     const filters = params && params.filter ? params.filter : null
     const filterLimitReached = filters 
       && currentCollection 
       && Object.keys(filters).length === Object.keys(currentCollection.fields).length
+
+    const newHref = onGetRoutes(state.api.paths).createRoute({pos: 1}) // TO-DO: Change pos to match the number of new entries.
 
     if (!currentCollection) {
       return null
@@ -92,10 +92,12 @@ class DocumentListController extends Component {
             accent="data"
             onClick={this.handleAddNewFilter.bind(this)}
           >Add Filter</Button>
-          <Button
-            accent="save"
-            href={buildUrl(group, collection, 'document', 'new')}
-          >Create new</Button>
+          {!currentCollection._isAuthCollection && (!isReference) && (
+            <Button
+              accent="save"
+              href={newHref}
+            >Create new</Button>
+          )}
         </ListController>
         <DocumentFilters
           config={state.app.config}

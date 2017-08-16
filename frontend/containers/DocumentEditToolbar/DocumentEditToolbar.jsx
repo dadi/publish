@@ -16,7 +16,7 @@ import {bindActionCreators} from 'redux'
 import {buildUrl} from 'lib/router'
 import {connectHelper} from 'lib/util'
 import {getApiForUrlParams, getCollectionForUrlParams} from 'lib/collection-lookup'
-import {route} from 'preact-router'
+import {route} from 'preact-router-regex'
 
 import ButtonWithOptions from 'components/ButtonWithOptions/ButtonWithOptions'
 import ButtonWithPrompt from 'components/ButtonWithPrompt/ButtonWithPrompt'
@@ -105,7 +105,7 @@ class DocumentEditToolbar extends Component {
     // Have we deleted a document?
     if (previousDocument.remote && !document.remote) {
       // Redirect to document list view
-      route(buildUrl(group, collection, 'documents'))
+      route(buildUrl(group, collection))
 
       actions.setNotification({
         message: 'The documents have been deleted'
@@ -257,7 +257,7 @@ class DocumentEditToolbar extends Component {
               }) 
               return
             }
-            route(buildUrl(group, collection, 'document', 'edit', documentId, section))
+            route(buildUrl(group, collection, documentId, section))
 
             actions.setNotification({
               message:`The document has been ${newDocument ? 'created' : 'updated'}`
@@ -271,7 +271,7 @@ class DocumentEditToolbar extends Component {
       case 'saveAndCreateNew':
         this.onSave = {
           callback: documentId => {
-            route(buildUrl(group, collection, 'document', 'new'))
+            route(buildUrl(group, collection, 'new'))
 
             actions.setNotification({
               message: `The document has been ${newDocument ? 'created' : 'updated'}`
@@ -287,7 +287,7 @@ class DocumentEditToolbar extends Component {
       case 'saveAndGoBack':
         this.onSave = {
           callback: documentId => {
-            route(buildUrl(group, collection, 'documents'))
+            route(buildUrl(group, collection))
 
             actions.setNotification({
               message: `The document has been ${newDocument ? 'created' : 'updated'}`
@@ -301,7 +301,7 @@ class DocumentEditToolbar extends Component {
       case 'saveAsDuplicate':
         this.onSave = {
           callback: documentId => {
-            route(buildUrl(group, collection, 'document', 'edit', documentId, section))
+            route(buildUrl(group, collection, documentId, section))
 
             actions.setNotification({
               message: `The document has been created`

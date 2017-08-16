@@ -20,6 +20,13 @@ The name of the collection currently being listed.
 - type: `string`
 
 
+### `documentId`
+
+When on a reference field, contains the ID of the parent document.
+
+- type: `string`
+
+
 ### `filter`
 
 The JSON-stringified object of active filters.
@@ -37,6 +44,14 @@ The name of the group where the current collection belongs (if any).
 ### `onBuildBaseUrl`
 
 A callback to be used to obtain the base URL for the given page, as
+determined by the view.
+
+- type: `func`
+
+
+### `onGetRoutes`
+
+A callback to be used to obtain the sibling document routes (edit, create and list), as
 determined by the view.
 
 - type: `func`
@@ -63,13 +78,6 @@ The order used to sort the documents by the `sort` field.
 The number of the current active page.
 
 - type: `number`
-
-
-### `parentDocumentId`
-
-When on a reference field, contains the ID of the parent document.
-
-- type: `string`
 
 
 ### `referencedField`

@@ -2,13 +2,14 @@
 
 import {h, Component} from 'preact'
 
-import {setPageTitle} from 'lib/util'
-
 import DocumentEdit from 'containers/DocumentEdit/DocumentEdit'
 import DocumentEditToolbar from 'containers/DocumentEditToolbar/DocumentEditToolbar'
 import Header from 'containers/Header/Header'
 import Main from 'components/Main/Main'
 import Page from 'components/Page/Page'
+
+import {DocumentRoutes} from 'lib/document-routes'
+import {setPageTitle} from 'lib/util'
 
 export default class DocumentCreateView extends Component {
   render() {
@@ -16,6 +17,7 @@ export default class DocumentCreateView extends Component {
       collection,
       documentId,
       group,
+      referencedField,
       section
     } = this.props
 
@@ -28,6 +30,7 @@ export default class DocumentCreateView extends Component {
             collection={collection}
             group={group}
             onBuildBaseUrl={this.handleBuildBaseUrl.bind(this)}
+            onGetRoutes={this.getRoutes.bind(this)}
             onPageTitle={this.handlePageTitle}
             section={section}
           />
@@ -36,10 +39,15 @@ export default class DocumentCreateView extends Component {
         <DocumentEditToolbar
           collection={collection}
           group={group}
+          onGetRoutes={this.getRoutes.bind(this)}
           section={section}
         />        
       </Page>
     )    
+  }
+
+  getRoutes(paths) {
+    return new DocumentRoutes(Object.assign(this.props, {paths}))
   }
 
   handleBuildBaseUrl() {
@@ -50,7 +58,7 @@ export default class DocumentCreateView extends Component {
       section
     } = this.props
 
-    return [group, collection, 'document', 'new']
+    return [group, collection, 'new']
   }
 
   handlePageTitle(title) {

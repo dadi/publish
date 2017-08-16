@@ -1,6 +1,6 @@
 import {Component, h} from 'preact'
 import {connect} from 'preact-redux'
-import {route} from 'preact-router'
+import {route} from 'preact-router-regex'
 import {bindActionCreators} from 'redux'
 import {connectHelper, isEmpty, setPageTitle} from 'lib/util'
 import Validation from 'lib/util/validation'

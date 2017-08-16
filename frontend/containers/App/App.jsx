@@ -1,5 +1,5 @@
 import {Component, h} from 'preact'
-import {Router, route} from 'preact-router'
+import {Router, route} from 'preact-router-regex'
 import {connect} from 'preact-redux'
 import {bindActionCreators} from 'redux'
 import Socket from 'lib/socket'
@@ -24,15 +24,11 @@ import SignOutView from 'views/SignOutView/SignOutView'
 import ProfileEditView from 'views/ProfileEditView/ProfileEditView'
 
 import {connectHelper, debounce} from 'lib/util'
+import Analytics from 'lib/analytics'
 import ConnectionMonitor from 'lib/status'
 import apiBridgeClient from 'lib/api-bridge-client'
 
 class App extends Component {
-
-  constructor (props) {
-    super(props)
-    const {actions, state} = this.props
-  }
 
   componentWillMount() {
     const {actions, state} = this.props
@@ -69,8 +65,15 @@ class App extends Component {
       (!previousProps.state.app.config && state.app.config) &&
         state.app.config.server.healthcheck.enabled
     ) {
-      ConnectionMonitor(state.app.config.server.healthcheck.frequency)
+      this.monitor = new ConnectionMonitor()
+        .watch(state.app.config.server.healthcheck.frequency)
         .registerStatusChangeCallback(actions.setNetworkStatus)
+
+      if (state.app.config.ga.enabled) {
+        this.analytics = new Analytics()
+          .register(state.app.config.ga.trackingId)
+          .pageview(state.router.locationBeforeTransitions.pathname)
+      }
     }
 
     // State change: user has signed in.
@@ -137,55 +140,26 @@ class App extends Component {
           path="/reset"
         />
 
-        <DocumentListView
-          authenticate
-          path="/:group/:collection/document/edit/:documentId?/select/:referencedField?/:page?"
-        />
+        {state.api.paths.list.map(path => (
+          <DocumentListView
+            authenticate
+            path={path}
+          />
+        ))}
+        
+        {state.api.paths.create.map(path => (
+          <DocumentCreateView
+            authenticate
+            path={path}
+          />
+        ))}
 
-        <DocumentListView
-          authenticate
-          path="/:collection/document/edit/:documentId?/select/:referencedField?/:page?"
-        />
-
-        <DocumentEditView
-          authenticate
-          path="/:group/:collection/document/edit/:documentId/:section?"
-        />
-
-        <DocumentEditView
-          authenticate
-          path="/:collection/document/edit/:documentId/:section?"
-        />
-
-        <DocumentListView
-          authenticate
-          path="/:group/:collection/document/new/:section?/:referencedField?/:page?"
-        />
-
-        <DocumentListView
-          authenticate
-          path="/:collection/document/new/:section?/:referencedField?/:page?"
-        />
-
-        <DocumentCreateView
-          authenticate
-          path="/:group/:collection/document/new/:section?"
-        />
-
-        <DocumentCreateView
-          authenticate
-          path="/:collection/document/new/:section?"
-        />
-
-        <DocumentListView
-          authenticate
-          path="/:group/:collection/documents/:page?"
-        />
-
-        <DocumentListView
-          authenticate
-          path="/:collection/documents/:page?"
-        />
+        {state.api.paths.edit.map(path => (
+          <DocumentEditView
+            authenticate
+            path={path}
+          />
+        ))}
 
         <ProfileEditView
           authenticate
@@ -194,7 +168,7 @@ class App extends Component {
 
         <ProfileEditView
           authenticate
-          path="/profile/select/:referencedField?/:page?"
+          path="/profile/select/:referencedField?/:page?[^\d+$]"
         />
 
         <SignInView
@@ -229,6 +203,10 @@ class App extends Component {
     const isAuthenticatedRoute = event.current &&
       event.current.attributes &&
       event.current.attributes.authenticate
+
+    if (this.analytics && this.analytics.isActive()) {
+      this.analytics.pageview(event.url)
+    }
 
     if (
       !state.user.authEnabled &&

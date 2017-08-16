@@ -71,6 +71,10 @@ beforeEach(() => {
   apiBridge = new ApiBridge()
 })
 
+afterEach(() => {
+  config.set('apis', [])
+})
+
 describe('ApiBridge', () => {
   it('should export function', () => {
     expect(apiBridge).toBeInstanceOf(Object)
@@ -114,7 +118,6 @@ describe('ApiBridge', () => {
 
     describe('ApiBridge: POST 200 response code without APIs', () => {
       it('should return 200 response code', (done) => {
-        config.set('apis', [])
         res.on('end', () => {
           expect(res.statusCode).toBe(200)
           done()
@@ -123,14 +126,12 @@ describe('ApiBridge', () => {
       })
 
       it('should return undefined', () => {
-        config.set('apis', [])
         expect(apiBridge.post(req, res, () => true)).toBe(true)
       })
     })
 
     describe('ApiBridge: POST empty bundle query with authenticated request', () => {
       it('should return next', (done) => {
-        config.set('apis', [])
         res.on('end', () => {
           expect(res._getData()).toBe('')
           done()
@@ -156,19 +157,19 @@ describe('ApiBridge', () => {
       apiBridge.post(req, res, () => {})
     })
 
-    it('should ...', (done) => {
-      req = httpMocks.createRequest({
-        headers,
-        method: 'POST',
-        body
-      })
-      req.isAuthenticated = () => true
-      res.on('end', () => {
+    // it('should ...', (done) => {
+      // req = httpMocks.createRequest({
+        // headers,
+        // method: 'POST',
+        // body
+      // })
+      // req.isAuthenticated = () => true
+      // res.on('end', () => {
         // console.log("DATA", res._getData())
-        done()
-      })
-      apiBridge.post(req, res, () => {})
-    })
+        // done()
+      // })
+      // apiBridge.post(req, res, () => {})
+    // })
   })
 
 })

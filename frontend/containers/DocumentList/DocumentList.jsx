@@ -4,7 +4,7 @@ import {h, Component} from 'preact'
 import proptypes from 'proptypes'
 import {connect} from 'preact-redux'
 import {bindActionCreators} from 'redux'
-import {route} from 'preact-router'
+import {route} from 'preact-router-regex'
 import {Keyboard} from 'lib/keyboard'
 
 import * as Constants from 'lib/constants'
@@ -55,6 +55,12 @@ class DocumentList extends Component {
     onBuildBaseUrl: proptypes.func,
 
     /**
+    * A callback to be used to obtain the sibling document routes (edit, create and list), as
+    * determined by the view.
+    */
+    onGetRoutes: proptypes.func,
+
+    /**
      * A callback to be fired if the container wants to attempt changing the
      * page title.
      */
@@ -73,7 +79,7 @@ class DocumentList extends Component {
     /**
      * When on a reference field, contains the ID of the parent document.
      */
-    parentDocumentId: proptypes.string,
+    documentId: proptypes.string,
 
     /**
      * The name of a reference field currently being edited.
@@ -104,6 +110,7 @@ class DocumentList extends Component {
   componentDidMount() {
     const {
       onBuildBaseUrl,
+      onGetRoutes,
       page,
       state
     } = this.props
@@ -120,6 +127,7 @@ class DocumentList extends Component {
   componentDidUpdate(prevProps) {
     const {
       actions,
+      onGetRoutes,
       referencedField,
       state
     } = this.props
@@ -146,6 +154,7 @@ class DocumentList extends Component {
     // State check: reject when path matches and document list loaded
     if (list && historyKeyMatch) return
 
+    this.routes = onGetRoutes(state.api.paths)
     this.checkStatusAndFetch()
   }
 
@@ -154,6 +163,7 @@ class DocumentList extends Component {
       collection,
       filter,
       group,
+      onGetRoutes,
       order,
       referencedField,
       sort,
@@ -161,11 +171,11 @@ class DocumentList extends Component {
     } = this.props
     const documents = state.documents
 
-    this.currentCollection = getCollectionForUrlParams(state.api.apis, {
-      collection,
-      group,
-      referencedField
-    })
+    if (state.api.apis.length) {
+      this.currentCollection = this.routes.getCurrentCollection(state.api.apis)
+    }
+
+    const createHref = this.routes.createRoute()
 
     if (documents.status === Constants.STATUS_NOT_FOUND) {
       return (
@@ -175,7 +185,7 @@ class DocumentList extends Component {
       )      
     }
 
-    if (!documents.list || documents.status === Constants.STATUS_LOADING || !this.currentCollection) {
+    if (!documents.list || !documents.list.results || documents.status === Constants.STATUS_LOADING || !this.currentCollection) {
       return null
     }
 
@@ -190,7 +200,7 @@ class DocumentList extends Component {
           {!referencedField && (
             <Button
               accent="save"
-              href={buildUrl(group, collection, 'document', 'new')}
+              href={createHref}
             >Create new document</Button>
           )}
         </HeroMessage>
@@ -201,6 +211,9 @@ class DocumentList extends Component {
   }
 
   componentWillMount() {
+    const {state, onGetRoutes} = this.props
+
+    this.routes = onGetRoutes(state.api.paths)
     this.checkStatusAndFetch()
   }
 
@@ -229,9 +242,10 @@ class DocumentList extends Component {
       collection,
       filter,
       group,
+      onGetRoutes,
       order,
       page,
-      parentDocumentId,
+      documentId,
       referencedField,
       sort,
       state
@@ -240,12 +254,7 @@ class DocumentList extends Component {
       collection,
       group
     })
-    const currentCollection = getCollectionForUrlParams(state.api.apis, {
-      collection,
-      group,
-      referencedField,
-      useApi: currentApi
-    })
+    const currentCollection = this.routes.getCurrentCollection(state.api.apis)
 
     if (!currentCollection) {
       actions.setDocumentListStatus(Constants.STATUS_NOT_FOUND)
@@ -255,11 +264,7 @@ class DocumentList extends Component {
 
     const count = currentCollection.settings && currentCollection.settings.count || 20
     const filterValue = state.router.params ? state.router.params.filter : null
-    const parentCollection = referencedField && getCollectionForUrlParams(state.api.apis, {
-      collection,
-      group,
-      useApi: currentApi
-    })
+    const parentCollection = referencedField && this.routes.getParentCollection(state.api.apis)
 
     actions.fetchDocuments({
       api: currentApi,
@@ -267,7 +272,7 @@ class DocumentList extends Component {
       count,
       filters: filterValue,
       page,
-      parentDocumentId,
+      documentId,
       parentCollection,
       referencedField,
       sortBy: sort,
@@ -294,7 +299,9 @@ class DocumentList extends Component {
   handleAnchorRender(value, data, column, index) {
     const {
       collection,
+      documentId,
       group,
+      onGetRoutes,
       referencedField,
       state
     } = this.props
@@ -305,16 +312,16 @@ class DocumentList extends Component {
       return value
     }
 
-    const currentCollection = getCollectionForUrlParams(state.api.apis, {
-      collection,
-      group
+    const editHref = this.routes.editRoute({
+      documentId: documentId || data._id,
+      referencedId: documentId ? data._id : null
     })
+    const currentCollection = this.routes.getCurrentCollection(state.api.apis)
     const fieldSchema = currentCollection.fields[column.id]
     const renderedValue = this.renderField(column.id, fieldSchema, value)
-
     if (index === 0) {
       return (
-        <a href={buildUrl(group, collection, 'document/edit', data._id)}>{renderedValue}</a>
+        <a href={editHref}>{renderedValue}</a>
       )
     }
 
@@ -361,6 +368,7 @@ class DocumentList extends Component {
       collection,
       group,
       referencedField,
+      onGetRoutes,
       onPageTitle,
       order,
       sort,
@@ -376,15 +384,11 @@ class DocumentList extends Component {
     // context. If it does, we'll use that instead of the default `SyncTable`
     // to render the results.
     if (referencedField) {
-      const parentCollection = getCollectionForUrlParams(state.api.apis, {
-        collection,
-        group
-      })
+      const parentCollection = this.routes.getParentCollection(state.api.apis)
       const fieldSchema = parentCollection.fields[referencedField]
       const fieldType = (fieldSchema.publish && fieldSchema.publish.subType) || fieldSchema.type
       const fieldComponentName = `Field${fieldType}`
       const FieldComponentReferenceSelect = fieldComponents[fieldComponentName].referenceSelect
-
       if (
         fieldSchema.settings &&
         fieldSchema.settings.limit &&
@@ -454,6 +458,8 @@ class DocumentList extends Component {
   }
 
   renderField(fieldName, schema, value) {
+    if (!schema) return
+
     const fieldType = (schema.publish && schema.publish.subType) ?
       schema.publish.subType : schema.type
     const fieldComponentName = `Field${fieldType}`

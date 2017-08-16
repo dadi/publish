@@ -1,7 +1,7 @@
 'use strict'
 
 /**
- * @class  Valication
+ * @class  Validation
  */
 export default class Validation {
   /**
