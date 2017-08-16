@@ -17,8 +17,9 @@ import * as routerActions from 'actions/routerActions'
 import * as fieldComponents from 'lib/field-components'
 
 import APIBridge from 'lib/api-bridge-client'
+import {visibleFieldList, visibleFields} from 'lib/fields'
 import {buildUrl} from 'lib/router'
-import {connectHelper, filterHiddenFields} from 'lib/util'
+import {connectHelper} from 'lib/util'
 import {Format} from 'lib/util/string'
 import {getApiForUrlParams, getCollectionForUrlParams} from 'lib/collection-lookup'
 
@@ -115,7 +116,10 @@ class DocumentEdit extends Component {
     }
 
     if (currentCollection) {
-      const collectionFields = filterHiddenFields(currentCollection.fields, 'edit')
+      const collectionFields = visibleFields({
+        fields: currentCollection.fields,
+        view: 'edit'
+      })
       const fields = this.groupFields(collectionFields)
 
       if (section) {
@@ -292,7 +296,10 @@ class DocumentEdit extends Component {
       return null
     }
 
-    const collectionFields = filterHiddenFields(this.currentCollection.fields, 'edit')
+    const collectionFields = visibleFields({
+      fields: this.currentCollection.fields,
+      view: 'edit'
+    })
     const fields = this.groupFields(collectionFields)
     const sections = fields.sections || [{
       slug: 'other',
@@ -410,8 +417,10 @@ class DocumentEdit extends Component {
     // As far as the fetch method is concerned, we're only interested in the
     // collection of the main document, not the referenced one.
     const parentCollection = this.routes.getParentCollection(state.api.apis)
-    const collectionFields = Object.keys(filterHiddenFields(parentCollection.fields, 'edit'))
-      .concat(['createdAt', 'createdBy', 'lastModifiedAt', 'lastModifiedBy'])
+    const collectionFields = visibleFieldList({
+      fields: parentCollection.fields,
+      view: 'edit'
+    }).concat(['createdAt', 'createdBy', 'lastModifiedAt', 'lastModifiedBy'])
 
     const query = {
       api: this.currentApi,

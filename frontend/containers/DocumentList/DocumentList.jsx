@@ -15,7 +15,8 @@ import * as fieldComponents from 'lib/field-components'
 
 import APIBridge from 'lib/api-bridge-client'
 import {buildUrl, createRoute} from 'lib/router'
-import {connectHelper, filterHiddenFields} from 'lib/util'
+import {visibleFields} from 'lib/fields'
+import {connectHelper} from 'lib/util'
 import {getApiForUrlParams, getCollectionForUrlParams} from 'lib/collection-lookup'
 
 import Button from 'components/Button/Button'
@@ -306,12 +307,6 @@ class DocumentList extends Component {
       state
     } = this.props
 
-    // If we're on a nested document view, we don't want to add links to
-    // documents (for now).
-    // if (referencedField) {
-    //   return value
-    // }
-
     const editHref = this.routes.editRoute({
       documentId: documentId || data._id,
       referencedId: documentId ? data._id : null
@@ -415,7 +410,10 @@ class DocumentList extends Component {
     } else {
       onPageTitle(this.currentCollection.settings.description || this.currentCollection.name)
     }
-    const listableFields = filterHiddenFields(this.currentCollection.fields, 'list')
+    const listableFields = visibleFields({
+      fields: this.currentCollection.fields,
+      view: 'list'
+    })
 
     const tableColumns = Object.keys(listableFields)
       .map(field => {
