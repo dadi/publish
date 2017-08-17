@@ -307,6 +307,8 @@ class DocumentList extends Component {
       state
     } = this.props
 
+    // If we're on a nested document view, we don't want to add links to
+    // documents (for now).
     if (referencedField) {
       return value
     }
