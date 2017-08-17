@@ -20,6 +20,7 @@
     "snyk-protect": "snyk protect",
     "start": "NODE_ENV=development node index.js",
     "test": "npm-run-all test-all lint",
+    "test-watch": "jest --watch",
     "test-all": "jest && node scripts/coverage/coverage.js",
     "watch": "NODE_ENV=development npm-run-all --parallel watch:server watch:build",
     "watch:build": "webpack --watch",
