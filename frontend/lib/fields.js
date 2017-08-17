@@ -7,7 +7,7 @@ export function visibleFieldList ({
       // If there's no publish block, return field by default.
       if (!fields[key].publish || !fields[key].publish.display) return true
 
-      // Is the field display value is enabled for this view.
+      // Return the fields display property value for this view.
       return fields[key].publish.display[view]
     })
 }

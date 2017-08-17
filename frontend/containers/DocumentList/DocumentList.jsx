@@ -307,6 +307,10 @@ class DocumentList extends Component {
       state
     } = this.props
 
+    if (referencedField) {
+      return value
+    }
+
     const editHref = this.routes.editRoute({
       documentId: documentId || data._id,
       referencedId: documentId ? data._id : null
