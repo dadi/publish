@@ -1,25 +1,128 @@
-// const restify = require('restify')
+const Server = function () {
+  return this
+}
 
-// const pre = jest.fn(() => restify)
-// const use = jest.fn(() => restify)
+Server.prototype.use = function () {
+  return this
+}
 
-// restify.createServer = jest.fn(() => {
+Server.prototype.pre = function () {
+  return this
+}
+
+Server.prototype.post = function () {
+  return this
+}
+
+Server.prototype.get = function () {
+  return this
+}
+
+Server.prototype.put = function () {
+  return this
+}
+
+Server.prototype.del = function () {
+  return this
+}
+
+Server.prototype.head = function () {
+  return this
+}
+
+Server.prototype.close = function (callback) {
+  return callback()
+}
+
+Server.prototype.listen = function (port, host, callback) {
+  return callback()
+}
+
+Server.prototype.sanitizePath = function () {
+  return this
+}
+
+const Restify = function () {
+  this.pre = {
+    sanitizePath: this.sanitizePath,
+  }
+  this.initialize = () => {}
+  this.session = () => {}
+  this.serializeUser = () => {}
+  this.deserializeUser = () => {}
+
+  return this
+}
+
+Restify.prototype.createServer = function () {
+  return new Server()
+}
+
+Restify.prototype.use = function () {
+  return this
+}
+
+Restify.prototype.sanitizePath = function () {
+  return this
+}
+
+Restify.prototype.gzipResponse = function () {
+  return this
+}
+
+Restify.prototype.requestLogger = function () {
+  return this
+}
+
+Restify.prototype.queryParser = function () {
+  return this
+}
+
+Restify.prototype.bodyParser = function () {
+  return this
+}
+
+Restify.prototype.throttle = function () {
+  return this
+}
+
+Restify.prototype.serveStatic = function () {
+  return this
+}
+
+module.exports = new Restify()
+
+// module.exports = {
+//   createServer: () => {
+//     return {
+//       use: () => {
+//         return this
+//       },
+//       pre: () => {}
+//     }
+//   },
+//   use: () => {
+    
+//   },
+//   pre: {
+//     sanitizePath: () => {}
+//   },
+//   gzipResponse: () => {
+    
+//   }
+// }
+
+
+// jest.mock('restify', () => {
 //   return {
-//     pre,
-//     use
+//     createServer: () => {
+//       return {
+//         pre: () => {}
+//       }
+//     },
+//     pre: {
+//       sanitizePath: () => {}
+//     },
+//     gzipResponse: {}
 //   }
 // })
-
-module.exports = () => {
-  return {
-    createServer: () => {
-      return this
-    },
-    use: () => {
-      return this
-    },
-    pre: () => {
-      return this
-    }
-  }
-}

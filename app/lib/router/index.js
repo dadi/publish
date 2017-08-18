@@ -20,7 +20,6 @@ const Router = function (server) {
   this.publicDir = path.resolve(__dirname, '../../../public')
   this.routesDir = path.join(__dirname, 'routes')
   this.server = server
-
   this.entryPointTemplate = fs.readFileSync(path.join(this.publicDir, 'index.html'), 'utf8')
 }
 

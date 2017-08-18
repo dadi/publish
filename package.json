@@ -175,7 +175,8 @@
       "^react-dom$": "preact-compat",
       "request-promise": "<rootDir>/test/mocks/request-promise",
       "@dadi/ssl": "<rootDir>/test/mocks/ssl",
-      "fetch": "unfetch/polyfill"
+      "fetch": "unfetch/polyfill",
+      "restify": "<rootDir>/test/mocks/restify"
     },
     "moduleFileExtensions": [
       "js",
