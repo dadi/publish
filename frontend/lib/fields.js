@@ -1,3 +1,5 @@
+import * as Constants from 'lib/constants'
+
 export function visibleFieldList ({
   fields,
   view = 'list'
@@ -10,6 +12,7 @@ export function visibleFieldList ({
       // Return the fields display property value for this view.
       return fields[key].publish.display[view]
     })
+    .concat(Constants.DEFAULT_FIELDS)
 }
 
 export function visibleFields ({
@@ -17,6 +20,7 @@ export function visibleFields ({
   view = 'list'
 }) {
   return Object.assign({}, ...visibleFieldList(...arguments)
+    .filter(field => fields[field])
     .map(field => {
       return {[field]: fields[field]}
     }))

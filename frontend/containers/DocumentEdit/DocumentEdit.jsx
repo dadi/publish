@@ -420,7 +420,7 @@ class DocumentEdit extends Component {
     const collectionFields = visibleFieldList({
       fields: parentCollection.fields,
       view: 'edit'
-    }).concat(['createdAt', 'createdBy', 'lastModifiedAt', 'lastModifiedBy'])
+    })
 
     const query = {
       api: this.currentApi,
