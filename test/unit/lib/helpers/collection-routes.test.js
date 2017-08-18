@@ -15,7 +15,7 @@ describe('String', () => {
   describe('Reduce to type', () => {
     it('should handle incorrect map variable type.', () => {
       expect(collectionRoutes.reduceToType(false, 'edit'))
-        .toEqual(false)
+        .toBeUndefined()
     })
 
     it('should handle incorrect type variable type.', () => {
@@ -46,6 +46,34 @@ describe('String', () => {
     })
   })
 
+  describe('Get collection by slug', () => {
+    it ('should only accept an array of collections', () => {
+      expect(collectionRoutes.getCollectionBySlug(undefined, 'foo'))
+        .toBeUndefined()
+    })
+
+    it ('should only accept a string of collectionNames', () => {
+      expect(collectionRoutes.getCollectionBySlug([], undefined))
+        .toBeUndefined()
+    })
+
+    it ('should return a collection if the collection.slug matches collectionName', () => {
+      const collections = [{
+        slug: 'foo'
+      }]
+      expect(collectionRoutes.getCollectionBySlug(collections, 'foo'))
+        .toEqual(expect.objectContaining(collections[0]))
+    })
+
+    it ('should return undefined if the collection.slug does not match collectionName', () => {
+      const collections = [{
+        slug: 'bar'
+      }]
+      expect(collectionRoutes.getCollectionBySlug(collections, 'foo'))
+        .toBeUndefined()
+    })
+  })
+
 })
 
 // it('should reduce array to map dot notations ending with specified type.', () => {
@@ -65,6 +93,6 @@ describe('String', () => {
 // getMaxDepth
 // filterReferenceFields
 // canExtend
-// appendGroup
-// getCollectionBySlug
+// appendGroup √
+// getCollectionBySlug √
 
