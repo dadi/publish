@@ -52,6 +52,7 @@ const apiBridgeFetch = function (requestObject) {
 const apiBridgeFactory = function ({
   api,
   collection = {},
+  fields = [],
   inBundle = false
 }) {
   if (!api) {
@@ -111,6 +112,7 @@ const apiBridgeFactory = function ({
   }
 
   let apiWrapperInstance = new APIWrapper(apiWrapperOptions)
+    .useFields(fields)
     .withComposition() // Force composition
 
   // If we were given a collection, we might as well run the `.in()` filter.

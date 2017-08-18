@@ -110,22 +110,3 @@ export function throttle (func, threshold) {
 export function setPageTitle (title) {
   document.title = (title ? title + ' / ' : '') + 'DADI Publish'
 }
-
-export function filterHiddenFields (fields, type) {
-  if (!(typeof type === 'string')) {
-    return fields
-  }
-
-  return Object.assign({}, ...Object.keys(fields)
-    .filter(key => {
-      // If the publish && display block don't exist, or if the given type is
-      // true,  allow this field to pass.
-      return !fields[key].publish ||
-        !fields[key].publish.display ||
-        fields[key].publish.display[type]
-    })
-    .map(key => {
-      return {[key]: fields[key]}
-    })
-  )
-}

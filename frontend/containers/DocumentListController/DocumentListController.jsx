@@ -92,7 +92,7 @@ class DocumentListController extends Component {
             accent="data"
             onClick={this.handleAddNewFilter.bind(this)}
           >Add Filter</Button>
-          {!currentCollection._isAuthCollection && (!isReference) && (
+          {!currentCollection._isAuthCollection && !isReference && (
             <Button
               accent="save"
               href={newHref}

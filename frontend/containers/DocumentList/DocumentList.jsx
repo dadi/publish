@@ -15,7 +15,8 @@ import * as fieldComponents from 'lib/field-components'
 
 import APIBridge from 'lib/api-bridge-client'
 import {buildUrl, createRoute} from 'lib/router'
-import {connectHelper, filterHiddenFields} from 'lib/util'
+import {filterVisibleFields} from 'lib/fields'
+import {connectHelper} from 'lib/util'
 import {getApiForUrlParams, getCollectionForUrlParams} from 'lib/collection-lookup'
 
 import Button from 'components/Button/Button'
@@ -415,7 +416,10 @@ class DocumentList extends Component {
     } else {
       onPageTitle(this.currentCollection.settings.description || this.currentCollection.name)
     }
-    const listableFields = filterHiddenFields(this.currentCollection.fields, 'list')
+    const listableFields = filterVisibleFields({
+      fields: this.currentCollection.fields,
+      view: 'list'
+    })
 
     const tableColumns = Object.keys(listableFields)
       .map(field => {

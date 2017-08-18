@@ -4,6 +4,7 @@ import apiBridgeClient from 'lib/api-bridge-client'
 import {batchActions} from 'lib/redux'
 import {setNotification} from 'actions/appActions'
 import {setRemoteDocument} from 'actions/documentActions'
+import {visibleFieldList} from 'lib/fields'
 
 export function clearDocumentList () {
   return {
@@ -59,9 +60,12 @@ export function fetchDocuments ({
         inBundle: true
       }).inMedia()
     } else {
+      const fields = visibleFieldList({fields: collection.fields, view: 'list'})
+
       parentQuery = apiBridgeClient({
         api,
         collection,
+        fields,
         inBundle: true
       })
     }
