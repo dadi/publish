@@ -17,7 +17,7 @@ import * as routerActions from 'actions/routerActions'
 import * as fieldComponents from 'lib/field-components'
 
 import APIBridge from 'lib/api-bridge-client'
-import {visibleFieldList, visibleFields} from 'lib/fields'
+import {visibleFieldList, filterVisibleFields} from 'lib/fields'
 import {buildUrl} from 'lib/router'
 import {connectHelper} from 'lib/util'
 import {Format} from 'lib/util/string'
@@ -116,7 +116,7 @@ class DocumentEdit extends Component {
     }
 
     if (currentCollection) {
-      const collectionFields = visibleFields({
+      const collectionFields = filterVisibleFields({
         fields: currentCollection.fields,
         view: 'edit'
       })
@@ -296,7 +296,7 @@ class DocumentEdit extends Component {
       return null
     }
 
-    const collectionFields = visibleFields({
+    const collectionFields = filterVisibleFields({
       fields: this.currentCollection.fields,
       view: 'edit'
     })

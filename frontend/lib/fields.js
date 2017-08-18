@@ -15,7 +15,7 @@ export function visibleFieldList ({
     .concat(Constants.DEFAULT_FIELDS)
 }
 
-export function visibleFields ({
+export function filterVisibleFields ({
   fields,
   view = 'list'
 }) {

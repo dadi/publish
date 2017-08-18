@@ -3,7 +3,7 @@
 import {h, Component} from 'preact'
 import proptypes from 'proptypes'
 import {buildUrl} from 'lib/router'
-import {visibleFields} from 'lib/fields'
+import {filterVisibleFields} from 'lib/fields'
 
 import Style from 'lib/Style'
 import styles from './FieldReference.css'
@@ -120,7 +120,7 @@ export default class FieldReferenceEdit extends Component {
 
     if (!referencedCollection) return null
     const displayName = schema.label || schema._id
-    const displayableFields = visibleFields({
+    const displayableFields = filterVisibleFields({
       fields: referencedCollection.fields,
       view: 'list'
     })
