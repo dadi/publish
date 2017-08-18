@@ -4,7 +4,7 @@ const globals = require('./globals') // eslint-disable-line
 
 const Server = require(paths.lib.server)
 const Watch = require(paths.lib.watch)
-let config = require(paths.config)
+let config = require(paths.config) // eslint-disable-line
 
 /*
 To-do - this.server.close should be promise based
@@ -22,10 +22,7 @@ const App = function () {}
  */
 App.prototype.start = function (options = {isStandalone: false}) {
   if (!options.isStandalone) {
-    const watcher = new Watch().start()
-
-    // Overwrite default config with app-specific module
-    config = watcher.getConfig(config)
+    new Watch().start()
   }
   this.server = new Server()
   return this.server.start()
