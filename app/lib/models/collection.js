@@ -9,9 +9,8 @@ const Collection = function () {
 }
 
 Collection.prototype.buildCollectionRoutes = function () {
-  // new Api(config)
   return this.getCollections()
-    .then(apiCollections => new CollectionRoutes(apiCollections))
+    .then(apiCollections => new CollectionRoutes().generateApiRoutes(apiCollections))
 }
 
 Collection.prototype.getCollections = function () {

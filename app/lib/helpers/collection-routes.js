@@ -44,7 +44,11 @@ const parts = {
   }
 }
 
-const CollectionRoutes = function (apiCollections) {
+const CollectionRoutes = function () {
+
+}
+
+CollectionRoutes.prototype.generateApiRoutes = function (apiCollections) {
   const depth = this.getMaxDepth(apiCollections)
   const depthMap = this.mapToDepth(depth, Object.keys(map))
 
@@ -61,7 +65,7 @@ const CollectionRoutes = function (apiCollections) {
 
 CollectionRoutes.prototype.buildRoutes = function (maps, type) {
   return maps
-    .filter(map => map.split('.').pop() === type)
+    .filter(map => this.reduceToType(map, type))
     .map(map => {
       return map
         .split('.')
@@ -74,6 +78,12 @@ CollectionRoutes.prototype.buildRoutes = function (maps, type) {
         })
         .join('/')
     })
+}
+
+CollectionRoutes.prototype.reduceToType = function (map, type) {
+  if (typeof map !== 'string' || typeof type !== 'string') return false
+
+  return map.split('.').pop() === type
 }
 
 CollectionRoutes.prototype.mapToDepth = function (depth, nodes, limit = 0) {
@@ -143,6 +153,8 @@ CollectionRoutes.prototype.canExtend = function (node, next) {
 }
 
 CollectionRoutes.prototype.appendGroup = function (routes) {
+  if (!Array.isArray(routes)) return
+
   return routes
     .concat(routes.map(route => `:group${slugRegex}/${route}`))
 }
@@ -151,8 +163,8 @@ CollectionRoutes.prototype.getCollectionBySlug = function (collections, collecti
   return collections.find(collection => collection.slug === collectionName)
 }
 
-module.exports = function (apiCollections) {
-  return new CollectionRoutes(apiCollections)
+module.exports = function () {
+  return new CollectionRoutes()
 }
 
 module.exports.CollectionRoutes = CollectionRoutes

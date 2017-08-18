@@ -1,11 +1,22 @@
 'use strict'
 
 class ArrayHelper {
+
+  // Merge nested arrays.
   reduce (arrays) {
-    return arrays.reduce((a, b) => a.concat(b))
+    if (!Array.isArray(arrays)) return
+
+    return arrays
+      .reduce((a, b) => {
+        return Array.isArray(a) && Array.isArray(b) && a.concat(b)
+      })
   }
-  unique (v, i, a) {
-    return a.indexOf(v) === i
+
+  // Remove duplicate values in array.
+  unique (value, index, array) {
+    if (!Array.isArray(array)) return
+
+    return array.indexOf(value) === index
   }
 }
 module.exports = new ArrayHelper()
