@@ -81,8 +81,6 @@ CollectionRoutes.prototype.buildRoutes = function (maps, type) {
 }
 
 CollectionRoutes.prototype.reduceToType = function (map, type) {
-  if (typeof map !== 'string' || typeof type !== 'string') return false
-
   return map.split('.').pop() === type
 }
 
@@ -153,8 +151,6 @@ CollectionRoutes.prototype.canExtend = function (node, next) {
 }
 
 CollectionRoutes.prototype.appendGroup = function (routes) {
-  if (!Array.isArray(routes)) return
-
   return routes
     .concat(routes.map(route => `:group${slugRegex}/${route}`))
 }
