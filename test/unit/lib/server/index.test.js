@@ -52,34 +52,34 @@ describe('Server', () => {
       return expect(server.start()).resolves.toBe('2 servers starter')
     })
 
-    // it('Should start two servers if SSL is disabled', () => {
-    //   config.set('server.ssl.enabled', true)
-    //   expect.assertions(1)
+    it('Should start two servers if SSL is disabled', () => {
+      config.set('server.ssl.enabled', true)
+      expect.assertions(1)
 
-    //   return expect(server.start()).resolves.toBe('2 servers starter')
-    // })
+      return expect(server.start()).resolves.toBe('2 servers starter')
+    })
 
-    // it('Should append all apis with Publish UUID', () => {
-    //   expect.assertions(1)
+    it('Should append all apis with Publish UUID', () => {
+      expect.assertions(1)
      
-    //   return expect(server.start()
-    //     .then(resp => config.get('apis')))
-    //     .resolves
-    //     .toEqual(
-    //       expect.arrayContaining([
-    //         expect.objectContaining({
-    //           publishId: expect.any(String)
-    //         })
-    //       ])
-    //     )
-    // })
+      return expect(server.start()
+        .then(resp => config.get('apis')))
+        .resolves
+        .toEqual(
+          expect.arrayContaining([
+            expect.objectContaining({
+              publishId: expect.any(String)
+            })
+          ])
+        )
+    })
 
-    // it('Should start one server if SSL is disabled', () => {
-    //   config.set('server.ssl.enabled', false)
-    //   expect.assertions(1)
+    it('Should start one server if SSL is disabled', () => {
+      config.set('server.ssl.enabled', false)
+      expect.assertions(1)
 
-    //   return expect(server.start()).resolves.toBe('1 servers starter')
-    // })
+      return expect(server.start()).resolves.toBe('1 servers starter')
+    })
   })
 
   describe('Restart server', () => {

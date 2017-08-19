@@ -91,38 +91,3 @@ Restify.prototype.serveStatic = function () {
 }
 
 module.exports = new Restify()
-
-// module.exports = {
-//   createServer: () => {
-//     return {
-//       use: () => {
-//         return this
-//       },
-//       pre: () => {}
-//     }
-//   },
-//   use: () => {
-    
-//   },
-//   pre: {
-//     sanitizePath: () => {}
-//   },
-//   gzipResponse: () => {
-    
-//   }
-// }
-
-
-// jest.mock('restify', () => {
-//   return {
-//     createServer: () => {
-//       return {
-//         pre: () => {}
-//       }
-//     },
-//     pre: {
-//       sanitizePath: () => {}
-//     },
-//     gzipResponse: {}
-//   }
-// })
