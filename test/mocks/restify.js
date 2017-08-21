@@ -1,12 +1,22 @@
 const Server = function () {
+  this.before = []
+  this.chain = []
+
   return this
 }
 
-Server.prototype.use = function () {
+Server.prototype.use = function (handler) {
+  if (typeof handler === 'undefined') {
+    return this
+  }
+  this.chain.push(handler.constructor)
+
   return this
 }
 
-Server.prototype.pre = function () {
+Server.prototype.pre = function (handler) {
+  this.before.push(handler.constructor)
+
   return this
 }
 
@@ -15,6 +25,7 @@ Server.prototype.post = function () {
 }
 
 Server.prototype.get = function () {
+
   return this
 }
 
@@ -44,12 +55,17 @@ Server.prototype.sanitizePath = function () {
 
 const Restify = function () {
   this.pre = {
-    sanitizePath: this.sanitizePath,
+    sanitizePath: this.sanitizePath
   }
-  this.initialize = () => {}
-  this.session = () => {}
-  this.serializeUser = () => {}
-  this.deserializeUser = () => {}
+  this.initialize = () => () => {}
+  this.session = () => () => {}
+  this.serializeUser = () => () => {}
+  this.deserializeUser = () => () => {}
+  this.gzipResponse = () => () => {}
+  this.requestLogger = () => () => {}
+  this.queryParser = () => () => {}
+  this.bodyParser = () => () => {}
+  this.serveStatic = () => () => {}
 
   return this
 }

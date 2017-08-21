@@ -158,11 +158,30 @@ describe('Router', () => {
       expect(pre).toThrowError('Server must be defined.')
     })
 
-    it('should add restify sanitizePath middleware to server', () => {
-      const serverPreSpy = jest.spyOn(server, 'pre')
+    it('should add pre middleware to server before array', () => {
       router.pre()
 
-      expect(serverPreSpy).toBeCalled()
+      expect(server.before)
+      .toEqual(expect.arrayContaining([expect.any(Function)]))
+    })
+  })
+
+  describe('use()', () => {
+    it('should throw an error if router is not defined', () => {
+      router = new Router()
+
+      const use = () => {
+        router.use()
+      }
+
+      expect(use).toThrowError('Server must be defined.')
+    })
+
+    it('should add use middleware to server chain array', () => {
+      router.use()
+
+      expect(server.chain)
+      .toEqual(expect.arrayContaining([expect.any(Function)]))
     })
   })
 })
