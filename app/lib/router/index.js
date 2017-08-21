@@ -27,6 +27,8 @@ const Router = function (server) {
  * Add Routes
  */
 Router.prototype.addRoutes = function () {
+  if (!this.server) throw new Error('Server must be defined.')
+
   this.pre()
   this.use()
   this.setPassportStrategies()
@@ -90,6 +92,8 @@ Router.prototype.setPassportStrategies = function () {
  * For use with isomorphic web application base route
  */
 Router.prototype.webRoutes = function () {
+  if (!this.server) throw new Error('Server must be defined.')
+
   this.server.get(/\/public\/?.*/, restify.serveStatic({
     directory: path.resolve(__dirname, '../../..')
   }))
@@ -131,6 +135,8 @@ Router.prototype.webRoutes = function () {
  * Add component routes
  */
 Router.prototype.componentRoutes = function (dir, match) {
+  if (!this.server) throw new Error('Server must be defined.')
+
   // Fetch aditional component schema
   fs.readdirSync(dir).forEach(folder => {
     const sub = path.resolve(dir, folder)
@@ -156,6 +162,8 @@ Router.prototype.componentRoutes = function (dir, match) {
  * Set headers
  */
 Router.prototype.setHeaders = function () {
+  if (!this.server) throw new Error('Server must be defined.')
+
   this.server.use((req, res, next) => {
     res.header('ETag', 'publish-etag')
     res.header('Last-Modified', new Date())
@@ -169,6 +177,8 @@ Router.prototype.setHeaders = function () {
  * @param  {restify} app Restify web server instance
  */
 Router.prototype.use = function () {
+  if (!this.server) throw new Error('Server must be defined.')
+
   this.server
     .use(restify.gzipResponse())
     .use(restify.requestLogger())
@@ -193,6 +203,8 @@ Router.prototype.use = function () {
  * @param  {restify} app Restify web server instance
  */
 Router.prototype.pre = function () {
+  if (!this.server) throw new Error('Server must be defined.')
+
   this.server.pre(restify.pre.sanitizePath())
 }
 
