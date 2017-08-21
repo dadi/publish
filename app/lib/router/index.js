@@ -37,8 +37,6 @@ Router.prototype.addRoutes = function () {
   this.componentRoutes(path.resolve(`${paths.frontend.components}`), /Routes$/g)
   this.webRoutes()
 
-  // console.log(this.server)
-
   return this
 }
 
@@ -180,20 +178,21 @@ Router.prototype.setHeaders = function () {
  */
 Router.prototype.use = function () {
   if (!this.server) throw new Error('Server must be defined.')
+
   this.server
     .use(restify.gzipResponse())
     .use(restify.requestLogger())
     .use(restify.queryParser())
     .use(restify.bodyParser({mapParams: true})) // Changing to false throws issues with auth. Needs addressing
     .use(cookieParser.parse)
-  //   // Add session.
+    // Add session.
     .use(session({
       key: 'dadi-publish',
       secret: 'keyboard cat',
       saveUninitialized: true,
       resave: true
     }))
-  //   // Initialise passport session.
+    // Initialise passport session.
     .use(passport.initialize())
     .use(passport.session())
     .use(flash())
