@@ -62,6 +62,16 @@ describe('Router', () => {
     expect(router).toBeInstanceOf(Object)
   })
 
+  it('should append default paths, server and template html properties to module instance.', () => {
+    expect(router)
+      .toEqual(expect.objectContaining({
+        publicDir: expect.any(String),
+        routesDir: expect.any(String),
+        server: expect.any(restify.Server),
+        entryPointTemplate: expect.any(String)
+      }))
+  })
+
   describe('addRoutes()', () => {
     it('should throw an error if server is undefined', () => {
       router = new Router()
@@ -135,15 +145,6 @@ describe('Router', () => {
       router.addRoutes()
 
       expect(webRoutesSpy).toBeCalled()
-    })
-
-    it('should return instance of router', () => {
-      expect(router.addRoutes()).toEqual(expect.objectContaining({
-        publicDir: expect.any(String),
-        routesDir: expect.any(String),
-        server: expect.any(restify.Server),
-        entryPointTemplate: expect.any(String)
-      }))
     })
   })
 
