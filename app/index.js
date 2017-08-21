@@ -19,7 +19,7 @@ const App = function () {}
  * Start Publish App
  * @return {Server}        Server Instance
  */
-App.prototype.start = function (options = {isStandalone: false}) {
+App.prototype.start = function () {
   this.server = new Server()
   return this.server.start()
 }

@@ -30,8 +30,8 @@ Publish.prototype.getStartupMessage = function () {
   }
 }
 
-Publish.prototype.run = function (options) {
-  app.start(options)
+Publish.prototype.run = function () {
+  app.start()
     .then(this.getStartupMessage)
     .catch((err) => {
       console.log('App failed to start', err)
@@ -41,7 +41,7 @@ Publish.prototype.run = function (options) {
 // Run-type switch
 if (require.main === module) {
   // App called directly
-  module.exports = new Publish().run({isStandalone: true})
+  module.exports = new Publish().run()
 } else {
   // App called as module
   module.exports = new Publish()
