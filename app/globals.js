@@ -34,8 +34,9 @@ const Globals = function () {
  * Set
  * @param {Object} newParams New parameters to be appended to global.paths.
  */
-Globals.prototype.set = function (newParams) {
-  global.paths = Object.assign(global.paths, newParams)
+Globals.prototype.set = function (paths) {
+  if (typeof paths !== 'object') throw new Error('Paths must be an Object.')
+  global.paths = Object.assign(global.paths, paths)
 }
 
 // exports
