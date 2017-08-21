@@ -54,7 +54,7 @@ const Restify = function () {
   return this
 }
 
-Restify.prototype.createServer = function () {
+Restify.prototype.createServer = function (options) {
   return new Server()
 }
 
@@ -91,3 +91,5 @@ Restify.prototype.serveStatic = function () {
 }
 
 module.exports = new Restify()
+module.exports.Server = Server
+module.exports.server = new Server()

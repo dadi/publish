@@ -1,6 +1,9 @@
 const globals = require(`${__dirname}/../../../../app/globals`) // Always required
 const Server = require(`${__dirname}/../../../../app/lib/server`)
+const Socket = require(`${__dirname}/../../../../app/lib/server/socket`)
 const config = require(paths.config)
+// const restify = jest.genMockFromModule('restify')
+const restify = require('restify')
 
 jest.mock(`${__dirname}/../../../../app/lib/server/socket`, () => {
   return () => {
@@ -9,6 +12,9 @@ jest.mock(`${__dirname}/../../../../app/lib/server/socket`, () => {
 })
 
 const mockCreatePrimaryServer = jest.fn()
+// const restifyMockCreateServer = jest.fn(options => {
+//   return new restify.Server()
+// })
 const mockServer = {
   close: jest.fn()
 }
@@ -37,6 +43,14 @@ afterEach(() => {
 
   config.set('server.ssl.enabled', true)
 
+  if (restify.createServer._isMockFunction) {
+    restify.createServer.mockRestore()
+  }
+
+  // if (restify.Server.listen._isMockFunction) {
+  //   restify.Server.listen.mockRestore()
+  // }
+
   return Promise.all(restartCalls)
 })
 
@@ -53,7 +67,6 @@ describe('Server', () => {
     })
 
     it('Should start two servers if SSL is disabled', () => {
-      config.set('server.ssl.enabled', true)
       expect.assertions(1)
 
       return expect(server.start()).resolves.toBe('2 servers starter')
@@ -104,18 +117,107 @@ describe('Server', () => {
       return expect(mockServer.close).toBeCalled()
     })
   })
+
+  describe('createPrimaryServer()', () => {
+    it('should call restify.createServer with secure options when ssl is enabled.', () => {
+      const createServerSpy = jest.spyOn(restify, 'createServer')
+
+      server.createPrimaryServer()
+
+      expect(createServerSpy)
+        .toBeCalledWith(expect.objectContaining({
+          port: 443,
+          secure: true
+        }))
+    })
+
+    it('should call restify.createServer without secure options when ssl is disabled.', () => {
+      // Set port back to original in config.test
+      config.set('server.port', 3000)
+      // Disable SSL (default: enabled)
+      config.set('server.ssl.enabled', false)
+
+      const createServerSpy = jest.spyOn(restify, 'createServer')
+      server.createPrimaryServer()
+
+      expect(createServerSpy)
+        .toBeCalledWith(expect.objectContaining({
+          port: 3000
+        }))
+    })
+
+    it('should return a promise', () => {
+      expect(server.createPrimaryServer()).toBeInstanceOf(Promise)
+    })
+
+    it('should set primaryServer to be instance of restify.', () => {
+      server.createPrimaryServer()
+      expect(server.primaryServer).toBeInstanceOf(restify.Server)
+    })
+
+    it('should create a new socket instance.', () => {
+      expect.assertions(1)
+
+      const checkSocketExists = () => {
+        return server.createPrimaryServer()
+          .then(() => server.socket)
+      }
+
+      return expect(checkSocketExists()).resolves.toBeInstanceOf(Socket)
+    })
+  })
+
+  describe('addListeners()', () => {
+    it('should throw an error if the port is invalid.', () => {
+      const serverListenMock = jest.fn()
+      const mockRestifyServer = restify.createServer({})
+      const addListenerCall = () => {
+        return server.addListeners(mockRestifyServer, {})
+      }
+
+      expect(addListenerCall)
+        .toThrowError('Port must be a valid Number.')
+    })
+
+    it('should throw an error if the host is invalid.', () => {
+      const serverListenMock = jest.fn()
+      const mockRestifyServer = restify.createServer({})
+      const addListenerCall = () => {
+        return server.addListeners(mockRestifyServer, {port: 80})
+      }
+
+      expect(addListenerCall)
+        .toThrowError('Host must be a valid String.')
+    })
+
+    it('should return a promise', () => {
+      const serverListenMock = jest.fn()
+      const mockRestifyServer = restify.createServer({})
+
+      expect(server.addListeners(mockRestifyServer, {
+        port: 80,
+        host: '0.0.0.0'
+      })).toBeInstanceOf(Promise)
+    })
+
+    it('should call server.listen with correct ports and a callback method.', () => {
+      const serverListenMock = jest.fn()
+      const mockRestifyServer = restify.createServer({})
+      mockRestifyServer.listen = serverListenMock
+
+      server.addListeners(mockRestifyServer, {
+        port: 80,
+        host: '0.0.0.0'
+      })
+      expect(serverListenMock)
+        .toBeCalledWith(80, '0.0.0.0', expect.any(Function))
+    })
+  })
 })
 
 // Constructor √
 // start √
 // restartServers √
-// createPrimaryServer
+// createPrimaryServer √
+// addListeners √
 // createRedirectServer
-// addListeners
-// appListen
-
-// describe('Start server', () => {
-//   it('', () => {
-    
-//   })
-// })

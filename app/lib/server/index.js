@@ -97,7 +97,8 @@ Server.prototype.createPrimaryServer = function () {
   this.primaryServer = restify.createServer(options)
 
   // Add all routes to server
-  new Router(this.primaryServer).addRoutes()
+  new Router(this.primaryServer)
+    .addRoutes()
 
   // Add listeners and initialise socket
   return this.addListeners(this.primaryServer, options)
@@ -134,19 +135,11 @@ Server.prototype.addSSL = function (server) {
  * Set all listeners for Resify server instance
  */
 Server.prototype.addListeners = function (server, options) {
-  let listeners = []
-  listeners.push(this.addServerListener(server, options.port, options.host))
+  if (isNaN(options.port)) throw new Error('Port must be a valid Number.')
+  if (typeof options.host !== 'string') throw new Error('Host must be a valid String.')
 
-  return Promise.all(listeners)
-}
-
-/**
- * Begin Restify server listen
- * @return {Restify} Restify server instance
- */
-Server.prototype.addServerListener = function (server, port, host) {
   return new Promise(resolve => server
-    .listen(Number(port), host, resolve))
+    .listen(Number(options.port), options.host, resolve))
 }
 
 module.exports = function () {
