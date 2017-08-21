@@ -3,24 +3,26 @@
 const config = require(paths.config)
 
 const assign = (subj, pre) => {
-  return Object.assign(...Object.keys(subj).map(key => {
-    let keypath = pre ? `${pre}.${key}` : key
+  return Object.assign(...Object.keys(subj)
+    .map(key => {
+      let keypath = pre ? `${pre}.${key}` : key
 
-    if (typeof subj[key] === 'boolean') {
-      return {[`${key}`]: config.has(keypath) ? config.get(keypath) : null}
-    } else {
-      if (Array.isArray(config.get(keypath))) {
-        let items = config.get(keypath).map((val, pos) => {
-          keypath = pre ? `${pre}.${pos}.${key}` : `${key}.${pos}`
+      if (typeof subj[key] === 'boolean') {
+        return {[`${key}`]: config.has(keypath) ? config.get(keypath) : null}
+      } else {
+        if (Array.isArray(config.get(keypath))) {
+          let items = config.get(keypath).map((val, pos) => {
+            keypath = pre ? `${pre}.${pos}.${key}` : `${key}.${pos}`
 
-          return assign(subj[key], keypath)
-        })
+            return assign(subj[key], keypath)
+          })
 
-        return {[`${key}`]: items}
+          return {[`${key}`]: items}
+        }
+        return {[`${key}`]: assign(subj[key], keypath)}
       }
-      return {[`${key}`]: assign(subj[key], keypath)}
-    }
-  }))
+    })
+  )
 }
 
 const AppConfigController = function () {}
@@ -45,3 +47,4 @@ module.exports = function () {
 }
 
 module.exports.AppConfigController = AppConfigController
+module.exports.assign = assign

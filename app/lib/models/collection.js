@@ -1,6 +1,6 @@
 'use strict'
 
-const Api = require(`${paths.lib.models}/api`)
+const DadiAPI = require('@dadi/api-wrapper')
 const CollectionRoutes = require(`${paths.lib.helpers}/collection-routes`)
 const config = require(paths.config)
 
@@ -18,7 +18,7 @@ Collection.prototype.getCollections = function () {
     config
       .get('apis')
       .map(api => {
-        return new Api(api)
+        return new DadiAPI(Object.assign(api, {uri: api.host}))
         .getCollections()
         .then(res => this.getSchemas(api, res.collections))
       })
@@ -29,7 +29,7 @@ Collection.prototype.getSchemas = function (api, collections) {
   return Promise.all(
     collections
       .map(collection => {
-        return new Api(api)
+        return new DadiAPI(Object.assign(api, {uri: api.host}))
         .in(collection.slug)
         .getConfig()
         .then(schema => Object.assign(schema, {slug: collection.slug}))

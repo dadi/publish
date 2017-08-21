@@ -1,7 +1,7 @@
 'use strict'
 
 const config = require(paths.config)
-const Api = require(`${paths.lib.models}/api`)
+const DadiAPI = require('@dadi/api-wrapper')
 const Constants = require(`${paths.lib.root}/constants`)
 
 const Session = function () {}
@@ -22,7 +22,7 @@ Session.prototype.authorise = function (email, password, next) {
     this.returnAuthDisabled({next})
   }
 
-  return new Api(authAPI)
+  return new DadiAPI(Object.assign(authAPI, {uri: authAPI.host}))
     .in(authAPI.collection)
     .whereFieldIsEqualTo('email', email)
     .whereFieldIsEqualTo('password', password)
@@ -203,7 +203,7 @@ Session.prototype.reset = function (req, res, next) {
   }
 
   if (req.body && (req.body.token && req.body.password)) {
-    return new Api(authAPI)
+    return new DadiAPI(Object.assign(authAPI, {uri: authAPI.host}))
       .in(authAPI.collection)
       .whereFieldIsEqualTo('loginToken', req.body.token)
       .update({password: req.body.password})
@@ -252,7 +252,7 @@ Session.prototype.resetToken = function (req, res, next) {
 
   // Check for required email value.
   if (req.body && req.body.email) {
-    return new Api(authAPI)
+    return new DadiAPI(Object.assign(authAPI, {uri: authAPI.host}))
       .in(authAPI.collection)
       .whereFieldIsEqualTo('email', req.body.email)
       .update({

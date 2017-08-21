@@ -92,4 +92,3 @@ Restify.prototype.serveStatic = function () {
 
 module.exports = new Restify()
 module.exports.Server = Server
-module.exports.server = new Server()

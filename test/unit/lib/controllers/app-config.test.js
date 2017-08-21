@@ -1,5 +1,5 @@
 const globals = require(`${__dirname}/../../../../app/globals`) // Always required
-const AppConfigController = require(`${__dirname}/../../../../app/lib/controllers/app-config`).AppConfigController
+const AppConfigController = require(`${__dirname}/../../../../app/lib/controllers/app-config`)
 const httpMocks = require('node-mocks-http')
 const config = require(paths.config)
 
@@ -108,6 +108,21 @@ describe('App config', () => {
         done()
       })
       appConfig.get(req, res, () => true)
+    })
+  })
+
+  describe('Assign', () => {
+    it('should return config filtered by availableInFrontend.', () => {
+      config.set('availableInFrontend', {ui: true})
+
+      const frontendConfig = AppConfigController.assign(config.get('availableInFrontend'))
+      expect(frontendConfig)
+        .toEqual(expect.objectContaining({
+          ui: expect.objectContaining({
+            availableInFrontend: expect.any(Boolean),
+            inputDelay: expect.any(Number)
+          })
+        }))
     })
   })
 
