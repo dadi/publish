@@ -230,6 +230,6 @@ describe('Session', () => {
  * get √
  * post
  * put
- * reset
+ * reset √
  * resetToken √
  */
