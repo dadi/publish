@@ -1,8 +1,9 @@
 const globals = require(`${__dirname}/../../../../app/globals`) // Always required
 const Server = require(`${__dirname}/../../../../app/lib/server`)
+const Router = require(`${__dirname}/../../../../app/lib/router`)
 const Socket = require(`${__dirname}/../../../../app/lib/server/socket`)
 const config = require(paths.config)
-// const restify = jest.genMockFromModule('restify')
+const SSL = require('@dadi/ssl')
 const restify = require('restify')
 
 jest.mock(`${__dirname}/../../../../app/lib/server/socket`, () => {
@@ -12,9 +13,6 @@ jest.mock(`${__dirname}/../../../../app/lib/server/socket`, () => {
 })
 
 const mockCreatePrimaryServer = jest.fn()
-// const restifyMockCreateServer = jest.fn(options => {
-//   return new restify.Server()
-// })
 const mockServer = {
   close: jest.fn()
 }
@@ -46,10 +44,6 @@ afterEach(() => {
   if (restify.createServer._isMockFunction) {
     restify.createServer.mockRestore()
   }
-
-  // if (restify.Server.listen._isMockFunction) {
-  //   restify.Server.listen.mockRestore()
-  // }
 
   return Promise.all(restartCalls)
 })
@@ -213,6 +207,39 @@ describe('Server', () => {
         .toBeCalledWith(80, '0.0.0.0', expect.any(Function))
     })
   })
+
+  describe('createRedirectServer()', () => {
+    it('should start a restify server with port 80', () => {
+      const createServerSpy = jest.spyOn(restify, 'createServer')
+
+      server.createRedirectServer()
+
+      expect(createServerSpy)
+        .toBeCalledWith(expect.objectContaining({
+          port: 80
+        }))
+    })
+
+    it('should add ssl listeners to the redirect server', () => {
+      const addSSLSpy = jest.spyOn(server, 'addSSL')
+
+      server.createRedirectServer()
+
+      expect(addSSLSpy)
+        .toBeCalledWith(server.redirectServer)
+    })
+
+    it('should add routes to the redirect server', () => {
+      server.createRedirectServer()
+
+      expect(server.redirectServer.chain)
+        .toEqual(expect.arrayContaining([expect.any(Function)]))
+    })
+
+    it('should return a promise', () => {
+      expect(server.createRedirectServer()).toBeInstanceOf(Promise)
+    })
+  })
 })
 
 // Constructor √
@@ -220,4 +247,4 @@ describe('Server', () => {
 // restartServers √
 // createPrimaryServer √
 // addListeners √
-// createRedirectServer
+// createRedirectServer √
