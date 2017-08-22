@@ -26,7 +26,8 @@ Session.prototype.authorise = function (email, password, next) {
     .in(authAPI.collection)
     .whereFieldIsEqualTo('email', email)
     .whereFieldIsEqualTo('password', password)
-    .find({extractResults: true}).then(user => {
+    .find({extractResults: true})
+    .then(user => {
       if (user.length > 0) {
         // Return only required fields
         const authUser = {

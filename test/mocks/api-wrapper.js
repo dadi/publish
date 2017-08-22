@@ -26,6 +26,14 @@ APIWrapper.prototype.update = function (query) {
   })
 }
 
+APIWrapper.prototype.find = function (query) {
+  this.query = query
+
+  return new Promise(resolve => {
+    resolve()
+  })
+}
+
 
 module.exports = function () {
   return new APIWrapper()

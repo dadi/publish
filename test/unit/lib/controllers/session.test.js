@@ -47,6 +47,19 @@ describe('Session', () => {
     expect(session).toBeInstanceOf(Object)
   })
 
+  describe(`authorise()`, () => {
+    it('should return 503 status code when auth is disabled', () => {
+      config.set('auth.enabled', false)
+
+      const returnAuthDisabledSpy = jest.spyOn(session, 'returnAuthDisabled')
+
+      session.authorise('foo@somedomain.com', 'mockPassword', next)
+
+      expect(returnAuthDisabledSpy)
+        .toHaveBeenCalled()
+    })
+  })
+
   describe(`get()`, () => {
     it('should return 503 status code when auth is disabled', (done) => {
       config.set('auth.enabled', false)
@@ -172,6 +185,39 @@ describe('Session', () => {
     })
   })
 
+  describe('returnAuthDisabled()', () => {
+    it('should call next with null if res is undefined', () => {
+      session.returnAuthDisabled({next})
+
+      expect(next).toBeCalledWith(null)
+    })
+
+    it('should set statusCode to 503', (done) => {
+
+      res.on('end', () => {
+        expect(res.statusCode).toBe(503)
+        done()
+      })
+      session.returnAuthDisabled({res, next})
+    })
+
+    it(`should return ${Constants.AUTH_DISABLED} error`, (done) => {
+
+      res.on('end', () => {
+        expect(JSON.parse(res._getData())).toEqual(expect.objectContaining({
+          error: Constants.AUTH_DISABLED
+        }))
+        done()
+      })
+      session.returnAuthDisabled({res, next})
+    })
+
+    it('should call next with no parameters when res is defined', () => {
+      session.returnAuthDisabled({res, next})
+      expect(next).toHaveBeenCalled()
+    })
+  })
+
   describe(`resetToken()`, () => {
     it('should return 503 status code when auth is disabled', (done) => {
       config.set('auth.enabled', false)
@@ -225,6 +271,7 @@ describe('Session', () => {
 
 /**
  * TO-DO
+ * returnAuthDisabled √
  * authorise
  * delete
  * get √
