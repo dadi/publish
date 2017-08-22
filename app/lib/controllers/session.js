@@ -109,8 +109,7 @@ Session.prototype.post = function (req, res, next, passport) {
     if (err) {
       switch (err) {
         case Constants.AUTH_DISABLED:
-          res.statusCode = 503
-          res.end(JSON.stringify({err}))
+          this.returnAuthDisabled({res, next})
 
           break
 
@@ -189,21 +188,26 @@ Session.prototype.reset = function (req, res, next) {
     this.returnAuthDisabled({res, next})
   }
 
-  if (req.body && (req.body.token && req.body.password)) {
-    return new DadiAPI(Object.assign(authAPI, {uri: authAPI.host}))
-      .in(authAPI.collection)
-      .whereFieldIsEqualTo('loginToken', req.body.token)
-      .update({password: req.body.password})
-      .then(resp => {
-        if (resp.results.length) {
-          res.end(JSON.stringify({success: true}))
-        } else {
-          res.end(JSON.stringify({error: Constants.PASSWORD_RESET_FAILED}))
-        }
+  // If token and password are missing return error.
+  if (!req.body || !(req.body.token && req.body.password)) {
+    res.end(JSON.stringify({error: Constants.PASSWORD_RESET_INVALID}))
 
-        return next()
-      })
+    return next()
   }
+
+  return new DadiAPI(Object.assign(authAPI, {uri: authAPI.host}))
+    .in(authAPI.collection)
+    .whereFieldIsEqualTo('loginToken', req.body.token)
+    .update({password: req.body.password})
+    .then(resp => {
+      if (resp.results.length) {
+        res.end(JSON.stringify({success: true}))
+      } else {
+        res.end(JSON.stringify({error: Constants.PASSWORD_RESET_FAILED}))
+      }
+
+      return next()
+    })
 }
 
 Session.prototype.returnAuthDisabled = function ({
@@ -212,6 +216,7 @@ Session.prototype.returnAuthDisabled = function ({
   }) {
   if (!res) return next(null)
 
+  res.statusCode = 503
   res.end(JSON.stringify({error: Constants.AUTH_DISABLED}))
 
   return next()

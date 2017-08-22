@@ -2,6 +2,7 @@ const Constants = require(`${__dirname}/../../../../app/lib/constants`)
 const globals = require(`${__dirname}/../../../../app/globals`) // Always required
 const Session = require(`${__dirname}/../../../../app/lib/controllers/session`).Session
 const httpMocks = require('node-mocks-http')
+const DadiAPI = require('@dadi/api-wrapper')
 const nock = require('nock')
 const config = require(paths.config)
 
@@ -47,10 +48,10 @@ describe('Session', () => {
   })
 
   describe(`get()`, () => {
-    it('should return 200 status code when auth is disabled', (done) => {
+    it('should return 503 status code when auth is disabled', (done) => {
       config.set('auth.enabled', false)
       res.on('end', () => {
-        expect(res.statusCode).toBe(200)
+        expect(res.statusCode).toBe(503)
         done()
       })
       session.get(req, res, next)
@@ -94,10 +95,10 @@ describe('Session', () => {
   })
 
   describe(`reset()`, () => {
-    it('should return 200 status code when auth is disabled', (done) => {
+    it('should return 503 status code when auth is disabled', (done) => {
       config.set('auth.enabled', false)
       res.on('end', () => {
-        expect(res.statusCode).toBe(200)
+        expect(res.statusCode).toBe(503)
         done()
       })
       session.reset(req, res, next)
@@ -113,13 +114,69 @@ describe('Session', () => {
       })
       session.reset(req, res, next)
     })
+
+    it(`should return ${Constants.PASSWORD_RESET_INVALID} error if token and password are invalid`, (done) => {
+      res.on('end', () => {
+        expect(JSON.parse(res._getData())).toEqual(expect.objectContaining({
+          error: Constants.PASSWORD_RESET_INVALID
+        }))
+        done()
+      })
+      session.reset(req, res, next)
+    })
+
+    it(`should return success if API returns results`, (done) => {
+      req.body = {
+        token: 'mockToken',
+        password: 'mockPassword'
+      }
+
+      DadiAPI.APIWrapper.prototype.update = jest.fn().mockImplementation(() => {
+        return new Promise(resolve => {
+          resolve({
+            results: [{}]
+          })
+        })  
+      })
+
+      res.on('end', () => {
+        expect(JSON.parse(res._getData())).toEqual(expect.objectContaining({
+          success: true
+        }))
+        done()
+      })
+      session.reset(req, res, next)
+    })
+
+    it(`should return error ${Constants.PASSWORD_RESET_FAILED} if API returns empty results`, (done) => {
+      req.body = {
+        token: 'mockToken',
+        password: 'mockPassword'
+      }
+
+      DadiAPI.APIWrapper.prototype.update = jest.fn().mockImplementation(() => {
+        return new Promise(resolve => {
+          resolve({
+            results: []
+          })
+        })  
+      })
+
+      res.on('end', () => {
+        expect(JSON.parse(res._getData())).toEqual(expect.objectContaining({
+          error: Constants.PASSWORD_RESET_FAILED
+        }))
+        done()
+      })
+      session.reset(req, res, next)
+    })
   })
 
   describe(`resetToken()`, () => {
-    it('should return 200 status code when auth is disabled', (done) => {
+    it('should return 503 status code when auth is disabled', (done) => {
       config.set('auth.enabled', false)
       res.on('end', () => {
-        expect(res.statusCode).toBe(200)
+        expect(res.statusCode).toBe(503)
         done()
       })
       session.resetToken(req, res, next)

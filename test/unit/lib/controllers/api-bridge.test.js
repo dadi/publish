@@ -1,5 +1,6 @@
 const globals = require(`${__dirname}/../../../../app/globals`) // Always required
 const ApiBridge = require(`${__dirname}/../../../../app/lib/controllers/api-bridge`).APIBridgeController
+const Constants = require(`${paths.lib.root}/constants`)
 
 const httpMocks = require('node-mocks-http')
 const nock = require('nock')
@@ -100,7 +101,9 @@ describe('ApiBridge', () => {
     it('should return next', (done) => {
       req.isAuthenticated = () => false
       res.on('end', () => {
-        expect(res._getData()).toBe('{"err":"AUTH_FAILED"}')
+        expect(JSON.parse(res._getData())).toEqual(expect.objectContaining({
+          error: Constants.AUTH_FAILED
+        }))
         done()
       })
       apiBridge.post(req, res, () => {})
