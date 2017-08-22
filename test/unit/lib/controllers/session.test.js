@@ -22,13 +22,23 @@ const auth = config.get('auth')
 
 beforeEach(() => {
   // next.mockClear()
-
+  config.set('auth.enabled', true)
   session = new Session()
   req = httpMocks.createRequest()
   res = httpMocks.createResponse({
     eventEmitter: require('events').EventEmitter
   })
-  req.isAuthenticated = jest.fn()
+  req.session = {
+    passport: {
+      user: {
+        username: 'foo',
+        email: 'foo@somedomain.com'
+      }
+    }
+  }
+  req.isAuthenticated = jest.fn(() => {
+    return true
+  })
 })
 
 describe('Session', () => {
@@ -55,6 +65,30 @@ describe('Session', () => {
         }))
         done()
       })
+      session.get(req, res, next)
+    })
+
+    it('should return session data if user is authenticated', (done) => {
+      res.on('end', () => {
+        expect(JSON.parse(res._getData())).toEqual(expect.objectContaining({
+          email: expect.any(String),
+          username: expect.any(String)
+        }))
+        done()
+      })
+      session.get(req, res, next)
+    })
+
+    it('should return 401 when isAuthenticated returns false', (done) => {
+      req.isAuthenticated = jest.fn(() => {
+        return false
+      })
+
+      res.on('end', () => {
+        expect(res.statusCode).toBe(401)
+        done()
+      })
+
       session.get(req, res, next)
     })
   })
@@ -136,7 +170,7 @@ describe('Session', () => {
  * TO-DO
  * authorise
  * delete
- * get
+ * get √
  * post
  * put
  * reset
