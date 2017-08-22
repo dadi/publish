@@ -87,6 +87,53 @@ describe('Session', () => {
           done()
         })
     })
+
+    it(`should return null when user is not found`, () => {
+
+      DadiAPI.APIWrapper.prototype.find = jest.fn().mockImplementation((done) => {
+        return new Promise(resolve => {
+          resolve([])
+        })  
+      })
+
+      session.authorise('foo@somedomain.com', 'mockPassword', next)
+        .then(resp => {
+          expect(next).toBeCalledWith(null)
+          done()
+        })
+    })
+
+    it(`should return ${Constants.WRONG_CREDENTIALS} error when a reject error code matches`, () => {
+      DadiAPI.APIWrapper.prototype.find = jest.fn().mockImplementation((done) => {
+        return new Promise((resolve, reject) => {
+          reject({
+            error: [{
+              code: Constants.WRONG_CREDENTIALS
+            }]
+          })
+        })  
+      })
+
+      session.authorise('foo@somedomain.com', 'mockPassword', next)
+        .then(resp => {
+          expect(next).toBeCalledWith(Constants.WRONG_CREDENTIALS)
+          done()
+        })
+    })
+
+    it(`should return ${Constants.AUTH_UNREACHABLE} error when a reject error code does not match`, () => {
+      DadiAPI.APIWrapper.prototype.find = jest.fn().mockImplementation((done) => {
+        return new Promise((resolve, reject) => {
+          reject()
+        })  
+      })
+
+      session.authorise('foo@somedomain.com', 'mockPassword', next)
+        .then(resp => {
+          expect(next).toBeCalledWith(Constants.AUTH_UNREACHABLE)
+          done()
+        })
+    })
   })
 
   describe(`delete()`, () => {
