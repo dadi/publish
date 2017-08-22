@@ -58,6 +58,35 @@ describe('Session', () => {
       expect(returnAuthDisabledSpy)
         .toHaveBeenCalled()
     })
+
+    it(`should call next with authUser when user is returned`, () => {
+
+      DadiAPI.APIWrapper.prototype.find = jest.fn().mockImplementation((done) => {
+        return new Promise(resolve => {
+          resolve(
+            [{
+              first_name: 'Foo',
+              last_name: 'Foo',
+              email: 'foo@somedomain.com',
+              _id: 'mockId',
+              handle: 'foo-bar'
+            }]
+          )
+        })  
+      })
+
+      session.authorise('foo@somedomain.com', 'mockPassword', next)
+        .then(resp => {
+          expect(next).toBeCalledWith(null, expect.objectContaining({
+            first_name: expect.any(String),
+            last_name: expect.any(String),
+            email: expect.any(String),
+            _id: expect.any(String),
+            handle: expect.any(String)
+          }))
+          done()
+        })
+    })
   })
 
   describe(`delete()`, () => {
