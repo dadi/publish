@@ -27,23 +27,15 @@ Session.prototype.authorise = function (email, password, next) {
     .whereFieldIsEqualTo('email', email)
     .whereFieldIsEqualTo('password', password)
     .find({extractResults: true})
-    .then(user => {
-      if (user.length > 0) {
-        // Return only required fields
-        const authUser = {
-          first_name: user[0].first_name,
-          last_name: user[0].last_name,
-          email: user[0].email,
-          _id: user[0]._id,
-          handle: user[0].handle
-        }
-        return next(null, authUser)
+    .then(users => {
+      if (users.length > 0) {
+        return next(null, users[0])
       } else {
         return next(null)
       }
     }).catch(response => {
-      if (Array.isArray(response.error) && (response.error[0].code === 'WRONG_CREDENTIALS')) {
-        return next('WRONG_CREDENTIALS')
+      if (Array.isArray(response.error) && (response.error[0].code === Constants.WRONG_CREDENTIALS)) {
+        return next(Constants.WRONG_CREDENTIALS)
       }
 
       return next(Constants.AUTH_UNREACHABLE)
@@ -120,7 +112,7 @@ Session.prototype.post = function (req, res, next, passport) {
 
           break
 
-        case 'WRONG_CREDENTIALS':
+        case Constants.WRONG_CREDENTIALS:
           res.statusCode = 401
           res.end(JSON.stringify({err}))
 
