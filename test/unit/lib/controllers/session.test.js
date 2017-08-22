@@ -22,7 +22,7 @@ const next = jest.fn(() => {
 const auth = config.get('auth')
 
 beforeEach(() => {
-  // next.mockClear()
+  next.mockClear()
   config.set('auth.enabled', true)
   session = new Session()
   req = httpMocks.createRequest()
@@ -57,6 +57,33 @@ describe('Session', () => {
 
       expect(returnAuthDisabledSpy)
         .toHaveBeenCalled()
+    })
+  })
+
+  describe(`delete()`, () => {
+    it('should call logout method', () => {
+      req.logout = jest.fn()
+
+      session.delete(req, res, next)
+
+      expect(req.logout)
+        .toHaveBeenCalled()
+    })
+
+    it('should return false authenticated param', (done) => {
+      req.logout = jest.fn()
+      req.isAuthenticated = jest.fn(() => {
+        return false
+      })
+
+      res.on('end', () => {
+        expect(JSON.parse(res._getData())).toEqual(expect.objectContaining({
+          authenticated: false
+        }))
+        done()
+      })
+
+      session.delete(req, res, next)
     })
   })
 
@@ -273,7 +300,7 @@ describe('Session', () => {
  * TO-DO
  * returnAuthDisabled √
  * authorise
- * delete
+ * delete √
  * get √
  * post
  * put
