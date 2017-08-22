@@ -59,8 +59,7 @@ Session.prototype.authorise = function (email, password, next) {
  */
 Session.prototype.delete = function (req, res, next) {
   req.logout()
-  res.write(JSON.stringify({authenticated: req.isAuthenticated()}))
-  res.end()
+  res.end(JSON.stringify({authenticated: req.isAuthenticated()}))
 
   return next()
 }
@@ -84,14 +83,12 @@ Session.prototype.get = function (req, res, next) {
   res.header('Content-Type', 'application/json')
 
   if (req.isAuthenticated()) {
-    res.write(JSON.stringify(req.session.passport.user))
-    res.end()
+    res.end(JSON.stringify(req.session.passport.user))
 
     return next()
   } else {
     res.statusCode = 401
-    res.write(JSON.stringify({err: 'AUTH_FAILED'}))
-    res.end()
+    res.end(JSON.stringify({err: 'AUTH_FAILED'}))
 
     return next()
   }
@@ -113,42 +110,38 @@ Session.prototype.post = function (req, res, next, passport) {
       switch (err) {
         case Constants.AUTH_DISABLED:
           res.statusCode = 503
-          res.write(JSON.stringify({err}))
+          res.end(JSON.stringify({err}))
 
           break
 
         case Constants.AUTH_UNREACHABLE:
           res.statusCode = 404
-          res.write(JSON.stringify({err}))
+          res.end(JSON.stringify({err}))
 
           break
 
         case 'WRONG_CREDENTIALS':
           res.statusCode = 401
-          res.write(JSON.stringify({err}))
+          res.end(JSON.stringify({err}))
 
           break
 
         default:
           res.statusCode = 500
-          res.write(JSON.stringify({err: 'UNKNOWN_ERROR'}))
+          res.end(JSON.stringify({err: 'UNKNOWN_ERROR'}))
 
           break
       }
-
-      res.end()
 
       return next()
     } else {
       req.login(user, {}, (err) => {
         if (err) {
           res.statusCode = 401
-          res.write(JSON.stringify({err: 'AUTH_FAILED'}))
+          res.end(JSON.stringify({err: 'AUTH_FAILED'}))
         } else {
-          res.write(JSON.stringify(user))
+          res.end(JSON.stringify(user))
         }
-
-        res.end()
 
         return next()
       })
@@ -172,8 +165,7 @@ Session.prototype.put = function (req, res, next) {
       res.statusCode = 500
     }
 
-    res.write(JSON.stringify({}))
-    res.end()
+    res.end(JSON.stringify({}))
   })
 
   return next()
@@ -209,11 +201,10 @@ Session.prototype.reset = function (req, res, next) {
       .update({password: req.body.password})
       .then(resp => {
         if (resp.results.length) {
-          res.write(JSON.stringify({success: true}))
+          res.end(JSON.stringify({success: true}))
         } else {
-          res.write(JSON.stringify({err: 'PASSWORD_RESET_FAILED'}))
+          res.end(JSON.stringify({err: 'PASSWORD_RESET_FAILED'}))
         }
-        res.end()
 
         return next()
       })
@@ -226,8 +217,7 @@ Session.prototype.returnAuthDisabled = function ({
   }) {
   if (!res) return next(null)
 
-  res.write(JSON.stringify({error: Constants.AUTH_DISABLED}))
-  res.end()
+  res.end(JSON.stringify({error: Constants.AUTH_DISABLED}))
 
   return next()
 }
@@ -251,26 +241,24 @@ Session.prototype.resetToken = function (req, res, next) {
   }
 
   // Check for required email value.
-  if (req.body && req.body.email) {
-    return new DadiAPI(Object.assign(authAPI, {uri: authAPI.host}))
-      .in(authAPI.collection)
-      .whereFieldIsEqualTo('email', req.body.email)
-      .update({
-        loginWithToken: true
-      })
-      .then(resp => {
-        res.write(JSON.stringify({expiresAt: 1494516108})) // TO-DO: Remove temporary expiration param.
-        res.end()
+  if (!req.body || !req.body.email) {
+    res.end(JSON.stringify({error: Constants.INVALID_EMAIL}))
 
-        return next()
-      })
+    return next()
   }
+  // TO-DO: Handle missing user.
 
-  // Default: email address missing error.
-  res.write(JSON.stringify({error: 'MISSING_EMAIL_ADDRESS'}))
-  res.end()
+  return new DadiAPI(Object.assign(authAPI, {uri: authAPI.host}))
+    .in(authAPI.collection)
+    .whereFieldIsEqualTo('email', req.body.email)
+    .update({
+      loginWithToken: true
+    })
+    .then(resp => {
+      res.end(JSON.stringify({expiresAt: 1494516108})) // TO-DO: Remove temporary expiration param.
 
-  return next()
+      return next()
+    })
 }
 
 module.exports = function () {
