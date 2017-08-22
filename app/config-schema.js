@@ -248,7 +248,7 @@ module.exports = {
   env: {
     availableInFrontend: true,
     doc: 'The applicaton environment.',
-    format: ['production', 'development', 'test'],
+    format: String,
     default: 'development',
     env: 'NODE_ENV'
   },
