@@ -1,6 +1,7 @@
 'use strict'
 
 const config = require(paths.config)
+const Constants = require(`${paths.lib.root}/constants`)
 const passport = require('@dadi/passport')
 const request = require('request-promise')
 const slugify = require(`${paths.lib.helpers}/string`).Slugify
@@ -43,7 +44,7 @@ APIBridgeController.prototype.post = function (req, res, next) {
 
   // Block any API requests if there's no session
   if (authAPI.enabled && !req.isAuthenticated()) {
-    res.write(JSON.stringify({err: 'AUTH_FAILED'}))
+    res.write(JSON.stringify({error: Constants.AUTH_FAILED}))
     res.end()
   }
 

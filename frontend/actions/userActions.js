@@ -183,7 +183,7 @@ export function signIn (email, password) {
     }).then(user => {
       dispatch(setRemoteUser(user))
     }).catch(response => {
-      switch (response.err) {
+      switch (response.error) {
         case Constants.AUTH_DISABLED:
           dispatch(registerFailedSignInAttempt(Constants.STATUS_NOT_FOUND))
 

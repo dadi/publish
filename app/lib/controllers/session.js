@@ -88,7 +88,7 @@ Session.prototype.get = function (req, res, next) {
     return next()
   } else {
     res.statusCode = 401
-    res.end(JSON.stringify({err: 'AUTH_FAILED'}))
+    res.end(JSON.stringify({error: Constants.AUTH_FAILED}))
 
     return next()
   }
@@ -128,7 +128,7 @@ Session.prototype.post = function (req, res, next, passport) {
 
         default:
           res.statusCode = 500
-          res.end(JSON.stringify({err: 'UNKNOWN_ERROR'}))
+          res.end(JSON.stringify({error: Constants.UNKNOWN_ERROR}))
 
           break
       }
@@ -138,7 +138,7 @@ Session.prototype.post = function (req, res, next, passport) {
       req.login(user, {}, (err) => {
         if (err) {
           res.statusCode = 401
-          res.end(JSON.stringify({err: 'AUTH_FAILED'}))
+          res.end(JSON.stringify({error: Constants.AUTH_FAILED}))
         } else {
           res.end(JSON.stringify(user))
         }
@@ -189,11 +189,6 @@ Session.prototype.reset = function (req, res, next) {
     this.returnAuthDisabled({res, next})
   }
 
-  // No authentication.
-  if (!authAPI.enabled) {
-    this.returnAuthDisabled({res, next})
-  }
-
   if (req.body && (req.body.token && req.body.password)) {
     return new DadiAPI(Object.assign(authAPI, {uri: authAPI.host}))
       .in(authAPI.collection)
@@ -203,7 +198,7 @@ Session.prototype.reset = function (req, res, next) {
         if (resp.results.length) {
           res.end(JSON.stringify({success: true}))
         } else {
-          res.end(JSON.stringify({err: 'PASSWORD_RESET_FAILED'}))
+          res.end(JSON.stringify({error: Constants.PASSWORD_RESET_FAILED}))
         }
 
         return next()
