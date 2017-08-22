@@ -40,6 +40,7 @@ beforeEach(() => {
   req.isAuthenticated = jest.fn(() => {
     return true
   })
+  req.login = jest.fn()
 })
 
 describe('Session', () => {
@@ -59,9 +60,9 @@ describe('Session', () => {
         .toHaveBeenCalled()
     })
 
-    it(`should call next with authUser when user is returned`, () => {
+    it(`should call next with authUser when user is returned`, (done) => {
 
-      DadiAPI.APIWrapper.prototype.find = jest.fn().mockImplementation((done) => {
+      DadiAPI.APIWrapper.prototype.find = jest.fn().mockImplementation(() => {
         return new Promise(resolve => {
           resolve(
             [{
@@ -88,9 +89,9 @@ describe('Session', () => {
         })
     })
 
-    it(`should return null when user is not found`, () => {
+    it(`should return null when user is not found`, (done) => {
 
-      DadiAPI.APIWrapper.prototype.find = jest.fn().mockImplementation((done) => {
+      DadiAPI.APIWrapper.prototype.find = jest.fn().mockImplementation(() => {
         return new Promise(resolve => {
           resolve([])
         })  
@@ -103,8 +104,8 @@ describe('Session', () => {
         })
     })
 
-    it(`should return ${Constants.WRONG_CREDENTIALS} error when a reject error code matches`, () => {
-      DadiAPI.APIWrapper.prototype.find = jest.fn().mockImplementation((done) => {
+    it(`should return ${Constants.WRONG_CREDENTIALS} error when a reject error code matches`, (done) => {
+      DadiAPI.APIWrapper.prototype.find = jest.fn().mockImplementation(() => {
         return new Promise((resolve, reject) => {
           reject({
             error: [{
@@ -121,8 +122,8 @@ describe('Session', () => {
         })
     })
 
-    it(`should return ${Constants.AUTH_UNREACHABLE} error when a reject error code does not match`, () => {
-      DadiAPI.APIWrapper.prototype.find = jest.fn().mockImplementation((done) => {
+    it(`should return ${Constants.AUTH_UNREACHABLE} error when a reject error code does not match`, (done) => {
+      DadiAPI.APIWrapper.prototype.find = jest.fn().mockImplementation(() => {
         return new Promise((resolve, reject) => {
           reject()
         })  
@@ -207,6 +208,50 @@ describe('Session', () => {
       })
 
       session.get(req, res, next)
+    })
+  })
+
+  describe('put()', () => {
+    it('should call login method', () => {
+      req.login = jest.fn()
+
+      session.put(req, res, next)
+
+      expect(req.login)
+        .toHaveBeenCalled()
+    })
+
+    it('should return 500 statusCode when login returns error', (done) => {
+      req.login = jest.fn((body, data, callback) => {
+        callback({err: 'errorMock'})
+      })
+
+      res.on('end', () => {
+        expect(res.statusCode).toBe(500)
+        done()
+      })
+
+      session.put(req, res, next)
+    })
+
+    it('should add an empty object to the response', (done) => {
+      req.login = jest.fn((body, data, callback) => {
+        callback()
+      })
+
+      res.on('end', () => {
+        expect(res._getData()).toEqual('{}')
+        done()
+      })
+
+      session.put(req, res, next)
+    })
+
+    it('should call next method', () => {
+      session.put(req, res, next)
+
+      expect(next)
+        .toHaveBeenCalled()
     })
   })
 
@@ -375,11 +420,11 @@ describe('Session', () => {
 /**
  * TO-DO
  * returnAuthDisabled √
- * authorise
+ * authorise √
  * delete √
  * get √
  * post
- * put
+ * put √
  * reset √
  * resetToken √
  */

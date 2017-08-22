@@ -34,7 +34,7 @@ Session.prototype.authorise = function (email, password, next) {
         return next(null)
       }
     }).catch(response => {
-      if (response.error && Array.isArray(response.error) && (response.error[0].code === Constants.WRONG_CREDENTIALS)) {
+      if (response && response.error && Array.isArray(response.error) && (response.error[0].code === Constants.WRONG_CREDENTIALS)) {
         return next(Constants.WRONG_CREDENTIALS)
       }
 
