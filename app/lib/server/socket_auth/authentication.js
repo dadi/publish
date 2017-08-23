@@ -25,7 +25,7 @@ Auth.prototype.attach = function (scServer, socket) {
 
   socket.on('login', validateLoginAndAuth)
   socket.on('disconnect', data => {
-    // console.log("Disconnected")
+    
   })
 }
 
