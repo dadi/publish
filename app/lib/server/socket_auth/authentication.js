@@ -3,7 +3,7 @@
 const Auth = function () {}
 
 Auth.prototype.attach = function (scServer, socket) {
-  let currentToken = socket.getAuthToken()
+  const currentToken = socket.getAuthToken()
   if (currentToken) {
     socket.setAuthToken(currentToken, {})
   }

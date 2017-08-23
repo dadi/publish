@@ -1,5 +1,7 @@
 const globals = require(`${__dirname}/../../../../app/globals`) // Always required
 const Socket = require(`${__dirname}/../../../../app/lib/server/socket`).Socket
+const Auth = require(`${__dirname}/../../../../app/lib/server/socket_auth/authentication`)
+const Room = require(`${__dirname}/../../../../app/lib/server/socket_auth/room`)
 const config = require(paths.config)
 const nock = require('nock')
 const EventEmitter = require('events').EventEmitter
@@ -7,10 +9,32 @@ const scServer = require('socketcluster-server')
 
 let socket
 let server
+let returnAuthDisabledSpy
+let authAttachSpy
+let roomAttachSpy
+
+const mockOnFn = jest.fn((type, callback) => {})
+const mockGetAuthToken = jest.fn(() => {})
+const mockNext = jest.fn(() => {})
+
+jest.mock('socketcluster-server', () => {
+  return {
+    attach: jest.fn((app) => {
+      return {
+        MIDDLEWARE_PUBLISH_IN: 'publishIn',
+        on: mockOnFn,
+        addMiddleware: mockAddMiddlware
+      }
+    })
+  }
+})
 
 beforeEach(() => {
   jest.clearAllMocks()
   server = nock('http://127.0.0.1')
+  returnAuthDisabledSpy = jest.spyOn(scServer, 'attach')
+  authAttachSpy = jest.spyOn(Auth.Auth.prototype, 'attach')
+  roomAttachSpy = jest.spyOn(Room.Room.prototype, 'attach')
   socket = new Socket(server)
 })
 
@@ -51,66 +75,54 @@ const mockAddMiddlware = jest.fn((eventDefinition, callback) => {
   }
 })
 
-const mockOnFn = jest.fn((type, callback) => {})
-const mockGetAuthToken = jest.fn(() => {})
-const mockNext = jest.fn(() => {})
-
-jest.mock('socketcluster-server', () => {
-  return {
-    attach: (app) => {
-      return {
-        MIDDLEWARE_PUBLISH_IN: 'publishIn',
-        on: mockOnFn,
-        addMiddleware: mockAddMiddlware
-      }
-    }
-  }
-})
-
 describe('Socket', () => {
   it('should export function', () => {
     expect(socket).toBeInstanceOf(Object)
   })
 
-  describe('Socket: no running server', () => {
-    it('should return undefined', () => {
-      socket = new Socket()
-      expect(socket.server).toBeUndefined()
-    })
+  it('should return undefined if server is undefined', () => {
+    jest.clearAllMocks()
+    socket = new Socket()
 
-    it('should not call addMiddleware', () => {
-      jest.clearAllMocks()
-      socket = new Socket()
-      expect(mockAddMiddlware).not.toHaveBeenCalled()
-    })
-
-    it('should not add connection EventEmitter', () => {
-      jest.clearAllMocks()
-      socket = new Socket()
-      expect(mockOnFn).not.toHaveBeenCalled()
-    })
+    expect(socket.server).toBeUndefined()
   })
 
-  describe('Socket: add publishIn middleware', () => {
+  it('should not call addMiddleware if server is undefined', () => {
+    jest.clearAllMocks()
+    socket = new Socket()
+
+    expect(mockAddMiddlware).not.toHaveBeenCalled()
+  })
+
+  it('should not add connection EventEmitter if server is undefined', () => {
+    jest.clearAllMocks()
+    socket = new Socket()
+
+    expect(mockOnFn).not.toHaveBeenCalled()
+  })
+
+  it('should attach the server to socket cluster', () => {
+    expect(returnAuthDisabledSpy)
+      .toHaveBeenCalled()
+  })
+
+  describe('addMiddleware()', () => {
     it('should be instance of onPublish middleware', () => {
-      expect(socket.addMiddleware().server._middleware.publishIn).toBe(socket.onPublish)
+      expect(mockOnFn)
+        .toBeCalledWith('connection', expect.any(socket.onPublish.constructor))
     })
   })
 
-  describe('Socket: call onConnection without socket', () => {
-    it('should return undefined', () => {
+  describe('onConnection', () => {
+    it('should return undefined when there is no socket', () => {
       expect(socket.onConnection()).toBeUndefined()
     })
-  })
 
-  describe('Socket: call onConnection without socket bound to server', () => {
-    it('should return undefined', () => {
+    it('should return undefined when socket is not bound to server', () => {
       socket = new Socket()
       expect(socket.onConnection(socket)).toBeUndefined()
     })
-  })
 
-  describe('Socket: call onConnection with socket successfully bound to server', () => {
     it('should call EventEmitter', () => {
       socket.getAuthToken = mockGetAuthToken
       socket.on = mockOnFn
@@ -131,23 +143,33 @@ describe('Socket', () => {
       socket.onConnection(socket)
       expect(socket.server).not.toBeUndefined()
     })
-  })
 
-  describe('Socket: call onPublish without req data or next method', () => {
-    it('should not call next', () => {
-      expect(mockNext).not.toHaveBeenCalled()
+    it('should attach authentication listeners', () => {
+      socket.getAuthToken = mockGetAuthToken
+      socket.on = mockOnFn
+      socket.onConnection(socket)
+      expect(authAttachSpy).toHaveBeenCalled()
+    })
+
+    it('should attach room listeners', () => {
+      socket.getAuthToken = mockGetAuthToken
+      socket.on = mockOnFn
+      socket.onConnection(socket)
+      expect(roomAttachSpy).toHaveBeenCalled()
     })
   })
 
-  describe('Socket: call onPublish without req data', () => {
-    it('should return next', () => {
+  describe('onPublish()', () => {
+    it('should not call next when next method is missing', () => {
+      expect(mockNext).not.toHaveBeenCalled()
+    })
+
+    it('should return next when req data is missing', () => {
       socket.onPublish(null, mockNext)
       expect(mockNext).toHaveBeenCalled()
     })
-  })
 
-  describe('Socket: call onPublish with req data', () => {
-    it('should call socket.exchange.publish', () => {
+    it('should call socket.exchange.publish when req data is valid', () => {
       socket.onPublish(req, mockNext)
       expect(mockSocketExcangePublish).toHaveBeenCalled()
     })
