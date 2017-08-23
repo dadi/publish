@@ -113,5 +113,37 @@ describe('Auth', () => {
       expect(mockNext)
         .toHaveBeenCalledWith(null, 'Invalid socket')
     })
+
+    it('should authenticate user with token', () => {
+      auth.attach(socket)
+      auth.validateLogin(mockData, mockNext)
+
+      expect(mockSetAuthToken)
+        .toHaveBeenCalledWith(expect.objectContaining({
+          name: 'Foo Bar',
+          email: 'foo@somedomain.com',
+          handle: 'foo-bar',
+          username: 'mockId'
+        }))
+    })
+
+    it('should call next', () => {
+      auth.attach(socket)
+      auth.validateLogin(mockData, mockNext)
+
+      expect(mockNext)
+        .toHaveBeenCalled()
+    })
+  })
+
+  describe('handleDisconnect', () => {
+    it('should return undefined', () => {
+      expect(auth.handleDisconnect())
+        .toBeUndefined()
+    })
   })
 })
+
+// attach √
+// validateLogin √
+// handleDisconnect √
