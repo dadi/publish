@@ -51,6 +51,7 @@ Session.prototype.authorise = function (email, password, next) {
  * @return {Function} Next method call.
  */
 Session.prototype.delete = function (req, res, next) {
+  res.header('Content-Type', 'application/json')
   req.logout()
   res.end(JSON.stringify({authenticated: req.isAuthenticated()}))
 
@@ -67,13 +68,12 @@ Session.prototype.delete = function (req, res, next) {
  */
 Session.prototype.get = function (req, res, next) {
   const authAPI = config.get('auth')
+  res.header('Content-Type', 'application/json')
 
   // No authentication.
   if (!authAPI.enabled) {
     this.returnAuthDisabled({res, next})
   }
-
-  res.header('Content-Type', 'application/json')
 
   if (req.isAuthenticated()) {
     res.end(JSON.stringify(req.session.passport.user))
@@ -98,9 +98,9 @@ Session.prototype.get = function (req, res, next) {
 Session.prototype.post = function (req, res, next, passport) {
   res.header('Content-Type', 'application/json')
 
-  passport.authenticate('local', (err, user, info) => {
-    if (err) {
-      switch (err) {
+  passport.authenticate('local', (error, user) => {
+    if (error) {
+      switch (error) {
         case Constants.AUTH_DISABLED:
           this.returnAuthDisabled({res, next})
 
@@ -108,13 +108,13 @@ Session.prototype.post = function (req, res, next, passport) {
 
         case Constants.AUTH_UNREACHABLE:
           res.statusCode = 404
-          res.end(JSON.stringify({err}))
+          res.end(JSON.stringify({error}))
 
           break
 
         case Constants.WRONG_CREDENTIALS:
           res.statusCode = 401
-          res.end(JSON.stringify({err}))
+          res.end(JSON.stringify({error}))
 
           break
 
@@ -127,8 +127,8 @@ Session.prototype.post = function (req, res, next, passport) {
 
       return next()
     } else {
-      req.login(user, {}, (err) => {
-        if (err) {
+      req.login(user, {}, error => {
+        if (error) {
           res.statusCode = 401
           res.end(JSON.stringify({error: Constants.AUTH_FAILED}))
         } else {

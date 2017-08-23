@@ -41,6 +41,7 @@ beforeEach(() => {
     return true
   })
   req.login = jest.fn()
+  req.logout = jest.fn()
 })
 
 describe('Session', () => {
@@ -138,6 +139,13 @@ describe('Session', () => {
   })
 
   describe(`delete()`, () => {
+    it('should add a json content type header', () => {
+      session.delete(req, res, next)
+
+      expect(res.getHeader('Content-Type'))
+        .toEqual('application/json')
+    })
+
     it('should call logout method', () => {
       req.logout = jest.fn()
 
@@ -212,9 +220,14 @@ describe('Session', () => {
   })
 
   describe('put()', () => {
-    it('should call login method', () => {
-      req.login = jest.fn()
+    it('should add a json content type header', () => {
+      session.put(req, res, next)
 
+      expect(res.getHeader('Content-Type'))
+        .toEqual('application/json')
+    })
+
+    it('should call login method', () => {
       session.put(req, res, next)
 
       expect(req.login)
@@ -255,7 +268,228 @@ describe('Session', () => {
     })
   })
 
+  describe('post()', () => {
+    it('should add a json content type header', () => {
+      const passport = {
+        authenticate: jest.fn((type, callback) => {
+          callback()
+
+          return jest.fn((req, res, next) => {
+            return next()
+          })
+        })
+      }
+
+      session.post(req, res, next, passport)
+
+      expect(res.getHeader('Content-Type'))
+        .toEqual('application/json')
+    })
+
+    it('should call the passport authenticate method', () => {
+      const passport = {
+        authenticate: jest.fn((type, callback) => {
+          callback()
+
+          return jest.fn((req, res, next) => {
+            return next()
+          })
+        })
+      }
+
+      session.post(req, res, next, passport)
+
+      expect(passport.authenticate)
+        .toHaveBeenCalled()
+    })
+
+    it(`should return 503 statusCode if ${Constants.AUTH_DISABLED} error is returned by passport`, (done) => {
+      const passport = {
+        authenticate: jest.fn((type, callback) => {
+          callback(Constants.AUTH_DISABLED)
+
+          return jest.fn((req, res, next) => {
+            return next()
+          })
+        })
+      }
+
+      res.on('end', () => {
+        expect(res.statusCode).toBe(503)
+        done()
+      })
+
+      session.post(req, res, next, passport)
+    })
+
+    it(`should return error ${Constants.AUTH_DISABLED} when returned by passport`, (done) => {
+      const passport = {
+        authenticate: jest.fn((type, callback) => {
+          callback(Constants.AUTH_DISABLED)
+
+          return jest.fn((req, res, next) => {
+            return next()
+          })
+        })
+      }
+
+      res.on('end', () => {
+        expect(JSON.parse(res._getData())).toEqual(expect.objectContaining({
+          error: Constants.AUTH_DISABLED
+        }))
+        done()
+      })
+
+      session.post(req, res, next, passport)
+    })
+
+    it(`should return 404 statusCode if ${Constants.AUTH_UNREACHABLE} error is returned by passport`, (done) => {
+      const passport = {
+        authenticate: jest.fn((type, callback) => {
+          callback(Constants.AUTH_UNREACHABLE)
+
+          return jest.fn((req, res, next) => {
+            return next()
+          })
+        })
+      }
+
+      res.on('end', () => {
+        expect(res.statusCode).toBe(404)
+        done()
+      })
+
+      session.post(req, res, next, passport)
+    })
+
+    it(`should return error ${Constants.AUTH_UNREACHABLE} when returned by passport`, (done) => {
+      const passport = {
+        authenticate: jest.fn((type, callback) => {
+          callback(Constants.AUTH_UNREACHABLE)
+
+          return jest.fn((req, res, next) => {
+            return next()
+          })
+        })
+      }
+
+      res.on('end', () => {
+        expect(JSON.parse(res._getData())).toEqual(expect.objectContaining({
+          error: Constants.AUTH_UNREACHABLE
+        }))
+        done()
+      })
+
+      session.post(req, res, next, passport)
+    })
+
+    it(`should return 401 statusCode if ${Constants.WRONG_CREDENTIALS} error is returned by passport`, (done) => {
+      const passport = {
+        authenticate: jest.fn((type, callback) => {
+          callback(Constants.WRONG_CREDENTIALS)
+
+          return jest.fn((req, res, next) => {
+            return next()
+          })
+        })
+      }
+
+      res.on('end', () => {
+        expect(res.statusCode).toBe(401)
+        done()
+      })
+
+      session.post(req, res, next, passport)
+    })
+
+    it(`should return error ${Constants.WRONG_CREDENTIALS} when returned by passport`, (done) => {
+      const passport = {
+        authenticate: jest.fn((type, callback) => {
+          callback(Constants.WRONG_CREDENTIALS)
+
+          return jest.fn((req, res, next) => {
+            return next()
+          })
+        })
+      }
+
+      res.on('end', () => {
+        expect(JSON.parse(res._getData())).toEqual(expect.objectContaining({
+          error: Constants.WRONG_CREDENTIALS
+        }))
+        done()
+      })
+
+      session.post(req, res, next, passport)
+    })
+
+    it(`should return 500 statusCode if unknown error is returned by passport`, (done) => {
+      const passport = {
+        authenticate: jest.fn((type, callback) => {
+          callback('MOCK_ERROR')
+
+          return jest.fn((req, res, next) => {
+            return next()
+          })
+        })
+      }
+
+      res.on('end', () => {
+        expect(res.statusCode).toBe(500)
+        done()
+      })
+
+      session.post(req, res, next, passport)
+    })
+
+    it(`should return error ${Constants.UNKNOWN_ERROR} when unhandled error returned by passport`, (done) => {
+      const passport = {
+        authenticate: jest.fn((type, callback) => {
+          callback('MOCK_ERROR')
+
+          return jest.fn((req, res, next) => {
+            return next()
+          })
+        })
+      }
+
+      res.on('end', () => {
+        expect(JSON.parse(res._getData())).toEqual(expect.objectContaining({
+          error: Constants.UNKNOWN_ERROR
+        }))
+        done()
+      })
+
+      session.post(req, res, next, passport)
+    })
+
+    it('should call the req.login method', () => {
+      const passport = {
+        authenticate: jest.fn((type, callback) => {
+          callback()
+
+          return jest.fn((req, res, next) => {
+            return next()
+          })
+        })
+      }
+
+      session.post(req, res, next, passport)
+
+      expect(req.login)
+        .toHaveBeenCalled()
+    })
+
+  })
+
   describe(`reset()`, () => {
+    it('should add a json content type header', () => {
+      session.reset(req, res, next)
+
+      expect(res.getHeader('Content-Type'))
+        .toEqual('application/json')
+    })
+
     it('should return 503 status code when auth is disabled', (done) => {
       config.set('auth.enabled', false)
       res.on('end', () => {
@@ -367,6 +601,14 @@ describe('Session', () => {
   })
 
   describe(`resetToken()`, () => {
+
+    it('should add a json content type header', () => {
+      session.resetToken(req, res, next)
+
+      expect(res.getHeader('Content-Type'))
+        .toEqual('application/json')
+    })
+
     it('should return 503 status code when auth is disabled', (done) => {
       config.set('auth.enabled', false)
       res.on('end', () => {
