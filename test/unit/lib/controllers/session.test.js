@@ -480,6 +480,81 @@ describe('Session', () => {
         .toHaveBeenCalled()
     })
 
+    it('should return 401 statusCode if login fails', (done) => {
+      const passport = {
+        authenticate: jest.fn((type, callback) => {
+          callback()
+
+          return jest.fn((req, res, next) => {
+            return next()
+          })
+        })
+      }
+
+      req.login = jest.fn((body, data, callback) => {
+        callback({err: 'errorMock'})
+      })
+
+      res.on('end', () => {
+        expect(res.statusCode).toBe(401)
+        done()
+      })
+
+      session.post(req, res, next, passport)
+    })
+
+    it(`should return ${Constants.AUTH_FAILED} Object if login fails`, (done) => {
+      const passport = {
+        authenticate: jest.fn((type, callback) => {
+          callback()
+
+          return jest.fn((req, res, next) => {
+            return next()
+          })
+        })
+      }
+
+      req.login = jest.fn((body, data, callback) => {
+        callback({err: 'errorMock'})
+      })
+
+      res.on('end', () => {
+        expect(JSON.parse(res._getData())).toEqual(expect.objectContaining({
+          error: Constants.AUTH_FAILED
+        }))
+        done()
+      })
+
+      session.post(req, res, next, passport)
+    })
+
+    it(`should return a user object on successful login`, (done) => {
+      const passport = {
+        authenticate: jest.fn((type, callback) => {
+          callback(null, {
+            username: 'foo'
+          })
+
+          return jest.fn((req, res, next) => {
+            return next()
+          })
+        })
+      }
+
+      req.login = jest.fn((user, data, callback) => {
+        callback()
+      })
+
+      res.on('end', () => {
+        expect(JSON.parse(res._getData())).toEqual(expect.objectContaining({
+          username: 'foo'
+        }))
+        done()
+      })
+
+      session.post(req, res, next, passport)
+    })
+
   })
 
   describe(`reset()`, () => {
@@ -665,7 +740,7 @@ describe('Session', () => {
  * authorise √
  * delete √
  * get √
- * post
+ * post √
  * put √
  * reset √
  * resetToken √
