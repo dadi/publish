@@ -30,7 +30,7 @@ Auth.prototype.validateLogin = function (data, next) {
   if (!data || !data.user) {
     return next(null, 'Invalid user')
   } else {
-    let token = Object.assign({}, {
+    const token = Object.assign({}, {
       name: `${data.user.first_name} ${data.user.last_name}`,
       email: data.user.email,
       handle: data.user.handle,
