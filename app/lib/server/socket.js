@@ -34,8 +34,8 @@ Socket.prototype.addMiddleware = function () {
  */
 Socket.prototype.onConnection = function (socket) {
   if (!this.server || !socket) return
-  new Auth().attach(this.server, socket)
-  new Room().attach(this.server, socket)
+  new Auth().attach(socket)
+  new Room().attach(socket)
 
   return this
 }

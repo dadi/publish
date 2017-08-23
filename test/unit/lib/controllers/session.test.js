@@ -3,7 +3,6 @@ const globals = require(`${__dirname}/../../../../app/globals`) // Always requir
 const Session = require(`${__dirname}/../../../../app/lib/controllers/session`).Session
 const httpMocks = require('node-mocks-http')
 const DadiAPI = require('@dadi/api-wrapper')
-const nock = require('nock')
 const config = require(paths.config)
 
 let session

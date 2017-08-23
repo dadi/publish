@@ -18,7 +18,7 @@ Room.prototype.getUsers = function (room, clients) {
   })
 }
 
-Room.prototype.attach = function (scServer, socket) {
+Room.prototype.attach = function (socket) {
   let subscribe = (room, respond) => {
     // console.log(`subscribed to ${room}`)
     let users = this.getUsers(room, socket.server.clients)
