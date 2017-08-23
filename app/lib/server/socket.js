@@ -51,7 +51,9 @@ Socket.prototype.onPublish = function (req, next) {
   if (req && req.data && req.data.type) {
     switch (req.data.type) {
       case 'getUsersInRoom':
-        const users = new Room().getUsers(req.channel, req.socket.server.clients)
+        const users = new Room()
+          .getUsers(req.channel, req.socket.server.clients)
+
         req.socket.exchange.publish(req.channel, {type: 'userListChange', body: {users: users}})
     }
   }

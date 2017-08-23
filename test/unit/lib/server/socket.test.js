@@ -169,9 +169,18 @@ describe('Socket', () => {
       expect(mockNext).toHaveBeenCalled()
     })
 
-    it('should call socket.exchange.publish when req data is valid', () => {
+    it('should call socket.exchange.publish with user auth tokens when req data is valid', () => {
       socket.onPublish(req, mockNext)
-      expect(mockSocketExcangePublish).toHaveBeenCalled()
+      expect(mockSocketExcangePublish)
+        .toHaveBeenCalledWith(
+          'mockChannel',
+          {
+            body: {
+              users: ["mockAuthToken"]
+            },
+            type: "userListChange"
+          }
+        )
     })
   })
 })
@@ -179,6 +188,4 @@ describe('Socket', () => {
 // Constructor √
 // addMiddleware √
 // onConnection √
-// - Unable to test new Auth instance call
-// - Unable to test new Room instance call
 // onPublish √

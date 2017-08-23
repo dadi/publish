@@ -5,14 +5,15 @@ const Room = function () {}
 Room.prototype.getUsers = function (room, clients) {
   return Object.keys(clients).filter(key => {
     let client = clients[key]
+
     if (client.authToken) {
       if (client.channelSubscriptions[room]) {
         return true
       }
     }
-    // console.log(Object.keys(client), "HAS Subscriptions", client.channelSubscriptions)
   }).map(key => {
     let client = clients[key]
+
     return client.authToken
   })
 }
