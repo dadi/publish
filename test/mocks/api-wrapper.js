@@ -29,11 +29,16 @@ APIWrapper.prototype.update = function (query) {
 APIWrapper.prototype.find = function (query) {
   this.query = query
 
-  return new Promise(resolve => {
-    resolve()
-  })
+  return new Promise(resolve => resolve())
 }
 
+APIWrapper.prototype.getCollections = function () {
+  return new Promise(resolve => resolve())
+}
+
+APIWrapper.prototype.getConfig = function () {
+  return new Promise(resolve => resolve())
+}
 
 module.exports = function () {
   return new APIWrapper()
