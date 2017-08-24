@@ -70,5 +70,6 @@ const initConf = () => {
 }
 
 module.exports = initConf()
+module.exports.initConf = initConf
 module.exports.getFrontendProps = getFrontendProps
 module.exports.getAdditionalSchema = getAdditionalSchema
