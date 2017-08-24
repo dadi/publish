@@ -5,6 +5,8 @@ const Room = function () {
 }
 
 Room.prototype.getUsers = function (room, clients) {
+  if (typeof room !== 'string' || typeof clients !== 'object') return []
+
   return Object.keys(clients)
     .filter(key => clients[key].authToken && clients[key].channelSubscriptions[room])
     .map(key => clients[key].authToken)

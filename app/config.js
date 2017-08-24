@@ -14,15 +14,15 @@ const schema = require('./config-schema')
  */
 const getAdditionalSchema = (dir, match) => {
   fs.readdirSync(dir).forEach(folder => {
-    let sub = path.resolve(dir, folder)
+    const sub = path.resolve(dir, folder)
 
     if (fs.lstatSync(sub).isDirectory()) {
       getAdditionalSchema(sub, match)
     } else if (fs.lstatSync(sub).isFile()) {
-      let file = path.parse(sub)
+      const file = path.parse(sub)
 
       if (file.ext === '.js' && file.name.match(match)) {
-        let subSchema = require(sub)
+        const subSchema = require(sub)
         Object.assign(schema, subSchema)
       }
     }
@@ -40,30 +40,35 @@ const getFrontendProps = (schema = {}, prev = {}) => {
   )
 }
 
-// Fetch aditional component schema
-getAdditionalSchema(paths.frontend.components, /ConfigSchema$/g)
+const initConf = () => {
+  // Fetch aditional component schema
+  getAdditionalSchema(paths.frontend.components, /ConfigSchema$/g)
 
-let availableInFrontend = getFrontendProps(schema)
-const conf = convict(schema)
+  const availableInFrontend = getFrontendProps(schema)
+  const conf = convict(schema)
+  const env = conf.get('env')
+  const envConfigPath = `${paths.configDir}/config.${env}s.json`
 
-conf.set('availableInFrontend', availableInFrontend)
+  conf.set('availableInFrontend', availableInFrontend)
 
-// Load environment dependent configuration.
-const env = conf.get('env')
-try {
-  conf.loadFile(`${paths.configDir}/config.${env}.json`)
-} catch (e) {
-  console.log(`Failed to load config, dropping to defaults. Error: ${e}`)
+  // Check that environmental config file exists.
+  if (fs.existsSync(envConfigPath)) {
+    conf.loadFile(`${paths.configDir}/config.${env}.json`)
+  } else {
+    console.log(`Failed to load ${envConfigPath}, dropping to defaults`)
+  }
+
+  // Force port 443 if ssl is enabled.
+  if (conf.get('server.ssl.enabled')) {
+    conf.set('server.port', 443)
+  }
+
+  // Perform validation
+  conf.validate({})
+
+  return conf
 }
 
-// Force port 443 if ssl is enabled.
-if (conf.get('server.ssl.enabled')) {
-  conf.set('server.port', 443)
-}
-
-// Perform validation
-conf.validate({})
-
-module.exports = conf
+module.exports = initConf()
 module.exports.getFrontendProps = getFrontendProps
 module.exports.getAdditionalSchema = getAdditionalSchema
