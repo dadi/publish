@@ -47,7 +47,7 @@ const initConf = () => {
   const availableInFrontend = getFrontendProps(schema)
   const conf = convict(schema)
   const env = conf.get('env')
-  const envConfigPath = `${paths.configDir}/config.${env}s.json`
+  const envConfigPath = `${paths.configDir}/config.${env}.json`
 
   conf.set('availableInFrontend', availableInFrontend)
 
