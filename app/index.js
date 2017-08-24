@@ -15,6 +15,7 @@ const App = function () {}
  */
 App.prototype.start = function () {
   this.server = new Server()
+
   return this.server.start()
 }
 
