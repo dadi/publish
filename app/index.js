@@ -1,13 +1,7 @@
 'use strict'
 
 const globals = require('./globals') // eslint-disable-line
-
 const Server = require(paths.lib.server)
-let config = require(paths.config) // eslint-disable-line
-
-/*
-To-do - this.server.close should be promise based
- */
 
 /**
  * @constructor
@@ -17,7 +11,7 @@ const App = function () {}
 
 /**
  * Start Publish App
- * @return {Server}        Server Instance
+ * @return {Server} Server Instance
  */
 App.prototype.start = function () {
   this.server = new Server()

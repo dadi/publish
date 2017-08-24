@@ -8,7 +8,7 @@ describe('App', () => {
   })
 
   describe('start()', () => {
-    it('should set property this.server.', () => {
+    it('should set property this.server to be instance of Server.', () => {
       app.start()
       expect(app.server)
         .toBeInstanceOf(Server)
