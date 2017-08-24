@@ -5,6 +5,9 @@ const SessionController = require(`${paths.lib.controllers}/session`)
 
 module.exports = function (app) {
   const sessionController = new SessionController()
+
+  if (!app) return
+
   // Reset password reset endpoint.
   app.post({
     name: 'session-password-reset',

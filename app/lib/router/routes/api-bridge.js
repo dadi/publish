@@ -6,6 +6,8 @@ const APIBridgeController = require(`${paths.lib.controllers}/api-bridge`)
 module.exports = function (app) {
   const controller = new APIBridgeController()
 
+  if (!app) return
+
   app.use(restify.throttle({
     burst: 100,
     rate: 50,
