@@ -1,6 +1,6 @@
-const globals = require(`${__dirname}/../../../../../app/globals`) // Always required
-const Room = require(`${__dirname}/../../../../../app/lib/server/socket_auth/room`)
-const Socket = require(`${__dirname}/../../../../../app/lib/server/socket`)
+const globals = require(`${__dirname}/../../../../../../app/globals`) // Always required
+const Room = require(`${__dirname}/../../../../../../app/lib/server/socket_auth/room`)
+const Socket = require(`${__dirname}/../../../../../../app/lib/server/socket`)
 const scServer = require('socketcluster-server')
 const nock = require('nock')
 const config = require(paths.config)
@@ -65,7 +65,7 @@ jest.mock('socketcluster-server', () => {
   }
 })
 
-jest.mock(`${__dirname}/../../../../../app/lib/server/socket`, () => {
+jest.mock(`${__dirname}/../../../../../../app/lib/server/socket`, () => {
   return () => {
 
   }

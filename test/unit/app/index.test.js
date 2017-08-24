@@ -1,6 +1,6 @@
-const globals = require(`${__dirname}/../../app/globals`) // Always required
-const app = require(`${__dirname}/../../app`)
-const Server = require(`${__dirname}/../../app/lib/server`).Server
+const globals = require(`${__dirname}/../../../app/globals`) // Always required
+const app = require(`${__dirname}/../../../app`)
+const Server = require(`${__dirname}/../../../app/lib/server`).Server
 
 describe('App', () => {
   it('should export object', () => {

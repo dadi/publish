@@ -1,5 +1,5 @@
-const globals = require(`${__dirname}/../../../../app/globals`) // Always required
-const ApiBridge = require(`${__dirname}/../../../../app/lib/controllers/api-bridge`).APIBridgeController
+const globals = require(`${__dirname}/../../../../../app/globals`) // Always required
+const ApiBridge = require(`${__dirname}/../../../../../app/lib/controllers/api-bridge`).APIBridgeController
 const Constants = require(`${paths.lib.root}/constants`)
 
 const httpMocks = require('node-mocks-http')

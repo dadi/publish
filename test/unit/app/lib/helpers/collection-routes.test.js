@@ -1,5 +1,5 @@
-const globals = require(`${__dirname}/../../../../app/globals`) // Always required
-const CollectionRoutes = require(`${__dirname}/../../../../app/lib/helpers/collection-routes`)
+const globals = require(`${__dirname}/../../../../../app/globals`) // Always required
+const CollectionRoutes = require(`${__dirname}/../../../../../app/lib/helpers/collection-routes`)
 
 let collectionRoutes
 

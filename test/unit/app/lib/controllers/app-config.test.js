@@ -1,5 +1,5 @@
-const globals = require(`${__dirname}/../../../../app/globals`) // Always required
-const AppConfigController = require(`${__dirname}/../../../../app/lib/controllers/app-config`)
+const globals = require(`${__dirname}/../../../../../app/globals`) // Always required
+const AppConfigController = require(`${__dirname}/../../../../../app/lib/controllers/app-config`)
 const httpMocks = require('node-mocks-http')
 const config = require(paths.config)
 

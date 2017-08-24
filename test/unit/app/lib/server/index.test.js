@@ -1,12 +1,12 @@
-const globals = require(`${__dirname}/../../../../app/globals`) // Always required
-const Server = require(`${__dirname}/../../../../app/lib/server`)
-const Router = require(`${__dirname}/../../../../app/lib/router`)
-const Socket = require(`${__dirname}/../../../../app/lib/server/socket`)
+const globals = require(`${__dirname}/../../../../../app/globals`) // Always required
+const Server = require(`${__dirname}/../../../../../app/lib/server`)
+const Router = require(`${__dirname}/../../../../../app/lib/router`)
+const Socket = require(`${__dirname}/../../../../../app/lib/server/socket`)
 const config = require(paths.config)
 const SSL = require('@dadi/ssl')
 const restify = require('restify')
 
-jest.mock(`${__dirname}/../../../../app/lib/server/socket`, () => {
+jest.mock(`${__dirname}/../../../../../app/lib/server/socket`, () => {
   return () => {
 
   }

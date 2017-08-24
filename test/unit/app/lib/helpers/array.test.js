@@ -1,5 +1,5 @@
-const globals = require(`${__dirname}/../../../../app/globals`) // Always required
-const array = require(`${__dirname}/../../../../app/lib/helpers/array`)
+const globals = require(`${__dirname}/../../../../../app/globals`) // Always required
+const array = require(`${__dirname}/../../../../../app/lib/helpers/array`)
 
 describe('String', () => {
   it('should export object', () => {

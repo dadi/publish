@@ -1,6 +1,6 @@
-const Constants = require(`${__dirname}/../../../../app/lib/constants`)
-const globals = require(`${__dirname}/../../../../app/globals`) // Always required
-const Session = require(`${__dirname}/../../../../app/lib/controllers/session`).Session
+const Constants = require(`${__dirname}/../../../../../app/lib/constants`)
+const globals = require(`${__dirname}/../../../../../app/globals`) // Always required
+const Session = require(`${__dirname}/../../../../../app/lib/controllers/session`).Session
 const httpMocks = require('node-mocks-http')
 const DadiAPI = require('@dadi/api-wrapper')
 const config = require(paths.config)

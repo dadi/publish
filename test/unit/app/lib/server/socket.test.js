@@ -1,7 +1,7 @@
-const globals = require(`${__dirname}/../../../../app/globals`) // Always required
-const Socket = require(`${__dirname}/../../../../app/lib/server/socket`).Socket
-const Auth = require(`${__dirname}/../../../../app/lib/server/socket_auth/authentication`)
-const Room = require(`${__dirname}/../../../../app/lib/server/socket_auth/room`)
+const globals = require(`${__dirname}/../../../../../app/globals`) // Always required
+const Socket = require(`${__dirname}/../../../../../app/lib/server/socket`).Socket
+const Auth = require(`${__dirname}/../../../../../app/lib/server/socket_auth/authentication`)
+const Room = require(`${__dirname}/../../../../../app/lib/server/socket_auth/room`)
 const config = require(paths.config)
 const nock = require('nock')
 const EventEmitter = require('events').EventEmitter

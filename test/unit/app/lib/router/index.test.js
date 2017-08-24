@@ -1,5 +1,5 @@
-const globals = require(`${__dirname}/../../../../app/globals`) // Always required
-const Router = require(`${__dirname}/../../../../app/lib/router`)
+const globals = require(`${__dirname}/../../../../../app/globals`) // Always required
+const Router = require(`${__dirname}/../../../../../app/lib/router`)
 const restify = require('restify')
 let router
 let server

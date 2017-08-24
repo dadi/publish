@@ -1,5 +1,5 @@
-const globals = require(`${__dirname}/../../../../../app/globals`) // Always required
-const AppConfigRoutes = require(`${__dirname}/../../../../../app/lib/router/routes/app-config`)
+const globals = require(`${__dirname}/../../../../../../app/globals`) // Always required
+const AppConfigRoutes = require(`${__dirname}/../../../../../../app/lib/router/routes/app-config`)
 const nock = require('nock')
 const restify = require('restify')
 

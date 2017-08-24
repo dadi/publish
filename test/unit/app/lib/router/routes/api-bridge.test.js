@@ -1,5 +1,5 @@
-const globals = require(`${__dirname}/../../../../../app/globals`) // Always required
-const APIBridgeRoutes = require(`${__dirname}/../../../../../app/lib/router/routes/api-bridge`)
+const globals = require(`${__dirname}/../../../../../../app/globals`) // Always required
+const APIBridgeRoutes = require(`${__dirname}/../../../../../../app/lib/router/routes/api-bridge`)
 const nock = require('nock')
 const restify = require('restify')
 

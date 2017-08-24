@@ -1,5 +1,5 @@
-const globals = require(`${__dirname}/../../../../app/globals`) // Always required
-const string = require(`${__dirname}/../../../../app/lib/helpers/string`)
+const globals = require(`${__dirname}/../../../../../app/globals`) // Always required
+const string = require(`${__dirname}/../../../../../app/lib/helpers/string`)
 
 describe('String', () => {
   it('should export object', () => {

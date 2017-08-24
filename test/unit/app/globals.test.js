@@ -1,4 +1,4 @@
-const globals = require(`${__dirname}/../../app/globals`).Globals // Always required
+const globals = require(`${__dirname}/../../../app/globals`).Globals // Always required
 
 describe('Globals', () => {
   it('should export object', () => {

@@ -1,6 +1,6 @@
-const globals = require(`${__dirname}/../../../../app/globals`) // Always required
-const Collection = require(`${__dirname}/../../../../app/lib/models/collection`)
-const CollectionRoutes = require(`${__dirname}/../../../../app/lib/helpers/collection-routes`)
+const globals = require(`${__dirname}/../../../../../app/globals`) // Always required
+const Collection = require(`${__dirname}/../../../../../app/lib/models/collection`)
+const CollectionRoutes = require(`${__dirname}/../../../../../app/lib/helpers/collection-routes`)
 const DadiAPI = require('@dadi/api-wrapper')
 
 let collection

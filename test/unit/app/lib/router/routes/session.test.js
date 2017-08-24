@@ -1,6 +1,6 @@
-const globals = require(`${__dirname}/../../../../../app/globals`) // Always required
-const SessionRoutes = require(`${__dirname}/../../../../../app/lib/router/routes/session`)
-const SessionController = require(`${__dirname}/../../../../../app/lib/controllers/session`)
+const globals = require(`${__dirname}/../../../../../../app/globals`) // Always required
+const SessionRoutes = require(`${__dirname}/../../../../../../app/lib/router/routes/session`)
+const SessionController = require(`${__dirname}/../../../../../../app/lib/controllers/session`)
 const nock = require('nock')
 
 let server

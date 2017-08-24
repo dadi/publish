@@ -1,5 +1,5 @@
-const globals = require(`${__dirname}/../../../../app/globals`) // Always required
-const regex = require(`${__dirname}/../../../../app/lib/helpers/regex`)
+const globals = require(`${__dirname}/../../../../../app/globals`) // Always required
+const regex = require(`${__dirname}/../../../../../app/lib/helpers/regex`)
 
 describe('Regex: URL', () => {
   it('should export object', () => {
