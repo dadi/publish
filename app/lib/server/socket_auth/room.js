@@ -1,43 +1,31 @@
 'use strict'
 
-const Room = function () {}
+const Room = function () {
+  this.socket
+}
 
 Room.prototype.getUsers = function (room, clients) {
-  return Object.keys(clients).filter(key => {
-    let client = clients[key]
-
-    if (client.authToken) {
-      if (client.channelSubscriptions[room]) {
-        return true
-      }
-    }
-  }).map(key => {
-    let client = clients[key]
-
-    return client.authToken
-  })
+  return Object.keys(clients)
+    .filter(key => clients[key].authToken && clients[key].channelSubscriptions[room])
+    .map(key => clients[key].authToken)
 }
 
 Room.prototype.attach = function (socket) {
-  let subscribe = (room, respond) => {
-    // console.log(`subscribed to ${room}`)
-    let users = this.getUsers(room, socket.server.clients)
-    socket.exchange.publish(room, {type: 'userListChange', body: {users: users}})
-  }
+  if (!socket) return
 
-  let unsubscribe = (room, respond) => {
-    // console.log(`unsubscribed from ${room}`)
-    let users = this.getUsers(room, socket.server.clients)
-    socket.exchange.publish(room, {type: 'userListChange', body: {users: users}})
-  }
+  this.socket = socket
 
-  let dropOut = (room, respond) => {
-    // console.log(`drop out of ${room}`)
-  }
+  socket.on('subscribe', this.userListDidChange.bind(this))
+  socket.on('unsubscribe', this.userListDidChange.bind(this))
+}
 
-  socket.on('subscribe', subscribe)
-  socket.on('unsubscribe', unsubscribe)
-  socket.on('dropOut', dropOut)
+Room.prototype.userListDidChange = function (room) {
+  if (!this.socket) return
+
+  const users = this.getUsers(room, this.socket.server.clients)
+
+  this.socket.exchange
+    .publish(room, {type: 'userListChange', body: {users}})
 }
 
 module.exports = function () {
