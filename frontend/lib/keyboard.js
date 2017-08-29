@@ -149,7 +149,7 @@ export class Keyboard extends Keys {
     this.keydown = this.keydown.bind(this)
     this.keyup = this.keyup.bind(this)
 
-    if (window) {
+    if (window && typeof window.addEventListener === 'function') {
       window.addEventListener('keydown', this.keydown)
       window.addEventListener('keyup', this.keyup)
     }
