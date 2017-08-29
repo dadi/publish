@@ -2,24 +2,12 @@
 
 export const Format = {
   /**
-   * Camel case
-   * @param  {String} value String to format
-   * @return {String} Formatted result
-   */
-  camelCase (value) {
-    return value
-      .replace(/\s(.)/g, $1 => $1.toUpperCase())
-      .replace(/\s/g, '')
-      .replace(/^(.)/, $1 => $1.toUpperCase())
-  },
-
-  /**
    * Sentence case
    * @param  {String} value String to format
    * @return {String} Formatted result
    */
   sentenceCase (value) {
-    if (!value) return ''
+    if (typeof value !== 'string') return ''
 
     return value
       .split('.')
@@ -33,6 +21,8 @@ export const Format = {
    * @return {String} Formatted result
    */
   slugify (value) {
+    if (!value || typeof value !== 'string') return ''
+
     return value.toString()
       .toLowerCase()
       .replace(/\s+/g, '-')     // Replace spaces with -
