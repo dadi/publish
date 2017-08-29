@@ -5,11 +5,11 @@ import {bindActionCreators} from 'redux'
 import {connect} from 'preact-redux'
 
 export function connectHelper (stateMap, dispatchMap) {
-  return connect((state) => {
+  return connect(state => {
     return {
       state: stateMap(state)
     }
-  }, (dispatch) => {
+  }, dispatch => {
     if (dispatchMap) {
       return {
         actions: dispatchMap(dispatch)
@@ -36,7 +36,10 @@ export function getUniqueId () {
 }
 
 export function objectToArray (obj, keyField) {
-  if (!obj) return []
+  if (
+    !(obj && typeof obj === 'object') ||
+    !(keyField && typeof keyField === 'string')
+  ) return []
 
   return Object.keys(obj)
     .map(key => Object.assign({}, {[keyField || 'key']: key, value: obj[key]}))
