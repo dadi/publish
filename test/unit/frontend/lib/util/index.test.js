@@ -1,11 +1,6 @@
 const globals = require(`${__dirname}/../../../../../app/globals`) // Always required
 const Util = require(`${__dirname}/../../../../../frontend/lib/util`)
 
-beforeEach(() => {
-  // Reset lastId
-  // Util.lastId = 0   
-})
-
 describe('Util', () => {
   it('should export object', () => {
     expect(Util).toMatchObject(expect.any(Object))
