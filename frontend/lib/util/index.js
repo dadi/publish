@@ -45,6 +45,7 @@ export function objectToArray (obj, keyField) {
     .map(key => Object.assign({}, {[keyField || 'key']: key, value: obj[key]}))
 }
 
+// To do - move to util.array
 export function arrayToObject (arr, keyField) {
   if (!arr.length) return null
 
@@ -94,8 +95,8 @@ export function throttle (func, threshold) {
   // Must return standard function.
   // An arrow function here would not use arguments.
   return function () {
-    let now = new Date().getTime()
-    let args = arguments
+    const now = new Date().getTime()
+    const args = arguments
 
     if (lastCall && (now < lastCall + threshold)) {
       clearTimeout(timeout)
@@ -111,5 +112,7 @@ export function throttle (func, threshold) {
 }
 
 export function setPageTitle (title) {
-  document.title = (title ? title + ' / ' : '') + 'DADI Publish'
+  const isValidTitle = title && (typeof title === 'string' || typeof title === 'number')
+
+  document.title = `${isValidTitle ? title + ' / ' : ''}DADI Publish`
 }

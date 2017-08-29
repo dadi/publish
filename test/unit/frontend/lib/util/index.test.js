@@ -26,7 +26,7 @@ describe('Util', () => {
     })
   })
 
-  describe('objectToArray', () => {
+  describe('objectToArray()', () => {
     it('should return an empty array if object is invalid', () => {
       expect(Util.objectToArray())
         .toEqual(expect.arrayContaining([]))
@@ -51,14 +51,37 @@ describe('Util', () => {
         ]))
     })
   })
+
+  describe('setPageTitle()', () => {
+    it('should set document.title to be default title if title param is undefined', () => {
+      Util.setPageTitle()
+
+      expect(document.title)
+        .toBe('DADI Publish')
+    })
+
+    it('should set document.title to be default title if title parameter is not a string', () => {
+      Util.setPageTitle({})
+
+      expect(document.title)
+        .toBe('DADI Publish')
+    })
+
+    it('should return default document title if title parameter is not a string', () => {
+      Util.setPageTitle('Foo')
+
+      expect(document.title)
+        .toBe('Foo / DADI Publish')
+    })
+  })
 })
 
 // connectHelper
 // getUniqueId √
-// objectToArray
+// objectToArray √
 // arrayToObject
 // isValidJSON
 // isEmpty
 // debounce
 // throttle
-// setPageTitle
+// setPageTitle √
