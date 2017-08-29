@@ -47,11 +47,17 @@ export function objectToArray (obj, keyField) {
 
 // To do - move to util.array
 export function arrayToObject (arr, keyField) {
-  if (!arr.length) return null
+  if (!arr || !Array.isArray(arr) || !arr.length) return null
 
-  return Object.assign({}, ...arr.map(obj => {
-    return {[obj[keyField] || 'key']: obj.value}
-  }))
+  return Object.assign({},
+    ...arr
+      .map(obj => {
+        if (!obj.value || !obj[keyField]) return
+
+        return {[obj[keyField] || 'key']: obj.value}
+      })
+      .filter(Boolean)
+  )
 }
 
 // Object and Field validation
@@ -62,10 +68,6 @@ export function isValidJSON (string) {
     .test(string.replace(/\\["\\\/bfnrtu]/g, '@')
     .replace(/"[^"\\\n\r]*"|true|false|null|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?/g, ']')
     .replace(/(?:^|:|,)(?:\s*\[)+/g, ''))
-}
-
-export function isEmpty (subject) {
-  return !subject || (typeof subject === 'object' && subject.length < 1)
 }
 
 export function debounce (func, wait, immediate) {

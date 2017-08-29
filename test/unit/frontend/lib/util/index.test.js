@@ -74,14 +74,65 @@ describe('Util', () => {
         .toBe('Foo / DADI Publish')
     })
   })
+
+  describe('isValidJSON()', () => {
+    it('should return undefined if string param is invalid', () => {
+      expect(Util.isValidJSON({}))
+        .toBeUndefined()
+    })
+
+    it('should return true if string is valid json', () => {
+      expect(Util.isValidJSON(JSON.stringify({foo: 'bar'})))
+        .toBeTruthy()
+    })
+
+    it('should return false if string is not valid json', () => {
+      expect(Util.isValidJSON('foo'))
+        .toBeFalsy()
+    })
+  })
+
+  describe('arrayToObject()', () => {
+    it('should return null if array argument is invalid', () => {
+      expect(Util.arrayToObject(undefined, 'keyField'))
+        .toBeNull()
+    })
+
+    it('should omit objects without value property', () => {
+      expect(Util.arrayToObject([{
+        field: 'foo'
+      }], 'field'))
+      .toEqual({})
+    })
+
+    it('should omit objects without key field', () => {
+      expect(Util.arrayToObject([{
+        field: 'foo',
+        value: 'bar'
+      }], 'foo'))
+      .toEqual({})
+    })
+
+    it('should return valid object if field and value are valid', () => {
+      expect(Util.arrayToObject([{
+        field: 'foo', 
+        value: 'bar'
+      }, {
+        field: 'baz', value: 'qux'
+      }], 'field'))
+      .toEqual(expect.objectContaining({
+        foo: 'bar',
+        baz: 'qux'
+      }))
+    })
+  })
 })
 
 // connectHelper
 // getUniqueId √
 // objectToArray √
 // arrayToObject
-// isValidJSON
-// isEmpty
+// isValidJSON √
 // debounce
 // throttle
 // setPageTitle √
