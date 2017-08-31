@@ -148,9 +148,36 @@ describe('Keyboard', () => {
       })
     })
 
-    // describe('on', () => {
-      
-    // })
+    describe('on', () => {
+      it('should throw an error if pattern is invalid', () => {
+
+        const keyboardAddOn = () => {
+          keyboard.on(undefined)
+        }
+        expect(keyboardAddOn)
+          .toThrowError('Invalid keyboard pattern')
+      })
+
+      it('should throw an error if one or more pattern key is invalid', () => {
+        const keyboardAddOn = () => {
+          keyboard.on('cmd+foo')
+        }
+        expect(keyboardAddOn)
+          .toThrowError('Invalid keyboard pattern')
+      })
+
+      it('should push vald shortcuts into list', () => {
+        keyboard.on('backspace')
+
+        expect(keyboard.shortcuts)
+          .toHaveLength(1)
+      })
+
+      it('should return instance of Pattern', () => {
+        expect(keyboard.on('backspace'))
+          .toBeInstanceOf(KeyboardController.Pattern)
+      })
+    })
 
     describe('off', () => {
       it('should call removeEventListener method on window', () => {

@@ -178,7 +178,15 @@ export class Keyboard extends Keys {
   }
 
   on (pattern) {
-    const keys = this.find(pattern.toLowerCase().split('+'))
+    if (!pattern || typeof pattern !== 'string') {
+      throw new Error('Invalid keyboard pattern')
+    }
+    const patternKeys = pattern.toLowerCase().split('+')
+    const keys = this.find(patternKeys)
+    // If one or more key is invalid, throw an error.
+    if (patternKeys.length > keys.length) {
+      throw new Error(`Invalid keyboard pattern`)
+    }
     const shortcut = new Pattern(pattern, keys)
 
     this.shortcuts.push(shortcut)
