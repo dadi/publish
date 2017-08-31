@@ -209,4 +209,139 @@ describe('Keyboard', () => {
       })
     })
   })
+  describe('Class Keys', () => {
+    it('should be an Object', () => {
+      expect(keys).toMatchObject(expect.any(Object))
+    })
+
+    describe('keys', () => {
+      it('should return keys appended with all possible letter codes', () => {
+        expect(keys.keys).toEqual(expect.objectContaining({
+          z: 90
+        }))
+      })
+
+      it('should return keys appended with all possible number codes', () => {
+        expect(keys.keys).toEqual(expect.objectContaining({
+          1: 49
+        }))
+      })
+
+      it('should return keys appended with all possible function codes', () => {
+        expect(keys.keys).toEqual(expect.objectContaining({
+          f1: 112
+        }))
+      })
+
+      it('should return keys appended with all possible numpad codes', () => {
+        expect(keys.keys).toEqual(expect.objectContaining({
+          'numpad *': 106
+        }))
+      })
+    })
+
+    describe('find()', () => {
+      it('should returning matching keycodes', () => {
+        expect(keys.find(['cmd']))
+          .toEqual(expect.arrayContaining([91]))
+      })
+
+      it('should only return matching keys', () => {
+        expect(keys.find(['cmd', 'foo']))
+          .toEqual(expect.arrayContaining([91]))
+      })
+    })
+  })
+
+  describe('Class Pattern', () => {
+    it('should be an Object', () => {
+      expect(pattern).toMatchObject(expect.any(Object))
+    })
+
+    describe('next()', () => {
+      it('should return undefined if callback is not set', () => {
+        expect(pattern.next()).toBeUndefined()
+      })
+
+      it('should trigger callback method if last key is reached', () => {
+        const mockPattern = 'cmd+del'
+        const mockKeys = [91, 46]
+        pattern = new KeyboardController.Pattern(mockPattern, mockKeys)
+        pattern.do(keyboardCallback)
+        pattern.next(mockKeys[0])
+        pattern.next(mockKeys[1])
+
+        expect(keyboardCallback)
+          .toHaveBeenCalledWith(expect.objectContaining({
+            keys: mockKeys,
+            pattern: mockPattern
+          }))
+      })
+
+      it('should return true if last key is reached', () => {
+        const mockPattern = 'cmd+del'
+        const mockKeys = [91, 46]
+        pattern = new KeyboardController.Pattern(mockPattern, mockKeys)
+        pattern.do(keyboardCallback)
+        pattern.next(mockKeys[0])
+
+        expect(pattern.next(mockKeys[1]))
+          .toBeTruthy()
+      })
+
+      it('should not trigger callback if pattern is not met', () => {
+        const mockPattern = 'cmd'
+        const mockKeys = [91]
+        pattern = new KeyboardController.Pattern(mockPattern, mockKeys)
+        pattern.do(keyboardCallback)
+
+        expect(pattern.next(92))
+          .toBeUndefined()
+      })
+
+      it('should reset active if keycode does not match expected pattern key', () => {
+        const mockPattern = 'cmd+del'
+        const mockKeys = [91, 46]
+        pattern = new KeyboardController.Pattern(mockPattern, mockKeys)
+        pattern.do(keyboardCallback)
+        pattern.next(mockKeys[0])
+        pattern.next(1)
+
+        expect(pattern.active).toBe(0)
+      })
+
+      it('should not trigger callback method if key is incorrect', () => {
+        const mockPattern = 'cmd+del'
+        const mockKeys = [91, 46]
+        pattern = new KeyboardController.Pattern(mockPattern, mockKeys)
+        pattern.do(keyboardCallback)
+        pattern.next(mockKeys[0])
+        pattern.next(1)
+
+        expect(keyboardCallback).not.toHaveBeenCalled()
+      })
+    })
+
+    describe('reset()', () => {
+      it('should reset active position to 0', () => {
+        pattern.active = 10
+        pattern.reset()
+        expect(pattern.active).toBe(0)
+      })
+    })
+
+    describe('do()', () => {
+      it('should reject invalid callback', () => {
+        const addDo = () => {
+          pattern.do()
+        }
+        expect(addDo).toThrowError('Invalid keyboard callback method')
+      })
+
+      it('should set class callback to be recieved method', () => {
+        pattern.do(() => {})
+        expect(pattern.callback).toBeInstanceOf(Function)
+      })
+    })
+  })
 })

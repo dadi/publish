@@ -128,6 +128,9 @@ export class Pattern {
   }
 
   do (callback) {
+    if (!callback || typeof callback !== 'function') {
+      throw new Error('Invalid keyboard callback method')
+    }
     this.callback = callback
   }
 }
