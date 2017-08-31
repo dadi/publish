@@ -37,12 +37,12 @@ export function urlHelper () {
         .map(key => {
           if (typeof params[key] === 'object') {
             try {
-              return key + '=' + encodeURI(JSON.stringify(params[key]))
+              return key + '=' + JSON.stringify(params[key])
             } catch (e) {
-              return key + '=' + encodeURI(params[key])
+              return key + '=' + params[key]
             }
           } else {
-            return key + '=' + encodeURI(params[key])
+            return key + '=' + params[key]
           }
         })
         .join('&')

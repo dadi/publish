@@ -63,9 +63,9 @@ describe('URLHelper', () => {
         .toBe('foo=bar&baz=qux')
     })
 
-    it('should convert parameter object to url friendly param', () => {
+    it('should convert parameter object to readable param', () => {
       expect(urlHelper.paramsToString({foo: 'bar', baz: 'foo qux'}))
-        .toBe('foo=bar&baz=foo%20qux')
+        .toBe('foo=bar&baz=foo qux')
     })
   })
 })

@@ -1,7 +1,7 @@
 /* eslint-disable */
 'use strict'
 
-class Keys {
+export class Keys {
   get keys () {
     let codes = {
       'backspace': 8,
@@ -70,7 +70,6 @@ class Keys {
     }
 
     // Letters
-
     for (let i = 97; i < 123; i++) codes[String.fromCharCode(i)] = i - 32
 
     // Numbers
@@ -86,15 +85,13 @@ class Keys {
   }
 
   find (pattern) {
-    return pattern.map(key => {
-      return this.keys[key]
-    }).filter(key => {
-      return key
-    })
+    return pattern
+    .map(key => this.keys[key])
+    .filter(key => key)
   }
 }
 
-class Pattern {
+export class Pattern {
   constructor (pattern, keys) {
     this.pattern = pattern
     this.keys = keys
@@ -102,11 +99,13 @@ class Pattern {
   }
 
   next (keyCode) {
-    if (this.match(keyCode, this.keys[this.active])) {
+    if (!this.callback) return
+
+    if (keyCode === this.keys[this.active]) {
       if (this.active < this.keys.length - 1) {
         this.active++
 
-        return false
+        return
       } else {
         this.callback({
           keys: this.keys,
@@ -120,11 +119,8 @@ class Pattern {
     } else {
       this.reset()
 
-      return false
+      return
     }
-  }
-  match (key, current) {
-    return key === current
   }
 
   reset () {
@@ -157,8 +153,11 @@ export class Keyboard extends Keys {
 
   keydown (event) {
     if (event.keyCode) {
-      const hasNext = this.findShortcut(event.keyCode)
-      if (hasNext) {
+      // Find matching shortcut
+      // trigger when pattern matches.
+      // Return true if trigger successful
+      const didTrigger = this.findShortcut(event.keyCode)
+      if (didTrigger) {
         event.preventDefault()
       }
     }
@@ -174,9 +173,8 @@ export class Keyboard extends Keys {
   }
 
   findShortcut (keyCode) {
-    return this.shortcuts.find(shortcut => {
-      return shortcut.next(keyCode)
-    })
+    return this.shortcuts
+      .find(shortcut => shortcut.next(keyCode))
   }
 
   on (pattern) {
