@@ -3,7 +3,12 @@
 export function urlHelper () {
   return {
     paramsToObject (source) {
-      if (!source || source === undefined) return null
+      if (
+        !source ||
+        source === undefined ||
+        typeof source !== 'string'
+      ) return
+
       let params = JSON.parse('{"' + decodeURI(source.replace(/^(\?)/, ''))
         .replace(/"/g, '\\"')
         .replace(/&/g, '","')
@@ -11,6 +16,7 @@ export function urlHelper () {
 
       Object.keys(params).forEach(param => {
         try {
+          // Try to parse valid JSON parameters
           params[param] = JSON.parse(params[param])
         } catch (e) {
           return
