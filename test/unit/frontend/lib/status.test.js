@@ -1,16 +1,16 @@
 const globals = require(`${__dirname}/../../../../app/globals`) // Always required
 const Status = require(`${__dirname}/../../../../frontend/lib/status`)
 
-Object.defineProperty(window.navigator, "onLine", (function(_value){
+Object.defineProperty(window.navigator, "onLine", ((_value) => {
   return {
-    get: function _get() {
-      return _value;
+    get: () => {
+      return _value
     },
-    set: function _set(v) {
-        _value = v;
+    set: (v) => {
+        _value = v
     }
-  };
-})(window.navigator.onLine));
+  }
+})(window.navigator.onLine))
 
 beforeEach(() => {
   window.navigator.onLine = true
