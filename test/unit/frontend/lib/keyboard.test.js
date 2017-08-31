@@ -24,6 +24,10 @@ beforeEach(() => {
   window.addEventListener = jest.fn((event, cb) => {
     map[event] = cb
   })
+
+  window.removeEventListener = jest.fn((event, cb) => {
+    delete map[event]
+  })
 })
 
 describe('Keyboard', () => {
@@ -123,6 +127,58 @@ describe('Keyboard', () => {
         keyboard.keyup(event)
 
         expect(mockPreventDefault).toHaveBeenCalled()
+      })
+    })
+
+    describe('findShortcut', () => {
+      it('should return matching pattern instance', () => {
+        keyboard.on('backspace')
+          .do(jest.fn())
+
+        expect(keyboard.findShortcut(8))
+          .toBeInstanceOf(KeyboardController.Pattern)
+      })
+
+      it('should return undefined if no matching pattern', () => {
+        keyboard.on('backspace')
+          .do(jest.fn())
+
+        expect(keyboard.findShortcut(7))
+          .toBeUndefined()
+      })
+    })
+
+    // describe('on', () => {
+      
+    // })
+
+    describe('off', () => {
+      it('should call removeEventListener method on window', () => {
+        window.addEventListener('keydown', () => {})
+        keyboard.off()
+        expect(window.removeEventListener)
+          .toHaveBeenCalled()
+      })
+
+      it('should remove keydown events', () => {
+        window.addEventListener('keydown', () => {})
+        keyboard.off()
+        expect(map.keydown)
+          .toBeUndefined()
+      })
+
+      it('should call removeEventListener method on window', () => {
+        window.addEventListener('keyup', () => {})
+        keyboard.off()
+        expect(window.removeEventListener)
+          .toHaveBeenCalled()
+      })
+
+      it('should remove keyup events', () => {
+        window.addEventListener('keyup', () => {})
+        keyboard.off()
+        expect(map.keyup)
+          .toBeUndefined()
       })
     })
   })

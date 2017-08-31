@@ -178,8 +178,8 @@ export class Keyboard extends Keys {
   }
 
   on (pattern) {
-    let keys = this.find(pattern.toLowerCase().split('+'))
-    let shortcut = new Pattern(pattern, keys)
+    const keys = this.find(pattern.toLowerCase().split('+'))
+    const shortcut = new Pattern(pattern, keys)
 
     this.shortcuts.push(shortcut)
 
