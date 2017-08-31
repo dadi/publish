@@ -12,13 +12,13 @@ describe('URLHelper', () => {
     expect(URLHelper).toBeInstanceOf(Function)
   })
 
-  describe('paramsToObject', () => {
+  describe('paramsToObject()', () => {
     it('should should return falsy if source is undefined', () => {
       expect(urlHelper.paramsToObject())
         .toBeFalsy()
     })
 
-    it('should should return falsy if source is incorrect prototype', () => {
+    it('should return falsy if source is incorrect prototype', () => {
       expect(urlHelper.paramsToObject({foo: 'bar'}))
         .toBeFalsy()
     })
@@ -39,6 +39,33 @@ describe('URLHelper', () => {
         .toEqual(expect.objectContaining({
           filter: 'foo'
         }))
+    })
+  })
+
+  describe('paramsToString()', () => {
+    it('should return falsy if params are undefined', () => {
+      expect(urlHelper.paramsToString())
+        .toBeFalsy()
+    })
+
+    it('should return falsy if params is incorrect prototype', () => {
+      expect(urlHelper.paramsToString('incorrect'))
+        .toBeFalsy()
+    })
+
+    it('should convert parameter object to url friendly param', () => {
+      expect(urlHelper.paramsToString({foo: 'bar'}))
+        .toBe('foo=bar')
+    })
+
+    it('should convert parameter object to url friendly param', () => {
+      expect(urlHelper.paramsToString({foo: 'bar', baz: 'qux'}))
+        .toBe('foo=bar&baz=qux')
+    })
+
+    it('should convert parameter object to url friendly param', () => {
+      expect(urlHelper.paramsToString({foo: 'bar', baz: 'foo qux'}))
+        .toBe('foo=bar&baz=foo%20qux')
     })
   })
 })

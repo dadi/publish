@@ -26,17 +26,23 @@ export function urlHelper () {
       return params
     },
     paramsToString (params) {
+      if (
+        !params ||
+        params === undefined ||
+        typeof params !== 'object'
+      ) return
+
       return Object.keys(params)
         .filter(key => params[key])
         .map(key => {
           if (typeof params[key] === 'object') {
             try {
-              return key + '=' + JSON.stringify(params[key])
+              return key + '=' + encodeURI(JSON.stringify(params[key]))
             } catch (e) {
-              return key + '=' + params[key]
+              return key + '=' + encodeURI(params[key])
             }
           } else {
-            return key + '=' + params[key]
+            return key + '=' + encodeURI(params[key])
           }
         })
         .join('&')
