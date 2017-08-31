@@ -9,7 +9,7 @@ export function isOnline () {
 }
 
 export function isServerOnline () {
-  return fetch('http://am.dev.dadi.technology/', {
+  return fetch('/', {
     credentials: 'include',
     method: 'HEAD'
   })
@@ -44,15 +44,20 @@ export default class ConnectionMonitor {
   }
 
   set status (statusCode) {
-    if (this.statusCode && statusCode !== this.statusCode) {
-      if (typeof this.callback === 'function') {
-        this.callback(statusCode)
-      }
+    if (
+      this.statusCode &&
+      statusCode !== this.statusCode &&
+      typeof this.callback === 'function'
+    ) {
+      this.callback(statusCode)
     }
     this.statusCode = statusCode
   }
 
   registerStatusChangeCallback (callback) {
+    if (typeof callback !== 'function') {
+      throw new Error('Status callback must be a function')
+    }
     this.callback = callback
   }
 }

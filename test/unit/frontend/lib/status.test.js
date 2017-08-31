@@ -1,7 +1,8 @@
 const globals = require(`${__dirname}/../../../../app/globals`) // Always required
 const Status = require(`${__dirname}/../../../../frontend/lib/status`)
 
-const nock = require('nock')
+let connectionMonitor
+const mockStatusChangeCallback = jest.fn()
 
 Object.defineProperty(window.navigator, "onLine", ((_value) => {
   return {
@@ -16,6 +17,9 @@ Object.defineProperty(window.navigator, "onLine", ((_value) => {
 
 beforeEach(() => {
   window.navigator.onLine = true
+  connectionMonitor = new Status.default
+
+  mockStatusChangeCallback.mockReset()
 })
 
 describe('Status', () => {
@@ -59,6 +63,52 @@ describe('Status', () => {
         status: 500
       }))
       return expect(Status.isServerOnline()).resolves.toBeFalsy()
+    })
+  })
+
+  describe('Class ConnectionMonitor', () => {
+    it('should be an Object', () => {
+      expect(connectionMonitor).toMatchObject(expect.any(Object))
+    })
+
+    describe('status', () => {
+      it('should store status as statusCode', () => {
+        connectionMonitor.status = 200
+        expect(connectionMonitor.statusCode).toBe(200)
+      })
+
+      it('should send status to callback method if callback method is defined', () => {
+        connectionMonitor.status = 200
+        connectionMonitor.registerStatusChangeCallback(mockStatusChangeCallback)
+        connectionMonitor.status = 500
+
+        expect(mockStatusChangeCallback).toHaveBeenCalledWith(500)
+      })
+
+      it('should not send status to callback method if callback method undefined', () => {
+        connectionMonitor.status = 200
+        connectionMonitor.status = 500
+
+        expect(mockStatusChangeCallback).not.toHaveBeenCalled()
+      })
+
+      it('should not trigger callback method if status does not change', () => {
+        connectionMonitor.status = 200
+        connectionMonitor.registerStatusChangeCallback(mockStatusChangeCallback)
+        connectionMonitor.status = 200
+
+        expect(mockStatusChangeCallback).not.toHaveBeenCalled()
+      })
+    })
+
+    describe('registerStatusChangeCallback()', () => {
+      it('should set class callback method if method is valid', () => {
+        const registerCallback = () => {
+          connectionMonitor.registerStatusChangeCallback()
+        }
+
+        expect(registerCallback).toThrowError('Status callback must be a function')
+      })
     })
   })
 })
