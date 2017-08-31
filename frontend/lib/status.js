@@ -9,7 +9,7 @@ export function isOnline () {
 }
 
 export function isServerOnline () {
-  return fetch('/', {
+  return fetch('http://am.dev.dadi.technology/', {
     credentials: 'include',
     method: 'HEAD'
   })
@@ -29,7 +29,9 @@ export default class ConnectionMonitor {
       } else {
         isServerOnline()
           .then(isUp => {
-            this.status = !isUp ? Constants.NETWORK_SERVER_UNRESPONSIVE : Constants.NETWORK_OK
+            this.status = !isUp ?
+            Constants.NETWORK_SERVER_UNRESPONSIVE :
+            Constants.NETWORK_OK
           })
       }
     }, interval)

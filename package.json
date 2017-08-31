@@ -135,7 +135,6 @@
     "webpack": "^2.3.3",
     "ws": "2.0.0"
   },
-  "devDependencies": {},
   "standard": {
     "globals": [
       "paths"
@@ -154,6 +153,7 @@
   },
   "jest": {
     "collectCoverage": true,
+    "automock": false,
     "collectCoverageFrom": [
       "**/frontend/**/*.{js,jsx}",
       "**/app/**/*.{js}"

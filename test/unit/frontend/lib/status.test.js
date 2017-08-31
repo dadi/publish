@@ -1,6 +1,8 @@
 const globals = require(`${__dirname}/../../../../app/globals`) // Always required
 const Status = require(`${__dirname}/../../../../frontend/lib/status`)
 
+const nock = require('nock')
+
 Object.defineProperty(window.navigator, "onLine", ((_value) => {
   return {
     get: () => {
@@ -34,6 +36,29 @@ describe('Status', () => {
     it('should return false if window.navigator.onLine is undefined', () => {
       window.navigator.onLine = undefined
       expect(Status.isOnline()).toBeFalsy()
+    })
+  })
+
+  describe('isServerOnline()', () => {
+    it('should return false when fetch rejects', () => {
+      expect.assertions(1)
+      return expect(Status.isServerOnline()).resolves.toBeFalsy()
+    })
+
+    it('should return true when fetch to domain route returns 200 status', () => {
+      expect.assertions(1)
+      window.fetch = jest.fn().mockImplementation(() => Promise.resolve({
+        status: 200
+      }))
+      return expect(Status.isServerOnline()).resolves.toBeTruthy()
+    })
+
+    it('should return false when fetch to domain route does not return 200 status', () => {
+      expect.assertions(1)
+      window.fetch = jest.fn().mockImplementation(() => Promise.resolve({
+        status: 500
+      }))
+      return expect(Status.isServerOnline()).resolves.toBeFalsy()
     })
   })
 })
