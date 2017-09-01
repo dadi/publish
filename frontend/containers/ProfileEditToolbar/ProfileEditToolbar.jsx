@@ -113,10 +113,6 @@ class ProfileEditToolbar extends Component {
       state
     } = this.props
     const document = state.document.remote
-    const hasConnectionIssues = state.app.networkStatus !== Constants.NETWORK_OK
-      && Object.keys(document.validationErrors)
-        .filter(field => document.validationErrors[field])
-        .length
     const validationErrors = state.document.validationErrors
     const hasValidationErrors = validationErrors && Object.keys(validationErrors)
       .filter(field => validationErrors[field])
