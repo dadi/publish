@@ -120,9 +120,6 @@ class DocumentEditToolbar extends Component {
     } = this.props
     const document = state.document.remote
     const hasConnectionIssues = state.app.networkStatus !== Constants.NETWORK_OK
-      && Object.keys(document.validationErrors)
-        .filter(field => document.validationErrors[field])
-        .length
     const isSaving = state.document.remoteStatus === Constants.STATUS_SAVING
     const validationErrors = state.document.validationErrors
     const hasValidationErrors = validationErrors && Object.keys(validationErrors)
