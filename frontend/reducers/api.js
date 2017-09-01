@@ -3,7 +3,7 @@
 import * as Constants from 'lib/constants'
 import * as Types from 'actions/actionTypes'
 
-const initialState = {
+export const initialState = {
   apis: [],
   paths: window.__documentRoutes__,
   status: Constants.STATUS_IDLE
