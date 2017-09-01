@@ -18,14 +18,14 @@ export default function syncRouteWithStore (history, store, {
   let unsubscribeFromHistory
 
   // Get location in store
-  const getLocationInStore = (fallbackToInitial) => {
+  const getLocationInStore = fallbackToInitial => {
     let locationState = selectLocationState(store.getState())
 
     return locationState.locationBeforeTransitions ||
            (fallbackToInitial ? initialLocation : undefined)
   }
 
-  const handleLocationChange = (location) => {
+  const handleLocationChange = location => {
     if (isTimeTraveling) {
       return
     }
@@ -39,7 +39,7 @@ export default function syncRouteWithStore (history, store, {
       }
     }
 
-    let params = urlHelper().paramsToObject(history.location.search)
+    const params = urlHelper().paramsToObject(history.location.search)
 
     // Update the store by calling action
     store.dispatch({

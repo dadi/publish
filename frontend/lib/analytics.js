@@ -30,21 +30,15 @@ export default class Analytics {
   }
 
   register (trackingId) {
+    if (!trackingId) throw new Error('trackingId is invalid')
+
     this.trackingId = trackingId
-
-    if (!typeof ga === 'function') {
-      console.log('ga not initialised')
-
-      return this
-    }
-    if (!trackingId) {
-      console.log('Tracking ID not defined')
-
-      return this
+    if (typeof ga === 'undefined' || !typeof ga === 'function') {
+      throw new Error('ga not initialised')
     }
 
     ga('create', this.trackingId, 'auto')
-    ga((tracker) => this.getClientId(tracker))
+    ga(tracker => this.getClientId(tracker))
 
     return this
   }
@@ -54,6 +48,9 @@ export default class Analytics {
   }
 
   pageview (path) {
+    if (typeof path !== 'string') {
+      throw new Error('Invalid pageview path')
+    }
     if (this.trackingId) {
       ga('send', 'pageview', path)
     }
