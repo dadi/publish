@@ -3,6 +3,8 @@
 import 'fetch'
 import * as Constants from 'lib/constants'
 
+export const minWatchInterval = 1000
+
 export function isOnline () {
   // Return true when property undefined
   return window.navigator.onLine !== undefined || window.navigator.onLine
@@ -23,6 +25,10 @@ export default class ConnectionMonitor {
   }
 
   watch (interval) {
+    if (isNaN(interval)) {
+      throw new Error(`Watch interval should be a number greater than ${minWatchInterval}`)
+    }
+
     this.monitor = setInterval(() => {
       if (!isOnline()) {
         this.status = Constants.NETWORK_NO_INTERNET_CONNECTION
@@ -34,7 +40,7 @@ export default class ConnectionMonitor {
             Constants.NETWORK_OK
           })
       }
-    }, interval)
+    }, Math.max(minWatchInterval, interval))
 
     return this
   }

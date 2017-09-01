@@ -4,6 +4,8 @@ const Status = require(`${__dirname}/../../../../frontend/lib/status`)
 let connectionMonitor
 const mockStatusChangeCallback = jest.fn()
 
+jest.useFakeTimers()
+
 Object.defineProperty(window.navigator, "onLine", ((_value) => {
   return {
     get: () => {
@@ -15,11 +17,16 @@ Object.defineProperty(window.navigator, "onLine", ((_value) => {
   }
 })(window.navigator.onLine))
 
-beforeEach(() => {
+beforeEach(() => {  
   window.navigator.onLine = true
   connectionMonitor = new Status.default
 
   mockStatusChangeCallback.mockReset()
+})
+
+afterEach(() => {
+  jest.clearAllTimers()
+  setInterval.mockClear()
 })
 
 describe('Status', () => {
@@ -69,6 +76,30 @@ describe('Status', () => {
   describe('Class ConnectionMonitor', () => {
     it('should be an Object', () => {
       expect(connectionMonitor).toMatchObject(expect.any(Object))
+    })
+
+    describe('watch()', () => {
+      it('should throw an error if the watch interval is invalid', () => {
+        const monitorCall = () => {
+          connectionMonitor.watch()
+        }
+        expect(monitorCall)
+          .toThrowError(`Watch interval should be a number greater than ${Status.minWatchInterval}`)
+      })
+
+      it('should set variable monitor to be a setInterval function', () => {
+        connectionMonitor.watch(1000)
+
+        expect(connectionMonitor.monitor)
+          .not.toBeUndefined()
+      })
+
+      it('should set variable monitor to be a setInterval function', () => {
+        connectionMonitor.watch(1000)
+
+        expect(setInterval.mock.calls.length).toBe(1)
+        expect(setInterval.mock.calls[0][1]).toBe(1000)
+      })
     })
 
     describe('status', () => {
