@@ -22,18 +22,18 @@ export default class DocumentFilter extends Component {
     /**
      * The slug of the field being filtered.
      */
-    field: proptypes.string,
+    field: proptypes.string.isRequired,
 
     /**
      * An object containing the fields available for the given collection.
      * Keys represent field slugs and values hold the field schema.
      */
-    fields: proptypes.object,
+    fields: proptypes.object.isRequired,
 
     /**
      * An object containing the current applied filters.
      */
-    filters: proptypes.object,
+    filters: proptypes.object.isRequired,
 
     /**
      * The index of the current filter within a list of filters.
@@ -62,7 +62,7 @@ export default class DocumentFilter extends Component {
       '$gte',
       '$lt',
       '$lte'
-    ]),
+    ]).isRequired,
 
     /**
      * The value used by the filter.
