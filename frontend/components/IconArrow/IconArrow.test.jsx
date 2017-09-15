@@ -26,4 +26,48 @@ describe('IconArrow component', () => {
     expect(component.nodeName.propTypes).to.exist
     expect(Object.keys(component.nodeName.propTypes)).to.have.length.above(0)
   })
+
+  it('has defaultProps', () => {
+    const component = (
+      <IconArrow />
+    )
+
+    expect(component.nodeName.defaultProps).to.exist
+    expect(Object.keys(component.nodeName.defaultProps)).to.have.length.above(0)
+  })
+
+  it('renders a `<span>` dom node with a default direction of up', () => {
+    const component = (
+      <IconArrow />
+    )
+
+    expect(component).to.equal(
+      <span class="icon" style="border-width: 0px 5px 10px 5px;border-color: transparent transparent currentColor transparent;" />
+    )
+  })
+
+  it('renders styles based on the direction property', () => {
+    const component = (
+      <IconArrow
+        direction={'down'}
+      />
+    )
+    
+    expect(component).to.equal(
+      <span class="icon" style="border-width: 10px 5px 0px 5px;border-color: currentColor transparent transparent transparent;" />
+    )
+  })
+
+  it('increases border width property to match height and width', () => {
+    const component = (
+      <IconArrow
+        width={20}
+        height={10}
+      />
+    )
+    
+    expect(component).to.equal(
+      <span class="icon" style="border-width: 0px 10px 10px 10px;border-color: transparent transparent currentColor transparent;" />
+    )
+  })
 })
