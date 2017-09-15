@@ -152,6 +152,7 @@
     ]
   },
   "jest": {
+    "verbose": true,
     "collectCoverage": true,
     "automock": false,
     "collectCoverageFrom": [

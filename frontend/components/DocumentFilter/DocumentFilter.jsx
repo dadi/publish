@@ -81,6 +81,8 @@ export default class DocumentFilter extends Component {
       type, 
       value
     } = this.props
+    if (!fields || !type || !filters || !field) return null
+
     const controlButtonsStyle = new Style(styles, 'control', 'control-button')
     const controlFieldStyle = new Style(styles, 'control', 'control-field', 'select')
     const controlAnalyserStyle = new Style(styles, 'select', 'control', 'control-analyser')
@@ -112,7 +114,7 @@ export default class DocumentFilter extends Component {
           ))}
         </select>
 
-        {(field && type) && (
+        {(field && type && !isNaN(index)) && (
           <FieldFilter
             analyserStyles={controlAnalyserStyle.getClasses()}
             config={config}
