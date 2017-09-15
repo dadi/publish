@@ -15,7 +15,8 @@ const mockCollectionResponse = {
       database: 'publish',
       name: 'Books',
       slug: 'books',
-      path: '/1.0/publish/books'
+      path: '/1.0/publish/books',
+      database: 'publish'
     }
   ],
   media: {
