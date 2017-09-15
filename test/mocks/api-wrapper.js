@@ -12,6 +12,12 @@ APIWrapper.prototype.in = function (collection) {
   return this
 }
 
+APIWrapper.prototype.useDatabase = function (database) {
+  this.database = database
+
+  return this
+}
+
 APIWrapper.prototype.whereFieldIsEqualTo = function (field, value) {
   this.fieldFilters.push({[field]: value})
 
