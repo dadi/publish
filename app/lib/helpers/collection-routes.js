@@ -140,7 +140,10 @@ CollectionRoutes.prototype.getMaxDepth = function (apiCollections) {
 
 CollectionRoutes.prototype.filterReferenceFields = function (collection) {
   return Object.keys(collection.fields)
-    .filter(key => collection.fields[key].type === 'Reference')
+    .filter(key => {
+      return collection.fields[key].type === 'Reference' &&
+      collection.fields[key].settings.collection !== collection.slug
+    })
     .map(key => Object.assign({key}, collection.fields[key]))
 }
 
