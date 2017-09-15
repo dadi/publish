@@ -30,6 +30,7 @@ Collection.prototype.getSchemas = function (api, collections) {
     collections
       .map(collection => {
         return new DadiAPI(Object.assign(api, {uri: api.host}))
+        .useDatabase(collection.database)
         .in(collection.slug)
         .getConfig()
         .then(schema => Object.assign(schema, {slug: collection.slug}))
