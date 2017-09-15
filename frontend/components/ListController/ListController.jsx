@@ -6,8 +6,6 @@ import proptypes from 'proptypes'
 import Style from 'lib/Style'
 import styles from './ListController.css'
 
-import DocumentSearch from 'components/DocumentSearch/DocumentSearch'
-
 /**
  * A bar with various types of controls that affect the list of results
  * displayed in a list/table.
