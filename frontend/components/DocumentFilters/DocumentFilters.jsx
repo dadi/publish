@@ -30,7 +30,7 @@ export default class DocumentFilters extends Component {
     /**
      * The JSON-stringified object of filters currently applied.
      */
-    filter: proptypes.string,
+    filter: proptypes.string.isRequired,
 
     /**
      * Whether we are creating a new filter.
@@ -109,6 +109,8 @@ export default class DocumentFilters extends Component {
   render() {
     const {dirty, filters, newFilter} = this.state
     const {collection, config} = this.props
+
+    if (!filters || !collection) return null
 
     return (
       <form class={styles.filters} onSubmit={e => e.preventDefault()}>

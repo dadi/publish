@@ -13,14 +13,14 @@ App config.
 - type: `object`
 
 
-### `field`
+### `field` (required)
 
 The slug of the field being filtered.
 
 - type: `string`
 
 
-### `fields`
+### `fields` (required)
 
 An object containing the fields available for the given collection.
 Keys represent field slugs and values hold the field schema.
@@ -28,7 +28,7 @@ Keys represent field slugs and values hold the field schema.
 - type: `object`
 
 
-### `filters`
+### `filters` (required)
 
 An object containing the current applied filters.
 
@@ -56,7 +56,7 @@ A callback to be fired when the filter is updated.
 - type: `func`
 
 
-### `type`
+### `type` (required)
 
 The type of expression used by the filter.
 
