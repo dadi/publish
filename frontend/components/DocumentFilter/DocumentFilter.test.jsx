@@ -110,7 +110,7 @@ describe('DocumentFilter component', () => {
     mount(component)
 
     expect(component).not.to.equal(null)
-    expect($('.filter')).to.exist
+    expect($('.filter').length).to.equal(1)
     expect($('.control').length).to.equal(2)
   })
 

@@ -25,6 +25,18 @@ const mockCollection = {
   fields: mockFields
 }
 
+const mockInvalidFilters = {
+  foo: {
+    '$eq': null
+  }
+}
+
+const mockValidFilters = {
+  foo: {
+    '$eq': 'bar'
+  }
+}
+
 options.debounceRendering = f => f()
 
 beforeAll(() => {
@@ -76,6 +88,78 @@ describe('DocumentFilters component', () => {
     mount(component)
 
     expect(component).not.to.equal(null)
-    expect($('form.filters')).to.exist
+    expect($('form.filters').length).to.equal(1)
+  })
+
+  it('should not render `Apply` button if there are no valid filters present', () => {
+    const component = (
+      <DocumentFilters
+        collection={mockCollection}
+      />
+    )
+
+    mount(component)
+
+    expect(component).not.to.equal(null)
+    expect($('button.submit').length).to.equal(0)
+  })
+
+  it('should render `Apply` button if one or more filters are present', () => {
+    let component
+
+    mount(
+      <DocumentFilters
+        collection={mockCollection}
+        filters={mockValidFilters}
+        ref={c => component = c}
+      />
+    )
+
+    expect($('button.submit').length).to.equal(1)
+  })
+
+  it('should mount with `dirty` state set to false', () => {
+    let component
+
+    mount(
+      <DocumentFilters
+        collection={mockCollection}
+        filters={mockValidFilters}
+        ref={c => component = c}
+      />
+    )
+
+    expect(component.state.dirty).to.equal(false)
+  })
+
+  it('should change component `dirty` state value from false to true if input value changes', () => {
+    let component
+
+    const wrapper = mount(
+      <DocumentFilters
+        collection={mockCollection}
+        filters={mockValidFilters}
+        ref={c => component = c}
+      />
+    )
+    $('input.control.control-value')[0].focus()
+
+    const keyup = new KeyboardEvent("keyup", {
+        type: 'keyup',
+        altKey: false,
+        bubbles: true,
+        cancelBubble: false,
+        cancelable: true,
+        charCode: 0,
+        code: 'KeyS',
+        composed: true,
+        ctrlKey: false,
+        key : "s",
+        isTrusted: true,
+        keyCode : 83
+    })
+    expect(component.state.dirty).to.equal(false)
+    $('input.control.control-value')[0].dispatchEvent(keyup)
+    expect(component.state.dirty).to.equal(true)
   })
 })

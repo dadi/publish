@@ -101,9 +101,7 @@ App
 │ │ │ ├─┬ DocumentFilter
 │ │ │ │ └── Button
 │ │ │ └── Button
-│ │ └─┬ ListController
-│ │   └─┬ DocumentSearch
-│ │     └── TextInput
+│ │ └── ListController
 │ ├─┬ DocumentListToolbar
 │ │ ├── Button
 │ │ ├─┬ ButtonWithPrompt

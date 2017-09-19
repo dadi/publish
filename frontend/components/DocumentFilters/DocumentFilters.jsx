@@ -107,7 +107,7 @@ export default class DocumentFilters extends Component {
   }
 
   render() {
-    const {dirty, filters, newFilter} = this.state
+    const {dirty, filters} = this.state
     const {collection, config} = this.props
 
     if (!filters || !collection) return null
@@ -128,14 +128,13 @@ export default class DocumentFilters extends Component {
           />
         ))}
         {filters && collection && (filters.length > 0) && (
-          <div class={styles.submit}>
-            <Button
-              accent="data"
-              disabled={!dirty}
-              onClick={this.updateUrl.bind(this)}
-              type="submit"
-            >Apply {filters.length > 1 ? 'filters' : 'filter'}</Button>
-          </div>
+          <Button
+            className={styles.submit}
+            accent="data"
+            disabled={!dirty}
+            onClick={this.updateUrl.bind(this)}
+            type="submit"
+          >Apply {filters.length > 1 ? 'filters' : 'filter'}</Button>
         )}
       </form>
     )

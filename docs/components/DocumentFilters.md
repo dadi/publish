@@ -20,7 +20,7 @@ App config.
 - type: `object`
 
 
-### `filter`
+### `filter` (required)
 
 The JSON-stringified object of filters currently applied.
 
