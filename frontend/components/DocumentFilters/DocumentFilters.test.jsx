@@ -159,7 +159,10 @@ describe('DocumentFilters component', () => {
         keyCode : 83
     })
     expect(component.state.dirty).to.equal(false)
+
+    // Dispatch fake keystroke in value field
     $('input.control.control-value')[0].dispatchEvent(keyup)
+
     expect(component.state.dirty).to.equal(true)
   })
 })

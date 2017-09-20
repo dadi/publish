@@ -43,13 +43,20 @@ export default class NavItem extends Component {
   }
 
   render() {
+    const {
+      active,
+      children,
+      href,
+      mobile,
+      text
+    } = this.props
     let containerClass = new Style(styles, 'container')
     let navItemClass = new Style(styles, 'nav-item')
 
-    containerClass.addIf('container-desktop', !this.props.mobile)
+    containerClass.addIf('container-desktop', !mobile)
     containerClass.addIf('container-expanded', this.state.expanded)
 
-    navItemClass.addIf('nav-item-active', this.props.active)
+    navItemClass.addIf('nav-item-active', active)
 
     return (
       <li
@@ -60,14 +67,14 @@ export default class NavItem extends Component {
       >
         <a
           class={navItemClass.getClasses()}
-          href={this.props.href}
+          href={href}
         >
-          {this.props.text}
+          {text}
         </a>
 
-        {this.props.children.length ?
+        {children.length ?
           <div class={styles.children}>
-            {this.props.children}
+            {children}
           </div>
           : null
         }

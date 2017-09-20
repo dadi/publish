@@ -13,13 +13,18 @@ import styles from './Nav.css'
  */
 export default class Nav extends Component {
   static propTypes = {
+    /*
+     * Current URL, e.g. `/articles`.
+     */
+    currentRoute: proptypes.string.isRequired,
     /**
      * Grouped list of navigation elements to render.
      */
-    items: proptypes.array,
+    items: proptypes.array.isRequired,
 
     /**
-     * Whether to render the navigation in mobile mode, with a collapsible drawer controlled by a hamburger button.
+     * Whether to render the navigation in mobile mode,
+     * with a collapsible drawer controlled by a hamburger button.
      */
     mobile: proptypes.bool
   }
@@ -35,6 +40,8 @@ export default class Nav extends Component {
       items,
       mobile
     } = this.props
+
+    if (!items.length || !currentRoute) return null
 
     return (
       <nav class={styles.nav}>
