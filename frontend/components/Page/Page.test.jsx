@@ -23,4 +23,16 @@ describe('Page component', () => {
       <Page />
     )
   })
+
+  it('renders a `<div>` containing passed children', () => {
+    const component = (
+      <Page>
+        <div class="foo">Foo</div>
+      </Page>
+    )
+
+    mount(component)
+
+    expect(component).to.equal(<div class="container"><div class="foo">Foo</div></div>)
+  })
 })
