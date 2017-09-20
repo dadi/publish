@@ -1,9 +1,6 @@
 'use strict'
 
 import {h, Component} from 'preact'
-import proptypes from 'proptypes'
-
-import Style from 'lib/Style'
 import styles from './Page.css'
 
 /**
