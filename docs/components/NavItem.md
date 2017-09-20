@@ -6,7 +6,7 @@ An item of the main navigation component.
 Props
 -----
 
-### `active`
+### `active` (required)
 
 Whether the component corresponds to the currently active page.
 
@@ -14,17 +14,24 @@ Whether the component corresponds to the currently active page.
 - default value: `false`
 
 
-### `href`
+### `href` (required)
 
 The link to be followed when the navigation item is clicked.
 
 - type: `string`
 
 
-### `mobile`
+### `mobile` (required)
 
 Whether the navigation item is part of a navigation component in mobile mode.
 
 - type: `bool`
 - default value: `false`
+
+
+### `text` (required)
+
+Text content for navigation anchor.
+
+- type: `string`
 

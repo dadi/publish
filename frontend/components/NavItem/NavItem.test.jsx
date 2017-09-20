@@ -26,4 +26,41 @@ describe('NavItem component', () => {
     expect(component.nodeName.propTypes).to.exist
     expect(Object.keys(component.nodeName.propTypes)).to.have.length.above(0)
   })
+
+  it('should return `null` if required fields are not defined', () => {
+    const componentWithNoParams = (
+      <NavItem/>
+    )
+
+    mount(componentWithNoParams)
+
+    expect(componentWithNoParams).to.equal(null)
+  })
+
+  it('renders an `<li>` node', () => {
+    const component = (
+      <NavItem
+        text={'Foo'}
+        href={'/'}
+      />
+    )
+
+    mount(component)
+
+    expect(component).not.to.equal(null)
+    expect($('li').length).to.equal(1)
+  })
+
+  it('renders an `<a>` node inside `<li>`', () => {
+    const component = (
+      <NavItem
+        text={'Foo'}
+        href={'/foo'}
+      />
+    )
+
+    mount(component)
+
+    expect(component).to.equal(<li class="container container-desktop"><a class="nav-item" href="/foo">Foo</a></li>)
+  })
 })

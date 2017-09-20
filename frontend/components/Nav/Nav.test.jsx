@@ -47,8 +47,7 @@ describe('Nav component', () => {
 
   it('should return `null` if required fields are not defined', () => {
     const componentWithNoParams = (
-      <Nav
-      />
+      <Nav />
     )
 
     const componentWithNoItems = (
