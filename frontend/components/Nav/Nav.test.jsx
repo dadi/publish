@@ -26,12 +26,27 @@ const mockItems = [
   {
     id: 'bar',
     label: 'Bar',
+    href: '/bar'
+  }
+]
+
+const mockItemsWithSubItem = [
+  {
+    id: 'foo',
+    label: 'Foo',
+    href: '/foo'
+  },
+  {
+    id: 'bar',
+    label: 'Bar',
     href: '/bar',
-    subItem: {
-      id: 'baz',
-      label: 'Baz',
-      href: '/bar/baz'
-    }
+    subItems: [
+      {
+        id: 'baz',
+        label: 'Baz',
+        href: '/bar/baz'
+      }
+    ]
   }
 ]
 
@@ -110,5 +125,18 @@ describe('Nav component', () => {
     mount(component)
 
     expect($('.nav-item-active').length).to.equal(1)
+  })
+
+  it('renders an instance of `DropdownItem` when sub items exist', () => {
+    const component = (
+      <Nav
+        currentRoute={'/foo'}
+        items={mockItemsWithSubItem}
+      />
+    )
+
+    mount(component)
+    
+    expect($('.dropdown-item').length).to.equal(1)
   })
 })

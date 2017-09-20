@@ -49,20 +49,25 @@ export default class DropdownItem extends Component {
   }
 
   render() {
+    const {
+      active,
+      children,
+      href
+    } =  this.props
     let itemStyle = new Style(styles, 'dropdown-item')
 
-    itemStyle.addIf('dropdown-item-active', this.props.active)
+    itemStyle.addIf('dropdown-item-active', active)
 
     // Should we render an achor?
-    if (this.props.href) {
+    if (href) {
       return (
         <li>
           <a
             class={itemStyle.getClasses()}
-            href={this.props.href}
+            href={href}
             onClick={this.handleClick.bind(this)}
           >
-            {this.props.children}
+            {children}
           </a>
         </li>
       )
@@ -76,7 +81,7 @@ export default class DropdownItem extends Component {
           type="button"
           onClick={this.handleClick.bind(this)}
         >
-          {this.props.children}
+          {children}
         </button>
       </li>
     )
