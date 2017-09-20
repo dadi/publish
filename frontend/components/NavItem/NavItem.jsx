@@ -14,17 +14,22 @@ export default class NavItem extends Component {
     /**
      * Whether the component corresponds to the currently active page.
      */
-    active: proptypes.bool,
+    active: proptypes.bool.isRequired,
 
     /**
      * The link to be followed when the navigation item is clicked.
      */
-    href: proptypes.string,
+    href: proptypes.string.isRequired,
 
     /**
      * Whether the navigation item is part of a navigation component in mobile mode.
      */
-    mobile: proptypes.bool
+    mobile: proptypes.bool.isRequired,
+
+    /**
+     * Text content for navigation anchor. 
+     */
+    text: proptypes.string.isRequired
   }
 
   static defaultProps = {
@@ -57,6 +62,8 @@ export default class NavItem extends Component {
     containerClass.addIf('container-expanded', this.state.expanded)
 
     navItemClass.addIf('nav-item-active', active)
+
+    if (!text) return null
 
     return (
       <li

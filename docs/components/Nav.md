@@ -6,7 +6,12 @@ The main navigation component.
 Props
 -----
 
-### `items`
+### `currentRoute` (required)
+
+- type: `string`
+
+
+### `items` (required)
 
 Grouped list of navigation elements to render.
 
@@ -16,7 +21,8 @@ Grouped list of navigation elements to render.
 
 ### `mobile`
 
-Whether to render the navigation in mobile mode, with a collapsible drawer controlled by a hamburger button.
+Whether to render the navigation in mobile mode,
+with a collapsible drawer controlled by a hamburger button.
 
 - type: `bool`
 - default value: `false`
