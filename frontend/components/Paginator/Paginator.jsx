@@ -17,28 +17,28 @@ export default class Paginator extends Component {
     /**
      * Number of the current active page.
      */
-    currentPage: proptypes.number,
+    currentPage: proptypes.number.isRequired,
 
     /**
      * A callback function to be executed in order to generate the page links.
      * This function will receive the page number as an argument.
      */
-    linkCallback: proptypes.func,
+    linkCallback: proptypes.func.isRequired,
 
     /**
      * Maximum number of page links to display.
      */
-    maxPages: proptypes.number,
+    maxPages: proptypes.number.isRequired,
 
     /**
      * Whether to render `Prev` and `Next` links.
      */
-    prevNext: proptypes.bool,
+    prevNext: proptypes.bool.isRequired,
 
     /**
      * Number of available pages.
      */
-    totalPages: proptypes.number
+    totalPages: proptypes.number.isRequired
   }
 
   static defaultProps = {
@@ -48,7 +48,7 @@ export default class Paginator extends Component {
 
   renderPageNumber(pageNumber) {
     const {currentPage, linkCallback} = this.props
-    const href = typeof linkCallback === 'function' ? linkCallback.call(this, pageNumber) : null
+    const href = linkCallback.call(this, pageNumber)
     const activePageStyle = new Style(styles, 'page', 'page-active')
 
     if (pageNumber === currentPage) {
@@ -80,6 +80,16 @@ export default class Paginator extends Component {
       prevNext,
       totalPages
     } = this.props
+
+    // Return null if required props are invalid.
+    if (
+      isNaN(currentPage) ||
+      isNaN(totalPages) ||
+      isNaN(maxPages) ||
+      typeof linkCallback !== 'function'
+    ) {
+      return null
+    }
 
     // The paginator always tries to render an equal number of pages
     // before and after the current page. If the current page is too
@@ -114,8 +124,8 @@ export default class Paginator extends Component {
       items.push(this.renderPageNumber(i))
     }
 
-    const nextUrl = (typeof linkCallback === 'function') && linkCallback(currentPage + 1)
-    const prevUrl = (typeof linkCallback === 'function') && linkCallback(currentPage - 1)
+    const nextUrl = linkCallback(currentPage + 1)
+    const prevUrl = linkCallback(currentPage - 1)
     const prevNextStyle = new Style(styles, 'page', 'page-secondary')
 
     // If there's less than two pages to show, don't show page numbers.
