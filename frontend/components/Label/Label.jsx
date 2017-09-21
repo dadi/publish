@@ -42,7 +42,7 @@ export default class Label extends Component {
     /**
      * The text to be rendered inside the label.
      */
-    label: proptypes.string,
+    label: proptypes.string.isRequired,
 
     /**
      * The input element to be rendered inside the label.
@@ -65,7 +65,11 @@ export default class Label extends Component {
   // This will render all children and inject an `id` prop
   // with the generated unique id.
   renderChildren() {
-    const {children, error, required} = this.props
+    const {
+      children,
+      error,
+      required
+    } = this.props
 
     return children.map(child => {
       if (child) {
@@ -105,6 +109,14 @@ export default class Label extends Component {
       .addIf('container-error-message', errorMessage)
       .addIf('container-with-comment', comment)
       .addResolved(className)
+
+    if (
+      typeof label !== 'string' ||
+      (comment && typeof comment !== 'string') ||
+      (errorMessage && typeof errorMessage !== 'string')
+    ) {
+      return null
+    }
 
     return (
       <div class={labelStyle.getClasses()}>

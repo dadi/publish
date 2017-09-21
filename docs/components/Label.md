@@ -52,7 +52,7 @@ An error message to display on the label.
 - default value: `null`
 
 
-### `label`
+### `label` (required)
 
 The text to be rendered inside the label.
 
