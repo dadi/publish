@@ -6,9 +6,9 @@ An arrow icon.
 Props
 -----
 
-### `class`
+### `className`
 
-A list of classes to be added to the icon element.
+A class to be added to the icon element.
 
 - type: `string`
 - default value: `null`
