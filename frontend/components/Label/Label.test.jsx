@@ -166,4 +166,40 @@ describe('Label component', () => {
     expect(component1.children[0].getAttribute('for'))
       .not.to.equal(component2.children[0].getAttribute('for'))
   })
+
+  it('adds an error attribute to children based on the `error` prop', () => {
+    const component = render(
+      <Label
+        error={true}
+        label={'bar'}
+      >
+        <div class="child"></div>
+      </Label>
+    )
+    expect(component.children[0].getAttribute('error')).to.equal('true')
+  })
+
+  it('adds a required attribute to children based on the `required` prop', () => {
+    const component = render(
+      <Label
+        required={true}
+        label={'bar'}
+      >
+        <div class="child"></div>
+      </Label>
+    )
+    expect(component.children[0].getAttribute('required')).to.equal('true')
+  })
+
+  it('should apply parent id attribute to all children', () => {
+    const component = render(
+      <Label
+        label={'bar'}
+      >
+        <div class="child"></div>
+      </Label>
+    )
+    expect(component.children[1].getAttribute('for'))
+      .to.equal(component.children[0].getAttribute('id'))
+  })
 })

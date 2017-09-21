@@ -14,6 +14,11 @@ import styles from './Label.css'
 export default class Label extends Component {
   static propTypes = {
     /**
+     * The input element to be rendered inside the label.
+     */
+    children: proptypes.node,
+
+    /**
      * Classes to append to the label container.
      */
     className: proptypes.string,
@@ -45,16 +50,15 @@ export default class Label extends Component {
     label: proptypes.string.isRequired,
 
     /**
-     * The input element to be rendered inside the label.
+     * Should apply a required attribute to all children.
      */
-    children: proptypes.node
+    required: proptypes.bool.isRequired
   }
 
   static defaultProps = {
     compact: false,
     error: false,
     errorMessage: null,
-    optional: false,
     required: false
   }
 
