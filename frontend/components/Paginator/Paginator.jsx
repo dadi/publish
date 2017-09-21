@@ -84,9 +84,9 @@ export default class Paginator extends Component {
 
     // Return null if required props are invalid.
     if (
-      isNaN(currentPage) ||
-      isNaN(totalPages) ||
-      isNaN(maxPages) ||
+      !Number.isInteger(currentPage) ||
+      !Number.isInteger(totalPages) ||
+      !Number.isInteger(maxPages) ||
       typeof linkCallback !== 'function'
     ) {
       return null
