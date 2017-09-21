@@ -6,14 +6,14 @@ A generic pagination component.
 Props
 -----
 
-### `currentPage`
+### `currentPage` (required)
 
 Number of the current active page.
 
 - type: `number`
 
 
-### `linkCallback`
+### `linkCallback` (required)
 
 A callback function to be executed in order to generate the page links.
 This function will receive the page number as an argument.
@@ -21,7 +21,7 @@ This function will receive the page number as an argument.
 - type: `func`
 
 
-### `maxPages`
+### `maxPages` (required)
 
 Maximum number of page links to display.
 
@@ -29,7 +29,7 @@ Maximum number of page links to display.
 - default value: `10`
 
 
-### `prevNext`
+### `prevNext` (required)
 
 Whether to render `Prev` and `Next` links.
 
@@ -37,7 +37,7 @@ Whether to render `Prev` and `Next` links.
 - default value: `true`
 
 
-### `totalPages`
+### `totalPages` (required)
 
 Number of available pages.
 
