@@ -144,6 +144,6 @@ describe('Paginator component', () => {
     mount(component)
 
     const paginators = $('.page')
-    expect(paginators[1].__n).to.equal('span')
+    expect(paginators[1].tagName).to.equal('SPAN')
   })
 })
