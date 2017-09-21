@@ -51,7 +51,6 @@ export default class Paginator extends Component {
     const href = linkCallback.call(this, pageNumber)
     const activePageStyle = new Style(styles, 'page', 'page-active')
 
-    console.log(pageNumber, currentPage)
     if (pageNumber === currentPage) {
       return (
         <Button

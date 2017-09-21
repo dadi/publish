@@ -160,7 +160,8 @@
       "**/app/**/*.{js}"
     ],
     "coverageReporters": [
-      "cobertura"
+      "cobertura",
+      "text"
     ],
     "moduleDirectories": [
       "node_modules"
