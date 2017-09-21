@@ -59,12 +59,10 @@ The text to be rendered inside the label.
 - type: `string`
 
 
-### `optional`
+### `required` (required)
 
-- default value: `false`
+Should apply a required attribute to all children.
 
-
-### `required`
-
+- type: `bool`
 - default value: `false`
 

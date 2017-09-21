@@ -2,6 +2,7 @@ import {h, options, render} from 'preact'
 import {expect} from 'chai'
 
 import IconArrow from './IconArrow'
+import styles from './IconArrow.css'
 // DOM setup
 let $, mount, root, scratch
 
@@ -69,5 +70,18 @@ describe('IconArrow component', () => {
     expect(component).to.equal(
       <span class="icon" style="border-width: 0px 10px 10px 10px;border-color: transparent transparent currentColor transparent;" />
     )
+  })
+
+  it('append a classname to the existing default classes', () => {
+    const customClassName = 'foo'
+    const component = render(
+      <IconArrow
+        width={20}
+        height={10}
+        className={customClassName}
+      />
+    )
+    
+    expect(component.getAttribute('class')).to.equal([styles.icon, customClassName].join(' '))
   })
 })

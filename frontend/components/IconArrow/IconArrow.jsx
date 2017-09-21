@@ -27,20 +27,20 @@ export default class IconArrow extends Component {
     width: proptypes.number,
 
     /**
-     * A list of classes to be added to the icon element.
+     * A class to be added to the icon element.
      */
-    class: proptypes.string
+    className: proptypes.string
   }
 
   static defaultProps = {
-    class: null,
+    className: null,
     direction: 'up',
     width: 10,
     height: 10
   }
 
   render() {
-    const {direction} = this.props
+    const {className, direction} = this.props
     const width = parseInt(this.props.width)
     const height = parseInt(this.props.height)
 
@@ -97,8 +97,8 @@ export default class IconArrow extends Component {
 
     let classes = [styles.icon]
 
-    if (this.props.class) {
-      classes.push(this.props.class)
+    if (className) {
+      classes.push(className)
     }
     
     return (
