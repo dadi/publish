@@ -61,8 +61,7 @@ describe('DocumentFilters component', () => {
 
   it('should return `null` if required fields are not defined', () => {
     const componentWithNoParams = (
-      <DocumentFilters
-      />
+      <DocumentFilters />
     )
 
     const componentWithNoCollection = (
