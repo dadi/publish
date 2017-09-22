@@ -26,6 +26,21 @@ export default class Prompt extends Component {
     ]),
 
     /**
+     * The text to be displayed on the action button
+     */
+    action: proptypes.string.isRequired,
+
+    /**
+     * The child elements to be rendered next to the message.
+     */
+    children: proptypes.node,
+
+    /**
+     * Classes to append to the container element.
+     */
+    className: proptypes.string,
+
+    /**
      * Callback to be executed when the button is clicked.
      */
     onClick: proptypes.func,
