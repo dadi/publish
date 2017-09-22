@@ -95,15 +95,13 @@ describe('ErrorMessage component', () => {
 
   it('renders a generic error message when given an invalid or no error code', () => {
     const output = (
-      <ErrorMessage
-        type={Constants.ERROR_ROUTE_NOT_FOUND}
-      />
+      <ErrorMessage />
     )
 
     expect(output).to.equal(
       <HeroMessage
-        title="404"
-        subtitle="We couldn't find the page you're looking for, sorry."
+        title="Oops!"
+        subtitle="Something went wrong, sorry."
       />
     )
   })
