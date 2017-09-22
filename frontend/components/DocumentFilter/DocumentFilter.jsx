@@ -140,15 +140,17 @@ export default class DocumentFilter extends Component {
   handleChange(elementId, event) {
     const {onUpdate, index} = this.props
 
-    onUpdate({
-      [elementId]: event.target.value
-    }, index)
+    if (Number.isInteger(index) && typeof onUpdate === 'function') {
+      onUpdate({
+        [elementId]: event.target.value
+      }, index)
+    }
   }
 
   handleRemove() {
     const {index, onRemove} = this.props
 
-    if (typeof onRemove === 'function') {
+    if (Number.isInteger(index) && typeof onRemove === 'function') {
       onRemove(index)  
     }
   }

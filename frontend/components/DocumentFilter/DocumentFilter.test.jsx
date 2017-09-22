@@ -22,6 +22,15 @@ const mockFields = {
   }
 }
 
+const mockFilters = [
+{
+  field: "foo", 
+  value: "qux",
+  type: "$eq"
+}]
+
+const mockIndex = 1
+
 options.debounceRendering = f => f()
 
 beforeAll(() => {
@@ -146,13 +155,6 @@ describe('DocumentFilter component', () => {
   })
 
   it('renders a `FieldFilter` when existing filters are defined', () => {
-    const mockFilters = [
-    {
-      field: "foo", 
-      value: "qux",
-      type: "$eq"
-    }]
-
     const component = (
       <DocumentFilter
         field={'foo'}
@@ -166,5 +168,99 @@ describe('DocumentFilter component', () => {
     mount(component)
 
     expect($('.filter-container').length).to.equal(1)
+  })
+
+  it('if `onRemove` prop is defined it should be called when remove button it clicked', () => {
+    const onRemove = jest.fn()
+
+    const component = (
+      <DocumentFilter
+        field={'foo'}
+        type={'$eq'}
+        filters={mockFilters}
+        fields={mockFields}
+        onRemove={onRemove}
+        index={mockIndex}
+      />
+    )
+
+    mount(component)
+
+    $('.small-button')[0].click()
+
+    expect(onRemove.mock.calls.length).to.equal(1)
+    expect(onRemove.mock.calls[0][0]).to.equal(mockIndex)
+  })
+
+  it('should not trigger `onUpdate` when prop is defined and remove button is clicked but `index` prop is invalid', () => {
+    const onRemove = jest.fn()
+
+    const component = (
+      <DocumentFilter
+        field={'foo'}
+        type={'$eq'}
+        filters={mockFilters}
+        fields={mockFields}
+        onRemove={onRemove}
+        index={'foo'}
+      />
+    )
+
+    mount(component)
+
+    $('.small-button')[0].click()
+
+    expect(onRemove.mock.calls.length).to.equal(0)
+  })
+
+  it('if `onUpdate` prop is defined it should be called when a change event is triggered', () => {
+    const onUpdate = jest.fn()
+
+    const component = (
+      <DocumentFilter
+        field={'foo'}
+        type={'$eq'}
+        filters={mockFilters}
+        fields={mockFields}
+        onUpdate={onUpdate}
+        index={mockIndex}
+      />
+    )
+
+    const wrapper = mount(component)
+
+    $('div.filter select.control-field')[0].focus()
+
+    const changeEvent = document.createEvent("HTMLEvents")
+    changeEvent.initEvent('change', false, true)
+    $('div.filter select.control-field')[0].dispatchEvent(changeEvent)
+
+    expect(onUpdate.mock.calls.length).to.equal(1)
+    expect(onUpdate.mock.calls[0]).to.deep.equal([{field: 'foo'}, 1])
+  })
+
+  it('should not trigger `onUpdate` when prop is defined but `index` prop is invalid', () => {
+    const onUpdate = jest.fn()
+
+    const component = (
+      <DocumentFilter
+        field={'foo'}
+        type={'$eq'}
+        filters={mockFilters}
+        fields={mockFields}
+        onUpdate={onUpdate}
+        index={'invalid'}
+      />
+    )
+
+    const wrapper = mount(component)
+
+    $('div.filter select.control-field')[0].focus()
+
+    const changeEvent = document.createEvent("HTMLEvents")
+    changeEvent.initEvent('change', false, true)
+    $('div.filter select.control-field')[0].dispatchEvent(changeEvent)
+
+    expect(onUpdate.mock.calls.length).to.equal(0)
   })
 })
