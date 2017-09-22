@@ -9,8 +9,6 @@ import * as appActions from 'actions/appActions'
 import * as documentActions from 'actions/documentActions'
 import * as Constants from 'lib/constants'
 
-import Header from 'containers/Header/Header'
-
 import DocumentCreateView from 'views/DocumentCreateView/DocumentCreateView'
 import DocumentEditView from 'views/DocumentEditView/DocumentEditView'
 import DocumentListView from 'views/DocumentListView/DocumentListView'
