@@ -47,7 +47,19 @@ describe('IconArrow component', () => {
     )
   })
 
-  it('renders styles based on the direction property', () => {
+  it('renders a upward pointing svg when `direction` prop is `up`', () => {
+    const component = (
+      <IconArrow
+        direction={'up'}
+      />
+    )
+    
+    expect(component).to.equal(
+      <span class="icon" style="border-width: 0px 5px 10px 5px;border-color: transparent transparent currentColor transparent;" />
+    )
+  })
+
+  it('renders a downward pointing svg when `direction` prop is `down`', () => {
     const component = (
       <IconArrow
         direction={'down'}
@@ -56,6 +68,30 @@ describe('IconArrow component', () => {
     
     expect(component).to.equal(
       <span class="icon" style="border-width: 10px 5px 0px 5px;border-color: currentColor transparent transparent transparent;" />
+    )
+  })
+
+  it('renders a left pointing svg when `direction` prop is `left`', () => {
+    const component = (
+      <IconArrow
+        direction={'left'}
+      />
+    )
+    
+    expect(component).to.equal(
+      <span class="icon" style="border-width: 5px 10px 5px 0px;border-color: transparent currentColor transparent transparent;" />
+    )
+  })
+
+  it('renders a right pointing svg when `direction` prop is `right`', () => {
+    const component = (
+      <IconArrow
+        direction={'right'}
+      />
+    )
+    
+    expect(component).to.equal(
+      <span class="icon" style="border-width: 5px 0px 5px 10px;border-color: transparent transparent transparent currentColor;" />
     )
   })
 
