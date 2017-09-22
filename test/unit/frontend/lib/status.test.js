@@ -6,7 +6,7 @@ const mockStatusChangeCallback = jest.fn()
 
 jest.useFakeTimers()
 
-Object.defineProperty(window.navigator, "onLine", ((_value) => {
+Object.defineProperty(window.navigator, 'onLine', ((_value) => {
   return {
     get: () => {
       return _value
