@@ -8,10 +8,6 @@ App
 │ │   └── NavItem
 │ ├── IconBurger
 │ └── IconCross
-├─┬ Main
-│ ├── LoadingBar
-│ └─┬ NotificationCentre
-│   └── Notification
 ├─┬ DocumentCreateView
 │ ├─┬ DocumentEdit
 │ │ ├─┬ ErrorMessage
