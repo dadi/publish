@@ -132,5 +132,20 @@ describe('DropdownItem component', () => {
       expect(onClick.mock.calls[0].length).to.equal(1)
       expect(onClick.mock.calls[0][0].constructor.name).to.equal('MouseEvent')
     })
+
+    it('does not fire the `onClick` callback when the item is clicked and onClick is invalud', () => {
+
+      let component
+
+      mount(
+        <DropdownItem
+          onClick={'fooss'}
+          ref={c => component = c}
+        >Click me</DropdownItem>
+      )
+      expect(() => {
+        $('button')[0].click()
+      }).to.not.throw()
+    })
   })
 })

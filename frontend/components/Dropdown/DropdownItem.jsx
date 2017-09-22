@@ -39,7 +39,7 @@ export default class DropdownItem extends Component {
 
   handleClick(event) {
     // If there is an onClick event registered, fire it
-    if (this.props.onClick) {
+    if (typeof this.props.onClick === 'function') {
       this.props.onClick(event)
     }
   }
