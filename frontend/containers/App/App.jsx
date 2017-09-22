@@ -1,6 +1,5 @@
 import {Component, h} from 'preact'
 import {Router, route} from 'preact-router-regex'
-import {connect} from 'preact-redux'
 import {bindActionCreators} from 'redux'
 import Socket from 'lib/socket'
 
@@ -11,7 +10,6 @@ import * as documentActions from 'actions/documentActions'
 import * as Constants from 'lib/constants'
 
 import Header from 'containers/Header/Header'
-import Main from 'components/Main/Main'
 
 import DocumentCreateView from 'views/DocumentCreateView/DocumentCreateView'
 import DocumentEditView from 'views/DocumentEditView/DocumentEditView'
