@@ -248,7 +248,6 @@ describe('DocumentFilters component', () => {
         cancelBubble: false,
         cancelable: true,
         charCode: 0,
-        // code: 'KeyS',
         composed: true,
         ctrlKey: false,
         key : "cmd",
@@ -274,9 +273,9 @@ describe('DocumentFilters component', () => {
     // Mock `cmd+f` call
     document.dispatchEvent(cmdKey)
     document.dispatchEvent(fKey)
-
     expect(component.state.filters.length).to.equal(3)
     expect(component.state.filters[2])
     .to.deep.equal({field: 'bar', type: '$eq', value: null})
+
   })
 })

@@ -33,3 +33,10 @@ Whether we are creating a new filter.
 
 - type: `bool`
 
+
+### `updateUrlParams`
+
+Change callback method to trigger rendering new url parameters.
+
+- type: `func`
+
