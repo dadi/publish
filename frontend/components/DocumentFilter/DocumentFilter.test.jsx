@@ -227,7 +227,7 @@ describe('DocumentFilter component', () => {
       />
     )
 
-    const wrapper = mount(component)
+    mount(component)
 
     $('div.filter select.control-field')[0].focus()
 
@@ -253,7 +253,7 @@ describe('DocumentFilter component', () => {
       />
     )
 
-    const wrapper = mount(component)
+    mount(component)
 
     $('div.filter select.control-field')[0].focus()
 

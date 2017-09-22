@@ -35,7 +35,12 @@ export default class DocumentFilters extends Component {
     /**
      * Whether we are creating a new filter.
      */
-    newFilter: proptypes.bool
+    newFilter: proptypes.bool,
+
+    /**
+     * Change callback method to trigger rendering new url parameters.
+     */
+    updateUrlParams: proptypes.func
   }
 
   constructor(props) {
@@ -61,11 +66,10 @@ export default class DocumentFilters extends Component {
   componentDidMount() {
     this.keyboard.on('cmd+f')
       .do(cmd => {
-        const {collection, filters} = this.props
-        
-        if (!filters) {
-          this.setState({filters: [this.createDefaultFilter(collection, filters)]})
-        }
+        const blankFilter = this.createEmptyFilter()
+        this.setState({
+          filters: this.state.filters.concat([blankFilter])
+        })
       })
   }
 
@@ -82,11 +86,11 @@ export default class DocumentFilters extends Component {
   }
 
   createOrAppendFilters(newFilter) {
-    const {collection, filters} = this.props
     // If we aren't changing collection
     let paramFilters = this.getFiltersFromParams()
     if (newFilter) {
-      paramFilters.push(this.createDefaultFilter(collection, filters))
+      const blankFilter = this.createEmptyFilter()
+      paramFilters.push(blankFilter)
     }
     this.setState({filters: paramFilters})
   }
@@ -95,9 +99,11 @@ export default class DocumentFilters extends Component {
     this.keyboard.off()
   }
 
-  createDefaultFilter(collection, filters) {
+  createEmptyFilter() {
+    const {collection} = this.props
+    const {filters} = this.state
     const remainingFields = Object.keys(collection.fields)
-      .filter(collectionField => !(filters) || !Object.keys(filters).find(filter => filter === collectionField))
+      .filter(collectionField => !(filters) || !filters.find(filter => filter.field === collectionField))
 
     return {
       field: remainingFields[0],
@@ -197,7 +203,10 @@ export default class DocumentFilters extends Component {
     const constructedFilters = this.constructFilters(validFilters)
     const filterObj = arrayToObject(constructedFilters, 'field')
 
-    if (filterObj || clear) {
+    if (
+      (filterObj || clear) &&
+      typeof updateUrlParams === 'function'
+    ) {
       updateUrlParams(filterObj)
     }
 

@@ -37,6 +37,15 @@ const mockValidFilters = {
   }
 }
 
+const mockMultipleValidFilters = {
+  foo: {
+    '$eq': 'bar'
+  },
+  baz: {
+    '$eq': 'qux'
+  }
+}
+
 options.debounceRendering = f => f()
 
 beforeAll(() => {
@@ -134,7 +143,7 @@ describe('DocumentFilters component', () => {
   it('should change component `dirty` state value from false to true if input value changes', () => {
     let component
 
-    const wrapper = mount(
+    mount(
       <DocumentFilters
         collection={mockCollection}
         filters={mockValidFilters}
@@ -163,5 +172,111 @@ describe('DocumentFilters component', () => {
     $('input.control.control-value')[0].dispatchEvent(keyup)
 
     expect(component.state.dirty).to.equal(true)
+  })
+
+  it('should trigger a url update on filter removal if `updateUrlParams` prop exists', () => {
+    const mockUpdateUrlParams = jest.fn()
+
+    let component
+
+    mount(
+      <DocumentFilters
+        collection={mockCollection}
+        filters={mockValidFilters}
+        updateUrlParams={mockUpdateUrlParams}
+        ref={c => component = c}
+      />
+    )
+    $('.small-button')[0].click()
+
+    expect(mockUpdateUrlParams.mock.calls.length).to.equal(1)
+  })
+
+  it('should call `updateUrlParams` with `null` if there are no filters remaining', () => {
+    const mockUpdateUrlParams = jest.fn()
+
+    let component
+
+    mount(
+      <DocumentFilters
+        collection={mockCollection}
+        filters={mockValidFilters}
+        updateUrlParams={mockUpdateUrlParams}
+        ref={c => component = c}
+      />
+    )
+    $('.small-button')[0].click()
+
+    expect(mockUpdateUrlParams.mock.calls.length).to.equal(1)
+    expect(mockUpdateUrlParams.mock.calls[0][0]).to.equal(null)
+  })
+
+  it('should call `updateUrlParams` with remaining filters', () => {
+    const mockUpdateUrlParams = jest.fn()
+
+    let component
+
+    mount(
+      <DocumentFilters
+        collection={mockCollection}
+        filters={mockMultipleValidFilters}
+        updateUrlParams={mockUpdateUrlParams}
+        ref={c => component = c}
+      />
+    )
+    $('.small-button')[0].click()
+
+    expect(mockUpdateUrlParams.mock.calls.length).to.equal(1)
+    expect(mockUpdateUrlParams.mock.calls[0][0].baz).to.deep.equal(mockMultipleValidFilters.baz)
+  })
+
+  it('should add a blank filter when `cmd+f` are pressed', () => {
+    let component
+
+    mount(
+      <DocumentFilters
+        collection={mockCollection}
+        filters={mockMultipleValidFilters}
+        ref={c => component = c}
+      />
+    )
+
+    const cmdKey = new KeyboardEvent("keydown", {
+        type: 'keydown',
+        altKey: false,
+        bubbles: true,
+        cancelBubble: false,
+        cancelable: true,
+        charCode: 0,
+        // code: 'KeyS',
+        composed: true,
+        ctrlKey: false,
+        key : "cmd",
+        isTrusted: true,
+        keyCode : 91
+    })
+    const fKey = new KeyboardEvent("keydown", {
+        type: 'keydown',
+        altKey: false,
+        bubbles: true,
+        cancelBubble: false,
+        cancelable: true,
+        charCode: 0,
+        code: 'KeyF',
+        composed: true,
+        ctrlKey: false,
+        key : "f",
+        isTrusted: true,
+        keyCode : 70
+    })
+    expect(component.state.filters.length).to.equal(2)
+
+    // Mock `cmd+f` call
+    document.dispatchEvent(cmdKey)
+    document.dispatchEvent(fKey)
+
+    expect(component.state.filters.length).to.equal(3)
+    expect(component.state.filters[2])
+    .to.deep.equal({field: 'bar', type: '$eq', value: null})
   })
 })
