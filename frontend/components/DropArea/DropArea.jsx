@@ -9,11 +9,6 @@ import styles from './DropArea.css'
 export default class FileUpload extends Component {
   static propTypes = {
     /**
-     * File type acceptance.
-     */
-    accept: proptypes.string,
-
-    /**
      * The contents of the drop area.
      */
     children: proptypes.node,
@@ -24,19 +19,13 @@ export default class FileUpload extends Component {
     draggingText: proptypes.string,
 
     /**
-     * Whether to accept multiple files.
-     */
-    multiple: proptypes.bool,
-
-    /**
      * Callback to be executed when files are dropped.
      */
     onDrop: proptypes.func
   }
 
   static defaultProps = {
-    draggingText: 'Drop files here',
-    multiple: false
+    draggingText: 'Drop files here'
   }
 
   constructor(props) {
@@ -47,10 +36,8 @@ export default class FileUpload extends Component {
 
   render() {
     const {
-      accept,
       children,
-      draggingText,
-      multiple
+      draggingText
     } = this.props
     const {dragging} = this.state
     const dropStyles = new Style(styles, 'droparea')
@@ -78,8 +65,9 @@ export default class FileUpload extends Component {
     this.setState({
       dragging: false
     })
-
-    onDrop(event.dataTransfer.files)
+    if (typeof onDrop === 'function') {
+      onDrop(event.dataTransfer ? event.dataTransfer.files : [])
+    }
 
     event.preventDefault()
   }
