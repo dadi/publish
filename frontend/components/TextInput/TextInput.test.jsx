@@ -69,8 +69,8 @@ describe('TextInput component', () => {
 
     $('input')[0].focus()
 
-    const change = new Event("change", {
-        type: 'change'
+    const change = new Event('change', {
+      type: 'change'
     })
     // Dispatch fake change event 
     $('input')[0].dispatchEvent(change)
@@ -91,8 +91,8 @@ describe('TextInput component', () => {
 
     $('input')[0].focus()
 
-    const change = new KeyboardEvent("keyup", {
-        type: 'keyup'
+    const change = new KeyboardEvent('keyup', {
+      type: 'keyup'
     })
     // Dispatch fake change event 
     $('input')[0].dispatchEvent(change)
@@ -151,8 +151,8 @@ describe('TextInput component', () => {
 
     $('input')[0].focus()
 
-    const change = new Event("change", {
-        type: 'change'
+    const change = new Event('change', {
+      type: 'change'
     })
     // Dispatch fake change event 
     $('input')[0].dispatchEvent(change)

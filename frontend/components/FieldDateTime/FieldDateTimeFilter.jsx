@@ -76,31 +76,31 @@ export default class FieldDateTimeFilter extends Component {
     } = this.props
 
     return (
-        <div class={containerStyles}>
-          <select
-            class={analyserStyles}
-            onChange={this.handleChange.bind(this, 'type')}
-          >
-            <option disabled selected value>Select a type</option>
-            {Object.keys(this.filterTypes).map(key => (
-              <option
-                selected={type === key}
-                key={key}
-                value={key}
-              >
-                {this.filterTypes[key]}
-              </option>
-            ))}
-          </select>
-          <TextInput
-            className={valueStyles}
-            onChange={this.handleChange.bind(this, 'value')}
-            onKeyUp={this.handleChange.bind(this, 'value')}
-            placeholder="Search value"
-            type="date"
-            value={value}
-          />
-        </div>
+      <div class={containerStyles}>
+        <select
+          class={analyserStyles}
+          onChange={this.handleChange.bind(this, 'type')}
+        >
+          <option disabled selected value>Select a type</option>
+          {Object.keys(this.filterTypes).map(key => (
+            <option
+              selected={type === key}
+              key={key}
+              value={key}
+            >
+              {this.filterTypes[key]}
+            </option>
+          ))}
+        </select>
+        <TextInput
+          className={valueStyles}
+          onChange={this.handleChange.bind(this, 'value')}
+          onKeyUp={this.handleChange.bind(this, 'value')}
+          placeholder="Search value"
+          type="date"
+          value={value}
+        />
+      </div>
     )
   }
 

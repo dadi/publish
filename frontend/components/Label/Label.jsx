@@ -67,7 +67,7 @@ export default class Label extends Component {
   }
 
   // This will render all children and inject an `id` prop
-  // with the generated unique id.
+  // with the generated unique id in the first child.
   renderChildren() {
     const {
       children,
@@ -75,10 +75,13 @@ export default class Label extends Component {
       required
     } = this.props
 
-    return children.map(child => {
+    return children.map((child, index) => {
       if (child) {
         child.attributes = child.attributes || {}
-        child.attributes.id = child.attributes.id || this.id
+
+        if (index === 0) {
+          child.attributes.id = child.attributes.id || this.id
+        }
 
         // Inject 'inLabel' to children
         child.attributes.inLabel = true

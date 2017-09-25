@@ -2,7 +2,7 @@ import {h, options, render} from 'preact'
 import {expect} from 'chai'
 
 jest.mock('./../../lib/util', () => ({
-  getUniqueId: () => 'c1'
+  getUniqueId: () => 'c-1'
 }))
 
 import FieldBooleanEdit from './FieldBooleanEdit'
@@ -17,20 +17,18 @@ options.debounceRendering = f => f()
 
 beforeAll(() => {
   $ = sel => scratch.querySelectorAll(sel)
-  mount = jsx => {
-    root = render(jsx, scratch, root)
-
-    document.body.appendChild(scratch)
-
-    return root
-  }
+  mount = jsx => root = render(jsx, scratch, root)
   scratch = document.createElement('div')
 })
 
+beforeEach(() => {
+  document.body.appendChild(scratch)
+})
+
 afterEach(() => {
-  while (document.body.firstChild) {
-    document.body.removeChild(document.body.firstChild)
-  }  
+  mount(null).remove()
+
+  document.body.removeChild(document.body.firstChild)
 })
 
 const mockSchema = {

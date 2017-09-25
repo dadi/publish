@@ -117,7 +117,7 @@ export default class FieldDateTimeEdit extends Component {
 
     return (
       <Label
-        error={error}
+        error={Boolean(error)}
         errorMessage={typeof error === 'string' ? error : null}
         label={schema.label}
         comment={schema.required && 'Required'}
@@ -131,15 +131,15 @@ export default class FieldDateTimeEdit extends Component {
           value={dateObj && dateObj.format(config.formats.date.long)}
         />
 
-        <div ref={this.handlePickerRef.bind(this)}>
-          {pickerVisible &&
+        {pickerVisible &&
+          <div ref={this.handlePickerRef.bind(this)}>
             <DateTimePicker
               className={styles.picker}
               date={dateObj && dateObj.getDate()}
               onChange={this.handlePickerChange.bind(this)}
             />
-          }
-        </div>
+          </div>
+        }
       </Label>
     )
   }
@@ -150,7 +150,7 @@ export default class FieldDateTimeEdit extends Component {
 
   componentWillUnmount() {
     if (this.picker) {
-      this.picker.removeEventListener('click', this.pickerEventHandler)
+      this.picker.removeEventListener('click', this.pickerOutsideEventHandler)
     }
 
     clearTimeout(this.losingFocusTimeout)
