@@ -11,9 +11,18 @@ import Button from 'components/Button/Button'
 export default class Peer extends Component {
   static propTypes = {
     /**
+     * The peer is currently active.
+     */
+    active: proptypes.bool.isRequired,
+
+    /**
      * The socket peer.
      */
-    peer: proptypes.object
+    peer: proptypes.object.isRequired
+  }
+
+  static defaultProps = {
+    active: true
   }
 
   constructor(props) {
@@ -21,11 +30,13 @@ export default class Peer extends Component {
   }
 
   render() {
-    const {peer} = this.props
-    const initial = peer.name.charAt(0)
+    const {active, peer} = this.props
 
+    if (typeof peer !== 'object' || !peer.name) return null
+
+    const initial = peer.name.charAt(0)
     const peerClass = new Style(styles, 'avatar')
-      .addIf('active', true) // {!} TD - Set this using timestamp
+      .addIf('active', active) // {!} TD - Set this using timestamp
     
     return (
       <Button
