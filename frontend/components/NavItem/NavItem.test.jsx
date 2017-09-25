@@ -63,4 +63,21 @@ describe('NavItem component', () => {
 
     expect(component).to.equal(<li class="container container-desktop"><a class="nav-item" href="/foo">Foo</a></li>)
   })
+
+  it('toggles expanded state on hover', () => {
+    let component
+
+    mount(
+      <NavItem
+        text={'Foo'}
+        href={'/foo'}
+        ref={c => component = c}
+      />
+    )
+    const hover = new MouseEvent("mouseenter", {type: 'mouseenter'})
+
+    $('li.container')[0].dispatchEvent(hover)
+
+    expect(component.state.expanded).to.be.true
+  })
 })
