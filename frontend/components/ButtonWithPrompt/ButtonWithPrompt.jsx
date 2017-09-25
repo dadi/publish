@@ -120,6 +120,8 @@ export default class ButtonWithPrompt extends Component {
   }
 
   handlePromptRef(element) {
+    if (!element) return
+
     if (!this.promptRef) {
       this.promptRef = element
 

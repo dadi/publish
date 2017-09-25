@@ -77,6 +77,13 @@ export default class Notification extends Component {
       .add(`notification-${accent}`)
       .addIf('notification-faded', faded)
 
+    if (
+      typeof message !== 'string' ||
+      (typeof options !== 'undefined' && typeof onOptionClick !== 'function')
+    ) {
+      return null
+    }
+
     return (
       <div class={containerStyle.getClasses()}>
         <div

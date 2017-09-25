@@ -131,4 +131,47 @@ describe('ButtonWithPrompt component', () => {
     expect(callback.mock.calls.length).to.equal(1)
     expect(callback.mock.calls[0].length).to.equal(1)
   })
+
+  it('removes click event listener when component is unmounted', () => {
+    let component
+
+    const removeEventListener = jest.fn()
+
+    mount(
+      <ButtonWithPrompt
+        accent="data"
+        promptCallToAction="Yes"
+        promptMessage="Are you sure you want to proceed with this action?"
+        ref={c => component = c}
+      >Go</ButtonWithPrompt>
+    )
+
+    component.promptRef.removeEventListener = removeEventListener
+    const promptInsideClickHandler = component.promptInsideClickHandler
+    mount(null).remove()
+
+    expect(removeEventListener.mock.calls.length).to.equal(1)
+    expect(removeEventListener.mock.calls[0][0]).to.equal('click')
+    expect(removeEventListener.mock.calls[0][1]).to.equal(promptInsideClickHandler)
+  })
+
+  it('does not attempt to remove event listener if `promptRef` is undefined', () => {
+    let component
+
+    const removeEventListener = jest.fn()
+
+    mount(
+      <ButtonWithPrompt
+        accent="data"
+        promptCallToAction="Yes"
+        promptMessage="Are you sure you want to proceed with this action?"
+        ref={c => component = c}
+      >Go</ButtonWithPrompt>
+    )
+
+    component.promptRef = null
+    mount(null).remove()
+
+    expect(removeEventListener.mock.calls.length).to.equal(0)
+  })
 })
