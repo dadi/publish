@@ -10,7 +10,13 @@ options.debounceRendering = f => f()
 
 beforeAll(() => {
   $ = sel => scratch.querySelectorAll(sel)
-  mount = jsx => root = render(jsx, scratch, root)
+  mount = jsx => {
+    root = render(jsx, scratch, root)
+
+    document.body.appendChild(scratch)
+
+    return root
+  }
   scratch = document.createElement('div')
 })
 
