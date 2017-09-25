@@ -1,13 +1,5 @@
 ```
 App
-├─┬ Header
-│ ├─┬ CollectionNav
-│ │ └─┬ Nav
-│ │   ├── Dropdown
-│ │   ├── DropdownItem
-│ │   └── NavItem
-│ ├── IconBurger
-│ └── IconCross
 ├─┬ DocumentCreateView
 │ ├─┬ DocumentEdit
 │ │ ├─┬ ErrorMessage
