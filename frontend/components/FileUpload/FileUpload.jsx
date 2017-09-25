@@ -72,7 +72,9 @@ export default class FileUpload extends Component {
   handleFileSelect(event) {
     const {onChange} = this.props
 
-    onChange(event.target.files)
+    if (typeof onChange === 'function') {
+      onChange(event.target.files)
+    }
 
     event.preventDefault()
   }
