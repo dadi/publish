@@ -26,4 +26,52 @@ describe('SubNavItem component', () => {
     expect(component.nodeName.propTypes).to.exist
     expect(Object.keys(component.nodeName.propTypes)).to.have.length.above(0)
   })
+
+  it('should render an `<a>` node', () => {
+    const component = (
+      <SubNavItem />
+    )
+
+    render(component)
+
+    expect(component).to.contain(<a class="sub-nav-item"></a>)
+  })
+
+  it('should render `<a>` with href is prop exists', () => {
+    const component = (
+      <SubNavItem
+        href='http://somedomain.com'
+      />
+    )
+
+    render(component)
+
+    expect(component).to.contain(<a class="sub-nav-item" href="http://somedomain.com"></a>)
+  })
+
+  it('should apply error class if prop is true', () => {
+    const component = (
+      <SubNavItem
+        error={true}
+        href='http://somedomain.com'
+      />
+    )
+
+    render(component)
+
+    expect(component).to.contain(<a class="sub-nav-item sub-nav-item-error" href="http://somedomain.com"></a>)
+  })
+
+  it('should apply active class if prop is true', () => {
+    const component = (
+      <SubNavItem
+        active={true}
+        href='http://somedomain.com'
+      />
+    )
+
+    render(component)
+
+    expect(component).to.contain(<a class="sub-nav-item sub-nav-item-active" href="http://somedomain.com"></a>)
+  })
 })
