@@ -2,6 +2,7 @@ import {h, options, render} from 'preact'
 import {expect} from 'chai'
 
 import Nav from './Nav'
+import NavItem from './../NavItem/NavItem'
 // DOM setup
 let $, mount, root, scratch
 
@@ -42,7 +43,7 @@ const mockItemsWithSubItem = [
     href: '/bar',
     subItems: [
       {
-        id: 'baz',
+        id: 'bar/baz',
         label: 'Baz',
         href: '/bar/baz'
       }
@@ -138,5 +139,32 @@ describe('Nav component', () => {
     mount(component)
     
     expect($('.dropdown-item').length).to.equal(1)
+  })
+
+  it('renders `NavItem` for subItems when `mobile` prop is true', () => {
+    const component = (
+      <Nav
+        currentRoute={'/foo'}
+        items={mockItemsWithSubItem}
+        mobile={true}
+      />
+    )
+
+    mount(component)
+    expect($('.dropdown-item').length).to.equal(0)
+    expect($('.nav-item').length).to.equal(3)
+  })
+
+  it('should render `DropdownItem` with `active` prop when `currentRoute` matches subItem `href` prop', () => {
+    const component = (
+      <Nav
+        currentRoute={'/bar/baz'}
+        items={mockItemsWithSubItem}
+      />
+    )
+
+    mount(component)
+
+    expect($('.dropdown-item.dropdown-item-active').length).to.equal(1)
   })
 })
