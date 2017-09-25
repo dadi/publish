@@ -47,22 +47,20 @@ export default class FieldBooleanFilter extends Component {
     } = this.props
 
     return (
-        <div class={containerStyles}>
-          <select
-            class={analyserStyles}
-            onChange={this.handleChange.bind(this, 'value')}
-          >
-            <option
-              selected={value === true}
-              value="true"
-            >Yes</option>
-            <option
-              selected={value === false}
-              value="false"
-            >No</option>
-            ))}
-          </select>
-        </div>
+      <div class={containerStyles}>
+        <select
+          class={analyserStyles}
+          onChange={this.handleChange.bind(this, 'value')}
+          value={value ? 'true' : 'false'}
+        >
+          <option
+            value="true"
+          >Yes</option>
+          <option
+            value="false"
+          >No</option>
+        </select>
+      </div>
     )
   }
 
