@@ -158,7 +158,8 @@
     "automock": false,
     "collectCoverageFrom": [
       "**/frontend/**/*.{js,jsx}",
-      "**/app/**/*.{js}"
+      "**/app/**/*.{js}",
+      "!**/frontend/**/Mock*.{js,jsx}"
     ],
     "coverageReporters": [
       "cobertura",
@@ -171,16 +172,17 @@
       "^actions/(.*)": "<rootDir>/frontend/actions/$1",
       "^components/(.*)": "<rootDir>/frontend/components/$1",
       "^containers/(.*)": "<rootDir>/frontend/containers/$1",
+      "^views/(.*)": "<rootDir>/frontend/views/$1",
       "^frontend/components/(.*)": "<rootDir>/frontend/components/$1",
       "^lib/(.*)": "<rootDir>/frontend/lib/$1",
       "\\.css$": "identity-obj-proxy",
       "^react$": "preact-compat",
       "^react-dom$": "preact-compat",
       "request-promise": "<rootDir>/test/mocks/request-promise",
-      "@dadi/ssl": "<rootDir>/test/mocks/ssl",
-      "@dadi/api-wrapper": "<rootDir>/test/mocks/api-wrapper",
       "fetch": "unfetch/polyfill",
-      "restify": "<rootDir>/test/mocks/restify"
+      "restify": "<rootDir>/test/mocks/restify",
+      "@dadi/ssl": "<rootDir>/test/mocks/ssl",
+      "@dadi/api-wrapper": "<rootDir>/test/mocks/api-wrapper"
     },
     "moduleFileExtensions": [
       "js",
