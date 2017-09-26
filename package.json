@@ -110,6 +110,7 @@
     "preact": "^8.1.0",
     "preact-compat": "^3.0.0",
     "preact-jsx-chai": "^2.2.1",
+    "preact-jsx-chai-match": "^0.1.0",
     "preact-redux": "^1.2.0",
     "preact-render-to-string": "^3.6.0",
     "preact-router-redux": "^4.1.0",
