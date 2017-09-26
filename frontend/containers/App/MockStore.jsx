@@ -16,8 +16,7 @@ import * as reducers from 'reducers/'
 
 const browserHistory = createHistory()
 const reducer = combineReducers(reducers)
-const storeComposer = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose
-const store = storeComposer(applyMiddleware(thunk))(createStore)(enableBatching(reducer))
+const store = compose(applyMiddleware(thunk))(createStore)(enableBatching(reducer))
 const history = syncRouteWithStore(browserHistory, store)
 
 export default class MockStore extends Component {
