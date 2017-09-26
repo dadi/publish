@@ -82,6 +82,7 @@
     "file-size": "^1.0.0",
     "fs": "0.0.1-security",
     "history": "^4.5.1",
+    "html-looks-like": "^1.0.3",
     "husky": "^0.13.3",
     "identity-obj-proxy": "^3.0.0",
     "inquirer": "^3.0.6",
