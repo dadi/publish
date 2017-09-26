@@ -30,7 +30,6 @@ class App extends Component {
     const {actions, state} = this.props
 
     apiBridgeClient.registerProgressCallback(actions.registerNetworkCall)
-
     // We only load the config at this point if the user is already signed in
     // (existing session). Otherwise, it will be loaded upon successful login.
     if (state.user.status === Constants.STATUS_LOADED) {
@@ -114,8 +113,11 @@ class App extends Component {
     const {history, state} = this.props
 
     if (
-      state.api.status === Constants.STATUS_FAILED &&
-      state.user.status === Constants.STATUS_LOADED
+      !state.api.paths ||
+      (
+        state.api.status === Constants.STATUS_FAILED &&
+        state.user.status === Constants.STATUS_LOADED
+      )
     ) {
       return (
         <ErrorView type={Constants.STATUS_FAILED} />
