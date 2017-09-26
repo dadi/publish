@@ -137,7 +137,7 @@ export default class FieldImageEdit extends Component {
 
         {!values &&
           <DropArea
-            draggingText={`Drop image${!singleFile && 's'} here`}
+            draggingText={`Drop image${singleFile ? '' : 's'} here`}
             onDrop={this.handleFileChange.bind(this)}
           >
             <div class={styles.placeholder}>
@@ -150,7 +150,7 @@ export default class FieldImageEdit extends Component {
             </div>
 
             <div class={styles['upload-options']}>
-              <span>Drop file{!singleFile && 's'} to upload or</span>
+              <span>Drop file{singleFile ? '' : 's'} to upload or</span>
               <FileUpload
                 allowDrop={true}
                 accept={config['FieldImage'].accept}

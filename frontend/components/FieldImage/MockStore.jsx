@@ -8,18 +8,25 @@ import {
   createStore
 } from 'redux'
 import thunk from 'redux-thunk'
+import {enableBatching} from 'lib/redux'
+import createHistory from 'history/createBrowserHistory'
+import syncRouteWithStore from 'middleware/router'
 
-const storeComposer = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose
-const store = storeComposer(applyMiddleware(thunk))(createStore)(() => {
-  return {
-    app: {
-      api: () => {}
-    }
-  }
-})
+import * as reducers from 'reducers/'
+
+const browserHistory = createHistory()
+const reducer = combineReducers(reducers)
+const store = compose(applyMiddleware(thunk))(createStore)(enableBatching(reducer))
+const history = syncRouteWithStore(browserHistory, store)
 
 export default class MockStore extends Component {
   render() {
+    const store = compose(applyMiddleware(thunk))(createStore)(
+      this.props.state ?
+      () => this.props.state :
+      enableBatching(reducer)
+    )
+
     return (
       <Provider store={store}>
         {this.props.children}
