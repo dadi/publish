@@ -21,11 +21,36 @@ const mockFields = {
   }
 }
 
-const mockCollection = {
-  fields: mockFields
+const mockAlternateFields = {
+  quz: {
+    label: 'Qux',
+    type: 'String'
+  },
+  foo: {
+    label: 'Foo',
+    type: 'String'
+  },
+  baz: {
+    label: 'Baz',
+    type: 'Number'
+  }
 }
 
-const mockInvalidFilters = {
+const mockCollection = {
+  fields: mockFields,
+  settings: {
+    displayName: 'foo'
+  }
+}
+
+const mockAlternateCollection = {
+  fields: mockAlternateFields,
+  settings: {
+    displayName: 'bar'
+  }
+}
+
+const mockIncompleteFilters = {
   foo: {
     '$eq': null
   }
@@ -36,6 +61,22 @@ const mockValidFilters = {
     '$eq': 'bar'
   }
 }
+
+const mockFormattedValidFilters = [
+  {
+    field: 'foo',
+    value: 'bar',
+    type: '$eq'
+  }
+]
+
+const mockFormattedNewFilters = [
+  {
+    field: 'foo',
+    value: null,
+    type: '$eq'
+  }
+]
 
 const mockMultipleValidFilters = {
   foo: {
@@ -111,6 +152,19 @@ describe('DocumentFilters component', () => {
     expect($('form.filters').length).to.equal(1)
   })
 
+  it('renders a `form` with class `filters`', () => {
+    const component = (
+      <DocumentFilters
+        collection={mockCollection}
+      />
+    )
+
+    mount(component)
+
+    expect(component).not.to.equal(null)
+    expect($('form.filters').length).to.equal(1)
+  })
+
   it('should not render `Apply` button if there are no valid filters present', () => {
     const component = (
       <DocumentFilters
@@ -152,7 +206,7 @@ describe('DocumentFilters component', () => {
     expect(component.state.dirty).to.equal(false)
   })
 
-  it('should change component `dirty` state value from false to true if input value changes', () => {
+  it('changes component `dirty` state value from false to true if input value changes', () => {
     let component
 
     mount(
@@ -186,7 +240,59 @@ describe('DocumentFilters component', () => {
     expect(component.state.dirty).to.equal(true)
   })
 
-  it('should trigger a url update on filter removal if `updateUrlParams` prop exists', () => {
+  it('does not change `dirty` state value from false to true if input value changes but filter value is undefined', () => {
+    let component
+
+    mount(
+      <DocumentFilters
+        collection={mockCollection}
+        filters={mockIncompleteFilters}
+        ref={c => component = c}
+      />
+    )
+    $('input.control.control-value')[0].focus()
+
+    const keyup = new KeyboardEvent("keyup", {
+        type: 'keyup',
+        altKey: false,
+        bubbles: true,
+        cancelBubble: false,
+        cancelable: true,
+        charCode: 0,
+        code: 'KeyS',
+        composed: true,
+        ctrlKey: false,
+        key : "s",
+        isTrusted: true,
+        keyCode : 83
+    })
+    expect(component.state.dirty).to.equal(false)
+
+    // Dispatch fake keystroke in value field
+    $('input.control.control-value')[0].dispatchEvent(keyup)
+
+    expect(component.state.dirty).to.equal(false)
+  })
+
+  it('does not trigger a url update on filter removal if `updateUrlParams` prop exists but is invalid', () => {
+    const mockUpdateUrlParams = jest.fn()
+
+    let component
+
+    mount(
+      <DocumentFilters
+        collection={mockCollection}
+        filters={mockValidFilters}
+        updateUrlParams={'foo'}
+        ref={c => component = c}
+      />
+    )
+    $('.small-button')[0].click()
+
+    expect(mockUpdateUrlParams.mock.calls.length).to.equal(0)
+  })
+
+  it('triggers a url update on filter removal if `updateUrlParams` prop exists', () => {
     const mockUpdateUrlParams = jest.fn()
 
     let component
@@ -204,7 +310,7 @@ describe('DocumentFilters component', () => {
     expect(mockUpdateUrlParams.mock.calls.length).to.equal(1)
   })
 
-  it('should call `updateUrlParams` with `null` if there are no filters remaining', () => {
+  it('triggers `updateUrlParams` with `null` if there are no filters remaining', () => {
     const mockUpdateUrlParams = jest.fn()
 
     let component
@@ -288,6 +394,103 @@ describe('DocumentFilters component', () => {
     expect(component.state.filters.length).to.equal(3)
     expect(component.state.filters[2])
     .to.deep.equal({field: 'bar', type: '$eq', value: null})
-
   })
+
+  it('should set local `state.filters` prop on update', () => {
+    let component
+
+    mount(
+      <DocumentFilters
+        collection={mockCollection}
+        filters={mockValidFilters}
+        ref={c => component = c}
+      />
+    )
+    expect(component.state.filters).to.deep.equal(mockFormattedValidFilters)
+  })
+
+  it('should create a new filter if `newFilter` prop is true on component update', () => {
+    let component
+
+    mount(
+      <DocumentFilters
+        collection={mockCollection}
+        ref={c => component = c}
+      />
+    )
+
+    mount(
+      <DocumentFilters
+        collection={mockCollection}
+        newFilter={true}
+        ref={c => component = c}
+      />
+    )
+    expect(component.state.filters).to.deep.equal(mockFormattedNewFilters)
+  })
+
+  it('should clear filters if collection changes', () => {
+    let component
+
+    mount(
+      <DocumentFilters
+        collection={mockCollection}
+        filters={mockValidFilters}
+        ref={c => component = c}
+      />
+    )
+
+    mount(
+      <DocumentFilters
+        collection={mockAlternateCollection}
+        ref={c => component = c}
+      />
+    )
+    expect(component.state.filters).to.deep.equal([])
+  })
+
+  it('formats string filters in the same way as object filters', () => {
+    let component
+    mount(
+      <DocumentFilters
+        collection={mockCollection}
+        filters={{
+          foo: 'bar',
+          baz: {
+            '$eq': 'qux'
+          }
+        }}
+        ref={c => component = c}
+      />
+    )
+    expect(component.state.filters).to.deep.equal([
+      {field: 'foo', value: 'bar', type: '$eq'},
+      {field: 'baz', value: 'qux', type: '$eq'}
+    ])
+  })
+
+  // it('change `dirty` state to true when the `filters` prop changes', () => {
+  //   let component
+  //   console.log('gogogo')
+  //   mount(
+  //     <DocumentFilters
+  //       collection={mockCollection}
+  //       filters={{
+  //         foo: 'bar'
+  //       }}
+  //       ref={c => component = c}
+  //     />
+  //   )
+  //   mount(
+  //     <DocumentFilters
+  //       collection={mockCollection}
+  //       filters={{
+  //         foo: 'bar',
+  //         baz: 'qux'
+  //       }}
+  //       ref={c => component = c}
+  //     />
+  //   )
+  //   expect(component.state.dirty).to.equal(true)
+  // })
 })

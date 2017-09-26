@@ -75,7 +75,7 @@ export default class DocumentFilters extends Component {
 
   componentWillUpdate(nextProps, nextState) {
     const {collection} = this.props
-    const {newFilter} = nextProps 
+    const {newFilter} = nextProps
 
     if (nextProps.collection !== collection) {
       // If we're changing collection, reset all filters
@@ -92,6 +92,7 @@ export default class DocumentFilters extends Component {
       const blankFilter = this.createEmptyFilter()
       paramFilters.push(blankFilter)
     }
+
     this.setState({filters: paramFilters})
   }
 
@@ -117,9 +118,8 @@ export default class DocumentFilters extends Component {
     const {collection, config} = this.props
 
     if (!filters || !collection) return null
-
     return (
-      <form class={styles.filters} onSubmit={e => e.preventDefault()}>
+      <form class={styles.filters}>
         {filters && collection && filters.map((filter, index) => (
           <DocumentFilter
             config={config}
@@ -184,7 +184,9 @@ export default class DocumentFilters extends Component {
     Object.assign(newFilters[index], filter)
     this.setState({filters: newFilters})
 
-    if (filter.value !== undefined) {
+    // {!} To-do: Test filter value against field type validation methods
+    // Which should be built into components.
+    if (filter.value) {
       this.setState({dirty: true})
     }
   }
