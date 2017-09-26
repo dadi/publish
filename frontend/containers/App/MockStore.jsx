@@ -14,8 +14,6 @@ import syncRouteWithStore from 'middleware/router'
 
 import * as reducers from 'reducers/'
 
-import App from 'containers/App/App'
-
 const browserHistory = createHistory()
 const reducer = combineReducers(reducers)
 const storeComposer = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose

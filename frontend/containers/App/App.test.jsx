@@ -34,6 +34,6 @@ describe('App', () => {
     )
     mount(component)
 
-    // expect(component).to.equal(<div></div>)
+    // expect(component).to.contain(<div></div>)
   })
 })
