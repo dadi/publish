@@ -1,6 +1,9 @@
 import {h, options, render} from 'preact'
 import {expect} from 'chai'
+import {render as renderToString} from 'preact-render-to-string'
+import htmlLooksLike from 'html-looks-like'
 
+import ErrorView from 'views/ErrorView/ErrorView'
 import App from './App'
 import MockStore from './MockStore'
 
@@ -26,14 +29,25 @@ afterEach(() => {
 })
 
 describe('App', () => {
-  it('renders an error view if connection to an api fails or api paths are not defined', () => {
-    const component = (
+  it('renders an error view if api paths are not defined', () => {
+    const component = renderToString(
       <MockStore>
         <App />
       </MockStore>
     )
-    mount(component)
 
-    // expect(component).to.contain(<div></div>)
+    // mount(component)
+
+    const error = renderToString(
+      <MockStore>
+        <ErrorView
+          type={'STATUS_FAILED'}
+        >
+          {'{{ ... }}'}
+        </ErrorView>
+      </MockStore>
+    )
+
+    htmlLooksLike(component, error)
   })
 })
