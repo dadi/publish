@@ -1,8 +1,6 @@
 import {h, options, render} from 'preact'
 import {expect} from 'chai'
 
-import FieldImage from './FieldImage'
-import FieldImageEdit from './FieldImageEdit'
 import FieldImageReferenceSelect from './FieldImageReferenceSelect'
 
 // DOM setup
@@ -18,17 +16,6 @@ beforeAll(() => {
 
 afterEach(() => {
   mount(null).remove()
-})
-
-describe('FieldImageEdit component', () => {
-  it('has propTypes', () => {
-    const component = (
-      <FieldImageEdit />
-    )
-
-    expect(component.nodeName.propTypes).to.exist
-    expect(Object.keys(component.nodeName.propTypes)).to.have.length.above(0)
-  })
 })
 
 describe('FieldImageReferenceSelect component', () => {

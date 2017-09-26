@@ -76,7 +76,7 @@ export default class Label extends Component {
     } = this.props
 
     return children.map((child, index) => {
-      if (child) {
+      if (child && typeof child === 'object') {
         child.attributes = child.attributes || {}
 
         if (index === 0) {
