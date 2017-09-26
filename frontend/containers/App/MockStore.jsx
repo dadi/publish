@@ -16,11 +16,16 @@ import * as reducers from 'reducers/'
 
 const browserHistory = createHistory()
 const reducer = combineReducers(reducers)
-const store = compose(applyMiddleware(thunk))(createStore)(enableBatching(reducer))
-const history = syncRouteWithStore(browserHistory, store)
 
 export default class MockStore extends Component {
   render() {
+    const store = compose(applyMiddleware(thunk))(createStore)(
+      this.props.state ?
+      () => this.props.state :
+      enableBatching(reducer)
+    )
+    const history = syncRouteWithStore(browserHistory, store)
+
     return (
       <Provider store={store}>
         {this.props.children}
