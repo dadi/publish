@@ -8,7 +8,7 @@ import DateTimePicker from './../DateTimePicker/DateTimePicker'
 import Label from './../Label/Label'
 import TextInput from './../TextInput/TextInput'
 
-jest.mock('./../../lib/util', () => ({
+jest.mock('lib/util', () => ({
   getUniqueId: () => 'c-1'
 }))
 

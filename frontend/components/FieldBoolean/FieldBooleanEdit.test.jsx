@@ -1,7 +1,7 @@
 import {h, options, render} from 'preact'
 import {expect} from 'chai'
 
-jest.mock('./../../lib/util', () => ({
+jest.mock('lib/util', () => ({
   getUniqueId: () => 'c-1'
 }))
 

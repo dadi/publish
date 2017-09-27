@@ -7,7 +7,7 @@ import Checkbox from 'components/Checkbox/Checkbox'
 import Label from 'components/Label/Label'
 import TextInput from 'components/TextInput/TextInput'
 
-jest.mock('./../../lib/util', () => ({
+jest.mock('lib/util', () => ({
   getUniqueId: () => 'c-1'
 }))
 
