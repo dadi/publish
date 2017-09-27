@@ -1,6 +1,5 @@
 import {h, options, render} from 'preact'
 import {expect} from 'chai'
-import {render as r} from 'preact-render-to-string'
 import FieldNumberFilter from './FieldNumberFilter'
 
 import TextInput from 'components/TextInput/TextInput'
