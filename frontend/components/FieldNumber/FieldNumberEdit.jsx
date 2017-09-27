@@ -84,7 +84,7 @@ export default class FieldNumberEdit extends Component {
 
     return (
       <Label
-        error={error}
+        error={Boolean(error)}
         errorMessage={typeof error === 'string' ? error : null}
         label={schema.label}
         comment={schema.required && 'Required'}

@@ -69,38 +69,40 @@ export default class FieldNumberFilter extends Component {
     } = this.props
 
     return (
-        <div class={containerStyles}>
-          <select
-            class={analyserStyles}
-            onChange={this.handleChange.bind(this, 'type')}
-          >
-            <option disabled selected value>Select a type</option>
-            {Object.keys(this.filterTypes).map(key => (
-              <option
-                selected={type === key}
-                key={key}
-                value={key}
-              >
-                {this.filterTypes[key]}
-              </option>
-            ))}
-          </select>
-            <TextInput
-              type="number"
-              className={valueStyles}
-              value={value}
-              onChange={this.handleChange.bind(this, 'value')}
-              onKeyUp={this.handleChange.bind(this, 'value')}
-              placeholder="Numberic value"
-            />
-        </div>
+      <div class={containerStyles}>
+        <select
+          class={analyserStyles}
+          onChange={this.handleChange.bind(this, 'type')}
+          value={type}
+        >
+          <option disabled>Select a type</option>
+
+          {Object.keys(this.filterTypes).map(key => (
+            <option
+              key={key}
+              value={key}
+            >
+              {this.filterTypes[key]}
+            </option>
+          ))}
+        </select>
+
+        <TextInput
+          type="number"
+          className={valueStyles}
+          value={value}
+          onChange={this.handleChange.bind(this, 'value')}
+          onKeyUp={this.handleChange.bind(this, 'value')}
+          placeholder="Numeric value"
+        />
+      </div>
     )
   }
 
   handleChange(elementId, event) {
     const {onUpdate, index} = this.props
     const value = isNaN(event.target.value) ? 0 : Number(event.target.value)
-    
+
     onUpdate({
       [elementId]: value
     }, index)

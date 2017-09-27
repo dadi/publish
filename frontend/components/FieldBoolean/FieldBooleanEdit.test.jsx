@@ -7,8 +7,8 @@ jest.mock('./../../lib/util', () => ({
 
 import FieldBooleanEdit from './FieldBooleanEdit'
 
-import Checkbox from './../Checkbox/Checkbox'
-import Label from './../Label/Label'
+import Checkbox from 'components/Checkbox/Checkbox'
+import Label from 'components/Label/Label'
 
 // DOM setup
 let $, mount, root, scratch
