@@ -213,7 +213,7 @@ export default class FieldPasswordEdit extends Component {
       newPasswordConfirm
     } = this.state
 
-    this.validate(event.target.value)
+    this.validate()
 
     if (typeof onChange === 'function') {
       // When updating the password, we need to send two values: the current
@@ -243,11 +243,14 @@ export default class FieldPasswordEdit extends Component {
       newPasswordConfirm
     } = this.state
 
-    let validationErrors = error && error.includes(Constants.ERROR_WRONG_PASSWORD) ?
-      [Constants.ERROR_WRONG_PASSWORD] : []
+    let validationErrors = error && error.includes(Constants.ERROR_WRONG_PASSWORD)
+      ? [Constants.ERROR_WRONG_PASSWORD]
+      : []
 
-    if ((forceValidation || (newPasswordConfirm.length > 0)) &&
-        (newPassword !== newPasswordConfirm)) {
+    if (
+      forceValidation || (newPasswordConfirm.length > 0) &&
+      newPassword !== newPasswordConfirm
+    ) {
       validationErrors.push(Constants.ERROR_PASSWORD_MISMATCH)
     }
 
