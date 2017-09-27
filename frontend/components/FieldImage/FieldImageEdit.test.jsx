@@ -338,78 +338,140 @@ describe('FieldImageEdit component', () => {
         </div>
       )
     })
+  })
 
-    describe('renders a FileUpload component', () => {
-      it('with the text "Drop file here" (singular) if the field schema\'s `limit` property is `1`', () => {
-        const mockSchemaWithLimit = {
-          ...mockSchema,
-          settings: {
-            ...mockSchema.settings,
-            limit: 1
-          }
+  describe('renders a FileUpload component', () => {
+    it('with the text "Drop file here" (singular) if the field schema\'s `limit` property is `1`', () => {
+      const mockSchemaWithLimit = {
+        ...mockSchema,
+        settings: {
+          ...mockSchema.settings,
+          limit: 1
         }
+      }
 
-        const component = (
-          <FieldImageEdit
-            config={mockConfig}
-            onBuildBaseUrl={mockBuildBaseUrl}
-            schema={mockSchemaWithLimit}
+      const component = (
+        <FieldImageEdit
+          config={mockConfig}
+          onBuildBaseUrl={mockBuildBaseUrl}
+          schema={mockSchemaWithLimit}
+        />
+      )
+
+      expect(component).to.contain(
+        <div class="upload-options">
+          <span>Drop file to upload or</span>
+          <FileUpload
+            allowDrop={true}
+            accept={mockConfig.FieldImage.accept}
+            multiple={false}
+            onChange={() => {}}
           />
-        )
+        </div>
+      )
+    })
 
-        expect(component).to.contain(
-          <div class="upload-options">
-            <span>Drop file to upload or</span>
-            <FileUpload
-              allowDrop={true}
-              accept={mockConfig.FieldImage.accept}
-              multiple={false}
-              onChange={() => {}}
-            />
-          </div>
-        )
-      })
-
-      it('with the text "Drop files here" (plural) if the field schema\'s `limit` property is missing or greater than `1`', () => {
-        const mockSchemaWithLimit = {
-          ...mockSchema,
-          settings: {
-            ...mockSchema.settings,
-            limit: 4
-          }
+    it('with the text "Drop files here" (plural) if the field schema\'s `limit` property is missing or greater than `1`', () => {
+      const mockSchemaWithLimit = {
+        ...mockSchema,
+        settings: {
+          ...mockSchema.settings,
+          limit: 4
         }
+      }
 
-        const component1 = (
-          <FieldImageEdit
-            config={mockConfig}
-            onBuildBaseUrl={mockBuildBaseUrl}
-            schema={mockSchemaWithLimit}
+      const component1 = (
+        <FieldImageEdit
+          config={mockConfig}
+          onBuildBaseUrl={mockBuildBaseUrl}
+          schema={mockSchemaWithLimit}
+        />
+      )
+
+      const component2 = (
+        <FieldImageEdit
+          config={mockConfig}
+          onBuildBaseUrl={mockBuildBaseUrl}
+          schema={mockSchema}
+        />
+      )
+
+      const uploadOptions = (
+        <div class="upload-options">
+          <span>Drop files to upload or</span>
+          <FileUpload
+            allowDrop={true}
+            accept={mockConfig.FieldImage.accept}
+            multiple={true}
+            onChange={() => {}}
           />
-        )
+        </div>
+      )
 
-        const component2 = (
-          <FieldImageEdit
-            config={mockConfig}
-            onBuildBaseUrl={mockBuildBaseUrl}
-            schema={mockSchema}
-          />
-        )
+      expect(component1).to.contain(uploadOptions)
+      expect(component2).to.contain(uploadOptions)
+    })
 
-        const uploadOptions = (
-          <div class="upload-options">
-            <span>Drop files to upload or</span>
-            <FileUpload
-              allowDrop={true}
-              accept={mockConfig.FieldImage.accept}
-              multiple={true}
-              onChange={() => {}}
-            />
-          </div>
-        )
+    it('processes uploaded files and fires the `onChange` callback', () => {
+      const onChange = jest.fn()
+      let component
 
-        expect(component1).to.contain(uploadOptions)
-        expect(component2).to.contain(uploadOptions)
-      })
+      mount(
+        <FieldImageEdit
+          config={mockConfig}
+          onBuildBaseUrl={mockBuildBaseUrl}
+          onChange={onChange}
+          ref={c => component = c}
+          schema={mockSchema}
+        />
+      )
+
+      const $input = $('input[type="file"]')[0]
+      const mockFile1 = {
+        name: 'image1.png',
+        type: 'image/png',
+        size: 43000
+      }
+      const mockFile1Data = 'data:image/png;base64,1q2w3e4r'
+      const mockFile2 = {
+        name: 'image2.png',
+        type: 'image/jpeg',
+        size: 89000
+      }
+      const mockFile2Data = 'data:image/jpeg;base64,5t6y7u8i'
+      const readAsDataURLCopy = FileReader.prototype.readAsDataURL
+
+      FileReader.prototype.readAsDataURL = function (file) {
+        const result = file.type === 'image/png'
+          ? mockFile1Data
+          : mockFile2Data
+
+        Object.defineProperty(this, 'result', {
+          value: result
+        })
+
+        this.onload()
+      }
+
+      component.handleFileChange([mockFile1, mockFile2])
+
+      FileReader.prototype.readAsDataURL = readAsDataURLCopy
+
+      expect(onChange.mock.calls.length).to.eql(1)
+      expect(onChange.mock.calls[0][0]).to.eql(mockSchema._id)
+      expect(onChange.mock.calls[0][1].length).to.eql(2)
+
+      expect(onChange.mock.calls[0][1][0]._file).to.eql(mockFile1)
+      expect(onChange.mock.calls[0][1][0]._previewData).to.eql(mockFile1Data)
+      expect(onChange.mock.calls[0][1][0].contentLength).to.eql(mockFile1.size)
+      expect(onChange.mock.calls[0][1][0].fileName).to.eql(mockFile1.name)
+      expect(onChange.mock.calls[0][1][0].mimetype).to.eql(mockFile1.type)
+
+      expect(onChange.mock.calls[0][1][1]._file).to.eql(mockFile2)
+      expect(onChange.mock.calls[0][1][1]._previewData).to.eql(mockFile2Data)
+      expect(onChange.mock.calls[0][1][1].contentLength).to.eql(mockFile2.size)
+      expect(onChange.mock.calls[0][1][1].fileName).to.eql(mockFile2.name)
+      expect(onChange.mock.calls[0][1][1].mimetype).to.eql(mockFile2.type)
     })
   })
 })
