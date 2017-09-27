@@ -17,14 +17,39 @@ const fileSize = require('file-size')
 export default class FieldImageReferenceSelect extends Component {
   static propTypes = {
     /**
-     * The field value.
+     * The available documents..
      */
-    value: proptypes.bool,
+    data: proptypes.array,
 
     /**
-     * The field schema.
+     * The callback to be fired when a document is selected.
      */
-    schema: proptypes.object
+    onSelect: proptypes.func,
+
+    /**
+     * The callback to be fired when the sort parameters are changed.
+     */
+    onSort: proptypes.func,
+
+    /**
+     * The indexes of the currently selected documents.
+     */
+    selectedRows: proptypes.array,
+
+    /**
+     * The maximum number of documents that can be selected.
+     */
+    selectLimit: proptypes.number,
+
+    /**
+     * The name of the field to sort documents by.
+     */
+    sortBy: proptypes.string,
+
+    /**
+     * The order used to sort the documents by the `sortBy` field.
+     */
+    sortOrder: proptypes.oneOf(['asc', 'desc'])
   }
 
   constructor(props) {
