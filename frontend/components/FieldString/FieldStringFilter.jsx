@@ -70,11 +70,12 @@ export default class FieldStringFilter extends Component {
           <select
             class={analyserStyles}
             onChange={this.handleChange.bind(this, 'type')}
+            value={type}
           >
             <option disabled selected value>Select a type</option>
+
             {Object.keys(this.filterTypes).map(key => (
               <option
-                selected={type === key}
                 key={key}
                 value={key}
               >

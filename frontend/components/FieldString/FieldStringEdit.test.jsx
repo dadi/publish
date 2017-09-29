@@ -31,7 +31,6 @@ const mockSchema = {
   label: 'Sub Heading',
   validation: {},
   required: false,
-  message: 'can\'t be empty',
   publish: {
     section: 'Article',
     placement: 'main'
@@ -608,6 +607,371 @@ describe('FieldStringEdit component', () => {
         expect(onError.mock.calls[0][0]).to.eql(mockSchemaWithOptionsRequired._id)
         expect(onError.mock.calls[0][1]).to.eql(true)
         expect(onError.mock.calls[0][2]).to.eql([])
+      })
+
+      it('fires an error via the `onError` callback if one of the values does not conform to a `minLength` constraint', () => {
+        const onError = jest.fn()
+        const mockSchemaWithValidation = {
+          ...mockSchemaWithOptions,
+          validation: {
+            minLength: 15
+          }
+        }
+
+        let component
+
+        mount(
+          <FieldStringEdit
+            onError={onError}
+            ref={c => component = c}
+            schema={mockSchemaWithValidation}
+          />
+        )
+
+        component.validate(['thisOneWillValidate', 'notThisOne'])
+
+        expect(onError.mock.calls.length).to.eql(1)
+        expect(onError.mock.calls[0][0]).to.eql(mockSchemaWithValidation._id)
+        expect(onError.mock.calls[0][1]).to.eql(true)
+        expect(onError.mock.calls[0][2]).to.eql(['thisOneWillValidate', 'notThisOne'])
+      })
+
+      it('fires an error via the `onError` callback, with the message set in `message`, if one of the values does not conform to a `minLength` constraint', () => {
+        const onError = jest.fn()
+        const mockSchemaWithValidation = {
+          ...mockSchemaWithOptions,
+          validation: {
+            minLength: 15
+          },
+          message: 'Oops'
+        }
+
+        let component
+
+        mount(
+          <FieldStringEdit
+            onError={onError}
+            ref={c => component = c}
+            schema={mockSchemaWithValidation}
+          />
+        )
+
+        component.validate(['thisOneWillValidate', 'notThisOne'])
+
+        expect(onError.mock.calls.length).to.eql(1)
+        expect(onError.mock.calls[0][0]).to.eql(mockSchemaWithValidation._id)
+        expect(onError.mock.calls[0][1]).to.eql('Oops')
+        expect(onError.mock.calls[0][2]).to.eql(['thisOneWillValidate', 'notThisOne'])
+      })
+
+      it('fires an error via the `onError` callback if one of the values does not conform to a `maxLength` constraint', () => {
+        const onError = jest.fn()
+        const mockSchemaWithValidation = {
+          ...mockSchemaWithOptions,
+          validation: {
+            maxLength: 5
+          }
+        }
+
+        let component
+
+        mount(
+          <FieldStringEdit
+            onError={onError}
+            ref={c => component = c}
+            schema={mockSchemaWithValidation}
+          />
+        )
+
+        component.validate(['fine', 'notFine'])
+
+        expect(onError.mock.calls.length).to.eql(1)
+        expect(onError.mock.calls[0][0]).to.eql(mockSchemaWithValidation._id)
+        expect(onError.mock.calls[0][1]).to.eql(true)
+        expect(onError.mock.calls[0][2]).to.eql(['fine', 'notFine'])
+      })
+
+      it('fires an error via the `onError` callback, with the message set in `message`, if one of the values does not conform to a `maxLength` constraint', () => {
+        const onError = jest.fn()
+        const mockSchemaWithValidation = {
+          ...mockSchemaWithOptions,
+          validation: {
+            maxLength: 5
+          },
+          message: 'Oops'
+        }
+
+        let component
+
+        mount(
+          <FieldStringEdit
+            onError={onError}
+            ref={c => component = c}
+            schema={mockSchemaWithValidation}
+          />
+        )
+
+        component.validate(['fine', 'notFine'])
+
+        expect(onError.mock.calls.length).to.eql(1)
+        expect(onError.mock.calls[0][0]).to.eql(mockSchemaWithValidation._id)
+        expect(onError.mock.calls[0][1]).to.eql('Oops')
+        expect(onError.mock.calls[0][2]).to.eql(['fine', 'notFine'])
+      })
+
+      it('fires an error via the `onError` callback if one of the values does not conform to a `regex` constraint', () => {
+        const onError = jest.fn()
+        const mockSchemaWithValidation = {
+          ...mockSchemaWithOptions,
+          validation: {
+            regex: {
+              pattern: '(one|three|four)'
+            }
+          }
+        }
+
+        let component
+
+        mount(
+          <FieldStringEdit
+            onError={onError}
+            ref={c => component = c}
+            schema={mockSchemaWithValidation}
+          />
+        )
+
+        component.validate(['one', 'two'])
+
+        expect(onError.mock.calls.length).to.eql(1)
+        expect(onError.mock.calls[0][0]).to.eql(mockSchemaWithValidation._id)
+        expect(onError.mock.calls[0][1]).to.eql(true)
+        expect(onError.mock.calls[0][2]).to.eql(['one', 'two'])
+      })
+
+      it('fires an error via the `onError` callback, with the message set in `message`, if one of the values does not conform to a `regex` constraint', () => {
+        const onError = jest.fn()
+        const mockSchemaWithValidation = {
+          ...mockSchemaWithOptions,
+          validation: {
+            regex: {
+              pattern: '(one|three|four)'
+            }
+          },
+          message: 'Oops'
+        }
+
+        let component
+
+        mount(
+          <FieldStringEdit
+            onError={onError}
+            ref={c => component = c}
+            schema={mockSchemaWithValidation}
+          />
+        )
+
+        component.validate(['one', 'two'])
+
+        expect(onError.mock.calls.length).to.eql(1)
+        expect(onError.mock.calls[0][0]).to.eql(mockSchemaWithValidation._id)
+        expect(onError.mock.calls[0][1]).to.eql('Oops')
+        expect(onError.mock.calls[0][2]).to.eql(['one', 'two'])
+      })
+    })
+
+    describe('when dealing with a single value', () => {
+      it('fires an error via the `onError` callback if the field is required and the value is empty', () => {
+        const onError = jest.fn()
+        const mockSchemaRequired = {
+          ...mockSchema,
+          required: true
+        }
+
+        let component
+
+        mount(
+          <FieldStringEdit
+            onError={onError}
+            ref={c => component = c}
+            schema={mockSchemaRequired}
+          />
+        )
+
+        component.validate('')
+
+        expect(onError.mock.calls.length).to.eql(1)
+        expect(onError.mock.calls[0][0]).to.eql(mockSchemaRequired._id)
+        expect(onError.mock.calls[0][1]).to.eql(true)
+        expect(onError.mock.calls[0][2]).to.eql('')
+      })
+
+      it('fires an error via the `onError` callback if the value does not conform to a `minLength` constraint', () => {
+        const onError = jest.fn()
+        const mockSchemaWithValidation = {
+          ...mockSchema,
+          validation: {
+            minLength: 15
+          }
+        }
+
+        let component
+
+        mount(
+          <FieldStringEdit
+            onError={onError}
+            ref={c => component = c}
+            schema={mockSchemaWithValidation}
+          />
+        )
+
+        component.validate('too short')
+
+        expect(onError.mock.calls.length).to.eql(1)
+        expect(onError.mock.calls[0][0]).to.eql(mockSchemaWithValidation._id)
+        expect(onError.mock.calls[0][1]).to.eql(true)
+        expect(onError.mock.calls[0][2]).to.eql('too short')
+      })
+
+      it('fires an error via the `onError` callback, with the message set in `message`, if the value does not conform to a `minLength` constraint', () => {
+        const onError = jest.fn()
+        const mockSchemaWithValidation = {
+          ...mockSchema,
+          validation: {
+            minLength: 15
+          },
+          message: 'Oops'
+        }
+
+        let component
+
+        mount(
+          <FieldStringEdit
+            onError={onError}
+            ref={c => component = c}
+            schema={mockSchemaWithValidation}
+          />
+        )
+
+        component.validate('too short')
+
+        expect(onError.mock.calls.length).to.eql(1)
+        expect(onError.mock.calls[0][0]).to.eql(mockSchemaWithValidation._id)
+        expect(onError.mock.calls[0][1]).to.eql('Oops')
+        expect(onError.mock.calls[0][2]).to.eql('too short')
+      })
+
+      it('fires an error via the `onError` callback if the value does not conform to a `maxLength` constraint', () => {
+        const onError = jest.fn()
+        const mockSchemaWithValidation = {
+          ...mockSchema,
+          validation: {
+            maxLength: 5
+          }
+        }
+
+        let component
+
+        mount(
+          <FieldStringEdit
+            onError={onError}
+            ref={c => component = c}
+            schema={mockSchemaWithValidation}
+          />
+        )
+
+        component.validate('too long')
+
+        expect(onError.mock.calls.length).to.eql(1)
+        expect(onError.mock.calls[0][0]).to.eql(mockSchemaWithValidation._id)
+        expect(onError.mock.calls[0][1]).to.eql(true)
+        expect(onError.mock.calls[0][2]).to.eql('too long')
+      })
+
+      it('fires an error via the `onError` callback, with the message set in `message`, if the value does not conform to a `maxLength` constraint', () => {
+        const onError = jest.fn()
+        const mockSchemaWithValidation = {
+          ...mockSchema,
+          validation: {
+            maxLength: 5
+          },
+          message: 'Oops'
+        }
+
+        let component
+
+        mount(
+          <FieldStringEdit
+            onError={onError}
+            ref={c => component = c}
+            schema={mockSchemaWithValidation}
+          />
+        )
+
+        component.validate('too long')
+
+        expect(onError.mock.calls.length).to.eql(1)
+        expect(onError.mock.calls[0][0]).to.eql(mockSchemaWithValidation._id)
+        expect(onError.mock.calls[0][1]).to.eql('Oops')
+        expect(onError.mock.calls[0][2]).to.eql('too long')
+      })
+
+      it('fires an error via the `onError` callback if the value does not conform to a `regex` constraint', () => {
+        const onError = jest.fn()
+        const mockSchemaWithValidation = {
+          ...mockSchema,
+          validation: {
+            regex: {
+              pattern: '(one|three|four)'
+            }
+          }
+        }
+
+        let component
+
+        mount(
+          <FieldStringEdit
+            onError={onError}
+            ref={c => component = c}
+            schema={mockSchemaWithValidation}
+          />
+        )
+
+        component.validate('two')
+
+        expect(onError.mock.calls.length).to.eql(1)
+        expect(onError.mock.calls[0][0]).to.eql(mockSchemaWithValidation._id)
+        expect(onError.mock.calls[0][1]).to.eql(true)
+        expect(onError.mock.calls[0][2]).to.eql('two')
+      })
+
+      it('fires an error via the `onError` callback, with the message set in `message`, if the value does not conform to a `regex` constraint', () => {
+        const onError = jest.fn()
+        const mockSchemaWithValidation = {
+          ...mockSchema,
+          validation: {
+            regex: {
+              pattern: '(one|three|four)'
+            }
+          },
+          message: 'Oops'
+        }
+
+        let component
+
+        mount(
+          <FieldStringEdit
+            onError={onError}
+            ref={c => component = c}
+            schema={mockSchemaWithValidation}
+          />
+        )
+
+        component.validate('two')
+
+        expect(onError.mock.calls.length).to.eql(1)
+        expect(onError.mock.calls[0][0]).to.eql(mockSchemaWithValidation._id)
+        expect(onError.mock.calls[0][1]).to.eql('Oops')
+        expect(onError.mock.calls[0][2]).to.eql('two')
       })
     })
   })

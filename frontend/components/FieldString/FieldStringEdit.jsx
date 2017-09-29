@@ -299,11 +299,17 @@ export default class FieldStringEdit extends Component {
       // in the array as an individual string to check for other validation
       // parameters.
       if (!hasValidationErrors) {
-        const individualValidationErrors = value.filter(valueString => {
+        const individualValidationErrors = value.map(valueString => {
           return this.findValidationErrorsInValue(valueString)
-        })
+        }).filter(Boolean)
 
-        hasValidationErrors = individualValidationErrors[0] || false
+        if (individualValidationErrors.length > 0) {
+          const errorWithMessage = individualValidationErrors.find(error => {
+            return typeof error === 'string'
+          })
+
+          hasValidationErrors = errorWithMessage || true
+        }
       }
     } else {
       const trimmedValue = typeof value === 'string' ? value.trim() : ''
