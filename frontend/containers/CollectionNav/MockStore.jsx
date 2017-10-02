@@ -24,10 +24,8 @@ export default class MockStore extends Component {
       () => this.props.state :
       enableBatching(reducer)
     )
+    const history = syncRouteWithStore(browserHistory, store)
 
-    const history = this.props.history ?
-      this.props.history : 
-      syncRouteWithStore(browserHistory, store)
     return (
       <Provider store={store}>
         {this.props.children}
@@ -35,5 +33,3 @@ export default class MockStore extends Component {
     )
   }
 }
-
-// {cloneElement(this.props.children, {history})} // Works, but coverage doesn't accept this

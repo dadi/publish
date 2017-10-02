@@ -1,23 +1,51 @@
 import {h, options, render} from 'preact'
+import {Router, route} from 'preact-router-regex'
 import {expect} from 'chai'
 import {render as renderToString} from 'preact-render-to-string'
 import htmlLooksLike from 'html-looks-like'
 
 import ErrorView from 'views/ErrorView/ErrorView'
+import HomeView from 'views/HomeView/HomeView'
 import App from './App'
 import MockStore from './MockStore'
 
 // DOM setup
-let $, mount, root, scratch
+let $, mount, root, scratch, base
 
 options.debounceRendering = f => f()
 
 let defaultState
 
 const mockPaths = {
-  create: [],
-  edit: [],
-  list: []
+  create: [
+    ':collection[^[a-z-]]/new/:section?',
+    ':group[^[a-z-]]/:collection[^[a-z-]]/new/:section?'
+  ],
+  edit: [
+    ':collection[^[a-z-]]/:documentId[^[a-fA-F0-9]{24}]/:section?',
+    ':group[^[a-z-]]/:collection[^[a-z-]]/:documentId[^[a-fA-F0-9]{24}]/:section?'
+  ],
+  list: [
+    ':collection[^[a-z-]]/:page?[^\d+$]',
+    ':group[^[a-z-]]/:collection[^[a-z-]]/:page?[^\d+$]'
+  ]
+}
+
+Object.defineProperty(window.location, "pathname", {
+  writable: true,
+  value: '/'
+})
+
+const mockHistory =  {
+  action: "POP",
+  locationBeforeTransitions: {
+    pathname: "/",
+    search: "",
+    hash: "",
+    state: undefined
+  },
+  params: {},
+  room: null 
 }
 
 const getDefaultState = () => {
@@ -32,7 +60,8 @@ const getDefaultState = () => {
       config: null,
       networkStatus: 'NETWORK_OK',
       notification: null,
-      status: 'STATUS_IDLE' },
+      status: 'STATUS_IDLE' 
+    },
     document: {
       fieldsNotPersistedInLocalStorage: [],
       loadedFromLocalStorage: false,
@@ -72,10 +101,14 @@ beforeAll(() => {
   $ = sel => scratch.querySelectorAll(sel)
   mount = jsx => root = render(jsx, scratch, root)
   scratch = document.createElement('div')
+  // base = document.createElement('base')
+  // base.href = 'http://localhost/'
+  // base.setAttribute('href', '/')
 })
 
 beforeEach(() => {
   document.body.appendChild(scratch)
+  // document.body.appendChild(base)
   defaultState = getDefaultState() 
 })
 
@@ -129,25 +162,48 @@ describe('App', () => {
     htmlLooksLike(component, error)
   })
 
-  it('renders an error view if route does not match', () => {
+  // it('renders an error view if route does not match', () => {
+  //   defaultState.api.paths = mockPaths
+  //   defaultState.api.status = 'STATUS_LOADED'
+  //   const component = renderToString(
+  //     <MockStore state={defaultState}>
+  //       <App />
+  //     </MockStore>
+  //   )
+
+  //   const error = renderToString(
+  //     <MockStore>
+  //       <ErrorView
+  //         type={'ERROR_ROUTE_NOT_FOUND'}
+  //       >
+  //         {'{{ ... }}'}
+  //       </ErrorView>
+  //     </MockStore>
+  //   )
+
+  //   htmlLooksLike(component, error)
+  // })
+
+  it('renders an instance of `HomeView` by default', () => {
     defaultState.api.paths = mockPaths
     defaultState.api.status = 'STATUS_LOADED'
+    defaultState.router = mockHistory
+
     const component = renderToString(
-      <MockStore state={defaultState}>
+      <MockStore state={defaultState} history={'foo'}>
         <App />
       </MockStore>
     )
 
-    const error = renderToString(
+    const homeview = renderToString(
       <MockStore>
-        <ErrorView
-          type={'ERROR_ROUTE_NOT_FOUND'}
+        <HomeView
         >
           {'{{ ... }}'}
-        </ErrorView>
+        </HomeView>
       </MockStore>
     )
 
-    htmlLooksLike(component, error)
+    htmlLooksLike(component, homeview)
   })
 })
