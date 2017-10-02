@@ -7,6 +7,8 @@ import htmlLooksLike from 'html-looks-like'
 import CollectionNav from './CollectionNav'
 import MockStore from './MockStore'
 
+import Nav from 'components/Nav/Nav'
+
 // DOM setup
 let $, mount, root, scratch
 
@@ -18,6 +20,28 @@ Object.defineProperty(window.location, "pathname", {
   writable: true,
   value: '/'
 })
+
+const mockGroups = [{id: 'articles', label: 'Articles', href: '/articles'}]
+
+const mockApi = {
+  apis: [
+    {
+      database: 'test',
+      name: 'Publish Test API',
+      port: 80,
+      publishId: 'foo',
+      version: '1.0',
+      collections: [
+        {
+          database: 'foo',
+          name: "Articles",
+          slug: 'articles',
+          version: '1.0'
+        }
+      ]
+    }
+  ]
+}
 
 const getDefaultState = () => {
   return { 
@@ -33,9 +57,14 @@ const getDefaultState = () => {
       notification: null,
       status: 'STATUS_IDLE' 
     },
-    router:{
-      action: null,
-      locationBeforeTransitions: null,
+    router: {
+      action: "POP",
+      locationBeforeTransitions: {
+        pathname: "/",
+        search: "",
+        hash: "",
+        state: undefined
+      },
       params: {},
       room: null 
     }
@@ -68,5 +97,36 @@ describe('CollectionNav', () => {
     )
 
     expect(component).to.equal('')
+  })
+
+  it('generates `groups` prop from api state collections', () => {
+    let component
+
+    defaultState.api = mockApi
+
+    mount(
+      <MockStore state={defaultState}>
+        <CollectionNav 
+          ref={c => component = c}
+        />
+      </MockStore>
+    )
+
+    component.forceUpdate()
+
+    // Mock Nav for comparison
+    // const nav = renderToString(
+    //   <MockStore>
+    //     <Nav
+    //       currentRoute={'/'}
+    //       items={mockGroups}
+    //       mobile={false}
+    //     >
+    //       {'{{ ... }}'}
+    //     </Nav>
+    //   </MockStore>
+    // )
+
+    expect(component._component.groups).to.deep.equal(mockGroups)
   })
 })

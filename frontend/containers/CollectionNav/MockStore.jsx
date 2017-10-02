@@ -14,7 +14,7 @@ import syncRouteWithStore from 'middleware/router'
 
 import * as reducers from 'reducers/'
 
-const browserHistory = createHistory()
+// const browserHistory = createHistory()
 const reducer = combineReducers(reducers)
 
 export default class MockStore extends Component {
@@ -24,7 +24,7 @@ export default class MockStore extends Component {
       () => this.props.state :
       enableBatching(reducer)
     )
-    const history = syncRouteWithStore(browserHistory, store)
+    // const history = syncRouteWithStore(browserHistory, store)
 
     return (
       <Provider store={store}>
