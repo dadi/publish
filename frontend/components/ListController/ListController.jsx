@@ -15,41 +15,23 @@ export default class ListController extends Component {
     /**
      * The list of controls to be rendered on the right-hand side of the bar.
      */
-    children: proptypes.node,
-
-    /**
-     * The collection being affected by the list controller.
-     */
-    collection: proptypes.object,
-
-    /**
-     * Whether to render a search bar.
-     */
-    search: proptypes.bool
+    children: proptypes.node
   }
 
   render() {
-    const {children, collection, search} = this.props
+    const {children} = this.props
+
+    if (!children.length) return null
 
     return (
       <div class={styles.container}>
-        <div>
-          {search &&
-            <DocumentSearch
-              className={styles.search}
-              collection={collection}
-            />
-          }
-        </div>
-        <div>
-          {children.map(control => {
-            return (
-              <div class={styles.control}>
-                {control}
-              </div>
-            )
-          })}
-        </div>
+        {children.map(control => {
+          return (
+            <div class={styles.control}>
+              {control}
+            </div>
+          )
+        })}
       </div>
     )
   }
