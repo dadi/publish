@@ -40,7 +40,7 @@ class DocumentEdit extends Component {
     /**
      * The name of the collection currently being listed.
      */
-    collection: proptypes.string,
+    collection: proptypes.string.isRequired,
 
     /**
      * The ID of the document being edited.
@@ -62,7 +62,7 @@ class DocumentEdit extends Component {
     * A callback to be used to obtain the sibling document routes (edit, create and list), as
     * determined by the view.
     */
-    onGetRoutes: proptypes.func,
+    onGetRoutes: proptypes.func.isRequired,
 
     /**
     * A callback to be fired if the container wants to attempt changing the
@@ -97,13 +97,13 @@ class DocumentEdit extends Component {
       collection,
       documentId,
       group,
-      onBuildBaseUrl,
-      onGetRoutes,
       onPageTitle,
-      referencedField,
       section,
       state
     } = this.props
+
+    if (!this.canRender()) return false
+
     const currentApi = getApiForUrlParams(state.api.apis, {
       collection,
       group
@@ -231,9 +231,11 @@ class DocumentEdit extends Component {
       documentId,
       group,
       onGetRoutes,
-      referencedField,
       state
     } = this.props
+
+    if (!this.canRender()) return null
+
     const currentApi = getApiForUrlParams(state.api.apis, {
       collection,
       group
@@ -268,14 +270,14 @@ class DocumentEdit extends Component {
       collection,
       documentId,
       group,
-      onBuildBaseUrl,
-      onGetRoutes,
       referencedField,
       section,
       state
     } = this.props
     const document = state.document
     const status = document.remoteStatus
+
+    if (!this.canRender()) return null
 
     if (status === Constants.STATUS_NOT_FOUND) {
       return (
@@ -382,7 +384,6 @@ class DocumentEdit extends Component {
     const {
       collection,
       onBuildBaseUrl,
-      onGetRoutes,
       state
     } = this.props
     const sectionUrlBase = onBuildBaseUrl()
@@ -410,7 +411,6 @@ class DocumentEdit extends Component {
       actions,
       collection,
       documentId,
-      group,
       state
     } = this.props
 
@@ -487,7 +487,6 @@ class DocumentEdit extends Component {
     const {
       actions,
       collection,
-      documentId,
       group
     } = this.props
 
@@ -570,6 +569,19 @@ class DocumentEdit extends Component {
         />
       </div>
     )
+  }
+
+  canRender() {
+    const {
+      collection,
+      onGetRoutes
+    } = this.props
+
+    const isValid = 
+      (typeof collection === 'string') &&
+      (typeof onGetRoutes === 'function')
+    
+    return isValid
   }
 }
 

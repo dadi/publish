@@ -33,7 +33,7 @@ const mockApi = {
       version: '1.0',
       collections: [
         {
-          database: 'foo',
+          database: 'test',
           name: "Articles",
           slug: 'articles',
           version: '1.0'
