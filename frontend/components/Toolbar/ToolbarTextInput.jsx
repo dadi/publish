@@ -34,8 +34,7 @@ export default class ToolbarTextInput extends Component {
   render() {
     const {className, onChange, placeholder} = this.props
     const inputStyle = new Style(styles, 'input')
-
-    inputStyle.addResolved(className)
+      .addResolved(className)
 
     return (
       <TextInput

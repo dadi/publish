@@ -1,7 +1,10 @@
 import {h, options, render} from 'preact'
 import {expect} from 'chai'
 
-import Toolbar from './Toolbar'
+import ToolbarTextInput from './ToolbarTextInput'
+
+import TextInput from 'components/TextInput/TextInput'
+
 // DOM setup
 let $, mount, root, scratch
 
@@ -25,52 +28,48 @@ afterEach(() => {
 describe('Toolbar component', () => {
   it('has propTypes', () => {
     const component = (
-      <Toolbar />
+      <ToolbarTextInput />
     )
 
     expect(component.nodeName.propTypes).to.exist
     expect(Object.keys(component.nodeName.propTypes)).to.have.length.above(0)
   })
 
-  it('returns `null` if no `children` prop is empty', () => {
+  it('renders a `<TextInput>` component', () => {
     const component = (
-      <Toolbar />
-    )
-
-    mount(component)
-
-    expect(component).to.equal(null)
-  })
-
-  it('renders a `<footer>` node containing children', () => {
-    const component = (
-      <Toolbar>
-        <div>foo</div>
-      </Toolbar>
+      <ToolbarTextInput />
     )
 
     const template = (
-      <footer class="container container-padded">
-        (...)
-      </footer>
+      <input class='input input'/>
     )
 
     expect(component).to.matchTemplate(template)
   })
 
-  it('does not apply padded class when `padded` prop is falsy', () => {
+  it('applies a placeholder if `placeholder` prop is defined', () => {
     const component = (
-      <Toolbar
-        padded={false}
-      >
-        <div>foo</div>
-      </Toolbar>
+      <ToolbarTextInput
+        placeholder={'foo'}
+      />
     )
 
     const template = (
-      <footer class="container">
-        (...)
-      </footer>
+      <input class='input input' placeholder='foo'/>
+    )
+
+    expect(component).to.matchTemplate(template)
+  })
+
+  it('accepts extra classnames when `className` prop exists', () => {
+    const component = (
+      <ToolbarTextInput
+        className={'container-padded'}
+      />
+    )
+
+    const template = (
+      <input class='input input container-padded'/>
     )
 
     expect(component).to.matchTemplate(template)

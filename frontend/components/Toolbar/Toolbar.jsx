@@ -29,14 +29,15 @@ export default class Toolbar extends Component {
   }
 
   render() {
-    const {padded} = this.props
+    const {children, padded} = this.props
     const toolbarStyle = new Style(styles, 'container')
+      .addIf('container-padded', padded)
 
-    toolbarStyle.addIf('container-padded', padded)
+    if (!children.length) return null
 
     return (
       <footer class={toolbarStyle.getClasses()}>
-        {this.props.children}
+        {children}
       </footer>
     )
   }
