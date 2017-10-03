@@ -288,6 +288,7 @@ class DocumentEdit extends Component {
       )
     }
 
+    // console.log(status, this.currentCollection, this.hasFetched)
     if (status === Constants.STATUS_IDLE && !this.currentCollection && this.hasFetched) {
       return (
         <ErrorMessage type={Constants.ERROR_ROUTE_NOT_FOUND} />

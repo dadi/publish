@@ -21,6 +21,10 @@ Object.defineProperty(window.location, "pathname", {
   value: '/'
 })
 
+const mockLocalDocument = {
+
+}
+
 const mockPaths = {
   create: [
     ':collection[^[a-z-]]/new/:section?',
@@ -154,36 +158,128 @@ describe('DocumentEdit', () => {
     expect(component).to.equal('')
   })
 
-  it('returns an error if document is not found', () => {
-    defaultState.document.remoteStatus = 'STATUS_NOT_FOUND'
-    defaultState.api.paths = mockPaths
-    defaultState.api = mockApi
+  describe('when editing a document', () => {
+    it('renders an error message if document is not found', () => {
+      defaultState.document.remoteStatus = 'STATUS_NOT_FOUND'
+      defaultState.api.paths = mockPaths
+      defaultState.api = mockApi
 
-    const mockOnGetRoutes = jest.fn(() => {
-      return {
-        getCurrentCollection: () => { 
-          return 'articles'
+      const mockOnGetRoutes = jest.fn(() => {
+        return {
+          getCurrentCollection: () => { 
+            return 'articles'
+          }
         }
-      }
+      })
+
+      const component = renderToString(
+        <MockStore state={defaultState}>
+            <DocumentEdit 
+              collection={'articles'}
+              onGetRoutes={mockOnGetRoutes}
+            />
+        </MockStore>
+      )
+
+      const error = renderToString(
+        <ErrorMessage
+          data={{href: '/articles'}}
+          type={'ERROR_DOCUMENT_NOT_FOUND'}
+        />
+      )
+
+      expect(component).to.equal(error)
     })
 
+    it('returns null if document is still loading', () => {
+      defaultState.api.paths = mockPaths
+      defaultState.api = mockApi
+      defaultState.document.remoteStatus = 'STATUS_LOADING'
 
-    const component = renderToString(
-      <MockStore state={defaultState}>
-          <DocumentEdit 
-            collection={'articles'}
-            onGetRoutes={mockOnGetRoutes}
-          />
-      </MockStore>
-    )
+      const mockOnGetRoutes = jest.fn(() => {
+        return {
+          getCurrentCollection: () => { 
+            return false
+          }
+        }
+      })
 
-    const error = renderToString(
-      <ErrorMessage
-        data={{href: '/articles'}}
-        type={'ERROR_DOCUMENT_NOT_FOUND'}
-      />
-    )
+      const component = renderToString(
+        <MockStore state={defaultState}>
+            <DocumentEdit 
+              collection={'articles'}
+              onGetRoutes={mockOnGetRoutes}
+            />
+        </MockStore>
+      )
 
-    expect(component).to.equal(error)
+
+      expect(component).to.equal('')
+    })
+
+    it('returns null if document local state is falsy', () => {
+      defaultState.api.paths = mockPaths
+      defaultState.api = mockApi
+      defaultState.document.remoteStatus = 'STATUS_IDLE'
+
+      const mockOnGetRoutes = jest.fn(() => {
+        return {
+          getCurrentCollection: () => { 
+            return false
+          }
+        }
+      })
+
+      const component = renderToString(
+        <MockStore state={defaultState}>
+            <DocumentEdit 
+              collection={'articles'}
+              onGetRoutes={mockOnGetRoutes}
+            />
+        </MockStore>
+      )
+
+      expect(component).to.equal('')
+    })
+  })
+
+  describe('when creating a new document', () => {
+    it('renders a container ', () => {
+      defaultState.api.paths = mockPaths
+      defaultState.api = mockApi
+      defaultState.document.remoteStatus = 'STATUS_IDLE'
+      defaultState.document.local = mockLocalDocument
+
+      const mockOnGetRoutes = jest.fn(() => {
+        return {
+          getCurrentCollection: () => { 
+            return {
+              name: 'articles',
+              fields: {
+                foo: {
+                  type: 'String'
+                }
+              }
+            }
+          }
+        }
+      })
+
+      const component = (
+        <MockStore state={defaultState}>
+            <DocumentEdit 
+              collection={'articles'}
+              onGetRoutes={mockOnGetRoutes}
+            />
+        </MockStore>
+      )
+
+
+      const container = (
+        <div class="container">(...)</div>
+      )
+
+      expect(component).to.matchTemplate(container)
+    })
   })
 })
