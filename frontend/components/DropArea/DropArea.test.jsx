@@ -72,8 +72,7 @@ describe('DropArea component', () => {
 
     $('div.droparea')[0].dispatchEvent(drop)
 
-    expect(onDrop.mock.calls.length).to.equal(1)
-    expect(onDrop.mock.calls[0][0]).to.deep.equal([])
+    expect(onDrop).to.have.been.called
   })
 
   it('does not trigger `onDrop` callback after when `onDrop` event is fired but `onDrop` prop is invalid', () => {

@@ -66,7 +66,7 @@ export default class FileUpload extends Component {
       dragging: false
     })
     if (typeof onDrop === 'function') {
-      onDrop(event.dataTransfer ? event.dataTransfer.files : [])
+      onDrop(event.dataTransfer.files)
     }
 
     event.preventDefault()
