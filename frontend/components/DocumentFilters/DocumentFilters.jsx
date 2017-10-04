@@ -172,7 +172,6 @@ export default class DocumentFilters extends Component {
     newFilters.splice(index, 1)
 
     this.setState({filters: newFilters})
-
     this.updateUrl(!newFilters.length)
   }
 
@@ -182,11 +181,12 @@ export default class DocumentFilters extends Component {
     const newFilters = [...filters]
 
     Object.assign(newFilters[index], filter)
+
     this.setState({filters: newFilters})
 
     // {!} To-do: Test filter value against field type validation methods
     // Which should be built into components.
-    if (filter.value) {
+    if (filter.value !== undefined) {
       this.setState({dirty: true})
     }
   }
@@ -195,14 +195,7 @@ export default class DocumentFilters extends Component {
     // Remove filters with null values
     const {filters} = this.state
     const {updateUrlParams} = this.props
-
-    let validFilters = filters.filter(entry => {
-      let isValid = Object.keys(entry)
-        .filter(key => !entry[key])
-
-      return isValid.length < 1
-    })
-    const constructedFilters = this.constructFilters(validFilters)
+    const constructedFilters = this.constructFilters(filters)
     const filterObj = arrayToObject(constructedFilters, 'field')
 
     if (

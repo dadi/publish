@@ -101,9 +101,11 @@ export default class FieldNumberFilter extends Component {
 
   handleChange(elementId, event) {
     const {onUpdate, index} = this.props
-    if (!event.target.value.length) return
+    let value = isNaN(event.target.value) ? 0 : Number(event.target.value)
 
-    const value = isNaN(event.target.value) ? 0 : Number(event.target.value)
+    if (!event.target.value.length) {
+      value = null
+    }
 
     onUpdate({
       [elementId]: value
