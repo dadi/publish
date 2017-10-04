@@ -35,8 +35,8 @@
     "Publish",
     "Publishing"
   ],
-  "author": "DADI",
-  "license": "MIT",
+  "author": "DADI <team@dadi.tech>",
+  "license": "SEE LICENSE IN GPL.md",
   "bugs": {
     "url": "https://github.com/dadi/publish/issues"
   },
@@ -44,7 +44,7 @@
     "node": ">=4.7",
     "npm": ">=3.0"
   },
-  "homepage": "https://github.com/dadi/publish#readme",
+  "homepage": "https://github.com/dadi/publish",
   "dependencies": {
     "@dadi/api-wrapper": "^1.4.0",
     "@dadi/api-wrapper-core": "^1.6.0",
