@@ -187,7 +187,6 @@ export default class DocumentFilters extends Component {
   }
 
   updateUrl(clear) {
-    // Remove filters with null values
     const {filters} = this.state
     const {updateUrlParams} = this.props
     const constructedFilters = this.constructFilters(filters)
