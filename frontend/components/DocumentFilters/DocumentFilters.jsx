@@ -149,6 +149,7 @@ export default class DocumentFilters extends Component {
   deconstructFilters(filter) {
     // If there is no filter type and the field value is a string, add a type
     if (typeof filter.value === 'string') {
+
       return Object.assign(filter, {type: '$eq'})
     } else {
       const type = Object.keys(filter.value)[0]
@@ -172,7 +173,6 @@ export default class DocumentFilters extends Component {
     newFilters.splice(index, 1)
 
     this.setState({filters: newFilters})
-
     this.updateUrl(!newFilters.length)
   }
 
@@ -182,27 +182,14 @@ export default class DocumentFilters extends Component {
     const newFilters = [...filters]
 
     Object.assign(newFilters[index], filter)
-    this.setState({filters: newFilters})
 
-    // {!} To-do: Test filter value against field type validation methods
-    // Which should be built into components.
-    if (filter.value) {
-      this.setState({dirty: true})
-    }
+    this.setState({filters: newFilters, dirty: true})
   }
 
   updateUrl(clear) {
-    // Remove filters with null values
     const {filters} = this.state
     const {updateUrlParams} = this.props
-
-    let validFilters = filters.filter(entry => {
-      let isValid = Object.keys(entry)
-        .filter(key => !entry[key])
-
-      return isValid.length < 1
-    })
-    const constructedFilters = this.constructFilters(validFilters)
+    const constructedFilters = this.constructFilters(filters)
     const filterObj = arrayToObject(constructedFilters, 'field')
 
     if (

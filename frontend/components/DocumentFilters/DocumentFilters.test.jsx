@@ -56,6 +56,12 @@ const mockIncompleteFilters = {
   }
 }
 
+const mockInvalidFilters = {
+  foo: {
+    '$eq': undefined
+  }
+}
+
 const mockValidFilters = {
   foo: {
     '$eq': 'bar'
@@ -240,39 +246,6 @@ describe('DocumentFilters component', () => {
     expect(component.state.dirty).to.equal(true)
   })
 
-  it('does not change `dirty` state value from false to true if input value changes but filter value is undefined', () => {
-    let component
-
-    mount(
-      <DocumentFilters
-        collection={mockCollection}
-        filters={mockIncompleteFilters}
-        ref={c => component = c}
-      />
-    )
-    $('input.control.control-value')[0].focus()
-
-    const keyup = new KeyboardEvent("keyup", {
-        type: 'keyup',
-        altKey: false,
-        bubbles: true,
-        cancelBubble: false,
-        cancelable: true,
-        charCode: 0,
-        code: 'KeyS',
-        composed: true,
-        ctrlKey: false,
-        key : "s",
-        isTrusted: true,
-        keyCode : 83
-    })
-    expect(component.state.dirty).to.equal(false)
-
-    // Dispatch fake keystroke in value field
-    $('input.control.control-value')[0].dispatchEvent(keyup)
-
-    expect(component.state.dirty).to.equal(false)
-  })
 
   it('does not trigger a url update on filter removal if `updateUrlParams` prop exists but is invalid', () => {
     const mockUpdateUrlParams = jest.fn()

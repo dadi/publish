@@ -96,7 +96,7 @@ export default class FieldStringFilter extends Component {
 
   handleChange(elementId, event) {
     const {onUpdate, index} = this.props
-    
+
     onUpdate({
       [elementId]: event.target.value
     }, index)
