@@ -86,7 +86,7 @@ export default class ErrorMessage extends Component {
               href={window.location.pathname}
             >Try again</Button>
           ),
-          message: data.detail,
+          message: data.detail || 'The API doesn\'t seem to be responding.',
           title: 'API connection failure'
         }
 
