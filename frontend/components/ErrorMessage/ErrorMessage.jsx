@@ -78,10 +78,22 @@ export default class ErrorMessage extends Component {
           title: 'API failure'
         }
 
+      case Constants.API_CONNECTION_ERROR:
+        return {
+          body: (
+            <Button
+              accent="system"
+              href={window.location.pathname}
+            >Try again</Button>
+          ),
+          message: data.detail,
+          title: 'API connection failure'
+        }
+
       default:
         return {
-          message: 'Something went wrong, sorry.',
-          title: 'Oops!'
+          message: data.message || 'Something went wrong, sorry.',
+          title: data.title || 'Oops!'
         }
     }
   }

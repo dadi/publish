@@ -112,6 +112,12 @@ class App extends Component {
   render() {
     const {history, state} = this.props
 
+    if (window.__apiErrors__) {
+      return (
+        <ErrorView type={Constants.API_CONNECTION_ERROR} data={window.__apiErrors__} />
+      )
+    }
+
     if (
       !state.api.paths ||
       (
