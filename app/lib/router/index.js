@@ -128,6 +128,14 @@ Router.prototype.webRoutes = function () {
           return next()
         }
       })
+      .catch(e => {
+        entryPointPage = entryPointPage.replace(
+          '/*@@apiErrors@@*/',
+          `window.__apiErrors__ = ${JSON.stringify(e)};`
+        )
+        res.end(entryPointPage)
+        return next()
+      })
   })
 }
 

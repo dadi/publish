@@ -93,6 +93,57 @@ describe('ErrorMessage component', () => {
     )
   })
 
+  it('renders an error message for API_CONNECTION_ERROR with a link for the given URL', () => {
+    Object.defineProperty(window.location, "pathname", {
+      writable: true,
+      value: '/content/articles'
+    })
+
+    const output = (
+      <ErrorMessage
+        type={Constants.API_CONNECTION_ERROR}
+      />
+    )
+
+    expect(output).to.equal(
+      <HeroMessage
+        title="API connection failure"
+        subtitle="The API doesn't seem to be responding."
+      >
+        <Button
+          accent="system"
+          href="/content/articles"
+        >Try again</Button>
+      </HeroMessage>
+    )
+  })
+
+  it('renders an error message for API_CONNECTION_ERROR and a custom message if data.details is defined', () => {
+    Object.defineProperty(window.location, "pathname", {
+      writable: true,
+      value: '/content/articles'
+    })
+
+    const output = (
+      <ErrorMessage
+        data={{detail: 'custom message'}}
+        type={Constants.API_CONNECTION_ERROR}
+      />
+    )
+
+    expect(output).to.equal(
+      <HeroMessage
+        title="API connection failure"
+        subtitle="custom message"
+      >
+        <Button
+          accent="system"
+          href="/content/articles"
+        >Try again</Button>
+      </HeroMessage>
+    )
+  })
+
   it('renders a generic error message when given an invalid or no error code', () => {
     const output = (
       <ErrorMessage />
@@ -101,6 +152,36 @@ describe('ErrorMessage component', () => {
     expect(output).to.equal(
       <HeroMessage
         title="Oops!"
+        subtitle="Something went wrong, sorry."
+      />
+    )
+  })
+
+  it('renders a custom message if data.message is defined', () => {
+    const output = (
+      <ErrorMessage
+        data={{message: 'Custom message'}}
+       />
+    )
+
+    expect(output).to.equal(
+      <HeroMessage
+        title="Oops!"
+        subtitle="Custom message"
+      />
+    )
+  })
+
+  it('renders a custom title if data.title is defined', () => {
+    const output = (
+      <ErrorMessage
+        data={{title: 'Custom title'}}
+       />
+    )
+
+    expect(output).to.equal(
+      <HeroMessage
+        title="Custom title"
         subtitle="Something went wrong, sorry."
       />
     )

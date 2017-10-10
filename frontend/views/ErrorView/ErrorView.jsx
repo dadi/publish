@@ -10,7 +10,7 @@ import Page from 'components/Page/Page'
 
 class ErrorView extends Component {
   render() {
-    const {state, type} = this.props
+    const {data, state, type} = this.props
     const hasConfig = state.app && state.app.config
 
     // We only treat this as an actual error, and therefore display the error
@@ -21,8 +21,8 @@ class ErrorView extends Component {
         <Header />
 
         <Main>
-          {hasConfig &&
-            <ErrorMessage type={type}/>
+          {(hasConfig || data) &&
+            <ErrorMessage type={type} data={data} />
           }
         </Main>
       </Page>
