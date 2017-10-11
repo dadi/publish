@@ -2,7 +2,7 @@ import 'fetch'
 
 import * as Constants from 'lib/constants'
 import * as Types from 'actions/actionTypes'
-import * as documentActions from './documentActions'
+import * as documentActions from 'actions/documentActions'
 
 import {getApiForUrlParams, getCollectionForUrlParams} from 'lib/collection-lookup'
 import apiBridgeClient from 'lib/api-bridge-client'

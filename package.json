@@ -134,7 +134,7 @@
     "url-loader": "^0.5.7",
     "validate-commit-msg": "^2.11.1",
     "validator": "^7.0.0",
-    "webpack": "^2.3.3",
+    "webpack": "^3.6.0",
     "ws": "2.0.0"
   },
   "standard": {
