@@ -18,7 +18,6 @@ Collection.prototype.getCollections = function () {
     config
       .get('apis')
       .map(api => {
-
         return new DadiAPI(Object.assign(api, {uri: api.host}))
         .getCollections()
         .then(res => this.getSchemas(api, res.collections))
@@ -30,7 +29,6 @@ Collection.prototype.getSchemas = function (api, collections) {
   return Promise.all(
     collections
       .map(collection => {
-
         return new DadiAPI(Object.assign(api, {uri: api.host}))
           .useDatabase(collection.database)
           .in(collection.slug)
