@@ -89,7 +89,7 @@ describe('Session', () => {
         })
     })
 
-    it(`should return null when user is not found`, (done) => {
+    it(`should return ${Constants.WRONG_CREDENTIALS} when user is not found`, (done) => {
 
       DadiAPI.APIWrapper.prototype.find = jest.fn().mockImplementation(() => {
         return new Promise(resolve => {
@@ -99,7 +99,7 @@ describe('Session', () => {
 
       session.authorise('foo@somedomain.com', 'mockPassword', next)
         .then(resp => {
-          expect(next).toBeCalledWith(null)
+          expect(next).toBeCalledWith(Constants.WRONG_CREDENTIALS)
           done()
         })
     })
