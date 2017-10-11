@@ -23,7 +23,7 @@ class LazyLoader extends Component {
   }
 
   static defaultProps = {
-    styles: "",
+    styles: '',
     idleOnly: true
   }
 
@@ -41,7 +41,7 @@ class LazyLoader extends Component {
       src
     } = this.props
     const {status} = this.state
-    const canLoad = this.evalLoadingConditions()
+    const canLoad = this.checkAppStatus()
     const canDisplay = Object.is(status, Constants.STATUS_LOADED)
     const loadFailed = Object.is(status, Constants.STATUS_FAILED)
 
@@ -50,12 +50,16 @@ class LazyLoader extends Component {
     return (
       <img 
         src={src}
-        style={!canDisplay && `display: none`}
+        style={!canDisplay && 'display: none'}
         class={styles}
         onLoad={this.handleImageLoaded.bind(this)}
         onError={this.handleImageError.bind(this)}
       />
     )
+  }
+
+  componentWillUnmount() {
+    this.setState({ status: Constants.STATUS_IDLE })
   }
 
   handleImageLoaded() {
@@ -67,13 +71,11 @@ class LazyLoader extends Component {
   }
   
 
-  evalLoadingConditions() {
+  checkAppStatus() {
     const {idleOnly, state} = this.props
 
     // If an idle status is required and not met, block loading
-    if (idleOnly && state.status !== 'STATUS_IDLE') return false
-
-    return true
+    return !idleOnly || Object.is(state.status, Constants.STATUS_IDLE)
   }
 }
 

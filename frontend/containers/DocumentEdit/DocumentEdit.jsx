@@ -262,6 +262,7 @@ class DocumentEdit extends Component {
     
     window.removeEventListener('beforeunload', this.userLeavingDocumentHandler)
 
+    this.handleUserLeavingDocument()
     actions.roomChange(null)
   }
 
