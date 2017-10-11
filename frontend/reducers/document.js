@@ -196,7 +196,7 @@ export default function document (state = initialState, action = {}) {
 
     // Document action: user leaving document
     case Types.USER_LEAVING_DOCUMENT:
-      return state
+      return initialState
 
     default:
       return state
