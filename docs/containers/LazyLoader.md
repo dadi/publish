@@ -19,5 +19,5 @@ Load only when app status is idle.
 Image style classes.
 
 - type: `string`
-- default value: `""`
+- default value: `''`
 

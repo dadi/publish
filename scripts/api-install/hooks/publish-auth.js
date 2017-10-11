@@ -31,11 +31,16 @@ module.exports = (obj, type, data) => {
     case 'afterGet':
       // If both email and password exist, treat this as a login.
       if (filter && filter[usernameField] && filter[passwordField]) {
-        return authenticate(filter[usernameField], filter[passwordField], data).then(user => {
-          return {
-            results: [user]
-          }
-        })
+        return authenticate(filter[usernameField], filter[passwordField], data)
+          .then(user => {
+            return {
+              results: [user]
+            }
+          })
+          .catch(e => {
+            console.log('SEND BACK', e)
+            return e
+          })
       } else {
         // Standard user lookup.
         return Object.assign(obj, {results: obj.results.map(doc => {
@@ -53,7 +58,7 @@ module.exports = (obj, type, data) => {
 
       return getUser(obj[data.options.usernameField], data).then(user => {
         if (user) {
-          return Promise.reject(ERROR_USER_EXISTS)
+          return Promise.reject(buildError(ERROR_USER_EXISTS))
         }
 
         return hash(obj[data.options.passwordField]).then(hashedPassword => {
@@ -61,7 +66,7 @@ module.exports = (obj, type, data) => {
 
           return obj
         }).catch(err => {
-          return Promise.reject(ERROR_API_FAILURE)
+          return Promise.reject(buildError(ERROR_API_FAILURE))
         })
       })
 
@@ -116,7 +121,7 @@ module.exports = (obj, type, data) => {
           }
         } catch (err) {
           console.log(err.stack)
-          throw ERROR_API_FAILURE
+          throw buildError(ERROR_API_FAILURE)
         }
       }
 
@@ -141,27 +146,41 @@ const authenticate = (email, password, data) => {
   let passwordField = data.options.passwordField
 
   if (!password) {
-    return Promise.reject(ERROR_WRONG_CREDENTIALS)
+    return Promise.reject(buildError(ERROR_WRONG_CREDENTIALS))
   }
 
   return getUser(email, data).then(user => {
     if (!user) {
-      return Promise.reject(ERROR_WRONG_CREDENTIALS)
+      return Promise.reject(buildError(ERROR_WRONG_CREDENTIALS))
     }
 
     // Comparing
     return compare(password, user[passwordField]).then(match => {
       if (match) {
         delete user[passwordField]
-
         return user
       }
-
-      return Promise.reject(ERROR_WRONG_CREDENTIALS)
+      return Promise.reject(buildError(ERROR_WRONG_CREDENTIALS))
     }).catch(err => {
-      return Promise.reject(ERROR_WRONG_CREDENTIALS)
+      return Promise.reject(buildError(ERROR_WRONG_CREDENTIALS))
     })
   })
+}
+
+/**
+ * Builds a custom error
+ *
+ * @param {string} code - The custom error code
+ * @param {string} message - The error message
+ *
+ * @returns {Error} - The custom error
+ */
+const buildError = (code, details) => {
+  let error = new Error(details)
+
+  error.code = code
+
+  return error
 }
 
 /**

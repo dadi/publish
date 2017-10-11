@@ -28,10 +28,10 @@ Session.prototype.authorise = function (email, password, next) {
     .whereFieldIsEqualTo('password', password)
     .find({extractResults: true})
     .then(users => {
-      if (users.length > 0) {
+      if (users && users.length > 0) {
         return next(null, users[0])
       } else {
-        return next(null)
+        return next(Constants.WRONG_CREDENTIALS)
       }
     }).catch(response => {
       if (response && response.error && Array.isArray(response.error) && (response.error[0].code === Constants.WRONG_CREDENTIALS)) {
