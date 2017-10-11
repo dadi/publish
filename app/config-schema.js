@@ -221,6 +221,11 @@ module.exports = {
         doc: 'Date Format',
         format: String,
         default: 'YYYY/MM/DD HH:mm'
+      },
+      short: {
+        doc: 'Date Format',
+        format: String,
+        default: 'YYYY/MM/DD'
       }
     }
   },

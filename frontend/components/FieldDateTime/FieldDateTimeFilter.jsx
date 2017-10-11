@@ -7,8 +7,8 @@ import DateTime from 'lib/datetime'
 import Style from 'lib/Style'
 import styles from './FieldDateTime.css'
 
-import DateTimePicker from 'components/DateTimePicker/DateTimePicker'
 import TextInput from 'components/TextInput/TextInput'
+import TextInputWithDatePicker from 'components/TextInputWithDatePicker/TextInputWithDatePicker'
 
 /**
  * Component for rendering API fields of type DateTime in a filter.
@@ -69,6 +69,7 @@ export default class FieldDateTimeFilter extends Component {
   render() {
     const {
       analyserStyles,
+      config,
       containerStyles,
       type,
       value,
@@ -92,8 +93,9 @@ export default class FieldDateTimeFilter extends Component {
             </option>
           ))}
         </select>
-        <TextInput
+        <TextInputWithDatePicker
           className={valueStyles}
+          format={config.formats.date.short}
           onChange={this.handleChange.bind(this, 'value')}
           onKeyUp={this.handleChange.bind(this, 'value')}
           placeholder="Search value"
@@ -104,13 +106,19 @@ export default class FieldDateTimeFilter extends Component {
     )
   }
 
-  handleChange(elementId, event) {
+  handleChange(elementId, data) {
     const {config, onUpdate, index} = this.props
-    const newDate = new DateTime(event.target.value, config.formats.date.long)
+
     let newValue = null
 
-    if (event.target.value.length > 0 && newDate.isValid()) {
-      newValue = newDate.getDate().toISOString()
+    if (elementId === 'value') {
+      const newDate = new DateTime(data, config.formats.date.short)
+
+      if (data.length > 0 && newDate.isValid()) {
+        newValue = newDate.getDate().toISOString()
+      }
+    } else {
+      newValue = data.target.value
     }
 
     onUpdate({
