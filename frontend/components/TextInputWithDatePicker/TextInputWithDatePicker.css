@@ -1,0 +1,10 @@
+.container {
+  position: relative;
+}
+
+.picker {
+  position: absolute;
+  left: 0;
+  top: 100%;
+  margin-top: 10px;
+}

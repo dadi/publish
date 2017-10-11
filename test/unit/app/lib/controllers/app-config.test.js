@@ -42,7 +42,8 @@ const expectedConfig = {
   formats:{
     availableInFrontend: true,
     date: {
-      long: 'YYYY/MM/DD HH:mm' 
+      long: 'YYYY/MM/DD HH:mm' ,
+      short: 'YYYY/MM/DD'
     }
   },
   ga: {
