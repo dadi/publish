@@ -160,11 +160,81 @@ describe('FieldStringEdit component', () => {
           value={mockSchemaWithOptions.default}
         >
           <option
+            value=""
+            class="dropdown-option"
+            disabled
+          >Please select {mockSchemaWithOptions.label}</option>
+
+          {mockSchemaWithOptions.publish.options.map(option => (
+            <option
+              class="dropdown-option"
+              value={option.value}
+            >{option.label}</option>
+          ))}
+        </select>
+      )
+    })
+
+    it('renders a default disabled `<option>` field schema `label` prop', () => {
+      const label = 'Foo Bar'
+      const mockSchemaWithLabel = Object.assign({}, mockSchemaWithOptions, {label})
+      const component = (
+        <FieldStringEdit
+          schema={mockSchemaWithLabel}
+        />
+      )
+
+      expect(component).to.contain(
+        <select
+          class="dropdown"
+          id="c-1"
+          inLabel={true}
+          multiple={false}
+          disabled={false}
+          value={mockSchemaWithLabel.default}
+        >
+          <option
+            value=""
+            class="dropdown-option"
+            disabled
+          >Please select {label}</option>
+
+          {mockSchemaWithLabel.publish.options.map(option => (
+            <option
+              class="dropdown-option"
+              value={option.value}
+            >{option.label}</option>
+          ))}
+        </select>
+      )
+    })
+
+    it('renders a default disabled `<option>` without label value if prop does not exist in field schema', () => {
+      const label = 'Foo Bar'
+      const mockSchemaWithLabel = Object.assign({}, mockSchemaWithOptions)
+      delete mockSchemaWithLabel.label
+      const component = (
+        <FieldStringEdit
+          schema={mockSchemaWithLabel}
+        />
+      )
+
+      expect(component).to.contain(
+        <select
+          class="dropdown"
+          id="c-1"
+          inLabel={true}
+          multiple={false}
+          disabled={false}
+          value={mockSchemaWithLabel.default}
+        >
+          <option
+            value=""
             class="dropdown-option"
             disabled
           >Please select</option>
 
-          {mockSchemaWithOptions.publish.options.map(option => (
+          {mockSchemaWithLabel.publish.options.map(option => (
             <option
               class="dropdown-option"
               value={option.value}
@@ -192,9 +262,10 @@ describe('FieldStringEdit component', () => {
           value="blog"
         >
           <option
+            value=""
             class="dropdown-option"
             disabled
-          >Please select</option>
+          >Please select {mockSchemaWithOptions.label}</option>
 
           {mockSchemaWithOptions.publish.options.map(option => (
             <option
@@ -264,9 +335,10 @@ describe('FieldStringEdit component', () => {
           value={mockSchemaWithOptions.default}
         >
           <option
+            value=""
             class="dropdown-option"
             disabled
-          >Please select</option>
+          >Please select {mockSchemaWithOptions.label}</option>
 
           {mockSchemaWithOptions.publish.options.map(option => (
             <option

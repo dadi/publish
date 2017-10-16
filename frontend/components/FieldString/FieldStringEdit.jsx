@@ -148,6 +148,7 @@ export default class FieldStringEdit extends Component {
     const publishBlock = schema.publish || {}
     const options = publishBlock.options
     const selectedValue = value || schema.default || null
+    const selectLabel = `Please select${schema.label ? ` ${schema.label}` : ''}`
     const multiple = publishBlock.multiple === true
     const readOnly = publishBlock.readonly === true
     const dropdownStyle = new Style(styles, 'dropdown')
@@ -158,7 +159,7 @@ export default class FieldStringEdit extends Component {
       <Label
         error={error}
         errorMessage={typeof error === 'string' ? error : null}
-        label={schema.label}
+        label={schema.label || schema._id}
         comment={schema.required && 'Required'}
       >
         <select
@@ -171,10 +172,11 @@ export default class FieldStringEdit extends Component {
         >
           {!multiple &&
             <option
+              value=""
               class={styles['dropdown-option']}
               disabled
               selected={selectedValue === null}
-            >Please select</option>
+            >{selectLabel}</option>
           }
 
           {options.map(option => {
