@@ -16,7 +16,7 @@ export default class Nav extends Component {
     /*
      * Current selected collection.
      */
-    currentCollection: proptypes.object.isRequired,
+    currentCollection: proptypes.object,
     /**
      * Grouped list of navigation elements to render.
      */
