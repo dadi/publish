@@ -6,7 +6,7 @@ The main navigation component.
 Props
 -----
 
-### `currentCollection` (required)
+### `currentCollection`
 
 - type: `object`
 
