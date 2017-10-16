@@ -22,6 +22,13 @@ export default class Checkbox extends Component {
     onChange: proptypes.func,
 
     /**
+     * Whether the field is required.
+     *
+     * **NOTE:** This prop is automatically passed down by `<Label/>`.       
+     */
+    readonly: proptypes.bool,
+
+    /**
      * The value of the checkbox, determining whether it's checked or not.
      */
     value: proptypes.bool
@@ -31,6 +38,7 @@ export default class Checkbox extends Component {
     const {
       id,
       onChange,
+      readonly,
       value
     } = this.props
 
@@ -38,6 +46,7 @@ export default class Checkbox extends Component {
       <input
         checked={value}
         class={styles.checkbox}
+        disabled={readonly}
         id={id}
         onChange={onChange}
         type="checkbox"
