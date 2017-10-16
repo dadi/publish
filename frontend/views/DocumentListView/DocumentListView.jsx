@@ -49,7 +49,10 @@ export default class DocumentListView extends Component {
             onBuildBaseUrl={this.handleBuildBaseUrl.bind(this)}
             documentId={documentId}
             referencedField={referencedField}
-          /> : <Header />
+          /> : 
+          <Header
+            onGetRoutes={this.getRoutes.bind(this)}
+          />
         }
 
         <Main>

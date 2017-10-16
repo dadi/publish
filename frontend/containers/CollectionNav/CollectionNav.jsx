@@ -1,5 +1,6 @@
 import {Component, h} from 'preact'
 import {Router} from 'preact-router-regex'
+import proptypes from 'proptypes'
 import {connect} from 'preact-redux'
 import {bindActionCreators} from 'redux'
 
@@ -13,6 +14,18 @@ import {connectHelper} from 'lib/util'
 import {Format} from 'lib/util/string'
 
 class CollectionNav extends Component {
+  static propTypes = {
+    /**
+     * The current selected collection.
+     */
+    currentCollection: proptypes.object,
+
+    /**
+     * The global state object.
+     */
+    state: proptypes.object
+  }
+
   buildCollectionMap(apis) {
     let groups = {}
     let ungrouped = {}
@@ -135,7 +148,7 @@ class CollectionNav extends Component {
   }
 
   render() {
-    const {state, actions} = this.props
+    const {currentCollection, state, actions} = this.props
 
     if (!this.groups) {
       return null
@@ -143,7 +156,7 @@ class CollectionNav extends Component {
 
     return (
       <Nav
-        currentRoute={state.router.locationBeforeTransitions.pathname}
+        currentCollection={currentCollection}
         items={this.groups}
         mobile={state.app.breakpoint === null}
       />

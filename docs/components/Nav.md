@@ -6,9 +6,9 @@ The main navigation component.
 Props
 -----
 
-### `currentRoute` (required)
+### `currentCollection`
 
-- type: `string`
+- type: `object`
 
 
 ### `items` (required)

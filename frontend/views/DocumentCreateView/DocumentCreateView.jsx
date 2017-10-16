@@ -23,7 +23,9 @@ export default class DocumentCreateView extends Component {
 
     return (
       <Page>
-        <Header />
+        <Header
+          onGetRoutes={this.getRoutes.bind(this)}
+        />
 
         <Main>
           <DocumentEdit
