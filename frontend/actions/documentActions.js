@@ -156,11 +156,12 @@ export function saveDocument ({
 
       // When creating a document, we need to attach to the payload any Boolean
       // fields that are required.
-      const booleanFields = Object.keys(collection.fields).filter(fieldName => {
-        const field = collection.fields[fieldName]
+      const booleanFields = Object.keys(collection.fields)
+        .filter(fieldName => {
+          const field = collection.fields[fieldName]
 
-        return field.required && field.type === 'Boolean'
-      })
+          return field.required && field.type === 'Boolean'
+        })
 
       booleanFields.forEach(booleanField => {
         if (payload[booleanField] === undefined) {

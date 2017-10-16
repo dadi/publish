@@ -35,15 +35,20 @@ export function loadApis () {
         collectionBundler.run()
           .then(apiCollections => {
             const isAuthApi = auth.host === api.host && auth.port === api.port
-            const mergedCollections = apiCollections.map((schema, index) => {
-              if (schema.apiBridgeError) return null
+            const mergedCollections = apiCollections
+              .map((schema, index) => {
+                if (schema.apiBridgeError) return null
 
-              return Object.assign({}, schema, collections[index], {
-                _isAuthCollection: isAuthApi && (auth.collection === collections[index].slug)
+                schema = applyDefaultPublishParams(schema)
+
+                return Object.assign({}, schema, collections[index], {
+                  _isAuthCollection: isAuthApi && (auth.collection === collections[index].slug)
+                })
               })
-            }).filter(Boolean).filter(collection => {
-              return !(collection.settings.publish && collection.settings.publish.hidden)
-            })
+              .filter(Boolean)
+              .filter(collection => {
+                return !(collection.settings.publish && collection.settings.publish.hidden)
+              })
 
             const apiWithCollections = Object.assign({}, api, {
               _failedCollections: apiCollections.length - mergedCollections.length,
@@ -95,4 +100,36 @@ export function setCurrentCollection (collectionName) {
     collectionName,
     type: Types.SET_API_CURRENT_COLLECTION
   }
+}
+
+/**
+ * Apply Required Mutations
+ * @param  {Object} schema     Collection schema.
+ * @return {Object} Mutated collection schema.
+ */
+const applyDefaultPublishParams = schema => {
+  const publish = {
+    display: {
+      edit: true,
+      list: false
+    },
+    placement: 'sidebar',
+    section: 'General'
+  }
+
+  // Mutate fields to include required publish config.
+  const fields = Object.assign(schema.fields, ...Object.keys(schema.fields)
+    .map(key => {
+      let field = schema.fields[key]
+
+      if (!field.publish) field.publish = publish
+
+      field.publish.section = field.publish.section || publish.section
+      field.publish.placement = field.publish.placement || publish.placement
+      field.publish.display = field.publish.display || publish.display
+
+      return {[key]: field}
+    }))
+
+  return Object.assign(schema, {fields})
 }
