@@ -14,9 +14,9 @@ import styles from './Nav.css'
 export default class Nav extends Component {
   static propTypes = {
     /*
-     * Current URL, e.g. `/articles`.
+     * Current selected collection.
      */
-    currentRoute: proptypes.string.isRequired,
+    currentCollection: proptypes.object.isRequired,
     /**
      * Grouped list of navigation elements to render.
      */
@@ -36,23 +36,28 @@ export default class Nav extends Component {
 
   render() {
     const {
-      currentRoute,
+      currentCollection,
       items,
       mobile
     } = this.props
 
-    if (!items.length || !currentRoute) return null
+    if (!items.length || !currentCollection) return null
 
     return (
       <nav class={styles.nav}>
         <ul>
           {items.map(item => {
-            let itemActive = currentRoute.indexOf(item.id) === 1
+            let itemActive = item.id === currentCollection.slug
+            let activeSubItem = item.subItems && item.subItems
+              .find(subItem => subItem.id === `${item.id}/${currentCollection.slug}`)
+            if (activeSubItem) {
+              itemActive = true
+            }
             let subItems = null
 
             if (item.subItems) {
               let children = item.subItems.map(subItem => {
-                let subItemActive = currentRoute.indexOf(subItem.id) === 1
+                let subItemActive = activeSubItem && subItem.id === activeSubItem.id
 
                 if (mobile) {
                   return (
@@ -62,10 +67,6 @@ export default class Nav extends Component {
                       mobile={true}
                     />
                   )
-                }
-
-                if (subItemActive) {
-                  itemActive = true
                 }
 
                 return (

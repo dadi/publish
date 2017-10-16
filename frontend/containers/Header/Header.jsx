@@ -25,6 +25,12 @@ class Header extends Component {
     actions: proptypes.object,
 
     /**
+    * A callback to be used to obtain the sibling document routes (edit, create and list), as
+    * determined by the view.
+    */
+    onGetRoutes: proptypes.func,
+
+    /**
      * The global state object.
      */
     state: proptypes.object
@@ -36,9 +42,15 @@ class Header extends Component {
     this.state.expanded = false
   }
 
+  componentWillMount() {
+    const {onGetRoutes, state} = this.props
+    this.routes = onGetRoutes(state.api.paths)
+  }
+
   render() {
     const {state} = this.props
     const compact = state.app.breakpoint === null
+    const currentCollection = state.api.apis.length && this.routes.getCurrentCollection(state.api.apis)
 
     if (state.user.status !== Constants.STATUS_LOADED) {
       return null
@@ -89,7 +101,9 @@ class Header extends Component {
               )}
           </div>
 
-          <CollectionNav />
+          <CollectionNav
+            currentCollection={currentCollection}
+          />
         </div>
       </header>
     )
@@ -114,6 +128,7 @@ class Header extends Component {
 
 export default connectHelper(
   state => ({
+    api: state.api,
     app: state.app,
     user: state.user
   }),
