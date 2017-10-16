@@ -171,10 +171,11 @@ export default class FieldStringEdit extends Component {
         >
           {!multiple &&
             <option
+              value=""
               class={styles['dropdown-option']}
               disabled
               selected={selectedValue === null}
-            >Please select</option>
+            >Please select {schema.label}</option>
           }
 
           {options.map(option => {
