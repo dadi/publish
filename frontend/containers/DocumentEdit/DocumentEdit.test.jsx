@@ -257,7 +257,10 @@ describe('DocumentEdit', () => {
               name: 'articles',
               fields: {
                 foo: {
-                  type: 'String'
+                  type: 'String',
+                  publish: {
+                    
+                  }
                 }
               }
             }
