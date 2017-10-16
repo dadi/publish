@@ -44,13 +44,24 @@ class Header extends Component {
 
   componentWillMount() {
     const {onGetRoutes, state} = this.props
-    this.routes = onGetRoutes(state.api.paths)
+    
+    if (typeof onGetRoutes === 'function') {
+      this.routes = onGetRoutes(state.api.paths)
+    }
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    const {onGetRoutes, state} = this.props
+
+    if (typeof onGetRoutes === 'function') {
+      this.routes = onGetRoutes(state.api.paths)
+    }
   }
 
   render() {
     const {state} = this.props
     const compact = state.app.breakpoint === null
-    const currentCollection = state.api.apis.length && this.routes.getCurrentCollection(state.api.apis)
+    const currentCollection = state.api.apis.length && this.routes && this.routes.getCurrentCollection(state.api.apis)
 
     if (state.user.status !== Constants.STATUS_LOADED) {
       return null

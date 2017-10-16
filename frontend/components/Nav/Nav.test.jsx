@@ -51,6 +51,10 @@ const mockItemsWithSubItem = [
   }
 ]
 
+const mockCurrentCollection = {
+  slug: 'foo'
+}
+
 describe('Nav component', () => {
   it('has propTypes', () => {
     const component = (
@@ -68,11 +72,11 @@ describe('Nav component', () => {
 
     const componentWithNoItems = (
       <Nav
-        currentRoute={'/'}
+        currentCollection={mockCurrentCollection}
       />
     )
 
-    const componentWithNoCurrentRoute = (
+    const componentWithNoCurrentCollection = (
       <Nav
         items={mockItems}
       />
@@ -80,17 +84,17 @@ describe('Nav component', () => {
 
     mount(componentWithNoParams)
     mount(componentWithNoItems)
-    mount(componentWithNoCurrentRoute)
+    mount(componentWithNoCurrentCollection)
 
     expect(componentWithNoParams).to.equal(null)
     expect(componentWithNoItems).to.equal(null)
-    expect(componentWithNoCurrentRoute).to.equal(null)
+    expect(componentWithNoCurrentCollection).to.equal(null)
   })
 
   it('renders a `nav` with class `nav`', () => {
     const component = (
       <Nav
-        currentRoute={'/'}
+        currentCollection={mockCurrentCollection}
         items={mockItems}
       />
     )
@@ -104,7 +108,7 @@ describe('Nav component', () => {
   it('renders an unordered list node with a list item for each entry in `items` array', () => {
     const component = (
       <Nav
-        currentRoute={'/'}
+        currentCollection={mockCurrentCollection}
         items={mockItems}
       />
     )
@@ -118,7 +122,7 @@ describe('Nav component', () => {
   it('renders a NavItem with active class when active', () => {
     const component = (
       <Nav
-        currentRoute={'/foo'}
+        currentCollection={mockCurrentCollection}
         items={mockItems}
       />
     )
@@ -131,7 +135,7 @@ describe('Nav component', () => {
   it('renders an instance of `DropdownItem` when sub items exist', () => {
     const component = (
       <Nav
-        currentRoute={'/foo'}
+        currentCollection={mockCurrentCollection}
         items={mockItemsWithSubItem}
       />
     )
@@ -144,7 +148,7 @@ describe('Nav component', () => {
   it('renders `NavItem` for subItems when `mobile` prop is true', () => {
     const component = (
       <Nav
-        currentRoute={'/foo'}
+        currentCollection={mockCurrentCollection}
         items={mockItemsWithSubItem}
         mobile={true}
       />
@@ -155,10 +159,12 @@ describe('Nav component', () => {
     expect($('.nav-item').length).to.equal(3)
   })
 
-  it('should render `DropdownItem` with `active` prop when `currentRoute` matches subItem `href` prop', () => {
+  it('should render `DropdownItem` with `active` prop when `currentCollection` matches subItem `href` prop', () => {
     const component = (
       <Nav
-        currentRoute={'/bar/baz'}
+        currentCollection={{
+          slug: 'baz'
+        }}
         items={mockItemsWithSubItem}
       />
     )

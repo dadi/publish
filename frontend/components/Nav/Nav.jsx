@@ -41,15 +41,15 @@ export default class Nav extends Component {
       mobile
     } = this.props
 
-    if (!items.length || !currentCollection) return null
+    if (!items.length) return null
 
     return (
       <nav class={styles.nav}>
         <ul>
           {items.map(item => {
-            let itemActive = item.id === currentCollection.slug
+            let itemActive = currentCollection && item.id === currentCollection.slug
             let activeSubItem = item.subItems && item.subItems
-              .find(subItem => subItem.id === `${item.id}/${currentCollection.slug}`)
+              .find(subItem => currentCollection && subItem.id === `${item.id}/${currentCollection.slug}`)
             if (activeSubItem) {
               itemActive = true
             }
