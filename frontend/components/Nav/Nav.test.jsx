@@ -76,19 +76,11 @@ describe('Nav component', () => {
       />
     )
 
-    const componentWithNoCurrentCollection = (
-      <Nav
-        items={mockItems}
-      />
-    )
-
     mount(componentWithNoParams)
     mount(componentWithNoItems)
-    mount(componentWithNoCurrentCollection)
 
     expect(componentWithNoParams).to.equal(null)
     expect(componentWithNoItems).to.equal(null)
-    expect(componentWithNoCurrentCollection).to.equal(null)
   })
 
   it('renders a `nav` with class `nav`', () => {
