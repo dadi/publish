@@ -78,6 +78,28 @@ export default class FieldNumberEdit extends Component {
     value: proptypes.bool
   }
 
+  static defaultProps = {
+    error: false,
+    forceValidation: false,
+    value: null
+  }
+
+  componentDidMount() {
+    const {forceValidation, value} = this.props
+
+    if (forceValidation) {
+      this.validate(value)
+    }
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    const {forceValidation, value} = this.props
+
+    if (!prevProps.forceValidation && forceValidation) {
+      this.validate(value)
+    }
+  }
+
   render() {
     const {error, schema, value} = this.props
     const publishBlock = schema.publish || {}
@@ -91,6 +113,7 @@ export default class FieldNumberEdit extends Component {
       >
         <TextInput
           onChange={this.handleOnChange.bind(this)}
+          onKeyUp={this.handleOnKeyUp.bind(this)}
           readonly={publishBlock.readonly === true}
           type="number"
           value={value}
@@ -99,11 +122,35 @@ export default class FieldNumberEdit extends Component {
     )
   }
 
+  getValueOfInput(input) {
+    return parseFloat(input.value)
+  }
+
   handleOnChange(event) {
     const {onChange, schema} = this.props
+    const value = this.getValueOfInput(event.target)
+
+    this.validate(value)
 
     if (typeof onChange === 'function') {
       onChange.call(this, schema._id, parseFloat(event.target.value))
+    }
+  }
+
+  handleOnKeyUp(event) {
+    const value = this.getValueOfInput(event.target)
+
+    this.validate(value)
+  }
+
+  validate(value) {
+    const {onError, schema} = this.props
+
+    const hasValidationErrors = schema.required && (isNaN(value) || typeof value !== 'number') 
+    //{To-Do}: add findValidationErrorsInValue method for further validation checks 
+
+    if (typeof onError === 'function') {
+        onError.call(this, schema._id, hasValidationErrors, value)
     }
   }
 }
