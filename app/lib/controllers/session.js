@@ -1,8 +1,9 @@
 'use strict'
 
 const config = require(paths.config)
-const DadiAPI = require('@dadi/api-wrapper')
 const Constants = require(`${paths.lib.root}/constants`)
+const DadiAPI = require('@dadi/api-wrapper')
+const log = require('@dadi/logger')
 
 const Session = function () {}
 
@@ -21,6 +22,8 @@ Session.prototype.authorise = function (email, password, next) {
   if (!authAPI.enabled) {
     this.returnAuthDisabled({next})
   }
+
+  log.debug({ module: 'session' }, `AUTHORISE ${email} with ${authAPI.host}`)
 
   return new DadiAPI(Object.assign(authAPI, {uri: authAPI.host}))
     .in(authAPI.collection)
@@ -51,6 +54,7 @@ Session.prototype.authorise = function (email, password, next) {
  * @return {Function} Next method call.
  */
 Session.prototype.delete = function (req, res, next) {
+  log.debug({ module: 'session' }, 'DELETE')
   res.header('Content-Type', 'application/json')
   req.logout()
   res.end(JSON.stringify({authenticated: req.isAuthenticated()}))
@@ -80,8 +84,11 @@ Session.prototype.get = function (req, res, next) {
 
     return next()
   } else {
+    const error = {error: Constants.AUTH_FAILED}
+
+    log.info({ module: 'session' }, `GET: ${error}`)
     res.statusCode = 401
-    res.end(JSON.stringify({error: Constants.AUTH_FAILED}))
+    res.end(JSON.stringify(error))
 
     return next()
   }
@@ -108,18 +115,21 @@ Session.prototype.post = function (req, res, next, passport) {
 
         case Constants.AUTH_UNREACHABLE:
           res.statusCode = 404
+          log.warn({ module: 'session' }, `POST: ${Constants.AUTH_UNREACHABLE} - ${error}`)
           res.end(JSON.stringify({error}))
 
           break
 
         case Constants.WRONG_CREDENTIALS:
           res.statusCode = 401
+          log.info({ module: 'session' }, `POST: ${Constants.WRONG_CREDENTIALS} - ${error}`)
           res.end(JSON.stringify({error}))
 
           break
 
         default:
           res.statusCode = 500
+          log.error({ module: 'session' }, `POST: ${Constants.UNKNOWN_ERROR}`)
           res.end(JSON.stringify({error: Constants.UNKNOWN_ERROR}))
 
           break
@@ -130,6 +140,7 @@ Session.prototype.post = function (req, res, next, passport) {
       req.login(user, {}, error => {
         if (error) {
           res.statusCode = 401
+          log.error({ module: 'session' }, `POST: login - ${Constants.AUTH_FAILED}`)
           res.end(JSON.stringify({error: Constants.AUTH_FAILED}))
         } else {
           res.end(JSON.stringify(user))
@@ -152,8 +163,8 @@ Session.prototype.post = function (req, res, next, passport) {
 Session.prototype.put = function (req, res, next) {
   res.header('Content-Type', 'application/json')
 
-  req.login(req.body, {}, err => {
-    if (err) {
+  req.login(req.body, {}, error => {
+    if (error) {
       res.statusCode = 500
     }
 

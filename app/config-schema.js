@@ -2,22 +2,53 @@
 const path = require('path')
 
 module.exports = {
-  app: {
+  auth: {
+    doc: 'Auth API Collection',
     availableInFrontend: true,
-    name: {
-      doc: 'The applicaton name',
-      format: String,
-      default: 'DADI Publish (Repo Default)'
+    format: Object,
+    default: {
+      enabled: false
     },
-    publisher: {
-      doc: 'The organisation name',
+    collection: {
+      availableInFrontend: true,
       format: String,
-      default: 'DADI'
+      default: ''
     },
-    baseUrl: {
-      doc: 'The base URL of the application',
-      format: 'url',
-      default: '127.0.0.1'
+    credentials: {
+      format: Object,
+      clientId: {
+        format: String,
+        default: 'testClient'
+      },
+      secret: {
+        format: String,
+        default: 'superSecret'
+      }
+    },
+    database: {
+      availableInFrontend: true,
+      format: String,
+      default: ''
+    },
+    enabled: {
+      availableInFrontend: true,
+      format: Boolean,
+      default: true
+    },
+    host: {
+      availableInFrontend: true,
+      format: 'ipaddress',
+      default: '0.0.0.0'
+    },
+    port: {
+      availableInFrontend: true,
+      format: 'port',
+      default: 3000
+    },
+    version: {
+      availableInFrontend: true,
+      format: String,
+      default: '1.0'
     }
   },
   apis: {
@@ -77,53 +108,22 @@ module.exports = {
       }
     }
   },
-  auth: {
-    doc: 'Auth API Collection',
+  app: {
     availableInFrontend: true,
-    format: Object,
-    default: {
-      enabled: false
+    baseUrl: {
+      doc: 'The base URL of the application',
+      format: 'url',
+      default: '127.0.0.1'
     },
-    enabled: {
-      availableInFrontend: true,
-      format: Boolean,
-      default: true
-    },
-    host: {
-      availableInFrontend: true,
-      format: 'ipaddress',
-      default: '0.0.0.0'
-    },
-    port: {
-      availableInFrontend: true,
-      format: 'port',
-      default: 3000
-    },
-    database: {
-      availableInFrontend: true,
+    name: {
+      doc: 'The applicaton name',
       format: String,
-      default: ''
+      default: 'DADI Publish (Repo Default)'
     },
-    collection: {
-      availableInFrontend: true,
+    publisher: {
+      doc: 'The organisation name',
       format: String,
-      default: ''
-    },
-    version: {
-      availableInFrontend: true,
-      format: String,
-      default: '1.0'
-    },
-    credentials: {
-      format: Object,
-      clientId: {
-        format: String,
-        default: 'testClient'
-      },
-      secret: {
-        format: String,
-        default: 'superSecret'
-      }
+      default: 'DADI'
     }
   },
   assets: {
@@ -162,6 +162,44 @@ module.exports = {
         format: String,
         default: 'superSecret'
       }
+    }
+  },
+  env: {
+    availableInFrontend: true,
+    doc: 'The applicaton environment.',
+    format: String,
+    default: 'development',
+    env: 'NODE_ENV'
+  },
+  formats: {
+    availableInFrontend: true,
+    date: {
+      long: {
+        doc: 'Date Format',
+        format: String,
+        default: 'YYYY/MM/DD HH:mm'
+      },
+      short: {
+        doc: 'Date Format',
+        format: String,
+        default: 'YYYY/MM/DD'
+      }
+    }
+  },
+  ga: {
+    availableInFrontend: true,
+    doc: 'Google Analytics options',
+    enabled: {
+      availableInFrontend: true,
+      doc: 'GA events enabled',
+      format: Boolean,
+      default: false
+    },
+    trackingId: {
+      availableInFrontend: true,
+      doc: 'GA Tracking credentials',
+      format: String,
+      default: ''
     }
   },
   server: {
@@ -214,48 +252,10 @@ module.exports = {
       }
     }
   },
-  formats: {
-    availableInFrontend: true,
-    date: {
-      long: {
-        doc: 'Date Format',
-        format: String,
-        default: 'YYYY/MM/DD HH:mm'
-      },
-      short: {
-        doc: 'Date Format',
-        format: String,
-        default: 'YYYY/MM/DD'
-      }
-    }
-  },
-  ga: {
-    availableInFrontend: true,
-    doc: 'Google Analytics options',
-    enabled: {
-      availableInFrontend: true,
-      doc: 'GA events enabled',
-      format: Boolean,
-      default: false
-    },
-    trackingId: {
-      availableInFrontend: true,
-      doc: 'GA Tracking credentials',
-      format: String,
-      default: ''
-    }
-  },
   TZ: {
     availableInFrontend: true,
     doc: 'Process Timezone',
     default: 'Europe/London'
-  },
-  env: {
-    availableInFrontend: true,
-    doc: 'The applicaton environment.',
-    format: String,
-    default: 'development',
-    env: 'NODE_ENV'
   },
   ui: {
     availableInFrontend: true,
@@ -263,6 +263,40 @@ module.exports = {
       doc: 'Delay in ms to debounce inputs by',
       format: 'integer',
       default: 100
+    }
+  },
+  logging: {
+    enabled: {
+      doc: 'If true, logging is enabled using the following settings.',
+      format: Boolean,
+      default: true
+    },
+    level: {
+      doc: 'Sets the logging level.',
+      format: ['debug', 'info', 'warn', 'error', 'trace'],
+      default: 'info'
+    },
+    path: {
+      doc: 'The absolute or relative path to the directory for log files.',
+      format: String,
+      default: './log'
+    },
+    filename: {
+      doc: 'The name to use for the log file, without extension.',
+      format: String,
+      default: 'publish'
+    },
+    extension: {
+      doc: 'The extension to use for the log file.',
+      format: String,
+      default: 'log'
+    },
+    accessLog: {
+      enabled: {
+        doc: 'If true, HTTP access logging is enabled. The log file name is similar to the setting used for normal logging, with the addition of "access". For example `publish.access.log`.',
+        format: Boolean,
+        default: true
+      }
     }
   }
 }

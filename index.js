@@ -3,6 +3,7 @@
 const app = require('./app')
 const colors = require('colors') // eslint-disable-line
 const config = require(paths.config)
+const log = require('@dadi/logger')
 const nodeVersion = Number(process.version.match(/^v(\d+\.\d+)/)[1])
 const pkg = require('./package.json')
 
@@ -10,6 +11,8 @@ const Publish = function () {}
 
 Publish.prototype.getStartupMessage = function () {
   const env = config.get('env')
+
+  log.init(config.get('logging'), {}, env)
 
   let startText = '\n\n'
 

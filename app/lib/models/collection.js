@@ -1,19 +1,22 @@
 'use strict'
 
-const DadiAPI = require('@dadi/api-wrapper')
 const CollectionRoutes = require(`${paths.lib.helpers}/collection-routes`)
 const config = require(paths.config)
+const DadiAPI = require('@dadi/api-wrapper')
+const log = require('@dadi/logger')
 
 const Collection = function () {
 
 }
 
 Collection.prototype.buildCollectionRoutes = function () {
+  log.debug({ module: 'collection' }, 'Building collection Routes')
   return this.getCollections()
     .then(apiCollections => new CollectionRoutes().generateApiRoutes(apiCollections))
 }
 
 Collection.prototype.getCollections = function () {
+  log.debug({ module: 'collection' }, 'Requesting collection list from API')
   return Promise.all(
     config
       .get('apis')
@@ -29,6 +32,8 @@ Collection.prototype.getSchemas = function (api, collections) {
   return Promise.all(
     collections
       .map(collection => {
+        log.debug({ module: 'collection' }, `Requesting collection schema for ${collection.slug} from API`)
+
         return new DadiAPI(Object.assign(api, {uri: api.host}))
           .useDatabase(collection.database)
           .in(collection.slug)

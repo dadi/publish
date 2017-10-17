@@ -5,6 +5,7 @@ const config = require(paths.config)
 const session = require('cookie-session')
 const flash = require('connect-flash')
 const fs = require('fs')
+const log = require('@dadi/logger')
 const path = require('path')
 const passport = require('passport-restify')
 const LocalStrategy = require('passport-local')
@@ -129,6 +130,7 @@ Router.prototype.webRoutes = function () {
         }
       })
       .catch(e => {
+        log.error({ module: 'router' }, `buildCollectionRoutes failed: ${JSON.stringify(e)}`)
         entryPointPage = entryPointPage.replace(
           '/*@@apiErrors@@*/',
           `window.__apiErrors__ = ${JSON.stringify(e)};`
@@ -143,7 +145,7 @@ Router.prototype.webRoutes = function () {
  * Add component routes
  */
 Router.prototype.componentRoutes = function (dir, match) {
-  if (!this.server) throw new Error('Server must be defined.')
+  if (!this.server) log.error({ module: 'router' }, 'componentRoutes : Server must be defined.')
 
   // Fetch aditional component schema
   fs.readdirSync(dir).forEach(folder => {
@@ -189,10 +191,11 @@ Router.prototype.use = function () {
 
   this.server
     .use(restify.gzipResponse())
-    .use(restify.requestLogger())
     .use(restify.queryParser())
     .use(restify.bodyParser({mapParams: true})) // Changing to false throws issues with auth. Needs addressing
     .use(cookieParser.parse)
+    // Request logging middleware.
+    .use(log.requestLogger)
     // Add session.
     .use(session({
       key: 'dadi-publish',

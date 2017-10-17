@@ -9,7 +9,6 @@ let res
 
 const expectedConfig = {
   app: {
-    availableInFrontend: true,
     name: 'DADI Publish Test',
     publisher: 'DADI',
     baseUrl: 'http://0.0.0.0'
@@ -40,7 +39,6 @@ const expectedConfig = {
     }
   },
   formats:{
-    availableInFrontend: true,
     date: {
       long: 'YYYY/MM/DD HH:mm' ,
       short: 'YYYY/MM/DD'
@@ -52,7 +50,7 @@ const expectedConfig = {
   },
   TZ: 'Europe/London',
   env: 'test',
-  ui: { availableInFrontend: true, inputDelay: 100 },
+  ui: { inputDelay: 100 },
   FieldImage: {
     accept: [ 'image/*' ],
     cdn: { 
@@ -105,7 +103,9 @@ describe('App config', () => {
   describe('GET config', () => {
     it ('should return filtered config body', (done) => {
       res.on('end', () => {
-        expect(res._getData()).toBe(JSON.stringify(expectedConfig))
+        const data = res._getData()
+
+        expect(JSON.parse(data)).toMatchObject(expectedConfig)
         done()
       })
       appConfig.get(req, res, () => true)
