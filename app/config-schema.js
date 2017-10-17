@@ -284,7 +284,7 @@ module.exports = {
     filename: {
       doc: 'The name to use for the log file, without extension.',
       format: String,
-      default: 'api'
+      default: 'publish'
     },
     extension: {
       doc: 'The extension to use for the log file.',
