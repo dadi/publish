@@ -87,10 +87,6 @@ export default class FieldStringEdit extends Component {
     value: ''
   }
 
-  constructor(props) {
-    super(props)
-  }
-
   componentDidMount() {
     const {forceValidation, value} = this.props
 
