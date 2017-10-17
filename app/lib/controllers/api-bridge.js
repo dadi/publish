@@ -2,6 +2,7 @@
 
 const config = require(paths.config)
 const Constants = require(`${paths.lib.root}/constants`)
+const log = require('@dadi/logger')
 const passport = require('@dadi/passport')
 const request = require('request-promise')
 const slugify = require(`${paths.lib.helpers}/string`).Slugify
@@ -44,7 +45,9 @@ APIBridgeController.prototype.post = function (req, res, next) {
 
   // Block any API requests if there's no session
   if (authAPI.enabled && !req.isAuthenticated()) {
-    res.write(JSON.stringify({error: Constants.AUTH_FAILED}))
+    const error = {error: Constants.AUTH_FAILED}
+    log.warn({ module: 'api-bridge' }, `POST: ${JSON.stringify(error)}`)
+    res.write(JSON.stringify(error))
     res.end()
   }
 
@@ -80,16 +83,16 @@ APIBridgeController.prototype.post = function (req, res, next) {
 
         return request(payload)
           .then(response => response.length ? JSON.parse(response) : response)
-          .catch(err => {
+          .catch(error => {
             if (isBundle) {
-              console.log('(*) API Bridge error:', err)
+              log.error({ module: 'api-bridge' }, `POST: ${JSON.stringify(error)}`)
 
               return Promise.resolve({
                 apiBridgeError: true
               })
             }
 
-            return Promise.reject(err)
+            return Promise.reject(error)
           })
       }))
     })
@@ -99,16 +102,16 @@ APIBridgeController.prototype.post = function (req, res, next) {
 
         res.end(JSON.stringify(output))
       })
-      .catch(err => {
-        console.log('(*) API Bridge error:', err)
+      .catch(error => {
+        log.error({ module: 'api-bridge' }, `POST: ${JSON.stringify(error)}`)
 
         res.statusCode = 500
-        res.end(JSON.stringify(err))
+        res.end(JSON.stringify(error))
       })
-  } catch (err) {
-    // console.log('err', err)
+  } catch (error) {
+    log.error({ module: 'api-bridge' }, `POST: ${JSON.stringify(error)}`)
     res.statusCode = 500
-    res.end(JSON.stringify(err))
+    res.end(JSON.stringify(error))
   }
 
   return next()
