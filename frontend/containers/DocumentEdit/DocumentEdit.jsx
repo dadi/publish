@@ -219,9 +219,11 @@ class DocumentEdit extends Component {
     const needsFetch = !document.remote || remoteDocumentHasChanged
 
     if 
-      (isIdle &&
-      needsFetch &&
-      this.currentCollection && state.api.apis.length > 0
+      (
+        isIdle &&
+        needsFetch &&
+        this.currentCollection &&
+        state.api.apis.length > 0
     ) {
       this.handleRoomChange()
       this.fetchDocument()

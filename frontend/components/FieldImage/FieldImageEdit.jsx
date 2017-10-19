@@ -118,9 +118,9 @@ export default class FieldImageEdit extends Component {
           <div class={styles['value-container']}>
             <div class={styles.thumbnails}>
               {values.map(value => (
-                <img 
-                  src={this.getImageSrc(value)}
+                <img
                   class={styles.thumbnail}
+                  src={this.getImageSrc(value)}
                 />
               ))}
             </div>
