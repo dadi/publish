@@ -214,7 +214,6 @@ class DocumentEdit extends Component {
     // - We're not already in the process of fetching one AND
     // - There is no document in the store OR the document id has changed AND
     // - All APIs have collections
-    // - There are no unsaved local changes (If we've navigated to a document list to select a reference field, we don't want to reset anything)
     const isIdle = document.remoteStatus === Constants.STATUS_IDLE
     const remoteDocumentHasChanged = document.remote &&
       (documentId !== document.remote._id)
