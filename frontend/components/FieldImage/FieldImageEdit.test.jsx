@@ -13,7 +13,6 @@ import Button from 'components/Button/Button'
 import DropArea from 'components/DropArea/DropArea'
 import FileUpload from 'components/FileUpload/FileUpload'
 import Label from 'components/Label/Label'
-import LazyLoader from 'containers/LazyLoader/LazyLoader'
 
 // DOM setup
 let $, mount, root, scratch
@@ -102,9 +101,9 @@ describe('FieldImageEdit component', () => {
       const images = (
         <MockStore>
           <div class="thumbnails">
-            <LazyLoader
-              styles="thumbnail"
+            <img 
               src="https://cdn.somedomain.tech/test.jpg"
+              class='thumbnail'
             />
           </div>
         </MockStore>
@@ -132,17 +131,17 @@ describe('FieldImageEdit component', () => {
       const images = (
         <MockStore>
           <div class="thumbnails">
-            <LazyLoader
-              styles="thumbnail"
+            <img 
               src="https://cdn.somedomain.tech/test1.jpg"
+              class='thumbnail'
             />
-            <LazyLoader
-              styles="thumbnail"
+            <img 
               src="https://cdn.somedomain.tech/test2.jpg"
+              class='thumbnail'
             />
-            <LazyLoader
-              styles="thumbnail"
+            <img 
               src="https://cdn.somedomain.tech/test3.jpg"
+              class='thumbnail'
             />
           </div>
         </MockStore>
@@ -166,9 +165,9 @@ describe('FieldImageEdit component', () => {
       const images = (
         <MockStore>
           <div class="thumbnails">
-            <LazyLoader
-              styles="thumbnail"
+            <img 
               src="123456789"
+              class='thumbnail'
             />
           </div>
         </MockStore>
@@ -196,17 +195,17 @@ describe('FieldImageEdit component', () => {
       const images = (
         <MockStore>
           <div class="thumbnails">
-            <LazyLoader
-              styles="thumbnail"
+            <img 
               src="123456789"
+              class='thumbnail'
             />
-            <LazyLoader
-              styles="thumbnail"
+            <img 
               src="234567891"
+              class='thumbnail'
             />
-            <LazyLoader
-              styles="thumbnail"
+            <img 
               src="345678912"
+              class='thumbnail'
             />
           </div>
         </MockStore>

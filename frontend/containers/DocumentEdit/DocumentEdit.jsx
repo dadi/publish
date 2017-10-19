@@ -218,7 +218,13 @@ class DocumentEdit extends Component {
       (documentId !== document.remote._id)
     const needsFetch = !document.remote || remoteDocumentHasChanged
 
-    if (isIdle && needsFetch && this.currentCollection && state.api.apis.length > 0) {
+    if 
+      (
+        isIdle &&
+        needsFetch &&
+        this.currentCollection &&
+        state.api.apis.length > 0
+    ) {
       this.handleRoomChange()
       this.fetchDocument()
     }
@@ -256,13 +262,10 @@ class DocumentEdit extends Component {
 
   componentWillUnmount() {
     const {
-      actions,
-      documentId
+      actions
     } = this.props
-    
-    window.removeEventListener('beforeunload', this.userLeavingDocumentHandler)
 
-    this.handleUserLeavingDocument()
+    window.removeEventListener('beforeunload', this.userLeavingDocumentHandler)
     actions.roomChange(null)
   }
 
@@ -289,7 +292,6 @@ class DocumentEdit extends Component {
       )
     }
 
-    // console.log(status, this.currentCollection, this.hasFetched)
     if (status === Constants.STATUS_IDLE && !this.currentCollection && this.hasFetched) {
       return (
         <ErrorMessage type={Constants.ERROR_ROUTE_NOT_FOUND} />

@@ -13,7 +13,6 @@ import Button from 'components/Button/Button'
 import DropArea from 'components/DropArea/DropArea'
 import FileUpload from 'components/FileUpload/FileUpload'
 import Label from 'components/Label/Label'
-import LazyLoader from 'containers/LazyLoader/LazyLoader'
 
 export default class FieldImageEdit extends Component { 
   static propTypes = {
@@ -119,8 +118,8 @@ export default class FieldImageEdit extends Component {
           <div class={styles['value-container']}>
             <div class={styles.thumbnails}>
               {values.map(value => (
-                <LazyLoader
-                  styles={styles.thumbnail}
+                <img
+                  class={styles.thumbnail}
                   src={this.getImageSrc(value)}
                 />
               ))}
