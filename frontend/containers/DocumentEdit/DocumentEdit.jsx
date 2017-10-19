@@ -261,11 +261,9 @@ class DocumentEdit extends Component {
 
   componentWillUnmount() {
     const {
-      actions,
-      documentId,
-      state
+      actions
     } = this.props
-    
+
     window.removeEventListener('beforeunload', this.userLeavingDocumentHandler)
     actions.roomChange(null)
   }
