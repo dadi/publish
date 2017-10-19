@@ -168,6 +168,7 @@ class DocumentEdit extends Component {
       group,
       state
     } = this.props
+
     const document = state.document
     const previousDocument = previousProps.state.document
     const status = document.remoteStatus
@@ -213,12 +214,17 @@ class DocumentEdit extends Component {
     // - We're not already in the process of fetching one AND
     // - There is no document in the store OR the document id has changed AND
     // - All APIs have collections
+    // - There are no unsaved local changes (If we've navigated to a document list to select a reference field, we don't want to reset anything)
     const isIdle = document.remoteStatus === Constants.STATUS_IDLE
     const remoteDocumentHasChanged = document.remote &&
       (documentId !== document.remote._id)
     const needsFetch = !document.remote || remoteDocumentHasChanged
 
-    if (isIdle && needsFetch && this.currentCollection && state.api.apis.length > 0) {
+    if 
+      (isIdle &&
+      needsFetch &&
+      this.currentCollection && state.api.apis.length > 0
+    ) {
       this.handleRoomChange()
       this.fetchDocument()
     }
@@ -257,12 +263,11 @@ class DocumentEdit extends Component {
   componentWillUnmount() {
     const {
       actions,
-      documentId
+      documentId,
+      state
     } = this.props
     
     window.removeEventListener('beforeunload', this.userLeavingDocumentHandler)
-
-    this.handleUserLeavingDocument()
     actions.roomChange(null)
   }
 
@@ -289,7 +294,6 @@ class DocumentEdit extends Component {
       )
     }
 
-    // console.log(status, this.currentCollection, this.hasFetched)
     if (status === Constants.STATUS_IDLE && !this.currentCollection && this.hasFetched) {
       return (
         <ErrorMessage type={Constants.ERROR_ROUTE_NOT_FOUND} />
