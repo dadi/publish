@@ -447,7 +447,14 @@ export function updateLocalDocument (change, {
 }
 
 function uploadMedia (api, signedUrl, content) {
-  const url = `${api.host}:${api.port}${signedUrl}`
+  // Override default api DNS with public props so that
+  // media can be uploaded even if API is behind a load balancer
+  // or configured to use a private IP/host for performance purposes.
+  const host = api.publicUrl ?
+    `${api.publicUrl.protocol || 'http'}://${api.publicUrl.host}` :
+    api.host
+  const port = api.publicUrl ? api.publicUrl.port : api.port
+  const url = `${host}:${port}${signedUrl}`
   const payload = new FormData()
 
   payload.append('file', content._file)
