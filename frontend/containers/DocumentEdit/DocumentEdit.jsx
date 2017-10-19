@@ -168,7 +168,6 @@ class DocumentEdit extends Component {
       group,
       state
     } = this.props
-
     const document = state.document
     const previousDocument = previousProps.state.document
     const status = document.remoteStatus
