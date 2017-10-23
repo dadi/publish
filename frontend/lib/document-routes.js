@@ -113,6 +113,9 @@ export class DocumentRoutes {
     const api = this.getAPI(apis, collectionMatch, groupName)
     const collection = this.getCollection(api, collectionMatch.name)
 
+    // Create collection paths based on routes
+    collection.path = this.buildCollectionPath(groupName, collectionMatch)
+
     if (referencedFieldsParams.length) {
       return {
         children: this.deepCollectionSearch(api, collection, referencedFieldsParams),
@@ -123,6 +126,13 @@ export class DocumentRoutes {
         parent: collection
       }
     }
+  }
+
+  buildCollectionPath (group, collection) {
+    const versionPath = collection.number ? `-${collection.number + 1}` : ''
+    const groupPath = group ? `${group}/` : ''
+
+    return `${groupPath}${collection.name}${versionPath}`
   }
 
   deepCollectionSearch (api, collection, referencedFields, collections = [], index = 0) {

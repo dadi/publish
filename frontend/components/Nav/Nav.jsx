@@ -47,9 +47,10 @@ export default class Nav extends Component {
       <nav class={styles.nav}>
         <ul>
           {items.map(item => {
-            let itemActive = currentCollection && item.id === currentCollection.slug
+            let itemActive = currentCollection && item.id === currentCollection.path
             let activeSubItem = item.subItems && item.subItems
-              .find(subItem => currentCollection && subItem.id === `${item.id}/${currentCollection.slug}`)
+              .find(subItem => currentCollection && subItem.id === currentCollection.path)
+
             if (activeSubItem) {
               itemActive = true
             }

@@ -19,7 +19,6 @@ export default class Main extends Component {
     return (
       <main className={styles.main}>
         {this.props.children}
-
         <LoadingBar />
         <NotificationCentre />
       </main>

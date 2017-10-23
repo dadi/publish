@@ -52,7 +52,8 @@ const mockItemsWithSubItem = [
 ]
 
 const mockCurrentCollection = {
-  slug: 'foo'
+  slug: 'foo',
+  path: 'foo'
 }
 
 describe('Nav component', () => {
@@ -155,7 +156,8 @@ describe('Nav component', () => {
     const component = (
       <Nav
         currentCollection={{
-          slug: 'baz'
+          slug: 'baz',
+          path: 'bar/baz'
         }}
         items={mockItemsWithSubItem}
       />
