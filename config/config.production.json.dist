@@ -1,8 +1,12 @@
 {
   "app": {
     "name": "DADI Publish",
-    "publisher": "Publisher Name",
-    "baseUrl": "http://127.0.0.1"
+    "publisher": "Publisher Name"
+  },
+  "publicUrl": {
+      "host": "127.0.0.1",
+      "port": 443,
+      "protocol": "https"
   },
   "server": {
     "host": "127.0.0.1",

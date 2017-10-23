@@ -10,8 +10,7 @@ let res
 const expectedConfig = {
   app: {
     name: 'DADI Publish Test',
-    publisher: 'DADI',
-    baseUrl: 'http://0.0.0.0'
+    publisher: 'DADI'
   },
   apis:[{ 
     publishId: null,

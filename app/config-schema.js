@@ -110,11 +110,6 @@ module.exports = {
   },
   app: {
     availableInFrontend: true,
-    baseUrl: {
-      doc: 'The base URL of the application',
-      format: 'url',
-      default: '127.0.0.1'
-    },
     name: {
       doc: 'The applicaton name',
       format: String,
@@ -200,6 +195,27 @@ module.exports = {
       doc: 'GA Tracking credentials',
       format: String,
       default: ''
+    }
+  },
+  publicUrl: {
+    availableInFrontend: true,
+    host: {
+      doc: 'The host of the URL where the Publish instance can be publicly accessed at',
+      format: '*',
+      default: null,
+      env: 'URL_HOST'
+    },
+    port: {
+      doc: 'The port of the URL where the Publish instance can be publicly accessed at',
+      format: '*',
+      default: null,
+      env: 'URL_PORT'
+    },
+    protocol: {
+      doc: 'The protocol of the URL where the Publish instance can be publicly accessed at',
+      format: 'String',
+      default: 'http',
+      env: 'URL_PROTOCOL'
     }
   },
   server: {

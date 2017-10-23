@@ -55,25 +55,27 @@ class App extends Component {
     const {actions, state} = this.props
     const previousState = previousProps.state
     const room = previousState.router.room
+    const conf = state.app.config
+    const prevConf = previousState.app.config
 
     if (
-      (!previousProps.state.app.config && state.app.config) &&
-        state.app.config.server.healthcheck.enabled
+      (!prevConf && conf) &&
+        conf.server.healthcheck.enabled
     ) {
       this.monitor = new ConnectionMonitor()
-        .watch(state.app.config.server.healthcheck.frequency)
+        .watch(conf.server.healthcheck.frequency)
         .registerStatusChangeCallback(actions.setNetworkStatus)
 
-      if (state.app.config.ga.enabled) {
+      if (conf.ga.enabled) {
         this.analytics = new Analytics()
-          .register(state.app.config.ga.trackingId)
+          .register(conf.ga.trackingId)
           .pageview(state.router.locationBeforeTransitions.pathname)
       }
     }
 
     // State change: user has signed in.
     if (
-      previousProps.state.user.status === Constants.STATUS_FAILED &&
+      previousState.user.status === Constants.STATUS_FAILED &&
       state.user.status === Constants.STATUS_LOADED
     ) {
       actions.loadAppConfig()
@@ -83,16 +85,16 @@ class App extends Component {
 
     // State change: user has signed out.
     if (
-      previousProps.state.user.status === Constants.STATUS_LOADED &&
+      previousState.user.status === Constants.STATUS_LOADED &&
       state.user.hasSignedOut
     ) {
       return route('/sign-in')
     }
 
     // State change: app now has config.
-    if (!previousState.app.config && state.app.config) {
+    if (!prevConf && conf) {
       actions.loadApis()
-      this.socket = new Socket(state.app.config.server.port)
+      this.socket = new Socket(conf.publicUrl.port || conf.server.port)
         .on('userListChange', this.handleUserListChange.bind(this))
     }
 
