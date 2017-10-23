@@ -71,6 +71,17 @@ export class DocumentRoutes {
     }
   }
 
+  getCollectionMatch (collectionName) {
+    const parts = collectionName.match(/(.*)-([0-9]+)/)
+    const number = parts ? parseInt(parts[2]) - 1 : 0
+    const name = parts ? parts[1] : collectionName
+    return {
+      number,
+      name,
+      original: collectionName
+    }
+  }
+
   getParentCollection (apis) {
     const collections = this.getAllCollections(apis)
     const prev = collections.children && collections.children.length - 2
@@ -96,10 +107,10 @@ export class DocumentRoutes {
     const referencedFieldsParams = parts
       .filter(part => part.isVar && part.varName === 'referencedField')
       .map(referencedField => urlParts[referencedField.pos])
-    const collectionName = this.props.collection
+    const collectionMatch = this.getCollectionMatch(this.props.collection)
     const groupName = this.props.group || null
-    const api = this.getAPI(apis, collectionName, groupName)
-    const collection = this.getCollection(api, collectionName)
+    const api = this.getAPI(apis, collectionMatch, groupName)
+    const collection = this.getCollection(api, collectionMatch.name)
 
     if (referencedFieldsParams.length) {
       return {
@@ -146,8 +157,14 @@ export class DocumentRoutes {
     return fields[field].settings.collection
   }
 
-  menuMatch (api, group) {
-    if (!group) return true
+  menuMatch (api, group, collection) {
+
+    // If there is no group specified
+    // make sure the input API doesn't have a group containing the collection.
+    const inGroup = (api.menu || [])
+      .find(menuItem => menuItem.collections && menuItem.collections.includes(collection.name))
+
+    if (!group) return !inGroup
 
     return api.menu
       .filter(menu => menu.title && Format.slugify(menu.title) === group)
@@ -175,14 +192,16 @@ export class DocumentRoutes {
     return this.collectionMatch(api, collectionName)
   }
 
-  getAPI (apis, collectionName, groupName) {
-    if (collectionName === Constants.AUTH_COLLECTION) {
+  getAPI (apis, collection, groupName) {
+    if (collection.original === Constants.AUTH_COLLECTION) {
       return apis.find(api => api._isAuthApi)
     }
 
-    return apis
-      .filter(api => this.menuMatch(api, groupName))
-      .find(api => this.collectionMatch(api, collectionName))
+    const matches = apis
+      .filter(api => this.menuMatch(api, groupName, collection))
+      .filter(api => this.collectionMatch(api, collection.name))
+    
+    return matches[collection.number]
   }
 
   get parts () {
