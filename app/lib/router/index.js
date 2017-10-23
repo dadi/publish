@@ -33,11 +33,10 @@ Router.prototype.addRoutes = function () {
   this.pre()
   this.use()
   this.setPassportStrategies()
-  this.setHeaders() // Only run when no redirects
   this.getRoutes()
   this.componentRoutes(path.resolve(`${paths.frontend.components}`), /Routes$/g)
+  this.setHeaders()
   this.webRoutes()
-
   return this
 }
 
@@ -101,12 +100,14 @@ Router.prototype.webRoutes = function () {
 
   // Respond to HEAD requests - this is used by ConnectionMonitor in App.jsx.
   this.server.head(/.*/, (req, res, next) => {
-    res.header('Content-Type', 'application/json')
+    res.header( 'Content-Type', 'application/json')
 
     return res.end()
   })
 
   this.server.get(/.*/, (req, res, next) => {
+    res.header( 'Content-Type', 'text/html; charset=utf-8')
+
     const serialisedUser = (req.isAuthenticated() && req.session.passport && req.session.passport.user)
       ? JSON.stringify(req.session.passport.user)
       : null
@@ -130,7 +131,7 @@ Router.prototype.webRoutes = function () {
         }
       })
       .catch(e => {
-        log.error({ module: 'router' }, `buildCollectionRoutes failed: ${JSON.stringify(e)}`)
+        log.error({module: 'router'}, `buildCollectionRoutes failed: ${JSON.stringify(e)}`)
         entryPointPage = entryPointPage.replace(
           '/*@@apiErrors@@*/',
           `window.__apiErrors__ = ${JSON.stringify(e)};`
@@ -145,7 +146,7 @@ Router.prototype.webRoutes = function () {
  * Add component routes
  */
 Router.prototype.componentRoutes = function (dir, match) {
-  if (!this.server) log.error({ module: 'router' }, 'componentRoutes : Server must be defined.')
+  if (!this.server) log.error({module: 'router'}, 'componentRoutes : Server must be defined.')
 
   // Fetch aditional component schema
   fs.readdirSync(dir).forEach(folder => {
@@ -172,11 +173,18 @@ Router.prototype.componentRoutes = function (dir, match) {
  * Set headers
  */
 Router.prototype.setHeaders = function () {
-  if (!this.server) throw new Error('Server must be defined.')
+  if (!this.server) {
+    log.error({module: 'router'}, `setHeaders failed: this.server is undefined`)
+
+    return
+  }
 
   this.server.use((req, res, next) => {
-    res.header('ETag', 'publish-etag')
-    res.header('Last-Modified', new Date())
+    res.set({
+      'Last-Modified': new Date(),
+      'ETag': 'publish-etag',
+      'Vary': 'Accept-Encoding'
+    })
 
     return next()
   })
@@ -187,7 +195,11 @@ Router.prototype.setHeaders = function () {
  * @param  {restify} app Restify web server instance
  */
 Router.prototype.use = function () {
-  if (!this.server) throw new Error('Server must be defined.')
+  if (!this.server) {
+    log.error({module: 'router'}, `use failed: this.server is undefined`)
+    
+    return
+  }
 
   this.server
     .use(restify.gzipResponse())
