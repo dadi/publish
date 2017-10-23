@@ -139,6 +139,12 @@ class DocumentList extends Component {
     const isIdle = status === Constants.STATUS_IDLE
     const previousStatus = prevProps.state.documents.status
     const wasLoading = previousStatus === Constants.STATUS_LOADING
+    const collectionHasChanged = prevProps.collection !== this.props.collection
+
+    // Reset state if collection changes.
+    if (collectionHasChanged) {
+      actions.setDocumentListStatus(Constants.STATUS_IDLE)
+    }
 
     // If we are have just loaded a list of documents for a nested document,
     // let's update the selection with the value of the reference field, if

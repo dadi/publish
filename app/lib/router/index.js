@@ -141,8 +141,8 @@ Router.prototype.webRoutes = function () {
       .catch(e => {
         log.error({module: 'router'}, `buildCollectionRoutes failed: ${JSON.stringify(e)}`)
         entryPointPage = entryPointPage.replace(
-          '/*@@apiErrors@@*/',
-          `window.__apiErrors__ = ${JSON.stringify(e)};`
+          '/*@@apiError@@*/',
+          `window.__apiError__ = ${JSON.stringify(e)};`
         )
         res.end(entryPointPage)
         return next()

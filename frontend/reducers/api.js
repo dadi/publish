@@ -5,6 +5,7 @@ import * as Types from 'actions/actionTypes'
 
 export const initialState = {
   apis: [],
+  error: window.__apiError__,
   paths: window.__documentRoutes__,
   status: Constants.STATUS_IDLE
 }

@@ -92,7 +92,7 @@ class App extends Component {
     }
 
     // State change: app now has config.
-    if (!prevConf && conf) {
+    if (!prevConf && conf && !state.api.error) {
       actions.loadApis()
       this.socket = new Socket(conf.publicUrl.port || conf.server.port)
         .on('userListChange', this.handleUserListChange.bind(this))
@@ -114,9 +114,9 @@ class App extends Component {
   render() {
     const {history, state} = this.props
 
-    if (window.__apiErrors__) {
+    if (state.api.error) {
       return (
-        <ErrorView type={Constants.API_CONNECTION_ERROR} data={window.__apiErrors__} />
+        <ErrorView type={Constants.API_CONNECTION_ERROR} data={state.api.error} />
       )
     }
 

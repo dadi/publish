@@ -5,14 +5,22 @@ const config = require(paths.config)
 const DadiAPI = require('@dadi/api-wrapper')
 const log = require('@dadi/logger')
 
-const Collection = function () {
+const Collection = function () {}
 
+const formatAPIError = err => {
+  switch (err.code) {
+    case 404:
+      return {detail: 'One or more APIs are unreachable. Please check your config.'}
+    case 401:
+      return {detail: 'The credentials for your API are incorrect.'}
+  }
 }
 
 Collection.prototype.buildCollectionRoutes = function () {
   log.debug({ module: 'collection' }, 'Building collection Routes')
   return this.getCollections()
     .then(apiCollections => new CollectionRoutes().generateApiRoutes(apiCollections))
+    .catch(err => Promise.reject(formatAPIError(err)))
 }
 
 Collection.prototype.getCollections = function () {

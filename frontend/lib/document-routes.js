@@ -75,9 +75,10 @@ export class DocumentRoutes {
     const parts = collectionName.match(/(.*)-([0-9]+)/)
     const number = parts ? parseInt(parts[2]) - 1 : 0
     const name = parts ? parts[1] : collectionName
+
     return {
-      number,
       name,
+      number,
       original: collectionName
     }
   }
@@ -158,7 +159,6 @@ export class DocumentRoutes {
   }
 
   menuMatch (api, group, collection) {
-
     // If there is no group specified
     // make sure the input API doesn't have a group containing the collection.
     const inGroup = (api.menu || [])
@@ -200,7 +200,7 @@ export class DocumentRoutes {
     const matches = apis
       .filter(api => this.menuMatch(api, groupName, collection))
       .filter(api => this.collectionMatch(api, collection.name))
-    
+
     return matches[collection.number]
   }
 

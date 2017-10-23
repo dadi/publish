@@ -47,8 +47,7 @@ APIBridgeController.prototype.post = function (req, res, next) {
   if (authAPI.enabled && !req.isAuthenticated()) {
     const error = {error: Constants.AUTH_FAILED}
     log.warn({ module: 'api-bridge' }, `POST: ${JSON.stringify(error)}`)
-    res.write(JSON.stringify(error))
-    res.end()
+    res.end(JSON.stringify(error))
   }
 
   try {
