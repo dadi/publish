@@ -28,7 +28,11 @@ const Router = function (server) {
  * Add Routes
  */
 Router.prototype.addRoutes = function () {
-  if (!this.server) throw new Error('Server must be defined.')
+  if (!this.server) {
+    log.error({module: 'router'}, `setHeaders failed: this.server is undefined`)
+
+    return
+  }
 
   this.pre()
   this.use()
@@ -92,7 +96,11 @@ Router.prototype.setPassportStrategies = function () {
  * For use with isomorphic web application base route
  */
 Router.prototype.webRoutes = function () {
-  if (!this.server) throw new Error('Server must be defined.')
+  if (!this.server) {
+    log.error({module: 'router'}, `setHeaders failed: this.server is undefined`)
+
+    return
+  }
 
   this.server.get(/\/public\/?.*/, restify.serveStatic({
     directory: path.resolve(__dirname, '../../..')
@@ -100,13 +108,13 @@ Router.prototype.webRoutes = function () {
 
   // Respond to HEAD requests - this is used by ConnectionMonitor in App.jsx.
   this.server.head(/.*/, (req, res, next) => {
-    res.header( 'Content-Type', 'application/json')
+    res.header('Content-Type', 'application/json')
 
     return res.end()
   })
 
   this.server.get(/.*/, (req, res, next) => {
-    res.header( 'Content-Type', 'text/html; charset=utf-8')
+    res.header('Content-Type', 'text/html; charset=utf-8')
 
     const serialisedUser = (req.isAuthenticated() && req.session.passport && req.session.passport.user)
       ? JSON.stringify(req.session.passport.user)
@@ -146,7 +154,11 @@ Router.prototype.webRoutes = function () {
  * Add component routes
  */
 Router.prototype.componentRoutes = function (dir, match) {
-  if (!this.server) log.error({module: 'router'}, 'componentRoutes : Server must be defined.')
+  if (!this.server) {
+    log.error({module: 'router'}, `setHeaders failed: this.server is undefined`)
+
+    return
+  }
 
   // Fetch aditional component schema
   fs.readdirSync(dir).forEach(folder => {
@@ -197,7 +209,7 @@ Router.prototype.setHeaders = function () {
 Router.prototype.use = function () {
   if (!this.server) {
     log.error({module: 'router'}, `use failed: this.server is undefined`)
-    
+
     return
   }
 
@@ -226,7 +238,11 @@ Router.prototype.use = function () {
  * @param  {restify} app Restify web server instance
  */
 Router.prototype.pre = function () {
-  if (!this.server) throw new Error('Server must be defined.')
+  if (!this.server) {
+    log.error({module: 'router'}, `use failed: this.server is undefined`)
+
+    return
+  }
 
   this.server.pre(restify.pre.sanitizePath())
 }

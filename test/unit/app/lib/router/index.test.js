@@ -73,14 +73,14 @@ describe('Router', () => {
   })
 
   describe('addRoutes()', () => {
-    it('should throw an error if server is undefined', () => {
+    it('should return undefined if `server` is invalid', () => {
       router = new Router()
 
       const addRoutes = () => {
         router.addRoutes()
       }
 
-      expect(addRoutes).toThrowError('Server must be defined.')
+      expect(addRoutes()).toBeUndefined()
     })
 
     it('should call pre method', () => {
@@ -149,14 +149,14 @@ describe('Router', () => {
   })
 
   describe('pre()', () => {
-    it('should throw an error if router is not defined', () => {
+    it('should return undefined if `server` is invalid', () => {
       router = new Router()
 
       const pre = () => {
         router.pre()
       }
 
-      expect(pre).toThrowError('Server must be defined.')
+      expect(pre()).toBeUndefined()
     })
 
     it('should add pre middleware to server before array', () => {
@@ -168,14 +168,14 @@ describe('Router', () => {
   })
 
   describe('use()', () => {
-    it('should throw an error if router is not defined', () => {
+    it('should return undefined if `server` is invalid', () => {
       router = new Router()
 
       const use = () => {
         router.use()
       }
 
-      expect(use).toThrowError('Server must be defined.')
+      expect(use()).toBeUndefined()
     })
 
     it('should add use middleware to server chain array', () => {
