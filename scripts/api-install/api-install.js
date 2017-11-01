@@ -9,7 +9,7 @@ if (process.env.npm_config_configDir) {
 }
 
 const config = require(paths.config)
-const Api = require(`${paths.lib.models}/api`)
+const Api = require(`./api`)
 const fs = require('fs')
 
 
