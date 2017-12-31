@@ -196,7 +196,6 @@ const getUser = (email, data) => {
   let usernameField = data.options.usernameField
 
   let query = {
-    apiVersion: '1.0',
     [usernameField]: email
   }
 
