@@ -382,6 +382,7 @@ class DocumentList extends Component {
       state
     } = this.props
     const documents = state.documents.list.results
+    const config = state.app.config
     const selectedRows = this.getSelectedRows()
 
     let selectLimit = Infinity
@@ -407,6 +408,7 @@ class DocumentList extends Component {
       if (FieldComponentReferenceSelect) {
         return (
           <FieldComponentReferenceSelect
+            config={config}
             data={documents}
             onSelect={this.handleRowSelect.bind(this)}
             onSort={this.handleTableSort.bind(this)}
