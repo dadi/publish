@@ -7,6 +7,13 @@ list view.
 Props
 -----
 
+### `config`
+
+A subset of the app config containing data specific to this field type.
+
+- type: `object`
+
+
 ### `data`
 
 The available documents..
