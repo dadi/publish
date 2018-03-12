@@ -17,6 +17,11 @@ const fileSize = require('file-size')
 export default class FieldImageReferenceSelect extends Component {
   static propTypes = {
     /**
+     * A subset of the app config containing data specific to this field type.
+     */
+    config: proptypes.object,
+
+    /**
      * The available documents..
      */
     data: proptypes.array,
@@ -135,6 +140,28 @@ export default class FieldImageReferenceSelect extends Component {
     }
   }
 
+  getImageSrc(value) {
+    const {config} = this.props
+    const cdn = config ? config.cdn : null
+
+    if (!value) return null
+
+    if (value._previewData) return value._previewData
+
+    if (value.url) return value.url
+
+    if (value.path) {
+      if (
+        cdn &&
+        cdn.publicUrl
+      ) {
+        return `${cdn.publicUrl}/${value.path}`
+      } else {
+        return value.path
+      }
+    }
+  }
+
   renderItem(item, index) {
     const {
       selectedRows,
@@ -160,7 +187,7 @@ export default class FieldImageReferenceSelect extends Component {
           class={styles['item-image-holder']}
           style={`padding-bottom: ${aspectRatio}%`}
         >
-          <img class={styles['item-image']} src={item.url}/>
+          <img class={styles['item-image']} src={this.getImageSrc(item)}/>
         </div>
 
         <div class={styles['item-overlay']}>

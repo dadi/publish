@@ -159,6 +159,14 @@ module.exports = {
       }
     }
   },
+  cdn: {
+    availableInFrontend: true,
+    publicUrl: {
+      doc: 'The host of the URL where the CDN instance can be publicly reached',
+      format: '*',
+      default: null
+    }
+  },
   env: {
     availableInFrontend: true,
     doc: 'The applicaton environment.',
@@ -200,19 +208,19 @@ module.exports = {
   publicUrl: {
     availableInFrontend: true,
     host: {
-      doc: 'The host of the URL where the Publish instance can be publicly accessed at',
+      doc: 'The host of the URL where the Publish instance can be publicly reached',
       format: '*',
       default: null,
       env: 'URL_HOST'
     },
     port: {
-      doc: 'The port of the URL where the Publish instance can be publicly accessed at',
+      doc: 'The port of the URL where the Publish instance can be publicly reached',
       format: '*',
       default: null,
       env: 'URL_PORT'
     },
     protocol: {
-      doc: 'The protocol of the URL where the Publish instance can be publicly accessed at',
+      doc: 'The protocol of the URL where the Publish instance can be publicly reached',
       format: 'String',
       default: 'http',
       env: 'URL_PROTOCOL'
