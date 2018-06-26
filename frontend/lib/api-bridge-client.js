@@ -12,6 +12,7 @@ const MAX_CALLS_PER_SECOND = 50
 let callCount = 0
 let onUpdate = null
 let throttle = null
+let bearerToken = null
 
 function throttleAllow () {
   clearInterval(throttle)
@@ -20,33 +21,66 @@ function throttleAllow () {
   return ++callCount <= MAX_CALLS_PER_SECOND
 }
 
+function getBearerToken (uri) {
+  if (bearerToken) {
+    return Promise.resolve(bearerToken)
+  }
+
+  if ('undefined' === typeof uri) {
+    return Promise.reject(new Error('URI is not defined'))
+  }
+
+  return fetch(
+    `${uri.protocol}\/\/${uri.hostname}:${uri.port}/token`,
+    {
+      body: JSON.stringify(
+        {
+          clientId: __userData__.clientId,
+          secret: __userData__.secret
+        }
+      ),
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      method: 'POST'
+    }
+  ).then(response => response.json())
+  .then(parsedResponse => parsedResponse.accessToken)
+}
+
 const apiBridgeFetch = function (requestObject) {
   if (!throttleAllow()) {
     return Promise.reject('API_CALL_QUOTA_EXCEEDED')
   }
 
-  return fetch('/api', {
-    body: JSON.stringify(requestObject),
-    credentials: 'include',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    method: 'POST'
-  }).then(response => {
-    if (response.status === 200) {
-      return response.json()
-    }
+  if (Array.isArray(requestObject)) {
+    return Promise.all(requestObject.map(req => apiBridgeFetch(req)))
+  }
 
-    return response.json().then(parsedResponse => {
-      let error = parsedResponse.error || ''
+  return getBearerToken(requestObject.uri)
+    .then(bearerToken => fetch(requestObject.uri.href, {
+      body: JSON.stringify(requestObject.body),
+      headers: {
+        'Authorization': `Bearer ${bearerToken}`,
+        'Content-Type': 'application/json'
+      },
+      method: requestObject.method
+    }))
+    .then(response => {
+      if (response.status === 200) {
+        return response.json()
+      }
 
-      try {
-        error = JSON.parse(error)
-      } catch (parsingError) {}
+      return response.json().then(parsedResponse => {
+        let error = parsedResponse.error || ''
 
-      return Promise.reject(error)
+        try {
+          error = JSON.parse(error)
+        } catch (parsingError) {}
+
+        return Promise.reject(error)
+      })
     })
-  })
 }
 
 const apiBridgeFactory = function ({
