@@ -4,8 +4,8 @@ import * as Constants from 'lib/constants'
 import * as Types from 'actions/actionTypes'
 import * as documentActions from 'actions/documentActions'
 
+import {apiBridgeClient, getNewBearerToken} from 'lib/api-bridge-client'
 import {getApiForUrlParams, getCollectionForUrlParams} from 'lib/collection-lookup'
-import apiBridgeClient from 'lib/api-bridge-client'
 
 export function registerFailedSignInAttempt (errorStatus) {
   return {
@@ -180,9 +180,20 @@ export function signIn (email, password) {
         password,
         username: email // Passport needs this property to be called username!
       }
-    }).then(user => {
-      dispatch(setRemoteUser(user))
-    }).catch(response => {
+    })
+    .then(user => {
+      getNewBearerToken(user).then(
+        token => console.log({token})
+      ).catch(
+        err => console.error({err})
+      )
+
+      return user
+    })
+    .then(user => dispatch(setRemoteUser(user)))
+    .catch(response => {
+      console.log(response)
+      console.error(response.error)
       switch (response.error) {
         case Constants.AUTH_DISABLED:
           dispatch(registerFailedSignInAttempt(Constants.STATUS_NOT_FOUND))
