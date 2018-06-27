@@ -2,8 +2,11 @@
 
 import 'fetch'
 import * as Constants from 'lib/constants'
+import APIWrapper from '@dadi/api-wrapper-core'
+import Cookie from 'js-cookie'
 
-const APIWrapper = require('@dadi/api-wrapper-core')
+// The cookie name to store the bearer token
+const KEY_BEARER_TOKEN = 'bearer_token'
 
 // The maximum number of allowed API calls per second. Any API Bridge calls
 // past this limit will be blocked and the Promise will reject.
@@ -12,40 +15,12 @@ const MAX_CALLS_PER_SECOND = 50
 let callCount = 0
 let onUpdate = null
 let throttle = null
-let bearerToken = null
 
 function throttleAllow () {
   clearInterval(throttle)
   throttle = setTimeout(() => callCount = 0, 1000)
 
   return ++callCount <= MAX_CALLS_PER_SECOND
-}
-
-function getBearerToken (uri) {
-  if (bearerToken) {
-    return Promise.resolve(bearerToken)
-  }
-
-  if ('undefined' === typeof uri) {
-    return Promise.reject(new Error('URI is not defined'))
-  }
-
-  return fetch(
-    `${uri.protocol}\/\/${uri.hostname}:${uri.port}/token`,
-    {
-      body: JSON.stringify(
-        {
-          clientId: __userData__.clientId,
-          secret: __userData__.secret
-        }
-      ),
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      method: 'POST'
-    }
-  ).then(response => response.json())
-  .then(parsedResponse => parsedResponse.accessToken)
 }
 
 const apiBridgeFetch = function (requestObject) {
@@ -57,15 +32,14 @@ const apiBridgeFetch = function (requestObject) {
     return Promise.all(requestObject.map(req => apiBridgeFetch(req)))
   }
 
-  return getBearerToken(requestObject.uri)
-    .then(bearerToken => fetch(requestObject.uri.href, {
-      body: JSON.stringify(requestObject.body),
-      headers: {
-        'Authorization': `Bearer ${bearerToken}`,
-        'Content-Type': 'application/json'
-      },
-      method: requestObject.method
-    }))
+  return fetch(requestObject.uri.href, {
+    body: JSON.stringify(requestObject.body),
+    headers: {
+      'Authorization': `Bearer ${Cookie.get(KEY_BEARER_TOKEN)}`,
+      'Content-Type': 'application/json'
+    },
+    method: requestObject.method
+  })
     .then(response => {
       if (response.status === 200) {
         return response.json()
@@ -81,6 +55,7 @@ const apiBridgeFetch = function (requestObject) {
         return Promise.reject(error)
       })
     })
+    .catch(err => console.error(err))
 }
 
 const apiBridgeFactory = function ({
@@ -157,9 +132,9 @@ const apiBridgeFactory = function ({
   return apiWrapperInstance
 }
 
-module.exports = apiBridgeFactory
+export default apiBridgeFactory
 
-module.exports.getBundler = () => {
+apiBridgeFactory.getBundler = () => {
   const APIBridgeBundler = function (api) {
     this.queries = []
   }
@@ -197,6 +172,35 @@ module.exports.getBundler = () => {
   return new APIBridgeBundler()
 }
 
-module.exports.registerProgressCallback = callback => {
+apiBridgeFactory.registerProgressCallback = callback => {
   onUpdate = callback
+}
+
+export const getNewBearerToken = function getNewBearerToken (user) {
+  const bearerToken = Cookie.get(KEY_BEARER_TOKEN)
+
+  if (bearerToken) {
+    return Promise.resolve(bearerToken)
+  }
+
+  return fetch(
+    'http:\/\/atlas.jolharg.com:8081\/token',
+    {
+      body: JSON.stringify(
+        {
+          clientId: user.clientId,
+          secret: user.secret
+        }
+      ),
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      method: 'POST'
+    }
+  ).then(response => response.json())
+  .then(parsedResponse => {
+    Cookie.set(KEY_BEARER_TOKEN, parsedResponse.accessToken)
+
+    return parsedResponse.accessToken
+  })
 }
