@@ -105,14 +105,13 @@ export default class Table extends Component {
     }
   }
 
-  handleRowSelect(index, event) {
+  handleRowSelect(index, selected, isRangeSelection) {
     const {
       onSelect,
       selectLimit,
       selectedRows
     } = this.props
-    const selected = event.target.checked
-    const isRangeSelection = event.shiftKey
+    
     const selectedRowsIndices = Object.keys(selectedRows)
 
     let newSelectedRows = {}
