@@ -129,11 +129,11 @@ export default class Label extends Component {
       <label for={this.id} class={labelStyle.getClasses()}>
         {this.renderChildren()}
 
-        <label
+        <div
           class={styles.label}
         >
           {label}
-        </label>
+        </div>
 
         {comment &&
           <sub class={styles.comment}>{comment}</sub>
