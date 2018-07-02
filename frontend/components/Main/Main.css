@@ -42,7 +42,7 @@
 body {
   min-height: 100vh;
   background-color: var(--theme-colour-background-shade-1, #FAFAFA);
-  background-repeat: no-repeat;
+  background-repeat: repeat;
   background-size: cover;
 }
 
