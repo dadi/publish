@@ -14,7 +14,7 @@
 .container-compact {
   display: flex;
   align-items: center;
-  padding: 15px 13px;
+  padding: 8px 13px;
 }
 
 .container-compact.container-with-comment {
