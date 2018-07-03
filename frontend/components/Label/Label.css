@@ -37,6 +37,10 @@
   margin-left: 10px;
 }
 
+.container-compact:hover .label {
+  color: var(--theme-colour-primary,#000)
+}
+
 .container:not(.container-compact) .label {
   position: absolute;
   top: 13px;
