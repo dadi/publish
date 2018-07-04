@@ -17,22 +17,16 @@ pipeline {
 
     stage('Build') {    
       steps {
-        sh "cd api"
-
         echo "Building...${IMAGE_TAG}_api"
 
         sh "docker build -t ${IMAGE_TAG}_api api"
 
-        sh "cd ../publish"
-
         echo "Setting @dadi/publish dependency to branch ${GIT_BRANCH}"
-        sh "sed -i -e 's/publish#master/publish#${GIT_BRANCH}/g' package.json"
+        sh "sed -i -e 's/publish#master/publish#${GIT_BRANCH}/g' publish/package.json"
 
         echo "Building...${IMAGE_TAG}_publish"
 
         sh "docker build -t ${IMAGE_TAG}_publish publish"
-
-        sh "cd .."
       }
     }
 
