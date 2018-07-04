@@ -22,7 +22,7 @@ pipeline {
         sh "docker build -t ${IMAGE_TAG}_api api"
 
         echo "Setting @dadi/publish dependency to branch ${GIT_BRANCH}"
-        sh "sed -i -e 's/publish#master/publish#${GIT_BRANCH}/g' publish/package.json"
+        sh "sed -i -e 's:publish#master:publish#${GIT_BRANCH}:g' publish/package.json"
 
         echo "Building...${IMAGE_TAG}_publish"
 
