@@ -21,7 +21,7 @@ pipeline {
 
         echo "Building...${IMAGE_TAG}_api"
 
-        sh "docker build -t ${IMAGE_TAG}_api ."
+        sh "docker build -t ${IMAGE_TAG}_api api"
 
         sh "cd ../publish"
 
@@ -30,7 +30,7 @@ pipeline {
 
         echo "Building...${IMAGE_TAG}_publish"
 
-        sh "docker build -t ${IMAGE_TAG}_publish ."
+        sh "docker build -t ${IMAGE_TAG}_publish publish"
 
         sh "cd .."
       }
