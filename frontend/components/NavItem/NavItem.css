@@ -11,6 +11,10 @@
   color: red !important;
 }
 
+.container-expanded:hover  .nav-item {
+  text-shadow: 1px 0 0 var(--theme-colour-primary, #000000);
+}
+
 .nav-item {
   position: relative;
   z-index: 2;
