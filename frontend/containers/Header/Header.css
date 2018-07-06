@@ -88,9 +88,6 @@
   transform: translateX(-100%);
 }
 
-.inner-content {
-}
-
 .inner-content-compact {
   max-height: 400px;
   overflow: auto;

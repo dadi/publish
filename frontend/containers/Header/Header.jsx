@@ -70,7 +70,7 @@ class Header extends Component {
     const user = state.user.remote
 
     let contentStyle = new Style(styles, 'content')
-    let innerStyle = new Style(styles, 'inner-content')
+    let innerStyle = new Style(styles)
 
     contentStyle.addIf('content-compact', compact)
     contentStyle.addIf('content-expanded', this.state.expanded)
