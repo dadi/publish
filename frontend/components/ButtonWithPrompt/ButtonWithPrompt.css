@@ -11,9 +11,11 @@
 
 .prompt-left {
   left: 0;
+  margin-right: -175px;
+  margin-bottom: 10px;
 }
 
 .prompt-right {
   right: 0;
-  margin-left: -200px;
+  margin-left: -175px;
 }
