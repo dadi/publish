@@ -180,6 +180,7 @@ class DocumentEditToolbar extends Component {
               disabled={hasConnectionIssues}
               onClick={this.handleDelete.bind(this)}
               promptCallToAction="Yes, delete it."
+              position="left"
               promptMessage="Are you sure you want to delete this document?"
             >Delete</ButtonWithPrompt> 
           </div>
