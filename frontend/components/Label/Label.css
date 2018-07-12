@@ -8,12 +8,14 @@
   font-family: var(--theme-font-family, sans-serif);
   font-size: var(--theme-font-size-small, 13px);
   color: var(--theme-colour-primary-shade-1, #FAFAFA);
+  display: block;
 }
 
 .container-compact {
   display: flex;
   align-items: center;
-  padding: 15px 13px;
+  padding: 8px 13px;
+  cursor: pointer;
 }
 
 .container-compact.container-with-comment {
@@ -33,6 +35,10 @@
 .container-compact .label {
   font-size: 15px;
   margin-left: 10px;
+}
+
+.container-compact:hover .label {
+  color: var(--theme-colour-primary,#000)
 }
 
 .container:not(.container-compact) .label {
