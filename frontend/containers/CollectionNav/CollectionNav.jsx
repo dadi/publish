@@ -1,5 +1,5 @@
 import {Component, h} from 'preact'
-import {Router} from 'preact-router-regex'
+import {Router} from '@dadi/preact-router'
 import proptypes from 'proptypes'
 import {connect} from 'preact-redux'
 import {bindActionCreators} from 'redux'

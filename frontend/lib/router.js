@@ -1,6 +1,6 @@
 'use strict'
 
-import {route} from 'preact-router-regex'
+import {route} from '@dadi/preact-router'
 import {urlHelper} from 'lib/util/url-helper'
 
 /**
