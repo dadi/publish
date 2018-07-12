@@ -8,3 +8,9 @@
 .file-input {
   display: none;
 }
+
+.label-file {
+  font-weight: bold;
+  color: var(--theme-colour-data, #4A91FF);
+  cursor: pointer;
+}
