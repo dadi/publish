@@ -4,7 +4,7 @@ import {h, Component} from 'preact'
 import proptypes from 'proptypes'
 import {connect} from 'preact-redux'
 import {bindActionCreators} from 'redux'
-import {route} from 'preact-router-regex'
+import {route} from '@dadi/preact-router'
 import {Keyboard} from 'lib/keyboard'
 
 import * as Constants from 'lib/constants'

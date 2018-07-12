@@ -1,5 +1,5 @@
 import {h, options, render} from 'preact'
-import {Router, route} from 'preact-router-regex'
+import {Router, route} from '@dadi/preact-router'
 import {expect} from 'chai'
 import {render as renderToString} from 'preact-render-to-string'
 import htmlLooksLike from 'html-looks-like'

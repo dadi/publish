@@ -16,7 +16,7 @@ import {bindActionCreators} from 'redux'
 import {buildUrl} from 'lib/router'
 import {connectHelper} from 'lib/util'
 import {getApiForUrlParams, getCollectionForUrlParams} from 'lib/collection-lookup'
-import {route} from 'preact-router-regex'
+import {route} from '@dadi/preact-router'
 
 import ButtonWithOptions from 'components/ButtonWithOptions/ButtonWithOptions'
 import ButtonWithPrompt from 'components/ButtonWithPrompt/ButtonWithPrompt'
