@@ -5,7 +5,7 @@ const ArrayHelper = require(`${paths.lib.helpers}/array`)
 const hiddenCollections = ['mediaStore']
 
 const numberRegex = '[^\\d+$]'
-const objectIdRegex = '[^[a-fA-F0-9]*]'
+const objectIdRegex = '[^[a-zA-Z0-9-]*]'
 const slugRegex = '[^[a-z-]]'
 
 const map = {

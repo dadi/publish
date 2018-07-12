@@ -5,7 +5,7 @@ import proptypes from 'proptypes'
 import {bindActionCreators} from 'redux'
 import {connect} from 'preact-redux'
 import {connectHelper} from 'lib/util'
-import {route} from 'preact-router-regex'
+import {route} from '@dadi/preact-router'
 import {redirectIf} from 'lib/router'
 import Validation from 'lib/util/validation'
 

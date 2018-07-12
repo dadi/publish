@@ -1,5 +1,5 @@
 import {Component, h} from 'preact'
-import {Router, route} from 'preact-router-regex'
+import {Router, route} from '@dadi/preact-router'
 import {bindActionCreators} from 'redux'
 import Socket from 'lib/socket'
 
@@ -146,13 +146,6 @@ class App extends Component {
           path="/reset"
         />
 
-        {state.api.paths.list.map(path => (
-          <DocumentListView
-            authenticate
-            path={path}
-          />
-        ))}
-        
         {state.api.paths.create.map(path => (
           <DocumentCreateView
             authenticate
@@ -162,6 +155,13 @@ class App extends Component {
 
         {state.api.paths.edit.map(path => (
           <DocumentEditView
+            authenticate
+            path={path}
+          />
+        ))}
+
+        {state.api.paths.list.map(path => (
+          <DocumentListView
             authenticate
             path={path}
           />
@@ -195,7 +195,7 @@ class App extends Component {
   }
 
   /**
-   * Handle Drag Drop Events
+   * Handle Drag Drop Events 
    * Block and drag and drop actions to handle accidental
    * drop outside of FileUpload and other asset drop handlers.
    * @param  {Event} event Event listener object.
