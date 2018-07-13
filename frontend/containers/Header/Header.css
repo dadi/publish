@@ -7,7 +7,7 @@
 }
 
 .masthead {
-  padding: 10px;
+  padding: 13px 20px;
 }
 
 @media (--breakpoint-medium) {
@@ -19,10 +19,12 @@
 
 .logo {
   height: 28px;
+  display: block;
 }
 
 .controls {
   margin-top: 10px;
+  margin: auto 0;
 }
 
 @media (--breakpoint-medium) {
