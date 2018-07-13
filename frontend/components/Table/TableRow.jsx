@@ -68,6 +68,19 @@ export default class TableRow extends Component {
     }
   }
 
+  handleSelectRow(event) {
+    const {onSelect, tableIndex} = this.props
+
+    if (typeof onSelect === 'function') {
+      onSelect.call(
+        this,
+        tableIndex,
+        !this.props.selected,
+        event.shiftKey
+      )
+    }
+  }
+
   renderChildren() {
     return this.props.children.map(child => {
       if (child) {
@@ -91,7 +104,7 @@ export default class TableRow extends Component {
     rowStyle.addIf('row-selected', selected)
 
     return (
-      <tr class={rowStyle.getClasses()}>
+      <tr class={rowStyle.getClasses()} onClick={this.handleSelectRow.bind(this)}>
         {selectable &&
           <TableRowCell select={true}>
             <input
@@ -99,7 +112,6 @@ export default class TableRow extends Component {
               class={styles.select}
               disabled={selectableMode === 'multiDisabled'}
               type={selectableMode === 'single' ? 'radio' : 'checkbox'}
-              onClick={this.handleSelectClick.bind(this)}
             />
           </TableRowCell>
         }
