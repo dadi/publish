@@ -50,7 +50,7 @@ export default class FileUpload extends Component {
     } = this.props
 
     return (
-      <div>
+      <span>
         <input 
           accept={accept}
           class={styles['file-input']}
@@ -59,12 +59,11 @@ export default class FileUpload extends Component {
           type="file"
           onChange={this.handleFileSelect.bind(this)}
         />
-
         <label
           class={styles['label-file']}
           for={this.fileInputId}
         >{ctaText}</label>
-      </div>
+      </span>
     )
   }
 
