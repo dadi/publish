@@ -359,13 +359,16 @@ describe('FieldImageEdit component', () => {
 
       expect(component).to.contain(
         <div class="upload-options">
-          <span>Drop file to upload or</span>
-          <FileUpload
-            allowDrop={true}
-            accept={mockConfig.FieldImage.accept}
-            multiple={false}
-            onChange={() => {}}
-          />
+          <div class="upload-drop">Drop file to upload</div>
+          <div>
+            <span>or </span>
+            <FileUpload
+              allowDrop={true}
+              accept={mockConfig.FieldImage.accept}
+              multiple={false}
+              onChange={() => {}}
+            />
+          </div>
         </div>
       )
     })
@@ -397,13 +400,18 @@ describe('FieldImageEdit component', () => {
 
       const uploadOptions = (
         <div class="upload-options">
-          <span>Drop files to upload or</span>
-          <FileUpload
-            allowDrop={true}
-            accept={mockConfig.FieldImage.accept}
-            multiple={true}
-            onChange={() => {}}
-          />
+          <div class="upload-drop">
+            Drop files to upload
+          </div>
+          <div>
+            <span>or </span>
+            <FileUpload
+              allowDrop={true}
+              accept={mockConfig.FieldImage.accept}
+              multiple={true}
+              onChange={() => {}}
+            />
+          </div>
         </div>
       )
 
