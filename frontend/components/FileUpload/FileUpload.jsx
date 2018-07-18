@@ -34,7 +34,7 @@ export default class FileUpload extends Component {
   }
 
   static defaultProps = {
-    ctaText: 'Select from device',
+    ctaText: 'select from device',
     multiple: false
   }
 
@@ -50,7 +50,7 @@ export default class FileUpload extends Component {
     } = this.props
 
     return (
-      <div>
+      <span>
         <input 
           accept={accept}
           class={styles['file-input']}
@@ -59,13 +59,11 @@ export default class FileUpload extends Component {
           type="file"
           onChange={this.handleFileSelect.bind(this)}
         />
-
-        <Button
-          accent="data"
-          forId={this.fileInputId}
-          size="small"
-        >{ctaText}</Button>
-      </div>
+        <label
+          class={styles['label-file']}
+          for={this.fileInputId}
+        >{ctaText}</label>
+      </span>
     )
   }
 

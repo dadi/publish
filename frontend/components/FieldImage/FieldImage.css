@@ -30,9 +30,19 @@
 
 .upload-options {
   display: flex;
+  flex-direction: column;
   align-items: center;
   border-top: 1px solid #e4e4e4;
   margin-top: 10px;
-  padding-top: 15px;
+  padding-top: 10px;
   justify-content: space-around;
+}
+
+.upload-drop {
+  box-shadow: inset 0 0 5px #e4e4e4;
+  background: #fdfdfd;
+  padding: 20px;
+  margin-bottom: 20px;
+  text-align: center;
+  width: 100%;
 }
