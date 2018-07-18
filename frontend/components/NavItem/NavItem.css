@@ -13,23 +13,27 @@
 
 .nav-item {
   position: relative;
-  z-index: 2;
+  z-index: 3;
   display: inline-block;
   font-family: var(--theme-font-family, sans-serif);
   font-size: 15px;
   color: var(--theme-colour-secondary, #ffffff);
-  padding: 17px 12px;
+  padding: 15px 12px;
   cursor: pointer;
   text-decoration: none;
 }
 
 .container-expanded .nav-item {
-  background-color: #17283f;
+  background-color: #fff;
+  color: #020406;
 }
 
-.container-expanded .nav-item-active,
 .nav-item-active {
   color: var(--theme-colour-system, #ffbf0d);
+}
+
+.container-expanded .nav-item-active {
+  color: #020406;
 }
 
 .container-desktop .children {
@@ -37,7 +41,7 @@
   position: absolute;
   min-width: 180px;
   top: 100%;
-  z-index: 3;
+  z-index: 2;
 }
 
 .container-expanded .children {
