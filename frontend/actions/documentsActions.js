@@ -49,7 +49,11 @@ export function fetchDocuments ({
   return (dispatch) => {
     // We use the API Bridge bundler because we might need to run more than
     // one query.
-    const bundler = apiBridgeClient.getBundler()
+    const bundler = apiBridgeClient.getBundler(),
+      sort = [
+        sortBy || collection.settings.sort || 'createdAt',
+        sortOrder || (collection.settings.sortOrder === 1 ? 'asc' : 'desc') || 'desc'
+      ]
 
     // This is the main one, where we retrieve the list of documents.
     let parentQuery
@@ -71,7 +75,7 @@ export function fetchDocuments ({
     }
 
     parentQuery = parentQuery.goToPage(page)
-      .sortBy(sortBy || 'createdAt', sortOrder || 'desc')
+      .sortBy(...sort)
       .where(filters)
       .find()
 
