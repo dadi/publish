@@ -1,6 +1,6 @@
 <img src="https://dadi.tech/assets/products/dadi-publish-full.png" alt="DADI Publish" height="65"/>
 
-[![coverage](https://img.shields.io/badge/coverage-49%2525-red.svg?style=flat?style=flat-square)](https://github.com/dadi/publish)
+[![coverage](https://img.shields.io/badge/coverage-49%25-red.svg?style=flat?style=flat-square)](https://github.com/dadi/publish)
 [![Build Status](https://travis-ci.org/dadi/publish.svg?branch=master)](https://travis-ci.org/dadi/publish)
 
 ## Overview
@@ -13,11 +13,11 @@ It is part of DADI, a suite of components covering the full development stack, b
 
 DADI is a data centric development and delivery stack, built specifically in support of the principles of API first and COPE.
 
-Copyright notice<br />
-(C) 2017 DADI+ Limited <support@dadi.tech><br />
+Copyright notice
+(C) 2018 DADI+ Limited <support@dadi.co>
 All rights reserved
 
-This product is part of DADI.<br />
+This product is part of DADI.
 DADI is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation, either version 3 of the License, or
