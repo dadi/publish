@@ -38,11 +38,5 @@
 }
 
 .actions {
-  display: none;
-}
-
-@media (--breakpoint-large) {
-  .actions {
-    display: block;
-  }
+  text-align: center;
 }
