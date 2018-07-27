@@ -19,6 +19,7 @@
 
 .logo {
   height: 28px;
+  display: block;
 }
 
 .controls {
@@ -27,7 +28,7 @@
 
 @media (--breakpoint-medium) {
   .controls {
-    margin-top: 0;
+    margin: auto 0;
   }
 }
 

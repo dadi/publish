@@ -126,15 +126,14 @@ export default class Label extends Component {
     }
 
     return (
-      <div class={labelStyle.getClasses()}>
+      <label for={this.id} class={labelStyle.getClasses()}>
         {this.renderChildren()}
 
-        <label
-          for={this.id}
+        <div
           class={styles.label}
         >
           {label}
-        </label>
+        </div>
 
         {comment &&
           <sub class={styles.comment}>{comment}</sub>
@@ -143,7 +142,7 @@ export default class Label extends Component {
         {errorMessage &&
           <p class={styles['error-message']}>{errorMessage}</p>
         }
-      </div>
+      </label>
     )
   }
 }

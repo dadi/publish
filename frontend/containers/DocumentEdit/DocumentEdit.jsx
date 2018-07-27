@@ -323,7 +323,7 @@ class DocumentEdit extends Component {
     // }
     return (
       <div class={styles.container}>
-        {fields.sections &&
+        {fields.sections && 1 < fields.sections.length &&
           <div class={styles.navigation}>
             {fields.sections.map(collectionSection => {
               const isActive = activeSection === collectionSection.slug
