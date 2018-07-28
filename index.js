@@ -19,7 +19,7 @@ Publish.prototype.getStartupMessage = function () {
     dadiBoot.started({
       server: `${config.get('server.host')}:${config.get('server.port')}`,
       header: {
-        app: `${config.get('app.name')} - ${config.get('app.publisher')}`
+        app: `${config.get('app.name')}${config.get('app.publisher') && config.get('app.publisher') !== '' ? ' - ' + config.get('app.publisher') : ''}`
       },
       body: {
         'Version': pkg.version,
