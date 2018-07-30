@@ -30,25 +30,31 @@ class App extends Component {
     const {actions, state} = this.props
 
     apiBridgeClient.registerProgressCallback(actions.registerNetworkCall)
-    // We only load the config at this point if the user is already signed in
+
+    // We only load the APIs at this point if the user is already signed in
     // (existing session). Otherwise, it will be loaded upon successful login.
-    if (state.user.status === Constants.STATUS_LOADED) {
-      actions.loadAppConfig()
+    if (state.user.accessToken) {
+      actions.loadApis()
     }
   }
 
   componentDidMount() {
-    const {actions} = this.props
+    const {actions, state} = this.props
+    const conf = state.app.config
+
+    this.socket = new Socket(
+      conf.publicUrl.port || conf.server.port
+    ).on('userListChange', this.handleUserListChange.bind(this))
 
     window.addEventListener('resize', debounce(() => {
       actions.setScreenWidth(window.innerWidth)
     }, 500))
-    document.addEventListener("dragstart", this.handleDragDropEvents, false)
-    document.addEventListener("dragend", this.handleDragDropEvents, false)
-    document.addEventListener("dragover", this.handleDragDropEvents, false)
-    document.addEventListener("dragenter", this.handleDragDropEvents, false)
-    document.addEventListener("dragleave", this.handleDragDropEvents, false)
-    document.addEventListener("drop", this.handleDragDropEvents, false)
+    document.addEventListener('dragstart', this.handleDragDropEvents, false)
+    document.addEventListener('dragend', this.handleDragDropEvents, false)
+    document.addEventListener('dragover', this.handleDragDropEvents, false)
+    document.addEventListener('dragenter', this.handleDragDropEvents, false)
+    document.addEventListener('dragleave', this.handleDragDropEvents, false)
+    document.addEventListener('drop', this.handleDragDropEvents, false)
   }
 
   componentDidUpdate(previousProps) {
@@ -60,7 +66,7 @@ class App extends Component {
 
     if (
       (!prevConf && conf) &&
-        conf.server.healthcheck.enabled
+      conf.server.healthcheck.enabled
     ) {
       this.monitor = new ConnectionMonitor()
         .watch(conf.server.healthcheck.frequency)
@@ -74,28 +80,15 @@ class App extends Component {
     }
 
     // State change: user has signed in.
-    if (
-      previousState.user.status === Constants.STATUS_FAILED &&
-      state.user.status === Constants.STATUS_LOADED
-    ) {
-      actions.loadAppConfig()
+    if (!previousState.user.accessToken && state.user.accessToken) {
+      actions.loadApis()
 
       return route('/')
     }
 
     // State change: user has signed out.
-    if (
-      previousState.user.status === Constants.STATUS_LOADED &&
-      state.user.hasSignedOut
-    ) {
+    if (previousState.user.accessToken && !state.user.accessToken) {
       return route('/sign-in')
-    }
-
-    // State change: app now has config.
-    if (!prevConf && conf && !state.api.error) {
-      actions.loadApis()
-      this.socket = new Socket(conf.publicUrl.port || conf.server.port)
-        .on('userListChange', this.handleUserListChange.bind(this))
     }
 
     if (this.socket && this.socket.getRoom() !== room) {
@@ -214,15 +207,15 @@ class App extends Component {
       this.analytics.pageview(event.url)
     }
 
-    if (
-      !state.user.authEnabled &&
-      (event.url === '/sign-in')
-    ) {
-      return route('/')
-    }
+    // if (
+    //   !state.user.authEnabled &&
+    //   (event.url === '/sign-in')
+    // ) {
+    //   return route('/')
+    // }
 
     if (
-      (isAuthenticatedRoute && state.user.status !== Constants.STATUS_LOADED) ||
+      (isAuthenticatedRoute && !state.user.accessToken) ||
       event.url === '/sign-out'
     ) {
       return route('/sign-in')

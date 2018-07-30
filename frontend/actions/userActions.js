@@ -7,6 +7,13 @@ import * as documentActions from 'actions/documentActions'
 import {getApiForUrlParams, getCollectionForUrlParams} from 'lib/collection-lookup'
 import apiBridgeClient from 'lib/api-bridge-client'
 
+export function authenticate (client) {
+  return {
+    client,
+    type: Types.AUTHENTICATE
+  }
+}
+
 export function registerFailedSignInAttempt (errorStatus) {
   return {
     errorStatus,
@@ -103,6 +110,7 @@ export function saveUser ({api, collection, user}) {
     dispatch(documentActions.setRemoteDocumentStatus(Constants.STATUS_SAVING))
 
     const apiBridge = apiBridgeClient({
+      accessToken: getState().user.accessToken,
       api,
       collection
     }).whereFieldIsEqualTo('_id', currentUser._id)
@@ -151,17 +159,6 @@ export function saveUser ({api, collection, user}) {
 }
 
 /**
- * Set Remote User
- * @param {Object} user User data
- */
-export function setRemoteUser (user) {
-  return {
-    type: Types.SET_REMOTE_USER,
-    user
-  }
-}
-
-/**
  * Set User Status
  * @param {String} status Status of user
  */
@@ -172,32 +169,30 @@ export function setUserStatus (status) {
   }
 }
 
-export function signIn (email, password) {
+export function signIn (clientId, secret) {
   return (dispatch, getState) => {
-    runSessionQuery({
-      method: 'POST',
-      payload: {
-        password,
-        username: email // Passport needs this property to be called username!
-      }
-    }).then(user => {
-      dispatch(setRemoteUser(user))
-    }).catch(response => {
-      switch (response.error) {
-        case Constants.AUTH_DISABLED:
-          dispatch(registerFailedSignInAttempt(Constants.STATUS_NOT_FOUND))
+    let apiUrl = getState().app.config.apis[0].host
+    let options = {
+      body: JSON.stringify({
+        clientId,
+        secret
+      }),
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      },
+      method: 'POST'
+    }
 
-          break
+    return fetch(`${apiUrl}/token`, options)
+      .then(response => response.json())
+      .then(response => {
+        if (typeof response.accessToken === 'string') {
+          return dispatch(authenticate(response))
+        }
 
-        case Constants.AUTH_UNREACHABLE:
-          dispatch(registerFailedSignInAttempt(Constants.AUTH_UNREACHABLE))
-
-          break
-
-        default:
-          dispatch(registerFailedSignInAttempt())
-      }
-    })
+        return Promise.reject(response)
+      })
   }
 }
 

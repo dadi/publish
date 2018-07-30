@@ -52,7 +52,7 @@ class SignIn extends Component {
     const {resetSuccess} = nextUser
 
     // If the user is signed in, redirect to the home view.
-    redirectIf(user.remote, '/')
+    //redirectIf(user.remote, '/')
 
     // Redirect if `resetSuccess` true
     redirectIf(!user.resetSuccess && (resetSuccess && isPasswordReset), '/sign-in')
@@ -69,7 +69,11 @@ class SignIn extends Component {
       if (nextUser.status === Constants.AUTH_UNREACHABLE) {
         this.setState({error: 'Authentication API unreachable'})
       } else {
-        this.setState({error:`${isPasswordReset ? 'Passwords don\'t match or invalid token' : 'Email not found or password incorrect'}.`})
+        let message = isPasswordReset
+          ? 'Passwords don\'t match or invalid token'
+          : 'Email not found or password incorrect'
+
+        this.setState({error: message})
       }
     } else {
       this.setState({error: false})

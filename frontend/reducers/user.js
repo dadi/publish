@@ -1,10 +1,12 @@
 'use strict'
 
 import * as Constants from 'lib/constants'
+import * as Cookies from 'js-cookie'
 import * as Types from 'actions/actionTypes'
 import {isValidJSON} from 'lib/util'
 
 const initialState = {
+  accessToken: Cookies.get('accessToken'),
   authEnabled: window.__auth__,
   failedSignInAttempts: 0,
   hasSignedOut: false,
@@ -20,22 +22,30 @@ const initialState = {
 export default function user (state = initialState, action = {}) {
   switch (action.type) {
 
+    // Action: authenticate
+    case Types.AUTHENTICATE:
+      let client = action.client
+      let expiryDate = new Date(
+        Date.now() + (client.expiresIn * 1000)
+      )
+
+      Cookies.set('accessToken', client.accessToken, {
+        expires: expiryDate
+      })
+
+      return {
+        ...state,
+        accessToken: client.accessToken,
+        failedSignInAttempts: 0,
+        status: Constants.STATUS_LOADED
+      }
+
     // Action: register failed sign-in attempt
     case Types.REGISTER_FAILED_SIGN_IN:
       return {
         ...state,
         failedSignInAttempts: state.failedSignInAttempts + 1,
         status: action.errorStatus || Constants.STATUS_FAILED
-      }
-
-    // Action: set user
-    case Types.SET_REMOTE_USER:
-      return {
-        ...state,
-        failedSignInAttempts: 0,
-        hasSignedOut: false,
-        remote: action.user,
-        status: Constants.STATUS_LOADED
       }
 
     case Types.REQUEST_PASSWORD_RESET:
