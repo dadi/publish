@@ -60,12 +60,16 @@ Router.prototype.secureRedirect = function (ssl) {
 }
 
 Router.prototype.getRoutes = function () {
-  fs.readdirSync(path.resolve(this.routesDir)).forEach((file) => {
-    /* require module with its name (from filename), passing app */
-    let controller = require(path.join(this.routesDir, file))
+  try {
+    fs.readdirSync(path.resolve(this.routesDir)).forEach((file) => {
+      /* require module with its name (from filename), passing app */
+      let controller = require(path.join(this.routesDir, file))
 
-    controller(this.server)
-  })
+      controller(this.server)
+    })
+  } catch (error) {
+    log.warn({module: 'router'}, error)
+  }
 }
 
 /**
