@@ -18,26 +18,24 @@ export function loadApis () {
 
     apis.forEach(api => {
       const apiConfig = apiBridgeClient({
+        accessToken: getState().user.accessToken,
         api
       })
       .getConfig()
       .then(config => {
-        apiBridgeClient({api}).getCollections().then(({collections}) => {
-          // This bundler will be used to get all the collections schemas for
-          // this API in bulk.
-          const collectionBundler = apiBridgeClient.getBundler()
-
-          collections.forEach(collection => {
-            const collectionQuery = apiBridgeClient({
+        apiBridgeClient({
+          accessToken: getState().user.accessToken,
+          api
+        }).getCollections().then(({collections}) => {
+          let queue = collections.map(collection => {
+            return apiBridgeClient({
+              accessToken: getState().user.accessToken,
               api,
-              collection,
-              inBundle: true
+              collection
             }).getConfig()
-
-            collectionBundler.add(collectionQuery)
           })
 
-          collectionBundler.run()
+          Promise.all(queue)
             .then(apiCollections => {
               const isAuthApi = auth.host === api.host && auth.port === api.port
               const mergedCollections = apiCollections

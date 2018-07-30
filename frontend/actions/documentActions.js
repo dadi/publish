@@ -37,8 +37,9 @@ export function fetchDocument ({
   id,
   fields
 }) {
-  return (dispatch) => {
+  return (dispatch, getState) => {
     const apiBridge = apiBridgeClient({
+      accessToken: getState().user.accessToken,
       api,
       collection
     }).whereFieldIsEqualTo('_id', id)
@@ -170,10 +171,9 @@ export function saveDocument ({
       })
     }
 
-    // Handling reference fields. We might need to run multiple queries, so
-    // we use the API Bridge bundler.
-    const referenceBundler = apiBridgeClient.getBundler()
-    let referenceBundlerMap = []
+    // Handling reference fields.
+    let referenceQueue = []
+    let referenceQueueMap = []
 
     // We iterate through the payload and find reference fields.
     Object.keys(payload).forEach(field => {
@@ -204,10 +204,9 @@ export function saveDocument ({
             }
 
             // Otherwise, we need to upload the file.
-            referenceBundler.add(
+            referenceQueue.push(
               apiBridgeClient({
-                api,
-                inBundle: true
+                api
               }).inMedia().getSignedUrl({
                 contentLength: document.contentLength,
                 fileName: document.fileName,
@@ -215,7 +214,7 @@ export function saveDocument ({
               })
             )
 
-            referenceBundlerMap.push({
+            referenceQueueMap.push({
               field,
               index,
               mediaUpload: true
@@ -249,29 +248,32 @@ export function saveDocument ({
       }
     })
 
-    referenceBundler.run().then(responses => {
+    Promise.all(referenceQueue).then(responses => {
       let uploadQueue = []
 
       // `responses` contains an array of API responses resulting from updating
       // or creationg referenced documents. The names of the fields they relate
-      // to are defined in `referenceBundlerMap`.
+      // to are defined in `referenceQueueMap`.
       responses.forEach((response, index) => {
-        const bundlerMapEntry = referenceBundlerMap[index]
-        const referenceField = bundlerMapEntry.field
-        const referenceLimit = bundlerMapEntry.limit
+        const queueMapEntry = referenceQueueMap[index]
+        const referenceField = queueMapEntry.field
+        const referenceLimit = queueMapEntry.limit
 
         // If this bundle entry is a media upload, we're not done yet. The
         // bundle response gave us a signed URL, but we still need to upload
         // the file and add the resulting ID to the final payload.
-        if (bundlerMapEntry.mediaUpload) {
-          dispatch(setRemoteDocumentStatus(Constants.STATUS_SAVING))
+        if (queueMapEntry.mediaUpload) {
+          dispatch(
+            setRemoteDocumentStatus(Constants.STATUS_SAVING)
+          )
+
           const mediaUpload = uploadMedia(
             api,
             response.url,
-            payload[referenceField][bundlerMapEntry.index]
+            payload[referenceField][queueMapEntry.index]
           ).then(uploadResponse => {
             if (uploadResponse.results && uploadResponse.results.length) {
-              payload[referenceField][bundlerMapEntry.index] = uploadResponse.results[0]._id
+              payload[referenceField][queueMapEntry.index] = uploadResponse.results[0]._id
             }
           })
 
@@ -312,7 +314,9 @@ export function saveDocument ({
 
             LocalStorage.clearDocument(localStorageKey)
           } else {
-            dispatch(setRemoteDocumentStatus(Constants.STATUS_FAILED))
+            dispatch(
+              setRemoteDocumentStatus(Constants.STATUS_FAILED)
+            )
           }
         })
       }).catch(response => {
@@ -327,11 +331,15 @@ export function saveDocument ({
             )
           )
         } else {
-          dispatch(setRemoteDocumentStatus(Constants.STATUS_FAILED))
+          dispatch(
+            setRemoteDocumentStatus(Constants.STATUS_FAILED)
+          )
         }
       })
     }).catch(err => {
-      dispatch(setRemoteDocumentStatus(Constants.STATUS_FAILED))
+      dispatch(
+        setRemoteDocumentStatus(Constants.STATUS_FAILED)
+      )
     })
   }
 }

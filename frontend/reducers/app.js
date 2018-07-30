@@ -17,7 +17,7 @@ const NETWORK_DEBOUNCE = 200
 // The initial state
 const initialState = {
   breakpoint: getActiveBreakpoint(window.innerWidth),
-  config: null,
+  config: window.__config__,
   networkStatus: Constants.NETWORK_OK,
   notification: null,
   status: Constants.STATUS_IDLE
@@ -90,13 +90,6 @@ export default function app (state = initialState, action = {}) {
       }
 
       return state
-
-    // App action: set config
-    case Types.SET_APP_CONFIG:
-      return {
-        ...state,
-        config: action.config
-      }
 
     // App action: set app status
     case Types.SET_APP_STATUS:

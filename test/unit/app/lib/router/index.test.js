@@ -18,14 +18,6 @@ const clearSpies = () => {
     router.use.mockRestore()
   }
 
-  if (router.setPassportStrategies.isMockFunction) {
-    router.setPassportStrategies.mockRestore()
-  }
-
-  if (router.setPassportStrategies.isMockFunction) {
-    router.setPassportStrategies.mockRestore()
-  }
-
   if (router.setHeaders.isMockFunction) {
     router.setHeaders.mockRestore()
   }
@@ -97,22 +89,6 @@ describe('Router', () => {
       router.addRoutes()
 
       expect(useSpy).toBeCalled()
-    })
-
-    it('should call setPassportStrategies method', () => {
-      const setPassportStrategiesSpy = jest.spyOn(router, 'setPassportStrategies')
-
-      router.addRoutes()
-
-      expect(setPassportStrategiesSpy).toBeCalled()
-    })
-
-    it('should call setPassportStrategies method', () => {
-      const setPassportStrategiesSpy = jest.spyOn(router, 'setPassportStrategies')
-
-      router.addRoutes()
-
-      expect(setPassportStrategiesSpy).toBeCalled()
     })
 
     it('should call setHeaders method', () => {

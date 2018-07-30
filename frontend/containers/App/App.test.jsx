@@ -162,43 +162,20 @@ describe('App', () => {
     htmlLooksLike(component, error)
   })
 
-  // it('renders an error view if route does not match', () => {
-  //   defaultState.api.paths = mockPaths
-  //   defaultState.api.status = 'STATUS_LOADED'
-  //   const component = renderToString(
-  //     <MockStore state={defaultState}>
-  //       <App />
-  //     </MockStore>
-  //   )
-
-  //   const error = renderToString(
-  //     <MockStore>
-  //       <ErrorView
-  //         type={'ERROR_ROUTE_NOT_FOUND'}
-  //       >
-  //         {'{{ ... }}'}
-  //       </ErrorView>
-  //     </MockStore>
-  //   )
-
-  //   htmlLooksLike(component, error)
-  // })
-
   it('renders an instance of `HomeView` by default', () => {
     defaultState.api.paths = mockPaths
     defaultState.api.status = 'STATUS_LOADED'
     defaultState.router = mockHistory
 
     const component = renderToString(
-      <MockStore state={defaultState} history={'foo'}>
+      <MockStore state={defaultState} history={'https://foo.com'}>
         <App />
       </MockStore>
     )
 
     const homeview = renderToString(
       <MockStore>
-        <HomeView
-        >
+        <HomeView>
           {'{{ ... }}'}
         </HomeView>
       </MockStore>

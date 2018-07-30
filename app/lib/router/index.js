@@ -7,10 +7,7 @@ const flash = require('connect-flash')
 const fs = require('fs')
 const log = require('@dadi/logger')
 const path = require('path')
-const passport = require('passport-restify')
-const LocalStrategy = require('passport-local')
 const restify = require('restify')
-const SessionController = require(`${paths.lib.controllers}/session`)
 const Collection = require(`${paths.lib.models}/collection`)
 
 /**
@@ -36,7 +33,6 @@ Router.prototype.addRoutes = function () {
 
   this.pre()
   this.use()
-  this.setPassportStrategies()
   this.getRoutes()
   this.componentRoutes(path.resolve(`${paths.frontend.components}`), /Routes$/g)
   this.setHeaders()
@@ -73,25 +69,6 @@ Router.prototype.getRoutes = function () {
 }
 
 /**
- * Set Passport Strategies
- * Add local sessionController strategies to passport.
- */
-Router.prototype.setPassportStrategies = function () {
-  const sessionController = new SessionController()
-
-  // Passport Local stategy selected
-  passport.use(new LocalStrategy(sessionController.authorise))
-
-  passport.serializeUser((user, done) =>
-    done(!user ? {err: 'User not found'} : null, user || null)
-  )
-
-  passport.deserializeUser((user, done) =>
-    done(!user ? {err: 'User not found'} : null, user || null)
-  )
-}
-
-/**
  * Web routes (Needs moving to controller?)
  * For use with isomorphic web application base route
  */
@@ -116,13 +93,10 @@ Router.prototype.webRoutes = function () {
   this.server.get(/.*/, (req, res, next) => {
     res.header('Content-Type', 'text/html; charset=utf-8')
 
-    const serialisedUser = (req.isAuthenticated() && req.session.passport && req.session.passport.user)
-      ? JSON.stringify(req.session.passport.user)
-      : null
     let entryPointPage = this.entryPointTemplate
       .replace(
-        '/*@@userData@@*/',
-        `window.__userData__ = ${serialisedUser};window.__auth__ = ${config.get('auth.enabled')};`
+        '/*@@config@@*/',
+        `window.__config__ = ${config.toString()};`
       )
 
     return new Collection()
@@ -135,16 +109,20 @@ Router.prototype.webRoutes = function () {
           )
 
           res.end(entryPointPage)
+
           return next()
         }
       })
       .catch(e => {
         log.error({module: 'router'}, `buildCollectionRoutes failed: ${JSON.stringify(e)}`)
+
         entryPointPage = entryPointPage.replace(
           '/*@@apiError@@*/',
           `window.__apiError__ = ${JSON.stringify(e)};`
         )
+
         res.end(entryPointPage)
+
         return next()
       })
   })
@@ -227,9 +205,6 @@ Router.prototype.use = function () {
       saveUninitialized: true,
       resave: true
     }))
-    // Initialise passport session.
-    .use(passport.initialize())
-    .use(passport.session())
     .use(flash())
 }
 
