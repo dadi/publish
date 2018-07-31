@@ -5,7 +5,7 @@ import * as Types from 'actions/actionTypes'
 
 export const initialState = {
   apis: [],
-  error: window.__apiError__,
+  error: undefined,
   paths: window.__documentRoutes__,
   status: Constants.STATUS_IDLE
 }
@@ -23,8 +23,13 @@ export default function api (state = initialState, action = {}) {
 
     // Action: Set status of API
     case Types.SET_API_STATUS:
+      if (action.error === Constants.API_UNAUTHORISED_ERROR) {
+        return initialState
+      }
+
       return {
         ...state,
+        error: action.error,
         status: action.status
       }
 

@@ -104,7 +104,6 @@ const getDefaultState = () => {
       room: null 
     },
     user: { 
-      authEnabled: undefined,
       failedSignInAttempts: 0,
       hasSignedOut: false,
       remote: null,

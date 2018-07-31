@@ -7,10 +7,8 @@ import {isValidJSON} from 'lib/util'
 
 const initialState = {
   accessToken: Cookies.get('accessToken'),
-  authEnabled: window.__auth__,
   failedSignInAttempts: 0,
-  hasSignedOut: false,
-  remote: window.__userData__ || null,
+  remote: null,
   resetEmail: null,
   resetError: null,
   resetSuccess: false,
@@ -61,6 +59,18 @@ export default function user (state = initialState, action = {}) {
         resetSuccess: action.success
       }
 
+    case Types.SET_API_STATUS:
+      if (action.error === Constants.API_UNAUTHORISED_ERROR) {
+        Cookies.remove('accessToken')
+
+        return {
+          ...initialState,
+          accessToken: undefined
+        }
+      }
+
+      return state
+
     // Action: set user status
     case Types.SET_USER_STATUS:
       return {
@@ -70,11 +80,11 @@ export default function user (state = initialState, action = {}) {
 
     // Action: clear user
     case Types.SIGN_OUT:
+      Cookies.remove('accessToken')
+
       return {
         ...initialState,
-        hasSignedOut: true,
-        remote: null,
-        status: Constants.STATUS_FAILED
+        accessToken: undefined
       }
 
     default:

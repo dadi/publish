@@ -67,8 +67,6 @@ class Header extends Component {
       return null
     }
 
-    const user = state.user.remote
-
     let contentStyle = new Style(styles, 'content')
     let innerStyle = new Style(styles)
 
@@ -101,7 +99,7 @@ class Header extends Component {
               <img class={styles.logo} src="/public/images/publish.png" />
             </a>
 
-              {user && (
+              {state.user.accessToken && (
                 <div class={styles.controls}>
                   <button
                     class={styles.signout}
@@ -109,7 +107,7 @@ class Header extends Component {
                   >
                     Sign out
                   </button>
-                  <a href="/profile" class={styles.user}>{`${user.first_name} ${user.last_name}`}</a>
+                  {/*<a href="/profile" class={styles.user}>{`${user.first_name} ${user.last_name}`}</a>*/}
                 </div>
               )}
           </div>
