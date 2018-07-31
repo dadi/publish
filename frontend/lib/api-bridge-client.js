@@ -36,13 +36,7 @@ const apiBridgeFetch = function (requestObject) {
       return response.json()
     }
 
-    return response.json().then(parsedResponse => {
-      let error = parsedResponse.error || ''
-
-      try {
-        error = JSON.parse(error)
-      } catch (parsingError) {}
-
+    return response.json().then(error => {
       return Promise.reject(error)
     })
   })

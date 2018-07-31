@@ -197,14 +197,8 @@ export function signIn (clientId, secret) {
 }
 
 export function signOut () {
-  return (dispatch, getState) => {
-    runSessionQuery({
-      method: 'DELETE'
-    }).then(response => {
-      dispatch({
-        type: Types.SIGN_OUT
-      })
-    })
+  return {
+    type: Types.SIGN_OUT
   }
 }
 

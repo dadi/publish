@@ -86,7 +86,7 @@ class App extends Component {
       return route('/')
     }
 
-    // State change: user has signed out.
+    // State change: token is invalid.
     if (previousState.user.accessToken && !state.user.accessToken) {
       return route('/sign-in')
     }
