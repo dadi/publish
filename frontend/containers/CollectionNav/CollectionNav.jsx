@@ -45,12 +45,22 @@ class CollectionNav extends Component {
 
       // We start by adding all the collections that are referenced in the menu
       // object.
-      filteredCollections.forEach(collection => {
-        (api.menu || []).forEach(menuEntry => {
-          if (menuEntry === collection.slug) {
-            apiCollections[collection.slug] = null
-          } else if (menuEntry.collections && menuEntry.collections.includes(collection.slug)) {
-            apiCollections[collection.slug] = menuEntry.title
+      let menu = (api.menu || [])
+      let slugs = filteredCollections.map(collection => collection.slug)
+
+      menu.forEach(menuEntry => {
+        //1st level menu entry
+        if(!menuEntry.collections) {
+          if(slugs.includes(menuEntry)) {
+            apiCollections[menuEntry] = null
+          }
+          return
+        }
+
+        //nested menu entry
+        menuEntry.collections.forEach(menuCollection => {
+          if(slugs.includes(menuCollection)) {
+            apiCollections[menuCollection] = menuEntry.title
           }
         })
       })
