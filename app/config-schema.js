@@ -322,5 +322,23 @@ module.exports = {
         default: true
       }
     }
+  },
+  whitelabel: {
+    availableInFrontend: true,
+    bgImage: {
+      doc: 'The background image URL',
+      format: String,
+      default: ''
+    },
+    logo: {
+      doc: 'The logo URL',
+      format: String,
+      default: ''
+    },
+    poweredBy: {
+      doc: 'Whether to include a "Powered by DADI Publish" section',
+      format: Boolean,
+      default: false
+    }
   }
 }
