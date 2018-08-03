@@ -1,7 +1,7 @@
 .container {
   display: flex;
   justify-content: space-between;
-  justify-content: flex-end;
+  align-items: center;
   background-color: var(--theme-colour-background-shade-3, #DDDDDD);
   font-family: var(--theme-font-family, sans-serif);
   padding: 15px 20px;
@@ -24,4 +24,19 @@
   height: 36px;
   color: rgba(0, 0, 0, 0.5);
   padding: 5px 10px;
+}
+
+.collection {
+  font-weight: bold;
+  padding-bottom: 2px;
+  border-bottom:  var(--theme-colour-system, #ffbf0d) 1px solid;
+}
+
+.group {
+  color: var(--theme-colour-primary-shade-1, #777777);
+}
+
+.arrow {
+  color: var(--theme-colour-primary-shade-2, #AAAAAA);
+  padding: 0 0.5em 0 0.5em;
 }
