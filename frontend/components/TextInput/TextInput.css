@@ -10,3 +10,19 @@
 .input-in-label {
   background-color: inherit;
 }
+
+.resizable {
+  resize: both;
+}
+
+.not-resizable {
+  resize: none;
+}
+
+.full-height {
+  height: calc(100vh - 135px);
+}
+
+.content-height {
+  height: auto;
+}
