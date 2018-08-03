@@ -111,7 +111,7 @@ export default class TextInput extends Component {
   }
 
   static defaultProps = {
-    heightType: `static`,
+    heightType: 'static',
     inLabel: false,
     multiline: false,
     readonly: false,
@@ -148,12 +148,11 @@ export default class TextInput extends Component {
     let inputStyle = new Style(styles, 'input')
 
     inputStyle.addIf('input-in-label', inLabel)
-    inputStyle.add(resizable ? `resizable` : `not-resizable`)
-    if (heightType === `full`) {
-      inputStyle.add(`full-height`)
-    }
-    else if (heightType === `content`) {
-      inputStyle.add(`content-height`)
+    inputStyle.add(resizable ? 'resizable' : 'not-resizable')
+    if (heightType === 'full') {
+      inputStyle.add('full-height')
+    } else if (heightType === 'content') {
+      inputStyle.add('content-height')
     }
     inputStyle.addResolved(className)
 
@@ -170,7 +169,7 @@ export default class TextInput extends Component {
           placeholder={placeholder}
           readonly={readonly}
           required={required}
-          rows={heightType === `static` ? rows : ``}
+          rows={heightType === 'static' ? rows : ''}
           value={value}
         />
       )
@@ -196,9 +195,9 @@ export default class TextInput extends Component {
 
   adjustHeightIfNeeded()
   {
-    if (this.props.heightType === `content`) {
+    if (this.props.heightType === 'content') {
       this.base.style.height = 0
-      this.base.style.height = this.base.scrollHeight + `px`;
+      this.base.style.height = this.base.scrollHeight + 'px';
     }
   }
 
