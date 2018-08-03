@@ -20,7 +20,7 @@
 }
 
 .full-height {
-  height: 100vh;
+  height: calc(100vh - 135px);
 }
 
 .content-height {
