@@ -69,7 +69,10 @@ class DocumentListController extends Component {
       referencedField,
       state
     } = this.props
-    const currentCollection = state.api.apis.length && onGetRoutes(state.api.paths).getCurrentCollection(state.api.apis)
+    
+    const routes = onGetRoutes(state.api.paths)
+    const currentCollection = state.api.apis.length && routes.getCurrentCollection(state.api.apis)
+    
     const hasDocuments = state.documents.list && state.documents.list.results && (state.documents.list.results.length > 0)
     const isReference = referencedField // Temporary to disable create new in reference fields until reference save is ready.
     const params = state.router.params
@@ -84,9 +87,20 @@ class DocumentListController extends Component {
       return null
     }
 
+    const collectionMatch = routes.getCollectionMatch(collection)
+    const api = routes.getAPI(state.api.apis, collectionMatch, group)
+    const menu = routes.menuMatch(api, group, currentCollection)
+
+    let groupName = null
+    if (menu && menu.length)
+      groupName = menu[0].title
+
     return (
       <div>
-        <ListController collection={currentCollection}>
+        <ListController 
+          collection={currentCollection}
+          groupName={groupName}
+        >
           <Button
             disabled={filterLimitReached}
             accent="data"
