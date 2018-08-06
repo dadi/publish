@@ -102,12 +102,14 @@ class DocumentListController extends Component {
           groupName={groupName}
         >
           <Button
+            type="fill"
             disabled={filterLimitReached}
             accent="data"
             onClick={this.handleAddNewFilter.bind(this)}
           >Add Filter</Button>
           {!currentCollection._isAuthCollection && !isReference && (
             <Button
+              type="fill"
               accent="save"
               href={newHref}
             >Create new</Button>
