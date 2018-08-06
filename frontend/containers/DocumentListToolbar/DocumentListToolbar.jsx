@@ -109,12 +109,13 @@ class DocumentListToolbar extends Component {
         <div class={styles.section}>
           <div class={styles.information}>
             {metadata.totalCount > metadata.limit && (
-              <ToolbarTextInput
-                className={styles['page-input']}
-                onChange={this.handleGoToPage.bind(this)}
-                size="small"
-                placeholder="Go to page"
-              />
+              <span class={styles['page-input']}>
+                <ToolbarTextInput
+                  onChange={this.handleGoToPage.bind(this)}
+                  size="small"
+                  placeholder="Go to page"
+                />
+              </span>
             )}
             {metadata.totalCount > 1 && (
               <span class={styles['count-label']}>

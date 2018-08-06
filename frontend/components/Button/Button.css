@@ -31,6 +31,10 @@
   pointer-events: none;
 }
 
+.button-fill {
+  width: 100%;
+}
+
 .button-inherit {
   background-color: inherit;
   color: inherit;

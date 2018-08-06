@@ -117,6 +117,7 @@ export default class FieldStringEdit extends Component {
   renderAsFreeInput() {
     const {error, value, schema} = this.props
     const publishBlock = schema.publish || {}
+    const {heightType, rows, resizable} = publishBlock
     const type = publishBlock.multiline ? 'multiline' : 'text'
     const readOnly = publishBlock.readonly === true
 
@@ -128,10 +129,13 @@ export default class FieldStringEdit extends Component {
         comment={schema.required && 'Required'}
       >
         <TextInput
+          heightType={heightType}
           onChange={this.handleOnChange.bind(this)}
           onKeyUp={this.handleOnKeyUp.bind(this)}
           placeholder={schema.placeholder}
           readonly={readOnly}
+          resizable={resizable}
+          rows={rows}
           type={type}
           value={value}
         />

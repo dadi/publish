@@ -100,6 +100,7 @@ export default class Button extends Component {
       .addIf(`button-in-group-${inGroup}`, inGroup)
       .addIf('button-mock', type === 'mock')
       .addIf(`button-${size}`, size !== 'normal')
+      .addIf('button-fill', type === 'fill')
       .addResolved(className)
 
     if (forId) {
