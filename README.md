@@ -37,6 +37,7 @@ but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 
+
 The GNU General Public License (GPL) is available at
 http://www.gnu.org/licenses/gpl-3.0.en.html.<br />
 A copy can be found in the file AGPL.md distributed with
