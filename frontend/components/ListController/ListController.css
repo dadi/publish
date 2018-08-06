@@ -7,12 +7,8 @@
   padding: 15px 20px;
 }
 
-.control {
-  display: inline-block;
-}
-
 .control + .control {
-  margin-left: 10px;
+  margin-top: 10px;
 }
 
 .search {
@@ -27,7 +23,9 @@
 }
 
 .collection {
+  display: inline-block;
   font-weight: bold;
+  padding-top: 5px;
   padding-bottom: 2px;
   border-bottom:  var(--theme-colour-system, #ffbf0d) 1px solid;
 }
@@ -39,4 +37,15 @@
 .arrow {
   color: var(--theme-colour-primary-shade-2, #AAAAAA);
   padding: 0 0.5em 0 0.5em;
+}
+
+@media (--breakpoint-medium) {
+  .control {
+    display: inline-block;
+  }
+
+  .control + .control {
+    margin-left: 10px;
+    margin-top: 0px;
+  }
 }
