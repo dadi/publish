@@ -50,8 +50,8 @@ class CollectionNav extends Component {
 
       menu.forEach(menuEntry => {
         //1st level menu entry
-        if(!menuEntry.collections) {
-          if(slugs.includes(menuEntry)) {
+        if (!menuEntry.collections) {
+          if (slugs.includes(menuEntry)) {
             apiCollections[menuEntry] = null
           }
           return
@@ -59,7 +59,7 @@ class CollectionNav extends Component {
 
         //nested menu entry
         menuEntry.collections.forEach(menuCollection => {
-          if(slugs.includes(menuCollection)) {
+          if (slugs.includes(menuCollection)) {
             apiCollections[menuCollection] = menuEntry.title
           }
         })
