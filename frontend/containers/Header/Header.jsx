@@ -70,9 +70,11 @@ class Header extends Component {
     const user = state.user.remote
 
     let contentStyle = new Style(styles, 'content')
+    let innerStyle = new Style(styles)
 
     contentStyle.addIf('content-compact', compact)
     contentStyle.addIf('content-expanded', this.state.expanded)
+    innerStyle.addIf('inner-content-compact', compact)
 
     return (
       <header class={styles.header}>
@@ -112,9 +114,11 @@ class Header extends Component {
               )}
           </div>
 
-          <CollectionNav
-            currentCollection={currentCollection}
-          />
+          <div class={innerStyle.getClasses()}>
+            <CollectionNav
+              currentCollection={currentCollection}
+            />
+          </div>
         </div>
       </header>
     )
