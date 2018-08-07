@@ -1,6 +1,7 @@
 import * as Constants from 'lib/constants'
 import * as Types from 'actions/actionTypes'
 import apiBridgeClient from 'lib/api-bridge-client'
+import {signOut} from 'actions/userActions'
 
 export function loadApis () {
   return (dispatch, getState) => {
@@ -22,22 +23,36 @@ export function loadApis () {
       })
       .getConfig()
       .then(config => {
-        apiBridgeClient({api}).getCollections().then(({collections}) => {
+        if ('undefined' === typeof config) {
+          return Promise.reject(new Error('Config is undefined'))
+        }
+        apiBridgeClient({api})
+          .getCollections()
+          .then(response => {
+            if ('undefined' === typeof response) {
+              return Promise.reject(new Error('Response is undefined'))
+            }
+            const collections = response.collections
+
+            if ('undefined' === typeof collections) {
+              return Promise.reject(new Error('No collections'))
+            }
+
           // This bundler will be used to get all the collections schemas for
           // this API in bulk.
-          const collectionBundler = apiBridgeClient.getBundler()
+            const collectionBundler = apiBridgeClient.getBundler()
 
-          collections.forEach(collection => {
-            const collectionQuery = apiBridgeClient({
-              api,
-              collection,
-              inBundle: true
-            }).getConfig()
+            collections.forEach(collection => {
+              const collectionQuery = apiBridgeClient({
+                api,
+                collection,
+                inBundle: true
+              }).getConfig()
 
-            collectionBundler.add(collectionQuery)
-          })
+              collectionBundler.add(collectionQuery)
+            })
 
-          collectionBundler.run()
+            collectionBundler.run()
             .then(apiCollections => {
               const isAuthApi = auth.host === api.host && auth.port === api.port
               const mergedCollections = apiCollections
@@ -70,12 +85,19 @@ export function loadApis () {
               }
             })
             .catch(err => {
+              console.log(73, err)
               dispatch(setApiStatus(Constants.STATUS_FAILED))
             })
-        })
+          })
         .catch(err => {
+          console.log(78, err)
           dispatch(setApiStatus(Constants.STATUS_FAILED))
         })
+      })
+      .catch(err => {
+        console.log(83, err)
+        console.log('No config means I should log out.')
+        dispatch(signOut())
       })
     })
   }
