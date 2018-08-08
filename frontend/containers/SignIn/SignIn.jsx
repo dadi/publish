@@ -24,7 +24,7 @@ class SignIn extends Component {
     /**
      * The method used to update the current page title.
      */
-     setPagetTitle: proptypes.func,
+     setPageTitle: proptypes.func,
 
      /**
       * Sign in token.
@@ -77,12 +77,12 @@ class SignIn extends Component {
   }
 
   render() {
-    const {state, actions, setPagetTitle} = this.props
+    const {state, actions, setPageTitle} = this.props
     const hasConnectionIssues = state.app.networkStatus !== Constants.NETWORK_OK
     const {formDataIsValid, error, isPasswordReset} = this.state
     const formActionLabel = isPasswordReset ? 'Reset password' : 'Sign In'
 
-    setPagetTitle('Sign In')
+    setPageTitle('Sign In')
 
     return (
       <div class={styles.wrapper}>
