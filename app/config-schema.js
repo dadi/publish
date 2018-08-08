@@ -325,15 +325,15 @@ module.exports = {
   },
   whitelabel: {
     availableInFrontend: true,
-    bgImage: {
+    backgroundImage: {
       doc: 'The background image URL',
       format: String,
-      default: ''
+      default: '/public/images/bg_2.svg'
     },
     logo: {
       doc: 'The logo URL',
       format: String,
-      default: ''
+      default: '/public/images/publish.png'
     },
     poweredBy: {
       doc: 'Whether to include a "Powered by DADI Publish" section',
