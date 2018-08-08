@@ -22,7 +22,7 @@ content: adapts to content
 static: use rows prop
 
 - type: `string`
-- default value: ``static``
+- default value: `'static'`
 
 
 ### `id`
