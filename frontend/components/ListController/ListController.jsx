@@ -23,15 +23,34 @@ export default class ListController extends Component {
 
     if (!children.length) return null
 
+    const arrow = ">"
+    let groupSpan = null
+    if (this.props.groupName) {
+      groupSpan = (
+        <span class={styles.group}>
+          <span>{this.props.groupName} </span>
+          <span class={styles.arrow}>{arrow}</span>
+        </span>
+      )
+    }
+
     return (
       <div class={styles.container}>
-        {children.map(control => {
-          return (
-            <div class={styles.control}>
-              {control}
-            </div>
-          )
-        })}
+        <span>
+          {groupSpan}
+          <span class={styles.collection}>
+            {this.props.collection.name}
+          </span>
+        </span>
+        <span>
+          {children.map(control => {
+            return (
+              <div class={styles.control}>
+                {control}
+              </div>
+            )
+          })}
+        </span>
       </div>
     )
   }

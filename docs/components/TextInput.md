@@ -13,6 +13,18 @@ Classes to append to the button element.
 - type: `string`
 
 
+### `heightType`
+
+full | content | static
+
+full: screen height
+content: adapts to content
+static: use rows prop
+
+- type: `string`
+- default value: ``static``
+
+
 ### `id`
 
 DOM ID for the input field.
@@ -87,6 +99,22 @@ Whether the field is required.
 **NOTE:** This prop is automatically passed down by `<Label/>`.
 
 - type: `bool`
+
+
+### `resizable`
+
+Whether the field is resizable
+
+- type: `bool`
+- default value: `false`
+
+
+### `rows`
+
+Number of rows, if the heightType is set to `static`.
+
+- type: `number`
+- default value: `10`
 
 
 ### `type`
