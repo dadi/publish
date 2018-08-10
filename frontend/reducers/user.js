@@ -8,13 +8,13 @@ import {isValidJSON} from 'lib/util'
 const initialState = {
   accessToken: Cookies.get('accessToken'),
   failedSignInAttempts: 0,
+  failedSignInError: null,
   hasBeenSubmitted: false,
   hasBeenValidated: false,
+  isAuthenticating: false,
+  isSignedIn: Boolean(window.__client__),
   local: {},
   remote: window.__client__ || {},
-  status: window.__client__ ?
-    Constants.STATUS_IDLE :
-    Constants.STATUS_FAILED,
   validationErrors: null
 }
 
@@ -76,8 +76,8 @@ export default function user (state = initialState, action = {}) {
         ...state,
         accessToken,
         failedSignInAttempts: 0,
-        remote: client,
-        status: Constants.STATUS_IDLE
+        isSignedIn: true,
+        remote: client
       }
 
     // Action: register failed sign-in attempt
@@ -85,20 +85,7 @@ export default function user (state = initialState, action = {}) {
       return {
         ...state,
         failedSignInAttempts: state.failedSignInAttempts + 1,
-        status: action.errorStatus || Constants.STATUS_FAILED
-      }
-
-    case Types.REQUEST_PASSWORD_RESET:
-      return {
-        ...state,
-        resetEmail: action.resetEmail
-      }
-
-    case Types.REQUEST_PASSWORD_RESET_SUCCESS:
-      return {
-        ...state,
-        resetError: action.error,
-        resetSuccess: action.success
+        isSignedIn: false
       }
 
     case Types.SET_API_STATUS:
@@ -117,9 +104,9 @@ export default function user (state = initialState, action = {}) {
       return {
         ...state,
         hasBeenSubmitted: true,
+        isSignedIn: true,
         local: {},
-        remote: action.user,
-        status: Constants.STATUS_IDLE
+        remote: action.user
       }
 
     // Document action: set field error status
@@ -162,7 +149,8 @@ export default function user (state = initialState, action = {}) {
 
       return {
         ...initialState,
-        accessToken: undefined
+        accessToken: undefined,
+        isSignedIn: false
       }
 
     // Action: update local user
@@ -172,6 +160,19 @@ export default function user (state = initialState, action = {}) {
         action.fieldName,
         action.value
       )
+
+    case Types.USER_START_AUTHENTICATING:
+      return {
+        ...state,
+        isAuthenticating: true
+      }
+
+    case Types.USER_SET_AUTHENTICATION_ERROR:
+      return {
+        ...state,
+        failedSignInError: action.error,
+        isAuthenticating: false
+      }
 
     default:
       return state

@@ -24,94 +24,6 @@ export function authenticate ({
   }
 }
 
-export function registerFailedSignInAttempt (errorStatus) {
-  return {
-    errorStatus,
-    type: Types.REGISTER_FAILED_SIGN_IN
-  }
-}
-
-export function registerSaveUserAttempt () {
-  return {
-    type: Types.ATTEMPT_SAVE_USER
-  }
-}
-
-export function setPasswordReset ({
-  resetEmail
-} = {}) {
-  return {
-    resetEmail,
-    type: Types.REQUEST_PASSWORD_RESET
-  }
-}
-
-export function setPasswordResetSuccess ({
-  response
-} = {}) {
-  return {
-    error: response.error,
-    success: response.success,
-    type: Types.REQUEST_PASSWORD_RESET_SUCCESS
-  }
-}
-
-export function requestPasswordReset (resetEmail) {
-  return (dispatch, getState) => {
-    return runSessionQuery({path: '/session/reset-token', payload: {email: resetEmail}})
-      .then(response => {
-        dispatch(setPasswordReset({resetEmail}))
-      })
-  }
-}
-
-export function passwordReset (token, password) {
-  return (dispatch, getState) =>
-    runSessionQuery({path: '/session/password-reset', payload: {
-      password,
-      token
-    }})
-    .then(response => dispatch(setPasswordResetSuccess({response})))
-}
-
-/**
- * Run Session Query
- * @param  {String} options.method Request method
- * @param  {String} options.path Relative path
- * @param  {Object} options.payload Optional data payload (POST only)
- * @return {Promise} Fetch callback Promise
- */
-function runSessionQuery ({
-  method = 'GET',
-  path = '/session',
-  payload = null
-} = {}) {
-  let request = {
-    credentials: 'include',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    method: method
-  }
-
-  if (payload) {
-    // Force POST method if there is a payload.
-    if (request.method === 'GET') {
-      request.method = 'POST'
-    }
-
-    // JSON stringify payload.
-    request.body = JSON.stringify(payload)
-  }
-
-  return fetch(path, request).then(response =>
-    response.json()
-      .then(parsedResponse =>
-        response.status === 200 ? parsedResponse : Promise.reject(parsedResponse)
-      )
-  )
-}
-
 /**
  * Save User
  * @return {Promise} API request Promise callback
@@ -163,6 +75,13 @@ export function setFieldErrorStatus (fieldName, value, error) {
   }
 }
 
+export function setAuthenticationError (error) {
+  return {
+    error,
+    type: Types.USER_SET_AUTHENTICATION_ERROR
+  }
+}
+
 /**
  * Set User Status
  * @param {String} status Status of user
@@ -200,8 +119,16 @@ export function signIn (clientId, secret) {
       method: 'POST'
     }
 
+    dispatch(startAuthenticating())
+
     return fetch(`${apiUrl}/token`, options)
-      .then(response => response.json())
+      .then(response => {
+        if (response.status === 200) {
+          return response.json()
+        }
+
+        return Promise.reject(response)
+      })
       .then(response => {
         let accessToken = response.accessToken
         let accessTokenTTL = response.expiresIn
@@ -211,7 +138,13 @@ export function signIn (clientId, secret) {
         }
 
         return fetch(`/config?accessToken=${accessToken}`)
-          .then(client => client.json())
+          .then(response => {
+            if (response.status === 200) {
+              return response.json()
+            }
+
+            return Promise.reject(response)
+          })
           .then(({client, config, routes}) => {
             return dispatch(
               authenticate({
@@ -224,12 +157,23 @@ export function signIn (clientId, secret) {
             )
           })
       })
+      .catch(error => {
+        dispatch(
+          setAuthenticationError(error.status)
+        )
+      })
   }
 }
 
 export function signOut () {
   return {
     type: Types.SIGN_OUT
+  }
+}
+
+export function startAuthenticating () {
+  return {
+    type: Types.USER_START_AUTHENTICATING
   }
 }
 
