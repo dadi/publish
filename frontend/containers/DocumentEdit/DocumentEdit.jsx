@@ -333,10 +333,6 @@ class DocumentEdit extends Component {
     } = this.props
     const sectionUrlBase = onBuildBaseUrl()
 
-    if (collection === Constants.AUTH_COLLECTION) {
-      return buildUrl(...sectionUrlBase, collectionSection.slug)
-    }
-
     if (method === 'new') {
       return this.routes.createRoute({
         section: collectionSection.slug
