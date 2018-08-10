@@ -1,14 +1,15 @@
 'use strict'
 
-const cookieParser = require('restify-cookies')
+const Collection = require(`${paths.lib.models}/collection`)
 const config = require(paths.config)
-const session = require('cookie-session')
+const cookieParser = require('restify-cookies')
 const flash = require('connect-flash')
 const fs = require('fs')
 const log = require('@dadi/logger')
 const path = require('path')
+const request = require('request-promise')
 const restify = require('restify')
-const Collection = require(`${paths.lib.models}/collection`)
+const session = require('cookie-session')
 
 /**
  * @constructor
@@ -99,36 +100,60 @@ Router.prototype.webRoutes = function () {
 
     let entryPointPage = this.entryPointTemplate
       .replace(
-        '/*@@config@@*/',
-        `window.__config__ = ${config.toString()};`
+        '/*@@apiInfo@@*/',
+        `window.__apiInfo__ = ${JSON.stringify(config.get('apis.0'))};`
       )
 
-    return new Collection()
-      .buildCollectionRoutes()
-      .then(documentRoutes => {
-        if (documentRoutes) {
+    let accessToken = req.cookies && req.cookies.accessToken
+    let authenticate = Promise.resolve()
+
+    if (accessToken) {
+      authenticate = new Collection({accessToken})
+        .buildCollectionRoutes()
+        .then(documentRoutes => {
+          if (documentRoutes) {
+            entryPointPage = entryPointPage
+              .replace(
+                '/*@@documentRoutes@@*/',
+                `window.__documentRoutes__ = ${JSON.stringify(documentRoutes)};`
+              )
+              .replace(
+                '/*@@config@@*/',
+                `window.__config__ = ${config.toString()};`
+              )
+          }
+
+          let api = config.get('apis.0')
+
+          return request({
+            headers: {
+              Authorization: `Bearer ${accessToken}`
+            },
+            json: true,
+            uri: `${api.host}:${api.port}/api/client`
+          })
+        }).then(({results}) => {
+          entryPointPage = entryPointPage
+            .replace(
+              '/*@@client@@*/',
+              `window.__client__ = ${JSON.stringify(results[0])};`
+            )
+        })
+        .catch(e => {
+          log.error({module: 'router'}, `buildCollectionRoutes failed: ${JSON.stringify(e)}`)
+
           entryPointPage = entryPointPage.replace(
-            '/*@@documentRoutes@@*/',
-            `window.__documentRoutes__ = ${JSON.stringify(documentRoutes)};`
+            '/*@@apiError@@*/',
+            `window.__apiError__ = ${JSON.stringify(e)};`
           )
+        })
+    }
 
-          res.end(entryPointPage)
+    return authenticate.then(() => {
+      res.end(entryPointPage)
 
-          return next()
-        }
-      })
-      .catch(e => {
-        log.error({module: 'router'}, `buildCollectionRoutes failed: ${JSON.stringify(e)}`)
-
-        entryPointPage = entryPointPage.replace(
-          '/*@@apiError@@*/',
-          `window.__apiError__ = ${JSON.stringify(e)};`
-        )
-
-        res.end(entryPointPage)
-
-        return next()
-      })
+      return next()
+    })
   })
 }
 

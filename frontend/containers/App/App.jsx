@@ -42,9 +42,9 @@ class App extends Component {
     const {actions, state} = this.props
     const conf = state.app.config
 
-    this.socket = new Socket(
-      conf.publicUrl.port || conf.server.port
-    ).on('userListChange', this.handleUserListChange.bind(this))
+    // this.socket = new Socket(
+    //   conf.publicUrl.port || conf.server.port
+    // ).on('userListChange', this.handleUserListChange.bind(this))
 
     window.addEventListener('resize', debounce(() => {
       actions.setScreenWidth(window.innerWidth)
@@ -113,17 +113,9 @@ class App extends Component {
       )
     }
 
-    if (
-      !state.api.paths ||
-      (
-        state.api.status === Constants.STATUS_FAILED &&
-        state.user.status === Constants.STATUS_LOADED
-      )
-    ) {
-      return (
-        <ErrorView type={Constants.STATUS_FAILED} />
-      )
-    }
+    let createPaths = (state.api.paths && state.api.paths.create) || []
+    let editPaths = (state.api.paths && state.api.paths.edit) || []
+    let listPaths = (state.api.paths && state.api.paths.list) || []
 
     return (
       <Router
@@ -138,27 +130,6 @@ class App extends Component {
         <PasswordResetView
           path="/reset"
         />
-
-        {state.api.paths.create.map(path => (
-          <DocumentCreateView
-            authenticate
-            path={path}
-          />
-        ))}
-
-        {state.api.paths.edit.map(path => (
-          <DocumentEditView
-            authenticate
-            path={path}
-          />
-        ))}
-
-        {state.api.paths.list.map(path => (
-          <DocumentListView
-            authenticate
-            path={path}
-          />
-        ))}
 
         <ProfileEditView
           authenticate
@@ -177,6 +148,27 @@ class App extends Component {
         <SignOutView
           path="/sign-out"
         />
+
+        {createPaths.map(path => (
+          <DocumentCreateView
+            authenticate
+            path={path}
+          />
+        ))}
+
+        {editPaths.map(path => (
+          <DocumentEditView
+            authenticate
+            path={path}
+          />
+        ))}
+
+        {listPaths.map(path => (
+          <DocumentListView
+            authenticate
+            path={path}
+          />
+        ))}        
 
         <ErrorView
           authenticate

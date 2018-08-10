@@ -107,7 +107,7 @@ export default class FieldStringEdit extends Component {
     const {schema} = this.props
     const publishBlock = schema.publish
 
-    if (publishBlock.options) {
+    if (publishBlock && publishBlock.options) {
       return this.renderAsDropdown()
     }
 

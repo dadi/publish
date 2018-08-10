@@ -6,9 +6,6 @@ import {connect} from 'preact-redux'
 import {route} from '@dadi/preact-router'
 import {bindActionCreators} from 'redux'
 
-import Style from 'lib/Style'
-import styles from './DocumentEdit.css'
-
 import * as Constants from 'lib/constants'
 import * as appActions from 'actions/appActions'
 import * as documentActions from 'actions/documentActions'
@@ -24,7 +21,7 @@ import {Format} from 'lib/util/string'
 import {getApiForUrlParams, getCollectionForUrlParams} from 'lib/collection-lookup'
 
 import ErrorMessage from 'components/ErrorMessage/ErrorMessage'
-import SubNavItem from 'components/SubNavItem/SubNavItem'
+import TabbedFieldSections from 'components/TabbedFieldSections/TabbedFieldSections'
 
 /**
  * The interface for editing a document.
@@ -314,72 +311,17 @@ class DocumentEdit extends Component {
     const hasValidationErrors = document.validationErrors
     const method = documentId ? 'edit' : 'new'
 
-    let documentData = Object.assign({}, document.remote, document.local)
+    // Add a link to each section before passing it down.
+    sections.forEach(section => {
+      section.href = this.buildHref(method, section)
+    })
 
-    // (!) This will be used once we add the ability to edit nested documents.
-    // if (referencedField) {
-    //  documentData = documentData[referencedField]
-    // }
     return (
-      <div class={styles.container}>
-        {fields.sections && 1 < fields.sections.length &&
-          <div class={styles.navigation}>
-            {fields.sections.map(collectionSection => {
-              const isActive = activeSection === collectionSection.slug
-              const editHref = this.buildHref(method, collectionSection)
-
-              return (
-                <SubNavItem
-                  active={isActive}
-                  error={collectionSection.hasErrors}
-                  href={editHref}
-                >
-                  {collectionSection.name}
-                </SubNavItem>
-              )
-            })}
-          </div>
-        }
-
-        {sections.map(section => {
-          let sectionClass = new Style(styles, 'section')
-
-          sectionClass.addIf('section-active', section.slug === activeSection)
-
-          const fields = {
-            main: section.fields.filter(field => {
-              return !field.publish ||
-                !field.publish.placement ||
-                field.publish.placement === 'main'
-            }),
-            sidebar: section.fields.filter(field => {
-              return field.publish &&
-                field.publish.placement &&
-                field.publish.placement === 'sidebar'
-            })
-          }
-
-          const mainBodyStyle = new Style(styles, 'main')
-
-          // If there are no fields in the side bar, the main body can use
-          // the full width of the page.
-          mainBodyStyle.addIf('main-full', !fields.sidebar.length)
-
-          return (
-            <section class={sectionClass.getClasses()}>
-              <div class={mainBodyStyle.getClasses()}>
-                {fields.main.map(field => this.renderField(field, documentData[field._id]))}
-              </div>
-
-              {(fields.sidebar.length > 0) &&
-                <div class={styles.sidebar}>
-                  {fields.sidebar.map(field => this.renderField(field, documentData[field._id]))}
-                </div>
-              }
-            </section>
-          )
-        })}
-      </div>
+      <TabbedFieldSections
+        activeSection={activeSection}
+        renderField={this.renderField.bind(this)}
+        sections={sections}
+      />
     )
   }
 
@@ -437,7 +379,16 @@ class DocumentEdit extends Component {
     this.hasFetched = true
   }
 
-  // Groups fields by section
+  // Groups fields by section based on the `section` property of the `publish`
+  // block present in their schema. It returns an object with two properties:
+  //
+  // - `sections`: an array of sections, each containing:
+  //    - `fields`: array containing the schema of the fields in the section
+  //    - `hasErrors`: Boolean indicating whether there are fields with errors
+  //                   in the section
+  //    - `name`: name of the section
+  //    - `slug`: slug of the section
+  // - `other`: array containing the schemas of fields without a section
   groupFields(fields) {
     const {state} = this.props
     const document = state.document
@@ -506,6 +457,7 @@ class DocumentEdit extends Component {
   // in a field or when a validation error has been cleared.
   handleFieldError(fieldName, hasError, value) {
     const {actions} = this.props
+
     actions.setFieldErrorStatus(fieldName, value, hasError)
   }
 
@@ -524,7 +476,7 @@ class DocumentEdit extends Component {
   }
 
   // Renders a field, deciding which component to use based on the field type
-  renderField(field, value) {
+  renderField(field) {
     const {
       collection,
       documentId,
@@ -536,6 +488,8 @@ class DocumentEdit extends Component {
     const hasAttemptedSaving = document.saveAttempts > 0
     const hasError = document.validationErrors
       && document.validationErrors[field._id]
+    const documentData = Object.assign({}, document.remote, document.local)
+    const value = documentData[field._id]
 
     // As per API docs, validation messages are in the format "must be xxx", which
     // assumes that something (probably the name of the field) will be prepended to
@@ -554,23 +508,21 @@ class DocumentEdit extends Component {
     }
 
     return (
-      <div class={styles.field}>
-        <FieldComponent
-          collection={collection}
-          config={app.config}
-          currentApi={this.currentApi}
-          currentCollection={this.currentCollection}
-          documentId={documentId}
-          error={error}
-          forceValidation={hasAttemptedSaving}
-          group={group}
-          onBuildBaseUrl={onBuildBaseUrl}
-          onChange={this.handleFieldChange.bind(this)}
-          onError={this.handleFieldError.bind(this)}
-          schema={field}
-          value={value}
-        />
-      </div>
+      <FieldComponent
+        collection={collection}
+        config={app.config}
+        currentApi={this.currentApi}
+        currentCollection={this.currentCollection}
+        documentId={documentId}
+        error={error}
+        forceValidation={hasAttemptedSaving}
+        group={group}
+        onBuildBaseUrl={onBuildBaseUrl}
+        onChange={this.handleFieldChange.bind(this)}
+        onError={this.handleFieldError.bind(this)}
+        schema={field}
+        value={value}
+      />
     )
   }
 
