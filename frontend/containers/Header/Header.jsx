@@ -65,7 +65,7 @@ class Header extends Component {
       this.routes &&
       this.routes.getCurrentCollection(state.api.apis)
 
-    if (state.user.status === Constants.STATUS_FAILED) {
+    if (!state.user.isSignedIn) {
       return null
     }
 

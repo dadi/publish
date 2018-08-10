@@ -15,7 +15,7 @@ class HomeView extends Component {
     const {state} = this.props
     const {user} = state
 
-    if (user.status !== Constants.STATUS_IDLE) {
+    if (!user.isSignedIn) {
       return null
     }
 

@@ -37,7 +37,6 @@ class SignIn extends Component {
 
     this.validation = new Validation()
     // Is there is a token in the URL.
-    this.state.isPasswordReset = typeof props.token === 'string' && props.token.length
     this.state.email = ''
     this.state.password = ''
     this.state.passwordConfirm = ''
@@ -45,46 +44,36 @@ class SignIn extends Component {
     this.state.error = false
   }
 
-  componentWillUpdate(nextProps, nextState) {
-    const {actions, state} = this.props
-    const {user, isPasswordReset} = state
-    const nextUser = nextProps.state.user
-    const {resetSuccess} = nextUser
+  getErrorBanner(signInError) {
+    let message
 
-    // If the user is signed in, redirect to the home view.
-    //redirectIf(user.remote, '/')
+    if (signInError) {
+      switch (signInError) {
+        case 401:
+          message = 'Email not found or password incorrect'
 
-    // Redirect if `resetSuccess` true
-    redirectIf(!user.resetSuccess && (resetSuccess && isPasswordReset), '/sign-in')
+          break
 
-    // Reset `isPasswordReset`
-    if (!user.resetSuccess && resetSuccess) {
-      this.setState({isPasswordReset: false})
-    }
+        default:
+          message = 'The API is not responding'
 
-    const hasFailed = nextUser.status !== Constants.STATUS_LOADED &&
-      nextUser.failedSignInAttempts > 0
-
-    if (hasFailed) {
-      if (nextUser.status === Constants.AUTH_UNREACHABLE) {
-        this.setState({error: 'Authentication API unreachable'})
-      } else {
-        let message = isPasswordReset
-          ? 'Passwords don\'t match or invalid token'
-          : 'Email not found or password incorrect'
-
-        this.setState({error: message})
+          break
       }
-    } else {
-      this.setState({error: false})
     }
+
+    if (message) {
+      return (
+        <Banner>{message}</Banner>
+      )      
+    }
+
+    return null
   }
 
   render() {
     const {state, actions, setPagetTitle} = this.props
     const hasConnectionIssues = state.app.networkStatus !== Constants.NETWORK_OK
-    const {formDataIsValid, error, isPasswordReset} = this.state
-    const formActionLabel = isPasswordReset ? 'Reset password' : 'Sign In'
+    const {formDataIsValid} = this.state
 
     setPagetTitle('Sign In')
 
@@ -93,64 +82,45 @@ class SignIn extends Component {
         <div class={styles.overlay}>
           <div class={styles.container}>
             <form
-              action="/profile"
               method="POST"
               onSubmit={this.handleSignIn.bind(this)}
             >
               <img class={styles.logo} src="/public/images/publish.png" />
 
-              {error &&
-                <Banner>{error}</Banner>
-              }
+              {this.getErrorBanner(state.user.failedSignInError)}
 
               <div class={styles.inputs}>
-                {!isPasswordReset && (
-                  <div class={styles.input}>
-                    <Label label="Email">
-                      <TextInput
-                        onChange={this.handleInputChange.bind(this, 'email')}
-                        onKeyUp={this.handleInputChange.bind(this, 'email')}
-                        placeholder="Your email address"
-                        validation={this.validation.email}
-                        value={this.state.email}
-                      />
-                    </Label>
-                  </div>
-                )}
+                <div class={styles.input}>
+                  <Label label="Email">
+                    <TextInput
+                      onChange={this.handleInputChange.bind(this, 'email')}
+                      onKeyUp={this.handleInputChange.bind(this, 'email')}
+                      placeholder="Your email address"
+                      validation={this.validation.email}
+                      value={this.state.email}
+                    />
+                  </Label>
+                </div>
 
                 <div class={styles.input}>
-                  <Label label={isPasswordReset ? 'New Password' : 'Password'}>
+                  <Label label="Password">
                     <TextInput
                       onChange={this.handleInputChange.bind(this, 'password')}
-                      placeholder={isPasswordReset ? 'Your new Password' : 'Your Password'}
+                      placeholder={"Your password"}
                       type="password"
                       value={this.state.password}
                     />
                   </Label>
                 </div>
-                {isPasswordReset && (
-                  <div class={styles.input}>
-                    <Label label="Confirm new Password">
-                      <TextInput
-                        onChange={this.handleInputChange.bind(this, 'passwordConfirm')}
-                        placeholder="Confirm new Password"
-                        type="password"
-                        value={this.state.passwordConfirm}
-                      />
-                    </Label>
-                  </div>
-                )}
               </div>
 
               <Button
                 accent="system"
-                disabled={hasConnectionIssues || (!formDataIsValid && !isPasswordReset)}
+                disabled={hasConnectionIssues || !formDataIsValid}
                 type="submit"
-              >{formActionLabel}</Button>
+              >Sign In</Button>
 
-              {!isPasswordReset && (
-                <a class={styles.link} href="/reset">Reset password</a>
-              )}
+              <a class={styles.link} href="/reset">Reset password</a>
             </form>
           </div>
         </div>
@@ -167,17 +137,9 @@ class SignIn extends Component {
 
   handleSignIn(event) {
     const {actions, token} = this.props
-    const {email, password, isPasswordReset, passwordConfirm} = this.state
+    const {email, password, passwordConfirm} = this.state
 
-    if (isPasswordReset) {
-      if (password === passwordConfirm) {
-        actions.passwordReset(token, password)
-      } else {
-        this.setState({error: Constants.PASSWORD_MISMATCH})
-      }
-    } else {
-      actions.signIn(email, password)
-    }
+    actions.signIn(email, password)
 
     event.preventDefault()
   }
