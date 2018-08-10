@@ -31,6 +31,8 @@ class CollectionNav extends Component {
     let ungrouped = {}
 
     apis.forEach(api => {
+      if (!api.collections) return
+
       let apiCollections = {}
       let displayNames = {}
 

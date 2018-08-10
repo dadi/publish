@@ -7,9 +7,19 @@ import * as documentActions from 'actions/documentActions'
 import {getApiForUrlParams, getCollectionForUrlParams} from 'lib/collection-lookup'
 import apiBridgeClient from 'lib/api-bridge-client'
 
-export function authenticate (client) {
+export function authenticate ({
+  accessToken,
+  accessTokenTTL,
+  client,
+  config,
+  routes
+}) {
   return {
+    accessToken,
+    accessTokenTTL,
     client,
+    config,
+    routes,
     type: Types.AUTHENTICATE
   }
 }
@@ -18,6 +28,12 @@ export function registerFailedSignInAttempt (errorStatus) {
   return {
     errorStatus,
     type: Types.REGISTER_FAILED_SIGN_IN
+  }
+}
+
+export function registerSaveUserAttempt () {
+  return {
+    type: Types.ATTEMPT_SAVE_USER
   }
 }
 
@@ -98,63 +114,63 @@ function runSessionQuery ({
 
 /**
  * Save User
- * @param  {String} options.api API handle
- * @param  {String} options.collection Collection handle
- * @param  {Object} options.user User payload body
  * @return {Promise} API request Promise callback
  */
-export function saveUser ({api, collection, user}) {
+export function saveUser () {
   return (dispatch, getState) => {
     const currentUser = getState().user.remote
 
-    dispatch(documentActions.setRemoteDocumentStatus(Constants.STATUS_SAVING))
+    dispatch(
+      setUserStatus(Constants.STATUS_SAVING)
+    )
 
-    const apiBridge = apiBridgeClient({
+    let api = getState().app.apiMain
+    let update = getState().user.local
+    let apiBridge = apiBridgeClient({
       accessToken: getState().user.accessToken,
-      api,
-      collection
-    }).whereFieldIsEqualTo('_id', currentUser._id)
-      .whereFieldIsEqualTo('email', currentUser.email)
-
-    apiBridge.update(user).then(response => {
-      if (response.results && response.results.length) {
-        const newUser = response.results[0]
-
-        // Update store
-        dispatch(documentActions.setRemoteDocument(newUser, {
-          clearLocal: true
-        }))
-        dispatch(setRemoteUser(newUser))
-
-        // Update session user
-        updateLocalUser(newUser)
-      } else {
-        dispatch(documentActions.setRemoteDocumentStatus(Constants.STATUS_FAILED))
-      }
-    }).catch(errors => {
-      const passwordField = Object.keys(collection.fields).find(fieldName => {
-        return collection.fields[fieldName].publish &&
-          collection.fields[fieldName].publish.subType === 'Password'
-      })
-
-      if (!passwordField) return
-
-      let validationErrors = getState().document.validationErrors[passwordField] || []
-
-      if (Array.isArray(errors)) {
-        errors.forEach(error => {
-          if (error.details && error.details.includes('\'WRONG_PASSWORD\'')) {
-            validationErrors.push(Constants.ERROR_WRONG_PASSWORD)
-          }
-        })
-
-        dispatch(documentActions.setFieldErrorStatus(
-          passwordField,
-          null,
-          validationErrors
-        ))
-      }
+      api
     })
+
+    apiBridge
+      .inClients()
+      .whereClientIsSelf()
+      .update(update)
+      .then(({results}) => {
+        if (results.length !== 1) {
+          return dispatch(
+            setUserStatus(Constants.STATUS_FAILED)
+          )
+        }
+
+        dispatch(
+          setRemoteUser(results[0])
+        )
+      })
+      .catch(error => {
+        dispatch(
+          setUserStatus(Constants.STATUS_FAILED)
+        )
+      })
+  }
+}
+
+export function setFieldErrorStatus (fieldName, value, error) {
+  return {
+    error,
+    fieldName,
+    type: Types.SET_USER_FIELD_ERROR_STATUS,
+    value
+  }
+}
+
+/**
+ * Set User Status
+ * @param {String} status Status of user
+ */
+export function setRemoteUser (user) {
+  return {
+    type: Types.SET_REMOTE_USER,
+    user
   }
 }
 
@@ -171,7 +187,7 @@ export function setUserStatus (status) {
 
 export function signIn (clientId, secret) {
   return (dispatch, getState) => {
-    let apiUrl = getState().app.config.apis[0].host
+    let apiUrl = getState().app.apiMain.host
     let options = {
       body: JSON.stringify({
         clientId,
@@ -187,11 +203,26 @@ export function signIn (clientId, secret) {
     return fetch(`${apiUrl}/token`, options)
       .then(response => response.json())
       .then(response => {
-        if (typeof response.accessToken === 'string') {
-          return dispatch(authenticate(response))
+        let accessToken = response.accessToken
+        let accessTokenTTL = response.expiresIn
+
+        if (typeof accessToken !== 'string') {
+          return Promise.reject(client)
         }
 
-        return Promise.reject(response)
+        return fetch(`/config?accessToken=${accessToken}`)
+          .then(client => client.json())
+          .then(({client, config, routes}) => {
+            return dispatch(
+              authenticate({
+                accessToken,
+                accessTokenTTL,
+                client,
+                config,
+                routes
+              })
+            )
+          })
       })
   }
 }
@@ -202,9 +233,10 @@ export function signOut () {
   }
 }
 
-function updateLocalUser (newUser) {
-  return runSessionQuery({
-    method: 'PUT',
-    payload: newUser
-  })
+export function updateLocalUser (fieldName, value) {
+  return {
+    fieldName,
+    type: Types.UPDATE_LOCAL_USER,
+    value
+  }
 }

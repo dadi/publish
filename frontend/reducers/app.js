@@ -16,6 +16,7 @@ const NETWORK_DEBOUNCE = 200
 
 // The initial state
 const initialState = {
+  apiMain: window.__apiInfo__,
   breakpoint: getActiveBreakpoint(window.innerWidth),
   config: window.__config__,
   networkStatus: Constants.NETWORK_OK,
@@ -41,6 +42,13 @@ function getActiveBreakpoint (windowWidth) {
 
 export default function app (state = initialState, action = {}) {
   switch (action.type) {
+
+    // App action: authenticate
+    case Types.AUTHENTICATE:
+      return {
+        ...state,
+        config: action.config
+      }
 
     // App action: register network call
     case Types.REGISTER_NETWORK_CALL:

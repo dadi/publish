@@ -14,7 +14,7 @@ process.env.TZ = config.get('TZ')
 // (!) This should probably be moved to a more suitable place
 const getApisBlockWithUUIDs = apis => {
   return apis.map(api => {
-    let uuid = md5(api.host + api.port + api.credentials.clientId)
+    let uuid = md5(api.host + api.port + api.version + api.database)
 
     return Object.assign({}, api, {publishId: uuid})
   })

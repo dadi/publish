@@ -138,6 +138,7 @@ export function saveDocument ({
 
     let payload = {}
     let apiBridge = apiBridgeClient({
+      accessToken: getState().user.accessToken,
       api,
       collection
     })
@@ -206,6 +207,7 @@ export function saveDocument ({
             // Otherwise, we need to upload the file.
             referenceQueue.push(
               apiBridgeClient({
+                accessToken: getState().user.accessToken,
                 api
               }).inMedia().getSignedUrl({
                 contentLength: document.contentLength,
