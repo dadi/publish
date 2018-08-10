@@ -45,8 +45,8 @@
   },
   "homepage": "https://github.com/dadi/publish",
   "dependencies": {
-    "@dadi/api-wrapper": "^1.4.0",
-    "@dadi/api-wrapper-core": "^1.6.0",
+    "@dadi/api-wrapper": "^3.0.0",
+    "@dadi/api-wrapper-core": "^3.0.0",
     "@dadi/logger": "^1.2.0",
     "@dadi/passport": "^1.2.0",
     "@dadi/preact-router": "^2.6.1",
