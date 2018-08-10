@@ -87,7 +87,7 @@ class SignIn extends Component {
             >
               <img class={styles.logo} src="/public/images/publish.png" />
 
-              {this.getErrorBanner(state.user.failedSignInError)}
+              {this.getErrorBanner(state.user.error)}
 
               <div class={styles.inputs}>
                 <div class={styles.input}>

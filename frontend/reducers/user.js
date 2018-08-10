@@ -7,17 +7,20 @@ import {isValidJSON} from 'lib/util'
 
 const initialState = {
   accessToken: Cookies.get('accessToken'),
-  failedSignInAttempts: 0,
-  failedSignInError: null,
+  error: null,
   hasBeenSubmitted: false,
   hasBeenValidated: false,
   isAuthenticating: false,
+  isSaving: false,
   isSignedIn: Boolean(window.__client__),
   local: {},
   remote: window.__client__ || {},
   validationErrors: null
 }
 
+// Merges the current state with a new value for a given client property,
+// which can be nested if it represents a data property
+// (e.g. `data.publishFirstName`).
 function mergeUpdate (current, fieldName, value) {
   let fieldNameParts = fieldName.split('.')
   let update
@@ -49,8 +52,6 @@ function mergeUpdate (current, fieldName, value) {
 
 export default function user (state = initialState, action = {}) {
   switch (action.type) {
-
-    // Action: force local user to be validated.
     case Types.ATTEMPT_SAVE_USER:
       return {
         ...state,
@@ -80,21 +81,14 @@ export default function user (state = initialState, action = {}) {
         remote: client
       }
 
-    // Action: register failed sign-in attempt
-    case Types.REGISTER_FAILED_SIGN_IN:
-      return {
-        ...state,
-        failedSignInAttempts: state.failedSignInAttempts + 1,
-        isSignedIn: false
-      }
-
     case Types.SET_API_STATUS:
       if (action.error === Constants.API_UNAUTHORISED_ERROR) {
         Cookies.remove('accessToken')
 
         return {
           ...initialState,
-          accessToken: undefined
+          accessToken: undefined,
+          isSignedIn: false
         }
       }
 
@@ -103,7 +97,9 @@ export default function user (state = initialState, action = {}) {
     case Types.SET_REMOTE_USER:
       return {
         ...state,
+        error: null,
         hasBeenSubmitted: true,
+        isSaving: false,
         isSignedIn: true,
         local: {},
         remote: action.user
@@ -138,10 +134,33 @@ export default function user (state = initialState, action = {}) {
 
     // Action: set user status
     case Types.SET_USER_STATUS:
-      return {
-        ...state,
-        status: action.status
+      switch (action.status) {
+
+        // User is signing in.
+        case Constants.STATUS_LOADING:
+          return {
+            ...state,
+            isAuthenticating: true
+          }
+
+        // User is signing in.
+        case Constants.STATUS_SAVING:
+          return {
+            ...state,
+            isSaving: true
+          }
+
+        // Sign in or save have failed.
+        case Constants.STATUS_FAILED:
+          return {
+            ...state,
+            error: action.data,
+            isAuthenticating: false,
+            isSaving: false
+          }
       }
+
+      return state
 
     // Action: clear user
     case Types.SIGN_OUT:
@@ -150,6 +169,7 @@ export default function user (state = initialState, action = {}) {
       return {
         ...initialState,
         accessToken: undefined,
+        isSaving: false,
         isSignedIn: false
       }
 
@@ -160,19 +180,6 @@ export default function user (state = initialState, action = {}) {
         action.fieldName,
         action.value
       )
-
-    case Types.USER_START_AUTHENTICATING:
-      return {
-        ...state,
-        isAuthenticating: true
-      }
-
-    case Types.USER_SET_AUTHENTICATION_ERROR:
-      return {
-        ...state,
-        failedSignInError: action.error,
-        isAuthenticating: false
-      }
 
     default:
       return state

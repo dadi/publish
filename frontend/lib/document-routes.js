@@ -53,10 +53,6 @@ export class DocumentRoutes {
       return collections.concat([Constants.MEDIA_COLLECTION])
     }
 
-    if (collectionName === Constants.AUTH_COLLECTION) {
-      return collections.concat([Constants.AUTH_COLLECTION])
-    }
-
     const apiCollection = this.collectionMatch(api, collectionName)
 
     if (referencedFields.length - 1 === index) {
@@ -122,10 +118,6 @@ export class DocumentRoutes {
   }
 
   getAPI (apis, collection, groupName) {
-    if (collection.original === Constants.AUTH_COLLECTION) {
-      return apis.find(api => api._isAuthApi)
-    }
-
     const matches = apis
       .filter(api => this.menuMatch(api, groupName, collection))
       .filter(api => this.collectionMatch(api, collection.name))
@@ -138,10 +130,6 @@ export class DocumentRoutes {
 
     if (collectionName === Constants.MEDIA_COLLECTION) {
       return Constants.MEDIA_COLLECTION
-    }
-
-    if (collectionName === Constants.AUTH_COLLECTION) {
-      return this.authCollectionMatch(api)
     }
 
     return this.collectionMatch(api, collectionName)

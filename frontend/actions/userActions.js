@@ -24,10 +24,12 @@ export function authenticate ({
   }
 }
 
-/**
- * Save User
- * @return {Promise} API request Promise callback
- */
+export function registerSaveUserAttempt () {
+  return {
+    type: Types.ATTEMPT_SAVE_USER
+  }
+}
+
 export function saveUser () {
   return (dispatch, getState) => {
     const currentUser = getState().user.remote
@@ -75,17 +77,6 @@ export function setFieldErrorStatus (fieldName, value, error) {
   }
 }
 
-export function setAuthenticationError (error) {
-  return {
-    error,
-    type: Types.USER_SET_AUTHENTICATION_ERROR
-  }
-}
-
-/**
- * Set User Status
- * @param {String} status Status of user
- */
 export function setRemoteUser (user) {
   return {
     type: Types.SET_REMOTE_USER,
@@ -93,12 +84,9 @@ export function setRemoteUser (user) {
   }
 }
 
-/**
- * Set User Status
- * @param {String} status Status of user
- */
-export function setUserStatus (status) {
+export function setUserStatus (status, data) {
   return {
+    data,
     status,
     type: Types.SET_USER_STATUS
   }
@@ -119,7 +107,9 @@ export function signIn (clientId, secret) {
       method: 'POST'
     }
 
-    dispatch(startAuthenticating())
+    dispatch(
+      setUserStatus(Constants.STATUS_LOADING)
+    )
 
     return fetch(`${apiUrl}/token`, options)
       .then(response => {
@@ -159,7 +149,7 @@ export function signIn (clientId, secret) {
       })
       .catch(error => {
         dispatch(
-          setAuthenticationError(error.status)
+          setUserStatus(Constants.STATUS_FAILED, error.status)
         )
       })
   }
@@ -168,12 +158,6 @@ export function signIn (clientId, secret) {
 export function signOut () {
   return {
     type: Types.SIGN_OUT
-  }
-}
-
-export function startAuthenticating () {
-  return {
-    type: Types.USER_START_AUTHENTICATING
   }
 }
 
