@@ -4,35 +4,17 @@ import * as Constants from 'lib/constants'
 import * as Types from 'actions/actionTypes'
 
 const initialState = {
-  // An array of field names whose values will never be persisted to local
-  // storage. Useful for sensitive data like passwords.
+  collection: {},
   fieldsNotPersistedInLocalStorage: [],
-
-  // Whether some or all of the contents of `local` have been loaded from
-  // local storage, rather than filled in manually.
-  loadedFromLocalStorage: false,
-
-  // A map of local changes to the remote document, with field names as keys.
+  hasBeenValidated: false,
+  hasLoadedFromLocalStorage: false,
+  isLoading: false,
+  isSaving: false,
   local: null,
-
-  // An array of people working on the current document.
   peers: null,
-
-  // The entire document being edited as it exists on the remote API.
   remote: null,
-
-  // The status of the fetch operation for the remote document.
-  remoteStatus: Constants.STATUS_IDLE,
-
-  // The number of times the user has tried to save the current document.
+  remoteError: null,
   saveAttempts: 0,
-
-  // When `validationErrors` is `null`, it means that we don't know whether the
-  // document was validated successfully, because we haven't forced fields to
-  // validate themselves (with the `forceValidate` prop).
-  //
-  // When it's `{}`, however, it means we have validated the document and there
-  // are no errors found.
   validationErrors: null
 }
 
@@ -54,7 +36,7 @@ export default function document (state = initialState, action = {}) {
     case Types.DISCARD_UNSAVED_CHANGES:
       return {
         ...state,
-        loadedFromLocalStorage: false,
+        hasLoadedFromLocalStorage: false,
         local: {},
         validationErrors: null
       }
@@ -66,13 +48,6 @@ export default function document (state = initialState, action = {}) {
       }
 
       return state
-
-    // Document action: save document
-    case Types.SAVE_DOCUMENT:
-      return {
-        ...state,
-        remoteStatus: Constants.STATUS_IDLE
-      }
 
     // Document action: set document peers
     case Types.SET_DOCUMENT_PEERS:
@@ -91,6 +66,7 @@ export default function document (state = initialState, action = {}) {
 
       return {
         ...state,
+        hasBeenValidated: true,
         validationErrors: {
           ...state.validationErrors,
           ...newValidationErrors
@@ -140,19 +116,43 @@ export default function document (state = initialState, action = {}) {
       return {
         ...state,
         fieldsNotPersistedInLocalStorage: action.fieldsNotPersistedInLocalStorage || [],
-        loadedFromLocalStorage: Boolean(action.fromLocalStorage),
+        hasLoadedFromLocalStorage: Boolean(action.fromLocalStorage),
+        isLoading: false,
+        isSaving: false,
         local,
         remote: action.remote,
-        remoteStatus: Constants.STATUS_IDLE,
         saveAttempts: 0
       }
 
     // Document action: set remote document status
     case Types.SET_REMOTE_DOCUMENT_STATUS:
-      return {
-        ...state,
-        remoteStatus: action.status
+      switch (action.status) {
+
+        // Document is fetching.
+        case Constants.STATUS_LOADING:
+          return {
+            ...state,
+            isLoading: true
+          }
+
+        // Fetch or save have failed.
+        case Constants.STATUS_FAILED:
+          return {
+            ...state,
+            isLoading: false,
+            isSaving: false,
+            remoteError: action.data || 500
+          }
+
+        // Document is saving.
+        case Constants.STATUS_SAVING:
+          return {
+            ...state,
+            isSaving: true
+          }
       }
+
+      return state
 
     // User action: user signed out
     case Types.SIGN_OUT:
@@ -160,15 +160,16 @@ export default function document (state = initialState, action = {}) {
 
     // Document action: start new document
     case Types.START_NEW_DOCUMENT:
-      let loadedFromLocalStorage = Object.keys(action.document).length > 0
+      let hasLoadedFromLocalStorage = Object.keys(action.document).length > 0
 
       return {
         ...state,
+        collection: action.collection,
         fieldsNotPersistedInLocalStorage: [],
-        loadedFromLocalStorage,
+        hasLoadedFromLocalStorage,
+        isLoading: false,
         local: action.document,
-        remote: null,
-        remoteStatus: Constants.STATUS_IDLE
+        remote: null
       }
 
     // Document action: update local document
@@ -186,6 +187,7 @@ export default function document (state = initialState, action = {}) {
       const newState = {
         ...state,
         fieldsNotPersistedInLocalStorage: newFieldsNotPersistedInLocalStorage,
+        hasBeenValidated: true,
         local: {
           ...state.local,
           ...action.change
@@ -193,10 +195,6 @@ export default function document (state = initialState, action = {}) {
       }
 
       return newState
-
-    // Document action: user leaving document
-    case Types.USER_LEAVING_DOCUMENT:
-      return state
 
     default:
       return state
