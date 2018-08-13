@@ -7,7 +7,6 @@ import {isValidJSON} from 'lib/util'
 
 const initialState = {
   accessToken: Cookies.get('accessToken'),
-  error: null,
   hasBeenSubmitted: false,
   hasBeenValidated: false,
   isAuthenticating: false,
@@ -15,6 +14,7 @@ const initialState = {
   isSignedIn: Boolean(window.__client__),
   local: {},
   remote: window.__client__ || {},
+  remoteError: null,
   validationErrors: null
 }
 
@@ -97,12 +97,12 @@ export default function user (state = initialState, action = {}) {
     case Types.SET_REMOTE_USER:
       return {
         ...state,
-        error: null,
         hasBeenSubmitted: true,
         isSaving: false,
         isSignedIn: true,
         local: {},
-        remote: action.user
+        remote: action.user,
+        remoteError: null
       }
 
     // Document action: set field error status
@@ -154,9 +154,9 @@ export default function user (state = initialState, action = {}) {
         case Constants.STATUS_FAILED:
           return {
             ...state,
-            error: action.data,
             isAuthenticating: false,
-            isSaving: false
+            isSaving: false,
+            remoteError: action.data,
           }
       }
 

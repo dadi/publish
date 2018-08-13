@@ -93,7 +93,7 @@ class SignIn extends Component {
             >
               <img class={styles.logo} src={logo} />
 
-              {this.getErrorBanner(state.user.error)}
+              {this.getErrorBanner(state.user.remoteError)}
 
               <div class={styles.inputs}>
                 <div class={styles.input}>

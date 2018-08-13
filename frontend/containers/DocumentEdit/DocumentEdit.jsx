@@ -105,7 +105,8 @@ class DocumentEdit extends Component {
       collection,
       group
     })
-    const currentCollection = state.api.apis.length && this.routes.getCurrentCollection(state.api.apis)
+    const currentCollection = state.api.apis.length &&
+      this.routes.getCurrentCollection(state.api.apis)
     const method = documentId ? 'edit' : 'new'
 
     if (typeof onPageTitle === 'function') {
@@ -120,7 +121,9 @@ class DocumentEdit extends Component {
       const fields = this.groupFields(collectionFields)
 
       if (section) {
-        const sectionMatch = fields.sections.find(fieldSection => fieldSection.slug === section)
+        const sectionMatch = fields.sections.find(fieldSection => {
+          return fieldSection.slug === section
+        })
 
         if (!sectionMatch) {
           const firstSection = fields.sections[0]
@@ -167,10 +170,13 @@ class DocumentEdit extends Component {
     } = this.props
     const document = state.document
     const previousDocument = previousProps.state.document
-    const status = document.remoteStatus
 
     // Are there unsaved changes?
-    if (!previousDocument.local && document.local && document.loadedFromLocalStorage) {
+    if (
+      !previousDocument.local &&
+      document.local &&
+      document.hasLoadedFromLocalStorage
+    ) {
       const notification = {
         dismissAfterSeconds: false,
         fadeAfterSeconds: 5,
@@ -187,16 +193,15 @@ class DocumentEdit extends Component {
     }
 
     // If there's an error, stop here.
-    if (this.hasFetched && (status === Constants.STATUS_NOT_FOUND)) {
+    if (this.hasFetched && document.remoteError) {
       return
     }
 
     // There's no document ID, so it means we're creating a new document.
     if (!documentId) {
-      // If there isn't a document in `document.local`, we start a new one.
-      if (!document.local && this.currentCollection) {
+      if (this.currentCollection) {
         actions.startNewDocument({
-          collection,
+          collection: this.currentCollection,
           group
         })
       }
@@ -210,13 +215,12 @@ class DocumentEdit extends Component {
     // - We're not already in the process of fetching one AND
     // - There is no document in the store OR the document id has changed AND
     // - All APIs have collections
-    const isIdle = document.remoteStatus === Constants.STATUS_IDLE
     const remoteDocumentHasChanged = document.remote &&
       (documentId !== document.remote._id)
     const needsFetch = !document.remote || remoteDocumentHasChanged
 
     if (
-      isIdle &&
+      !document.isLoading &&
       needsFetch &&
       this.currentCollection &&
       state.api.apis.length > 0
@@ -242,11 +246,11 @@ class DocumentEdit extends Component {
       collection,
       group
     })
-    this.routes = onGetRoutes(state.api.paths)
-    const currentCollection = state.api.apis.length && this.routes.getCurrentCollection(state.api.apis)
 
+    this.routes = onGetRoutes(state.api.paths)
     this.currentApi = currentApi
-    this.currentCollection = currentCollection
+    this.currentCollection = Boolean(state.api.apis.length) &&
+      this.routes.getCurrentCollection(state.api.apis)
     this.userLeavingDocumentHandler = this.handleUserLeavingDocument.bind(this)
 
     window.addEventListener('beforeunload', this.userLeavingDocumentHandler)
@@ -275,11 +279,10 @@ class DocumentEdit extends Component {
       state
     } = this.props
     const document = state.document
-    const status = document.remoteStatus
 
     if (!this.canRender()) return null
 
-    if (status === Constants.STATUS_NOT_FOUND) {
+    if (document.remoteError) {
       return (
         <ErrorMessage
           data={{href: buildUrl(group, collection)}}
@@ -288,13 +291,7 @@ class DocumentEdit extends Component {
       )
     }
 
-    if (status === Constants.STATUS_IDLE && !this.currentCollection && this.hasFetched) {
-      return (
-        <ErrorMessage type={Constants.ERROR_ROUTE_NOT_FOUND} />
-      )
-    }
-
-    if (status === Constants.STATUS_LOADING || !document.local) {
+    if (document.isLoading || !document.local) {
       return null
     }
 

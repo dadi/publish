@@ -89,7 +89,7 @@ class ProfileEditToolbar extends Component {
     const wasFirstValidated = !prevProps.state.validationErrors && state.validationErrors
 
     // Have we just saved?
-    if (previousState.isSaving && !state.isSaving && !state.error) {
+    if (previousState.isSaving && !state.isSaving && !state.remoteError) {
       dispatch(
         actions.setNotification({
           message: 'Your profile has been updated'

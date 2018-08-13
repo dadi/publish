@@ -48,17 +48,23 @@ export function fetchDocument ({
       apiBridge.useFields(fields)
     }
 
-    // Set loading status
-    dispatch(setRemoteDocumentStatus(Constants.STATUS_LOADING))
+    // Set loading status.
+    dispatch(
+      setRemoteDocumentStatus(Constants.STATUS_LOADING)
+    )
 
     apiBridge.find().then(response => {
-      if (response.results.length) {
-        dispatch(setRemoteDocument(response.results[0]))
-      } else {
-        dispatch(setRemoteDocumentStatus(Constants.STATUS_NOT_FOUND))
+      if (response.results.length === 0) {
+        return Promise.reject(404)
       }
-    }).catch(err => {
-      dispatch(setRemoteDocumentStatus(Constants.STATUS_FAILED))
+
+      dispatch(
+        setRemoteDocument(response.results[0])
+      )
+    }).catch(error => {
+      dispatch(
+        setRemoteDocumentStatus(Constants.STATUS_FAILED, error)
+      )
     })
   }
 }
@@ -76,7 +82,7 @@ function getLocalStorageKey ({
     return documentId
   }
 
-  if (state.document.remote) {
+  if (state && state.document.remote) {
     return state.document.remote._id
   }
 
@@ -143,7 +149,9 @@ export function saveDocument ({
       collection
     })
 
-    dispatch(setRemoteDocumentStatus(Constants.STATUS_SAVING))
+    dispatch(
+      setRemoteDocumentStatus(Constants.STATUS_SAVING)
+    )
 
     if (isUpdate) {
       Object.keys(document).forEach(field => {
@@ -399,8 +407,9 @@ export function setRemoteDocument (remote, {
  * Set Remote document status
  * @param {String} status Status from Constants
  */
-export function setRemoteDocumentStatus (status) {
+export function setRemoteDocumentStatus (status, data) {
   return {
+    data,
     status,
     type: Types.SET_REMOTE_DOCUMENT_STATUS
   }
@@ -410,18 +419,31 @@ export function setRemoteDocumentStatus (status) {
  * Start New Document
  * @return {Function} State dispatcher
  */
-export function startNewDocument ({
-  collection,
-  group
-} = {}) {
+export function startNewDocument ({collection, group}) {
   return (dispatch, getState) => {
-    let localStorageKey = JSON.stringify({collection, group})
-    let document = LocalStorage.readDocument(localStorageKey) || {}
+    let currentCollection = getState().document.collection
 
-    dispatch({
-      document,
-      type: Types.START_NEW_DOCUMENT
-    })
+    if (
+      currentCollection.database !== collection.database ||
+      currentCollection.slug !== collection.slug ||
+      currentCollection.version !== collection.version
+    ) {
+      let localStorageKey = getLocalStorageKey({
+        collection: collection.slug,
+        group
+      })
+      let document = LocalStorage.readDocument(localStorageKey) || {}
+
+      dispatch({
+        collection: {
+          database: collection.database,
+          slug: collection.slug,
+          version: collection.version
+        },
+        document,
+        type: Types.START_NEW_DOCUMENT
+      })
+    }
   }
 }
 

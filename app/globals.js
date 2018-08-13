@@ -14,12 +14,11 @@ const Globals = function () {
     config: path.resolve(`${__dirname}/config`),
     configDir: path.resolve(`${process.env.PWD}/config`),
     lib: {
-      root: lib,
-      controllers: path.resolve(`${lib}/controllers`),
-      models: path.resolve(`${lib}/models`),
-      server: path.resolve(`${lib}/server`),
-      router: path.resolve(`${lib}/router`),
       helpers: path.resolve(`${lib}/helpers`),
+      models: path.resolve(`${lib}/models`),
+      router: path.resolve(`${lib}/router`),
+      root: lib,
+      server: path.resolve(`${lib}/server`),
       watch: path.resolve(`${lib}/watch`)
     },
     frontend: {

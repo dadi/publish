@@ -83,7 +83,7 @@ const getDefaultState = () => {
     },
     document: {
       fieldsNotPersistedInLocalStorage: [],
-      loadedFromLocalStorage: false,
+      hasLoadedFromLocalStorage: false,
       local: null,
       peers: null,
       remote: null,
