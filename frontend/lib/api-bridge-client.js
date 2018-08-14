@@ -41,6 +41,8 @@ const apiBridgeFetch = function (requestObject) {
     }
 
     return response.json().then(error => {
+      console.error(error)
+
       return Promise.reject(error)
     })
   })
