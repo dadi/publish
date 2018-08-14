@@ -19,6 +19,7 @@ const initialState = {
   apiMain: window.__apiInfo__,
   breakpoint: getActiveBreakpoint(window.innerWidth),
   config: window.__config__,
+  isLoading: false,
   networkStatus: Constants.NETWORK_OK,
   notification: null,
   status: Constants.STATUS_IDLE
@@ -61,39 +62,39 @@ export default function app (state = initialState, action = {}) {
             clearTimeout(debouncedNetworkCall)
           }
 
-          // Something is loading from the network. If the `status` property
-          // doesn't already reflect that, it needs to.
-          if (state.status !== Constants.STATUS_LOADING) {
+          // Something is loading from the network. If the state doesn't already
+          // reflect that, it needs to.
+          if (!state.isLoading) {
             return {
               ...state,
-              status: Constants.STATUS_LOADING
+              isLoading: true
             }
           }
 
-          break
+          return state
 
         case Constants.STATUS_IDLE:
           // We were previously loading something from the network, but now
           // the request has successfully finished.
-          if (state.status === Constants.STATUS_LOADING) {
+          if (state.isLoading) {
             // If there's already a queued timer, we cancel it so it can be
             // replaced with the new (most recent) one.
             if (debouncedNetworkCall !== null) {
               clearTimeout(debouncedNetworkCall)
             }
 
-            // We queue the new timer. When the timer runs, we'll run the action,
-            // sent as the `onUpdate` parameter, which will contain STATUS_COMPLETE.
-            // and set the general status back to STATUS_IDLE.
+            // We queue the new timer. When the timer runs, we'll run the action
+            // sent as the `onUpdate` parameter.
             debouncedNetworkCall = setTimeout(action.onComplete, NETWORK_DEBOUNCE)
           }
 
           return state
 
         case Constants.STATUS_COMPLETE:
+        case Constants.STATUS_FAILED:
           return {
             ...state,
-            status: Constants.STATUS_IDLE
+            isLoading: false
           }
       }
 

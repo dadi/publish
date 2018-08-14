@@ -6,8 +6,9 @@ import * as Types from 'actions/actionTypes'
 export const initialState = {
   apis: [],
   error: undefined,
+  isLoading: false,
   paths: window.__documentRoutes__,
-  status: Constants.STATUS_IDLE
+  remoteError: null
 }
 
 export default function api (state = initialState, action = {}) {
@@ -25,6 +26,7 @@ export default function api (state = initialState, action = {}) {
       return {
         ...state,
         apis: action.apis,
+        isLoading: false,
         status: Constants.STATUS_IDLE
       }
 
@@ -34,11 +36,24 @@ export default function api (state = initialState, action = {}) {
         return initialState
       }
 
-      return {
-        ...state,
-        error: action.error,
-        status: action.status
+      switch (action.status) {
+        case Constants.STATUS_LOADING:
+        case Constants.STATUS_SAVING:
+          return {
+            ...state,
+            isLoading: true
+          }
+
+        // Fetch or save have failed.
+        case Constants.STATUS_FAILED:
+          return {
+            ...state,
+            isLoading: false,
+            remoteError: action.data || 500
+          }
       }
+
+      return state
 
     // Action: user signed out
     case Types.SIGN_OUT:
