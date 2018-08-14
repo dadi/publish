@@ -332,13 +332,7 @@ export function saveDocument ({
       }).catch(response => {
         if (response.errors && response.errors.length) {
           dispatch(
-            batchActions(
-              {
-                errors: response.errors,
-                type: Types.SET_ERRORS_FROM_REMOTE_API
-              },
-              setRemoteDocumentStatus(Constants.STATUS_FAILED)
-            )
+            setErrorsFromRemoteAPI(response.errors)
           )
         } else {
           dispatch(
@@ -358,6 +352,13 @@ export function setDocumentPeers (peers) {
   return {
     peers,
     type: Types.SET_DOCUMENT_PEERS
+  }
+}
+
+export function setErrorsFromRemoteAPI (errors) {
+  return {
+    errors,
+    type: Types.SET_ERRORS_FROM_REMOTE_API
   }
 }
 
