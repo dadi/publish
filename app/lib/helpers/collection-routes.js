@@ -4,6 +4,8 @@ const ArrayHelper = require(`${paths.lib.helpers}/array`)
 
 const hiddenCollections = ['mediaStore']
 
+let loadedCollections = []
+
 const numberRegex = '[^\\d+$]'
 const objectIdRegex = '[^(?:[a-f0-9]{24}|[a-f0-9]{32}|[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12})]'
 const slugRegex = '[^[a-z-]]'
@@ -121,16 +123,24 @@ CollectionRoutes.prototype.getCollectionDepth = function (collections, collectio
 CollectionRoutes.prototype.fieldReferenceDepth = function (collections, fields, depth) {
   return fields
     .map(field => {
-      const colName = field.settings.collection
-      const subCol = this.getCollectionBySlug(collections, colName)
+      let colName = field.settings.collection
+      let subCol = this.getCollectionBySlug(collections, colName)
+
+      // Return if we've already loaded this collection.
+      if (loadedCollections.includes(colName)) {
+        return depth + 1
+      }
 
       // If the collection doesn't exist, or it is hidden.
-      if (!subCol || hiddenCollections.includes(colName)) return depth + 1
+      if (!subCol || hiddenCollections.includes(colName)) {
+        return depth + 1
+      }
+
+      loadedCollections.push(colName)
 
       // Check sub-collection for reference fields.
       return this.getCollectionDepth(collections, subCol, depth + 1)
-    })
-    .filter(Boolean)
+    }).filter(Boolean)
 }
 
 CollectionRoutes.prototype.getMaxDepth = function (apiCollections) {
