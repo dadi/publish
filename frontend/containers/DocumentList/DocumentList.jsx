@@ -132,16 +132,20 @@ class DocumentList extends Component {
       referencedField,
       state
     } = this.props
-    const {list} = state.documents
+    const documents = state.documents
     const pathKey = prevProps.state.router.locationBeforeTransitions.key
-    const previousList = prevProps.state.documents
+    const previousDocuments = prevProps.state.documents
     const previousPathKey = state.router.locationBeforeTransitions.key
 
     // If we are have just loaded a list of documents for a nested document,
     // let's update the selection with the value of the reference field, if
     // it is in view.
-    if (referencedField && previousList.isLoading && !list.isLoading) {
-      const document = Object.assign({}, state.document.remote, state.document.local)
+    if (referencedField && previousDocuments.isLoading && !documents.isLoading) {
+      const document = Object.assign(
+        {},
+        state.document.remote,
+        state.document.local
+      )
       const referencedValue = document[referencedField]
 
       if (referencedValue && referencedValue._id) {
@@ -150,7 +154,9 @@ class DocumentList extends Component {
     }
 
     // State check: reject when path matches and document list loaded
-    if (list && (pathKey === previousPathKey)) return
+    if (documents.list && (pathKey === previousPathKey)) {
+      return
+    }
 
     this.routes = onGetRoutes(state.api.paths)
     this.checkStatusAndFetch()
