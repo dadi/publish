@@ -52,8 +52,7 @@ const apiBridgeFactory = function ({
   accessToken,
   api,
   collection = {},
-  fields = [],
-  inBundle = false
+  fields = []
 }) {
   if (!api) {
     throw 'apiBridgeFactory: Missing API'

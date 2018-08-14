@@ -18,13 +18,6 @@ export function registerNetworkCall (status, onComplete) {
   }
 }
 
-export function setAppStatus (status) {
-  return {
-    status,
-    type: Types.SET_APP_STATUS
-  }
-}
-
 export function setNetworkStatus (networkStatus) {
   return {
     networkStatus,
