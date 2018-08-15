@@ -6,6 +6,7 @@ import * as documentActions from 'actions/documentActions'
 
 import {getApiForUrlParams, getCollectionForUrlParams} from 'lib/collection-lookup'
 import apiBridgeClient from 'lib/api-bridge-client'
+import {batchActions} from 'lib/redux'
 
 export function authenticate ({
   accessToken,
@@ -45,6 +46,13 @@ export function saveUser () {
       api
     })
 
+    if (update.secret) {
+      let parsedSecret = JSON.parse(update.secret)
+
+      update.currentSecret = parsedSecret.current
+      update.secret = parsedSecret.new
+    }
+
     apiBridge
       .inClients()
       .whereClientIsSelf()
@@ -61,8 +69,20 @@ export function saveUser () {
         )
       })
       .catch(error => {
-        dispatch(
+        let actions = [
           setUserStatus(Constants.STATUS_FAILED)
+        ]
+
+        // The operation failed because the current secret was missing
+        // or invalid, so we must create a validation error accordingly.
+        if (error.code === 'API-0007' || error.code === 'API-0008') {
+          actions.push(
+            setFieldErrorStatus('secret', null, Constants.ERROR_WRONG_PASSWORD)
+          )
+        }
+
+        dispatch(
+          batchActions(actions)
         )
       })
   }
