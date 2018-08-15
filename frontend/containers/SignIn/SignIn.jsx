@@ -24,7 +24,7 @@ class SignIn extends Component {
     /**
      * The method used to update the current page title.
      */
-     setPagetTitle: proptypes.func,
+     setPageTitle: proptypes.func,
 
      /**
       * Sign in token.
@@ -37,7 +37,7 @@ class SignIn extends Component {
 
     this.validation = new Validation()
     // Is there is a token in the URL.
-    this.state.isPasswordReset = typeof props.token === 'string' && props.token.length
+    this.state.isPasswordReset = Boolean(typeof props.token === 'string' && props.token.length)
     this.state.email = ''
     this.state.password = ''
     this.state.passwordConfirm = ''
@@ -77,15 +77,21 @@ class SignIn extends Component {
   }
 
   render() {
-    const {state, actions, setPagetTitle} = this.props
+    const {state, actions, setPageTitle} = this.props
     const hasConnectionIssues = state.app.networkStatus !== Constants.NETWORK_OK
     const {formDataIsValid, error, isPasswordReset} = this.state
     const formActionLabel = isPasswordReset ? 'Reset password' : 'Sign In'
 
-    setPagetTitle('Sign In')
+    const {
+      whitelabel: {logo, poweredBy, backgroundImage}
+    } = state.app.config || {
+      whitelabel: {logo: '', poweredBy: false, backgroundImage: ''}
+    }
+
+    setPageTitle('Sign In')
 
     return (
-      <div class={styles.wrapper}>
+      <div class={styles.wrapper} style={`background: #000000 url(${backgroundImage}`}>
         <div class={styles.overlay}>
           <div class={styles.container}>
             <form
@@ -93,7 +99,7 @@ class SignIn extends Component {
               method="POST"
               onSubmit={this.handleSignIn.bind(this)}
             >
-              <img class={styles.logo} src="/public/images/publish.png" />
+              <img class={styles.logo} src={logo} />
 
               {error &&
                 <Banner>{error}</Banner>
@@ -146,6 +152,12 @@ class SignIn extends Component {
 
               {!isPasswordReset && (
                 <a class={styles.link} href="/reset">Reset password</a>
+              )}
+
+              {poweredBy && (
+                <p class={styles['powered-by']}>
+                  Powered by <a href="https://dadi.cloud/en/publish/" target="_blank">DADI Publish</a>
+                </p>
               )}
             </form>
           </div>
