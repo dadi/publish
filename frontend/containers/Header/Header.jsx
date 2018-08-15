@@ -81,6 +81,11 @@ class Header extends Component {
       state.user.remote.data && state.user.remote.data.publishLastName
     ].filter(Boolean).join(' ') || 'Profile'
 
+    let displayName = [
+      state.user.remote.data && state.user.remote.data.publishFirstName,
+      state.user.remote.data && state.user.remote.data.publishLastName
+    ].filter(Boolean).join(' ') || 'Profile'
+
     return (
       <header class={styles.header}>
         {compact &&
