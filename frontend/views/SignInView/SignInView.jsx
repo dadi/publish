@@ -14,7 +14,6 @@ export default class SignInView extends Component {
 
     return (
       <Page>
-        <Header />
         <Main>
           <SignIn 
             setPageTitle={this.handlePageTitleChange}

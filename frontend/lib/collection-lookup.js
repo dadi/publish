@@ -18,11 +18,6 @@ export function getApiForUrlParams (apis, filter) {
   const urlCollection = filter.collection
   const urlGroup = filter.group
 
-  // Are we after the auth API?
-  if (urlCollection === Constants.AUTH_COLLECTION) {
-    return apis.find(api => api._isAuthApi)
-  }
-
   // Are we looking at a collection name with a prefix (e.g. 'users-2')?
   const urlCollectionParts = urlCollection.match(/(.*)-([0-9]+)/)
   const urlCollectionName = urlCollectionParts ? urlCollectionParts[1] : urlCollection

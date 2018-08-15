@@ -5,54 +5,80 @@ const config = require(paths.config)
 const DadiAPI = require('@dadi/api-wrapper')
 const log = require('@dadi/logger')
 
-const Collection = function () {}
+const Collection = function ({accessToken} = {}) {
+  this.accessToken = accessToken
+}
 
 const formatAPIError = err => {
   switch (err.code) {
     case 404:
-      return {detail: 'One or more APIs are unreachable. Please check your config.'}
+      return {
+        detail: 'One or more APIs are unreachable. Please check your config.'
+      }
+
     case 401:
-      return {detail: 'The credentials for your API are incorrect.'}
+      return {
+        detail: 'The credentials for your API are incorrect.'
+      }
   }
 }
 
 Collection.prototype.buildCollectionRoutes = function () {
   log.debug({ module: 'collection' }, 'Building collection Routes')
+
   return this.getCollections()
-    .then(apiCollections => new CollectionRoutes().generateApiRoutes(apiCollections))
+    .then(apiCollections => {
+      return new CollectionRoutes().generateApiRoutes(apiCollections)
+    })
     .catch(err => Promise.reject(formatAPIError(err)))
 }
 
 Collection.prototype.getCollections = function () {
   log.debug({ module: 'collection' }, 'Requesting collection list from API')
-  return Promise.all(
-    config
-      .get('apis')
-      .map(api => {
-        return new DadiAPI(Object.assign(api, {uri: api.host}))
-        .getCollections()
-        .then(res => this.getSchemas(api, res.collections))
-      })
-  )
+
+  let collections = config.get('apis').map(api => {
+    let apiWrapperOptions = Object.assign({}, api, {
+      accessToken: this.accessToken,
+      uri: api.host
+    })
+    let apiWrapper = new DadiAPI(apiWrapperOptions)
+
+    return apiWrapper.getCollections().then(res => {
+      return this.getSchemas(api, res.collections)
+    })
+  })
+
+  return Promise.all(collections)
 }
 
 Collection.prototype.getSchemas = function (api, collections) {
-  return Promise.all(
-    collections
-      .map(collection => {
-        log.debug({ module: 'collection' }, `Requesting collection schema for ${collection.slug} from API`)
+  let schemas = collections.map(collection => {
+    log.debug({ module: 'collection' }, `Requesting collection schema for ${collection.slug} from API`)
 
-        return new DadiAPI(Object.assign(api, {uri: api.host}))
-          .useDatabase(collection.database)
-          .in(collection.slug)
-          .getConfig()
-          .then(schema => Object.assign(schema, {slug: collection.slug}))
+    let apiWrapperOptions = Object.assign({}, api, {
+      accessToken: this.accessToken,
+      uri: api.host
+    })
+    let apiWrapper = new DadiAPI(apiWrapperOptions)
+
+    return apiWrapper
+      .useDatabase(collection.database)
+      .in(collection.slug)
+      .getConfig()
+      .then(schema => {
+        return Object.assign(
+          {},
+          schema,
+          {slug: collection.slug}
+        )
       })
-  )
+  })
+
+  return Promise.all(schemas)
 }
 
-module.exports = function () {
-  return new Collection()
+module.exports = function (options) {
+  return new Collection(options)
 }
 
 module.exports.Collection = Collection

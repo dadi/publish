@@ -61,13 +61,13 @@ class Header extends Component {
   render() {
     const {state} = this.props
     const compact = state.app.breakpoint === null
-    const currentCollection = state.api.apis.length && this.routes && this.routes.getCurrentCollection(state.api.apis)
+    const currentCollection = state.api.apis.length &&
+      this.routes &&
+      this.routes.getCurrentCollection(state.api.apis)
 
-    if (state.user.status !== Constants.STATUS_LOADED) {
+    if (!state.user.isSignedIn) {
       return null
     }
-
-    const user = state.user.remote
 
     let contentStyle = new Style(styles, 'content')
     let innerStyle = new Style(styles)
@@ -75,6 +75,11 @@ class Header extends Component {
     contentStyle.addIf('content-compact', compact)
     contentStyle.addIf('content-expanded', this.state.expanded)
     innerStyle.addIf('inner-content-compact', compact)
+
+    let displayName = [
+      state.user.remote.data && state.user.remote.data.publishFirstName,
+      state.user.remote.data && state.user.remote.data.publishLastName
+    ].filter(Boolean).join(' ') || 'Profile'
 
     return (
       <header class={styles.header}>
@@ -101,7 +106,7 @@ class Header extends Component {
               <img class={styles.logo} src="/public/images/publish.png" />
             </a>
 
-              {user && (
+              {state.user.accessToken && (
                 <div class={styles.controls}>
                   <button
                     class={styles.signout}
@@ -109,7 +114,8 @@ class Header extends Component {
                   >
                     Sign out
                   </button>
-                  <a href="/profile" class={styles.user}>{`${user.first_name} ${user.last_name}`}</a>
+
+                  <a href="/profile" class={styles.user}>{displayName}</a>
                 </div>
               )}
           </div>

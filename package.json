@@ -45,8 +45,8 @@
   },
   "homepage": "https://github.com/dadi/publish",
   "dependencies": {
-    "@dadi/api-wrapper": "^1.4.0",
-    "@dadi/api-wrapper-core": "^1.6.0",
+    "@dadi/api-wrapper": "^3.0.0",
+    "@dadi/api-wrapper-core": "^3.0.0",
     "@dadi/boot": "^1.1.4",
     "@dadi/logger": "^1.2.0",
     "@dadi/passport": "^1.2.0",
@@ -88,6 +88,7 @@
     "inquirer": "^3.0.6",
     "istanbul-cobertura-badger": "^1.3.0",
     "jest": "^20.0.4",
+    "js-cookie": "^2.2.0",
     "json-loader": "^0.5.4",
     "md5": "^2.2.1",
     "mkdirp": "^0.5.1",
@@ -195,7 +196,8 @@
     "testMatch": [
       "**/frontend/**/*.test.jsx",
       "**/test/**/*.test.js"
-    ]
+    ],
+    "testURL": "http://localhost"
   },
   "directories": {
     "doc": "docs",

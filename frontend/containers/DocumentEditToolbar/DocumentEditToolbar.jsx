@@ -85,20 +85,21 @@ class DocumentEditToolbar extends Component {
     } = this.props
     const document = state.document
     const previousDocument = prevProps.state.document
-    const status = document.remoteStatus
-    const wasFirstValidated = !previousDocument.validationErrors && document.validationErrors
-    const wasSaving = previousDocument.remoteStatus === Constants.STATUS_SAVING
+    const wasFirstValidated = !previousDocument.hasBeenValidated &&
+      document.hasBeenValidated
 
     // Have we just saved a document?
-    if (wasSaving && (status !== Constants.STATUS_SAVING)) {
+    if (previousDocument.isSaving && !document.isSaving) {
       if (typeof this.onSave.callback === 'function') {
         this.onSave.callback(state.document.remote ? state.document.remote._id : null)
       }
     }
 
     // Are we trying to save the document?
-    if ((previousDocument.saveAttempts < document.saveAttempts) ||
-        (wasFirstValidated && document.saveAttempts > 0)) {
+    if (
+      previousDocument.saveAttempts < document.saveAttempts ||
+      wasFirstValidated && document.saveAttempts > 0
+    ) {
       this.saveDocument()
     }
 
@@ -118,15 +119,17 @@ class DocumentEditToolbar extends Component {
       documentId,
       state
     } = this.props
-    const document = state.document.remote
+    const {
+      isSaving,
+      peers,
+      remote: document
+    } = state.document.remote || {}
     const hasConnectionIssues = state.app.networkStatus !== Constants.NETWORK_OK
-    const isSaving = state.document.remoteStatus === Constants.STATUS_SAVING
     const validationErrors = state.document.validationErrors
     const hasValidationErrors = validationErrors && Object.keys(validationErrors)
       .filter(field => validationErrors[field])
       .length
     const method = documentId ? 'edit' : 'new'
-    const peers = state.document.peers
 
     // By default, we support these two save modes.
     let saveOptions = {

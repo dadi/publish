@@ -4,20 +4,21 @@ import {Component, h} from 'preact'
 import proptypes from 'proptypes'
 
 import * as Constants from 'lib/constants'
+import * as userActions from 'actions/userActions'
 import {connectHelper} from 'lib/util'
 import {bindActionCreators} from 'redux'
 
-import * as userActions from 'actions/userActions'
+import Style from 'lib/Style'
+import styles from './ProfileEdit.css'
 
-import DocumentEdit from 'containers/DocumentEdit/DocumentEdit'
-import DocumentList from 'containers/DocumentList/DocumentList'
-import DocumentListToolbar from 'containers/DocumentListToolbar/DocumentListToolbar'
+import {edit as FieldPassword} from 'frontend/components/FieldPassword/FieldPassword'
+import {edit as FieldString} from 'frontend/components/FieldString/FieldString'
+
 import Header from 'containers/Header/Header'
 import Main from 'components/Main/Main'
 import Page from 'components/Page/Page'
 import ProfileEditToolbar from 'containers/ProfileEditToolbar/ProfileEditToolbar'
-import ReferencedDocumentHeader from 'containers/ReferencedDocumentHeader/ReferencedDocumentHeader'
-import SubNavItem from 'components/SubNavItem/SubNavItem'
+import TabbedFieldSections from 'components/TabbedFieldSections/TabbedFieldSections'
 
 /**
  * The interface for editing a user profile.
@@ -52,6 +53,24 @@ class ProfileEdit extends Component {
     sections: proptypes.array
   }
 
+  // Handles the callback that fires whenever a field changes and the new value
+  // is ready to be sent to the store.
+  handleFieldChange(fieldName, value) {
+    const {
+      actions
+    } = this.props
+
+    actions.updateLocalUser(fieldName, value)
+  }
+
+  // Handles the callback that fires whenever there's a new validation error
+  // in a field or when a validation error has been cleared.
+  handleFieldError(fieldName, hasError, value) {
+    const {actions} = this.props
+
+    actions.setFieldErrorStatus(fieldName, value, hasError)
+  }
+
   render() {
     const {
       onBuildBaseUrl,
@@ -60,55 +79,40 @@ class ProfileEdit extends Component {
       section,
       state
     } = this.props
-    const userDocument = state.user.remote
 
-    if (!userDocument) return null
+    let sections = [
+      {
+        name: 'Credentials',
+        slug: 'credentials',
+        fields: [
+          'clientId',
+          'secret'
+        ]
+      },
+      {
+        name: 'Personal details',
+        slug: 'personal-details',
+        fields: [
+          'data.publishFirstName',
+          'data.publishLastName'
+        ]
+      }
+    ]
 
-    // Are we selecting a reference field?
-    if (referencedField) {
-      return (
-        <Page>
-          <ReferencedDocumentHeader
-            collection={Constants.AUTH_COLLECTION}
-            onBuildBaseUrl={onBuildBaseUrl}
-            onGetRoutes={onGetRoutes}
-            parentDocumentId={userDocument._id}
-            referencedField={referencedField}
-          />
-
-          <Main>
-            <DocumentList
-              collection={Constants.AUTH_COLLECTION}
-              documentId={userDocument._id}
-              onBuildBaseUrl={onBuildBaseUrl}
-              onGetRoutes={onGetRoutes}
-              referencedField={referencedField}
-              section={section}
-              selectLimit={1}
-            />
-
-            <DocumentListToolbar
-              collection={Constants.AUTH_COLLECTION}
-              onBuildBaseUrl={onBuildBaseUrl}
-              onGetRoutes={onGetRoutes}
-              referencedField={referencedField}
-            />
-          </Main>
-        </Page>
-      )
-    }
+    // Add a link to each section.
+    sections.forEach(section => {
+      section.href = `/profile/${section.slug}`
+    })
 
     return (
       <Page>
         <Header />
 
         <Main>
-          <DocumentEdit
-            collection={Constants.AUTH_COLLECTION}
-            documentId={userDocument._id}
-            onBuildBaseUrl={onBuildBaseUrl}
-            onGetRoutes={onGetRoutes}
-            section={section}
+          <TabbedFieldSections
+            activeSection={section}
+            renderField={this.renderField.bind(this)}
+            sections={sections}
           />
 
           <ProfileEditToolbar />
@@ -116,13 +120,90 @@ class ProfileEdit extends Component {
       </Page>
     )
   }
+
+  renderField(field) {
+    const {
+      state
+    } = this.props
+
+    let hasError = state.validationErrors
+      && state.validationErrors[field]
+    let error = typeof hasError === 'string'
+      ? 'This field ' + hasError
+      : hasError
+    let schema = {
+      _id: field
+    }
+    let userData = {
+      ...state.remote.data,
+      ...state.local.data
+    }
+
+    if (field === 'clientId') {
+      return (
+        <FieldString
+          error={error}
+          onChange={this.handleFieldChange.bind(this)}
+          onError={this.handleFieldError.bind(this)}
+          schema={{
+            ...schema,
+            label: 'ID',
+            publish: {
+              readonly: true
+            }
+          }}
+          value={state.remote.clientId}
+        />
+      )
+    }
+
+    if (field === 'secret') {
+      return (
+        <FieldPassword
+          error={error}
+          onChange={this.handleFieldChange.bind(this)}
+          onError={this.handleFieldError.bind(this)}
+          schema={{
+            ...schema,
+            label: 'Password'
+          }}
+        />
+      )
+    }
+
+    if (field === 'data.publishFirstName') {
+      return (
+        <FieldString
+          error={error}
+          onChange={this.handleFieldChange.bind(this)}
+          onError={this.handleFieldError.bind(this)}
+          schema={{
+            ...schema,
+            label: 'First name'
+          }}
+          value={userData.publishFirstName}
+        />
+      )
+    }
+
+    if (field === 'data.publishLastName') {
+      return (
+        <FieldString
+          error={error}
+          onChange={this.handleFieldChange.bind(this)}
+          onError={this.handleFieldError.bind(this)}
+          schema={{
+            ...schema,
+            label: 'Last name'
+          }}
+          value={userData.publishLastName}
+        />
+      )
+    }
+  }
 }
 
 export default connectHelper(
-  state => ({
-    api: state.api,
-    app: state.app,
-    user: state.user
-  }),
+  state => state.user,
   dispatch => bindActionCreators(userActions, dispatch)
 )(ProfileEdit)

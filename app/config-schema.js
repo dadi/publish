@@ -14,17 +14,6 @@ module.exports = {
       format: String,
       default: ''
     },
-    credentials: {
-      format: Object,
-      clientId: {
-        format: String,
-        default: 'testClient'
-      },
-      secret: {
-        format: String,
-        default: 'superSecret'
-      }
-    },
     database: {
       availableInFrontend: true,
       format: String,
@@ -95,17 +84,6 @@ module.exports = {
       doc: 'Collection menu ordering and grouping',
       format: Array,
       default: []
-    },
-    credentials: {
-      format: Object,
-      clientId: {
-        format: String,
-        default: 'testClient'
-      },
-      secret: {
-        format: String,
-        default: 'superSecret'
-      }
     }
   },
   app: {
@@ -146,17 +124,6 @@ module.exports = {
     endpoint: {
       format: String,
       default: ''
-    },
-    credentials: {
-      format: Object,
-      clientId: {
-        format: String,
-        default: 'testClient'
-      },
-      secret: {
-        format: String,
-        default: 'superSecret'
-      }
     }
   },
   cdn: {

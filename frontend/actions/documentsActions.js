@@ -13,8 +13,9 @@ export function clearDocumentList () {
 }
 
 export function deleteDocuments ({api, collection, ids}) {
-  return (dispatch) => {
+  return (dispatch, getState) => {
     const apiBridge = apiBridgeClient({
+      accessToken: getState().user.accessToken,
       api,
       collection
     }).whereFieldIsOneOf('_id', ids)
@@ -46,31 +47,29 @@ export function fetchDocuments ({
   sortBy,
   sortOrder
 }) {
-  return (dispatch) => {
-    // We use the API Bridge bundler because we might need to run more than
-    // one query.
-    const bundler = apiBridgeClient.getBundler()
+  return (dispatch, getState) => {
     const sort = [
       sortBy || collection.settings.sort || 'createdAt',
       sortOrder || (collection.settings.sortOrder === 1 ? 'asc' : 'desc') || 'desc'
     ]
+
+    let queries = []
 
     // This is the main one, where we retrieve the list of documents.
     let parentQuery
 
     if (collection === Constants.MEDIA_COLLECTION) {
       parentQuery = apiBridgeClient({
-        api,
-        inBundle: true
+        api
       }).inMedia()
     } else {
       const fields = visibleFieldList({fields: collection.fields, view: 'list'})
 
       parentQuery = apiBridgeClient({
+        accessToken: getState().user.accessToken,
         api,
         collection,
-        fields,
-        inBundle: true
+        fields
       })
     }
 
@@ -79,23 +78,27 @@ export function fetchDocuments ({
       .where(filters)
       .find()
 
-    bundler.add(parentQuery)
+    queries.push(parentQuery)
 
     // If we're on a nested document, we need to retrieve the parent too.
     if (referencedField && parentCollection) {
-      bundler.add(
+      queries.push(
         apiBridgeClient({
+          accessToken: getState().user.accessToken,
           api,
-          collection: parentCollection,
-          inBundle: true
-        }).whereFieldIsEqualTo('_id', parentDocumentId)
-          .find()
+          collection: parentCollection
+        }).whereFieldIsEqualTo(
+          '_id',
+          parentDocumentId
+        ).find()
       )
     }
 
-    dispatch(setDocumentListStatus(Constants.STATUS_LOADING))
+    dispatch(
+      setDocumentListStatus(Constants.STATUS_LOADING)
+    )
 
-    bundler.run().then(response => {
+    Promise.all(queries).then(response => {
       const documentList = response[0]
 
       let actions = [

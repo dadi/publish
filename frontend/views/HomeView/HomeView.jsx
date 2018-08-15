@@ -15,7 +15,7 @@ class HomeView extends Component {
     const {state} = this.props
     const {user} = state
 
-    if (user.status !== Constants.STATUS_LOADED) {
+    if (!user.isSignedIn) {
       return null
     }
 
@@ -27,7 +27,7 @@ class HomeView extends Component {
 
         <Main>
           <HeroMessage
-            title={`Welcome, ${(user.remote && !user.remote.error) ? user.remote.first_name : 'Guest'}.`}
+            title={`Welcome, ${(user.remote.data && user.remote.data && user.remote.data.publishFirstName) || 'Guest'}.`}
             subtitle="You can use the menu to navigate collections and start editing documents."
           />
         </Main>
