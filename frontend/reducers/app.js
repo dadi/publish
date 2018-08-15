@@ -16,7 +16,6 @@ const NETWORK_DEBOUNCE = 200
 
 // The initial state
 const initialState = {
-  apiMain: window.__apiInfo__,
   breakpoint: getActiveBreakpoint(window.innerWidth),
   config: window.__config__,
   isLoading: false,

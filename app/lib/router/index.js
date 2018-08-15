@@ -99,11 +99,6 @@ Router.prototype.webRoutes = function () {
     res.header('Content-Type', 'text/html; charset=utf-8')
 
     let entryPointPage = this.entryPointTemplate
-      .replace(
-        '/*@@apiInfo@@*/',
-        `window.__apiInfo__ = ${JSON.stringify(config.get('apis.0'))};`
-      )
-
     let accessToken = req.cookies && req.cookies.accessToken
     let authenticate = Promise.resolve()
 
@@ -142,11 +137,22 @@ Router.prototype.webRoutes = function () {
         .catch(e => {
           log.error({module: 'router'}, `buildCollectionRoutes failed: ${JSON.stringify(e)}`)
 
-          entryPointPage = entryPointPage.replace(
-            '/*@@apiError@@*/',
-            `window.__apiError__ = ${JSON.stringify(e)};`
-          )
+          entryPointPage = entryPointPage
+            .replace(
+              '/*@@apiError@@*/',
+              `window.__apiError__ = ${JSON.stringify(e)};`
+            )
+            .replace(
+              '/*@@config@@*/',
+              `window.__config__ = ${JSON.stringify(config.getUnauthenticatedConfig())};`
+            )
         })
+    } else {
+      entryPointPage = entryPointPage
+        .replace(
+          '/*@@config@@*/',
+          `window.__config__ = ${JSON.stringify(config.getUnauthenticatedConfig())};`
+        )
     }
 
     return authenticate.then(() => {

@@ -39,7 +39,7 @@ export function saveUser () {
       setUserStatus(Constants.STATUS_SAVING)
     )
 
-    let api = getState().app.apiMain
+    let api = getState().app.config.apis[0]
     let update = getState().user.local
     let apiBridge = apiBridgeClient({
       accessToken: getState().user.accessToken,
@@ -114,7 +114,7 @@ export function setUserStatus (status, data) {
 
 export function signIn (clientId, secret) {
   return (dispatch, getState) => {
-    let apiUrl = getState().app.apiMain.host
+    let apiUrl = getState().app.config.apis[0].host
     let options = {
       body: JSON.stringify({
         clientId,
