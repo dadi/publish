@@ -36,11 +36,7 @@ class SignIn extends Component {
     super(props)
 
     this.validation = new Validation()
-<<<<<<< HEAD
 
-=======
-    // Is there is a token in the URL.
->>>>>>> 36834929d53963055b8bc084b7b9ba63ee39056f
     this.state.email = ''
     this.state.password = ''
     this.state.passwordConfirm = ''
@@ -50,7 +46,6 @@ class SignIn extends Component {
 
   getErrorBanner(signInError) {
     let message
-<<<<<<< HEAD
 
     if (signInError) {
       switch (signInError) {
@@ -59,16 +54,6 @@ class SignIn extends Component {
 
           break
 
-=======
-
-    if (signInError) {
-      switch (signInError) {
-        case 401:
-          message = 'Email not found or password incorrect'
-
-          break
-
->>>>>>> 36834929d53963055b8bc084b7b9ba63ee39056f
         default:
           message = 'The API is not responding'
 

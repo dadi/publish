@@ -118,30 +118,10 @@ afterEach(() => {
 })
 
 describe('App', () => {
-  it('renders an error view if api paths are not defined', () => {
-    const component = renderToString(
-      <MockStore>
-        <App />
-      </MockStore>
-    )
-
-    const error = renderToString(
-      <MockStore>
-        <ErrorView
-          type={'STATUS_FAILED'}
-        >
-          {'{{ ... }}'}
-        </ErrorView>
-      </MockStore>
-    )
-
-    htmlLooksLike(component, error)
-  })
-
-  it('renders an error view if api status is `STATUS_FAILED`', () => {
+  it('renders an error view if api error is truthy', () => {
     defaultState.api.paths = mockPaths
     defaultState.user.status = 'STATUS_LOADED'
-    defaultState.api.status = 'STATUS_FAILED'
+    defaultState.api.error = true
     const component = renderToString(
       <MockStore state={defaultState}>
         <App />
