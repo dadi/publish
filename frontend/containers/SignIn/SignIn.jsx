@@ -125,7 +125,7 @@ class SignIn extends Component {
                 type="submit"
               >Sign In</Button>
 
-              <a class={styles.link} href="/reset">Reset password</a>
+              {/*<a class={styles.link} href="/reset">Reset password</a>*/}
 
               {poweredBy && (
                 <p class={styles['powered-by']}>
