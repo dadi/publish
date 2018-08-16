@@ -115,6 +115,11 @@ export function setUserStatus (status, data) {
 export function signIn (clientId, secret) {
   return (dispatch, getState) => {
     let apiUrl = getState().app.config.apis[0].host
+
+    if (getState().app.config.apis[0].port) {
+      apiUrl += ':' + getState().app.config.apis[0].port
+    }
+
     let options = {
       body: JSON.stringify({
         clientId,
