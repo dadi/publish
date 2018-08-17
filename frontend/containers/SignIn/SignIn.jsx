@@ -32,6 +32,18 @@ class SignIn extends Component {
      token: proptypes.string
   }
 
+  componentDidMount() {
+    const {
+      state
+    } = this.props
+
+    // If the user is already signed in, let's take them to
+    // the root page.
+    if (state.user.accessToken) {
+      return route('/')
+    }
+  }
+
   constructor(props) {
     super(props)
 
@@ -51,6 +63,11 @@ class SignIn extends Component {
       switch (signInError) {
         case 401:
           message = 'Email not found or password incorrect'
+
+          break
+
+        case 501:
+          message = 'The configured API is running an earlier version than that required by this version of Publish'
 
           break
 

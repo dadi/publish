@@ -114,10 +114,12 @@ export function setUserStatus (status, data) {
 
 export function signIn (clientId, secret) {
   return (dispatch, getState) => {
-    let apiUrl = getState().app.config.apis[0].host
+    let api = getState().app.config.apis[0]
+    let apiUrl = api.host
+    let requiredFeatures = ['aclv1']
 
-    if (getState().app.config.apis[0].port) {
-      apiUrl += ':' + getState().app.config.apis[0].port
+    if (api.port) {
+      apiUrl += ':' + api.port
     }
 
     let options = {
@@ -127,7 +129,8 @@ export function signIn (clientId, secret) {
       }),
       headers: {
         'Accept': 'application/json',
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        'x-dadi-requires': requiredFeatures.join(';')
       },
       method: 'POST'
     }
@@ -138,6 +141,15 @@ export function signIn (clientId, secret) {
 
     return fetch(`${apiUrl}/token`, options)
       .then(response => {
+        let supportedFeatures = (response.headers.get('X-DADI-Supports') || '').split(';')
+        let missingFeatures = requiredFeatures.filter(feature => {
+          return supportedFeatures.indexOf(feature) === -1
+        })
+
+        if (missingFeatures.length > 0) {
+          return Promise.reject(501)
+        }
+
         if (response.status === 200) {
           return response.json()
         }
@@ -149,7 +161,7 @@ export function signIn (clientId, secret) {
         let accessTokenTTL = response.expiresIn
 
         if (typeof accessToken !== 'string') {
-          return Promise.reject(client)
+          return Promise.reject(401)
         }
 
         return fetch(`/config?accessToken=${accessToken}`)
@@ -158,7 +170,7 @@ export function signIn (clientId, secret) {
               return response.json()
             }
 
-            return Promise.reject(response)
+            return Promise.reject(response.status)
           })
           .then(({client, config, routes}) => {
             return dispatch(
@@ -174,7 +186,7 @@ export function signIn (clientId, secret) {
       })
       .catch(error => {
         dispatch(
-          setUserStatus(Constants.STATUS_FAILED, error.status)
+          setUserStatus(Constants.STATUS_FAILED, error)
         )
       })
   }
