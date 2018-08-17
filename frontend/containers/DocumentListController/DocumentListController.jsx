@@ -98,8 +98,7 @@ class DocumentListController extends Component {
     return (
       <div>
         <ListController 
-          collection={currentCollection}
-          groupName={groupName}
+          breadcrumbs={[groupName, currentCollection.name]}
         >
           <Button
             type="fill"

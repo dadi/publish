@@ -99,10 +99,8 @@ class LoadingBar extends Component {
   componentDidUpdate(prevProps, prevState) {
     const {percentage, visible} = this.state
     const {state} = this.props
-    const loading = Object.is(state.app.status, Constants.STATUS_LOADING)
-      || Object.is(state.document.remoteStatus, Constants.STATUS_SAVING)
-    const prevLoading = Object.is(prevProps.state.app.status, Constants.STATUS_LOADING)
-      || Object.is(prevProps.state.document.remoteStatus, Constants.STATUS_SAVING)
+    const isLoading = Boolean(state.isLoading)
+    const wasLoading = Boolean(prevProps.state.isLoading)
 
     if (prevState.visible && !visible) {
       this.setState({
@@ -110,11 +108,11 @@ class LoadingBar extends Component {
       })
     }
 
-    if (!prevLoading && loading) {
+    if (!wasLoading && isLoading) {
       this.start()  
     }
 
-    if (prevLoading && !loading) {
+    if (wasLoading && !isLoading) {
       this.done()
     }
   }
@@ -140,9 +138,6 @@ class LoadingBar extends Component {
 }
 
 export default connectHelper(
-  state => ({
-    app: state.app,
-    document: state.document
-  }),
+  state => state.app,
   dispatch => bindActionCreators(appActions, dispatch)
 )(LoadingBar)

@@ -52,19 +52,6 @@ describe('API', () => {
         }))
     })
 
-    it('should update api status', () => {
-      const apiReducerCall = api(undefined, {
-        status: 'MOCK_STATUS',
-        type: Types.SET_API_STATUS
-      })
-
-      expect(apiReducerCall)
-        .toEqual(expect.objectContaining({
-          ...API.initialState,
-          status: 'MOCK_STATUS'
-        }))
-    })
-
     it('should return state to initialState on signout', () => {
       const apiReducerCall = api(undefined, {
         type: Types.SIGN_OUT

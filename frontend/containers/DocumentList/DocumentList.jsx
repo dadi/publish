@@ -132,25 +132,20 @@ class DocumentList extends Component {
       referencedField,
       state
     } = this.props
-    const {list} = state.documents
+    const documents = state.documents
     const pathKey = prevProps.state.router.locationBeforeTransitions.key
+    const previousDocuments = prevProps.state.documents
     const previousPathKey = state.router.locationBeforeTransitions.key
-    const historyKeyMatch = pathKey === previousPathKey
-    const isIdle = status === Constants.STATUS_IDLE
-    const previousStatus = prevProps.state.documents.status
-    const wasLoading = previousStatus === Constants.STATUS_LOADING
-    const collectionHasChanged = prevProps.collection !== this.props.collection
-
-    // Reset state if collection changes.
-    if (collectionHasChanged) {
-      actions.setDocumentListStatus(Constants.STATUS_IDLE)
-    }
 
     // If we are have just loaded a list of documents for a nested document,
     // let's update the selection with the value of the reference field, if
     // it is in view.
-    if (referencedField && wasLoading && isIdle) {
-      const document = Object.assign({}, state.document.remote, state.document.local)
+    if (referencedField && previousDocuments.isLoading && !documents.isLoading) {
+      const document = Object.assign(
+        {},
+        state.document.remote,
+        state.document.local
+      )
       const referencedValue = document[referencedField]
 
       if (referencedValue && referencedValue._id) {
@@ -159,7 +154,9 @@ class DocumentList extends Component {
     }
 
     // State check: reject when path matches and document list loaded
-    if (list && historyKeyMatch) return
+    if (documents.list && (pathKey === previousPathKey)) {
+      return
+    }
 
     this.routes = onGetRoutes(state.api.paths)
     this.checkStatusAndFetch()
@@ -184,7 +181,7 @@ class DocumentList extends Component {
 
     const createHref = this.routes.createRoute()
 
-    if (documents.status === Constants.STATUS_NOT_FOUND) {
+    if (documents.remoteError) {
       return (
         <ErrorMessage
           type={Constants.ERROR_ROUTE_NOT_FOUND}
@@ -192,7 +189,12 @@ class DocumentList extends Component {
       )      
     }
 
-    if (!documents.list || !documents.list.results || documents.status === Constants.STATUS_LOADING || !this.currentCollection) {
+    if (
+      !documents.list ||
+      !documents.list.results ||
+      documents.isLoading ||
+      !this.currentCollection
+    ) {
       return null
     }
 
@@ -226,12 +228,12 @@ class DocumentList extends Component {
 
   checkStatusAndFetch() {
     const {state} = this.props
-    const {list, status} = state.documents
+    const {isLoading, list, status} = state.documents
 
     // State check: reject when missing config, session, or apis
     if (!state.app.config || !state.api.apis.length || !state.user) return
 
-    if (status === Constants.STATUS_IDLE) {
+    if (!isLoading) {
       this.fetchDocuments()  
     }
   }
@@ -264,7 +266,7 @@ class DocumentList extends Component {
     const currentCollection = this.routes.getCurrentCollection(state.api.apis)
 
     if (!currentCollection) {
-      actions.setDocumentListStatus(Constants.STATUS_NOT_FOUND)
+      actions.setDocumentListStatus(Constants.STATUS_FAILED, 404)
 
       return
     }

@@ -5,7 +5,6 @@ import {h, Component} from 'preact'
 import ProfileEdit from 'containers/ProfileEdit/ProfileEdit'
 
 import * as Constants from 'lib/constants'
-import {DocumentRoutes} from 'lib/document-routes'
 import {setPageTitle} from 'lib/util'
 
 export default class ProfileEditView extends Component {
@@ -22,15 +21,10 @@ export default class ProfileEditView extends Component {
     return (
       <ProfileEdit
         onBuildBaseUrl={this.handleBuildBaseUrl.bind(this)}
-        onGetRoutes={this.getRoutes.bind(this)}
         referencedField={referencedField}
-        section={section}
+        section={section || 'credentials'}
       />
     ) 
-  }
-
-  getRoutes(paths) {
-    return new DocumentRoutes(Object.assign(this.props, {paths, collection: Constants.AUTH_COLLECTION}))
   }
 
   handleBuildBaseUrl() {

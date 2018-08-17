@@ -37,8 +37,9 @@ export function fetchDocument ({
   id,
   fields
 }) {
-  return (dispatch) => {
+  return (dispatch, getState) => {
     const apiBridge = apiBridgeClient({
+      accessToken: getState().user.accessToken,
       api,
       collection
     }).whereFieldIsEqualTo('_id', id)
@@ -47,17 +48,23 @@ export function fetchDocument ({
       apiBridge.useFields(fields)
     }
 
-    // Set loading status
-    dispatch(setRemoteDocumentStatus(Constants.STATUS_LOADING))
+    // Set loading status.
+    dispatch(
+      setRemoteDocumentStatus(Constants.STATUS_LOADING)
+    )
 
     apiBridge.find().then(response => {
-      if (response.results.length) {
-        dispatch(setRemoteDocument(response.results[0]))
-      } else {
-        dispatch(setRemoteDocumentStatus(Constants.STATUS_NOT_FOUND))
+      if (response.results.length === 0) {
+        return Promise.reject(404)
       }
-    }).catch(err => {
-      dispatch(setRemoteDocumentStatus(Constants.STATUS_FAILED))
+
+      dispatch(
+        setRemoteDocument(response.results[0])
+      )
+    }).catch(error => {
+      dispatch(
+        setRemoteDocumentStatus(Constants.STATUS_FAILED, error)
+      )
     })
   }
 }
@@ -75,7 +82,7 @@ function getLocalStorageKey ({
     return documentId
   }
 
-  if (state.document.remote) {
+  if (state && state.document.remote) {
     return state.document.remote._id
   }
 
@@ -137,11 +144,14 @@ export function saveDocument ({
 
     let payload = {}
     let apiBridge = apiBridgeClient({
+      accessToken: getState().user.accessToken,
       api,
       collection
     })
 
-    dispatch(setRemoteDocumentStatus(Constants.STATUS_SAVING))
+    dispatch(
+      setRemoteDocumentStatus(Constants.STATUS_SAVING)
+    )
 
     if (isUpdate) {
       Object.keys(document).forEach(field => {
@@ -170,10 +180,9 @@ export function saveDocument ({
       })
     }
 
-    // Handling reference fields. We might need to run multiple queries, so
-    // we use the API Bridge bundler.
-    const referenceBundler = apiBridgeClient.getBundler()
-    let referenceBundlerMap = []
+    // Handling reference fields.
+    let referenceQueue = []
+    let referenceQueueMap = []
 
     // We iterate through the payload and find reference fields.
     Object.keys(payload).forEach(field => {
@@ -204,10 +213,10 @@ export function saveDocument ({
             }
 
             // Otherwise, we need to upload the file.
-            referenceBundler.add(
+            referenceQueue.push(
               apiBridgeClient({
-                api,
-                inBundle: true
+                accessToken: getState().user.accessToken,
+                api
               }).inMedia().getSignedUrl({
                 contentLength: document.contentLength,
                 fileName: document.fileName,
@@ -215,7 +224,7 @@ export function saveDocument ({
               })
             )
 
-            referenceBundlerMap.push({
+            referenceQueueMap.push({
               field,
               index,
               mediaUpload: true
@@ -249,29 +258,32 @@ export function saveDocument ({
       }
     })
 
-    referenceBundler.run().then(responses => {
+    Promise.all(referenceQueue).then(responses => {
       let uploadQueue = []
 
       // `responses` contains an array of API responses resulting from updating
       // or creationg referenced documents. The names of the fields they relate
-      // to are defined in `referenceBundlerMap`.
+      // to are defined in `referenceQueueMap`.
       responses.forEach((response, index) => {
-        const bundlerMapEntry = referenceBundlerMap[index]
-        const referenceField = bundlerMapEntry.field
-        const referenceLimit = bundlerMapEntry.limit
+        const queueMapEntry = referenceQueueMap[index]
+        const referenceField = queueMapEntry.field
+        const referenceLimit = queueMapEntry.limit
 
         // If this bundle entry is a media upload, we're not done yet. The
         // bundle response gave us a signed URL, but we still need to upload
         // the file and add the resulting ID to the final payload.
-        if (bundlerMapEntry.mediaUpload) {
-          dispatch(setRemoteDocumentStatus(Constants.STATUS_SAVING))
+        if (queueMapEntry.mediaUpload) {
+          dispatch(
+            setRemoteDocumentStatus(Constants.STATUS_SAVING)
+          )
+
           const mediaUpload = uploadMedia(
             api,
             response.url,
-            payload[referenceField][bundlerMapEntry.index]
+            payload[referenceField][queueMapEntry.index]
           ).then(uploadResponse => {
             if (uploadResponse.results && uploadResponse.results.length) {
-              payload[referenceField][bundlerMapEntry.index] = uploadResponse.results[0]._id
+              payload[referenceField][queueMapEntry.index] = uploadResponse.results[0]._id
             }
           })
 
@@ -312,26 +324,26 @@ export function saveDocument ({
 
             LocalStorage.clearDocument(localStorageKey)
           } else {
-            dispatch(setRemoteDocumentStatus(Constants.STATUS_FAILED))
+            dispatch(
+              setRemoteDocumentStatus(Constants.STATUS_FAILED)
+            )
           }
         })
       }).catch(response => {
         if (response.errors && response.errors.length) {
           dispatch(
-            batchActions(
-              {
-                errors: response.errors,
-                type: Types.SET_ERRORS_FROM_REMOTE_API
-              },
-              setRemoteDocumentStatus(Constants.STATUS_FAILED)
-            )
+            setErrorsFromRemoteAPI(response.errors)
           )
         } else {
-          dispatch(setRemoteDocumentStatus(Constants.STATUS_FAILED))
+          dispatch(
+            setRemoteDocumentStatus(Constants.STATUS_FAILED)
+          )
         }
       })
     }).catch(err => {
-      dispatch(setRemoteDocumentStatus(Constants.STATUS_FAILED))
+      dispatch(
+        setRemoteDocumentStatus(Constants.STATUS_FAILED)
+      )
     })
   }
 }
@@ -340,6 +352,13 @@ export function setDocumentPeers (peers) {
   return {
     peers,
     type: Types.SET_DOCUMENT_PEERS
+  }
+}
+
+export function setErrorsFromRemoteAPI (errors) {
+  return {
+    errors,
+    type: Types.SET_ERRORS_FROM_REMOTE_API
   }
 }
 
@@ -389,8 +408,9 @@ export function setRemoteDocument (remote, {
  * Set Remote document status
  * @param {String} status Status from Constants
  */
-export function setRemoteDocumentStatus (status) {
+export function setRemoteDocumentStatus (status, data) {
   return {
+    data,
     status,
     type: Types.SET_REMOTE_DOCUMENT_STATUS
   }
@@ -400,18 +420,31 @@ export function setRemoteDocumentStatus (status) {
  * Start New Document
  * @return {Function} State dispatcher
  */
-export function startNewDocument ({
-  collection,
-  group
-} = {}) {
+export function startNewDocument ({collection, group}) {
   return (dispatch, getState) => {
-    let localStorageKey = JSON.stringify({collection, group})
-    let document = LocalStorage.readDocument(localStorageKey) || {}
+    let currentCollection = getState().document.collection
 
-    dispatch({
-      document,
-      type: Types.START_NEW_DOCUMENT
-    })
+    if (
+      currentCollection.database !== collection.database ||
+      currentCollection.slug !== collection.slug ||
+      currentCollection.version !== collection.version
+    ) {
+      let localStorageKey = getLocalStorageKey({
+        collection: collection.slug,
+        group
+      })
+      let document = LocalStorage.readDocument(localStorageKey) || {}
+
+      dispatch({
+        collection: {
+          database: collection.database,
+          slug: collection.slug,
+          version: collection.version
+        },
+        document,
+        type: Types.START_NEW_DOCUMENT
+      })
+    }
   }
 }
 

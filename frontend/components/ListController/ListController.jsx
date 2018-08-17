@@ -13,34 +13,41 @@ import styles from './ListController.css'
 export default class ListController extends Component {
   static propTypes = {
     /**
+     * An array of strings representing the breadcrumbs to display at the top
+     * of the list.
+     */
+    breadcrumbs: proptypes.array,
+
+    /**
      * The list of controls to be rendered on the right-hand side of the bar.
      */
     children: proptypes.node
   }
 
   render() {
-    const {children} = this.props
+    const {
+      children
+    } = this.props
 
     if (!children.length) return null
 
-    const arrow = ">"
-    let groupSpan = null
-    if (this.props.groupName) {
-      groupSpan = (
-        <span class={styles.group}>
-          <span>{this.props.groupName} </span>
-          <span class={styles.arrow}>{arrow}</span>
-        </span>
-      )
-    }
+    let breadcrumbs = (this.props.breadcrumbs || []).filter(Boolean)
 
     return (
       <div class={styles.container}>
         <span>
-          {groupSpan}
-          <span class={styles.collection}>
-            {this.props.collection.name}
-          </span>
+          {(breadcrumbs.length > 1) && breadcrumbs.slice(0, -1).map(node => (
+            <span class={styles['breadcrumbs-tail']}>
+              <span>{node} </span>
+              <span class={styles.arrow}>{'>'}</span>
+            </span>
+          ))}
+
+          {(breadcrumbs.length > 0) && (
+            <span class={styles['breadcrumbs-head']}>
+              {breadcrumbs.slice(-1)}
+            </span>
+          )}
         </span>
         <span>
           {children.map(control => {
