@@ -114,8 +114,14 @@ export function setUserStatus (status, data) {
 
 export function signIn (clientId, secret) {
   return (dispatch, getState) => {
-    let apiUrl = getState().app.config.apis[0].host
+    let api = getState().app.config.apis[0]
+    let apiUrl = api.host
     let requiredFeatures = ['aclv1']
+
+    if (api.port) {
+      apiUrl += ':' + api.port
+    }
+
     let options = {
       body: JSON.stringify({
         clientId,
