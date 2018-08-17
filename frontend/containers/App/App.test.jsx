@@ -118,29 +118,6 @@ afterEach(() => {
 })
 
 describe('App', () => {
-  it('renders an error view if api error is truthy', () => {
-    defaultState.api.paths = mockPaths
-    defaultState.user.status = 'STATUS_LOADED'
-    defaultState.api.error = true
-    const component = renderToString(
-      <MockStore state={defaultState}>
-        <App />
-      </MockStore>
-    )
-
-    const error = renderToString(
-      <MockStore>
-        <ErrorView
-          type={'STATUS_FAILED'}
-        >
-          {'{{ ... }}'}
-        </ErrorView>
-      </MockStore>
-    )
-
-    htmlLooksLike(component, error)
-  })
-
   it('renders an instance of `HomeView` by default', () => {
     defaultState.api.paths = mockPaths
     defaultState.api.status = 'STATUS_LOADED'
