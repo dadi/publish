@@ -45,6 +45,65 @@ describe('TextInput component', () => {
     expect(textInput.length).to.equal(1)
   })
 
+  it('renders a `<textarea>` with rows if `heightType` prop is "static"', () => {
+    const component = (
+      <TextInput
+        type='multiline'
+        heightType="static"
+        rows="3"
+      />
+    )
+
+    mount(component)
+    const textInput = $('textarea')
+    expect(textInput.length).to.equal(1)
+    expect(textInput[0].getAttribute('class')).to.equal('input not-resizable')
+    expect(textInput[0].getAttribute('rows')).to.equal('3')
+  })
+
+  it('renders a `<textarea>` with full height style if `heightType` prop is "full"', () => {
+    const component = (
+      <TextInput
+        type='multiline'
+        heightType="full"
+      />
+    )
+
+    mount(component)
+    const textInput = $('textarea')
+    expect(textInput.length).to.equal(1)
+    expect(textInput[0].getAttribute('class')).to.equal('input not-resizable full-height')
+  })
+
+  it('renders a `<textarea>` with content height style if `heightType` prop is "content"', () => {
+    const component = (
+      <TextInput
+        type='multiline'
+        heightType="content"
+      />
+    )
+
+    mount(component)
+    const textInput = $('textarea')
+    expect(textInput.length).to.equal(1)
+    expect(textInput[0].getAttribute('class')).to.equal('input not-resizable content-height')
+  })
+
+  it('renders a `<textarea>` which is resizable if `resizable` prop is "true"', () => {
+    const component = (
+      <TextInput
+        type='multiline'
+        resizable={true}
+      />
+    )
+
+    mount(component)
+    const textInput = $('textarea')
+    expect(textInput.length).to.equal(1)
+    expect(textInput[0].getAttribute('class')).to.equal('input resizable')
+  })
+
+
   it('renders an `<input>` by default', () => {
     const component = (
       <TextInput />
