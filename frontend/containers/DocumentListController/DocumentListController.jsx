@@ -80,7 +80,7 @@ class DocumentListController extends Component {
 
     const newHref = onGetRoutes(state.api.paths).createRoute({pos: 1}) // TO-DO: Change pos to match the number of new entries.
 
-    if (!currentCollection) {
+    if (!currentCollection || state.documents.remoteError) {
       return null
     }
 
