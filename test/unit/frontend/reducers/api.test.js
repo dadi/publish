@@ -47,8 +47,7 @@ describe('API', () => {
       expect(apiReducerCall)
         .toEqual(expect.objectContaining({
           ...API.initialState,
-          apis: mockApis,
-          status: Constants.STATUS_IDLE
+          apis: mockApis
         }))
     })
 
