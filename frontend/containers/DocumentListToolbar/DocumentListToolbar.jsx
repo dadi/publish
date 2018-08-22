@@ -15,7 +15,6 @@ import {bindActionCreators} from 'redux'
 import {buildUrl} from 'lib/router'
 import {connectHelper} from 'lib/util'
 import {Format} from 'lib/util/string'
-import {getApiForUrlParams, getCollectionForUrlParams} from 'lib/collection-lookup'
 import {route} from '@dadi/preact-router'
 
 import Button from 'components/Button/Button'
@@ -218,15 +217,7 @@ class DocumentListToolbar extends Component {
       group,
       state
     } = this.props
-    const currentApi = getApiForUrlParams(state.api.apis, {
-      collection,
-      group
-    })
-    const currentCollection = getCollectionForUrlParams(state.api.apis, {
-      collection,
-      group,
-      useApi: currentApi
-    })
+    const {currentApi, currentCollection} = state.api
 
     if (bulkActionSelected === 'delete') {
       actions.deleteDocuments({
@@ -278,6 +269,7 @@ class DocumentListToolbar extends Component {
       state
     } = this.props
     const documentsList = state.documents.list.results
+    const {currentParentCollection} = state.api
 
     // We might want to change this when we allow a field to reference multiple
     // documents. For now, we just get the first selected document.
@@ -294,11 +286,7 @@ class DocumentListToolbar extends Component {
       group
     })
 
-    const parentCollection = getCollectionForUrlParams(state.api.apis, {
-      collection,
-      group
-    })
-    const referenceFieldSchema = parentCollection.fields[referencedField]
+    const referenceFieldSchema = currentParentCollection.fields[referencedField]
     const referenceFieldSection = referenceFieldSchema &&
       referenceFieldSchema.publish &&
       referenceFieldSchema.publish.section &&

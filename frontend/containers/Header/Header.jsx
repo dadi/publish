@@ -61,9 +61,7 @@ class Header extends Component {
   render() {
     const {state} = this.props
     const compact = state.app.breakpoint === null
-    const currentCollection = state.api.apis.length &&
-      this.routes &&
-      this.routes.getCurrentCollection(state.api.apis)
+    const {currentCollection} = state.api
 
     if (!state.user.isSignedIn) {
       return null

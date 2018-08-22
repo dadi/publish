@@ -1,11 +1,9 @@
 import * as Types from 'actions/actionTypes'
 
-export function locationChange (locationBeforeTransitions, params, action) {
+export function setRouteParameters (parameters) {
   return {
-    action,
-    locationBeforeTransitions,
-    params,
-    type: Types.LOCATION_CHANGE
+    parameters,
+    type: Types.SET_ROUTE_PARAMETERS
   }
 }
 

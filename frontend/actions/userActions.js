@@ -4,7 +4,6 @@ import * as Constants from 'lib/constants'
 import * as Types from 'actions/actionTypes'
 import * as documentActions from 'actions/documentActions'
 
-import {getApiForUrlParams, getCollectionForUrlParams} from 'lib/collection-lookup'
 import apiBridgeClient from 'lib/api-bridge-client'
 import {batchActions} from 'lib/redux'
 
@@ -186,7 +185,7 @@ export function signIn (clientId, secret) {
       })
       .catch(error => {
         dispatch(
-          setUserStatus(Constants.STATUS_FAILED, error)
+          setUserStatus(Constants.STATUS_FAILED, error.status)
         )
       })
   }

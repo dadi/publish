@@ -7,6 +7,7 @@ import * as userActions from 'actions/userActions'
 import * as apiActions from 'actions/apiActions'
 import * as appActions from 'actions/appActions'
 import * as documentActions from 'actions/documentActions'
+import * as routerActions from 'actions/routerActions'
 import * as Constants from 'lib/constants'
 
 import DocumentCreateView from 'views/DocumentCreateView/DocumentCreateView'
@@ -190,24 +191,21 @@ class App extends Component {
   }
 
   handleRouteChange(event) {
-    const {state} = this.props
-    const isAuthenticatedRoute = event.current &&
-      event.current.attributes &&
-      event.current.attributes.authenticate
+    const {actions, state} = this.props
+    const currentRouteAttributes =
+      (event.current && event.current.attributes) || {}
+    const currentRouteIsAuthenticated = Boolean(
+      currentRouteAttributes.authenticate
+    )
+
+    actions.setRouteParameters(currentRouteAttributes.matches)
 
     if (this.analytics && this.analytics.isActive()) {
       this.analytics.pageview(event.url)
     }
 
-    // if (
-    //   !state.user.authEnabled &&
-    //   (event.url === '/sign-in')
-    // ) {
-    //   return route('/')
-    // }
-
     if (
-      (isAuthenticatedRoute && !state.user.accessToken) ||
+      (currentRouteIsAuthenticated && !state.user.accessToken) ||
       event.url === '/sign-out'
     ) {
       return route('/sign-in')
@@ -232,6 +230,7 @@ export default connectHelper(
     ...apiActions,
     ...appActions,
     ...documentActions,
+    ...routerActions,
     ...userActions
   }, dispatch)
 )(App)

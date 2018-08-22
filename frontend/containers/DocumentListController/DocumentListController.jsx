@@ -11,8 +11,6 @@ import * as documentsActions from 'actions/documentsActions'
 import {buildUrl, createRoute, router} from 'lib/router'
 import {connectHelper} from 'lib/util'
 
-import {getApiForUrlParams, getCollectionForUrlParams} from 'lib/collection-lookup'
-
 import Button from 'components/Button/Button'
 import DocumentFilters from 'components/DocumentFilters/DocumentFilters'
 import ListController from 'components/ListController/ListController'
@@ -69,9 +67,8 @@ class DocumentListController extends Component {
       referencedField,
       state
     } = this.props
-    
+    const {currentCollection} = state.api
     const routes = onGetRoutes(state.api.paths)
-    const currentCollection = state.api.apis.length && routes.getCurrentCollection(state.api.apis)
     
     const hasDocuments = state.documents.list && state.documents.list.results && (state.documents.list.results.length > 0)
     const isReference = referencedField // Temporary to disable create new in reference fields until reference save is ready.
@@ -83,7 +80,7 @@ class DocumentListController extends Component {
 
     const newHref = onGetRoutes(state.api.paths).createRoute({pos: 1}) // TO-DO: Change pos to match the number of new entries.
 
-    if (!currentCollection) {
+    if (!currentCollection || state.documents.remoteError) {
       return null
     }
 

@@ -24,7 +24,8 @@ export default function document (state = initialState, action = {}) {
         ...state,
         isLoading: false,
         list: action.documents,
-        query: action.query
+        query: action.query,
+        remoteError: null
       }
 
     // Action: clear document list.
@@ -42,6 +43,13 @@ export default function document (state = initialState, action = {}) {
     // Action: set document loading status.
     case Types.SET_DOCUMENT_LIST_STATUS:
       switch (action.status) {
+        case Constants.STATUS_IDLE:
+          return {
+            ...state,
+            isLoading: false,
+            remoteError: null
+          }
+
         case Constants.STATUS_LOADING:
           return {
             ...state,
@@ -52,6 +60,7 @@ export default function document (state = initialState, action = {}) {
           return {
             ...state,
             isLoading: false,
+            list: null,
             remoteError: action.data,
           }
 
