@@ -198,7 +198,14 @@ class App extends Component {
       currentRouteAttributes.authenticate
     )
 
-    actions.setRouteParameters(currentRouteAttributes.matches)
+    let parameters = currentRouteAttributes.matches
+
+    if (parameters.collection === 'new') {
+      parameters.collection = parameters.group
+      parameters.group = undefined
+    }
+
+    actions.setRouteParameters(parameters)
 
     if (this.analytics && this.analytics.isActive()) {
       this.analytics.pageview(event.url)
