@@ -20,11 +20,9 @@ export function deleteDocuments ({api, collection, ids}) {
       collection
     }).whereFieldIsOneOf('_id', ids)
 
-    const newStatus = ids.length > 1 ?
-      Constants.STATUS_DELETING_MULTIPLE :
-      Constants.STATUS_DELETING_SINGLE
-
-    dispatch(setDocumentListStatus(newStatus))
+    dispatch(
+      setDocumentListStatus(Constants.STATUS_DELETING, ids.length)
+    )
 
     apiBridge.delete().then(response => {
       dispatch({

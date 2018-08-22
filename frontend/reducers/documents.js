@@ -4,6 +4,7 @@ import * as Constants from 'lib/constants'
 import * as Types from 'actions/actionTypes'
 
 const initialState = {
+  isDeleting: false,
   isLoading: false,
   list: null,
   query: null,
@@ -43,9 +44,16 @@ export default function document (state = initialState, action = {}) {
     // Action: set document loading status.
     case Types.SET_DOCUMENT_LIST_STATUS:
       switch (action.status) {
+        case Constants.STATUS_DELETING:
+          return {
+            ...state,
+            isDeleting: action.data
+          }
+
         case Constants.STATUS_IDLE:
           return {
             ...state,
+            isDeleting: false,
             isLoading: false,
             remoteError: null
           }
@@ -59,6 +67,7 @@ export default function document (state = initialState, action = {}) {
         case Constants.STATUS_FAILED:
           return {
             ...state,
+            isDeleting: false,
             isLoading: false,
             list: null,
             remoteError: action.data,
