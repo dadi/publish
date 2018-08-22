@@ -24,7 +24,8 @@ export default function document (state = initialState, action = {}) {
         ...state,
         isLoading: false,
         list: action.documents,
-        query: action.query
+        query: action.query,
+        remoteError: null
       }
 
     // Action: clear document list.

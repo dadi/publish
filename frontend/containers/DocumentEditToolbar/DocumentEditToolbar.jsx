@@ -215,25 +215,15 @@ class DocumentEditToolbar extends Component {
       referencedField,
       state
     } = this.props
+    const {currentApi, currentCollection} = state.api
     const document = state.document.remote
-    const currentApi = getApiForUrlParams(state.api.apis, {
-      collection,
-      group
-    })
-    const currentCollection = getCollectionForUrlParams(state.api.apis, {
-      collection,
-      group,
-      referencedField,
-      useApi: currentApi
-    })
-    const query = {
-      api: currentApi,
-      collection: currentCollection,
-      ids: [document._id]
-    }
 
     if (document._id) {
-      actions.deleteDocuments(query)
+      actions.deleteDocuments({
+        api: currentApi,
+        collection: currentCollection,
+        ids: [document._id]
+      })
     }
   }
 
@@ -334,17 +324,6 @@ class DocumentEditToolbar extends Component {
 
     if (hasValidationErrors) return
 
-    const currentApi = getApiForUrlParams(state.api.apis, {
-      collection,
-      group
-    })
-    const currentCollection = getCollectionForUrlParams(state.api.apis, {
-      collection,
-      group,
-      referencedField,
-      useApi: currentApi
-    })
-
     let document = state.document.local
 
     // If we're creating a new document, we need to inject any required Boolean
@@ -354,8 +333,8 @@ class DocumentEditToolbar extends Component {
     }
 
     actions.saveDocument({
-      api: currentApi,
-      collection: currentCollection,
+      api: state.api.currentApi,
+      collection: state.api.currentCollection,
       document,
       documentId: creatingNew ? null : documentId,
       group,

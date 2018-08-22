@@ -114,6 +114,10 @@ export function fetchDocuments ({
       }
 
       dispatch(batchActions(actions))
+    }).catch(error => {
+      dispatch(
+        setDocumentListStatus(Constants.STATUS_FAILED, error)
+      )
     })
   }
 }
@@ -133,8 +137,9 @@ export function setDocumentSelection (selectedDocuments) {
   }
 }
 
-export function setDocumentListStatus (status) {
+export function setDocumentListStatus (status, data) {
   return {
+    data,
     status,
     type: Types.SET_DOCUMENT_LIST_STATUS
   }

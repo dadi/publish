@@ -174,11 +174,7 @@ class DocumentList extends Component {
       state
     } = this.props
     const documents = state.documents
-
-    if (state.api.apis.length) {
-      this.currentCollection = this.routes.getCurrentCollection(state.api.apis)
-    }
-
+    const {currentCollection} = state.api
     const createHref = this.routes.createRoute()
 
     if (documents.remoteError) {
@@ -193,7 +189,7 @@ class DocumentList extends Component {
       !documents.list ||
       !documents.list.results ||
       documents.isLoading ||
-      !this.currentCollection
+      !currentCollection
     ) {
       return null
     }
@@ -259,11 +255,7 @@ class DocumentList extends Component {
       sort,
       state
     } = this.props
-    const currentApi = getApiForUrlParams(state.api.apis, {
-      collection,
-      group
-    })
-    const currentCollection = this.routes.getCurrentCollection(state.api.apis)
+    const {currentApi, currentCollection} = state.api
 
     if (!currentCollection) {
       actions.setDocumentListStatus(Constants.STATUS_FAILED, 404)
@@ -271,9 +263,10 @@ class DocumentList extends Component {
       return
     }
 
-    const count = currentCollection.settings && currentCollection.settings.count || 20
-    const filterValue = state.router.params ? state.router.params.filter : null
-    const parentCollection = referencedField && this.routes.getParentCollection(state.api.apis)
+    let count = (currentCollection.settings && currentCollection.settings.count)
+      || 20
+    let filterValue = state.router.params ? state.router.params.filter : null
+    let parentCollection = referencedField && this.routes.getParentCollection(state.api.apis)
 
     actions.fetchDocuments({
       api: currentApi,
@@ -321,13 +314,14 @@ class DocumentList extends Component {
       return value
     }
 
-    const editHref = this.routes.editRoute({
+    let editHref = this.routes.editRoute({
       documentId: documentId || data._id,
       referencedId: documentId ? data._id : null
     })
-    const currentCollection = this.routes.getCurrentCollection(state.api.apis)
-    const fieldSchema = currentCollection.fields[column.id]
-    const renderedValue = this.renderField(column.id, fieldSchema, value)
+    let currentCollection = state.api.currentCollection
+    let fieldSchema = currentCollection.fields[column.id]
+    let renderedValue = this.renderField(column.id, fieldSchema, value)
+
     if (index === 0) {
       return (
         <a href={editHref}>{renderedValue}</a>
@@ -383,6 +377,7 @@ class DocumentList extends Component {
       sort,
       state
     } = this.props
+    const {currentCollection} = state.api
     const documents = state.documents.list.results
     const config = state.app.config
     const selectedRows = this.getSelectedRows()
@@ -424,20 +419,20 @@ class DocumentList extends Component {
 
       onPageTitle(`Select ${(fieldSchema.label || referencedField).toLowerCase()}`)
     } else {
-      onPageTitle(this.currentCollection.settings.description || this.currentCollection.name)
+      onPageTitle(currentCollection.settings.description || currentCollection.name)
     }
     const listableFields = filterVisibleFields({
-      fields: this.currentCollection.fields,
+      fields: currentCollection.fields,
       view: 'list'
     })
 
     const tableColumns = Object.keys(listableFields)
       .map(field => {
-        if (!this.currentCollection.fields[field]) return
+        if (!currentCollection.fields[field]) return
 
         return {
           id: field,
-          label: this.currentCollection.fields[field].label
+          label: currentCollection.fields[field].label
         }
       })
 

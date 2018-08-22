@@ -66,7 +66,7 @@ export function loadApis () {
 
     return Promise.all(apiQueue).then(apiList => {
       dispatch(
-        setApiList(apiList)
+        setApiList(apiList, getState().router.parameters)
       )
     }).catch(error => {
       dispatch(
@@ -76,17 +76,18 @@ export function loadApis () {
   }
 }
 
-export function setApiList (apis) {
-  return {
-    apis,
-    type: Types.SET_API_LIST,
-  }
-}
-
 export function setApi (api) {
   return {
     api,
     type: Types.SET_API,
+  }
+}
+
+export function setApiList (apis, routeParameters) {
+  return {
+    apis,
+    routeParameters,
+    type: Types.SET_API_LIST,
   }
 }
 
@@ -98,9 +99,11 @@ export function setApiStatus (status, error) {
   }
 }
 
-export function setCurrentCollection (collectionName) {
+export function setCurrentCollection ({collection, group, referencedField}) {
   return {
-    collectionName,
+    collection,
+    group,
+    referencedField,
     type: Types.SET_API_CURRENT_COLLECTION
   }
 }

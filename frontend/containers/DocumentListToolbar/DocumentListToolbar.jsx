@@ -218,15 +218,7 @@ class DocumentListToolbar extends Component {
       group,
       state
     } = this.props
-    const currentApi = getApiForUrlParams(state.api.apis, {
-      collection,
-      group
-    })
-    const currentCollection = getCollectionForUrlParams(state.api.apis, {
-      collection,
-      group,
-      useApi: currentApi
-    })
+    const {currentApi, currentCollection} = state.api
 
     if (bulkActionSelected === 'delete') {
       actions.deleteDocuments({

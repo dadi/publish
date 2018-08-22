@@ -101,12 +101,7 @@ class DocumentEdit extends Component {
 
     if (!this.canRender()) return false
 
-    const currentApi = getApiForUrlParams(state.api.apis, {
-      collection,
-      group
-    })
-    const currentCollection = state.api.apis.length &&
-      this.routes.getCurrentCollection(state.api.apis)
+    const {currentApi, currentCollection} = state.api
     const method = documentId ? 'edit' : 'new'
 
     if (typeof onPageTitle === 'function') {
@@ -143,9 +138,6 @@ class DocumentEdit extends Component {
         }
       }
     }
-
-    this.currentApi = currentApi
-    this.currentCollection = currentCollection
   }
 
   handleRoomChange() {
@@ -168,6 +160,7 @@ class DocumentEdit extends Component {
       group,
       state
     } = this.props
+    const {currentApi, currentCollection} = state.api
     const document = state.document
     const previousDocument = previousProps.state.document
 
@@ -199,9 +192,9 @@ class DocumentEdit extends Component {
 
     // There's no document ID, so it means we're creating a new document.
     if (!documentId) {
-      if (this.currentCollection) {
+      if (currentCollection) {
         actions.startNewDocument({
-          collection: this.currentCollection,
+          collection: currentCollection,
           group
         })
       }
@@ -222,7 +215,7 @@ class DocumentEdit extends Component {
     if (
       !document.isLoading &&
       needsFetch &&
-      this.currentCollection &&
+      currentCollection &&
       state.api.apis.length > 0
     ) {
       this.handleRoomChange()
@@ -242,15 +235,7 @@ class DocumentEdit extends Component {
 
     if (!this.canRender()) return null
 
-    const currentApi = getApiForUrlParams(state.api.apis, {
-      collection,
-      group
-    })
-
     this.routes = onGetRoutes(state.api.paths)
-    this.currentApi = currentApi
-    this.currentCollection = Boolean(state.api.apis.length) &&
-      this.routes.getCurrentCollection(state.api.apis)
     this.userLeavingDocumentHandler = this.handleUserLeavingDocument.bind(this)
 
     window.addEventListener('beforeunload', this.userLeavingDocumentHandler)
@@ -296,7 +281,7 @@ class DocumentEdit extends Component {
     }
 
     const collectionFields = filterVisibleFields({
-      fields: this.currentCollection.fields,
+      fields: state.api.currentCollection.fields,
       view: 'edit'
     })
     const fields = this.groupFields(collectionFields)
@@ -354,14 +339,13 @@ class DocumentEdit extends Component {
 
     // As far as the fetch method is concerned, we're only interested in the
     // collection of the main document, not the referenced one.
-    const parentCollection = this.routes.getParentCollection(state.api.apis)
-    const collectionFields = visibleFieldList({
+    let parentCollection = state.api.parentCollection || state.api.currentCollection
+    let collectionFields = visibleFieldList({
       fields: parentCollection.fields,
       view: 'edit'
     })
-
-    const query = {
-      api: this.currentApi,
+    let query = {
+      api: state.api.currentApi,
       collection: parentCollection,
       id: documentId,
       fields: collectionFields
@@ -458,11 +442,12 @@ class DocumentEdit extends Component {
     const {
       actions,
       documentId,
-      group
+      group,
+      state
     } = this.props
 
     actions.registerUserLeavingDocument({
-      collection: this.currentCollection.name,
+      collection: state.api.currentCollection.name,
       documentId,
       group
     })
@@ -477,7 +462,7 @@ class DocumentEdit extends Component {
       onBuildBaseUrl,
       state
     } = this.props
-    const {app, document} = state
+    const {api, app, document} = state
     const hasAttemptedSaving = document.saveAttempts > 0
     const hasError = document.validationErrors
       && document.validationErrors[field._id]
@@ -504,8 +489,8 @@ class DocumentEdit extends Component {
       <FieldComponent
         collection={collection}
         config={app.config}
-        currentApi={this.currentApi}
-        currentCollection={this.currentCollection}
+        currentApi={api.currentApi}
+        currentCollection={api.currentCollection}
         documentId={documentId}
         error={error}
         forceValidation={hasAttemptedSaving}
