@@ -70,21 +70,17 @@ class DocumentListToolbar extends Component {
 
   componentDidUpdate(prevProps, prevState) {
     const {actions, state} = this.props
-    const {list, status} = state.documents
-    const isIdle = status === Constants.STATUS_IDLE
-    const previousStatus = prevProps.state.documents.status
+    const {isDeleting, list} = state.documents
+    const wasDeleting = prevProps.state.documents.isDeleting
 
-    // Have we just deleted a single document?
-    if (isIdle && (previousStatus === Constants.STATUS_DELETING_SINGLE)) {
-      actions.setNotification({
-        message: 'The document has been deleted'
-      })
-    }
+    // Have we just deleted some documents?
+    if (wasDeleting && !isDeleting) {
+      let message = wasDeleting > 1 ?
+        `${wasDeleting} documents have been deleted` :
+        'The document has been deleted'
 
-    // Have we just deleted multiple documents?
-    if (isIdle && (previousStatus === Constants.STATUS_DELETING_MULTIPLE)) {
       actions.setNotification({
-        message: 'The documents have been deleted'
+        message
       })
     }
   }
