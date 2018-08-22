@@ -17,7 +17,6 @@ import APIBridge from 'lib/api-bridge-client'
 import {buildUrl, createRoute} from 'lib/router'
 import {filterVisibleFields} from 'lib/fields'
 import {connectHelper} from 'lib/util'
-import {getApiForUrlParams, getCollectionForUrlParams} from 'lib/collection-lookup'
 
 import Button from 'components/Button/Button'
 import ErrorMessage from 'components/ErrorMessage/ErrorMessage'
@@ -162,6 +161,26 @@ class DocumentList extends Component {
     this.checkStatusAndFetch()
   }
 
+  componentWillUpdate(nextProps) {
+    const {actions, state} = this.props
+    const {state: nextState} = nextProps
+    const currentCollection = state.api.currentCollection
+    const nextCollection = nextState.api.currentCollection
+
+    // This is required to recover from an error. If the document list has
+    // errored and we're about to navigate to a different collection, we
+    // clear the error state by setting the status to IDLE and let the
+    // container fetch again.
+    if (
+      state.documents.remoteError &&
+      currentCollection &&
+      nextCollection &&
+      (currentCollection.path !== nextCollection.path)
+    ) {
+      actions.setDocumentListStatus(Constants.STATUS_IDLE)
+    }
+  }
+
   render() {
     const {
       collection,
@@ -255,18 +274,19 @@ class DocumentList extends Component {
       sort,
       state
     } = this.props
-    const {currentApi, currentCollection} = state.api
+    const {
+      currentApi,
+      currentCollection,
+      currentParentCollection
+    } = state.api
 
-    if (!currentCollection) {
-      actions.setDocumentListStatus(Constants.STATUS_FAILED, 404)
-
+    if (state.documents.remoteError) {
       return
     }
 
     let count = (currentCollection.settings && currentCollection.settings.count)
       || 20
     let filterValue = state.router.params ? state.router.params.filter : null
-    let parentCollection = referencedField && this.routes.getParentCollection(state.api.apis)
 
     actions.fetchDocuments({
       api: currentApi,
@@ -275,7 +295,7 @@ class DocumentList extends Component {
       filters: filterValue,
       page,
       documentId,
-      parentCollection,
+      parentCollection: currentParentCollection,
       referencedField,
       sortBy: sort,
       sortOrder: order
@@ -377,7 +397,7 @@ class DocumentList extends Component {
       sort,
       state
     } = this.props
-    const {currentCollection} = state.api
+    const {currentCollection, currentParentCollection} = state.api
     const documents = state.documents.list.results
     const config = state.app.config
     const selectedRows = this.getSelectedRows()
@@ -389,8 +409,7 @@ class DocumentList extends Component {
     // context. If it does, we'll use that instead of the default `SyncTable`
     // to render the results.
     if (referencedField) {
-      const parentCollection = this.routes.getParentCollection(state.api.apis)
-      const fieldSchema = parentCollection.fields[referencedField]
+      const fieldSchema = currentParentCollection.fields[referencedField]
       const fieldType = (fieldSchema.publish && fieldSchema.publish.subType) || fieldSchema.type
       const fieldComponentName = `Field${fieldType}`
       const FieldComponentReferenceSelect = fieldComponents[fieldComponentName].referenceSelect

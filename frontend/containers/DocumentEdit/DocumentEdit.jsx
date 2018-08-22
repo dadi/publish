@@ -18,7 +18,6 @@ import {visibleFieldList, filterVisibleFields} from 'lib/fields'
 import {buildUrl} from 'lib/router'
 import {connectHelper} from 'lib/util'
 import {Format} from 'lib/util/string'
-import {getApiForUrlParams, getCollectionForUrlParams} from 'lib/collection-lookup'
 
 import ErrorMessage from 'components/ErrorMessage/ErrorMessage'
 import TabbedFieldSections from 'components/TabbedFieldSections/TabbedFieldSections'
@@ -339,7 +338,7 @@ class DocumentEdit extends Component {
 
     // As far as the fetch method is concerned, we're only interested in the
     // collection of the main document, not the referenced one.
-    let parentCollection = state.api.parentCollection || state.api.currentCollection
+    let parentCollection = state.api.currentParentCollection || state.api.currentCollection
     let collectionFields = visibleFieldList({
       fields: parentCollection.fields,
       view: 'edit'

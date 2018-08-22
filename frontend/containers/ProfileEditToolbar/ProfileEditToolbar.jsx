@@ -14,7 +14,6 @@ import * as userActions from 'actions/userActions'
 import {bindActionCreators} from 'redux'
 import {buildUrl} from 'lib/router'
 import {connectHelper} from 'lib/util'
-import {getApiForUrlParams, getCollectionForUrlParams} from 'lib/collection-lookup'
 import {route} from '@dadi/preact-router'
 
 import Button from 'components/Button/Button'

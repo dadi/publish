@@ -43,6 +43,13 @@ export default function document (state = initialState, action = {}) {
     // Action: set document loading status.
     case Types.SET_DOCUMENT_LIST_STATUS:
       switch (action.status) {
+        case Constants.STATUS_IDLE:
+          return {
+            ...state,
+            isLoading: false,
+            remoteError: null
+          }
+
         case Constants.STATUS_LOADING:
           return {
             ...state,
@@ -53,6 +60,7 @@ export default function document (state = initialState, action = {}) {
           return {
             ...state,
             isLoading: false,
+            list: null,
             remoteError: action.data,
           }
 

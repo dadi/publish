@@ -8,9 +8,9 @@ export const initialState = {
   apis: [],
   currentApi: null,
   currentCollection: null,
+  currentParentCollection: null,
   error: undefined,
   isLoading: false,
-  parentCollection: null,
   paths: window.__documentRoutes__,
   remoteError: null
 }
@@ -48,7 +48,7 @@ export default function api (state = initialState, action = {}) {
           referencedField: parameters.referencedField
         })
 
-        newState.parentCollection = parameters.referencedField ?
+        newState.currentParentCollection = parameters.referencedField ?
           getCollectionForParameters({
             api: newState.currentApi,
             collection: parameters.collection,
@@ -56,8 +56,6 @@ export default function api (state = initialState, action = {}) {
           }) :
           null
       }
-
-      console.log('----> 1:', newState.currentCollection)
 
       return newState
 
@@ -102,7 +100,7 @@ export default function api (state = initialState, action = {}) {
         group: action.parameters.group,
         referencedField: action.parameters.referencedField,
       })
-      let parentCollection = action.parameters.referencedField ?
+      let currentParentCollection = action.parameters.referencedField ?
         getCollectionForParameters({
           api: currentApi,
           collection: action.parameters.collection,
@@ -114,7 +112,7 @@ export default function api (state = initialState, action = {}) {
         ...state,
         currentApi,
         currentCollection,
-        parentCollection
+        currentParentCollection
       }
 
     // Action: user signed out

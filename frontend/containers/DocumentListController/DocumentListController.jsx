@@ -11,8 +11,6 @@ import * as documentsActions from 'actions/documentsActions'
 import {buildUrl, createRoute, router} from 'lib/router'
 import {connectHelper} from 'lib/util'
 
-import {getApiForUrlParams, getCollectionForUrlParams} from 'lib/collection-lookup'
-
 import Button from 'components/Button/Button'
 import DocumentFilters from 'components/DocumentFilters/DocumentFilters'
 import ListController from 'components/ListController/ListController'
