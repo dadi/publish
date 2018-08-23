@@ -125,13 +125,6 @@ Type/function of the input field.
 - default value: `'text'`
 
 
-### `validation`
-
-Callback to be executed onChange to validate field value.
-
-- type: `func`
-
-
 ### `value`
 
 Current value of the input field.
