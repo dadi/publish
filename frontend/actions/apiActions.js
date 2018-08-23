@@ -21,10 +21,14 @@ export function loadApis () {
         api
       }).getConfig().then(config => {
         apiList[apiIndex] = Object.assign({}, api, {
-          publicUrl: config.publicUrl
+          media: {
+            buckets: config.media.buckets,
+            defaultBucket: config.media.defaultBucket
+          },
+          publicUrl: config.publicUrl,
         })
 
-        // 2: Get list of collections.
+        // 2: Get list of collections and media.
         return apiBridgeClient({
           accessToken: getState().user.accessToken,
           api
