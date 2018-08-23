@@ -147,7 +147,7 @@ class ProfileEdit extends Component {
           onError={this.handleFieldError.bind(this)}
           schema={{
             ...schema,
-            label: 'ID',
+            label: 'Username',
             publish: {
               readonly: true
             }
