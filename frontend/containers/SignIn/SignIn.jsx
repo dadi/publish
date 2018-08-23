@@ -134,7 +134,7 @@ class SignIn extends Component {
 
               <Button
                 accent="system"
-                disabled={userHasInteracted && (hasConnectionIssues || !formDataIsValid)}
+                disabled={hasConnectionIssues || (userHasInteracted && !formDataIsValid)}
                 type="submit"
               >Sign In</Button>
 
