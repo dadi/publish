@@ -7,7 +7,6 @@ import {connect} from 'preact-redux'
 import {connectHelper} from 'lib/util'
 import {route} from '@dadi/preact-router'
 import {redirectIf} from 'lib/router'
-import Validation from 'lib/util/validation'
 
 import * as userActions from 'actions/userActions'
 import * as Constants from 'lib/constants'
@@ -44,16 +43,11 @@ class SignIn extends Component {
     }
   }
 
-  constructor(props) {
-    super(props)
-
-    this.validation = new Validation()
-
-    this.state.email = ''
-    this.state.password = ''
-    this.state.passwordConfirm = ''
-    this.state.formDataIsValid = false
-    this.state.error = false
+  state = {
+    email: '',
+    error: false,
+    password: '',
+    userHasInteracted: false
   }
 
   getErrorBanner(signInError) {
@@ -89,8 +83,8 @@ class SignIn extends Component {
 
   render() {
     const {state, actions, setPageTitle} = this.props
+    const {email, password, userHasInteracted} = this.state
     const hasConnectionIssues = state.app.networkStatus !== Constants.NETWORK_OK
-    const {formDataIsValid} = this.state
     const {
       whitelabel: {logo, poweredBy, backgroundImage}
     } = state.app.config || {
@@ -98,6 +92,8 @@ class SignIn extends Component {
     }
 
     setPageTitle('Sign In')
+
+    let formDataIsValid = this.validate()
 
     return (
       <div class={styles.wrapper} style={`background: #000000 url(${backgroundImage}`}>
@@ -113,13 +109,12 @@ class SignIn extends Component {
 
               <div class={styles.inputs}>
                 <div class={styles.input}>
-                  <Label label="Email">
+                  <Label label="Username">
                     <TextInput
                       onChange={this.handleInputChange.bind(this, 'email')}
                       onKeyUp={this.handleInputChange.bind(this, 'email')}
-                      placeholder="Your email address"
-                      validation={this.validation.email}
-                      value={this.state.email}
+                      placeholder="Your username"
+                      value={email}
                     />
                   </Label>
                 </div>
@@ -128,9 +123,10 @@ class SignIn extends Component {
                   <Label label="Password">
                     <TextInput
                       onChange={this.handleInputChange.bind(this, 'password')}
+                      onKeyUp={this.handleInputChange.bind(this, 'password')}
                       placeholder={"Your password"}
                       type="password"
-                      value={this.state.password}
+                      value={password}
                     />
                   </Label>
                 </div>
@@ -138,7 +134,7 @@ class SignIn extends Component {
 
               <Button
                 accent="system"
-                disabled={hasConnectionIssues || !formDataIsValid}
+                disabled={userHasInteracted && (hasConnectionIssues || !formDataIsValid)}
                 type="submit"
               >Sign In</Button>
 
@@ -157,9 +153,16 @@ class SignIn extends Component {
   }
 
   handleInputChange(name, event) {
+    // We use the `userHasInteracted` property to determine whether the user
+    // has actively interacted with the form. We can't disable the submit
+    // button until this has been the case, because the user might have
+    // the browser's autofill feature filling in the form for them on first
+    // render, which annoyingly doesn't fire the `onChange` event in some
+    // browsers. To avoid showing a disabled button in those cases, we can
+    // only disable the button once the user has started their interaction.
     this.setState({
       [name]: event.target.value,
-      formDataIsValid: event.isValid
+      userHasInteracted: true
     })
   }
 
@@ -170,6 +173,12 @@ class SignIn extends Component {
     actions.signIn(email, password)
 
     event.preventDefault()
+  }
+
+  validate() {
+    const {email, password} = this.state
+
+    return (email.length > 0) && (password.length > 0)
   }
 }
 
