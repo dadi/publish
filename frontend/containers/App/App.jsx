@@ -200,6 +200,11 @@ class App extends Component {
 
     let parameters = currentRouteAttributes.matches
 
+    // This is a special case where the document create route
+    // wrongly matches the pattern specified by the document
+    // list view (e.g. /articles/new matches /:group/:collection).
+    // When this happens, we correct the parameters before
+    // sending the parameters to the action.
     if (parameters.collection === 'new') {
       parameters.collection = parameters.group
       parameters.group = undefined
@@ -211,6 +216,9 @@ class App extends Component {
       this.analytics.pageview(event.url)
     }
 
+    // We redirect the user to the sign-in route if they are trying
+    // to access a protected route without an access token OR they
+    // have just signed out.
     if (
       (currentRouteIsAuthenticated && !state.user.accessToken) ||
       event.url === '/sign-out'
