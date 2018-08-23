@@ -26,24 +26,35 @@ class CollectionNav extends Component {
     state: proptypes.object
   }
 
+  addMediaToGroups(apis) {
+    return [
+      ...this.groups,
+      ...apis.map(
+        api => (
+          {
+            _id: api.media.defaultBucket,
+            label: 'Media',
+            href: '/media/'
+          }
+        )
+      )
+    ]
+  }
+
   buildCollectionMap(apis) {
     let groups = {}
     let ungrouped = {}
 
     apis.forEach(api => {
+
       if (!api.collections) return
 
       let apiCollections = {}
       let displayNames = {}
 
       // There are some collections that we don't want to display on the menu,
-      // like auth or media collections.
-      const filteredCollections = api.collections.filter(collection => {
-        const isMediaCollection = collection.settings &&
-          collection.settings.type === 'media'
-
-        return !collection._isAuthCollection && !isMediaCollection
-      })
+      // like auth collections.
+      const filteredCollections = api.collections.filter(collection => !collection._isAuthCollection)
 
       // We start by adding all the collections that are referenced in the menu
       // object.
@@ -152,10 +163,14 @@ class CollectionNav extends Component {
     const {state, actions} = this.props
     const apis = state.api.apis
 
+    console.log(apis)
+
     if (apis && apis.length) {
       const collectionMap = this.buildCollectionMap(apis)
 
       this.groups = this.buildGroups(collectionMap)
+
+      this.groups = this.addMediaToGroups(apis)
     }
   }
 
