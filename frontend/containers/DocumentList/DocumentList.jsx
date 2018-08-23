@@ -196,7 +196,7 @@ class DocumentList extends Component {
     const {currentCollection} = state.api
     const createHref = this.routes.createRoute()
 
-    if (documents.remoteError) {
+    if (documents.remoteError || !currentCollection) {
       return (
         <ErrorMessage
           type={Constants.ERROR_ROUTE_NOT_FOUND}
@@ -246,7 +246,9 @@ class DocumentList extends Component {
     const {isLoading, list, status} = state.documents
 
     // State check: reject when missing config, session, or apis
-    if (!state.app.config || !state.api.apis.length || !state.user) return
+    if (!state.app.config || !state.api.apis.length || !state.api.currentCollection) {
+      return
+    }
 
     if (!isLoading) {
       this.fetchDocuments()  
