@@ -4,6 +4,27 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [1.0.7-beta] (2018-08-23)
+
+### Changed
+
+- [#279](https://github.com/dadi/publish/issues/279): Display collection name on index view
+- [#384](https://github.com/dadi/publish/issues/384): Updates to Textbox view options
+- [#386](https://github.com/dadi/publish/issues/386): Customisable login screen
+- [#431](https://github.com/dadi/publish/issues/431): Add direct access to API
+- [#452](https://github.com/dadi/publish/issues/452): Rename email field to username
+- [#446](https://github.com/dadi/publish/issues/446): Perform API version check
+
+### Fixed
+
+- [#360](https://github.com/dadi/publish/issues/360): Sort menu items according to config file
+- [#373](https://github.com/dadi/publish/issues/373): Document grid alignment when only 1 column
+- [#388](https://github.com/dadi/publish/issues/388): Can't scroll mobile menu on welcome page
+- [#442](https://github.com/dadi/publish/issues/442): Circular reference in collection schemas causes max stack error
+- [#444](https://github.com/dadi/publish/issues/444): Include port number in sign in url
+- [#451](https://github.com/dadi/publish/issues/451): Enable Sign In button without having to click outside inputs
+- [#455](https://github.com/dadi/publish/issues/455): Show success message after deleting documents from list view
+
 ## [1.0.6-beta] (2018-08-06)
 
 ### Changed
