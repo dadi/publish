@@ -59,7 +59,6 @@ const apiBridgeFactory = function ({
   }
 
   const {
-    publishId,
     host,
     port
   } = api
@@ -72,8 +71,7 @@ const apiBridgeFactory = function ({
     let augmentedRequestObject = Object.assign({}, requestObject, {
       headers: {
         Authorization: `Bearer ${accessToken}`
-      },
-      publishId
+      }
     })
 
     return serveQuery(augmentedRequestObject)

@@ -185,7 +185,7 @@ export function signIn (clientId, secret) {
       })
       .catch(error => {
         dispatch(
-          setUserStatus(Constants.STATUS_FAILED, error.status)
+          setUserStatus(Constants.STATUS_FAILED, error.status || 404)
         )
       })
   }

@@ -67,10 +67,12 @@ class DocumentListController extends Component {
       referencedField,
       state
     } = this.props
-    const {currentCollection} = state.api
+    const {currentApi, currentCollection} = state.api
     const routes = onGetRoutes(state.api.paths)
     
-    const hasDocuments = state.documents.list && state.documents.list.results && (state.documents.list.results.length > 0)
+    const hasDocuments = state.documents.list &&
+      state.documents.list.results &&
+      state.documents.list.results.length > 0
     const isReference = referencedField // Temporary to disable create new in reference fields until reference save is ready.
     const params = state.router.params
     const filters = params && params.filter ? params.filter : null
@@ -85,12 +87,13 @@ class DocumentListController extends Component {
     }
 
     const collectionMatch = routes.getCollectionMatch(collection)
-    const api = routes.getAPI(state.api.apis, collectionMatch, group)
-    const menu = routes.menuMatch(api, group, currentCollection)
+    const menu = routes.menuMatch(currentApi, group, currentCollection)
 
     let groupName = null
-    if (menu && menu.length)
+
+    if (menu && menu.length) {
       groupName = menu[0].title
+    }
 
     return (
       <div>
