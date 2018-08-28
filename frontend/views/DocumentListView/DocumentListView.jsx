@@ -51,9 +51,7 @@ export default class DocumentListView extends Component {
             documentId={documentId}
             referencedField={referencedField}
           /> : 
-          <Header
-            onGetRoutes={this.getRoutes.bind(this)}
-          />
+          <Header/>
         }
 
         <Main>
@@ -64,7 +62,7 @@ export default class DocumentListView extends Component {
               filter={filter}
               newFilter={newFilter}
               onAddNewFilter={this.handleAddNewFilter.bind(this)}
-              onGetRoutes={this.getRoutes.bind(this)}
+              onBuildBaseUrl={this.handleBuildBaseUrl.bind(this)}
               documentId={documentId}
               referencedField={referencedField}
             />
@@ -74,7 +72,6 @@ export default class DocumentListView extends Component {
               filter={filter}
               group={group}
               onBuildBaseUrl={this.handleBuildBaseUrl.bind(this)}
-              onGetRoutes={this.getRoutes.bind(this)}
               onPageTitle={this.handlePageTitle}
               order={order}
               page={page}
