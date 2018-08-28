@@ -56,7 +56,7 @@ class SignIn extends Component {
     if (signInError) {
       switch (signInError) {
         case 401:
-          message = 'Email not found or password incorrect'
+          message = 'Username not found or password incorrect'
 
           break
 
