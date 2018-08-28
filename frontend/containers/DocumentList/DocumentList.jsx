@@ -193,7 +193,7 @@ class DocumentList extends Component {
       createNew: true
     })
 
-    if (documents.remoteError || !currentCollection) {
+    if (documents.remoteError) {
       return (
         <ErrorMessage
           type={Constants.ERROR_ROUTE_NOT_FOUND}
