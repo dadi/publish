@@ -6,19 +6,20 @@ const initialState = {
   action: null,
   locationBeforeTransitions: null,
   parameters: {},
-  room: null
+  room: null,
+  search: {}
 }
 
 export default function router (state = initialState, action = {}) {
   switch (action.type) {
     case Types.LOCATION_CHANGE:
-      let {locationBeforeTransitions, params} = action
+      let {locationBeforeTransitions, search} = action
 
       return {
         ...state,
         action: action.action,
         locationBeforeTransitions,
-        params: params || {}
+        search: search || {}
       }
 
     case Types.ROOM_CHANGE:
