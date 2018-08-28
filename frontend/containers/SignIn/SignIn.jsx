@@ -61,7 +61,12 @@ class SignIn extends Component {
           break
 
         case 501:
-          message = 'The configured API is running an earlier version than that required by this version of Publish'
+          message = 'The API is running an earlier version than that required by this version of Publish'
+
+          break
+
+        case 'NO-CORS':
+          message = 'API Cross Origin support appears to be disabled'
 
           break
 

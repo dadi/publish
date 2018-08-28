@@ -30,7 +30,12 @@ export default class FileUpload extends Component {
     /**
      * Callback to be executed when there is a change in the value of the field.
      */
-    onChange: proptypes.func
+    onChange: proptypes.func,
+
+    /**
+     * Whether the field is required.
+     */
+    required: proptypes.bool,
   }
 
   static defaultProps = {

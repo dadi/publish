@@ -10,6 +10,7 @@ import Page from 'components/Page/Page'
 
 import {DocumentRoutes} from 'lib/document-routes'
 import {setPageTitle} from 'lib/util'
+import {urlHelper} from 'lib/util/url-helper'
 
 export default class DocumentEditView extends Component {
   render() {
@@ -33,7 +34,6 @@ export default class DocumentEditView extends Component {
             documentId={documentId}
             group={group}
             onBuildBaseUrl={this.handleBuildBaseUrl.bind(this)}
-            onGetRoutes={this.getRoutes.bind(this)}
             onPageTitle={this.handlePageTitle}
             referencedField={referencedField}
             section={section}
@@ -44,6 +44,7 @@ export default class DocumentEditView extends Component {
           collection={collection}
           documentId={documentId}
           group={group}
+          onBuildBaseUrl={this.handleBuildBaseUrl.bind(this)}
           onGetRoutes={this.getRoutes.bind(this)}
           referencedField={referencedField}
           section={section}
@@ -56,15 +57,41 @@ export default class DocumentEditView extends Component {
     return new DocumentRoutes(Object.assign(this.props, {paths}))
   }
 
-  handleBuildBaseUrl() {
-    const {
-      collection,
-      documentId,
+  handleBuildBaseUrl({
+    collection = this.props.collection,
+    createNew,
+    documentId = this.props.documentId,
+    group = this.props.group,
+    referenceFieldSelect,
+    search = urlHelper().paramsToObject(window.location.search),
+    section =  this.props.section
+  } = {}) {
+    let urlNodes = [
       group,
-      section
-    } = this.props
+      collection
+    ]
 
-    return [group, collection, documentId]
+    if (createNew) {
+      urlNodes.push('new')
+    } else {
+      urlNodes.push(documentId)
+    }
+
+    if (referenceFieldSelect) {
+      urlNodes = urlNodes.concat(['select', referenceFieldSelect])
+    } else {
+      urlNodes.push(section)
+    }
+
+    let url = urlNodes.filter(Boolean).join('/')
+
+    if (search) {
+      let searchString = urlHelper().paramsToString(search)
+
+      url += `?${searchString}`
+    }
+
+    return `/${url}`
   }
 
   handlePageTitle(title) {

@@ -34,6 +34,13 @@ The schema of the collection being edited.
 - type: `object`
 
 
+### `displayName`
+
+The human-friendly name of the field, to be displayed as a label.
+
+- type: `string`
+
+
 ### `documentId`
 
 The ID of the document being edited.
@@ -65,6 +72,14 @@ If defined, specifies a group where the current collection belongs.
 - type: `string`
 
 
+### `name`
+
+The name of the field within the collection. May be a path using
+dot-notation.
+
+- type: `string`
+
+
 ### `onChange`
 
 A callback to be fired whenever the field wants to update its value to
@@ -82,6 +97,20 @@ Boolean value indicating whether or not there's an error and finally the
 new value of the field.
 
 - type: `string`
+
+
+### `placeholder`
+
+An optional string to display as placeholder text.
+
+- type: `string`
+
+
+### `required`
+
+Whether the field is required.
+
+- type: `bool`
 
 
 ### `schema`
