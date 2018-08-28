@@ -234,9 +234,11 @@ class App extends Component {
       (currentRouteIsAuthenticated && !state.user.accessToken) ||
       event.url === '/sign-out'
     ) {
-      let redirectUri = encodeURIComponent(event.url)
+      let redirectParam = event.url === '/'
+        ? ''
+        : `?redirect=${encodeURIComponent(event.url)}`
 
-      return route(`/sign-in?redirect=${redirectUri}`)
+      return route(`/sign-in${redirectParam}`)
     }
   }
 
