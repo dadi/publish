@@ -117,10 +117,12 @@ export default class FieldReferenceEdit extends Component {
       collection,
       currentApi,
       currentCollection,
+      displayName,
       documentId,
       error,
       group,
       forceValidation,
+      name,
       onBuildBaseUrl,
       onChange,
       onError,
@@ -135,14 +137,16 @@ export default class FieldReferenceEdit extends Component {
     })
 
     if (!referencedCollection) return null
-    const displayName = schema.label || schema._id
+
     const displayableFields = filterVisibleFields({
       fields: referencedCollection.fields,
       view: 'list'
     })
     const firstStringField = this.findFirstStringField(displayableFields)
     const displayField = value && firstStringField ? firstStringField.key : null
-    const href = buildUrl(...onBuildBaseUrl(), 'select', schema._id)
+    const href = onBuildBaseUrl({
+      referenceFieldSelect: name
+    })
     const values = value && !(value instanceof Array) ? [value] : value
 
     return (
@@ -152,14 +156,22 @@ export default class FieldReferenceEdit extends Component {
         {value
           ? (
             <div class={styles['value-container']}>
-              <div>
+              <div class={styles.values}>
                 {values.map(value => (
                   <p class={styles.value}>{displayField && value[displayField] || `Referenced ${displayName}`}</p>
                 ))}
               </div>
 
               <Button
+                accent="data"
+                className={styles['control-button']}
+                href={href}
+                size="small"
+              >Edit</Button>
+
+              <Button
                 accent="destruct"
+                className={styles['control-button']}
                 onClick={this.handleRemove.bind(this)}
                 size="small"
               >Remove</Button>

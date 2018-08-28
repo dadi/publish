@@ -8,6 +8,10 @@
   padding: 8px 10px;
 }
 
+.values {
+  width: 100%;
+}
+
 .value {
   color: var(--theme-colour-primary, #000000);
   font-family: var(--theme-font-family, sans-serif);
@@ -18,4 +22,8 @@
 .placeholder {
   padding-top: 5px;
   text-align: center;
+}
+
+.control-button {
+  margin-left: 10px;
 }
