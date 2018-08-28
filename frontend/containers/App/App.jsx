@@ -85,7 +85,11 @@ class App extends Component {
     if (!previousState.user.accessToken && state.user.accessToken) {
       actions.loadApis()
 
-      return route('/')
+      let redirectUri = state.router.search.redirect
+        ? decodeURIComponent(state.router.search.redirect)
+        : '/'
+
+      return route(redirectUri)
     }
 
     // State change: token is invalid.
@@ -230,7 +234,9 @@ class App extends Component {
       (currentRouteIsAuthenticated && !state.user.accessToken) ||
       event.url === '/sign-out'
     ) {
-      return route('/sign-in')
+      let redirectUri = encodeURIComponent(event.url)
+
+      return route(`/sign-in?redirect=${redirectUri}`)
     }
   }
 
