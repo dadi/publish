@@ -184,6 +184,26 @@ export function signIn (clientId, secret) {
           })
       })
       .catch(error => {
+        // This means that the API is unreachable.
+        if (error.message === 'Failed to fetch') {
+          // To understand whether the error results from a truly unreachable
+          // API or from an API that is running with CORS disabled, we ping
+          // the /hello with the `no-cors` mode. If that also fails, it means
+          // that the API is unreachable. If it succeeds, it means that the
+          // API has CORS disabled.
+          return fetch(`${apiUrl}/hello`, {
+            mode: 'no-cors'
+          }).then(response => {
+            dispatch(
+              setUserStatus(Constants.STATUS_FAILED, 'NO-CORS')
+            )
+          }).catch(error => {
+            dispatch(
+              setUserStatus(Constants.STATUS_FAILED, 404)
+            )
+          })
+        }
+
         dispatch(
           setUserStatus(Constants.STATUS_FAILED, error.status || 404)
         )
