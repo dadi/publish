@@ -20,6 +20,7 @@ import {route} from '@dadi/preact-router'
 import ButtonWithOptions from 'components/ButtonWithOptions/ButtonWithOptions'
 import ButtonWithPrompt from 'components/ButtonWithPrompt/ButtonWithPrompt'
 import DateTime from 'components/DateTime/DateTime'
+import DropdownNative from 'components/DropdownNative/DropdownNative'
 import Peer from 'components/Peer/Peer'
 import Toolbar from 'components/Toolbar/Toolbar'
 
@@ -47,6 +48,12 @@ class DocumentEditToolbar extends Component {
      * The name of the group where the current collection belongs (if any).
      */
     group: proptypes.string,
+
+    /**
+    * A callback to be used to obtain the base URL for the given page, as
+    * determined by the view.
+    */
+    onBuildBaseUrl: proptypes.func,
 
     /**
      * The name of a reference field currently being edited.
@@ -142,6 +149,26 @@ class DocumentEditToolbar extends Component {
       saveOptions['Save as duplicate'] = this.handleSave.bind(this, 'saveAsDuplicate')
     }
 
+    let languages = Boolean(state.api.currentApi) &&
+      Boolean(state.api.currentApi.languages) &&
+      (state.api.currentApi.languages.length > 1) &&
+      state.api.currentApi.languages.reduce((languagesObject, language) => {
+        languagesObject[language.code] = language.name
+
+        return languagesObject
+      }, {})
+    let currentLanguage = state.router.search.lang
+
+    // No language is selected, so we'll set the value of the dropdown to the
+    // value of the default language.
+    if (languages && !currentLanguage) {
+      let defaultLanguage = state.api.currentApi.languages.find(language => {
+        return Boolean(language.default)
+      })
+
+      currentLanguage = defaultLanguage && defaultLanguage.code
+    }
+
     return (
       <Toolbar>
         {peers && (peers.length > 0) &&
@@ -151,6 +178,14 @@ class DocumentEditToolbar extends Component {
             ))}
           </div>
         }
+
+        {languages && (
+          <DropdownNative
+            onChange={this.handleLanguageChange.bind(this)}
+            options={languages}
+            value={currentLanguage}
+          />
+        )}
 
         <div class={styles.metadata}>
           {document && document.createdAt &&
@@ -226,11 +261,24 @@ class DocumentEditToolbar extends Component {
     }
   }
 
+  handleLanguageChange(newLanguage) {
+    const {actions, onBuildBaseUrl} = this.props
+
+    let languageUrl = onBuildBaseUrl({
+      search: {
+        lang: newLanguage
+      }
+    })
+
+    route(languageUrl)
+  }
+
   handleSave(saveMode) {
     const {
       actions,
       collection,
       group,
+      onBuildBaseUrl,
       section,
       state
     } = this.props
@@ -247,7 +295,12 @@ class DocumentEditToolbar extends Component {
               }) 
               return
             }
-            route(buildUrl(group, collection, documentId, section))
+
+            let newUrl = onBuildBaseUrl({
+              documentId
+            })
+            
+            route(newUrl)
 
             actions.setNotification({
               message:`The document has been ${newDocument ? 'created' : 'updated'}`
@@ -261,7 +314,12 @@ class DocumentEditToolbar extends Component {
       case 'saveAndCreateNew':
         this.onSave = {
           callback: documentId => {
-            route(buildUrl(group, collection, 'new'))
+            let newUrl = onBuildBaseUrl({
+              createNew: true,
+              section: null
+            })
+
+            route(newUrl)
 
             actions.setNotification({
               message: `The document has been ${newDocument ? 'created' : 'updated'}`
@@ -277,7 +335,12 @@ class DocumentEditToolbar extends Component {
       case 'saveAndGoBack':
         this.onSave = {
           callback: documentId => {
-            route(buildUrl(group, collection))
+            let newUrl = onBuildBaseUrl({
+              documentId: null,
+              section: null
+            })
+
+            route(newUrl)
 
             actions.setNotification({
               message: `The document has been ${newDocument ? 'created' : 'updated'}`
@@ -291,7 +354,11 @@ class DocumentEditToolbar extends Component {
       case 'saveAsDuplicate':
         this.onSave = {
           callback: documentId => {
-            route(buildUrl(group, collection, documentId, section))
+            let newUrl = onBuildBaseUrl({
+              documentId
+            })
+
+            route(newUrl)
 
             actions.setNotification({
               message: `The document has been created`
@@ -346,7 +413,8 @@ export default connectHelper(
   state => ({
     api: state.api,
     app: state.app,
-    document: state.document
+    document: state.document,
+    router: state.router
   }),
   dispatch => bindActionCreators({
     ...appActions,

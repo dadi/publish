@@ -6,6 +6,9 @@ import {connect} from 'preact-redux'
 import {route} from '@dadi/preact-router'
 import {bindActionCreators} from 'redux'
 
+import Style from 'lib/Style'
+import styles from './DocumentEdit.css'
+
 import * as Constants from 'lib/constants'
 import * as appActions from 'actions/appActions'
 import * as documentActions from 'actions/documentActions'
@@ -55,12 +58,6 @@ class DocumentEdit extends Component {
     onBuildBaseUrl: proptypes.func,
 
     /**
-    * A callback to be used to obtain the sibling document routes (edit, create and list), as
-    * determined by the view.
-    */
-    onGetRoutes: proptypes.func.isRequired,
-
-    /**
     * A callback to be fired if the container wants to attempt changing the
     * page title.
     */
@@ -97,8 +94,6 @@ class DocumentEdit extends Component {
       section,
       state
     } = this.props
-
-    if (!this.canRender()) return false
 
     const {currentApi, currentCollection} = state.api
     const method = documentId ? 'edit' : 'new'
@@ -447,17 +442,46 @@ class DocumentEdit extends Component {
     const hasError = document.validationErrors
       && document.validationErrors[field._id]
     const documentData = Object.assign({}, document.remote, document.local)
-    const value = documentData[field._id]
+    const defaultApiLanguage = api.currentApi.i18n.defaultLanguage
+    const currentLanguage = state.router.search.lang
+    const isTranslatable = field.type.toLowerCase() === 'string'
+    const isTranslation = currentLanguage &&
+      currentLanguage !== defaultApiLanguage
+
+    let displayName = field.label || field._id
+    let fieldName = field._id
+    let placeholder = field.placeholder
+
+    if (isTranslation && isTranslatable) {
+      let language = api.currentApi.languages.find(language => {
+        return language.code === currentLanguage
+      })
+
+      if (language) {
+        displayName += ` (${language.name})`
+      }
+
+      fieldName += api.currentApi.i18n.fieldCharacter + currentLanguage
+      placeholder = documentData[field._id] || placeholder
+    }
+
+    let value = documentData[fieldName]
 
     // As per API docs, validation messages are in the format "must be xxx", which
     // assumes that something (probably the name of the field) will be prepended to
     // the string to form a final error message. For this reason, we're prepending
     // the validation message with "This field", but this is something that we can
     // easily revisit.
-    const error = typeof hasError === 'string' ? 'This field ' + hasError : hasError
-    const fieldType = field.publish && field.publish.subType ? field.publish.subType : field.type
+    const error = typeof hasError === 'string' ?
+      'This field ' + hasError :
+      hasError
+    const fieldType = field.publish &&
+      field.publish.subType ?
+        field.publish.subType :
+        field.type
     const fieldComponentName = `Field${fieldType}`
-    const FieldComponent = fieldComponents[fieldComponentName] && fieldComponents[fieldComponentName].edit
+    const FieldComponent = fieldComponents[fieldComponentName] &&
+      fieldComponents[fieldComponentName].edit
 
     if (!FieldComponent) {
       console.warn('Unknown field type:', fieldType)
@@ -465,36 +489,33 @@ class DocumentEdit extends Component {
       return null
     }
 
+    let fieldStyles = new Style(styles, 'field')
+
+    fieldStyles.addIf('field-disabled', isTranslation && !isTranslatable)
+
     return (
-      <FieldComponent
-        collection={collection}
-        config={app.config}
-        currentApi={api.currentApi}
-        currentCollection={api.currentCollection}
-        documentId={documentId}
-        error={error}
-        forceValidation={hasAttemptedSaving}
-        group={group}
-        onBuildBaseUrl={onBuildBaseUrl}
-        onChange={this.handleFieldChange.bind(this)}
-        onError={this.handleFieldError.bind(this)}
-        schema={field}
-        value={value}
-      />
+      <div class={fieldStyles.getClasses()}>
+        <FieldComponent
+          collection={collection}
+          config={app.config}
+          currentApi={api.currentApi}
+          currentCollection={api.currentCollection}
+          displayName={displayName}
+          documentId={documentId}
+          error={error}
+          forceValidation={hasAttemptedSaving}
+          group={group}
+          name={fieldName}
+          onBuildBaseUrl={onBuildBaseUrl}
+          onChange={this.handleFieldChange.bind(this)}
+          onError={this.handleFieldError.bind(this)}
+          placeholder={placeholder}
+          required={field.required && !isTranslation}
+          schema={field}
+          value={value}
+        />
+      </div>
     )
-  }
-
-  canRender() {
-    const {
-      collection,
-      onGetRoutes
-    } = this.props
-
-    const isValid = 
-      (typeof collection === 'string') &&
-      (typeof onGetRoutes === 'function')
-    
-    return isValid
   }
 }
 

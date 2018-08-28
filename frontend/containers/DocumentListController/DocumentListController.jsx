@@ -74,7 +74,7 @@ class DocumentListController extends Component {
       state.documents.list.results &&
       state.documents.list.results.length > 0
     const isReference = referencedField // Temporary to disable create new in reference fields until reference save is ready.
-    const params = state.router.params
+    const params = state.router.search
     const filters = params && params.filter ? params.filter : null
     const filterLimitReached = filters 
       && currentCollection 
