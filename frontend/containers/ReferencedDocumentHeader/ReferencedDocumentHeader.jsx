@@ -3,7 +3,6 @@
 import {h, Component} from 'preact'
 import proptypes from 'proptypes'
 import {bindActionCreators} from 'redux'
-import {buildUrl} from 'lib/router'
 
 import * as apiActions from 'actions/apiActions'
 import {connectHelper} from 'lib/util'
@@ -74,7 +73,6 @@ class ReferencedDocumentHeader extends Component {
     const fieldSection = fieldSchema.publish &&
       fieldSchema.publish.section &&
       Format.slugify(fieldSchema.publish.section)
-    const backToDocumentLink = buildUrl(...onBuildBaseUrl({section: fieldSection}))
 
     return (
       <div class={styles.container}>
@@ -85,7 +83,7 @@ class ReferencedDocumentHeader extends Component {
 
         <Button
           accent="destruct"
-          href={backToDocumentLink}
+          href={onBuildBaseUrl()}
           size="small"
         >Nevermind, back to document</Button>
       </div>

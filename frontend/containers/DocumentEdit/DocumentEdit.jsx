@@ -122,16 +122,10 @@ class DocumentEdit extends Component {
         if (!sectionMatch) {
           const firstSection = fields.sections[0]
 
-          // Redirect to first edit section
-          if (method === 'edit') {
-            route(this.routes.editRoute({
-              section: firstSection.slug
-            }))
-          } else {
-            route(this.routes.createRoute({
-              section: firstSection.slug
-            }))
-          }
+          // Redirect to first section.
+          route(
+            this.buildHref(method, firstSection)
+          )
 
           return false
         }
@@ -232,9 +226,6 @@ class DocumentEdit extends Component {
       state
     } = this.props
 
-    if (!this.canRender()) return null
-
-    this.routes = onGetRoutes(state.api.paths)
     this.userLeavingDocumentHandler = this.handleUserLeavingDocument.bind(this)
 
     window.addEventListener('beforeunload', this.userLeavingDocumentHandler)
@@ -263,8 +254,6 @@ class DocumentEdit extends Component {
       state
     } = this.props
     const document = state.document
-
-    if (!this.canRender()) return null
 
     if (document.remoteError) {
       return (
@@ -306,25 +295,17 @@ class DocumentEdit extends Component {
     )
   }
 
-  buildHref(method, collectionSection) {
+  buildHref(method, section) {
     const {
       collection,
       onBuildBaseUrl,
       state
     } = this.props
-    const sectionUrlBase = onBuildBaseUrl()
 
-    if (method === 'new') {
-      return this.routes.createRoute({
-        section: collectionSection.slug
-      })
-    }
-    
-    if (method === 'edit') {
-      return this.routes.editRoute({
-        section: collectionSection.slug
-      })
-    }
+    return onBuildBaseUrl({
+      search: state.router.search,
+      section: section && section.slug,
+    })
   }
 
   // Fetches a document from the remote API

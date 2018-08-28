@@ -99,15 +99,16 @@ export default class FieldImageEdit extends Component {
     const {
       collection,
       config,
+      displayName,
       documentId,
       group,
+      name,
       onBuildBaseUrl,
       schema,
       value
     } = this.props
-    const displayName = schema.label || schema._id
     const fieldLocalType = schema.publish && schema.publish.subType ? schema.publish.subType : schema.type
-    const href = buildUrl(...onBuildBaseUrl(), 'select', schema._id)
+    const href = buildUrl(...onBuildBaseUrl(), 'select', name)
     const isReference = schema.type === 'Reference'
     const singleFile = schema.settings && schema.settings.limit === 1
     const values = (value && !Array.isArray(value)) ? [value] : value

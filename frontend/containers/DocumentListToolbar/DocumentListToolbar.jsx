@@ -12,7 +12,6 @@ import * as documentActions from 'actions/documentActions'
 import * as documentsActions from 'actions/documentsActions'
 
 import {bindActionCreators} from 'redux'
-import {buildUrl} from 'lib/router'
 import {connectHelper} from 'lib/util'
 import {Format} from 'lib/util/string'
 import {route} from '@dadi/preact-router'
@@ -193,11 +192,9 @@ class DocumentListToolbar extends Component {
       referencedField
     } = this.props
 
-    if (referencedField) {
-      return buildUrl(...onBuildBaseUrl(), 'select', referencedField, page)
-    }
-
-    return buildUrl(...onBuildBaseUrl(), page)
+    return onBuildBaseUrl({
+      referenceFieldSelect: referencedField
+    })
   }
 
   handleBulkActionApply(actionType) {
@@ -288,7 +285,7 @@ class DocumentListToolbar extends Component {
       referenceFieldSchema.publish.section &&
       Format.slugify(referenceFieldSchema.publish.section)
 
-    route(buildUrl(...onBuildBaseUrl({section: referenceFieldSection})))
+    route(onBuildBaseUrl())
   }
 }
 
