@@ -81,7 +81,7 @@ export function fetchDocuments ({
       }
 
       let sort = [
-        sortBy || collection.settings.sort || 'createdAt',
+        sortBy || collection.settings.sort || '_createdAt',
         sortOrder || (collection.settings.sortOrder === 1 ? 'asc' : 'desc') || 'desc'
       ]
       let listQuery

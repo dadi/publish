@@ -1,7 +1,7 @@
 export const API_CONNECTION_ERROR = 'API_CONNECTION_ERROR'
 export const API_UNAUTHORISED_ERROR = 'API-0005'
 export const BATCH_ACTIONS = 'BATCH_ACTIONS'
-export const DEFAULT_FIELDS = ['createdAt', 'createdBy', 'lastModifiedAt', 'lastModifiedBy']
+export const DEFAULT_FIELDS = ['_createdAt', '_createdBy', '_lastModifiedAt', '_lastModifiedBy']
 export const ERROR_DOCUMENT_NOT_FOUND = 'ERROR_DOCUMENT_NOT_FOUND'
 export const ERROR_MISSING_FIELDS = 'ERROR_MISSING_FIELDS'
 export const ERROR_PASSWORD_MISMATCH = 'ERROR_PASSWORD_MISMATCH'

@@ -129,7 +129,7 @@ class DocumentEditToolbar extends Component {
       isSaving,
       peers,
       remote: document
-    } = state.document.remote || {}
+    } = state.document || {}
     const hasConnectionIssues = state.app.networkStatus !== Constants.NETWORK_OK
     const validationErrors = state.document.validationErrors
     const hasValidationErrors = validationErrors && Object.keys(validationErrors)
@@ -188,21 +188,21 @@ class DocumentEditToolbar extends Component {
         )}
 
         <div class={styles.metadata}>
-          {document && document.createdAt &&
+          {document && document._createdAt &&
             <p>
               <span>Created </span>
               <DateTime
-                date={document.createdAt}
+                date={document._createdAt}
                 relative={true}
               />
             </p>
           }
 
-          {document && document.lastModifiedAt &&
+          {document && document._lastModifiedAt &&
             <p class={styles['metadata-emphasis']}>
               <span>Last updated </span>
               <DateTime
-                date={document.lastModifiedAt}
+                date={document._lastModifiedAt}
                 relative={true}
               />
             </p>
