@@ -137,6 +137,7 @@ class ProfileEdit extends Component {
         <FieldString
           displayName="Username"
           error={error}
+          name="clientId"
           onChange={this.handleFieldChange.bind(this)}
           onError={this.handleFieldError.bind(this)}
           schema={{
@@ -155,6 +156,7 @@ class ProfileEdit extends Component {
         <FieldPassword
           displayName="Password"
           error={error}
+          name="secret"
           onChange={this.handleFieldChange.bind(this)}
           onError={this.handleFieldError.bind(this)}
           schema={schema}
@@ -167,6 +169,7 @@ class ProfileEdit extends Component {
         <FieldString
           displayName="First name"
           error={error}
+          name="data.publishFirstName"
           onChange={this.handleFieldChange.bind(this)}
           onError={this.handleFieldError.bind(this)}
           schema={schema}
@@ -180,6 +183,7 @@ class ProfileEdit extends Component {
         <FieldString
           displayName="Last name"
           error={error}
+          name="data.publishLastName"
           onChange={this.handleFieldChange.bind(this)}
           onError={this.handleFieldError.bind(this)}
           schema={schema}

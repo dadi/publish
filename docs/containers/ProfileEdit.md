@@ -14,14 +14,6 @@ determined by the view.
 - type: `func`
 
 
-### `onGetRoutes`
-
-A callback to be used to obtain the sibling document routes (edit, create and list), as
-determined by the view.
-
-- type: `func`
-
-
 ### `referencedField`
 
 The name of a reference field currently being edited.
