@@ -50,7 +50,7 @@ class DocumentListController extends Component {
     * A callback to be used to obtain the base URL for the given page, as
     * determined by the view.
     */
-    onBuildBaseUrl: proptypes.func,
+    onBuildBaseUrl: proptypes.func
   }
 
   constructor(props) {
