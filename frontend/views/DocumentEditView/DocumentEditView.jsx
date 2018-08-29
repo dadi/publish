@@ -24,9 +24,7 @@ export default class DocumentEditView extends Component {
 
     return (
       <Page>
-        <Header
-          onGetRoutes={this.getRoutes.bind(this)}
-        />
+        <Header/>
 
         <Main>
           <DocumentEdit
@@ -45,16 +43,11 @@ export default class DocumentEditView extends Component {
           documentId={documentId}
           group={group}
           onBuildBaseUrl={this.handleBuildBaseUrl.bind(this)}
-          onGetRoutes={this.getRoutes.bind(this)}
           referencedField={referencedField}
           section={section}
         />
       </Page>
     )
-  }
-
-  getRoutes(paths) {
-    return new DocumentRoutes(Object.assign(this.props, {paths}))
   }
 
   handleBuildBaseUrl({
