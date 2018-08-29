@@ -70,9 +70,9 @@ class ReferencedDocumentHeader extends Component {
     if (!fieldSchema) return null
 
     const displayName = fieldSchema.label || referencedField
-    const fieldSection = fieldSchema.publish &&
-      fieldSchema.publish.section &&
-      Format.slugify(fieldSchema.publish.section)
+    const returnUrl = onBuildBaseUrl({
+      createNew: !Boolean(state.router.parameters.documentId)
+    })
 
     return (
       <div class={styles.container}>
@@ -83,7 +83,7 @@ class ReferencedDocumentHeader extends Component {
 
         <Button
           accent="destruct"
-          href={onBuildBaseUrl()}
+          href={returnUrl}
           size="small"
         >Nevermind, back to document</Button>
       </div>
@@ -93,7 +93,8 @@ class ReferencedDocumentHeader extends Component {
 
 export default connectHelper(
   state => ({
-    api: state.api
+    api: state.api,
+    router: state.router
   }),
   dispatch => bindActionCreators(apiActions, dispatch)
 )(ReferencedDocumentHeader)
