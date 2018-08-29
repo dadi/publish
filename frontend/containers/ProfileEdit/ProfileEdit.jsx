@@ -32,12 +32,6 @@ class ProfileEdit extends Component {
     onBuildBaseUrl: proptypes.func,
 
     /**
-    * A callback to be used to obtain the sibling document routes (edit, create and list), as
-    * determined by the view.
-    */
-    onGetRoutes: proptypes.func,
-
-    /**
      * The name of a reference field currently being edited.
      */
     referencedField: proptypes.string,
@@ -74,7 +68,6 @@ class ProfileEdit extends Component {
   render() {
     const {
       onBuildBaseUrl,
-      onGetRoutes,
       referencedField,
       section,
       state
@@ -142,12 +135,12 @@ class ProfileEdit extends Component {
     if (field === 'clientId') {
       return (
         <FieldString
+          displayName="Username"
           error={error}
           onChange={this.handleFieldChange.bind(this)}
           onError={this.handleFieldError.bind(this)}
           schema={{
             ...schema,
-            label: 'Username',
             publish: {
               readonly: true
             }
@@ -160,13 +153,11 @@ class ProfileEdit extends Component {
     if (field === 'secret') {
       return (
         <FieldPassword
+          displayName="Password"
           error={error}
           onChange={this.handleFieldChange.bind(this)}
           onError={this.handleFieldError.bind(this)}
-          schema={{
-            ...schema,
-            label: 'Password'
-          }}
+          schema={schema}
         />
       )
     }
@@ -174,13 +165,11 @@ class ProfileEdit extends Component {
     if (field === 'data.publishFirstName') {
       return (
         <FieldString
+          displayName="First name"
           error={error}
           onChange={this.handleFieldChange.bind(this)}
           onError={this.handleFieldError.bind(this)}
-          schema={{
-            ...schema,
-            label: 'First name'
-          }}
+          schema={schema}
           value={userData.publishFirstName}
         />
       )
@@ -189,13 +178,11 @@ class ProfileEdit extends Component {
     if (field === 'data.publishLastName') {
       return (
         <FieldString
+          displayName="Last name"
           error={error}
           onChange={this.handleFieldChange.bind(this)}
           onError={this.handleFieldError.bind(this)}
-          schema={{
-            ...schema,
-            label: 'Last name'
-          }}
+          schema={schema}
           value={userData.publishLastName}
         />
       )

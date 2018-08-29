@@ -4,7 +4,6 @@ import * as Constants from 'lib/constants'
 import * as LocalStorage from 'lib/local-storage'
 import * as Types from 'actions/actionTypes'
 import apiBridgeClient from 'lib/api-bridge-client'
-import {batchActions} from 'lib/redux'
 
 export function clearRemoteDocument () {
   return {
