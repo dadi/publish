@@ -106,10 +106,6 @@ export default class DocumentListView extends Component {
     })
   }
 
-  getRoutes(paths) {
-    return new DocumentRoutes(Object.assign(this.props, {paths}))
-  }
-
   handleBuildBaseUrl({
     collection = this.props.collection,
     createNew,

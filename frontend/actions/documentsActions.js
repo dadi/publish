@@ -57,7 +57,12 @@ export function fetchDocuments ({
     let parentQuery = Promise.resolve()
 
     // If we're on a nested document, we need to retrieve the parent too.
-    if (referencedField && parentCollection && (currentDocumentId !== parentDocumentId)) {
+    if (
+      referencedField &&
+      parentCollection &&
+      parentDocumentId &&
+      currentDocumentId !== parentDocumentId
+    ) {
       parentQuery = apiBridgeClient({
         accessToken: getState().user.accessToken,
         api,

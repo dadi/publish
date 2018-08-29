@@ -279,20 +279,19 @@ class DocumentListToolbar extends Component {
       group
     })
 
-    const referenceFieldSchema = currentParentCollection.fields[referencedField]
-    const referenceFieldSection = referenceFieldSchema &&
-      referenceFieldSchema.publish &&
-      referenceFieldSchema.publish.section &&
-      Format.slugify(referenceFieldSchema.publish.section)
+    let redirectUrl = onBuildBaseUrl({
+      createNew: !Boolean(state.router.parameters.documentId)
+    })
 
-    route(onBuildBaseUrl())
+    route(redirectUrl)
   }
 }
 
 export default connectHelper(
   state => ({
     api: state.api,
-    documents: state.documents
+    documents: state.documents,
+    router: state.router
   }),
   dispatch => bindActionCreators({
     ...appActions,

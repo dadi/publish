@@ -10,6 +10,7 @@ import Page from 'components/Page/Page'
 
 import {DocumentRoutes} from 'lib/document-routes'
 import {setPageTitle} from 'lib/util'
+import {urlHelper} from 'lib/util/url-helper'
 
 export default class DocumentCreateView extends Component {
   render() {
@@ -52,15 +53,36 @@ export default class DocumentCreateView extends Component {
     return new DocumentRoutes(Object.assign(this.props, {paths}))
   }
 
-  handleBuildBaseUrl() {
-    const {
-      collection,
-      documentId,
+  handleBuildBaseUrl({
+    collection = this.props.collection,
+    createNew,
+    documentId = this.props.documentId,
+    group = this.props.group,
+    referenceFieldSelect,
+    search = urlHelper().paramsToObject(window.location.search),
+    section =  this.props.section
+  } = {}) {
+    let urlNodes = [
       group,
-      section
-    } = this.props
+      collection,
+      'new'
+    ]
 
-    return [group, collection, 'new']
+    if (referenceFieldSelect) {
+      urlNodes = urlNodes.concat(['select', referenceFieldSelect])
+    } else {
+      urlNodes.push(section)
+    }
+
+    let url = urlNodes.filter(Boolean).join('/')
+
+    if (search) {
+      let searchString = urlHelper().paramsToString(search)
+
+      url += `?${searchString}`
+    }
+
+    return `/${url}`
   }
 
   handlePageTitle(title) {
