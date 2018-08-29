@@ -108,7 +108,7 @@ class DocumentListController extends Component {
             <Button
               type="fill"
               accent="save"
-              href={onBuildBaseUrl}
+              href={newHref}
             >Create new</Button>
           )}
         </ListController>
