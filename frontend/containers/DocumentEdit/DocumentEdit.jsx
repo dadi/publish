@@ -293,11 +293,13 @@ class DocumentEdit extends Component {
   buildHref(method, section) {
     const {
       collection,
+      documentId,
       onBuildBaseUrl,
       state
     } = this.props
 
     return onBuildBaseUrl({
+      createNew: !Boolean(documentId),
       search: state.router.search,
       section: section && section.slug,
     })

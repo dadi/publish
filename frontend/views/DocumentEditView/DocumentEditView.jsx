@@ -78,7 +78,7 @@ export default class DocumentEditView extends Component {
 
     let url = urlNodes.filter(Boolean).join('/')
 
-    if (search) {
+    if (search && Object.keys(search).length) {
       let searchString = urlHelper().paramsToString(search)
 
       url += `?${searchString}`
