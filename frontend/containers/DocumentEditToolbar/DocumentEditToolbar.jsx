@@ -210,17 +210,19 @@ class DocumentEditToolbar extends Component {
         </div>
 
         <div class={styles.buttons}>
-          <div class={styles.button}>
-            <ButtonWithPrompt
-              accent="destruct"
-              className={styles.button}
-              disabled={hasConnectionIssues}
-              onClick={this.handleDelete.bind(this)}
-              promptCallToAction="Yes, delete it."
-              position="left"
-              promptMessage="Are you sure you want to delete this document?"
-            >Delete</ButtonWithPrompt> 
-          </div>
+          {document && (
+            <div class={styles.button}>
+              <ButtonWithPrompt
+                accent="destruct"
+                className={styles.button}
+                disabled={hasConnectionIssues}
+                onClick={this.handleDelete.bind(this)}
+                promptCallToAction="Yes, delete it."
+                position="left"
+                promptMessage="Are you sure you want to delete this document?"
+              >Delete</ButtonWithPrompt> 
+            </div>
+          )}
 
           <div class={styles.button}>
             <ButtonWithOptions
