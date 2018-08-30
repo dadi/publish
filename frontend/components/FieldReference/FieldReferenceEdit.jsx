@@ -144,7 +144,7 @@ export default class FieldReferenceEdit extends Component {
     })
     const firstStringField = this.findFirstStringField(displayableFields)
     const displayField = value && firstStringField ? firstStringField.key : null
-    const href = onBuildBaseUrl({
+    const editLink = onBuildBaseUrl({
       referenceFieldSelect: name
     })
     const values = value && !(value instanceof Array) ? [value] : value
@@ -157,15 +157,23 @@ export default class FieldReferenceEdit extends Component {
           ? (
             <div class={styles['value-container']}>
               <div class={styles.values}>
-                {values.map(value => (
-                  <p class={styles.value}>{displayField && value[displayField] || `Referenced ${displayName}`}</p>
-                ))}
+                {values.map(value => {
+                  let editLink = `${referencedCollection._publishLink}/${value._id}`
+
+                  return (
+                    <p class={styles.value}>
+                      <a class={styles['value-link']} href={editLink}>
+                        {displayField && value[displayField] || `Referenced ${displayName}`}
+                      </a>
+                    </p>
+                  )
+                })}
               </div>
 
               <Button
                 accent="data"
                 className={styles['control-button']}
-                href={href}
+                href={editLink}
                 size="small"
               >Edit</Button>
 
@@ -182,7 +190,7 @@ export default class FieldReferenceEdit extends Component {
             <div class={styles.placeholder}>
               <Button
                 accent="data"
-                href={href}
+                href={editLink}
                 size="small"
               >Select existing {displayName.toLowerCase()}</Button>
             </div>
