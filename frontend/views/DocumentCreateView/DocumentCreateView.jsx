@@ -8,7 +8,6 @@ import Header from 'containers/Header/Header'
 import Main from 'components/Main/Main'
 import Page from 'components/Page/Page'
 
-import {DocumentRoutes} from 'lib/document-routes'
 import {setPageTitle} from 'lib/util'
 import {urlHelper} from 'lib/util/url-helper'
 
@@ -24,16 +23,13 @@ export default class DocumentCreateView extends Component {
 
     return (
       <Page>
-        <Header
-          onGetRoutes={this.getRoutes.bind(this)}
-        />
+        <Header/>
 
         <Main>
           <DocumentEdit
             collection={collection}
             group={group}
             onBuildBaseUrl={this.handleBuildBaseUrl.bind(this)}
-            onGetRoutes={this.getRoutes.bind(this)}
             onPageTitle={this.handlePageTitle}
             section={section}
           />
@@ -42,15 +38,11 @@ export default class DocumentCreateView extends Component {
         <DocumentEditToolbar
           collection={collection}
           group={group}
-          onGetRoutes={this.getRoutes.bind(this)}
+          onBuildBaseUrl={this.handleBuildBaseUrl.bind(this)}
           section={section}
         />        
       </Page>
     )    
-  }
-
-  getRoutes(paths) {
-    return new DocumentRoutes(Object.assign(this.props, {paths}))
   }
 
   handleBuildBaseUrl({
@@ -64,9 +56,14 @@ export default class DocumentCreateView extends Component {
   } = {}) {
     let urlNodes = [
       group,
-      collection,
-      'new'
+      collection
     ]
+
+    if (createNew) {
+      urlNodes.push('new')
+    } else {
+      urlNodes.push(documentId)
+    }
 
     if (referenceFieldSelect) {
       urlNodes = urlNodes.concat(['select', referenceFieldSelect])
