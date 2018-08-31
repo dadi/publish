@@ -145,6 +145,7 @@ export default class FieldReferenceEdit extends Component {
     const firstStringField = this.findFirstStringField(displayableFields)
     const displayField = value && firstStringField ? firstStringField.key : null
     const editLink = onBuildBaseUrl({
+      createNew: !Boolean(documentId),
       referenceFieldSelect: name
     })
     const values = value && !(value instanceof Array) ? [value] : value
