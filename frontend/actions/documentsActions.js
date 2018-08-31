@@ -80,14 +80,16 @@ export function fetchDocuments ({
         return Promise.reject(404)
       }
 
+      let collectionSettings = (collection && collection.settings) || {}
       let sort = [
-        sortBy || collection.settings.sort || '_createdAt',
-        sortOrder || (collection.settings.sortOrder === 1 ? 'asc' : 'desc') || 'desc'
+        sortBy || collectionSettings.sort || '_createdAt',
+        sortOrder || (collectionSettings.sortOrder === 1 ? 'asc' : 'desc') || 'desc'
       ]
       let listQuery
 
       if (collection === Constants.MEDIA_COLLECTION) {
         listQuery = apiBridgeClient({
+          accessToken: getState().user.accessToken,
           api
         }).inMedia()
       } else {
