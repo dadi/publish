@@ -34,9 +34,9 @@ Whether a new filter has been added.
 - type: `func`
 
 
-### `onGetRoutes`
+### `onBuildBaseUrl`
 
-A callback to be used to obtain the sibling document routes (edit, create and list), as
+A callback to be used to obtain the base URL for the given page, as
 determined by the view.
 
 - type: `func`

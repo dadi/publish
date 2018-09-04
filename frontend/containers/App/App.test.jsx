@@ -64,7 +64,7 @@ const getDefaultState = () => {
     },
     document: {
       fieldsNotPersistedInLocalStorage: [],
-      loadedFromLocalStorage: false,
+      hasLoadedFromLocalStorage: false,
       local: null,
       peers: null,
       remote: null,
@@ -85,7 +85,6 @@ const getDefaultState = () => {
       room: null 
     },
     user: { 
-      authEnabled: undefined,
       failedSignInAttempts: 0,
       hasSignedOut: false,
       remote: null,
@@ -119,86 +118,20 @@ afterEach(() => {
 })
 
 describe('App', () => {
-  it('renders an error view if api paths are not defined', () => {
-    const component = renderToString(
-      <MockStore>
-        <App />
-      </MockStore>
-    )
-
-    const error = renderToString(
-      <MockStore>
-        <ErrorView
-          type={'STATUS_FAILED'}
-        >
-          {'{{ ... }}'}
-        </ErrorView>
-      </MockStore>
-    )
-
-    htmlLooksLike(component, error)
-  })
-
-  it('renders an error view if api status is `STATUS_FAILED`', () => {
-    defaultState.api.paths = mockPaths
-    defaultState.user.status = 'STATUS_LOADED'
-    defaultState.api.status = 'STATUS_FAILED'
-    const component = renderToString(
-      <MockStore state={defaultState}>
-        <App />
-      </MockStore>
-    )
-
-    const error = renderToString(
-      <MockStore>
-        <ErrorView
-          type={'STATUS_FAILED'}
-        >
-          {'{{ ... }}'}
-        </ErrorView>
-      </MockStore>
-    )
-
-    htmlLooksLike(component, error)
-  })
-
-  // it('renders an error view if route does not match', () => {
-  //   defaultState.api.paths = mockPaths
-  //   defaultState.api.status = 'STATUS_LOADED'
-  //   const component = renderToString(
-  //     <MockStore state={defaultState}>
-  //       <App />
-  //     </MockStore>
-  //   )
-
-  //   const error = renderToString(
-  //     <MockStore>
-  //       <ErrorView
-  //         type={'ERROR_ROUTE_NOT_FOUND'}
-  //       >
-  //         {'{{ ... }}'}
-  //       </ErrorView>
-  //     </MockStore>
-  //   )
-
-  //   htmlLooksLike(component, error)
-  // })
-
   it('renders an instance of `HomeView` by default', () => {
     defaultState.api.paths = mockPaths
     defaultState.api.status = 'STATUS_LOADED'
     defaultState.router = mockHistory
 
     const component = renderToString(
-      <MockStore state={defaultState} history={'foo'}>
+      <MockStore state={defaultState} history={'https://foo.com'}>
         <App />
       </MockStore>
     )
 
     const homeview = renderToString(
       <MockStore>
-        <HomeView
-        >
+        <HomeView>
           {'{{ ... }}'}
         </HomeView>
       </MockStore>

@@ -4,60 +4,41 @@ const path = require('path')
 module.exports = {
   auth: {
     doc: 'Auth API Collection',
-    availableInFrontend: true,
     format: Object,
     default: {
       enabled: false
     },
     collection: {
-      availableInFrontend: true,
       format: String,
       default: ''
     },
-    credentials: {
-      format: Object,
-      clientId: {
-        format: String,
-        default: 'testClient'
-      },
-      secret: {
-        format: String,
-        default: 'superSecret'
-      }
-    },
     database: {
-      availableInFrontend: true,
       format: String,
       default: ''
     },
     enabled: {
-      availableInFrontend: true,
       format: Boolean,
       default: true
     },
     host: {
-      availableInFrontend: true,
       format: 'ipaddress',
       default: '0.0.0.0'
     },
     port: {
-      availableInFrontend: true,
       format: 'port',
       default: 3000
     },
     version: {
-      availableInFrontend: true,
       format: String,
       default: '1.0'
     }
   },
   apis: {
-    availableInFrontend: true,
+    requireAuthentication: false,
     doc: 'Connected APIs',
     format: Array,
     default: [],
     publishId: {
-      availableInFrontend: true,
       type: String,
       default: ''
     },
@@ -66,50 +47,32 @@ module.exports = {
       default: true
     },
     name: {
-      availableInFrontend: true,
       format: String,
       default: 'No Name'
     },
     host: {
-      availableInFrontend: true,
       format: 'ipaddress',
       default: '0.0.0.0'
     },
     port: {
-      availableInFrontend: true,
       format: 'port',
       default: 3000
     },
     database: {
-      availableInFrontend: true,
       format: String,
       default: ''
     },
     version: {
-      availableInFrontend: true,
       format: String,
       default: '1.0'
     },
     menu: {
-      availableInFrontend: true,
       doc: 'Collection menu ordering and grouping',
       format: Array,
       default: []
-    },
-    credentials: {
-      format: Object,
-      clientId: {
-        format: String,
-        default: 'testClient'
-      },
-      secret: {
-        format: String,
-        default: 'superSecret'
-      }
     }
   },
   app: {
-    availableInFrontend: true,
     name: {
       doc: 'The applicaton name',
       format: String,
@@ -146,21 +109,9 @@ module.exports = {
     endpoint: {
       format: String,
       default: ''
-    },
-    credentials: {
-      format: Object,
-      clientId: {
-        format: String,
-        default: 'testClient'
-      },
-      secret: {
-        format: String,
-        default: 'superSecret'
-      }
     }
   },
   cdn: {
-    availableInFrontend: true,
     publicUrl: {
       doc: 'The host of the URL where the CDN instance can be publicly reached',
       format: '*',
@@ -168,14 +119,12 @@ module.exports = {
     }
   },
   env: {
-    availableInFrontend: true,
     doc: 'The applicaton environment.',
     format: String,
     default: 'development',
     env: 'NODE_ENV'
   },
   formats: {
-    availableInFrontend: true,
     date: {
       long: {
         doc: 'Date Format',
@@ -190,23 +139,19 @@ module.exports = {
     }
   },
   ga: {
-    availableInFrontend: true,
     doc: 'Google Analytics options',
     enabled: {
-      availableInFrontend: true,
       doc: 'GA events enabled',
       format: Boolean,
       default: false
     },
     trackingId: {
-      availableInFrontend: true,
       doc: 'GA Tracking credentials',
       format: String,
       default: ''
     }
   },
   publicUrl: {
-    availableInFrontend: true,
     host: {
       doc: 'The host of the URL where the Publish instance can be publicly reached',
       format: '*',
@@ -227,15 +172,12 @@ module.exports = {
     }
   },
   server: {
-    availableInFrontend: true,
     host: {
-      availableInFrontend: true,
       doc: 'The IP address or interface to bind to',
       format: 'ipaddress',
       default: '0.0.0.0'
     },
     port: {
-      availableInFrontend: true,
       doc: 'The port to bind to',
       format: 'port',
       default: 3001
@@ -261,15 +203,12 @@ module.exports = {
       }
     },
     healthcheck: {
-      availableInFrontend: true,
       enabled: {
-        availableInFrontend: true,
         doc: 'Healthcheck is enabled',
         format: Boolean,
         default: true
       },
       frequency: {
-        availableInFrontend: true,
         doc: 'Interval between checks (MS)',
         format: Number,
         default: 2000
@@ -277,12 +216,10 @@ module.exports = {
     }
   },
   TZ: {
-    availableInFrontend: true,
     doc: 'Process Timezone',
     default: 'Europe/London'
   },
   ui: {
-    availableInFrontend: true,
     inputDelay: {
       doc: 'Delay in ms to debounce inputs by',
       format: 'integer',
@@ -321,6 +258,24 @@ module.exports = {
         format: Boolean,
         default: true
       }
+    }
+  },
+  whitelabel: {
+    requireAuthentication: false,
+    backgroundImage: {
+      doc: 'The background image URL',
+      format: String,
+      default: '/public/images/bg-dark.jpg'
+    },
+    logo: {
+      doc: 'The logo URL',
+      format: String,
+      default: '/public/images/publish.png'
+    },
+    poweredBy: {
+      doc: 'Whether to include a "Powered by DADI Publish" section',
+      format: Boolean,
+      default: false
     }
   }
 }

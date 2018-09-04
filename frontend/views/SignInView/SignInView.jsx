@@ -14,10 +14,9 @@ export default class SignInView extends Component {
 
     return (
       <Page>
-        <Header />
         <Main>
           <SignIn 
-            setPagetTitle={this.handlePageTitleChange}
+            setPageTitle={this.handlePageTitleChange}
             token={token}
           />
         </Main>

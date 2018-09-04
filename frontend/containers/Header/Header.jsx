@@ -25,12 +25,6 @@ class Header extends Component {
     actions: proptypes.object,
 
     /**
-    * A callback to be used to obtain the sibling document routes (edit, create and list), as
-    * determined by the view.
-    */
-    onGetRoutes: proptypes.func,
-
-    /**
      * The global state object.
      */
     state: proptypes.object
@@ -42,37 +36,26 @@ class Header extends Component {
     this.state.expanded = false
   }
 
-  componentWillMount() {
-    const {onGetRoutes, state} = this.props
-    
-    if (typeof onGetRoutes === 'function') {
-      this.routes = onGetRoutes(state.api.paths)
-    }
-  }
-
-  componentDidUpdate(prevProps, prevState) {
-    const {onGetRoutes, state} = this.props
-
-    if (typeof onGetRoutes === 'function') {
-      this.routes = onGetRoutes(state.api.paths)
-    }
-  }
-
   render() {
     const {state} = this.props
     const compact = state.app.breakpoint === null
-    const currentCollection = state.api.apis.length && this.routes && this.routes.getCurrentCollection(state.api.apis)
+    const {currentCollection} = state.api
 
-    if (state.user.status !== Constants.STATUS_LOADED) {
+    if (!state.user.isSignedIn) {
       return null
     }
 
-    const user = state.user.remote
-
     let contentStyle = new Style(styles, 'content')
+    let innerStyle = new Style(styles)
 
     contentStyle.addIf('content-compact', compact)
     contentStyle.addIf('content-expanded', this.state.expanded)
+    innerStyle.addIf('inner-content-compact', compact)
+
+    let displayName = [
+      state.user.remote.data && state.user.remote.data.publishFirstName,
+      state.user.remote.data && state.user.remote.data.publishLastName
+    ].filter(Boolean).join(' ') || 'Profile'
 
     return (
       <header class={styles.header}>
@@ -99,7 +82,7 @@ class Header extends Component {
               <img class={styles.logo} src="/public/images/publish.png" />
             </a>
 
-              {user && (
+              {state.user.accessToken && (
                 <div class={styles.controls}>
                   <button
                     class={styles.signout}
@@ -107,14 +90,17 @@ class Header extends Component {
                   >
                     Sign out
                   </button>
-                  <a href="/profile" class={styles.user}>{`${user.first_name} ${user.last_name}`}</a>
+
+                  <a href="/profile" class={styles.user}>{displayName}</a>
                 </div>
               )}
           </div>
 
-          <CollectionNav
-            currentCollection={currentCollection}
-          />
+          <div class={innerStyle.getClasses()}>
+            <CollectionNav
+              currentCollection={currentCollection}
+            />
+          </div>
         </div>
       </header>
     )

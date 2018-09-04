@@ -22,7 +22,7 @@ content: adapts to content
 static: use rows prop
 
 - type: `string`
-- default value: ``static``
+- default value: `'static'`
 
 
 ### `id`
@@ -123,13 +123,6 @@ Type/function of the input field.
 
 - type: `enum('email'|'multiline'|'number'|'password'|'tel'|'text'|'url')`
 - default value: `'text'`
-
-
-### `validation`
-
-Callback to be executed onChange to validate field value.
-
-- type: `func`
 
 
 ### `value`

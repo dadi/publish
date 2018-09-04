@@ -1,6 +1,6 @@
 <img src="https://dadi.tech/assets/products/dadi-publish-full.png" alt="DADI Publish" height="65"/>
 
-[![coverage](https://img.shields.io/badge/coverage-49%25-red.svg?style=flat?style=flat-square)](https://github.com/dadi/publish)
+[![Coverage Status](https://coveralls.io/repos/github/dadi/publish/badge.svg?branch=develop)](https://coveralls.io/github/dadi/publish?branch=develop)
 [![Build Status](https://travis-ci.org/dadi/publish.svg?branch=master)](https://travis-ci.org/dadi/publish)
 
 ## Overview
@@ -36,6 +36,7 @@ DADI is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
+
 
 The GNU General Public License (GPL) is available at
 http://www.gnu.org/licenses/gpl-3.0.en.html.<br />

@@ -29,47 +29,64 @@ const getAdditionalSchema = (dir, match) => {
   })
 }
 
-const getFrontendProps = (schema = {}, prev = {}) => {
-  return Object.assign(prev,
-    ...Object.keys(schema)
-    .filter(key => Object.is(schema[key].availableInFrontend, true))
-    .map(key => {
-      const val = getFrontendProps(schema[key], {})
-      return {[`${key}`]: (Object.keys(val).length > 0) ? val : true}
-    })
-  )
+const getUnauthenticatedConfig = (tree = schema, target = {}, trail = []) => {
+  if (!tree || typeof tree !== 'object') {
+    return
+  }
+
+  Object.keys(tree).forEach(key => {
+    let path = trail.concat(key)
+
+    if (
+      tree[key] &&
+      typeof tree[key] === 'object' &&
+      tree[key].requireAuthentication === false
+    ) {
+      let pointer = target
+
+      trail.forEach(node => {
+        target[node] = target[node] || {}
+        pointer = target[node]
+      })
+
+      pointer[key] = config.get(path.join('.'))
+    } else {
+      getUnauthenticatedConfig(tree[key], target, path)
+    }
+  })
+
+  return target
 }
 
-const initConf = () => {
+const initialiseConfig = () => {
   // Fetch aditional component schema
   getAdditionalSchema(paths.frontend.components, /ConfigSchema$/g)
 
-  const availableInFrontend = getFrontendProps(schema)
-  const conf = convict(schema)
-  const env = conf.get('env')
+  const config = convict(schema)
+  const env = config.get('env')
   const envConfigPath = `${paths.configDir}/config.${env}.json`
-
-  conf.set('availableInFrontend', availableInFrontend)
 
   // Check that environmental config file exists.
   if (fs.existsSync(envConfigPath)) {
-    conf.loadFile(`${paths.configDir}/config.${env}.json`)
+    config.loadFile(`${paths.configDir}/config.${env}.json`)
   } else {
     console.log(`Failed to load ${envConfigPath}, dropping to defaults`)
   }
 
   // Force port 443 if ssl is enabled.
-  if (conf.get('server.ssl.enabled')) {
-    conf.set('server.port', 443)
+  if (config.get('server.ssl.enabled')) {
+    config.set('server.port', 443)
   }
 
   // Perform validation
-  conf.validate({})
+  config.validate({})
 
-  return conf
+  return config
 }
 
-module.exports = initConf()
-module.exports.initConf = initConf
-module.exports.getFrontendProps = getFrontendProps
+let config = initialiseConfig()
+
+module.exports = config
+module.exports.initialiseConfig = initialiseConfig
 module.exports.getAdditionalSchema = getAdditionalSchema
+module.exports.getUnauthenticatedConfig = getUnauthenticatedConfig

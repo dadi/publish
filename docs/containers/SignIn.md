@@ -6,7 +6,7 @@
 Props
 -----
 
-### `setPagetTitle`
+### `setPageTitle`
 
 The method used to update the current page title.
 

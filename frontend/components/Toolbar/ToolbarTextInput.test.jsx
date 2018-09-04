@@ -41,7 +41,7 @@ describe('Toolbar component', () => {
     )
 
     const template = (
-      <input class='input input'/>
+      <input class='input not-resizable input'/>
     )
 
     expect(component).to.matchTemplate(template)
@@ -55,7 +55,7 @@ describe('Toolbar component', () => {
     )
 
     const template = (
-      <input class='input input' placeholder='foo'/>
+      <input class='input not-resizable input' placeholder='foo'/>
     )
 
     expect(component).to.matchTemplate(template)
@@ -69,7 +69,7 @@ describe('Toolbar component', () => {
     )
 
     const template = (
-      <input class='input input container-padded'/>
+      <input class='input not-resizable input container-padded'/>
     )
 
     expect(component).to.matchTemplate(template)

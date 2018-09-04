@@ -78,11 +78,6 @@ export default class TextInputWithDatePicker extends Component {
     required: proptypes.bool,
 
     /**
-     * Callback to be executed onChange to validate field value.
-     */
-    validation: proptypes.func,
-
-    /**
      * Current value of the input field.
      */
     value: proptypes.string

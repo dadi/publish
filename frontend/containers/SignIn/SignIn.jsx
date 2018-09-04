@@ -7,7 +7,6 @@ import {connect} from 'preact-redux'
 import {connectHelper} from 'lib/util'
 import {route} from '@dadi/preact-router'
 import {redirectIf} from 'lib/router'
-import Validation from 'lib/util/validation'
 
 import * as userActions from 'actions/userActions'
 import * as Constants from 'lib/constants'
@@ -24,7 +23,7 @@ class SignIn extends Component {
     /**
      * The method used to update the current page title.
      */
-     setPagetTitle: proptypes.func,
+     setPageTitle: proptypes.func,
 
      /**
       * Sign in token.
@@ -32,120 +31,124 @@ class SignIn extends Component {
      token: proptypes.string
   }
 
-  constructor(props) {
-    super(props)
+  componentDidMount() {
+    const {
+      state
+    } = this.props
 
-    this.validation = new Validation()
-    // Is there is a token in the URL.
-    this.state.isPasswordReset = typeof props.token === 'string' && props.token.length
-    this.state.email = ''
-    this.state.password = ''
-    this.state.passwordConfirm = ''
-    this.state.formDataIsValid = false
-    this.state.error = false
+    // If the user is already signed in, let's take them to
+    // the root page.
+    if (state.user.accessToken) {
+      return route('/')
+    }
   }
 
-  componentWillUpdate(nextProps, nextState) {
-    const {actions, state} = this.props
-    const {user, isPasswordReset} = state
-    const nextUser = nextProps.state.user
-    const {resetSuccess} = nextUser
+  state = {
+    email: '',
+    error: false,
+    password: '',
+    userHasInteracted: false
+  }
 
-    // If the user is signed in, redirect to the home view.
-    redirectIf(user.remote, '/')
+  getErrorBanner(signInError) {
+    let message
 
-    // Redirect if `resetSuccess` true
-    redirectIf(!user.resetSuccess && (resetSuccess && isPasswordReset), '/sign-in')
+    if (signInError) {
+      switch (signInError) {
+        case 401:
+          message = 'Username not found or password incorrect'
 
-    // Reset `isPasswordReset`
-    if (!user.resetSuccess && resetSuccess) {
-      this.setState({isPasswordReset: false})
-    }
+          break
 
-    const hasFailed = nextUser.status !== Constants.STATUS_LOADED &&
-      nextUser.failedSignInAttempts > 0
+        case 501:
+          message = 'The API is running an earlier version than that required by this version of Publish'
 
-    if (hasFailed) {
-      if (nextUser.status === Constants.AUTH_UNREACHABLE) {
-        this.setState({error: 'Authentication API unreachable'})
-      } else {
-        this.setState({error:`${isPasswordReset ? 'Passwords don\'t match or invalid token' : 'Email not found or password incorrect'}.`})
+          break
+
+        case 'NO-CORS':
+          message = 'API Cross Origin support appears to be disabled'
+
+          break
+
+        default:
+          message = 'The API is not responding'
+
+          break
       }
-    } else {
-      this.setState({error: false})
     }
+
+    if (message) {
+      return (
+        <Banner>{message}</Banner>
+      )      
+    }
+
+    return null
   }
 
   render() {
-    const {state, actions, setPagetTitle} = this.props
+    const {state, actions, setPageTitle} = this.props
+    const {email, password, userHasInteracted} = this.state
     const hasConnectionIssues = state.app.networkStatus !== Constants.NETWORK_OK
-    const {formDataIsValid, error, isPasswordReset} = this.state
-    const formActionLabel = isPasswordReset ? 'Reset password' : 'Sign In'
+    const {
+      whitelabel: {logo, poweredBy, backgroundImage}
+    } = state.app.config || {
+      whitelabel: {logo: '', poweredBy: false, backgroundImage: ''}
+    }
 
-    setPagetTitle('Sign In')
+    setPageTitle('Sign In')
+
+    let formDataIsValid = this.validate()
 
     return (
-      <div class={styles.wrapper}>
+      <div class={styles.wrapper} style={`background-image: url(${backgroundImage}`}>
         <div class={styles.overlay}>
           <div class={styles.container}>
             <form
-              action="/profile"
               method="POST"
               onSubmit={this.handleSignIn.bind(this)}
             >
-              <img class={styles.logo} src="/public/images/publish.png" />
+              <img class={styles.logo} src={logo} />
 
-              {error &&
-                <Banner>{error}</Banner>
-              }
+              {this.getErrorBanner(state.user.remoteError)}
 
               <div class={styles.inputs}>
-                {!isPasswordReset && (
-                  <div class={styles.input}>
-                    <Label label="Email">
-                      <TextInput
-                        onChange={this.handleInputChange.bind(this, 'email')}
-                        onKeyUp={this.handleInputChange.bind(this, 'email')}
-                        placeholder="Your email address"
-                        validation={this.validation.email}
-                        value={this.state.email}
-                      />
-                    </Label>
-                  </div>
-                )}
-
                 <div class={styles.input}>
-                  <Label label={isPasswordReset ? 'New Password' : 'Password'}>
+                  <Label label="Username">
                     <TextInput
-                      onChange={this.handleInputChange.bind(this, 'password')}
-                      placeholder={isPasswordReset ? 'Your new Password' : 'Your Password'}
-                      type="password"
-                      value={this.state.password}
+                      onChange={this.handleInputChange.bind(this, 'email')}
+                      onKeyUp={this.handleInputChange.bind(this, 'email')}
+                      placeholder="Your username"
+                      value={email}
                     />
                   </Label>
                 </div>
-                {isPasswordReset && (
-                  <div class={styles.input}>
-                    <Label label="Confirm new Password">
-                      <TextInput
-                        onChange={this.handleInputChange.bind(this, 'passwordConfirm')}
-                        placeholder="Confirm new Password"
-                        type="password"
-                        value={this.state.passwordConfirm}
-                      />
-                    </Label>
-                  </div>
-                )}
+
+                <div class={styles.input}>
+                  <Label label="Password">
+                    <TextInput
+                      onChange={this.handleInputChange.bind(this, 'password')}
+                      onKeyUp={this.handleInputChange.bind(this, 'password')}
+                      placeholder={"Your password"}
+                      type="password"
+                      value={password}
+                    />
+                  </Label>
+                </div>
               </div>
 
               <Button
                 accent="system"
-                disabled={hasConnectionIssues || (!formDataIsValid && !isPasswordReset)}
+                disabled={hasConnectionIssues || (userHasInteracted && !formDataIsValid)}
                 type="submit"
-              >{formActionLabel}</Button>
+              >Sign In</Button>
 
-              {!isPasswordReset && (
-                <a class={styles.link} href="/reset">Reset password</a>
+              {/*<a class={styles.link} href="/reset">Reset password</a>*/}
+
+              {poweredBy && (
+                <p class={styles['powered-by']}>
+                  Powered by <a href="https://dadi.cloud/en/publish/" target="_blank">DADI Publish</a>
+                </p>
               )}
             </form>
           </div>
@@ -155,27 +158,32 @@ class SignIn extends Component {
   }
 
   handleInputChange(name, event) {
+    // We use the `userHasInteracted` property to determine whether the user
+    // has actively interacted with the form. We can't disable the submit
+    // button until this has been the case, because the user might have
+    // the browser's autofill feature filling in the form for them on first
+    // render, which annoyingly doesn't fire the `onChange` event in some
+    // browsers. To avoid showing a disabled button in those cases, we can
+    // only disable the button once the user has started their interaction.
     this.setState({
       [name]: event.target.value,
-      formDataIsValid: event.isValid
+      userHasInteracted: true
     })
   }
 
   handleSignIn(event) {
     const {actions, token} = this.props
-    const {email, password, isPasswordReset, passwordConfirm} = this.state
+    const {email, password, passwordConfirm} = this.state
 
-    if (isPasswordReset) {
-      if (password === passwordConfirm) {
-        actions.passwordReset(token, password)
-      } else {
-        this.setState({error: Constants.PASSWORD_MISMATCH})
-      }
-    } else {
-      actions.signIn(email, password)
-    }
+    actions.signIn(email, password)
 
     event.preventDefault()
+  }
+
+  validate() {
+    const {email, password} = this.state
+
+    return (email.length > 0) && (password.length > 0)
   }
 }
 

@@ -3,12 +3,10 @@
 import {h, Component} from 'preact'
 import proptypes from 'proptypes'
 import {bindActionCreators} from 'redux'
-import {buildUrl} from 'lib/router'
 
 import * as apiActions from 'actions/apiActions'
 import {connectHelper} from 'lib/util'
 import {Format} from 'lib/util/string'
-import {getApiForUrlParams, getCollectionForUrlParams} from 'lib/collection-lookup'
 
 import Style from 'lib/Style'
 import styles from './ReferencedDocumentHeader.css'
@@ -61,24 +59,20 @@ class ReferencedDocumentHeader extends Component {
       referencedField,
       state
     } = this.props
-    const parentCollection = getCollectionForUrlParams(state.api.apis, {
-      collection,
-      group
-    })
+    const {currentParentCollection} = state.api
 
     // Render nothing if we don't have the collection schema available.
-    if (!parentCollection) return null
+    if (!currentParentCollection) return null
 
-    const fieldSchema = parentCollection.fields[referencedField]
+    const fieldSchema = currentParentCollection.fields[referencedField]
     
     // Render nothing if we don't have a matching field in the collection.
     if (!fieldSchema) return null
 
     const displayName = fieldSchema.label || referencedField
-    const fieldSection = fieldSchema.publish &&
-      fieldSchema.publish.section &&
-      Format.slugify(fieldSchema.publish.section)
-    const backToDocumentLink = buildUrl(...onBuildBaseUrl({section: fieldSection}))
+    const returnUrl = onBuildBaseUrl({
+      createNew: !Boolean(state.router.parameters.documentId)
+    })
 
     return (
       <div class={styles.container}>
@@ -89,7 +83,7 @@ class ReferencedDocumentHeader extends Component {
 
         <Button
           accent="destruct"
-          href={backToDocumentLink}
+          href={returnUrl}
           size="small"
         >Nevermind, back to document</Button>
       </div>
@@ -99,7 +93,8 @@ class ReferencedDocumentHeader extends Component {
 
 export default connectHelper(
   state => ({
-    api: state.api
+    api: state.api,
+    router: state.router
   }),
   dispatch => bindActionCreators(apiActions, dispatch)
 )(ReferencedDocumentHeader)

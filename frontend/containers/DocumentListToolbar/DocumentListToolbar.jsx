@@ -12,10 +12,8 @@ import * as documentActions from 'actions/documentActions'
 import * as documentsActions from 'actions/documentsActions'
 
 import {bindActionCreators} from 'redux'
-import {buildUrl} from 'lib/router'
 import {connectHelper} from 'lib/util'
 import {Format} from 'lib/util/string'
-import {getApiForUrlParams, getCollectionForUrlParams} from 'lib/collection-lookup'
 import {route} from '@dadi/preact-router'
 
 import Button from 'components/Button/Button'
@@ -71,21 +69,17 @@ class DocumentListToolbar extends Component {
 
   componentDidUpdate(prevProps, prevState) {
     const {actions, state} = this.props
-    const {list, status} = state.documents
-    const isIdle = status === Constants.STATUS_IDLE
-    const previousStatus = prevProps.state.documents.status
+    const {isDeleting, list} = state.documents
+    const wasDeleting = prevProps.state.documents.isDeleting
 
-    // Have we just deleted a single document?
-    if (isIdle && (previousStatus === Constants.STATUS_DELETING_SINGLE)) {
-      actions.setNotification({
-        message: 'The document has been deleted'
-      })
-    }
+    // Have we just deleted some documents?
+    if (wasDeleting && !isDeleting) {
+      let message = wasDeleting > 1 ?
+        `${wasDeleting} documents have been deleted` :
+        'The document has been deleted'
 
-    // Have we just deleted multiple documents?
-    if (isIdle && (previousStatus === Constants.STATUS_DELETING_MULTIPLE)) {
       actions.setNotification({
-        message: 'The documents have been deleted'
+        message
       })
     }
   }
@@ -198,11 +192,9 @@ class DocumentListToolbar extends Component {
       referencedField
     } = this.props
 
-    if (referencedField) {
-      return buildUrl(...onBuildBaseUrl(), 'select', referencedField, page)
-    }
-
-    return buildUrl(...onBuildBaseUrl(), page)
+    return onBuildBaseUrl({
+      referenceFieldSelect: referencedField
+    })
   }
 
   handleBulkActionApply(actionType) {
@@ -218,15 +210,7 @@ class DocumentListToolbar extends Component {
       group,
       state
     } = this.props
-    const currentApi = getApiForUrlParams(state.api.apis, {
-      collection,
-      group
-    })
-    const currentCollection = getCollectionForUrlParams(state.api.apis, {
-      collection,
-      group,
-      useApi: currentApi
-    })
+    const {currentApi, currentCollection} = state.api
 
     if (bulkActionSelected === 'delete') {
       actions.deleteDocuments({
@@ -278,6 +262,7 @@ class DocumentListToolbar extends Component {
       state
     } = this.props
     const documentsList = state.documents.list.results
+    const {currentParentCollection} = state.api
 
     // We might want to change this when we allow a field to reference multiple
     // documents. For now, we just get the first selected document.
@@ -294,24 +279,19 @@ class DocumentListToolbar extends Component {
       group
     })
 
-    const parentCollection = getCollectionForUrlParams(state.api.apis, {
-      collection,
-      group
+    let redirectUrl = onBuildBaseUrl({
+      createNew: !Boolean(state.router.parameters.documentId)
     })
-    const referenceFieldSchema = parentCollection.fields[referencedField]
-    const referenceFieldSection = referenceFieldSchema &&
-      referenceFieldSchema.publish &&
-      referenceFieldSchema.publish.section &&
-      Format.slugify(referenceFieldSchema.publish.section)
 
-    route(buildUrl(...onBuildBaseUrl({section: referenceFieldSection})))
+    route(redirectUrl)
   }
 }
 
 export default connectHelper(
   state => ({
     api: state.api,
-    documents: state.documents
+    documents: state.documents,
+    router: state.router
   }),
   dispatch => bindActionCreators({
     ...appActions,

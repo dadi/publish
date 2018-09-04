@@ -7,6 +7,7 @@ import styles from './DocumentListView.css'
 
 import {DocumentRoutes} from 'lib/document-routes'
 import {isValidJSON, setPageTitle} from 'lib/util'
+import {urlHelper} from 'lib/util/url-helper'
 
 import DocumentList from 'containers/DocumentList/DocumentList'
 import DocumentListController from 'containers/DocumentListController/DocumentListController'
@@ -50,9 +51,7 @@ export default class DocumentListView extends Component {
             documentId={documentId}
             referencedField={referencedField}
           /> : 
-          <Header
-            onGetRoutes={this.getRoutes.bind(this)}
-          />
+          <Header/>
         }
 
         <Main>
@@ -63,7 +62,7 @@ export default class DocumentListView extends Component {
               filter={filter}
               newFilter={newFilter}
               onAddNewFilter={this.handleAddNewFilter.bind(this)}
-              onGetRoutes={this.getRoutes.bind(this)}
+              onBuildBaseUrl={this.handleBuildBaseUrl.bind(this)}
               documentId={documentId}
               referencedField={referencedField}
             />
@@ -73,7 +72,6 @@ export default class DocumentListView extends Component {
               filter={filter}
               group={group}
               onBuildBaseUrl={this.handleBuildBaseUrl.bind(this)}
-              onGetRoutes={this.getRoutes.bind(this)}
               onPageTitle={this.handlePageTitle}
               order={order}
               page={page}
@@ -108,28 +106,42 @@ export default class DocumentListView extends Component {
     })
   }
 
-  getRoutes(paths) {
-    return new DocumentRoutes(Object.assign(this.props, {paths}))
-  }
-
-  handleBuildBaseUrl(data = {}) {
-    const {
-      collection,
-      documentId,
+  handleBuildBaseUrl({
+    collection = this.props.collection,
+    createNew,
+    documentId = this.props.documentId,
+    group = this.props.group,
+    referenceFieldSelect,
+    search = urlHelper().paramsToObject(window.location.search),
+    section =  this.props.section
+  } = {}) {
+    let urlNodes = [
       group,
-      referencedField
-    } = this.props
+      collection
+    ]
 
-    if (referencedField) {
-      if (documentId) {
-        return [group, collection, documentId, data.section]
-      }
-
-      return [group, collection, 'new', data.section]
+    if (createNew) {
+      urlNodes.push('new')
+    } else {
+      urlNodes.push(documentId)
     }
 
-    return [group, collection]
-  }
+    if (referenceFieldSelect) {
+      urlNodes = urlNodes.concat(['select', referenceFieldSelect])
+    } else {
+      urlNodes.push(section)
+    }
+
+    let url = urlNodes.filter(Boolean).join('/')
+
+    if (search && Object.keys(search).length) {
+      let searchString = urlHelper().paramsToString(search)
+
+      url += `?${searchString}`
+    }
+
+    return `/${url}`
+  } 
 
   handlePageTitle(title) {
     // We could have containers calling `setPageTitle()` directly, but it should

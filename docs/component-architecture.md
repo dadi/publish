@@ -5,7 +5,8 @@ App
 │ │ ├─┬ ErrorMessage
 │ │ │ ├── Button
 │ │ │ └── HeroMessage
-│ │ └── SubNavItem
+│ │ └─┬ TabbedFieldSections
+│ │   └── SubNavItem
 │ ├─┬ DocumentEditToolbar
 │ │ ├─┬ ButtonWithOptions
 │ │ │ ├── Button
@@ -17,6 +18,7 @@ App
 │ │ │ └─┬ Prompt
 │ │ │   └── Button
 │ │ ├── DateTime
+│ │ ├── DropdownNative
 │ │ ├─┬ Peer
 │ │ │ └── Button
 │ │ └── Toolbar
@@ -38,7 +40,8 @@ App
 │ │ ├─┬ ErrorMessage
 │ │ │ ├── Button
 │ │ │ └── HeroMessage
-│ │ └── SubNavItem
+│ │ └─┬ TabbedFieldSections
+│ │   └── SubNavItem
 │ ├─┬ DocumentEditToolbar
 │ │ ├─┬ ButtonWithOptions
 │ │ │ ├── Button
@@ -50,6 +53,7 @@ App
 │ │ │ └─┬ Prompt
 │ │ │   └── Button
 │ │ ├── DateTime
+│ │ ├── DropdownNative
 │ │ ├─┬ Peer
 │ │ │ └── Button
 │ │ └── Toolbar
@@ -176,39 +180,17 @@ App
 ├── SignOutView
 └─┬ ProfileEditView
   └─┬ ProfileEdit
-    ├─┬ DocumentEdit
-    │ ├─┬ ErrorMessage
-    │ │ ├── Button
-    │ │ └── HeroMessage
-    │ └── SubNavItem
-    ├─┬ DocumentList
-    │ ├── Button
-    │ ├─┬ ErrorMessage
-    │ │ ├── Button
-    │ │ └── HeroMessage
-    │ ├── HeroMessage
-    │ └─┬ SyncTable
-    │   ├── Table
-    │   ├─┬ TableHead
-    │   │ └─┬ TableHeadCell
-    │   │   └── IconArrow
-    │   ├─┬ TableHeadCell
-    │   │ └── IconArrow
-    │   ├─┬ TableRow
-    │   │ └── TableRowCell
-    │   └── TableRowCell
-    ├─┬ DocumentListToolbar
-    │ ├── Button
-    │ ├─┬ ButtonWithPrompt
-    │ │ ├── Button
-    │ │ └─┬ Prompt
-    │ │   └── Button
-    │ ├── Checkbox
-    │ ├─┬ Paginator
-    │ │ └── Button
-    │ ├── Toolbar
-    │ └─┬ ToolbarTextInput
+    ├─┬ FieldPassword
+    │ └─┬ FieldPasswordEdit
+    │   ├── Label
     │   └── TextInput
+    ├─┬ FieldString
+    │ ├─┬ FieldStringEdit
+    │ │ ├── Label
+    │ │ └── TextInput
+    │ ├─┬ FieldStringFilter
+    │ │ └── TextInput
+    │ └── FieldStringList
     ├─┬ Header
     │ ├─┬ CollectionNav
     │ │ └─┬ Nav
@@ -237,8 +219,7 @@ App
     │ ├─┬ Peer
     │ │ └── Button
     │ └── Toolbar
-    ├─┬ ReferencedDocumentHeader
-    │ └── Button
-    └── SubNavItem
+    └─┬ TabbedFieldSections
+      └── SubNavItem
 
 ```

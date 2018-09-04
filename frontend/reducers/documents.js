@@ -4,10 +4,12 @@ import * as Constants from 'lib/constants'
 import * as Types from 'actions/actionTypes'
 
 const initialState = {
+  isDeleting: false,
+  isLoading: false,
   list: null,
   query: null,
-  selected: [],
-  status: Constants.STATUS_IDLE
+  remoteError: null,
+  selected: []
 }
 
 export default function document (state = initialState, action = {}) {
@@ -21,28 +23,58 @@ export default function document (state = initialState, action = {}) {
     case Types.SET_DOCUMENT_LIST:
       return {
         ...state,
+        isLoading: false,
         list: action.documents,
         query: action.query,
-        status: Constants.STATUS_IDLE
+        remoteError: null
       }
 
     // Action: clear document list.
     case Types.CLEAR_DOCUMENT_LIST:
       return {
         ...state,
+        isLoading: false,
         list: null,
         query: null,
         selected: [],
         sortBy: null,
-        sortOrder: null,
-        status: Constants.STATUS_IDLE
+        sortOrder: null
       }
 
     // Action: set document loading status.
     case Types.SET_DOCUMENT_LIST_STATUS:
-      return {
-        ...state,
-        status: action.status
+      switch (action.status) {
+        case Constants.STATUS_DELETING:
+          return {
+            ...state,
+            isDeleting: action.data
+          }
+
+        case Constants.STATUS_IDLE:
+          return {
+            ...state,
+            isDeleting: false,
+            isLoading: false,
+            remoteError: null
+          }
+
+        case Constants.STATUS_LOADING:
+          return {
+            ...state,
+            isLoading: true
+          }
+
+        case Constants.STATUS_FAILED:
+          return {
+            ...state,
+            isDeleting: false,
+            isLoading: false,
+            list: null,
+            remoteError: action.data,
+          }
+
+        default:
+          return state
       }
 
     // Action: set document list selection.
