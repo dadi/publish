@@ -37,6 +37,11 @@ export default class FieldImageEdit extends Component {
     currentCollection: proptypes.object,
 
     /**
+     * The human-friendly name of the field, to be displayed as a label.
+     */
+    displayName: proptypes.string,
+
+    /**
      * The ID of the document being edited.
      */
     documentId: proptypes.string,
@@ -56,6 +61,12 @@ export default class FieldImageEdit extends Component {
      * If defined, specifies a group where the current collection belongs.
      */
     group: proptypes.string,
+
+    /**
+     * The name of the field within the collection. May be a path using
+     * dot-notation.
+     */
+    name: proptypes.string,
 
     /**
     * A callback to be used to obtain the base URL for the given page, as
@@ -79,6 +90,11 @@ export default class FieldImageEdit extends Component {
     onError: proptypes.string,
 
     /**
+     * Whether the field is required.
+     */
+    required: proptypes.bool,
+
+    /**
      * The field schema.
      */
     schema: proptypes.object,
@@ -99,15 +115,20 @@ export default class FieldImageEdit extends Component {
     const {
       collection,
       config,
+      displayName,
       documentId,
       group,
+      name,
       onBuildBaseUrl,
       schema,
       value
     } = this.props
-    const displayName = schema.label || schema._id
     const fieldLocalType = schema.publish && schema.publish.subType ? schema.publish.subType : schema.type
-    const href = buildUrl(...onBuildBaseUrl(), 'select', schema._id)
+    const href = onBuildBaseUrl({
+      createNew: !Boolean(documentId),
+      documentId,
+      referenceFieldSelect: name
+    })
     const isReference = schema.type === 'Reference'
     const singleFile = schema.settings && schema.settings.limit === 1
     const values = (value && !Array.isArray(value)) ? [value] : value
@@ -191,16 +212,17 @@ export default class FieldImageEdit extends Component {
   }
   
   handleRemoveFile() {
-    const {onChange, schema} = this.props
+    const {name, onChange, schema} = this.props
 
     if (typeof onChange === 'function') {
-      onChange.call(this, schema._id, null)
+      onChange.call(this, name, null)
     }
   }
 
   handleFileChange(files) {
     const {
       config,
+      name,
       onChange,
       schema
     } = this.props
@@ -227,7 +249,7 @@ export default class FieldImageEdit extends Component {
         ) {
           const finalFiles = singleFile ? processedFiles[0] : processedFiles
 
-          onChange.call(this, schema._id, finalFiles)
+          onChange.call(this, name, finalFiles)
         }
       }
 

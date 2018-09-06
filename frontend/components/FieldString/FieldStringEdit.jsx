@@ -35,6 +35,11 @@ export default class FieldStringEdit extends Component {
     currentCollection: proptypes.object,
 
     /**
+     * The human-friendly name of the field, to be displayed as a label.
+     */
+    displayName: proptypes.string,
+
+    /**
      * The ID of the document being edited.
      */
     documentId: proptypes.string,
@@ -56,6 +61,12 @@ export default class FieldStringEdit extends Component {
     group: proptypes.string,
 
     /**
+     * The name of the field within the collection. May be a path using
+     * dot-notation.
+     */
+    name: proptypes.string,
+
+    /**
      * A callback to be fired whenever the field wants to update its value to
      * a successful state. The function receives the name of the field and the
      * new value as arguments.
@@ -69,6 +80,16 @@ export default class FieldStringEdit extends Component {
      * new value of the field.
      */
     onError: proptypes.string,
+
+    /**
+     * An optional string to display as placeholder text.
+     */
+    placeholder: proptypes.string,
+
+    /**
+     * Whether the field is required.
+     */
+    required: proptypes.bool,
 
     /**
      * The field schema.
@@ -115,7 +136,14 @@ export default class FieldStringEdit extends Component {
   }
 
   renderAsFreeInput() {
-    const {error, value, schema} = this.props
+    const {
+      displayName,
+      error,
+      placeholder,
+      required,
+      schema,
+      value
+    } = this.props
     const publishBlock = schema.publish || {}
     const {heightType, rows, resizable} = publishBlock
     const type = publishBlock.multiline ? 'multiline' : 'text'
@@ -125,14 +153,14 @@ export default class FieldStringEdit extends Component {
       <Label
         error={error}
         errorMessage={typeof error === 'string' ? error : null}
-        label={schema.label}
-        comment={schema.required && 'Required'}
+        label={displayName}
+        comment={required && 'Required'}
       >
         <TextInput
           heightType={heightType}
           onChange={this.handleOnChange.bind(this)}
           onKeyUp={this.handleOnKeyUp.bind(this)}
-          placeholder={schema.placeholder}
+          placeholder={placeholder}
           readonly={readOnly}
           resizable={resizable}
           rows={rows}
@@ -144,7 +172,14 @@ export default class FieldStringEdit extends Component {
   }
 
   renderAsDropdown() {
-    const {error, value, schema} = this.props
+    const {
+      displayName,
+      error,
+      name,
+      required,
+      schema,
+      value
+    } = this.props
     const publishBlock = schema.publish || {}
     const options = publishBlock.options
     const selectedValue = value || schema.default || null
@@ -159,8 +194,8 @@ export default class FieldStringEdit extends Component {
       <Label
         error={error}
         errorMessage={typeof error === 'string' ? error : null}
-        label={schema.label || schema._id}
-        comment={schema.required && 'Required'}
+        label={displayName}
+        comment={required && 'Required'}
       >
         <select
           class={dropdownStyle.getClasses()}
@@ -258,13 +293,13 @@ export default class FieldStringEdit extends Component {
   }
 
   handleOnChange(event) {
-    const {onChange, schema} = this.props
+    const {name, onChange, schema} = this.props
     const value = this.getValueOfInput(event.target)
 
     this.validate(value)
 
     if (typeof onChange === 'function') {
-      onChange.call(this, schema._id, value)
+      onChange.call(this, name, value)
     }
   }
 
@@ -287,7 +322,7 @@ export default class FieldStringEdit extends Component {
   }
 
   validate(value) {
-    const {onError, schema} = this.props
+    const {name, onError, required, schema} = this.props
 
     let hasValidationErrors = false
 
@@ -295,7 +330,7 @@ export default class FieldStringEdit extends Component {
     if (Array.isArray(value)) {
       // If the field is required and we don't have any values selected,
       // there's a validation error.
-      hasValidationErrors = schema.required && (value.length === 0)
+      hasValidationErrors = required && (value.length === 0)
 
       // If there are no errors so far, we proceed to validate each value
       // in the array as an individual string to check for other validation
@@ -318,14 +353,14 @@ export default class FieldStringEdit extends Component {
 
       // If the field is required, its value is empty and there's no default,
       // there's a validation error.
-      hasValidationErrors = schema.required && !schema.default && (trimmedValue.length === 0)
+      hasValidationErrors = required && !schema.default && (trimmedValue.length === 0)
 
       // We then proceed to validate the value for other validation parameters.
       hasValidationErrors = hasValidationErrors || this.findValidationErrorsInValue(trimmedValue)
     }
 
     if (typeof onError === 'function') {
-      onError.call(this, schema._id, hasValidationErrors, value)
+      onError.call(this, name, hasValidationErrors, value)
     }
   }
 }

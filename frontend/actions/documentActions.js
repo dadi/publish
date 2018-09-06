@@ -4,7 +4,6 @@ import * as Constants from 'lib/constants'
 import * as LocalStorage from 'lib/local-storage'
 import * as Types from 'actions/actionTypes'
 import apiBridgeClient from 'lib/api-bridge-client'
-import {batchActions} from 'lib/redux'
 
 export function clearRemoteDocument () {
   return {
@@ -348,6 +347,13 @@ export function saveDocument ({
   }
 }
 
+export function setDocumentLanguage (language) {
+  return {
+    language,
+    type: Types.SET_DOCUMENT_LANGUAGE
+  }
+}
+
 export function setDocumentPeers (peers) {
   return {
     peers,
@@ -384,23 +390,21 @@ export function setRemoteDocument (remote, {
   fieldsNotInLocalStorage = [],
   forceUpdate = true
 } = {}) {
-  return (dispatch, getState) => {
-    let localStorageKey = remote._id
+  let localStorageKey = remote._id
 
-    if (clearLocal && localStorageKey) {
-      LocalStorage.clearDocument(localStorageKey)
-    }
+  if (clearLocal && localStorageKey) {
+    LocalStorage.clearDocument(localStorageKey)
+  }
 
-    let fromLocalStorage = LocalStorage.readDocument(localStorageKey)
+  let fromLocalStorage = LocalStorage.readDocument(localStorageKey)
 
-    dispatch({
-      clearLocal,
-      fieldsNotInLocalStorage,
-      forceUpdate,
-      fromLocalStorage,
-      remote,
-      type: Types.SET_REMOTE_DOCUMENT
-    })
+  return {
+    clearLocal,
+    fieldsNotInLocalStorage,
+    forceUpdate,
+    fromLocalStorage,
+    remote,
+    type: Types.SET_REMOTE_DOCUMENT
   }
 }
 

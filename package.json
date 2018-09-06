@@ -1,6 +1,6 @@
 {
   "name": "@dadi/publish",
-  "version": "1.0.6-beta",
+  "version": "1.0.8-beta",
   "description": "DADI Publish",
   "main": "index.js",
   "scripts": {
@@ -45,8 +45,8 @@
   },
   "homepage": "https://github.com/dadi/publish",
   "dependencies": {
-    "@dadi/api-wrapper": "^3.0.0",
-    "@dadi/api-wrapper-core": "^3.0.0",
+    "@dadi/api-wrapper": "^3.2.0",
+    "@dadi/api-wrapper-core": "^3.1.0",
     "@dadi/boot": "^1.1.4",
     "@dadi/logger": "^1.4.1",
     "@dadi/passport": "^1.2.0",

@@ -10,6 +10,7 @@ import * as documentsActions from 'actions/documentsActions'
 
 import {buildUrl, createRoute, router} from 'lib/router'
 import {connectHelper} from 'lib/util'
+import {Format} from 'lib/util/string'
 
 import Button from 'components/Button/Button'
 import DocumentFilters from 'components/DocumentFilters/DocumentFilters'
@@ -46,10 +47,10 @@ class DocumentListController extends Component {
     onAddNewFilter: proptypes.func,
 
     /**
-    * A callback to be used to obtain the sibling document routes (edit, create and list), as
+    * A callback to be used to obtain the base URL for the given page, as
     * determined by the view.
     */
-    onGetRoutes: proptypes.func
+    onBuildBaseUrl: proptypes.func
   }
 
   constructor(props) {
@@ -63,42 +64,39 @@ class DocumentListController extends Component {
       group,
       newFilter,
       onAddNewFilter,
-      onGetRoutes,
+      onBuildBaseUrl,
       referencedField,
       state
     } = this.props
     const {currentApi, currentCollection} = state.api
-    const routes = onGetRoutes(state.api.paths)
-    
     const hasDocuments = state.documents.list &&
       state.documents.list.results &&
       state.documents.list.results.length > 0
     const isReference = referencedField // Temporary to disable create new in reference fields until reference save is ready.
-    const params = state.router.params
+    const params = state.router.search
     const filters = params && params.filter ? params.filter : null
     const filterLimitReached = filters 
       && currentCollection 
       && Object.keys(filters).length === Object.keys(currentCollection.fields).length
-
-    const newHref = onGetRoutes(state.api.paths).createRoute({pos: 1}) // TO-DO: Change pos to match the number of new entries.
+    const newHref = onBuildBaseUrl({
+      createNew: true
+    })
 
     if (!currentCollection || state.documents.remoteError) {
       return null
     }
 
-    const collectionMatch = routes.getCollectionMatch(collection)
-    const menu = routes.menuMatch(currentApi, group, currentCollection)
-
-    let groupName = null
-
-    if (menu && menu.length) {
-      groupName = menu[0].title
-    }
+    let currentGroup = state.router.parameters &&
+      state.router.parameters.group &&
+      state.api.currentApi.menu &&
+      state.api.currentApi.menu.find(item => {
+        return Format.slugify(item.title) === state.router.parameters.group
+      })
 
     return (
       <div>
         <ListController 
-          breadcrumbs={[groupName, currentCollection.name]}
+          breadcrumbs={[currentGroup && currentGroup.title, currentCollection.name]}
         >
           <Button
             type="fill"

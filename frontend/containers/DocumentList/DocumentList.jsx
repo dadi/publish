@@ -55,12 +55,6 @@ class DocumentList extends Component {
     onBuildBaseUrl: proptypes.func,
 
     /**
-    * A callback to be used to obtain the sibling document routes (edit, create and list), as
-    * determined by the view.
-    */
-    onGetRoutes: proptypes.func,
-
-    /**
      * A callback to be fired if the container wants to attempt changing the
      * page title.
      */
@@ -110,7 +104,6 @@ class DocumentList extends Component {
   componentDidMount() {
     const {
       onBuildBaseUrl,
-      onGetRoutes,
       page,
       state
     } = this.props
@@ -127,7 +120,6 @@ class DocumentList extends Component {
   componentDidUpdate(prevProps) {
     const {
       actions,
-      onGetRoutes,
       referencedField,
       state
     } = this.props
@@ -140,15 +132,19 @@ class DocumentList extends Component {
     // let's update the selection with the value of the reference field, if
     // it is in view.
     if (referencedField && previousDocuments.isLoading && !documents.isLoading) {
-      const document = Object.assign(
+      let document = Object.assign(
         {},
         state.document.remote,
         state.document.local
       )
-      const referencedValue = document[referencedField]
+      let referencedValues = document[referencedField]
+      let referencedIds = (Array.isArray(referencedValues)
+        ? referencedValues.map(value => value._id)
+        : [referencedValues && referencedValues._id]
+      ).filter(Boolean)
 
-      if (referencedValue && referencedValue._id) {
-        actions.setDocumentSelection([referencedValue._id])
+      if (referencedIds.length > 0) {
+        actions.setDocumentSelection(referencedIds)
       }
     }
 
@@ -157,7 +153,6 @@ class DocumentList extends Component {
       return
     }
 
-    this.routes = onGetRoutes(state.api.paths)
     this.checkStatusAndFetch()
   }
 
@@ -186,7 +181,7 @@ class DocumentList extends Component {
       collection,
       filter,
       group,
-      onGetRoutes,
+      onBuildBaseUrl,
       order,
       referencedField,
       sort,
@@ -194,9 +189,11 @@ class DocumentList extends Component {
     } = this.props
     const documents = state.documents
     const {currentCollection} = state.api
-    const createHref = this.routes.createRoute()
+    const createLink = onBuildBaseUrl({
+      createNew: true
+    })
 
-    if (documents.remoteError || !currentCollection) {
+    if (documents.remoteError) {
       return (
         <ErrorMessage
           type={Constants.ERROR_ROUTE_NOT_FOUND}
@@ -224,7 +221,7 @@ class DocumentList extends Component {
           {!referencedField && (
             <Button
               accent="save"
-              href={createHref}
+              href={createLink}
             >Create new document</Button>
           )}
         </HeroMessage>
@@ -235,9 +232,6 @@ class DocumentList extends Component {
   }
 
   componentWillMount() {
-    const {state, onGetRoutes} = this.props
-
-    this.routes = onGetRoutes(state.api.paths)
     this.checkStatusAndFetch()
   }
 
@@ -268,7 +262,6 @@ class DocumentList extends Component {
       collection,
       filter,
       group,
-      onGetRoutes,
       order,
       page,
       documentId,
@@ -288,7 +281,7 @@ class DocumentList extends Component {
 
     let count = (currentCollection.settings && currentCollection.settings.count)
       || 20
-    let filterValue = state.router.params ? state.router.params.filter : null
+    let filterValue = state.router.search ? state.router.search.filter : null
 
     actions.fetchDocuments({
       api: currentApi,
@@ -296,8 +289,8 @@ class DocumentList extends Component {
       count,
       filters: filterValue,
       page,
-      documentId,
       parentCollection: currentParentCollection,
+      parentDocumentId: documentId,
       referencedField,
       sortBy: sort,
       sortOrder: order
@@ -325,7 +318,7 @@ class DocumentList extends Component {
       collection,
       documentId,
       group,
-      onGetRoutes,
+      onBuildBaseUrl,
       referencedField,
       state
     } = this.props
@@ -336,9 +329,8 @@ class DocumentList extends Component {
       return value
     }
 
-    let editHref = this.routes.editRoute({
-      documentId: documentId || data._id,
-      referencedId: documentId ? data._id : null
+    let editLink = onBuildBaseUrl({
+      documentId: documentId || data._id
     })
     let currentCollection = state.api.currentCollection
     let fieldSchema = currentCollection.fields[column.id]
@@ -346,7 +338,7 @@ class DocumentList extends Component {
 
     if (index === 0) {
       return (
-        <a href={editHref}>{renderedValue}</a>
+        <a href={editLink}>{renderedValue}</a>
       )
     }
 
@@ -393,7 +385,6 @@ class DocumentList extends Component {
       collection,
       group,
       referencedField,
-      onGetRoutes,
       onPageTitle,
       order,
       sort,

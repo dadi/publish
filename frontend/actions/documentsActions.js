@@ -46,72 +46,83 @@ export function fetchDocuments ({
   sortOrder
 }) {
   return (dispatch, getState) => {
-    const sort = [
-      sortBy || collection.settings.sort || 'createdAt',
-      sortOrder || (collection.settings.sortOrder === 1 ? 'asc' : 'desc') || 'desc'
-    ]
-
-    let queries = []
-
-    // This is the main one, where we retrieve the list of documents.
-    let parentQuery
-
-    if (collection === Constants.MEDIA_COLLECTION) {
-      parentQuery = apiBridgeClient({
-        api
-      }).inMedia()
-    } else {
-      const fields = visibleFieldList({fields: collection.fields, view: 'list'})
-
-      parentQuery = apiBridgeClient({
-        accessToken: getState().user.accessToken,
-        api,
-        collection,
-        fields
-      })
-    }
-
-    parentQuery = parentQuery.goToPage(page)
-      .sortBy(...sort)
-      .where(filters)
-      .find()
-
-    queries.push(parentQuery)
-
-    // If we're on a nested document, we need to retrieve the parent too.
-    if (referencedField && parentCollection) {
-      queries.push(
-        apiBridgeClient({
-          accessToken: getState().user.accessToken,
-          api,
-          collection: parentCollection
-        }).whereFieldIsEqualTo(
-          '_id',
-          parentDocumentId
-        ).find()
-      )
-    }
-
     dispatch(
       setDocumentListStatus(Constants.STATUS_LOADING)
     )
 
-    Promise.all(queries).then(response => {
-      const documentList = response[0]
+    let currentDocument = getState().document
+    let currentDocumentId = currentDocument &&
+      currentDocument.remote &&
+      currentDocument.remote._id
+    let parentQuery = Promise.resolve()
 
-      let actions = [
-        setDocumentList(documentList, filters)
-      ]
+    // If we're on a nested document, we need to retrieve the parent too.
+    if (
+      referencedField &&
+      parentCollection &&
+      parentDocumentId &&
+      currentDocumentId !== parentDocumentId
+    ) {
+      parentQuery = apiBridgeClient({
+        accessToken: getState().user.accessToken,
+        api,
+        collection: parentCollection
+      }).whereFieldIsEqualTo(
+        '_id',
+        parentDocumentId
+      ).find()
+    }
 
-      if (referencedField) {
-        const document = response[1].results[0]
+    return parentQuery.then(response => {
+      let parentDocument = response && response.results && response.results[0]
 
-        actions.push(setRemoteDocument(document, {
-          forceUpdate: false
-        }))
+      if (response && !parentDocument) {
+        return Promise.reject(404)
       }
 
-      dispatch(batchActions(actions))
+      let collectionSettings = (collection && collection.settings) || {}
+      let sort = [
+        sortBy || collectionSettings.sort || '_createdAt',
+        sortOrder || (collectionSettings.sortOrder === 1 ? 'asc' : 'desc') || 'desc'
+      ]
+      let listQuery
+
+      if (collection === Constants.MEDIA_COLLECTION) {
+        listQuery = apiBridgeClient({
+          accessToken: getState().user.accessToken,
+          api
+        }).inMedia()
+      } else {
+        const fields = visibleFieldList({fields: collection.fields, view: 'list'})
+
+        listQuery = apiBridgeClient({
+          accessToken: getState().user.accessToken,
+          api,
+          collection,
+          fields
+        })
+      }
+
+      listQuery = listQuery.goToPage(page)
+        .sortBy(...sort)
+        .where(filters)
+        .find()
+
+      return listQuery.then(response => {
+        let actions = [
+          setDocumentList(response, filters)
+        ]
+
+        if (parentDocument) {
+          actions.push(
+            setRemoteDocument(parentDocument, {
+              forceUpdate: false
+            })
+          )
+        }
+
+        dispatch(batchActions(actions))
+      })
     }).catch(error => {
       dispatch(
         setDocumentListStatus(Constants.STATUS_FAILED, error)
