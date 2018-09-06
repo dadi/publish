@@ -163,8 +163,6 @@ class CollectionNav extends Component {
     const {state, actions} = this.props
     const apis = state.api.apis
 
-    console.log(apis)
-
     if (apis && apis.length) {
       const collectionMap = this.buildCollectionMap(apis)
 
