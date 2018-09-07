@@ -134,7 +134,7 @@ export default class TextInputWithDatePicker extends Component {
           value={dateObj && dateObj.format(format)}
         />
 
-        {pickerVisible &&
+        {pickerVisible && !readonly && 
           <div ref={this.handlePickerRef.bind(this)}>
             <DateTimePicker
               className={styles.picker}
