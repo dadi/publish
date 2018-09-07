@@ -229,6 +229,12 @@ export default class TextInputWithDatePicker extends Component {
   }
 
   handlePickerRef(element) {
+    const {
+      readonly
+    } = this.props
+
+    if (readonly) return
+
     if (this.picker) return
 
     element.addEventListener('click', this.pickerEventHandler)
