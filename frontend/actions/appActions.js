@@ -4,7 +4,7 @@ import * as Types from 'actions/actionTypes'
 
 const NOTIFICATION_DEFAULTS = {
   dismissAfterRouteChange: true,
-  dismissAfterSeconds: 10,
+  dismissAfterSeconds: 3,
   dismissOnHover: true,
   options: {},
   type: Constants.NOTIFICATION_TYPE_WARNING
