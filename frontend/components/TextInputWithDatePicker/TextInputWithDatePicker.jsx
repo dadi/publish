@@ -134,7 +134,7 @@ export default class TextInputWithDatePicker extends Component {
           value={dateObj && dateObj.format(format)}
         />
 
-        {pickerVisible && 
+        {pickerVisible &&
           <div ref={this.handlePickerRef.bind(this)}>
             <DateTimePicker
               className={styles.picker}
@@ -184,11 +184,10 @@ export default class TextInputWithDatePicker extends Component {
 
   handleFocus(hasFocus) {
     const {pickerVisible} = this.state
-    const {readonly} = this.props
 
     this.hasFocus = hasFocus
 
-    if (!pickerVisible && !readonly) {
+    if (!pickerVisible) {
       this.setState({
         pickerVisible: true
       })
@@ -230,12 +229,6 @@ export default class TextInputWithDatePicker extends Component {
   }
 
   handlePickerRef(element) {
-    const {
-      readonly
-    } = this.props
-
-    if (readonly) return
-
     if (this.picker) return
 
     element.addEventListener('click', this.pickerEventHandler)
