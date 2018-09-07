@@ -8,7 +8,7 @@ import {visibleFieldList} from 'lib/fields'
 
 export function clearMediaList () {
   return {
-    type: Types.CLEAR_DOCUMENT_LIST
+    type: Types.CLEAR_MEDIA_LIST
   }
 }
 
@@ -27,7 +27,7 @@ export function deleteMedias ({api, bucket, ids}) {
     apiBridge.delete().then(response => {
       dispatch({
         ids,
-        type: Types.DELETE_DOCUMENTS
+        type: Types.DELETE_MEDIAS
       })
     })
   }
@@ -87,7 +87,7 @@ export function fetchMedias ({
       ]
       let listQuery
 
-      if (bucket === Constants.MEDIA_COLLECTION) {
+      if (bucket === Constants.MEDIA_BUCKET) {
         listQuery = apiBridgeClient({
           accessToken: getState().user.accessToken,
           api
@@ -135,14 +135,14 @@ export function setMediaList (medias, query) {
   return {
     medias,
     query,
-    type: Types.SET_DOCUMENT_LIST
+    type: Types.SET_MEDIA_LIST
   }
 }
 
 export function setMediaSelection (selectedMedias) {
   return {
     selectedMedias,
-    type: Types.SET_DOCUMENT_SELECTION
+    type: Types.SET_MEDIA_SELECTION
   }
 }
 
@@ -150,6 +150,6 @@ export function setMediaListStatus (status, data) {
   return {
     data,
     status,
-    type: Types.SET_DOCUMENT_LIST_STATUS
+    type: Types.SET_MEDIA_LIST_STATUS
   }
 }

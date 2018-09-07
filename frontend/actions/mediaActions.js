@@ -7,7 +7,7 @@ import apiBridgeClient from 'lib/api-bridge-client'
 
 export function clearRemoteMedia () {
   return {
-    type: Types.CLEAR_REMOTE_DOCUMENT
+    type: Types.CLEAR_REMOTE_MEDIA
   }
 }
 
@@ -90,7 +90,7 @@ function getLocalStorageKey ({
 
 export function registerSaveAttempt () {
   return {
-    type: Types.ATTEMPT_SAVE_DOCUMENT
+    type: Types.ATTEMPT_SAVE_MEDIA
   }
 }
 
@@ -113,7 +113,7 @@ export function registerUserLeavingMedia ({
     })
 
     dispatch({
-      type: Types.USER_LEAVING_DOCUMENT
+      type: Types.USER_LEAVING_MEDIA
     })
   }
 }
@@ -124,7 +124,7 @@ export function saveMedia ({
   media,
   mediaId,
   group,
-  urlCollection
+  urlBucket
 }) {
   // A method that returns `true`:
   // 1) If the objects are different and `false`
@@ -189,7 +189,7 @@ export function saveMedia ({
 
       if (!fieldSchema) return
 
-      const referencedCollection = fieldSchema.settings && fieldSchema.settings.bucket
+      const referencedBucket = fieldSchema.settings && fieldSchema.settings.bucket
 
       // We're only interested in the field if its value is truthy. If it's
       // null, it's good as it is.
@@ -204,7 +204,7 @@ export function saveMedia ({
         ) ? fieldSchema.settings.limit : Infinity
 
         // Is this a reference to a media bucket?
-        if (referencedCollection === Constants.MEDIA_COLLECTION) {
+        if (referencedBucket === Constants.MEDIA_BUCKET) {
           payload[field] = referencedMedias.map((media, index) => {
             // If this is an existing media item, we simply grab its ID.
             if (media._id) {
@@ -232,13 +232,13 @@ export function saveMedia ({
             return media
           })
         } else {
-          const referencedCollectionSchema = referencedCollection &&
+          const referencedBucketSchema = referencedBucket &&
             api.buckets.find(bucket => {
-              return bucket.slug === referencedCollection
+              return bucket.slug === referencedBucket
             })
 
           // If the referenced bucket doesn't exist, there's nothing we can do.
-          if (!referencedCollectionSchema) return
+          if (!referencedBucketSchema) return
 
           let referenceMediaIds = []
 
@@ -317,7 +317,7 @@ export function saveMedia ({
             // the given group/bucket pair.
             const localStorageKey = isUpdate ?
               mediaId : JSON.stringify({
-                bucket: urlCollection,
+                bucket: urlBucket,
                 group
               })
 
@@ -350,14 +350,14 @@ export function saveMedia ({
 export function setMediaLanguage (language) {
   return {
     language,
-    type: Types.SET_DOCUMENT_LANGUAGE
+    type: Types.SET_MEDIA_LANGUAGE
   }
 }
 
 export function setMediaPeers (peers) {
   return {
     peers,
-    type: Types.SET_DOCUMENT_PEERS
+    type: Types.SET_MEDIA_PEERS
   }
 }
 
@@ -404,7 +404,7 @@ export function setRemoteMedia (remote, {
     forceUpdate,
     fromLocalStorage,
     remote,
-    type: Types.SET_REMOTE_DOCUMENT
+    type: Types.SET_REMOTE_MEDIA
   }
 }
 
@@ -416,7 +416,7 @@ export function setRemoteMediaStatus (status, data) {
   return {
     data,
     status,
-    type: Types.SET_REMOTE_DOCUMENT_STATUS
+    type: Types.SET_REMOTE_MEDIA_STATUS
   }
 }
 
@@ -426,12 +426,12 @@ export function setRemoteMediaStatus (status, data) {
  */
 export function startNewMedia ({bucket, group}) {
   return (dispatch, getState) => {
-    let currentCollection = getState().media.bucket
+    let currentBucket = getState().media.bucket
 
     if (
-      currentCollection.database !== bucket.database ||
-      currentCollection.slug !== bucket.slug ||
-      currentCollection.version !== bucket.version
+      currentBucket.database !== bucket.database ||
+      currentBucket.slug !== bucket.slug ||
+      currentBucket.version !== bucket.version
     ) {
       let localStorageKey = getLocalStorageKey({
         bucket: bucket.slug,
@@ -446,7 +446,7 @@ export function startNewMedia ({bucket, group}) {
           version: bucket.version
         },
         media,
-        type: Types.START_NEW_DOCUMENT
+        type: Types.START_NEW_MEDIA
       })
     }
   }
@@ -478,7 +478,7 @@ export function updateLocalMedia (change, {
     dispatch({
       change,
       persistInLocalStorage,
-      type: Types.UPDATE_LOCAL_DOCUMENT
+      type: Types.UPDATE_LOCAL_MEDIA
     })
   }
 }

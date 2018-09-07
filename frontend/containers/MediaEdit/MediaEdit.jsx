@@ -254,7 +254,7 @@ class MediaEdit extends Component {
       return (
         <ErrorMessage
           data={{href: buildUrl(group, bucket)}}
-          type={Constants.ERROR_DOCUMENT_NOT_FOUND}
+          type={Constants.ERROR_MEDIA_NOT_FOUND}
         />
       )
     }

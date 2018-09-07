@@ -183,7 +183,7 @@ describe('MediaEdit', () => {
       const error = renderToString(
         <ErrorMessage
           data={{href: '/articles'}}
-          type={'ERROR_DOCUMENT_NOT_FOUND'}
+          type={'ERROR_MEDIA_NOT_FOUND'}
         />
       )
 
