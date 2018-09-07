@@ -85,7 +85,8 @@ export function loadApis () {
         apiList[apiIndex].collections = augmentedCollections
 
         return apiList[apiIndex]
-      }).catch(error => {
+      })
+      .catch(error => {
         console.log(error)
         dispatch(
           setApiStatus(Constants.STATUS_FAILED, error.code || error)
