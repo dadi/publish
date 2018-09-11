@@ -43,7 +43,7 @@ export default class FieldImageList extends Component {
           <div class={styles.thumbnails}>
             {values.map(value => (
               <img
-                class={styles.thumbnail}
+                class={`${styles.thumbnail} ${styles.list}`}
                 src={this.getImageSrc(value)}
               />
             ))}
