@@ -61,16 +61,17 @@ export default class FieldReferenceList extends Component {
 
     const firstStringField = this.findFirstStringField(displayableFields)
 
+    const values = value && !(value instanceof Array) ? [value] : value
+
     return (<div class={styles.values}>
-      {value.map((val, idx) => {
-        console.log(val)
+      {values.map((val, idx) => {
         let collection = schema.settings.collection
         let editLink = `${collection}/${val._id}`
         let displayField = optionsBlock && optionsBlock.displayField || firstStringField ? firstStringField.key : null
 
         return <div><a class={styles['value-link']} href={editLink}>
           {displayField && val[displayField] || `Referenced ${collection}`}
-        </a>{idx < value.length - 1 ? ', ' : ''}</div>
+        </a>{idx < values.length - 1 ? ', ' : ''}</div>
       })}
     </div>
     )
