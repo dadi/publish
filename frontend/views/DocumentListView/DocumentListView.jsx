@@ -112,8 +112,9 @@ export default class DocumentListView extends Component {
     documentId = this.props.documentId,
     group = this.props.group,
     referenceFieldSelect,
+    page,
     search = urlHelper().paramsToObject(window.location.search),
-    section =  this.props.section
+    section = this.props.section
   } = {}) {
     let urlNodes = [
       group,
@@ -124,6 +125,10 @@ export default class DocumentListView extends Component {
       urlNodes.push('new')
     } else {
       urlNodes.push(documentId)
+    }
+
+    if (page) {
+      urlNodes.push(page)
     }
 
     if (referenceFieldSelect) {

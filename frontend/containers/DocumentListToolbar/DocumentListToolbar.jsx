@@ -193,6 +193,7 @@ class DocumentListToolbar extends Component {
     } = this.props
 
     return onBuildBaseUrl({
+      page: page,
       referenceFieldSelect: referencedField
     })
   }
