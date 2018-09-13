@@ -70,3 +70,4 @@ The global state object.
 
 - type: `object`
 
+
