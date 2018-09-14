@@ -124,7 +124,7 @@ export default class FieldStringEdit extends Component {
       <Label
         error={error}
         errorMessage={typeof error === 'string' ? error : null}
-        label={schema.label}
+        label={schema.label || ''}
         comment={schema.required && 'Required'}
       >
         <TextInput
@@ -155,7 +155,7 @@ export default class FieldStringEdit extends Component {
       <Label
         error={error}
         errorMessage={typeof error === 'string' ? error : null}
-        label={schema.label || schema._id}
+        label={schema.label || ''}
         comment={schema.required && 'Required'}
       >
         <select
