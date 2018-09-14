@@ -105,9 +105,10 @@ export default class FieldImageEdit extends Component {
       schema,
       value
     } = this.props
-    const displayName = schema.label || schema._id
+    const displayName = schema.label || schema._id || ''
     const fieldLocalType = schema.publish && schema.publish.subType ? schema.publish.subType : schema.type
-    const href = buildUrl(...onBuildBaseUrl(), 'select', schema._id)
+    const baseUrl = onBuildBaseUrl ? onBuildBaseUrl() : []
+    const href = buildUrl(...baseUrl, 'select', schema._id || '')
     const isReference = schema.type === 'Reference'
     const singleFile = schema.settings && schema.settings.limit === 1
     const values = (value && !Array.isArray(value)) ? [value] : value
@@ -156,7 +157,7 @@ export default class FieldImageEdit extends Component {
                 <span>or </span>
                 <FileUpload
                   allowDrop={true}
-                  accept={config['FieldImage'].accept}
+                  accept={((config || {})['FieldImage'] || {}).accept}
                   multiple={!singleFile}
                   onChange={this.handleFileChange.bind(this)}
                 />
