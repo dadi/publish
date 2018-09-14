@@ -137,7 +137,7 @@ export default class FieldPasswordEdit extends Component {
           className={styles.label}
           error={wrongPassword || (missingFields && currentPassword.length === 0)}
           errorMessage={wrongPassword && 'This password is incorrect'}
-          label={`Current ${schema.label.toLowerCase()}`}
+          label={`Current ${(schema.label || '').toLowerCase()}`}
         >
           <TextInput
             onChange={this.handleOnChange.bind(this, 'currentPassword')}
@@ -151,7 +151,7 @@ export default class FieldPasswordEdit extends Component {
         <Label
           className={styles.label}
           error={missingFields && newPassword.length === 0}
-          label={`New ${schema.label.toLowerCase()}`}
+          label={`New ${(schema.label || '').toLowerCase()}`}
         >
           <TextInput
             onChange={this.handleOnChange.bind(this, 'newPassword')}
@@ -167,7 +167,7 @@ export default class FieldPasswordEdit extends Component {
           className={styles.label}
           error={passwordMismatch || (missingFields && newPasswordConfirm.length === 0)}
           errorMessage={passwordMismatch && 'The passwords must match'}
-          label={`New ${schema.label.toLowerCase()} (confirm)`}
+          label={`New ${(schema.label || '').toLowerCase()} (confirm)`}
         >
           <TextInput
             onChange={this.handleOnChange.bind(this, 'newPasswordConfirm')}
