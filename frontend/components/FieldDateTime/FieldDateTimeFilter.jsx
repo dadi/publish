@@ -76,6 +76,8 @@ export default class FieldDateTimeFilter extends Component {
       valueStyles
     } = this.props
 
+    const format=(((config || {}).formats || {}).date || {}).short
+
     return (
       <div class={containerStyles}>
         <select
@@ -95,7 +97,7 @@ export default class FieldDateTimeFilter extends Component {
         </select>
         <TextInputWithDatePicker
           className={valueStyles}
-          format={config.formats.date.short}
+          format={format}
           onChange={this.handleChange.bind(this, 'value')}
           onKeyUp={this.handleChange.bind(this, 'value')}
           placeholder="Search value"
