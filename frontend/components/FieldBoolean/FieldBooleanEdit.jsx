@@ -85,13 +85,13 @@ export default class FieldBooleanEdit extends Component {
   render() {
     const {onChange, value, schema} = this.props
 
-    const publishBlock = schema.publish
+    const publishBlock = schema.publish || {}
     const readOnly = publishBlock.readonly === true
 
     return (
       <Label
         compact={true}
-        label={schema.label}
+        label={schema.label || ''}
       >
         <Checkbox
           onChange={this.handleOnChange.bind(this)}
