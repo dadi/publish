@@ -9,7 +9,17 @@ export function loadApis () {
       auth
     } = getState().app.config
 
-    if (!apis) return
+    if (!apis) {
+      return dispatch(
+        setApiStatus(Constants.STATUS_FAILED, 'APIs does not exist')
+      )
+    }
+
+    if (0 === apis.length) {
+      return dispatch(
+        setApiStatus(Constants.STATUS_FAILED, 'No APIs exist')
+      )
+    }
 
     dispatch(setApiStatus(Constants.STATUS_LOADING))
 
@@ -22,7 +32,11 @@ export function loadApis () {
       }).getConfig().then(config => {
         apiList[apiIndex] = Object.assign({}, api, {
           i18n: config.i18n,
-          publicUrl: config.publicUrl
+          media: {
+            buckets: config.media.buckets,
+            defaultBucket: config.media.defaultBucket
+          },
+          publicUrl: config.publicUrl,
         })
 
         // 2: Get list of supported languages.
@@ -71,6 +85,12 @@ export function loadApis () {
         apiList[apiIndex].collections = augmentedCollections
 
         return apiList[apiIndex]
+      })
+      .catch(error => {
+        console.log(error)
+        dispatch(
+          setApiStatus(Constants.STATUS_FAILED, error.code || error)
+        )
       })
     })
 
