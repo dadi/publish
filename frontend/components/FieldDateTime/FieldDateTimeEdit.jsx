@@ -203,8 +203,10 @@ export default class FieldDateTimeEdit extends Component {
     const {pickerVisible} = this.state
     const {schema} = this.props
 
+    const publishBlock = schema.publish || {}
+
     // Return from focus event so picker doesn't display
-    if (schema.publish.readonly === true) {
+    if (publishBlock.readonly === true) {
       return
     }
 
