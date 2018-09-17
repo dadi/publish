@@ -167,25 +167,23 @@ export default class FieldImageEdit extends Component {
             </div>
 
             <div class={styles['upload-options']}>
-              
-                <DropArea
-                  draggingText={`Drop image${singleFile ? '' : 's'} here`}
-                  onDrop={this.handleFileChange.bind(this)}
-                >
-                  <div class={styles['upload-drop']}>
-                    Drop file{singleFile ? '' : 's'} to upload
-                    </div>
-                </DropArea>
-              </div>
-              <div class={styles['upload-select']}>
-                <span>or </span>
-                <FileUpload
-                  allowDrop={true}
-                  accept={config['FieldImage'].accept}
-                  multiple={!singleFile}
-                  onChange={this.handleFileChange.bind(this)}
-                />
-              </div>
+              <DropArea
+                draggingText={`Drop image${singleFile ? '' : 's'} here`}
+                onDrop={this.handleFileChange.bind(this)}
+              >
+                <div class={styles['upload-drop']}>
+                  Drop file{singleFile ? '' : 's'} to upload
+                </div>
+              </DropArea>
+            </div>
+            <div class={styles['upload-select']}>
+              <span>or </span>
+              <FileUpload
+                allowDrop={true}
+                accept={config['FieldImage'].accept}
+                multiple={!singleFile}
+                onChange={this.handleFileChange.bind(this)}
+              />
             </div>
           </div>
         }
