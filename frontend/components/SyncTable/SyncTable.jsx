@@ -15,13 +15,14 @@ import TableRowCell from 'components/Table/TableRowCell'
 export default class SyncTable extends Component {
   static propTypes = {
     /**
-     * An array of objects containing the id and label of the columns to be displayed in the table.
+     * An array of objects containing the id, label and type of the columns to be displayed in the table.
      *
      *   ```js
      *   [
      *     {
      *        id: 'first_name',
-     *        label: 'First name'
+     *        label: 'First name',
+     *        annotation: 'String'
      *     }
      *   ]
      *   ```
@@ -166,6 +167,7 @@ export default class SyncTable extends Component {
       >
         <TableHead>
           {columns.map(column => {
+            console.log(column)
             let content = column.label
             let arrow = null
             let linkSortOrder = 'asc'
@@ -184,10 +186,11 @@ export default class SyncTable extends Component {
               }
 
               content = onSort(content, column.id, linkSortOrder)
+              console.log(content)
             }
 
             return (
-              <TableHeadCell arrow={arrow}>{content}</TableHeadCell>
+              <TableHeadCell arrow={arrow} annotation={column.annotation}>{content}</TableHeadCell>
             )
           })}
         </TableHead>

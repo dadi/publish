@@ -21,6 +21,11 @@ export default class TableHeadCell extends Component {
     /**
      * The text content of the table head cell.
      */
+    annotation: proptypes.string,
+
+    /**
+     * The text content of the table head cell.
+     */
     children: proptypes.node
   }
 
@@ -29,7 +34,7 @@ export default class TableHeadCell extends Component {
   }
 
   render() {
-    const {arrow} = this.props
+    const {arrow, annotation} = this.props
     let cellStyle = new Style(styles, 'cell', 'head-cell')
 
     cellStyle.addIf('select-cell', this.props.select)
@@ -47,6 +52,10 @@ export default class TableHeadCell extends Component {
 
         <span class={styles['head-cell-label']}>
           {this.props.children}
+        </span>
+
+        <span class={styles[annotation]}>
+          {annotation}
         </span>
       </th>
     )

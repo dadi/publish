@@ -444,7 +444,8 @@ class DocumentList extends Component {
 
         return {
           id: field,
-          label: currentCollection.fields[field].label
+          label: currentCollection.fields[field].label,
+          annotation: currentCollection.fields[field].type === 'Reference' ? 'ref' : ''
         }
       })
 
