@@ -443,9 +443,9 @@ class DocumentList extends Component {
         if (!currentCollection.fields[field]) return
 
         return {
+          annotation: this.renderAnnotation(currentCollection.fields[field]),
           id: field,
-          label: currentCollection.fields[field].label,
-          annotation: currentCollection.fields[field].type === 'Reference' ? 'ref' : ''
+          label: currentCollection.fields[field].label
         }
       })
 
@@ -477,6 +477,20 @@ class DocumentList extends Component {
         >Clear filters</Button>
       </HeroMessage>
     )
+  }
+
+  renderAnnotation(schema) {
+    const fieldType = (schema.publish && schema.publish.subType) ?
+      schema.publish.subType : schema.type
+    const fieldComponentName = `Field${fieldType}`
+    const FieldComponentListHeadAnnotation = fieldComponents[fieldComponentName] &&
+      fieldComponents[fieldComponentName].listHeadAnnotation
+
+    if (FieldComponentListHeadAnnotation) {
+      return (
+        <FieldComponentListHeadAnnotation />
+      )  
+    }
   }
 
   renderField(fieldName, schema, value) {

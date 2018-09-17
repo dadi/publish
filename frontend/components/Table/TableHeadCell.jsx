@@ -54,9 +54,7 @@ export default class TableHeadCell extends Component {
           {this.props.children}
         </span>
 
-        <span class={styles[annotation]}>
-          {annotation}
-        </span>
+        {annotation}
       </th>
     )
   }

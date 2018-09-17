@@ -167,7 +167,6 @@ export default class SyncTable extends Component {
       >
         <TableHead>
           {columns.map(column => {
-            console.log(column)
             let content = column.label
             let arrow = null
             let linkSortOrder = 'asc'
@@ -186,11 +185,13 @@ export default class SyncTable extends Component {
               }
 
               content = onSort(content, column.id, linkSortOrder)
-              console.log(content)
             }
 
             return (
-              <TableHeadCell arrow={arrow} annotation={column.annotation}>{content}</TableHeadCell>
+              <TableHeadCell
+                annotation={column.annotation}
+                arrow={arrow}
+              >{content}</TableHeadCell>
             )
           })}
         </TableHead>
