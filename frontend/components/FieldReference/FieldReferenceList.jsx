@@ -51,8 +51,6 @@ export default class FieldReferenceList extends Component {
 
     if (!referencedCollection) return null
 
-    if (!value) return null
-
     const optionsBlock = schema.publish && schema.publish.options
     const displayableFields = filterVisibleFields({
       fields: referencedCollection.fields,
@@ -63,17 +61,21 @@ export default class FieldReferenceList extends Component {
 
     const values = value && !(value instanceof Array) ? [value] : value
 
-    return (<div class={styles.values}>
-      {values.map((val, idx) => {
-        let collection = schema.settings.collection
-        let editLink = `${collection}/${val._id}`
-        let displayField = optionsBlock && optionsBlock.displayField || firstStringField ? firstStringField.key : null
+    if (values) {
+      return (<div class={styles.values}>
+        {values.map((val, idx) => {
+          let collection = schema.settings.collection
+          let editLink = `${collection}/${val._id}`
+          let displayField = optionsBlock && optionsBlock.displayField || firstStringField ? firstStringField.key : null
 
-        return <div><a class={styles['value-link']} href={editLink}>
-          {displayField && val[displayField] || `Referenced ${collection}`}
-        </a>{idx < values.length - 1 ? ', ' : ''}</div>
-      })}
-    </div>
-    )
+          return <div><a class={styles['value-link']} href={editLink}>
+            {displayField && val[displayField] || `Referenced ${collection}`}
+          </a>{idx < values.length - 1 ? ', ' : ''}</div>
+        })}
+      </div>
+      )
+    } else {
+      return (<div class={styles.values}><div class={styles.empty}>None</div></div>)      
+    }
   }
 }
