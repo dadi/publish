@@ -481,6 +481,9 @@ class DocumentList extends Component {
   renderField(fieldName, schema, value) {
     if (!schema) return
 
+    const {state} = this.props
+    const {currentApi, currentCollection} = state.api
+
     const fieldType = (schema.publish && schema.publish.subType) ?
       schema.publish.subType : schema.type
     const fieldComponentName = `Field${fieldType}`
@@ -490,6 +493,8 @@ class DocumentList extends Component {
     if (FieldComponentList) {
       return (
         <FieldComponentList
+          collection={currentCollection}
+          currentApi={currentApi}
           schema={schema}
           value={value}
         />
