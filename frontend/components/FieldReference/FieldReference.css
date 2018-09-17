@@ -19,6 +19,10 @@
   padding-top: 2px;
 }
 
+.empty {
+  color: var(--theme-colour-background-shade-2, #AAAAAA);
+}
+
 .value-link {
   display: inline-block;
   border-bottom: 1px solid var(--theme-colour-background-shade-4, #E4E4E4);
