@@ -32,6 +32,11 @@ export default class FieldBooleanEdit extends Component {
     currentCollection: proptypes.object,
 
     /**
+     * The human-friendly name of the field, to be displayed as a label.
+     */
+    displayName: proptypes.string,
+
+    /**
      * The ID of the document being edited.
      */
     documentId: proptypes.string,
@@ -53,6 +58,12 @@ export default class FieldBooleanEdit extends Component {
     group: proptypes.string,
 
     /**
+     * The name of the field within the collection. May be a path using
+     * dot-notation.
+     */
+    name: proptypes.string,
+
+    /**
      * A callback to be fired whenever the field wants to update its value to
      * a successful state. The function receives the name of the field and the
      * new value as arguments.
@@ -66,6 +77,11 @@ export default class FieldBooleanEdit extends Component {
      * new value of the field.
      */
     onError: proptypes.string,
+
+    /**
+     * Whether the field is required.
+     */
+    required: proptypes.bool,
 
     /**
      * The field schema.
@@ -83,7 +99,7 @@ export default class FieldBooleanEdit extends Component {
   }
 
   render() {
-    const {onChange, value, schema} = this.props
+    const {displayName, onChange, value, schema} = this.props
 
     const publishBlock = schema.publish || {}
     const readOnly = publishBlock.readonly === true
@@ -91,7 +107,7 @@ export default class FieldBooleanEdit extends Component {
     return (
       <Label
         compact={true}
-        label={schema.label || ''}
+        label={displayName || ''}
       >
         <Checkbox
           onChange={this.handleOnChange.bind(this)}
@@ -103,10 +119,10 @@ export default class FieldBooleanEdit extends Component {
   }
 
   handleOnChange(event) {
-    const {onChange, schema} = this.props
+    const {name, onChange, schema} = this.props
 
     if (typeof onChange === 'function') {
-      onChange.call(this, schema._id, event.target.checked)
+      onChange.call(this, name, event.target.checked)
     }
   }
 }

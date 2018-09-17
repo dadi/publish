@@ -32,6 +32,11 @@ export default class FieldNumberEdit extends Component {
     currentCollection: proptypes.object,
 
     /**
+     * The human-friendly name of the field, to be displayed as a label.
+     */
+    displayName: proptypes.string,
+
+    /**
      * The ID of the document being edited.
      */
     documentId: proptypes.string,
@@ -53,6 +58,12 @@ export default class FieldNumberEdit extends Component {
     group: proptypes.string,
 
     /**
+     * The name of the field within the collection. May be a path using
+     * dot-notation.
+     */
+    name: proptypes.string,
+
+    /**
      * A callback to be fired whenever the field wants to update its value to
      * a successful state. The function receives the name of the field and the
      * new value as arguments.
@@ -66,6 +77,11 @@ export default class FieldNumberEdit extends Component {
      * new value of the field.
      */
     onError: proptypes.string,
+
+    /**
+     * Whether the field is required.
+     */
+    required: proptypes.bool,
 
     /**
      * The field schema.
@@ -101,15 +117,21 @@ export default class FieldNumberEdit extends Component {
   }
 
   render() {
-    const {error, schema, value} = this.props
+    const {
+      displayName,
+      error,
+      required,
+      schema,
+      value
+    } = this.props
     const publishBlock = schema.publish || {}
 
     return (
       <Label
         error={Boolean(error)}
         errorMessage={typeof error === 'string' ? error : null}
-        label={schema.label || ''}
-        comment={schema.required && 'Required'}
+        label={displayName || ''}
+        comment={required && 'Required'}
       >
         <TextInput
           onChange={this.handleOnChange.bind(this)}
@@ -127,13 +149,13 @@ export default class FieldNumberEdit extends Component {
   }
 
   handleOnChange(event) {
-    const {onChange, schema} = this.props
+    const {name, onChange, schema} = this.props
     const value = this.getValueOfInput(event.target)
 
     this.validate(value)
 
     if (typeof onChange === 'function') {
-      onChange.call(this, schema._id, parseFloat(event.target.value))
+      onChange.call(this, name, parseFloat(event.target.value))
     }
   }
 
@@ -144,13 +166,14 @@ export default class FieldNumberEdit extends Component {
   }
 
   validate(value) {
-    const {onError, schema} = this.props
+    const {name, onError, required, schema} = this.props
 
-    const hasValidationErrors = schema.required && (isNaN(value) || typeof value !== 'number') 
+    const hasValidationErrors = required && (isNaN(value)
+      || typeof value !== 'number') 
     //{To-Do}: add findValidationErrorsInValue method for further validation checks 
 
     if (typeof onError === 'function') {
-        onError.call(this, schema._id, hasValidationErrors, value)
+        onError.call(this, name, hasValidationErrors, value)
     }
   }
 }

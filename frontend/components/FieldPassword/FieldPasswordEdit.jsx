@@ -37,6 +37,11 @@ export default class FieldPasswordEdit extends Component {
     currentCollection: proptypes.object,
 
     /**
+     * The human-friendly name of the field, to be displayed as a label.
+     */
+    displayName: proptypes.string,
+
+    /**
      * The ID of the document being edited.
      */
     documentId: proptypes.string,
@@ -58,6 +63,12 @@ export default class FieldPasswordEdit extends Component {
     group: proptypes.string,
 
     /**
+     * The name of the field within the collection. May be a path using
+     * dot-notation.
+     */
+    name: proptypes.string,
+
+    /**
      * A callback to be fired whenever the field wants to update its value to
      * a successful state. The function receives the name of the field and the
      * new value as arguments.
@@ -71,6 +82,11 @@ export default class FieldPasswordEdit extends Component {
      * new value of the field.
      */
     onError: proptypes.string,
+
+    /**
+     * Whether the field is required.
+     */
+    required: proptypes.bool,
 
     /**
      * The field schema.
@@ -117,6 +133,7 @@ export default class FieldPasswordEdit extends Component {
 
   render() {
     const {
+      displayName,
       error,
       schema
     } = this.props
@@ -137,7 +154,7 @@ export default class FieldPasswordEdit extends Component {
           className={styles.label}
           error={wrongPassword || (missingFields && currentPassword.length === 0)}
           errorMessage={wrongPassword && 'This password is incorrect'}
-          label={`Current ${(schema.label || '').toLowerCase()}`}
+          label={`Current ${(displayName || '').toLowerCase()}`}
         >
           <TextInput
             onChange={this.handleOnChange.bind(this, 'currentPassword')}
@@ -151,7 +168,7 @@ export default class FieldPasswordEdit extends Component {
         <Label
           className={styles.label}
           error={missingFields && newPassword.length === 0}
-          label={`New ${(schema.label || '').toLowerCase()}`}
+          label={`New ${(displayName || '').toLowerCase()}`}
         >
           <TextInput
             onChange={this.handleOnChange.bind(this, 'newPassword')}
@@ -167,7 +184,7 @@ export default class FieldPasswordEdit extends Component {
           className={styles.label}
           error={passwordMismatch || (missingFields && newPasswordConfirm.length === 0)}
           errorMessage={passwordMismatch && 'The passwords must match'}
-          label={`New ${(schema.label || '').toLowerCase()} (confirm)`}
+          label={`New ${(displayName || '').toLowerCase()} (confirm)`}
         >
           <TextInput
             onChange={this.handleOnChange.bind(this, 'newPasswordConfirm')}
@@ -185,6 +202,7 @@ export default class FieldPasswordEdit extends Component {
   handleKeyUp(field, event) {
     const {
       error,
+      name,
       onError,
       schema
     } = this.props
@@ -200,12 +218,12 @@ export default class FieldPasswordEdit extends Component {
     this.validate()
 
     if (wrongPassword && field === 'currentPassword') {
-      onError.call(this, schema._id, false, newPassword)
+      onError.call(this, name, false, newPassword)
     }
   }
 
   handleOnChange(field, event) {
-    const {onChange, schema} = this.props
+    const {name, onChange, schema} = this.props
     const {
       currentPassword,
       forceValidation,
@@ -226,13 +244,14 @@ export default class FieldPasswordEdit extends Component {
           new: newPassword
         }) : null
 
-      onChange.call(this, schema._id, combinedValue, false)
+      onChange.call(this, name, combinedValue, false)
     }
   }
 
   validate() {
     const {
       error,
+      name,
       onError,
       schema
     } = this.props
@@ -275,7 +294,7 @@ export default class FieldPasswordEdit extends Component {
     const hasValidationErrors = (validationErrors.length > 0) && validationErrors
 
     if (typeof onError === 'function') {
-      onError.call(this, schema._id, hasValidationErrors, newPassword)
+      onError.call(this, name, hasValidationErrors, newPassword)
     }
   }
 }

@@ -38,6 +38,11 @@ export default class FieldDateTimeEdit extends Component {
     currentCollection: proptypes.object,
 
     /**
+     * The human-friendly name of the field, to be displayed as a label.
+     */
+    displayName: proptypes.string,
+
+    /**
      * The ID of the document being edited.
      */
     documentId: proptypes.string,
@@ -59,6 +64,12 @@ export default class FieldDateTimeEdit extends Component {
     group: proptypes.string,
 
     /**
+     * The name of the field within the collection. May be a path using
+     * dot-notation.
+     */
+    name: proptypes.string,
+
+    /**
      * A callback to be fired whenever the field wants to update its value to
      * a successful state. The function receives the name of the field and the
      * new value as arguments.
@@ -72,6 +83,11 @@ export default class FieldDateTimeEdit extends Component {
      * new value of the field.
      */
     onError: proptypes.string,
+
+    /**
+     * Whether the field is required.
+     */
+    required: proptypes.bool,
 
     /**
      * The field schema.
@@ -98,7 +114,9 @@ export default class FieldDateTimeEdit extends Component {
   render() {
     const {
       config,
+      displayName,
       error, 
+      required,
       schema, 
       value
     } = this.props
@@ -119,8 +137,8 @@ export default class FieldDateTimeEdit extends Component {
       <Label
         error={Boolean(error)}
         errorMessage={typeof error === 'string' ? error : null}
-        label={schema.label || ''}
-        comment={schema.required && 'Required'}
+        label={displayName || ''}
+        comment={required && 'Required'}
       >
         <TextInput
           onBlur={this.handleFocus.bind(this, false)}
@@ -157,7 +175,13 @@ export default class FieldDateTimeEdit extends Component {
   }
 
   handleChange(event) {
-    const {config, onChange, schema, value} = this.props
+    const {
+      config,
+      name,
+      onChange,
+      schema,
+      value
+    } = this.props
     const newDate = new DateTime(event.target.value, config.formats.date.long)
 
     let newValue = null
@@ -171,7 +195,7 @@ export default class FieldDateTimeEdit extends Component {
     }
 
     if (typeof onChange === 'function') {
-      onChange.call(this, schema._id, newValue)
+      onChange.call(this, name, newValue)
     }
   }
 
@@ -198,10 +222,10 @@ export default class FieldDateTimeEdit extends Component {
   }
 
   handlePickerChange(newDate) {
-    const {onChange, schema} = this.props
+    const {name, onChange, schema} = this.props
 
     if (typeof onChange === 'function') {
-      onChange.call(this, schema._id, newDate.toISOString())
+      onChange.call(this, name, newDate.toISOString())
     }
   }
 
