@@ -40,7 +40,7 @@ export default class FieldReferenceList extends Component {
   }
 
   render() {
-    const {schema, value, currentApi, collection} = this.props
+    const {schema, value, currentApi} = this.props
 
     const referencedCollectionName = schema.settings && schema.settings.collection
     if (!referencedCollectionName) return null
@@ -62,20 +62,27 @@ export default class FieldReferenceList extends Component {
     const values = value && !(value instanceof Array) ? [value] : value
 
     if (values) {
-      return (<div class={styles.values}>
-        {values.map((val, idx) => {
-          let collection = schema.settings.collection
-          let editLink = `${collection}/${val._id}`
-          let displayField = optionsBlock && optionsBlock.displayField || firstStringField ? firstStringField.key : null
+      return (
+        <div class={styles.values}>
+          {values.map((val, idx) => {
+            let collection = schema.settings.collection
+            let editLink = `${collection}/${val._id}`
+            let displayField = optionsBlock && optionsBlock.displayField || firstStringField ? firstStringField.key : null
 
-          return <div><a class={styles['value-link']} href={editLink}>
-            {displayField && val[displayField] || `Referenced ${collection}`}
-          </a>{idx < values.length - 1 ? ', ' : ''}</div>
-        })}
-      </div>
+            return (
+              <div>
+                <a class={styles['value-link']} href={editLink}>
+                  {displayField && val[displayField] || `Referenced ${collection}`}
+                </a>{idx < values.length - 1 ? ', ' : ''}
+              </div>
+            )
+          })}
+        </div>
       )
     } else {
-      return (<div class={styles.values}><div class={styles.empty}>None</div></div>)      
+      return (
+        <div class={styles.values}><div class={styles.empty}>None</div></div>
+      )
     }
   }
 }
