@@ -156,10 +156,7 @@ export default class FieldImageEdit extends Component {
         }
 
         {!values &&
-          <DropArea
-            draggingText={`Drop image${singleFile ? '' : 's'} here`}
-            onDrop={this.handleFileChange.bind(this)}
-          >
+          <div>
             <div class={styles.placeholder}>
               <Button
                 accent="data"
@@ -170,10 +167,17 @@ export default class FieldImageEdit extends Component {
             </div>
 
             <div class={styles['upload-options']}>
-              <div class={styles['upload-drop']}>
-                Drop file{singleFile ? '' : 's'} to upload
+              
+                <DropArea
+                  draggingText={`Drop image${singleFile ? '' : 's'} here`}
+                  onDrop={this.handleFileChange.bind(this)}
+                >
+                  <div class={styles['upload-drop']}>
+                    Drop file{singleFile ? '' : 's'} to upload
+                    </div>
+                </DropArea>
               </div>
-              <div>
+              <div class={styles['upload-select']}>
                 <span>or </span>
                 <FileUpload
                   allowDrop={true}
@@ -183,7 +187,7 @@ export default class FieldImageEdit extends Component {
                 />
               </div>
             </div>
-          </DropArea>
+          </div>
         }
       </Label>
     )
