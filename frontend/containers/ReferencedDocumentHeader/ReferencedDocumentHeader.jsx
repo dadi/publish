@@ -3,7 +3,6 @@
 import {h, Component} from 'preact'
 import proptypes from 'proptypes'
 import {bindActionCreators} from 'redux'
-import {buildUrl} from 'lib/router'
 
 import * as apiActions from 'actions/apiActions'
 import {connectHelper} from 'lib/util'
@@ -71,10 +70,9 @@ class ReferencedDocumentHeader extends Component {
     if (!fieldSchema) return null
 
     const displayName = fieldSchema.label || referencedField
-    const fieldSection = fieldSchema.publish &&
-      fieldSchema.publish.section &&
-      Format.slugify(fieldSchema.publish.section)
-    const backToDocumentLink = buildUrl(...onBuildBaseUrl({section: fieldSection}))
+    const returnUrl = onBuildBaseUrl({
+      createNew: !Boolean(state.router.parameters.documentId)
+    })
 
     return (
       <div class={styles.container}>
@@ -85,7 +83,7 @@ class ReferencedDocumentHeader extends Component {
 
         <Button
           accent="destruct"
-          href={backToDocumentLink}
+          href={returnUrl}
           size="small"
         >Nevermind, back to document</Button>
       </div>
@@ -95,7 +93,8 @@ class ReferencedDocumentHeader extends Component {
 
 export default connectHelper(
   state => ({
-    api: state.api
+    api: state.api,
+    router: state.router
   }),
   dispatch => bindActionCreators(apiActions, dispatch)
 )(ReferencedDocumentHeader)

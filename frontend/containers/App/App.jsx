@@ -21,6 +21,7 @@ import SignOutView from 'views/SignOutView/SignOutView'
 import ProfileEditView from 'views/ProfileEditView/ProfileEditView'
 
 import {connectHelper, debounce} from 'lib/util'
+import {urlHelper} from 'lib/util/url-helper'
 import Analytics from 'lib/analytics'
 import ConnectionMonitor from 'lib/status'
 import apiBridgeClient from 'lib/api-bridge-client'
@@ -84,7 +85,11 @@ class App extends Component {
     if (!previousState.user.accessToken && state.user.accessToken) {
       actions.loadApis()
 
-      return route('/')
+      let redirectUri = state.router.search.redirect
+        ? decodeURIComponent(state.router.search.redirect)
+        : '/'
+
+      return route(redirectUri)
     }
 
     // State change: token is invalid.
@@ -198,7 +203,13 @@ class App extends Component {
       currentRouteAttributes.authenticate
     )
 
+    let search = urlHelper().paramsToObject(window.location.search)
     let parameters = currentRouteAttributes.matches
+
+    // Remove `search` parameters from `parameters`
+    Object.keys(search || {}).forEach(key => {
+      delete parameters[key]
+    })
 
     // This is a special case where the document create route
     // wrongly matches the pattern specified by the document
@@ -223,7 +234,11 @@ class App extends Component {
       (currentRouteIsAuthenticated && !state.user.accessToken) ||
       event.url === '/sign-out'
     ) {
-      return route('/sign-in')
+      let redirectParam = event.url === '/'
+        ? ''
+        : `?redirect=${encodeURIComponent(event.url)}`
+
+      return route(`/sign-in${redirectParam}`)
     }
   }
 

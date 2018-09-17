@@ -56,12 +56,17 @@ class SignIn extends Component {
     if (signInError) {
       switch (signInError) {
         case 401:
-          message = 'Email not found or password incorrect'
+          message = 'Username not found or password incorrect'
 
           break
 
         case 501:
-          message = 'The configured API is running an earlier version than that required by this version of Publish'
+          message = 'The API is running an earlier version than that required by this version of Publish'
+
+          break
+
+        case 'NO-CORS':
+          message = 'API Cross Origin support appears to be disabled'
 
           break
 

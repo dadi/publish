@@ -28,7 +28,7 @@ storiesOf('FieldString', module)
     .add('FieldStringEdit', () =>
       <FieldStringEdit schema={schema} />)
     .add('FieldStringList', () =>
-      <FieldStringList schema={schema} />) // returns null
+      <div><FieldStringList schema={schema} />Expected to return null</div>)
     .add('FieldStringFilter', () =>
       <FieldStringFilter schema={schema} />)
 
@@ -50,7 +50,7 @@ storiesOf('FieldImage', module)
     .add('FieldImageEdit', () =>
       <FieldImageEdit schema={schema} />)
     .add('FieldImageReferenceSelect', () =>
-      <FieldImageReferenceSelect schema={schema} />)
+      <div><FieldImageReferenceSelect schema={schema} />This one needs actual data to render</div>)
 
 storiesOf('FieldNumber', module)
     .add('FieldNumberEdit', () =>

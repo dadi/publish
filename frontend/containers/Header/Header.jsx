@@ -25,12 +25,6 @@ class Header extends Component {
     actions: proptypes.object,
 
     /**
-    * A callback to be used to obtain the sibling document routes (edit, create and list), as
-    * determined by the view.
-    */
-    onGetRoutes: proptypes.func,
-
-    /**
      * The global state object.
      */
     state: proptypes.object
@@ -40,22 +34,6 @@ class Header extends Component {
     super(props)
 
     this.state.expanded = false
-  }
-
-  componentWillMount() {
-    const {onGetRoutes, state} = this.props
-    
-    if (typeof onGetRoutes === 'function') {
-      this.routes = onGetRoutes(state.api.paths)
-    }
-  }
-
-  componentDidUpdate(prevProps, prevState) {
-    const {onGetRoutes, state} = this.props
-
-    if (typeof onGetRoutes === 'function') {
-      this.routes = onGetRoutes(state.api.paths)
-    }
   }
 
   render() {

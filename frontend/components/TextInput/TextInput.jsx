@@ -191,8 +191,8 @@ export default class TextInput extends Component {
   adjustHeightIfNeeded()
   {
     if (this.props.heightType === 'content') {
-      this.base.style.height = 0
-      this.base.style.height = this.base.scrollHeight + 'px';
+      this.base.style.height = "5px"
+      this.base.style.height = (this.base.scrollHeight + 20) + 'px';
     }
   }
 

@@ -30,19 +30,19 @@
 .container:active .launcher-system,
 .container:focus .launcher-system,
 .container:hover .launcher-system {
-  background-color: var(--theme-colour-system-shade-2, #c08d00);
-  color: var(--theme-colour-system, #ffbf0d);
+  background-color: var(--theme-colour-system-shade-2, #c08d00) !important;
+  color: var(--theme-colour-system, #ffbf0d) !important;
 }
 
 /* Accent: save */
 .launcher-save {
-  background-color: var(--theme-colour-save-shade-1, #6ea338);
-  color: var(--theme-colour-secondary, #FFFFFF);
+  background-color: var(--theme-colour-save-shade-1, #6ea338) !important;
+  color: var(--theme-colour-secondary, #FFFFFF) !important;
 }
 
 .container:active .launcher-save,
 .container:focus .launcher-save,
 .container:hover .launcher-save {
-  background-color: var(--theme-colour-save-shade-2, #58822d);
-  color: var(--theme-colour-secondary, #FFFFFF);
+  background-color: var(--theme-colour-save-shade-2, #58822d) !important;
+  color: var(--theme-colour-secondary, #FFFFFF) !important;
 }

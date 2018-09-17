@@ -4,6 +4,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [1.0.8-beta] (2018-09-04)
+
+### Changed
+
+* Replace "email" with "username"
+* Redirect to previous URL when signing in
+* Add support for API multi language
+* Display message when CORS is not enabled in API
+* Display message when required API version isn't being used 
+* Show Edit button on Reference fields
+
 ## [1.0.6-beta] (2018-08-06)
 
 ### Changed

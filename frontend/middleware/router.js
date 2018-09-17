@@ -39,13 +39,13 @@ export default function syncRouteWithStore (history, store, {
       }
     }
 
-    const params = urlHelper().paramsToObject(history.location.search)
+    const search = urlHelper().paramsToObject(history.location.search)
 
     // Update the store by calling action
     store.dispatch({
       action: history.action,
       locationBeforeTransitions: history.location,
-      params,
+      search,
       type: Types.LOCATION_CHANGE
     })
   }
