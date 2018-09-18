@@ -8,13 +8,14 @@ Props
 
 ### `columns`
 
-An array of objects containing the id and label of the columns to be displayed in the table.
+An array of objects containing the id, label and type of the columns to be displayed in the table.
 
   ```js
   [
     {
        id: 'first_name',
-       label: 'First name'
+       label: 'First name',
+       annotation: 'String'
     }
   ]
   ```
