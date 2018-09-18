@@ -13,11 +13,17 @@ import Page from 'components/Page/Page'
 class HomeView extends Component {
   render() {
     const {state} = this.props
-    const {user} = state
+    const {api, user} = state
 
     if (!user.isSignedIn) {
       return null
     }
+
+    let hasAccessToCollections = api.currentApi &&
+      api.currentApi.collections.length > 0
+    let message = hasAccessToCollections ?
+      'You can use the menu to navigate collections and start editing documents.' :
+      'You do not currently have access to any collections, please contact an administrator.'
 
     setPageTitle()
 
@@ -28,7 +34,7 @@ class HomeView extends Component {
         <Main>
           <HeroMessage
             title={`Welcome, ${(user.remote.data && user.remote.data && user.remote.data.publishFirstName) || 'Guest'}.`}
-            subtitle="You can use the menu to navigate collections and start editing documents."
+            subtitle={message}
           />
         </Main>
       </Page>
@@ -38,6 +44,7 @@ class HomeView extends Component {
 
 export default connectHelper(
   state => ({
+    api: state.api,
     user: state.user
   }),
   dispatch => bindActionCreators(userActions, dispatch)
