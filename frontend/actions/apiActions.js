@@ -15,33 +15,24 @@ export function loadApis () {
 
     let apiList = []
     let apiQueue = apis.map((api, apiIndex) => {
-      // 1: Get API config.
+      apiList[apiIndex] = Object.assign({}, api)
+
+      // 1: Get list of supported languages.
       return apiBridgeClient({
         accessToken: getState().user.accessToken,
         api
-      }).getConfig().then(config => {
-        apiList[apiIndex] = Object.assign({}, api, {
-          i18n: config.i18n,
-          publicUrl: config.publicUrl
-        })
-
-        // 2: Get list of supported languages.
-        return apiBridgeClient({
-          accessToken: getState().user.accessToken,
-          api
-        }).getLanguages()
-      })
+      }).getLanguages()
       .then(({results: languages}) => {
         apiList[apiIndex].languages = languages
 
-        // 3: Get list of collections.
+        // 2: Get list of collections.
         return apiBridgeClient({
           accessToken: getState().user.accessToken,
           api
         }).getCollections()
       })
       .then(({collections}) => {
-        // 4: Get collection schema.
+        // 3: Get collection schema.
         let queue = collections.map(collection => {
           return apiBridgeClient({
             accessToken: getState().user.accessToken,
@@ -55,7 +46,7 @@ export function loadApis () {
         return Promise.all(queue)
       })
       .then(apiCollections => {
-        // 5: Augmenting collection schemas with default Publish
+        // 4: Augmenting collection schemas with default Publish
         // parameters.
         let augmentedCollections = apiCollections
           .map((schema, index) => {
