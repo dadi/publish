@@ -19,8 +19,10 @@ class HomeView extends Component {
       return null
     }
 
-    let hasAccessToCollections = api.currentApi &&
-      api.currentApi.collections.length > 0
+    let hasAccessToCollections = api.apis.length &&
+      api.apis.find(api => {
+        return api.collections.length > 0
+      })
     let message = hasAccessToCollections ?
       'You can use the menu to navigate collections and start editing documents.' :
       'You do not currently have access to any collections, please contact an administrator.'
