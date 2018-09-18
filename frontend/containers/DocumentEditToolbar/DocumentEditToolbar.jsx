@@ -169,6 +169,12 @@ class DocumentEditToolbar extends Component {
       currentLanguage = defaultLanguage && defaultLanguage.code
     }
 
+    let languageOptions = {}
+    
+    Object.keys(languages).forEach(key => {
+      languageOptions[languages[key]] = this.handleLanguageChange.bind(this, key)
+    })
+
     return (
       <Toolbar>
         {peers && (peers.length > 0) &&
@@ -180,11 +186,14 @@ class DocumentEditToolbar extends Component {
         }
 
         {languages && (
-          <DropdownNative
-            onChange={this.handleLanguageChange.bind(this)}
-            options={languages}
-            value={currentLanguage}
-          />
+          <div class={styles.button}>
+            <ButtonWithOptions
+              accent="greyscale"
+              options={languageOptions}
+            >
+              {languages[currentLanguage]}
+            </ButtonWithOptions>
+          </div>
         )}
 
         <div class={styles.metadata}>

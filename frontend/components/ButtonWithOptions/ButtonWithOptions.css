@@ -46,3 +46,16 @@
   background-color: var(--theme-colour-save-shade-2, #58822d) !important;
   color: var(--theme-colour-secondary, #FFFFFF) !important;
 }
+
+/* Greyscale */
+.launcher-greyscale {
+  background-color: var(--theme-colour-background-shade-2, #EEEEEE) !important;
+  color: var(--theme-colour-secondary, #FFFFFF) !important;
+}
+
+.container:active .launcher-greyscale,
+.container:focus .launcher-greyscale,
+.container:hover .launcher-greyscale {
+  background-color: var(--theme-colour-primary-shade-1, #777777) !important;
+  color: var(--theme-colour-secondary, #FFFFFF) !important;
+}

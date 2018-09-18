@@ -125,3 +125,16 @@
   color: var(--theme-colour-secondary, #FFFFFF) !important;
   cursor: not-allowed !important;
 }
+
+/* Greyscale */
+.button-greyscale {
+  background-color: var(--theme-colour-background-shade-1, #FAFAFA);
+  color: var(--theme-colour-primary, #000000);
+}
+
+.button-greyscale:active,
+.button-greyscale:focus,
+.button-greyscale:hover {
+  background-color: var(--theme-colour-background-shade-2, #AAAAAA);
+  color: var(--theme-colour-primary, #FFFFFF);
+}
