@@ -76,6 +76,25 @@ class DocumentEditToolbar extends Component {
     
     this.keyboard = new Keyboard()
     this.onSave = null
+
+    this.saveOptions = {
+      default: 0,
+      options: [
+        {
+          name: 'Save and continue',
+          action: this.handleSave.bind(this, 'save')
+        },
+        {
+          name: 'Save and create new',
+          action: this.handleSave.bind(this, 'saveAndCreateNew')
+        },
+        {
+          name: 'Save and go back',
+          action: this.handleSave.bind(this, 'saveAndGoBack')
+        }
+      ]
+    }
+    
   }
 
   componentDidMount() {
@@ -137,17 +156,18 @@ class DocumentEditToolbar extends Component {
       .length
     const method = documentId ? 'edit' : 'new'
 
-    // By default, we support these two save modes.
-    let saveOptions = {
-      'Save and create new': this.handleSave.bind(this, 'saveAndCreateNew'),
-      'Save and go back': this.handleSave.bind(this, 'saveAndGoBack')
-    }
-
     // If we're editing an existing document, we also allow users to duplicate
     // the document.
     if (method === 'edit') {
-      saveOptions['Save as duplicate'] = this.handleSave.bind(this, 'saveAsDuplicate')
+      saveOptions.options.push(
+        {
+          name: 'Save as duplicate',
+          action: this.handleSave.bind(this, 'saveAsDuplicate')
+        }
+      )
     }
+
+    const defaultSaveOption = saveOptions.options[saveOptions.default]
 
     let languages = Boolean(state.api.currentApi) &&
       Boolean(state.api.currentApi.languages) &&
@@ -228,10 +248,10 @@ class DocumentEditToolbar extends Component {
             <ButtonWithOptions
               accent="save"
               disabled={hasConnectionIssues || hasValidationErrors || isSaving}
-              onClick={this.handleSave.bind(this, 'save')}
-              options={saveOptions}
+              onClick={this.saveDefaultActionAndExecute(saveOptions.default)}
+              options={saveOptions.options.filter(option => option !== defaultSaveOption)}
             >
-              Save and continue
+              {defaultSaveOption.name}
             </ButtonWithOptions>
           </div>
         </div>
@@ -373,6 +393,10 @@ class DocumentEditToolbar extends Component {
     }    
 
     actions.registerSaveAttempt()
+  }
+
+  saveDefaultActionAndExecute(defaultActionIndex) {
+    
   }
 
   saveDocument() {
