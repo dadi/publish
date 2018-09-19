@@ -56,6 +56,13 @@ If defined, contains an error message to be displayed by the field.
 - default value: `false`
 
 
+### `example`
+
+The field tip.
+
+- type: `string`
+
+
 ### `forceValidation`
 
 Whether the field should be validated as soon as it mounts, rather than
