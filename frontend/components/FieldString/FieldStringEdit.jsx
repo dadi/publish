@@ -99,7 +99,12 @@ export default class FieldStringEdit extends Component {
     /**
      * The field value.
      */
-    value: proptypes.bool
+    value: proptypes.bool,
+
+    /**
+     * The field tip.
+     */
+    example: proptypes.string
   }
 
   static defaultProps = {
@@ -142,19 +147,21 @@ export default class FieldStringEdit extends Component {
       placeholder,
       required,
       schema,
-      value
+      value,
+      example
     } = this.props
     const publishBlock = schema.publish || {}
     const {heightType, rows, resizable} = publishBlock
     const type = publishBlock.multiline ? 'multiline' : 'text'
     const readOnly = publishBlock.readonly === true
+    const comment = example || (required && 'Required')
 
     return (
       <Label
         error={error}
         errorMessage={typeof error === 'string' ? error : null}
-        label={displayName}
-        comment={required && 'Required'}
+        label={displayName || ''}
+        comment={comment}
       >
         <TextInput
           heightType={heightType}
@@ -178,7 +185,8 @@ export default class FieldStringEdit extends Component {
       name,
       required,
       schema,
-      value
+      value,
+      example
     } = this.props
     const publishBlock = schema.publish || {}
     const options = publishBlock.options
@@ -189,13 +197,14 @@ export default class FieldStringEdit extends Component {
     const dropdownStyle = new Style(styles, 'dropdown')
       .addIf('dropdown-error', error)
       .addIf('dropdown-multiple', multiple)
+    const comment = example || (required && 'Required')
 
     return (
       <Label
         error={error}
         errorMessage={typeof error === 'string' ? error : null}
-        label={displayName}
-        comment={required && 'Required'}
+        label={displayName || ''}
+        comment={comment}
       >
         <select
           class={dropdownStyle.getClasses()}

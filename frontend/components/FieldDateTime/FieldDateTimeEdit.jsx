@@ -97,7 +97,12 @@ export default class FieldDateTimeEdit extends Component {
     /**
      * The field value.
      */
-    value: proptypes.bool
+    value: proptypes.bool,
+
+    /**
+     * The field tip.
+     */
+    example: proptypes.string
   }
 
   constructor(props) {
@@ -118,10 +123,12 @@ export default class FieldDateTimeEdit extends Component {
       error, 
       required,
       schema, 
-      value
+      value,
+      example
     } = this.props
     const {pickerVisible} = this.state
     const publishBlock = schema.publish || {}
+    const comment = example || (required && 'Required')
 
     let dateObj = null
 
@@ -137,8 +144,8 @@ export default class FieldDateTimeEdit extends Component {
       <Label
         error={Boolean(error)}
         errorMessage={typeof error === 'string' ? error : null}
-        label={displayName}
-        comment={required && 'Required'}
+        label={displayName || ''}
+        comment={comment}
       >
         <TextInput
           onBlur={this.handleFocus.bind(this, false)}
