@@ -134,9 +134,9 @@ export default class ButtonWithOptions extends Component {
         {open && !disabled &&
           <div class={styles.options}>
             <Dropdown tooltip="right">
-              {Object.keys(options).map(option => {
+              {options.map(option => {
                 return (
-                  <DropdownItem onClick={options[option]}>{option}</DropdownItem>
+                  <DropdownItem onClick={option.action}>{option.name}</DropdownItem>
                 )
               })}
             </Dropdown>
