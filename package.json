@@ -24,7 +24,8 @@
     "watch": "NODE_ENV=development npm-run-all --parallel watch:server watch:build",
     "watch:build": "webpack --watch",
     "watch:server": "nodemon \"./index.js\" --watch \"./app\"",
-    "storybook": "start-storybook -p 9001 -c .storybook"
+    "storybook:run": "start-storybook -p 9001 -c .storybook",
+    "storybook:build": "build-storybook -c .storybook -o public/storybook"
   },
   "repository": {
     "type": "git",
@@ -150,7 +151,8 @@
       "public",
       "test",
       "scripts",
-      "frontend"
+      "frontend",
+      "stories"
     ]
   },
   "jest": {
