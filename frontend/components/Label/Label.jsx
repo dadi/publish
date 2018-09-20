@@ -102,7 +102,7 @@ export default class Label extends Component {
   }  
 
   render() {
-    const {
+    let {
       className,
       comment,
       compact,
