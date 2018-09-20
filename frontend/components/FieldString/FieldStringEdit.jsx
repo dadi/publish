@@ -152,7 +152,7 @@ export default class FieldStringEdit extends Component {
       <Label
         error={error}
         errorMessage={typeof error === 'string' ? error : null}
-        label={displayName || ''}
+        label={displayName}
         comment={required && 'Required'}
       >
         <TextInput
@@ -190,7 +190,7 @@ export default class FieldStringEdit extends Component {
       <Label
         error={error}
         errorMessage={typeof error === 'string' ? error : null}
-        label={displayName || ''}
+        label={displayName}
         comment={required && 'Required'}
       >
         <select
