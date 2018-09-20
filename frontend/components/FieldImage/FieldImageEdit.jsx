@@ -112,7 +112,7 @@ export default class FieldImageEdit extends Component {
   }
 
   render() {
-    const {
+    let {
       collection,
       config,
       displayName,
@@ -123,6 +123,10 @@ export default class FieldImageEdit extends Component {
       schema,
       value
     } = this.props
+
+    config = config || {}
+    const fieldImage = config.FieldImage || {}
+    const accept = fieldImage.accept
 
     const fieldLocalType = schema.publish && schema.publish.subType ? schema.publish.subType : schema.type
     const href = onBuildBaseUrl ?  onBuildBaseUrl({
@@ -179,7 +183,7 @@ export default class FieldImageEdit extends Component {
                 <span>or </span>
                 <FileUpload
                   allowDrop={true}
-                  accept={((config || {})['FieldImage'] || {}).accept}
+                  accept={accept}
                   multiple={!singleFile}
                   onChange={this.handleFileChange.bind(this)}
                 />
