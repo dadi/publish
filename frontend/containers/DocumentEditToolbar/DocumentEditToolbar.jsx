@@ -11,6 +11,7 @@ import {Keyboard} from 'lib/keyboard'
 import * as appActions from 'actions/appActions'
 import * as documentActions from 'actions/documentActions'
 import * as documentsActions from 'actions/documentsActions'
+import * as userActions from 'actions/userActions'
 
 import {bindActionCreators} from 'redux'
 import {buildUrl} from 'lib/router'
@@ -24,7 +25,8 @@ import DropdownNative from 'components/DropdownNative/DropdownNative'
 import Peer from 'components/Peer/Peer'
 import Toolbar from 'components/Toolbar/Toolbar'
 
-const SAVE_AND_CONTINUE = 'Save and continue',
+const FIELD_PUBLISH_SAVE_OPTIONS_LAST_USED = 'publishSaveOptionsLastUsed',
+  SAVE_AND_CONTINUE = 'Save and continue',
   SAVE_AND_CREATE_NEW = 'Save and create new',
   SAVE_AND_GO_BACK = 'Save and go back',
   SAVE_AS_DUPLICATE = 'Save as duplicate',
@@ -201,8 +203,9 @@ class DocumentEditToolbar extends Component {
       .length
     const method = documentId ? 'edit' : 'new'
 
-    // GET FROM STORAGE
-    const savedSaveOption = availableSaveOptions.default
+    const savedSaveOptionOnUser = state.user.remote.data[FIELD_PUBLISH_SAVE_OPTIONS_LAST_USED]
+
+    const savedSaveOption = savedSaveOptionOnUser || availableSaveOptions.default
 
     const localSaveOptions = filterMap(
       ([,option]) => option.methods.includes(method)
@@ -216,9 +219,7 @@ class DocumentEditToolbar extends Component {
       savedSaveOption :
       availableSaveOptions.default
 
-    const defaultSaveOption = localSaveOptions.get(defaultSaveOptionName)
-
-    const invisibleSaveOptions = filterMap(option => option !== defaultSaveOption)(localSaveOptions)
+    const invisibleSaveOptions = filterMap(([name]) => name !== defaultSaveOptionName)(localSaveOptions)
 
     let languages = Boolean(state.api.currentApi) &&
       Boolean(state.api.currentApi.languages) &&
@@ -454,7 +455,13 @@ class DocumentEditToolbar extends Component {
    * @return void
    */
   saveDefaultAction(defaultActionName) {
-    console.log(`Saving default action = ${defaultActionName}`)
+    const {
+      actions,
+      state
+    } = this.props
+
+    actions.updateLocalUser(`data.${FIELD_PUBLISH_SAVE_OPTIONS_LAST_USED}`, defaultActionName);
+    actions.saveUser()
   }
 
   /**
@@ -514,11 +521,13 @@ export default connectHelper(
     api: state.api,
     app: state.app,
     document: state.document,
-    router: state.router
+    router: state.router,
+    user: state.user
   }),
   dispatch => bindActionCreators({
     ...appActions,
     ...documentActions,
-    ...documentsActions
+    ...documentsActions,
+    ...userActions
   }, dispatch)
 )(DocumentEditToolbar)
