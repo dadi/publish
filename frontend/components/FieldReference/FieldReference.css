@@ -19,13 +19,10 @@
   padding-top: 2px;
 }
 
-<<<<<<< HEAD
-=======
 .empty {
   color: var(--theme-colour-background-shade-2, #AAAAAA);
 }
 
->>>>>>> develop
 .value-link {
   display: inline-block;
   border-bottom: 1px solid var(--theme-colour-background-shade-4, #E4E4E4);
@@ -44,8 +41,6 @@
 
 .control-button {
   margin-left: 10px;
-<<<<<<< HEAD
-=======
 }
 
 .list-head-annotation {
@@ -57,5 +52,4 @@
   display: inline-block;
   border-radius: 2px;
   margin-left: 5px;
->>>>>>> develop
 }
