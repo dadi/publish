@@ -15,12 +15,12 @@ import * as documentsActions from 'actions/documentsActions'
 import {bindActionCreators} from 'redux'
 import {buildUrl} from 'lib/router'
 import {connectHelper} from 'lib/util'
-import {getApiForUrlParams, getCollectionForUrlParams} from 'lib/collection-lookup'
 import {route} from '@dadi/preact-router'
 
 import ButtonWithOptions from 'components/ButtonWithOptions/ButtonWithOptions'
 import ButtonWithPrompt from 'components/ButtonWithPrompt/ButtonWithPrompt'
 import DateTime from 'components/DateTime/DateTime'
+import DropdownNative from 'components/DropdownNative/DropdownNative'
 import Peer from 'components/Peer/Peer'
 import Toolbar from 'components/Toolbar/Toolbar'
 
@@ -48,6 +48,12 @@ class DocumentEditToolbar extends Component {
      * The name of the group where the current collection belongs (if any).
      */
     group: proptypes.string,
+
+    /**
+    * A callback to be used to obtain the base URL for the given page, as
+    * determined by the view.
+    */
+    onBuildBaseUrl: proptypes.func,
 
     /**
      * The name of a reference field currently being edited.
@@ -85,20 +91,21 @@ class DocumentEditToolbar extends Component {
     } = this.props
     const document = state.document
     const previousDocument = prevProps.state.document
-    const status = document.remoteStatus
-    const wasFirstValidated = !previousDocument.validationErrors && document.validationErrors
-    const wasSaving = previousDocument.remoteStatus === Constants.STATUS_SAVING
+    const wasFirstValidated = !previousDocument.hasBeenValidated &&
+      document.hasBeenValidated
 
     // Have we just saved a document?
-    if (wasSaving && (status !== Constants.STATUS_SAVING)) {
+    if (previousDocument.isSaving && !document.isSaving) {
       if (typeof this.onSave.callback === 'function') {
         this.onSave.callback(state.document.remote ? state.document.remote._id : null)
       }
     }
 
     // Are we trying to save the document?
-    if ((previousDocument.saveAttempts < document.saveAttempts) ||
-        (wasFirstValidated && document.saveAttempts > 0)) {
+    if (
+      previousDocument.saveAttempts < document.saveAttempts ||
+      wasFirstValidated && document.saveAttempts > 0
+    ) {
       this.saveDocument()
     }
 
@@ -118,15 +125,17 @@ class DocumentEditToolbar extends Component {
       documentId,
       state
     } = this.props
-    const document = state.document.remote
+    const {
+      isSaving,
+      peers,
+      remote: document
+    } = state.document || {}
     const hasConnectionIssues = state.app.networkStatus !== Constants.NETWORK_OK
-    const isSaving = state.document.remoteStatus === Constants.STATUS_SAVING
     const validationErrors = state.document.validationErrors
     const hasValidationErrors = validationErrors && Object.keys(validationErrors)
       .filter(field => validationErrors[field])
       .length
     const method = documentId ? 'edit' : 'new'
-    const peers = state.document.peers
 
     // By default, we support these two save modes.
     let saveOptions = {
@@ -140,6 +149,26 @@ class DocumentEditToolbar extends Component {
       saveOptions['Save as duplicate'] = this.handleSave.bind(this, 'saveAsDuplicate')
     }
 
+    let languages = Boolean(state.api.currentApi) &&
+      Boolean(state.api.currentApi.languages) &&
+      (state.api.currentApi.languages.length > 1) &&
+      state.api.currentApi.languages.reduce((languagesObject, language) => {
+        languagesObject[language.code] = language.name
+
+        return languagesObject
+      }, {})
+    let currentLanguage = state.router.search.lang
+
+    // No language is selected, so we'll set the value of the dropdown to the
+    // value of the default language.
+    if (languages && !currentLanguage) {
+      let defaultLanguage = state.api.currentApi.languages.find(language => {
+        return Boolean(language.default)
+      })
+
+      currentLanguage = defaultLanguage && defaultLanguage.code
+    }
+
     return (
       <Toolbar>
         {peers && (peers.length > 0) &&
@@ -150,22 +179,30 @@ class DocumentEditToolbar extends Component {
           </div>
         }
 
+        {languages && (
+          <DropdownNative
+            onChange={this.handleLanguageChange.bind(this)}
+            options={languages}
+            value={currentLanguage}
+          />
+        )}
+
         <div class={styles.metadata}>
-          {document && document.createdAt &&
+          {document && document._createdAt &&
             <p>
               <span>Created </span>
               <DateTime
-                date={document.createdAt}
+                date={document._createdAt}
                 relative={true}
               />
             </p>
           }
 
-          {document && document.lastModifiedAt &&
+          {document && document._lastModifiedAt &&
             <p class={styles['metadata-emphasis']}>
               <span>Last updated </span>
               <DateTime
-                date={document.lastModifiedAt}
+                date={document._lastModifiedAt}
                 relative={true}
               />
             </p>
@@ -173,17 +210,19 @@ class DocumentEditToolbar extends Component {
         </div>
 
         <div class={styles.buttons}>
-          <div class={styles.button}>
-            <ButtonWithPrompt
-              accent="destruct"
-              className={styles.button}
-              disabled={hasConnectionIssues}
-              onClick={this.handleDelete.bind(this)}
-              promptCallToAction="Yes, delete it."
-              position="left"
-              promptMessage="Are you sure you want to delete this document?"
-            >Delete</ButtonWithPrompt> 
-          </div>
+          {document && (
+            <div class={styles.button}>
+              <ButtonWithPrompt
+                accent="destruct"
+                className={styles.button}
+                disabled={hasConnectionIssues}
+                onClick={this.handleDelete.bind(this)}
+                promptCallToAction="Yes, delete it."
+                position="left"
+                promptMessage="Are you sure you want to delete this document?"
+              >Delete</ButtonWithPrompt> 
+            </div>
+          )}
 
           <div class={styles.button}>
             <ButtonWithOptions
@@ -212,26 +251,28 @@ class DocumentEditToolbar extends Component {
       referencedField,
       state
     } = this.props
+    const {currentApi, currentCollection} = state.api
     const document = state.document.remote
-    const currentApi = getApiForUrlParams(state.api.apis, {
-      collection,
-      group
-    })
-    const currentCollection = getCollectionForUrlParams(state.api.apis, {
-      collection,
-      group,
-      referencedField,
-      useApi: currentApi
-    })
-    const query = {
-      api: currentApi,
-      collection: currentCollection,
-      ids: [document._id]
-    }
 
     if (document._id) {
-      actions.deleteDocuments(query)
+      actions.deleteDocuments({
+        api: currentApi,
+        collection: currentCollection,
+        ids: [document._id]
+      })
     }
+  }
+
+  handleLanguageChange(newLanguage) {
+    const {actions, onBuildBaseUrl} = this.props
+
+    let languageUrl = onBuildBaseUrl({
+      search: {
+        lang: newLanguage
+      }
+    })
+
+    route(languageUrl)
   }
 
   handleSave(saveMode) {
@@ -239,6 +280,7 @@ class DocumentEditToolbar extends Component {
       actions,
       collection,
       group,
+      onBuildBaseUrl,
       section,
       state
     } = this.props
@@ -255,7 +297,12 @@ class DocumentEditToolbar extends Component {
               }) 
               return
             }
-            route(buildUrl(group, collection, documentId, section))
+
+            let newUrl = onBuildBaseUrl({
+              documentId
+            })
+            
+            route(newUrl)
 
             actions.setNotification({
               message:`The document has been ${newDocument ? 'created' : 'updated'}`
@@ -269,7 +316,12 @@ class DocumentEditToolbar extends Component {
       case 'saveAndCreateNew':
         this.onSave = {
           callback: documentId => {
-            route(buildUrl(group, collection, 'new'))
+            let newUrl = onBuildBaseUrl({
+              createNew: true,
+              section: null
+            })
+
+            route(newUrl)
 
             actions.setNotification({
               message: `The document has been ${newDocument ? 'created' : 'updated'}`
@@ -285,7 +337,12 @@ class DocumentEditToolbar extends Component {
       case 'saveAndGoBack':
         this.onSave = {
           callback: documentId => {
-            route(buildUrl(group, collection))
+            let newUrl = onBuildBaseUrl({
+              documentId: null,
+              section: null
+            })
+
+            route(newUrl)
 
             actions.setNotification({
               message: `The document has been ${newDocument ? 'created' : 'updated'}`
@@ -299,7 +356,11 @@ class DocumentEditToolbar extends Component {
       case 'saveAsDuplicate':
         this.onSave = {
           callback: documentId => {
-            route(buildUrl(group, collection, documentId, section))
+            let newUrl = onBuildBaseUrl({
+              documentId
+            })
+
+            route(newUrl)
 
             actions.setNotification({
               message: `The document has been created`
@@ -331,17 +392,6 @@ class DocumentEditToolbar extends Component {
 
     if (hasValidationErrors) return
 
-    const currentApi = getApiForUrlParams(state.api.apis, {
-      collection,
-      group
-    })
-    const currentCollection = getCollectionForUrlParams(state.api.apis, {
-      collection,
-      group,
-      referencedField,
-      useApi: currentApi
-    })
-
     let document = state.document.local
 
     // If we're creating a new document, we need to inject any required Boolean
@@ -351,8 +401,8 @@ class DocumentEditToolbar extends Component {
     }
 
     actions.saveDocument({
-      api: currentApi,
-      collection: currentCollection,
+      api: state.api.currentApi,
+      collection: state.api.currentCollection,
       document,
       documentId: creatingNew ? null : documentId,
       group,
@@ -365,7 +415,8 @@ export default connectHelper(
   state => ({
     api: state.api,
     app: state.app,
-    document: state.document
+    document: state.document,
+    router: state.router
   }),
   dispatch => bindActionCreators({
     ...appActions,

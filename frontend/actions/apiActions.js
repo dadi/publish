@@ -13,78 +13,76 @@ export function loadApis () {
 
     dispatch(setApiStatus(Constants.STATUS_LOADING))
 
-    let apisToProcess = apis.length
-    let apisWithCollections = []
-
-    apis.forEach(api => {
-      const apiConfig = apiBridgeClient({
+    let apiList = []
+    let apiQueue = apis.map((api, apiIndex) => {
+      // 1: Get API config.
+      return apiBridgeClient({
+        accessToken: getState().user.accessToken,
         api
+      }).getConfig().then(config => {
+        apiList[apiIndex] = Object.assign({}, api, {
+          i18n: config.i18n,
+          publicUrl: config.publicUrl
+        })
+
+        // 2: Get list of supported languages.
+        return apiBridgeClient({
+          accessToken: getState().user.accessToken,
+          api
+        }).getLanguages()
       })
-      .getConfig()
-      .then(config => {
-        apiBridgeClient({api}).getCollections().then(({collections}) => {
-          // This bundler will be used to get all the collections schemas for
-          // this API in bulk.
-          const collectionBundler = apiBridgeClient.getBundler()
+      .then(({results: languages}) => {
+        apiList[apiIndex].languages = languages
 
-          collections.forEach(collection => {
-            const collectionQuery = apiBridgeClient({
-              api,
-              collection,
-              inBundle: true
-            }).getConfig()
+        // 3: Get list of collections.
+        return apiBridgeClient({
+          accessToken: getState().user.accessToken,
+          api
+        }).getCollections()
+      })
+      .then(({collections}) => {
+        // 4: Get collection schema.
+        let queue = collections.map(collection => {
+          return apiBridgeClient({
+            accessToken: getState().user.accessToken,
+            api,
+            collection
+          }).getConfig().then(collectionSchema => {
+            return Object.assign({}, collection, collectionSchema)
+          })
+        })
 
-            collectionBundler.add(collectionQuery)
+        return Promise.all(queue)
+      })
+      .then(apiCollections => {
+        // 5: Augmenting collection schemas with default Publish
+        // parameters.
+        let augmentedCollections = apiCollections
+          .map((schema, index) => {
+            return Object.assign(
+              {},
+              applyDefaultPublishParams(schema)
+            )
+          })
+          .filter(collection => {
+            return !(collection.settings.publish && collection.settings.publish.hidden)
           })
 
-          collectionBundler.run()
-            .then(apiCollections => {
-              const isAuthApi = auth.host === api.host && auth.port === api.port
-              const mergedCollections = apiCollections
-                .map((schema, index) => {
-                  if (schema.apiBridgeError) return null
+        apiList[apiIndex].collections = augmentedCollections
 
-                  schema = applyDefaultPublishParams(schema)
-
-                  return Object.assign({}, schema, collections[index], {
-                    _isAuthCollection: isAuthApi && (auth.collection === collections[index].slug)
-                  })
-                })
-                .filter(Boolean)
-                .filter(collection => {
-                  return !(collection.settings.publish && collection.settings.publish.hidden)
-                })
-
-              const apiWithCollections = Object.assign({}, api, {
-                _failedCollections: apiCollections.length - mergedCollections.length,
-                _isAuthApi: isAuthApi,
-                collections: mergedCollections,
-                publicUrl: config.publicUrl
-              })
-
-              apisWithCollections.push(apiWithCollections)
-              apisToProcess--
-
-              if (apisToProcess === 0) {
-                dispatch(setApiList(apisWithCollections))
-              }
-            })
-            .catch(err => {
-              dispatch(setApiStatus(Constants.STATUS_FAILED))
-            })
-        })
-        .catch(err => {
-          dispatch(setApiStatus(Constants.STATUS_FAILED))
-        })
+        return apiList[apiIndex]
       })
     })
-  }
-}
 
-export function setApiList (apis) {
-  return {
-    apis,
-    type: Types.SET_API_LIST,
+    return Promise.all(apiQueue).then(apiList => {
+      dispatch(
+        setApiList(apiList, getState().router.parameters)
+      )
+    }).catch(error => {
+      dispatch(
+        setApiStatus(Constants.STATUS_FAILED, error.code || error)
+      )
+    })
   }
 }
 
@@ -95,16 +93,27 @@ export function setApi (api) {
   }
 }
 
-export function setApiStatus (status) {
+export function setApiList (apis, routeParameters) {
   return {
+    apis,
+    routeParameters,
+    type: Types.SET_API_LIST,
+  }
+}
+
+export function setApiStatus (status, error) {
+  return {
+    error,
     status,
     type: Types.SET_API_STATUS
   }
 }
 
-export function setCurrentCollection (collectionName) {
+export function setCurrentCollection ({collection, group, referencedField}) {
   return {
-    collectionName,
+    collection,
+    group,
+    referencedField,
     type: Types.SET_API_CURRENT_COLLECTION
   }
 }

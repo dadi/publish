@@ -1,17 +1,15 @@
 'use strict'
 
-const cookieParser = require('restify-cookies')
+const Collection = require(`${paths.lib.models}/collection`)
 const config = require(paths.config)
-const session = require('cookie-session')
+const cookieParser = require('restify-cookies')
 const flash = require('connect-flash')
 const fs = require('fs')
 const log = require('@dadi/logger')
 const path = require('path')
-const passport = require('passport-restify')
-const LocalStrategy = require('passport-local')
+const request = require('request-promise')
 const restify = require('restify')
-const SessionController = require(`${paths.lib.controllers}/session`)
-const Collection = require(`${paths.lib.models}/collection`)
+const session = require('cookie-session')
 
 /**
  * @constructor
@@ -36,7 +34,6 @@ Router.prototype.addRoutes = function () {
 
   this.pre()
   this.use()
-  this.setPassportStrategies()
   this.getRoutes()
   this.componentRoutes(path.resolve(`${paths.frontend.components}`), /Routes$/g)
   this.setHeaders()
@@ -64,31 +61,16 @@ Router.prototype.secureRedirect = function (ssl) {
 }
 
 Router.prototype.getRoutes = function () {
-  fs.readdirSync(path.resolve(this.routesDir)).forEach((file) => {
-    /* require module with its name (from filename), passing app */
-    let controller = require(path.join(this.routesDir, file))
+  try {
+    fs.readdirSync(path.resolve(this.routesDir)).forEach((file) => {
+      /* require module with its name (from filename), passing app */
+      let controller = require(path.join(this.routesDir, file))
 
-    controller(this.server)
-  })
-}
-
-/**
- * Set Passport Strategies
- * Add local sessionController strategies to passport.
- */
-Router.prototype.setPassportStrategies = function () {
-  const sessionController = new SessionController()
-
-  // Passport Local stategy selected
-  passport.use(new LocalStrategy(sessionController.authorise))
-
-  passport.serializeUser((user, done) =>
-    done(!user ? {err: 'User not found'} : null, user || null)
-  )
-
-  passport.deserializeUser((user, done) =>
-    done(!user ? {err: 'User not found'} : null, user || null)
-  )
+      controller(this.server)
+    })
+  } catch (error) {
+    log.warn({module: 'router'}, error)
+  }
 }
 
 /**
@@ -116,37 +98,68 @@ Router.prototype.webRoutes = function () {
   this.server.get(/.*/, (req, res, next) => {
     res.header('Content-Type', 'text/html; charset=utf-8')
 
-    const serialisedUser = (req.isAuthenticated() && req.session.passport && req.session.passport.user)
-      ? JSON.stringify(req.session.passport.user)
-      : null
     let entryPointPage = this.entryPointTemplate
-      .replace(
-        '/*@@userData@@*/',
-        `window.__userData__ = ${serialisedUser};window.__auth__ = ${config.get('auth.enabled')};`
-      )
+    let accessToken = req.cookies && req.cookies.accessToken
+    let authenticate = Promise.resolve()
 
-    return new Collection()
-      .buildCollectionRoutes()
-      .then(documentRoutes => {
-        if (documentRoutes) {
-          entryPointPage = entryPointPage.replace(
-            '/*@@documentRoutes@@*/',
-            `window.__documentRoutes__ = ${JSON.stringify(documentRoutes)};`
-          )
+    if (accessToken) {
+      authenticate = new Collection({accessToken})
+        .buildCollectionRoutes()
+        .then(documentRoutes => {
+          if (documentRoutes) {
+            entryPointPage = entryPointPage
+              .replace(
+                '/*@@documentRoutes@@*/',
+                `window.__documentRoutes__ = ${JSON.stringify(documentRoutes)};`
+              )
+              .replace(
+                '/*@@config@@*/',
+                `window.__config__ = ${config.toString()};`
+              )
+          }
 
-          res.end(entryPointPage)
-          return next()
-        }
-      })
-      .catch(e => {
-        log.error({module: 'router'}, `buildCollectionRoutes failed: ${JSON.stringify(e)}`)
-        entryPointPage = entryPointPage.replace(
-          '/*@@apiError@@*/',
-          `window.__apiError__ = ${JSON.stringify(e)};`
+          let api = config.get('apis.0')
+
+          return request({
+            headers: {
+              Authorization: `Bearer ${accessToken}`
+            },
+            json: true,
+            uri: `${api.host}:${api.port}/api/client`
+          })
+        }).then(({results}) => {
+          entryPointPage = entryPointPage
+            .replace(
+              '/*@@client@@*/',
+              `window.__client__ = ${JSON.stringify(results[0])};`
+            )
+        })
+        .catch(e => {
+          log.error({module: 'router'}, `buildCollectionRoutes failed: ${JSON.stringify(e)}`)
+
+          entryPointPage = entryPointPage
+            .replace(
+              '/*@@apiError@@*/',
+              `window.__apiError__ = ${JSON.stringify(e)};`
+            )
+            .replace(
+              '/*@@config@@*/',
+              `window.__config__ = ${JSON.stringify(config.getUnauthenticatedConfig())};`
+            )
+        })
+    } else {
+      entryPointPage = entryPointPage
+        .replace(
+          '/*@@config@@*/',
+          `window.__config__ = ${JSON.stringify(config.getUnauthenticatedConfig())};`
         )
-        res.end(entryPointPage)
-        return next()
-      })
+    }
+
+    return authenticate.then(() => {
+      res.end(entryPointPage)
+
+      return next()
+    })
   })
 }
 
@@ -227,9 +240,6 @@ Router.prototype.use = function () {
       saveUninitialized: true,
       resave: true
     }))
-    // Initialise passport session.
-    .use(passport.initialize())
-    .use(passport.session())
     .use(flash())
 }
 

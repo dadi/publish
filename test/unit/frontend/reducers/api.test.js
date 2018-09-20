@@ -47,21 +47,7 @@ describe('API', () => {
       expect(apiReducerCall)
         .toEqual(expect.objectContaining({
           ...API.initialState,
-          apis: mockApis,
-          status: Constants.STATUS_IDLE
-        }))
-    })
-
-    it('should update api status', () => {
-      const apiReducerCall = api(undefined, {
-        status: 'MOCK_STATUS',
-        type: Types.SET_API_STATUS
-      })
-
-      expect(apiReducerCall)
-        .toEqual(expect.objectContaining({
-          ...API.initialState,
-          status: 'MOCK_STATUS'
+          apis: mockApis
         }))
     })
 

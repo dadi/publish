@@ -532,6 +532,158 @@ describe('FieldStringEdit component', () => {
           inLabel={true}
           placeholder={mockSchema.placeholder}
           type="multiline"
+          rows=""
+          resizable={false}
+          value=""
+        />
+      )
+    })
+
+    it('renders a static TextInput if `publish.heightType` is static', () => {
+      const mockSchemaWithStaticHeight = {
+        ...mockSchema,
+        publish: {
+          ...mockSchema.publish,
+          multiline: true,
+          heightType: 'static',
+          rows: 10
+        }
+      }
+
+      const component = (
+        <FieldStringEdit
+          schema={mockSchemaWithStaticHeight}
+        />
+      )
+
+      expect(component).to.contain(
+        <TextInput
+          id="c-1"
+          inLabel={true}
+          placeholder={mockSchema.placeholder}
+          type="multiline"
+          rows={10}
+          resizable={false}
+          heightType="static"
+          value=""
+        />
+      )
+    })
+
+    it('renders a full height TextInput if `publish.heightType` is full', () => {
+      const mockSchemaWithFullHeight = {
+        ...mockSchema,
+        publish: {
+          ...mockSchema.publish,
+          multiline: true,
+          heightType: 'full'
+        }
+      }
+
+      const component = (
+        <FieldStringEdit
+          schema={mockSchemaWithFullHeight}
+        />
+      )
+
+      expect(component).to.contain(
+        <TextInput
+          id="c-1"
+          inLabel={true}
+          placeholder={mockSchema.placeholder}
+          type="multiline"
+          rows=""
+          resizable={false}
+          heightType="full"
+          value=""
+        />
+      )
+    })
+
+    it('renders a content height TextInput if `publish.heightType` is content', () => {
+      const mockSchemaWithContentHeight = {
+        ...mockSchema,
+        publish: {
+          ...mockSchema.publish,
+          multiline: true,
+          heightType: 'content'
+        }
+      }
+
+      const component = (
+        <FieldStringEdit
+          schema={mockSchemaWithContentHeight}
+        />
+      )
+
+      expect(component).to.contain(
+        <TextInput
+          id="c-1"
+          inLabel={true}
+          placeholder={mockSchema.placeholder}
+          type="multiline"
+          rows=""
+          resizable={false}
+          heightType="content"
+          value=""
+        />
+      )
+    })
+
+    it('renders a resizable TextInput if `publish.resizable` is true', () => {
+      const mockSchemaWithResizable = {
+        ...mockSchema,
+        publish: {
+          ...mockSchema.publish,
+          multiline: true,
+          resizable: true
+        }
+      }
+
+      const component = (
+        <FieldStringEdit
+          schema={mockSchemaWithResizable}
+        />
+      )
+
+      expect(component).to.contain(
+        <TextInput
+          id="c-1"
+          inLabel={true}
+          placeholder={mockSchema.placeholder}
+          type="multiline"
+          resizable={true}
+          rows=""
+          value=""
+        />
+      )
+    })
+
+    it('renders a TextInput with 3 rows if `publish.rows` is 3', () => {
+      const mockSchemaWithThreeRows = {
+        ...mockSchema,
+        publish: {
+          ...mockSchema.publish,
+          multiline: true,
+          heightType: 'static',
+          rows: 3
+        }
+      }
+
+      const component = (
+        <FieldStringEdit
+          schema={mockSchemaWithThreeRows}
+        />
+      )
+
+      expect(component).to.contain(
+        <TextInput
+          id="c-1"
+          inLabel={true}
+          placeholder={mockSchema.placeholder}
+          type="multiline"
+          resizable={false}
+          rows={3}
           value=""
         />
       )

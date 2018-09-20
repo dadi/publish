@@ -114,7 +114,7 @@ export default class FieldImageEdit extends Component {
   render() {
     let {
       collection,
-      config,
+      config = {},
       displayName,
       documentId,
       group,
@@ -124,7 +124,6 @@ export default class FieldImageEdit extends Component {
       value
     } = this.props
 
-    config = config || {}
     const fieldImage = config.FieldImage || {}
     const accept = fieldImage.accept
 

@@ -29,6 +29,15 @@ export default class TextInput extends Component {
     inLabel: proptypes.bool,
 
     /**
+     * full | content | static
+     * 
+     * full: screen height
+     * content: adapts to content
+     * static: use rows prop
+     */
+    heightType: proptypes.string,
+
+    /**
      * Callback to be executed when the text loses focus (onBlur event).
      */
     onBlur: proptypes.func,
@@ -68,6 +77,16 @@ export default class TextInput extends Component {
     required: proptypes.bool,
 
     /**
+     * Whether the field is resizable
+     */
+    resizable: proptypes.bool,
+
+    /**
+     * Number of rows, if the heightType is set to `static`.
+     */
+    rows: proptypes.number,
+
+    /**
      * Type/function of the input field.
      */
     type: proptypes.oneOf([
@@ -81,20 +100,18 @@ export default class TextInput extends Component {
     ]),
 
     /**
-     * Callback to be executed onChange to validate field value.
-     */
-    validation: proptypes.func,
-
-    /**
      * Current value of the input field.
      */
     value: proptypes.string
   }
 
   static defaultProps = {
+    heightType: 'static',
     inLabel: false,
     multiline: false,
     readonly: false,
+    resizable: false,
+    rows: 10,
     type: 'text'
   }
 
@@ -104,14 +121,21 @@ export default class TextInput extends Component {
     this.state.value = props.value || ''
   }
 
+  componentDidMount() {
+    this.adjustHeightIfNeeded()
+  }
+
   render() {
     const {
       className,
+      heightType,
       id,
       inLabel,
       placeholder,
       readonly,
       required,
+      resizable,
+      rows,
       type,
       value
     } = this.props
@@ -119,6 +143,12 @@ export default class TextInput extends Component {
     let inputStyle = new Style(styles, 'input')
 
     inputStyle.addIf('input-in-label', inLabel)
+    inputStyle.add(resizable ? 'resizable' : 'not-resizable')
+    if (heightType === 'full') {
+      inputStyle.add('full-height')
+    } else if (heightType === 'content') {
+      inputStyle.add('content-height')
+    }
     inputStyle.addResolved(className)
 
     // If type is `multiline`, we render a `<textarea>`
@@ -134,7 +164,7 @@ export default class TextInput extends Component {
           placeholder={placeholder}
           readonly={readonly}
           required={required}
-          rows={10}
+          rows={heightType === 'static' ? rows : ''}
           value={value}
         />
       )
@@ -158,11 +188,18 @@ export default class TextInput extends Component {
     )
   }
 
-  handleChange(event) {
-    const {onChange, onKeyUp, validation} = this.props
+  adjustHeightIfNeeded()
+  {
+    if (this.props.heightType === 'content') {
+      this.base.style.height = "5px"
+      this.base.style.height = (this.base.scrollHeight + 20) + 'px';
+    }
+  }
 
-    // Attach validation outcome to event.
-    event.isValid = validation ? validation(event.target.value) : true
+  handleChange(event) {
+    const {onChange, onKeyUp} = this.props
+
+    this.adjustHeightIfNeeded()
 
     if (event.type === 'change' && typeof onChange === 'function') {
       onChange.call(this, event)

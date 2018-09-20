@@ -17,7 +17,8 @@ const NETWORK_DEBOUNCE = 200
 // The initial state
 const initialState = {
   breakpoint: getActiveBreakpoint(window.innerWidth),
-  config: null,
+  config: window.__config__,
+  isLoading: false,
   networkStatus: Constants.NETWORK_OK,
   notification: null,
   status: Constants.STATUS_IDLE
@@ -42,6 +43,13 @@ function getActiveBreakpoint (windowWidth) {
 export default function app (state = initialState, action = {}) {
   switch (action.type) {
 
+    // App action: authenticate
+    case Types.AUTHENTICATE:
+      return {
+        ...state,
+        config: action.config
+      }
+
     // App action: register network call
     case Types.REGISTER_NETWORK_CALL:
       switch (action.status) {
@@ -53,50 +61,43 @@ export default function app (state = initialState, action = {}) {
             clearTimeout(debouncedNetworkCall)
           }
 
-          // Something is loading from the network. If the `status` property
-          // doesn't already reflect that, it needs to.
-          if (state.status !== Constants.STATUS_LOADING) {
+          // Something is loading from the network. If the state doesn't already
+          // reflect that, it needs to.
+          if (!state.isLoading) {
             return {
               ...state,
-              status: Constants.STATUS_LOADING
+              isLoading: true
             }
           }
 
-          break
+          return state
 
         case Constants.STATUS_IDLE:
           // We were previously loading something from the network, but now
           // the request has successfully finished.
-          if (state.status === Constants.STATUS_LOADING) {
+          if (state.isLoading) {
             // If there's already a queued timer, we cancel it so it can be
             // replaced with the new (most recent) one.
             if (debouncedNetworkCall !== null) {
               clearTimeout(debouncedNetworkCall)
             }
 
-            // We queue the new timer. When the timer runs, we'll run the action,
-            // sent as the `onUpdate` parameter, which will contain STATUS_COMPLETE.
-            // and set the general status back to STATUS_IDLE.
+            // We queue the new timer. When the timer runs, we'll run the action
+            // sent as the `onUpdate` parameter.
             debouncedNetworkCall = setTimeout(action.onComplete, NETWORK_DEBOUNCE)
           }
 
           return state
 
         case Constants.STATUS_COMPLETE:
+        case Constants.STATUS_FAILED:
           return {
             ...state,
-            status: Constants.STATUS_IDLE
+            isLoading: false
           }
       }
 
       return state
-
-    // App action: set config
-    case Types.SET_APP_CONFIG:
-      return {
-        ...state,
-        config: action.config
-      }
 
     // App action: set app status
     case Types.SET_APP_STATUS:

@@ -25,24 +25,23 @@ const apiBridgeFetch = function (requestObject) {
     return Promise.reject('API_CALL_QUOTA_EXCEEDED')
   }
 
-  return fetch('/api', {
-    body: JSON.stringify(requestObject),
-    credentials: 'include',
-    headers: {
+  return fetch(requestObject.uri.href, {
+    body: JSON.stringify(requestObject.body),
+    headers: Object.assign({}, requestObject.headers, {
       'Content-Type': 'application/json'
-    },
-    method: 'POST'
+    }),
+    method: requestObject.method
   }).then(response => {
+    if (response.status === 204) {
+      return null
+    }
+
     if (response.status === 200) {
       return response.json()
     }
 
-    return response.json().then(parsedResponse => {
-      let error = parsedResponse.error || ''
-
-      try {
-        error = JSON.parse(error)
-      } catch (parsingError) {}
+    return response.json().then(error => {
+      console.error(error)
 
       return Promise.reject(error)
     })
@@ -50,17 +49,16 @@ const apiBridgeFetch = function (requestObject) {
 }
 
 const apiBridgeFactory = function ({
+  accessToken,
   api,
   collection = {},
-  fields = [],
-  inBundle = false
+  fields = []
 }) {
   if (!api) {
     throw 'apiBridgeFactory: Missing API'
   }
 
   const {
-    publishId,
     host,
     port
   } = api
@@ -70,15 +68,13 @@ const apiBridgeFactory = function ({
   } = collection
 
   const callback = requestObject => {
-    let requestObjectWithPublishId = Object.assign({}, requestObject, {
-      publishId
+    let augmentedRequestObject = Object.assign({}, requestObject, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`
+      }
     })
 
-    if (inBundle) {
-      return requestObjectWithPublishId
-    }
-
-    return serveQuery(requestObjectWithPublishId)
+    return serveQuery(augmentedRequestObject)
   }
 
   const serveQuery = query => {
@@ -124,44 +120,6 @@ const apiBridgeFactory = function ({
 }
 
 module.exports = apiBridgeFactory
-
-module.exports.getBundler = () => {
-  const APIBridgeBundler = function (api) {
-    this.queries = []
-  }
-
-  APIBridgeBundler.prototype.add = function (query) {
-    this.queries.push(query)
-  }
-
-  APIBridgeBundler.prototype.run = function () {
-    if (typeof onUpdate === 'function') {
-      onUpdate.call(this, Constants.STATUS_LOADING)
-    }
-
-    if (this.queries.length === 0) {
-      return Promise.resolve([])
-    }
-
-    return apiBridgeFetch(this.queries).then(response => {
-      if (typeof onUpdate === 'function') {
-        const onComplete = onUpdate.bind(this, Constants.STATUS_COMPLETE)
-
-        onUpdate.call(this, Constants.STATUS_IDLE, onComplete)
-      }
-
-      return response
-    }).catch(err => {
-      if (typeof onUpdate === 'function') {
-        onUpdate.call(this, Constants.STATUS_FAILED)
-      }
-
-      return Promise.reject(err)
-    })
-  }
-
-  return new APIBridgeBundler()
-}
 
 module.exports.registerProgressCallback = callback => {
   onUpdate = callback

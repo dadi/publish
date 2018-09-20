@@ -83,7 +83,7 @@ const getDefaultState = () => {
     },
     document: {
       fieldsNotPersistedInLocalStorage: [],
-      loadedFromLocalStorage: false,
+      hasLoadedFromLocalStorage: false,
       local: null,
       peers: null,
       remote: null,
@@ -104,7 +104,6 @@ const getDefaultState = () => {
       room: null 
     },
     user: { 
-      authEnabled: undefined,
       failedSignInAttempts: 0,
       hasSignedOut: false,
       remote: null,
@@ -160,7 +159,7 @@ describe('DocumentEdit', () => {
 
   describe('when editing a document', () => {
     it('renders an error message if document is not found', () => {
-      defaultState.document.remoteStatus = 'STATUS_NOT_FOUND'
+      defaultState.document.remoteError = 404
       defaultState.api.paths = mockPaths
       defaultState.api = mockApi
 
@@ -240,49 +239,6 @@ describe('DocumentEdit', () => {
       )
 
       expect(component).to.equal('')
-    })
-  })
-
-  describe('when creating a new document', () => {
-    it('renders a container ', () => {
-      defaultState.api.paths = mockPaths
-      defaultState.api = mockApi
-      defaultState.document.remoteStatus = 'STATUS_IDLE'
-      defaultState.document.local = mockLocalDocument
-
-      const mockOnGetRoutes = jest.fn(() => {
-        return {
-          getCurrentCollection: () => { 
-            return {
-              name: 'articles',
-              fields: {
-                foo: {
-                  type: 'String',
-                  publish: {
-                    
-                  }
-                }
-              }
-            }
-          }
-        }
-      })
-
-      const component = (
-        <MockStore state={defaultState}>
-            <DocumentEdit 
-              collection={'articles'}
-              onGetRoutes={mockOnGetRoutes}
-            />
-        </MockStore>
-      )
-
-
-      const container = (
-        <div class="container">(...)</div>
-      )
-
-      expect(component).to.matchTemplate(container)
     })
   })
 })

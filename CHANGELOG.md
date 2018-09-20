@@ -4,6 +4,34 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [1.0.8-beta] (2018-09-04)
+
+### Changed
+
+* Replace "email" with "username"
+* Redirect to previous URL when signing in
+* Add support for API multi language
+* Display message when CORS is not enabled in API
+* Display message when required API version isn't being used 
+* Show Edit button on Reference fields
+
+## [1.0.6-beta] (2018-08-06)
+
+### Changed
+
+- [#384](https://github.com/dadi/publish/issues/384): Textbox view options
+
+### Fixed
+
+- [#305](https://github.com/dadi/publish/issues/305): Navigation z-index above menu
+- [#357](https://github.com/dadi/publish/issues/357): Integrate @dadi/boot for consistency with other products
+- [#359](https://github.com/dadi/publish/issues/359): Obscured date picker
+- [#360](https://github.com/dadi/publish/issues/360): Sort menu items according to config file
+- [#361](https://github.com/dadi/publish/issues/361): Image corruption investigation
+- [#373](https://github.com/dadi/publish/issues/373): Document grid alignment when only 1 column
+- [#376](https://github.com/dadi/publish/issues/376): "Go to page" input styling
+
+
 ## [1.0.5-beta] (2018-07-27)
 
 ### Fixed

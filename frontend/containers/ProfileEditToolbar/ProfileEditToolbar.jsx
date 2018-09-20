@@ -9,13 +9,11 @@ import styles from './ProfileEditToolbar.css'
 import * as Constants from 'lib/constants'
 import {Keyboard} from 'lib/keyboard'
 import * as appActions from 'actions/appActions'
-import * as documentActions from 'actions/documentActions'
 import * as userActions from 'actions/userActions'
 
 import {bindActionCreators} from 'redux'
 import {buildUrl} from 'lib/router'
 import {connectHelper} from 'lib/util'
-import {getApiForUrlParams, getCollectionForUrlParams} from 'lib/collection-lookup'
 import {route} from '@dadi/preact-router'
 
 import Button from 'components/Button/Button'
@@ -27,7 +25,6 @@ import Toolbar from 'components/Toolbar/Toolbar'
 
 const actions = {
   ...appActions,
-  ...documentActions,
   ...userActions
 }
 
@@ -87,23 +84,23 @@ class ProfileEditToolbar extends Component {
       dispatch,
       state
     } = this.props
-    const {document, user} = state
-    const previousDocument = prevProps.state.document
-    const previousUser = prevProps.state.user
-    const status = document.remoteStatus
-    const wasFirstValidated = !previousDocument.validationErrors && document.validationErrors
-    const wasSaving = previousDocument.remoteStatus === Constants.STATUS_SAVING
+    const previousState = prevProps.state
+    const {isSaving, remoteError, validationErrors} = state
+    const hasValidationErrors = validationErrors && Object.keys(validationErrors)
+      .filter(field => validationErrors[field])
+      .length
 
     // Have we just saved?
-    if (wasSaving && (status === Constants.STATUS_IDLE)) {
-      dispatch(actions.setNotification({
-        message: 'Your profile has been updated'
-      }))
+    if (previousState.isSaving && !isSaving && !remoteError && !hasValidationErrors) {
+      dispatch(
+        actions.setNotification({
+          message: 'Your profile has been updated'
+        })
+      )
     }
 
     // Are we trying to save?
-    if ((previousDocument.saveAttempts < document.saveAttempts) ||
-        (wasFirstValidated && document.saveAttempts > 0)) {
+    if (!previousState.hasBeenValidated && !previousState.hasBeenSubmitted && state.hasBeenSubmitted) {
       this.saveUser()
     }    
   }
@@ -112,8 +109,7 @@ class ProfileEditToolbar extends Component {
     const {
       state
     } = this.props
-    const document = state.document.remote
-    const validationErrors = state.document.validationErrors
+    const validationErrors = state.validationErrors
     const hasValidationErrors = validationErrors && Object.keys(validationErrors)
       .filter(field => validationErrors[field])
       .length
@@ -136,9 +132,18 @@ class ProfileEditToolbar extends Component {
   }
 
   handleSave() {
-    const {dispatch} = this.props
+    const {
+      dispatch,
+      state
+    } = this.props
 
-    dispatch(actions.registerSaveAttempt())
+    if (!state.hasBeenValidated) {
+      return dispatch(
+        actions.registerSaveUserAttempt()
+      )
+    }
+    
+    this.saveUser()
   }
 
   saveUser() {
@@ -146,34 +151,19 @@ class ProfileEditToolbar extends Component {
       dispatch,
       state
     } = this.props
-    const validationErrors = state.document.validationErrors
-    const hasValidationErrors = !validationErrors || Object.keys(validationErrors)
-      .filter(field => validationErrors[field])
-      .length
+    const validationErrors = state.validationErrors
+    const hasValidationErrors = Boolean(
+      Object.keys(validationErrors || {})
+        .filter(field => validationErrors[field])
+        .length
+    )
 
-    if (hasValidationErrors) return
-
-    const currentApi = getApiForUrlParams(state.api.apis, {
-      collection: Constants.AUTH_COLLECTION
-    })
-    const currentCollection = getCollectionForUrlParams(state.api.apis, {
-      collection: Constants.AUTH_COLLECTION,
-      useApi: currentApi
-    })
-
-    dispatch(actions.saveUser({
-      api: currentApi,
-      collection: currentCollection,
-      user: state.document.local
-    }))
+    if (!hasValidationErrors) {
+      dispatch(actions.saveUser())
+    }
   }
 }
 
 export default connectHelper(
-  state => ({
-    api: state.api,
-    app: state.app,
-    document: state.document,
-    user: state.user
-  })
+  state => state.user
 )(ProfileEditToolbar)

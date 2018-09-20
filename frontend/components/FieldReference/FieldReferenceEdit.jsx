@@ -38,6 +38,11 @@ export default class FieldReferenceEdit extends Component {
     currentCollection: proptypes.object,
 
     /**
+     * The human-friendly name of the field, to be displayed as a label.
+     */
+    displayName: proptypes.string,
+
+    /**
      * The ID of the document being edited.
      */
     documentId: proptypes.string,
@@ -57,6 +62,12 @@ export default class FieldReferenceEdit extends Component {
      * If defined, specifies a group where the current collection belongs.
      */
     group: proptypes.string,
+
+    /**
+     * The name of the field within the collection. May be a path using
+     * dot-notation.
+     */
+    name: proptypes.string,
 
     /**
     * A callback to be used to obtain the base URL for the given page, as
@@ -80,6 +91,11 @@ export default class FieldReferenceEdit extends Component {
     onError: proptypes.string,
 
     /**
+     * Whether the field is required.
+     */
+    required: proptypes.bool,
+
+    /**
      * The field schema.
      */
     schema: proptypes.object,
@@ -101,10 +117,12 @@ export default class FieldReferenceEdit extends Component {
       collection,
       currentApi,
       currentCollection,
+      displayName,
       documentId,
       error,
       group,
       forceValidation,
+      name,
       onBuildBaseUrl,
       onChange,
       onError,
@@ -119,14 +137,17 @@ export default class FieldReferenceEdit extends Component {
     })
 
     if (!referencedCollection) return null
-    const displayName = schema.label || schema._id
+
     const displayableFields = filterVisibleFields({
       fields: referencedCollection.fields,
       view: 'list'
     })
     const firstStringField = this.findFirstStringField(displayableFields)
     const displayField = value && firstStringField ? firstStringField.key : null
-    const href = buildUrl(...onBuildBaseUrl(), 'select', schema._id)
+    const editLink = onBuildBaseUrl({
+      createNew: !Boolean(documentId),
+      referenceFieldSelect: name
+    })
     const values = value && !(value instanceof Array) ? [value] : value
 
     return (
@@ -136,14 +157,30 @@ export default class FieldReferenceEdit extends Component {
         {value
           ? (
             <div class={styles['value-container']}>
-              <div>
-                {values.map(value => (
-                  <p class={styles.value}>{displayField && value[displayField] || `Referenced ${displayName}`}</p>
-                ))}
+              <div class={styles.values}>
+                {values.map(value => {
+                  let editLink = `${referencedCollection._publishLink}/${value._id}`
+
+                  return (
+                    <p class={styles.value}>
+                      <a class={styles['value-link']} href={editLink}>
+                        {displayField && value[displayField] || `Referenced ${displayName}`}
+                      </a>
+                    </p>
+                  )
+                })}
               </div>
 
               <Button
+                accent="data"
+                className={styles['control-button']}
+                href={editLink}
+                size="small"
+              >Edit</Button>
+
+              <Button
                 accent="destruct"
+                className={styles['control-button']}
                 onClick={this.handleRemove.bind(this)}
                 size="small"
               >Remove</Button>
@@ -154,7 +191,7 @@ export default class FieldReferenceEdit extends Component {
             <div class={styles.placeholder}>
               <Button
                 accent="data"
-                href={href}
+                href={editLink}
                 size="small"
               >Select existing {displayName.toLowerCase()}</Button>
             </div>
@@ -165,10 +202,10 @@ export default class FieldReferenceEdit extends Component {
   }
 
   handleRemove() {
-    const {onChange, schema} = this.props
+    const {name, onChange, schema} = this.props
 
     if (typeof onChange === 'function') {
-      onChange.call(this, schema._id, null)
+      onChange.call(this, name, null)
     }
   }
 }

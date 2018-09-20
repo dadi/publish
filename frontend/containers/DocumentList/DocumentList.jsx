@@ -17,7 +17,6 @@ import APIBridge from 'lib/api-bridge-client'
 import {buildUrl, createRoute} from 'lib/router'
 import {filterVisibleFields} from 'lib/fields'
 import {connectHelper} from 'lib/util'
-import {getApiForUrlParams, getCollectionForUrlParams} from 'lib/collection-lookup'
 
 import Button from 'components/Button/Button'
 import ErrorMessage from 'components/ErrorMessage/ErrorMessage'
@@ -54,12 +53,6 @@ class DocumentList extends Component {
     * determined by the view.
     */
     onBuildBaseUrl: proptypes.func,
-
-    /**
-    * A callback to be used to obtain the sibling document routes (edit, create and list), as
-    * determined by the view.
-    */
-    onGetRoutes: proptypes.func,
 
     /**
      * A callback to be fired if the container wants to attempt changing the
@@ -111,7 +104,6 @@ class DocumentList extends Component {
   componentDidMount() {
     const {
       onBuildBaseUrl,
-      onGetRoutes,
       page,
       state
     } = this.props
@@ -128,41 +120,60 @@ class DocumentList extends Component {
   componentDidUpdate(prevProps) {
     const {
       actions,
-      onGetRoutes,
       referencedField,
       state
     } = this.props
-    const {list} = state.documents
+    const documents = state.documents
     const pathKey = prevProps.state.router.locationBeforeTransitions.key
+    const previousDocuments = prevProps.state.documents
     const previousPathKey = state.router.locationBeforeTransitions.key
-    const historyKeyMatch = pathKey === previousPathKey
-    const isIdle = status === Constants.STATUS_IDLE
-    const previousStatus = prevProps.state.documents.status
-    const wasLoading = previousStatus === Constants.STATUS_LOADING
-    const collectionHasChanged = prevProps.collection !== this.props.collection
-
-    // Reset state if collection changes.
-    if (collectionHasChanged) {
-      actions.setDocumentListStatus(Constants.STATUS_IDLE)
-    }
 
     // If we are have just loaded a list of documents for a nested document,
     // let's update the selection with the value of the reference field, if
     // it is in view.
-    if (referencedField && wasLoading && isIdle) {
-      const document = Object.assign({}, state.document.remote, state.document.local)
-      const referencedValue = document[referencedField]
+    if (referencedField && previousDocuments.isLoading && !documents.isLoading) {
+      let document = Object.assign(
+        {},
+        state.document.remote,
+        state.document.local
+      )
+      let referencedValues = document[referencedField]
+      let referencedIds = (Array.isArray(referencedValues)
+        ? referencedValues.map(value => value._id)
+        : [referencedValues && referencedValues._id]
+      ).filter(Boolean)
 
-      if (referencedValue && referencedValue._id) {
-        actions.setDocumentSelection([referencedValue._id])
+      if (referencedIds.length > 0) {
+        actions.setDocumentSelection(referencedIds)
       }
     }
 
     // State check: reject when path matches and document list loaded
-    if (list && historyKeyMatch) return
+    if (documents.list && (pathKey === previousPathKey)) {
+      return
+    }
 
-    this.routes = onGetRoutes(state.api.paths)
     this.checkStatusAndFetch()
+  }
+
+  componentWillUpdate(nextProps) {
+    const {actions, state} = this.props
+    const {state: nextState} = nextProps
+    const currentCollection = state.api.currentCollection
+    const nextCollection = nextState.api.currentCollection
+
+    // This is required to recover from an error. If the document list has
+    // errored and we're about to navigate to a different collection, we
+    // clear the error state by setting the status to IDLE and let the
+    // container fetch again.
+    if (
+      state.documents.remoteError &&
+      currentCollection &&
+      nextCollection &&
+      (currentCollection.path !== nextCollection.path)
+    ) {
+      actions.setDocumentListStatus(Constants.STATUS_IDLE)
+    }
   }
 
   render() {
@@ -170,21 +181,19 @@ class DocumentList extends Component {
       collection,
       filter,
       group,
-      onGetRoutes,
+      onBuildBaseUrl,
       order,
       referencedField,
       sort,
       state
     } = this.props
     const documents = state.documents
+    const {currentCollection} = state.api
+    const createLink = onBuildBaseUrl({
+      createNew: true
+    })
 
-    if (state.api.apis.length) {
-      this.currentCollection = this.routes.getCurrentCollection(state.api.apis)
-    }
-
-    const createHref = this.routes.createRoute()
-
-    if (documents.status === Constants.STATUS_NOT_FOUND) {
+    if (documents.remoteError) {
       return (
         <ErrorMessage
           type={Constants.ERROR_ROUTE_NOT_FOUND}
@@ -192,7 +201,12 @@ class DocumentList extends Component {
       )      
     }
 
-    if (!documents.list || !documents.list.results || documents.status === Constants.STATUS_LOADING || !this.currentCollection) {
+    if (
+      !documents.list ||
+      !documents.list.results ||
+      documents.isLoading ||
+      !currentCollection
+    ) {
       return null
     }
 
@@ -207,7 +221,7 @@ class DocumentList extends Component {
           {!referencedField && (
             <Button
               accent="save"
-              href={createHref}
+              href={createLink}
             >Create new document</Button>
           )}
         </HeroMessage>
@@ -218,20 +232,19 @@ class DocumentList extends Component {
   }
 
   componentWillMount() {
-    const {state, onGetRoutes} = this.props
-
-    this.routes = onGetRoutes(state.api.paths)
     this.checkStatusAndFetch()
   }
 
   checkStatusAndFetch() {
     const {state} = this.props
-    const {list, status} = state.documents
+    const {isLoading, list, status} = state.documents
 
     // State check: reject when missing config, session, or apis
-    if (!state.app.config || !state.api.apis.length || !state.user) return
+    if (!state.app.config || !state.api.apis.length || !state.api.currentCollection) {
+      return
+    }
 
-    if (status === Constants.STATUS_IDLE) {
+    if (!isLoading) {
       this.fetchDocuments()  
     }
   }
@@ -249,7 +262,6 @@ class DocumentList extends Component {
       collection,
       filter,
       group,
-      onGetRoutes,
       order,
       page,
       documentId,
@@ -257,21 +269,19 @@ class DocumentList extends Component {
       sort,
       state
     } = this.props
-    const currentApi = getApiForUrlParams(state.api.apis, {
-      collection,
-      group
-    })
-    const currentCollection = this.routes.getCurrentCollection(state.api.apis)
+    const {
+      currentApi,
+      currentCollection,
+      currentParentCollection
+    } = state.api
 
-    if (!currentCollection) {
-      actions.setDocumentListStatus(Constants.STATUS_NOT_FOUND)
-
+    if (state.documents.remoteError) {
       return
     }
 
-    const count = currentCollection.settings && currentCollection.settings.count || 20
-    const filterValue = state.router.params ? state.router.params.filter : null
-    const parentCollection = referencedField && this.routes.getParentCollection(state.api.apis)
+    let count = (currentCollection.settings && currentCollection.settings.count)
+      || 20
+    let filterValue = state.router.search ? state.router.search.filter : null
 
     actions.fetchDocuments({
       api: currentApi,
@@ -279,8 +289,8 @@ class DocumentList extends Component {
       count,
       filters: filterValue,
       page,
-      documentId,
-      parentCollection,
+      parentCollection: currentParentCollection,
+      parentDocumentId: documentId,
       referencedField,
       sortBy: sort,
       sortOrder: order
@@ -308,7 +318,7 @@ class DocumentList extends Component {
       collection,
       documentId,
       group,
-      onGetRoutes,
+      onBuildBaseUrl,
       referencedField,
       state
     } = this.props
@@ -319,16 +329,16 @@ class DocumentList extends Component {
       return value
     }
 
-    const editHref = this.routes.editRoute({
-      documentId: documentId || data._id,
-      referencedId: documentId ? data._id : null
+    let editLink = onBuildBaseUrl({
+      documentId: documentId || data._id
     })
-    const currentCollection = this.routes.getCurrentCollection(state.api.apis)
-    const fieldSchema = currentCollection.fields[column.id]
-    const renderedValue = this.renderField(column.id, fieldSchema, value)
+    let currentCollection = state.api.currentCollection
+    let fieldSchema = currentCollection.fields[column.id]
+    let renderedValue = this.renderField(column.id, fieldSchema, value)
+
     if (index === 0) {
       return (
-        <a href={editHref}>{renderedValue}</a>
+        <a href={editLink}>{renderedValue}</a>
       )
     }
 
@@ -375,12 +385,12 @@ class DocumentList extends Component {
       collection,
       group,
       referencedField,
-      onGetRoutes,
       onPageTitle,
       order,
       sort,
       state
     } = this.props
+    const {currentCollection, currentParentCollection} = state.api
     const documents = state.documents.list.results
     const config = state.app.config
     const selectedRows = this.getSelectedRows()
@@ -392,8 +402,7 @@ class DocumentList extends Component {
     // context. If it does, we'll use that instead of the default `SyncTable`
     // to render the results.
     if (referencedField) {
-      const parentCollection = this.routes.getParentCollection(state.api.apis)
-      const fieldSchema = parentCollection.fields[referencedField]
+      const fieldSchema = currentParentCollection.fields[referencedField]
       const fieldType = (fieldSchema.publish && fieldSchema.publish.subType) || fieldSchema.type
       const fieldComponentName = `Field${fieldType}`
       const FieldComponentReferenceSelect = fieldComponents[fieldComponentName].referenceSelect
@@ -422,20 +431,20 @@ class DocumentList extends Component {
 
       onPageTitle(`Select ${(fieldSchema.label || referencedField).toLowerCase()}`)
     } else {
-      onPageTitle(this.currentCollection.settings.description || this.currentCollection.name)
+      onPageTitle(currentCollection.settings.description || currentCollection.name)
     }
     const listableFields = filterVisibleFields({
-      fields: this.currentCollection.fields,
+      fields: currentCollection.fields,
       view: 'list'
     })
 
     const tableColumns = Object.keys(listableFields)
       .map(field => {
-        if (!this.currentCollection.fields[field]) return
+        if (!currentCollection.fields[field]) return
 
         return {
           id: field,
-          label: this.currentCollection.fields[field].label
+          label: currentCollection.fields[field].label
         }
       })
 

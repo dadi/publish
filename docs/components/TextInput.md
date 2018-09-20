@@ -13,6 +13,18 @@ Classes to append to the button element.
 - type: `string`
 
 
+### `heightType`
+
+full | content | static
+
+full: screen height
+content: adapts to content
+static: use rows prop
+
+- type: `string`
+- default value: `'static'`
+
+
 ### `id`
 
 DOM ID for the input field.
@@ -89,19 +101,28 @@ Whether the field is required.
 - type: `bool`
 
 
+### `resizable`
+
+Whether the field is resizable
+
+- type: `bool`
+- default value: `false`
+
+
+### `rows`
+
+Number of rows, if the heightType is set to `static`.
+
+- type: `number`
+- default value: `10`
+
+
 ### `type`
 
 Type/function of the input field.
 
 - type: `enum('email'|'multiline'|'number'|'password'|'tel'|'text'|'url')`
 - default value: `'text'`
-
-
-### `validation`
-
-Callback to be executed onChange to validate field value.
-
-- type: `func`
 
 
 ### `value`

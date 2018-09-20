@@ -21,10 +21,9 @@ import {visibleFieldList, filterVisibleFields} from 'lib/fields'
 import {buildUrl} from 'lib/router'
 import {connectHelper} from 'lib/util'
 import {Format} from 'lib/util/string'
-import {getApiForUrlParams, getCollectionForUrlParams} from 'lib/collection-lookup'
 
 import ErrorMessage from 'components/ErrorMessage/ErrorMessage'
-import SubNavItem from 'components/SubNavItem/SubNavItem'
+import TabbedFieldSections from 'components/TabbedFieldSections/TabbedFieldSections'
 
 /**
  * The interface for editing a document.
@@ -57,12 +56,6 @@ class DocumentEdit extends Component {
     * determined by the view.
     */
     onBuildBaseUrl: proptypes.func,
-
-    /**
-    * A callback to be used to obtain the sibling document routes (edit, create and list), as
-    * determined by the view.
-    */
-    onGetRoutes: proptypes.func.isRequired,
 
     /**
     * A callback to be fired if the container wants to attempt changing the
@@ -102,13 +95,7 @@ class DocumentEdit extends Component {
       state
     } = this.props
 
-    if (!this.canRender()) return false
-
-    const currentApi = getApiForUrlParams(state.api.apis, {
-      collection,
-      group
-    })
-    const currentCollection = state.api.apis.length && this.routes.getCurrentCollection(state.api.apis)
+    const {currentApi, currentCollection} = state.api
     const method = documentId ? 'edit' : 'new'
 
     if (typeof onPageTitle === 'function') {
@@ -123,29 +110,22 @@ class DocumentEdit extends Component {
       const fields = this.groupFields(collectionFields)
 
       if (section) {
-        const sectionMatch = fields.sections.find(fieldSection => fieldSection.slug === section)
+        const sectionMatch = fields.sections.find(fieldSection => {
+          return fieldSection.slug === section
+        })
 
         if (!sectionMatch) {
           const firstSection = fields.sections[0]
 
-          // Redirect to first edit section
-          if (method === 'edit') {
-            route(this.routes.editRoute({
-              section: firstSection.slug
-            }))
-          } else {
-            route(this.routes.createRoute({
-              section: firstSection.slug
-            }))
-          }
+          // Redirect to first section.
+          route(
+            this.buildHref(method, firstSection)
+          )
 
           return false
         }
       }
     }
-
-    this.currentApi = currentApi
-    this.currentCollection = currentCollection
   }
 
   handleRoomChange() {
@@ -168,12 +148,16 @@ class DocumentEdit extends Component {
       group,
       state
     } = this.props
+    const {currentApi, currentCollection} = state.api
     const document = state.document
     const previousDocument = previousProps.state.document
-    const status = document.remoteStatus
 
     // Are there unsaved changes?
-    if (!previousDocument.local && document.local && document.loadedFromLocalStorage) {
+    if (
+      !previousDocument.local &&
+      document.local &&
+      document.hasLoadedFromLocalStorage
+    ) {
       const notification = {
         dismissAfterSeconds: false,
         fadeAfterSeconds: 5,
@@ -190,16 +174,15 @@ class DocumentEdit extends Component {
     }
 
     // If there's an error, stop here.
-    if (this.hasFetched && (status === Constants.STATUS_NOT_FOUND)) {
+    if (this.hasFetched && document.remoteError) {
       return
     }
 
     // There's no document ID, so it means we're creating a new document.
     if (!documentId) {
-      // If there isn't a document in `document.local`, we start a new one.
-      if (!document.local && this.currentCollection) {
+      if (currentCollection) {
         actions.startNewDocument({
-          collection,
+          collection: currentCollection,
           group
         })
       }
@@ -213,17 +196,15 @@ class DocumentEdit extends Component {
     // - We're not already in the process of fetching one AND
     // - There is no document in the store OR the document id has changed AND
     // - All APIs have collections
-    const isIdle = document.remoteStatus === Constants.STATUS_IDLE
     const remoteDocumentHasChanged = document.remote &&
       (documentId !== document.remote._id)
     const needsFetch = !document.remote || remoteDocumentHasChanged
 
-    if 
-      (
-        isIdle &&
-        needsFetch &&
-        this.currentCollection &&
-        state.api.apis.length > 0
+    if (
+      !document.isLoading &&
+      needsFetch &&
+      currentCollection &&
+      state.api.apis.length > 0
     ) {
       this.handleRoomChange()
       this.fetchDocument()
@@ -240,17 +221,6 @@ class DocumentEdit extends Component {
       state
     } = this.props
 
-    if (!this.canRender()) return null
-
-    const currentApi = getApiForUrlParams(state.api.apis, {
-      collection,
-      group
-    })
-    this.routes = onGetRoutes(state.api.paths)
-    const currentCollection = state.api.apis.length && this.routes.getCurrentCollection(state.api.apis)
-
-    this.currentApi = currentApi
-    this.currentCollection = currentCollection
     this.userLeavingDocumentHandler = this.handleUserLeavingDocument.bind(this)
 
     window.addEventListener('beforeunload', this.userLeavingDocumentHandler)
@@ -279,11 +249,8 @@ class DocumentEdit extends Component {
       state
     } = this.props
     const document = state.document
-    const status = document.remoteStatus
 
-    if (!this.canRender()) return null
-
-    if (status === Constants.STATUS_NOT_FOUND) {
+    if (document.remoteError) {
       return (
         <ErrorMessage
           data={{href: buildUrl(group, collection)}}
@@ -292,18 +259,12 @@ class DocumentEdit extends Component {
       )
     }
 
-    if (status === Constants.STATUS_IDLE && !this.currentCollection && this.hasFetched) {
-      return (
-        <ErrorMessage type={Constants.ERROR_ROUTE_NOT_FOUND} />
-      )
-    }
-
-    if (status === Constants.STATUS_LOADING || !document.local) {
+    if (document.isLoading || !document.local) {
       return null
     }
 
     const collectionFields = filterVisibleFields({
-      fields: this.currentCollection.fields,
+      fields: state.api.currentCollection.fields,
       view: 'edit'
     })
     const fields = this.groupFields(collectionFields)
@@ -315,98 +276,33 @@ class DocumentEdit extends Component {
     const hasValidationErrors = document.validationErrors
     const method = documentId ? 'edit' : 'new'
 
-    let documentData = Object.assign({}, document.remote, document.local)
+    // Add a link to each section before passing it down.
+    sections.forEach(section => {
+      section.href = this.buildHref(method, section)
+    })
 
-    // (!) This will be used once we add the ability to edit nested documents.
-    // if (referencedField) {
-    //  documentData = documentData[referencedField]
-    // }
     return (
-      <div class={styles.container}>
-        {fields.sections && 1 < fields.sections.length &&
-          <div class={styles.navigation}>
-            {fields.sections.map(collectionSection => {
-              const isActive = activeSection === collectionSection.slug
-              const editHref = this.buildHref(method, collectionSection)
-
-              return (
-                <SubNavItem
-                  active={isActive}
-                  error={collectionSection.hasErrors}
-                  href={editHref}
-                >
-                  {collectionSection.name}
-                </SubNavItem>
-              )
-            })}
-          </div>
-        }
-
-        {sections.map(section => {
-          let sectionClass = new Style(styles, 'section')
-
-          sectionClass.addIf('section-active', section.slug === activeSection)
-
-          const fields = {
-            main: section.fields.filter(field => {
-              return !field.publish ||
-                !field.publish.placement ||
-                field.publish.placement === 'main'
-            }),
-            sidebar: section.fields.filter(field => {
-              return field.publish &&
-                field.publish.placement &&
-                field.publish.placement === 'sidebar'
-            })
-          }
-
-          const mainBodyStyle = new Style(styles, 'main')
-
-          // If there are no fields in the side bar, the main body can use
-          // the full width of the page.
-          mainBodyStyle.addIf('main-full', !fields.sidebar.length)
-
-          return (
-            <section class={sectionClass.getClasses()}>
-              <div class={mainBodyStyle.getClasses()}>
-                {fields.main.map(field => this.renderField(field, documentData[field._id]))}
-              </div>
-
-              {(fields.sidebar.length > 0) &&
-                <div class={styles.sidebar}>
-                  {fields.sidebar.map(field => this.renderField(field, documentData[field._id]))}
-                </div>
-              }
-            </section>
-          )
-        })}
-      </div>
+      <TabbedFieldSections
+        activeSection={activeSection}
+        renderField={this.renderField.bind(this)}
+        sections={sections}
+      />
     )
   }
 
-  buildHref(method, collectionSection) {
+  buildHref(method, section) {
     const {
       collection,
+      documentId,
       onBuildBaseUrl,
       state
     } = this.props
-    const sectionUrlBase = onBuildBaseUrl()
 
-    if (collection === Constants.AUTH_COLLECTION) {
-      return buildUrl(...sectionUrlBase, collectionSection.slug)
-    }
-
-    if (method === 'new') {
-      return this.routes.createRoute({
-        section: collectionSection.slug
-      })
-    }
-    
-    if (method === 'edit') {
-      return this.routes.editRoute({
-        section: collectionSection.slug
-      })
-    }
+    return onBuildBaseUrl({
+      createNew: !Boolean(documentId),
+      search: state.router.search,
+      section: section && section.slug,
+    })
   }
 
   // Fetches a document from the remote API
@@ -420,14 +316,13 @@ class DocumentEdit extends Component {
 
     // As far as the fetch method is concerned, we're only interested in the
     // collection of the main document, not the referenced one.
-    const parentCollection = this.routes.getParentCollection(state.api.apis)
-    const collectionFields = visibleFieldList({
+    let parentCollection = state.api.currentParentCollection || state.api.currentCollection
+    let collectionFields = visibleFieldList({
       fields: parentCollection.fields,
       view: 'edit'
     })
-
-    const query = {
-      api: this.currentApi,
+    let query = {
+      api: state.api.currentApi,
       collection: parentCollection,
       id: documentId,
       fields: collectionFields
@@ -438,7 +333,16 @@ class DocumentEdit extends Component {
     this.hasFetched = true
   }
 
-  // Groups fields by section
+  // Groups fields by section based on the `section` property of the `publish`
+  // block present in their schema. It returns an object with two properties:
+  //
+  // - `sections`: an array of sections, each containing:
+  //    - `fields`: array containing the schema of the fields in the section
+  //    - `hasErrors`: Boolean indicating whether there are fields with errors
+  //                   in the section
+  //    - `name`: name of the section
+  //    - `slug`: slug of the section
+  // - `other`: array containing the schemas of fields without a section
   groupFields(fields) {
     const {state} = this.props
     const document = state.document
@@ -507,6 +411,7 @@ class DocumentEdit extends Component {
   // in a field or when a validation error has been cleared.
   handleFieldError(fieldName, hasError, value) {
     const {actions} = this.props
+
     actions.setFieldErrorStatus(fieldName, value, hasError)
   }
 
@@ -514,18 +419,19 @@ class DocumentEdit extends Component {
     const {
       actions,
       documentId,
-      group
+      group,
+      state
     } = this.props
 
     actions.registerUserLeavingDocument({
-      collection: this.currentCollection.name,
+      collection: state.api.currentCollection.name,
       documentId,
       group
     })
   }
 
   // Renders a field, deciding which component to use based on the field type
-  renderField(field, value) {
+  renderField(field) {
     const {
       collection,
       documentId,
@@ -533,20 +439,51 @@ class DocumentEdit extends Component {
       onBuildBaseUrl,
       state
     } = this.props
-    const {app, document} = state
+    const {api, app, document} = state
     const hasAttemptedSaving = document.saveAttempts > 0
     const hasError = document.validationErrors
       && document.validationErrors[field._id]
+    const documentData = Object.assign({}, document.remote, document.local)
+    const defaultApiLanguage = api.currentApi.i18n.defaultLanguage
+    const currentLanguage = state.router.search.lang
+    const isTranslatable = field.type.toLowerCase() === 'string'
+    const isTranslation = currentLanguage &&
+      currentLanguage !== defaultApiLanguage
+
+    let displayName = field.label || field._id
+    let fieldName = field._id
+    let placeholder = field.placeholder
+
+    if (isTranslation && isTranslatable) {
+      let language = api.currentApi.languages.find(language => {
+        return language.code === currentLanguage
+      })
+
+      if (language) {
+        displayName += ` (${language.name})`
+      }
+
+      fieldName += api.currentApi.i18n.fieldCharacter + currentLanguage
+      placeholder = documentData[field._id] || placeholder
+    }
+
+    let value = documentData[fieldName]
 
     // As per API docs, validation messages are in the format "must be xxx", which
     // assumes that something (probably the name of the field) will be prepended to
     // the string to form a final error message. For this reason, we're prepending
     // the validation message with "This field", but this is something that we can
     // easily revisit.
-    const error = typeof hasError === 'string' ? 'This field ' + hasError : hasError
-    const fieldType = field.publish && field.publish.subType ? field.publish.subType : field.type
+    const error = typeof hasError === 'string' ?
+      'This field ' + hasError :
+      hasError
+    const fieldType = field.publish &&
+      field.publish.subType ?
+        field.publish.subType :
+        field.type
     const fieldComponentName = `Field${fieldType}`
-    const FieldComponent = fieldComponents[fieldComponentName] && fieldComponents[fieldComponentName].edit
+    const FieldComponent = fieldComponents[fieldComponentName] &&
+      fieldComponents[fieldComponentName].edit
 
     if (!FieldComponent) {
       console.warn('Unknown field type:', fieldType)
@@ -554,38 +491,33 @@ class DocumentEdit extends Component {
       return null
     }
 
+    let fieldStyles = new Style(styles, 'field')
+
+    fieldStyles.addIf('field-disabled', isTranslation && !isTranslatable)
+
     return (
-      <div class={styles.field}>
+      <div class={fieldStyles.getClasses()}>
         <FieldComponent
           collection={collection}
           config={app.config}
-          currentApi={this.currentApi}
-          currentCollection={this.currentCollection}
+          currentApi={api.currentApi}
+          currentCollection={api.currentCollection}
+          displayName={displayName}
           documentId={documentId}
           error={error}
           forceValidation={hasAttemptedSaving}
           group={group}
+          name={fieldName}
           onBuildBaseUrl={onBuildBaseUrl}
           onChange={this.handleFieldChange.bind(this)}
           onError={this.handleFieldError.bind(this)}
+          placeholder={placeholder}
+          required={field.required && !isTranslation}
           schema={field}
           value={value}
         />
       </div>
     )
-  }
-
-  canRender() {
-    const {
-      collection,
-      onGetRoutes
-    } = this.props
-
-    const isValid = 
-      (typeof collection === 'string') &&
-      (typeof onGetRoutes === 'function')
-    
-    return isValid
   }
 }
 

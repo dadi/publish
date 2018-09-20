@@ -4,7 +4,7 @@ import * as Types from 'actions/actionTypes'
 
 const NOTIFICATION_DEFAULTS = {
   dismissAfterRouteChange: true,
-  dismissAfterSeconds: 10,
+  dismissAfterSeconds: 3,
   dismissOnHover: true,
   options: {},
   type: Constants.NOTIFICATION_TYPE_WARNING
@@ -15,36 +15,6 @@ export function registerNetworkCall (status, onComplete) {
     onComplete,
     status,
     type: Types.REGISTER_NETWORK_CALL
-  }
-}
-
-export function loadAppConfig (config) {
-  return (dispatch, getState) => {
-    dispatch(setAppStatus(Constants.STATUS_LOADING))
-
-    fetch('/config', {
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      method: 'GET'
-    }).then(response => {
-      return response.json()
-    }).then(parsedResponse => {
-      dispatch({
-        config: parsedResponse,
-        type: Types.SET_APP_CONFIG
-      })
-    })
-    .catch(err => {
-      dispatch(setAppStatus(Constants.STATUS_FAILED))
-    })
-  }
-}
-
-export function setAppStatus (status) {
-  return {
-    status,
-    type: Types.SET_APP_STATUS
   }
 }
 

@@ -128,7 +128,7 @@ export default class FieldStringEdit extends Component {
     const {schema} = this.props
     const publishBlock = schema.publish
 
-    if (publishBlock.options) {
+    if (publishBlock && publishBlock.options) {
       return this.renderAsDropdown()
     }
 
@@ -145,6 +145,7 @@ export default class FieldStringEdit extends Component {
       value
     } = this.props
     const publishBlock = schema.publish || {}
+    const {heightType, rows, resizable} = publishBlock
     const type = publishBlock.multiline ? 'multiline' : 'text'
     const readOnly = publishBlock.readonly === true
 
@@ -156,10 +157,13 @@ export default class FieldStringEdit extends Component {
         comment={required && 'Required'}
       >
         <TextInput
+          heightType={heightType}
           onChange={this.handleOnChange.bind(this)}
           onKeyUp={this.handleOnKeyUp.bind(this)}
           placeholder={placeholder}
           readonly={readOnly}
+          resizable={resizable}
+          rows={rows}
           type={type}
           value={value}
         />
