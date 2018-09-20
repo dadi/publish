@@ -48,16 +48,29 @@ export default class ButtonWithOptions extends Component {
      *  ```jsx
      *  <ButtonWithOptions
      *    onClick={this.mainCallback()}
-     *    options={{
-     *      'Save and continue': this.saveAndContinueCallback()
-     *      'Save and go back': this.saveAndGoBackeCallback()
-     *    }}
+     *    options={new Map(
+     *      [
+     *       'Save and continue',
+     *        {
+     *          action: 'save',
+     *          methods: [
+     *            'edit',
+     *            'new'
+     *          ]
+     *        }
+     *      ]
+     *    ])}
      *  >
      *    Save
      *  </ButtonWithOptions>
      *  ```
      */
-    options: proptypes.object,
+    options: proptypes.map,
+
+    /**
+     * function to call with the value of the action
+     */
+    callback: proptypes.func,
 
     /**
      * Type/function of the button
@@ -96,6 +109,7 @@ export default class ButtonWithOptions extends Component {
       href,
       onClick,
       options,
+      callback,
       type
     } = this.props
     const {open} = this.state
@@ -134,11 +148,9 @@ export default class ButtonWithOptions extends Component {
         {open && !disabled &&
           <div class={styles.options}>
             <Dropdown tooltip="right">
-              {options.map(option => {
-                return (
-                  <DropdownItem onClick={option.action}>{option.name}</DropdownItem>
-                )
-              })}
+              {Array.from(options.keys()).map(name =>
+                  <DropdownItem onClick={event => callback(name)}>{name}</DropdownItem>
+              )}
             </Dropdown>
           </div>
         }
