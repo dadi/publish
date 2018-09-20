@@ -24,6 +24,70 @@ import DropdownNative from 'components/DropdownNative/DropdownNative'
 import Peer from 'components/Peer/Peer'
 import Toolbar from 'components/Toolbar/Toolbar'
 
+const SAVE_AND_CONTINUE = 'Save and continue',
+  SAVE_AND_CREATE_NEW = 'Save and create new',
+  SAVE_AND_GO_BACK = 'Save and go back',
+  SAVE_AS_DUPLICATE = 'Save as duplicate',
+  
+  ACTION_SAVE = 'save',
+  ACTION_SAVE_AND_CREATE_NEW = 'saveAndCreateNew',
+  ACTION_SAVE_AND_GO_BACK = 'saveAndGoBack',
+  ACTION_SAVE_AS_DUPLICATE = 'saveAsDuplicate',
+  
+  METHOD_EDIT = 'edit',
+  METHOD_NEW = 'new',
+  
+  availableSaveOptions = {
+    default: SAVE_AND_CONTINUE,
+    options: new Map(
+      [
+        [
+          SAVE_AND_CONTINUE,
+          {
+            action: ACTION_SAVE,
+            methods: [
+              METHOD_EDIT,
+              METHOD_NEW
+            ]
+          }
+        ],
+        [
+          SAVE_AND_CREATE_NEW,
+          {
+            action: ACTION_SAVE_AND_CREATE_NEW,
+            methods: [
+              METHOD_EDIT,
+              METHOD_NEW
+            ]
+          }
+        ],
+        [
+          SAVE_AND_GO_BACK,
+          {
+            action: ACTION_SAVE_AND_GO_BACK,
+            methods: [
+              METHOD_EDIT,
+              METHOD_NEW
+            ]
+          }
+        ],
+        [
+          SAVE_AS_DUPLICATE,
+          {
+            action: ACTION_SAVE_AS_DUPLICATE,
+            methods: [
+              // If we're editing an existing document, we also allow users to duplicate
+              // the document.
+              METHOD_EDIT
+            ]
+          }
+        ]
+      ]
+    )
+  }
+
+const filterMap = fn => map => new Map(Array.from(map).filter(fn))
+
 /**
  * A toolbar used in a document edit view.
  */
@@ -76,25 +140,6 @@ class DocumentEditToolbar extends Component {
     
     this.keyboard = new Keyboard()
     this.onSave = null
-
-    this.saveOptions = {
-      default: 0,
-      options: [
-        {
-          name: 'Save and continue',
-          action: this.handleSave.bind(this, 'save')
-        },
-        {
-          name: 'Save and create new',
-          action: this.handleSave.bind(this, 'saveAndCreateNew')
-        },
-        {
-          name: 'Save and go back',
-          action: this.handleSave.bind(this, 'saveAndGoBack')
-        }
-      ]
-    }
-    
   }
 
   componentDidMount() {
@@ -156,18 +201,24 @@ class DocumentEditToolbar extends Component {
       .length
     const method = documentId ? 'edit' : 'new'
 
-    // If we're editing an existing document, we also allow users to duplicate
-    // the document.
-    if (method === 'edit') {
-      saveOptions.options.push(
-        {
-          name: 'Save as duplicate',
-          action: this.handleSave.bind(this, 'saveAsDuplicate')
-        }
-      )
-    }
+    // GET FROM STORAGE
+    const savedSaveOption = availableSaveOptions.default
 
-    const defaultSaveOption = saveOptions.options[saveOptions.default]
+    const localSaveOptions = filterMap(
+      ([,option]) => option.methods.includes(method)
+    )(
+      availableSaveOptions.options
+    )
+
+    // Change based on user data
+
+    const defaultSaveOptionName = localSaveOptions.has(savedSaveOption) ?
+      savedSaveOption :
+      availableSaveOptions.default
+
+    const defaultSaveOption = localSaveOptions.get(defaultSaveOptionName)
+
+    const invisibleSaveOptions = filterMap(option => option !== defaultSaveOption)(localSaveOptions)
 
     let languages = Boolean(state.api.currentApi) &&
       Boolean(state.api.currentApi.languages) &&
@@ -248,10 +299,11 @@ class DocumentEditToolbar extends Component {
             <ButtonWithOptions
               accent="save"
               disabled={hasConnectionIssues || hasValidationErrors || isSaving}
-              onClick={this.saveDefaultActionAndExecute(saveOptions.default)}
-              options={saveOptions.options.filter(option => option !== defaultSaveOption)}
+              onClick={this.saveDefaultActionAndExecute.bind(this, defaultSaveOptionName)}
+              options={invisibleSaveOptions}
+              callback={this.saveDefaultActionAndExecute.bind(this)}
             >
-              {defaultSaveOption.name}
+              {defaultSaveOptionName}
             </ButtonWithOptions>
           </div>
         </div>
@@ -395,8 +447,30 @@ class DocumentEditToolbar extends Component {
     actions.registerSaveAttempt()
   }
 
-  saveDefaultActionAndExecute(defaultActionIndex) {
-    
+  /**
+   * Saves the default action.
+   * 
+   * @param {string} defaultActionName
+   * @return void
+   */
+  saveDefaultAction(defaultActionName) {
+    console.log(`Saving default action = ${defaultActionName}`)
+  }
+
+  /**
+   * Saves the default action and executes the action.
+   * 
+   * @param {string} defaultActionName
+   * @return void
+   */
+  saveDefaultActionAndExecute(defaultActionName) {
+    this.saveDefaultAction(defaultActionName)
+
+    // Execute the action
+    this.handleSave.call(
+      this,
+      availableSaveOptions.options.get(defaultActionName).action
+    );
   }
 
   saveDocument() {
