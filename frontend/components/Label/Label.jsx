@@ -118,11 +118,15 @@ export default class Label extends Component {
       .addResolved(className)
 
     if (
-      typeof label !== 'string' ||
+      (label && typeof label !== 'string') ||
       (comment && typeof comment !== 'string') ||
       (errorMessage && typeof errorMessage !== 'string')
     ) {
       return null
+    }
+
+    if(!label) {
+      label = ''
     }
 
     return (
