@@ -25,39 +25,44 @@ const schema = {
 }
 
 storiesOf('FieldString', module)
-    .add('FieldStringEdit', () =>
-      <FieldStringEdit schema={schema} />)
-    .add('FieldStringList', () =>
-      <div><FieldStringList schema={schema} />Expected to return null</div>)
-    .add('FieldStringFilter', () =>
-      <FieldStringFilter schema={schema} />)
+  .add('FieldStringEdit', () => (
+    <FieldStringEdit
+      displayName='Display name'
+      schema={schema}
+    />
+  ))
+
+  .add('FieldStringList', () =>
+    <div><FieldStringList schema={schema} />Expected to return null</div>)
+  .add('FieldStringFilter', () =>
+    <FieldStringFilter schema={schema} />)
 
 storiesOf('FieldBoolean', module)
-    .add('FieldBooleanEdit', () =>
-      <FieldBooleanEdit schema={schema} />)
-    .add('FieldBooleanFilter', () =>
-      <FieldBooleanFilter schema={schema} />)
-    .add('FieldBooleanList', () =>
-      <FieldBooleanList schema={schema} />)
+  .add('FieldBooleanEdit', () =>
+    <FieldBooleanEdit schema={schema} />)
+  .add('FieldBooleanFilter', () =>
+    <FieldBooleanFilter schema={schema} />)
+  .add('FieldBooleanList', () =>
+    <FieldBooleanList schema={schema} />)
 
 storiesOf('FieldDateTime', module)
-    .add('FieldDateTimeEdit', () =>
-      <FieldDateTimeEdit schema={schema} />)
-    .add('FieldDateTimeFilter', () =>
-      <FieldDateTimeFilter schema={schema} />)
+  .add('FieldDateTimeEdit', () =>
+    <FieldDateTimeEdit schema={schema} />)
+  .add('FieldDateTimeFilter', () =>
+    <FieldDateTimeFilter schema={schema} />)
 
 storiesOf('FieldImage', module)
-    .add('FieldImageEdit', () =>
-      <FieldImageEdit schema={schema} />)
-    .add('FieldImageReferenceSelect', () =>
-      <div><FieldImageReferenceSelect schema={schema} />This one needs actual data to render</div>)
+  .add('FieldImageEdit', () =>
+    <FieldImageEdit schema={schema} />)
+  .add('FieldImageReferenceSelect', () =>
+    <div><FieldImageReferenceSelect schema={schema} />This one needs actual data to render</div>)
 
 storiesOf('FieldNumber', module)
-    .add('FieldNumberEdit', () =>
-      <FieldNumberEdit schema={schema} />)
-    .add('FieldNumberFilter', () =>
-      <FieldNumberFilter schema={schema} />)
+  .add('FieldNumberEdit', () =>
+    <FieldNumberEdit schema={schema} />)
+  .add('FieldNumberFilter', () =>
+    <FieldNumberFilter schema={schema} />)
 
 storiesOf('FieldPassword', module)
-    .add('FieldPasswordEdit', () =>
-      <FieldPasswordEdit schema={schema} />)
+  .add('FieldPasswordEdit', () =>
+    <FieldPasswordEdit schema={schema} />)
