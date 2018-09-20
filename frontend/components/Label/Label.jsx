@@ -125,9 +125,7 @@ export default class Label extends Component {
       return null
     }
 
-    if(!label) {
-      label = ''
-    }
+    label = label || ''
 
     return (
       <label for={this.id} class={labelStyle.getClasses()}>
