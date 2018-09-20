@@ -178,5 +178,9 @@ module.exports = {
     ]
   },
 
-  stats: { colors: true }
+  stats: { colors: true },
+
+  externals: {
+    jsdom: 'jsdom'
+  }
 }
