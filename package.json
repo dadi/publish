@@ -14,7 +14,7 @@
     "prebuild": "mkdirp build",
     "prepublish": "npm run snyk-protect",
     "prepush": "npm run build-docs",
-    "precommit": "npm run lint",
+    "precommit": "npm run lint && node scripts/precommit.js",
     "postinstall": "node scripts/deploy/deploy.js",
     "snyk-protect": "snyk protect",
     "start": "NODE_ENV=development node index.js",

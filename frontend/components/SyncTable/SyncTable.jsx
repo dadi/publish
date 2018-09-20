@@ -15,13 +15,14 @@ import TableRowCell from 'components/Table/TableRowCell'
 export default class SyncTable extends Component {
   static propTypes = {
     /**
-     * An array of objects containing the id and label of the columns to be displayed in the table.
+     * An array of objects containing the id, label and type of the columns to be displayed in the table.
      *
      *   ```js
      *   [
      *     {
      *        id: 'first_name',
-     *        label: 'First name'
+     *        label: 'First name',
+     *        annotation: 'String'
      *     }
      *   ]
      *   ```
@@ -187,7 +188,10 @@ export default class SyncTable extends Component {
             }
 
             return (
-              <TableHeadCell arrow={arrow}>{content}</TableHeadCell>
+              <TableHeadCell
+                annotation={column.annotation}
+                arrow={arrow}
+              >{content}</TableHeadCell>
             )
           })}
         </TableHead>

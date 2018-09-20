@@ -15,15 +15,15 @@ export function loadApis () {
 
     let apiList = []
     let apiQueue = apis.map((api, apiIndex) => {
-      // 1: Get API config.
+      apiList[apiIndex] = Object.assign({}, api)
+
+      // 1: Get list of supported languages.
       return apiBridgeClient({
         accessToken: getState().user.accessToken,
         api
-      }).getConfig().then(config => {
-        apiList[apiIndex] = Object.assign({}, api, {
-          i18n: config.i18n,
-          publicUrl: config.publicUrl
-        })
+      }).getLanguages()
+      .then(({results: languages}) => {
+        apiList[apiIndex].languages = languages
 
         // 2: Get list of supported languages.
         return apiBridgeClient({

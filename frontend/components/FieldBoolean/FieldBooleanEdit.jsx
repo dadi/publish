@@ -107,7 +107,7 @@ export default class FieldBooleanEdit extends Component {
     return (
       <Label
         compact={true}
-        label={displayName || ''}
+        label={displayName}
       >
         <Checkbox
           onChange={this.handleOnChange.bind(this)}

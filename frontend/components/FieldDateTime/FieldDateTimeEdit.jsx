@@ -137,7 +137,7 @@ export default class FieldDateTimeEdit extends Component {
       <Label
         error={Boolean(error)}
         errorMessage={typeof error === 'string' ? error : null}
-        label={displayName || ''}
+        label={displayName}
         comment={required && 'Required'}
       >
         <TextInput
@@ -201,6 +201,14 @@ export default class FieldDateTimeEdit extends Component {
 
   handleFocus(hasFocus) {
     const {pickerVisible} = this.state
+    const {schema} = this.props
+
+    const publishBlock = schema.publish || {}
+
+    // Return from focus event so picker doesn't display
+    if (publishBlock.readonly === true) {
+      return
+    }
 
     this.hasFocus = hasFocus
 

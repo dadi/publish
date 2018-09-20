@@ -444,12 +444,18 @@ class DocumentEdit extends Component {
     const hasError = document.validationErrors
       && document.validationErrors[field._id]
     const documentData = Object.assign({}, document.remote, document.local)
-    const defaultApiLanguage = api.currentApi.i18n.defaultLanguage
+    const defaultApiLanguage = api.currentApi.languages &&
+      api.currentApi.languages.find(language => language.default)
     const currentLanguage = state.router.search.lang
     const isTranslatable = field.type.toLowerCase() === 'string'
     const isTranslation = currentLanguage &&
-      currentLanguage !== defaultApiLanguage
+      currentLanguage !== defaultApiLanguage.code
 
+    // This needs to adapt to the i18n.fieldCharacter configuration property of
+    // the API, but currently Publish doesn't have a way of knowing this. For now,
+    // we hardcode the default character, and in a future release of API we need to
+    // expose this information in the /api/languages endpoint.
+    let languageFieldCharacter = ':'
     let displayName = field.label || field._id
     let fieldName = field._id
     let placeholder = field.placeholder
@@ -463,7 +469,7 @@ class DocumentEdit extends Component {
         displayName += ` (${language.name})`
       }
 
-      fieldName += api.currentApi.i18n.fieldCharacter + currentLanguage
+      fieldName += languageFieldCharacter + currentLanguage
       placeholder = documentData[field._id] || placeholder
     }
 

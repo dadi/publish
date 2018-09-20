@@ -443,6 +443,7 @@ class DocumentList extends Component {
         if (!currentCollection.fields[field]) return
 
         return {
+          annotation: this.renderAnnotation(currentCollection.fields[field]),
           id: field,
           label: currentCollection.fields[field].label
         }
@@ -478,8 +479,25 @@ class DocumentList extends Component {
     )
   }
 
+  renderAnnotation(schema) {
+    const fieldType = (schema.publish && schema.publish.subType) ?
+      schema.publish.subType : schema.type
+    const fieldComponentName = `Field${fieldType}`
+    const FieldComponentListHeadAnnotation = fieldComponents[fieldComponentName] &&
+      fieldComponents[fieldComponentName].listHeadAnnotation
+
+    if (FieldComponentListHeadAnnotation) {
+      return (
+        <FieldComponentListHeadAnnotation />
+      )  
+    }
+  }
+
   renderField(fieldName, schema, value) {
     if (!schema) return
+
+    const {state} = this.props
+    const {currentApi, currentCollection} = state.api
 
     const fieldType = (schema.publish && schema.publish.subType) ?
       schema.publish.subType : schema.type
@@ -490,6 +508,8 @@ class DocumentList extends Component {
     if (FieldComponentList) {
       return (
         <FieldComponentList
+          collection={currentCollection}
+          currentApi={currentApi}
           schema={schema}
           value={value}
         />

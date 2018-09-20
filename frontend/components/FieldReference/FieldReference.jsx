@@ -1,3 +1,5 @@
 import edit from './FieldReferenceEdit'
+import list from './FieldReferenceList'
+import listHeadAnnotation from './FieldReferenceListHeadAnnotation'
 
-export {edit}
+export {edit, list, listHeadAnnotation}
