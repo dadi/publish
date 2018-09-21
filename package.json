@@ -23,7 +23,9 @@
     "test-all": "jest --coverage && node scripts/coverage/coverage.js",
     "watch": "NODE_ENV=development npm-run-all --parallel watch:server watch:build",
     "watch:build": "webpack --watch",
-    "watch:server": "nodemon \"./index.js\" --watch \"./app\""
+    "watch:server": "nodemon \"./index.js\" --watch \"./app\"",
+    "storybook:run": "start-storybook -p 9001 -c .storybook",
+    "storybook:build": "build-storybook -c .storybook -o public/storybook"
   },
   "repository": {
     "type": "git",
@@ -52,6 +54,7 @@
     "@dadi/passport": "^1.2.0",
     "@dadi/preact-router": "^2.6.2",
     "@dadi/ssl": "^1.1.0",
+    "@storybook/react": "^3.4.10",
     "archy": "^1.0.0",
     "autoprefixer": "^6.7.3",
     "aws-sdk": "^2.298.0",
@@ -148,7 +151,8 @@
       "public",
       "test",
       "scripts",
-      "frontend"
+      "frontend",
+      "stories"
     ]
   },
   "jest": {

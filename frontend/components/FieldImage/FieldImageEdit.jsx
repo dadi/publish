@@ -126,7 +126,6 @@ export default class FieldImageEdit extends Component {
 
     const fieldImage = config.FieldImage || {}
     const accept = fieldImage.accept
-
     const fieldLocalType = schema.publish && schema.publish.subType ? schema.publish.subType : schema.type
     const href = onBuildBaseUrl ?  onBuildBaseUrl({
       createNew: !Boolean(documentId),
