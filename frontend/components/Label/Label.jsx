@@ -102,7 +102,7 @@ export default class Label extends Component {
   }  
 
   render() {
-    const {
+    let {
       className,
       comment,
       compact,
@@ -118,12 +118,14 @@ export default class Label extends Component {
       .addResolved(className)
 
     if (
-      typeof label !== 'string' ||
+      (label && typeof label !== 'string') ||
       (comment && typeof comment !== 'string') ||
       (errorMessage && typeof errorMessage !== 'string')
     ) {
       return null
     }
+
+    label = label || ''
 
     return (
       <label for={this.id} class={labelStyle.getClasses()}>
