@@ -138,7 +138,7 @@ export default class FieldImageEdit extends Component {
     const values = (value && !Array.isArray(value)) ? [value] : value
 
     return (
-      <Label label={displayName || ''}>
+      <Label label={displayName}>
         {values &&
           <div class={styles['value-container']}>
             <div class={styles.thumbnails}>
