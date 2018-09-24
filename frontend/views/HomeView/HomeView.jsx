@@ -10,8 +10,6 @@ import HeroMessage from 'components/HeroMessage/HeroMessage'
 import Main from 'components/Main/Main'
 import Page from 'components/Page/Page'
 
-import RichEditor from 'components/RichEditor/RichEditor'
-
 class HomeView extends Component {
   render() {
     const {state} = this.props
@@ -40,11 +38,6 @@ class HomeView extends Component {
             title={`Welcome, ${(user.remote.data && user.remote.data && user.remote.data.publishFirstName) || 'Guest'}.`}
             subtitle={message}
           />
-
-          <RichEditor
-            inputFormat="html"
-            onChangeMarkdown={() => {}}
-          >{'Hello, world! <img src="http://localhost:3003/public/images/publish.png">'}</RichEditor>         
         </Main>
       </Page>
     )
