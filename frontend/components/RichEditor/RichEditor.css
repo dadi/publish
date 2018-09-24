@@ -1,7 +1,86 @@
-.editor b {
+.wrapper-mode-wysiwyg .editor-wysiwyg {
+  display: block;
+}
+
+.editor-wysiwyg b,
+.editor-wysiwyg strong {
   font-weight: bold;
 }
 
-.editor i {
+.editor-wysiwyg em,
+.editor-wysiwyg i {
   font-style: italic;
+}
+
+.editor-wysiwyg h1 {
+  font-size: 25px;
+  font-weight: bold;
+  margin-bottom: 10px;  
+}
+
+.editor-wysiwyg h2 {
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 10px;  
+}
+
+.editor-wysiwyg blockquote {
+  border-left: 3px solid #AAAAAA;
+  color: #AAAAAA;
+  padding-left: 10px;
+}
+
+.editor-wysiwyg ol {
+  list-style-type: decimal;
+  list-style-position: inside;  
+}
+
+.editor-wysiwyg ul {
+  list-style-type: disc;
+  list-style-position: inside;  
+}
+
+.pell {
+  border: 1px solid hsla(0,0%,4%,.1);
+}
+
+.pell,
+.editor-wysiwyg {
+  box-sizing: border-box;
+}
+
+.editor {
+  border: 0;
+  font-family: var(--theme-font-family, sans-serif);
+  font-size: var(--theme-font-size-normal, 16px);
+  background-color: var(--theme-colour-background, #FFFFFF);
+  color: var(--theme-colour-primary, #000000);
+  height: 300px;
+  outline: 0;
+  padding: 10px;
+  width: 100%;
+}
+
+.editor-wysiwyg {
+  display: none;
+  overflow-y: auto;
+}
+
+.pell-actionbar {
+  background-color: #fff;
+  border-bottom: 1px solid hsla(0, 0%, 4%, 0.1);
+}
+
+.pell-button {
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  height: 30px;
+  outline: 0;
+  width: 30px;
+  vertical-align: bottom;
+}
+
+.pell-button-selected {
+  background-color: #f0f0f0;
 }
