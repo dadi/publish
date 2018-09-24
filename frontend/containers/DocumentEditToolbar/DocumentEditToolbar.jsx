@@ -469,7 +469,7 @@ class DocumentEditToolbar extends Component {
     // Execute the action
     this.handleSave.call(
       this,
-      availableSaveOptions.options.get(defaultActionName).action
+      availableSaveOptions.options.find(option => defaultActionName === option[0]).action
     );
   }
 
