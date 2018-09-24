@@ -7,6 +7,7 @@ import Style from 'lib/Style'
 import styles from './FieldString.css'
 
 import Label from 'components/Label/Label'
+import RichEditor from 'components/RichEditor/RichEditor'
 import TextInput from 'components/TextInput/TextInput'
 
 /**
@@ -124,128 +125,6 @@ export default class FieldStringEdit extends Component {
     }
   }
 
-  render() {
-    const {schema} = this.props
-    const publishBlock = schema.publish
-
-    if (publishBlock && publishBlock.options) {
-      return this.renderAsDropdown()
-    }
-
-    return this.renderAsFreeInput()
-  }
-
-  renderAsFreeInput() {
-    const {
-      displayName,
-      error,
-      placeholder,
-      required,
-      schema,
-      value
-    } = this.props
-    const publishBlock = schema.publish || {}
-    const {heightType, rows, resizable} = publishBlock
-    const type = publishBlock.multiline ? 'multiline' : 'text'
-    const readOnly = publishBlock.readonly === true
-
-    return (
-      <Label
-        error={error}
-        errorMessage={typeof error === 'string' ? error : null}
-        label={displayName}
-        comment={required && 'Required'}
-      >
-        <TextInput
-          heightType={heightType}
-          onChange={this.handleOnChange.bind(this)}
-          onKeyUp={this.handleOnKeyUp.bind(this)}
-          placeholder={placeholder}
-          readonly={readOnly}
-          resizable={resizable}
-          rows={rows}
-          type={type}
-          value={value}
-        />
-      </Label>
-    )
-  }
-
-  renderAsDropdown() {
-    const {
-      displayName,
-      error,
-      name,
-      required,
-      schema,
-      value
-    } = this.props
-    const publishBlock = schema.publish || {}
-    const options = publishBlock.options
-    const selectedValue = value || schema.default || null
-    const selectLabel = `Please select${schema.label ? ` ${schema.label}` : ''}`
-    const multiple = publishBlock.multiple === true
-    const readOnly = publishBlock.readonly === true
-    const dropdownStyle = new Style(styles, 'dropdown')
-      .addIf('dropdown-error', error)
-      .addIf('dropdown-multiple', multiple)
-
-    return (
-      <Label
-        error={error}
-        errorMessage={typeof error === 'string' ? error : null}
-        label={displayName}
-        comment={required && 'Required'}
-      >
-        <select
-          class={dropdownStyle.getClasses()}
-          onChange={this.handleOnChange.bind(this)}
-          multiple={multiple}
-          disabled={readOnly}
-          ref={multiple && this.selectDropdownOptions.bind(this)}
-          value={selectedValue}
-        >
-          {!multiple &&
-            <option
-              value=""
-              class={styles['dropdown-option']}
-              disabled
-              selected={selectedValue === null}
-            >{selectLabel}</option>
-          }
-
-          {options.map(option => {
-            return (
-              <option
-                class={styles['dropdown-option']}
-                value={option.value}
-              >{option.label}</option>
-            )
-          })}
-        </select>
-      </Label>
-    )
-  }
-
-  getValueOfInput(input) {
-    switch (input.nodeName.toUpperCase()) {
-      case 'SELECT':
-        const options = Array.prototype.slice.call(input.options)
-        const value = options.filter(option => option.selected).map(option => option.value)
-
-        // If this isn't a multiple value select, we want to return the selected
-        // value as a single element and not wrapped in a one-element array.
-        if (!input.attributes.multiple) {
-          return value[0]
-        }
-
-        return value
-
-      default:
-        return input.value
-    }
-  }
-
   findValidationErrorsInValue(value) {
     const {error, schema} = this.props
     const valueLength = typeof value === 'string' ? value.length : 0
@@ -292,21 +171,164 @@ export default class FieldStringEdit extends Component {
     return hasValidationErrors
   }
 
-  handleOnChange(event) {
+  getValueOfDropdown(element) {
+    let options = Array.prototype.slice.call(element.options)
+    let value = options.filter(option => option.selected).map(option => option.value)
+
+    // If this isn't a multiple value select, we want to return the selected
+    // value as a single element and not wrapped in a one-element array.
+    if (!element.attributes.multiple) {
+      return value[0]
+    }
+
+    return value
+  }
+
+  handleOnChange(value) {
     const {name, onChange, schema} = this.props
-    const value = this.getValueOfInput(event.target)
 
     this.validate(value)
 
     if (typeof onChange === 'function') {
+      console.log('----> Calling:', name, value)
       onChange.call(this, name, value)
     }
   }
 
-  handleOnKeyUp(event) {
-    const value = this.getValueOfInput(event.target)
-
+  handleOnKeyUp(value) {
     this.validate(value)
+  }
+
+  render() {
+    const {schema} = this.props
+    const publishBlock = schema.publish
+
+    if (publishBlock && publishBlock.options) {
+      return this.renderAsDropdown()
+    }
+
+    if (schema.format) {
+      return this.renderAsRichEditor(schema.format)
+    }
+
+    return this.renderAsFreeInput()
+  }
+
+  renderAsDropdown() {
+    const {
+      displayName,
+      error,
+      name,
+      required,
+      schema,
+      value
+    } = this.props
+    const publishBlock = schema.publish || {}
+    const options = publishBlock.options
+    const selectedValue = value || schema.default || null
+    const selectLabel = `Please select${schema.label ? ` ${schema.label}` : ''}`
+    const multiple = publishBlock.multiple === true
+    const readOnly = publishBlock.readonly === true
+    const dropdownStyle = new Style(styles, 'dropdown')
+      .addIf('dropdown-error', error)
+      .addIf('dropdown-multiple', multiple)
+
+    return (
+      <Label
+        error={error}
+        errorMessage={typeof error === 'string' ? error : null}
+        label={displayName}
+        comment={required && 'Required'}
+      >
+        <select
+          class={dropdownStyle.getClasses()}
+          onChange={el => this.handleOnChange(this.getValueOfDropdown(el))}
+          multiple={multiple}
+          disabled={readOnly}
+          ref={multiple && this.selectDropdownOptions.bind(this)}
+          value={selectedValue}
+        >
+          {!multiple &&
+            <option
+              value=""
+              class={styles['dropdown-option']}
+              disabled
+              selected={selectedValue === null}
+            >{selectLabel}</option>
+          }
+
+          {options.map(option => {
+            return (
+              <option
+                class={styles['dropdown-option']}
+                value={option.value}
+              >{option.label}</option>
+            )
+          })}
+        </select>
+      </Label>
+    )
+  }
+
+  renderAsFreeInput() {
+    const {
+      displayName,
+      error,
+      placeholder,
+      required,
+      schema,
+      value
+    } = this.props
+    const publishBlock = schema.publish || {}
+    const {heightType, rows, resizable} = publishBlock
+    const type = publishBlock.multiline ? 'multiline' : 'text'
+    const readOnly = publishBlock.readonly === true
+
+    return (
+      <Label
+        error={error}
+        errorMessage={typeof error === 'string' ? error : null}
+        label={displayName}
+        comment={required && 'Required'}
+      >
+        <TextInput
+          heightType={heightType}
+          onChange={el => this.handleOnChange(el.target.value)}
+          onKeyUp={el => this.handleOnKeyUp.bind(el.target.value)}
+          placeholder={placeholder}
+          readonly={readOnly}
+          resizable={resizable}
+          rows={rows}
+          type={type}
+          value={value}
+        />
+      </Label>
+    )
+  }
+
+  renderAsRichEditor(format) {
+    const {
+      displayName,
+      error,
+      placeholder,
+      required,
+      schema,
+      value
+    } = this.props
+    return (
+      <Label
+        error={error}
+        errorMessage={typeof error === 'string' ? error : null}
+        label={displayName}
+        comment={required && 'Required'}
+      >
+        <RichEditor
+          onChangeMarkdown={this.handleOnChange.bind(this)}
+          value={value}
+          valueFormat={format}
+        />        
+      </Label>
+    )
   }
 
   selectDropdownOptions(input) {
