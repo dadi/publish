@@ -11,7 +11,7 @@
     "create-user": "node scripts/create-user/create-user.js",
     "api-install": "node scripts/api-install/api-install.js",
     "lint": "eslint frontend && standard --fix",
-    "prepublish": "npm run snyk-protect && npm run build",
+    "prepublishOnly": "npm run snyk-protect && npm run build",
     "prepush": "npm run build-docs",
     "precommit": "npm run lint && node scripts/precommit.js",
     "snyk-protect": "snyk protect",
