@@ -206,7 +206,7 @@ class DocumentEditToolbar extends Component {
 
     // Change based on user data
 
-    const defaultSaveOptionName = localSaveOptions.has(savedSaveOption) ?
+    const defaultSaveOptionName = localSaveOptions.find(option => savedSaveOption === option[0]) ?
       savedSaveOption :
       availableSaveOptions.default
 
