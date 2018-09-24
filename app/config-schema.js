@@ -219,13 +219,6 @@ module.exports = {
     doc: 'Process Timezone',
     default: 'Europe/London'
   },
-  ui: {
-    inputDelay: {
-      doc: 'Delay in ms to debounce inputs by',
-      format: 'integer',
-      default: 100
-    }
-  },
   logging: {
     enabled: {
       doc: 'If true, logging is enabled using the following settings.',
