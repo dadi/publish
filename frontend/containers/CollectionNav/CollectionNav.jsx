@@ -148,7 +148,7 @@ class CollectionNav extends Component {
     return grouped.concat(ungrouped)
   }
 
-  componentWillUpdate() {
+  createStructure() {
     const {state, actions} = this.props
     const apis = state.api.apis
 
@@ -157,6 +157,14 @@ class CollectionNav extends Component {
 
       this.groups = this.buildGroups(collectionMap)
     }
+  }
+
+  componentWillMount() {
+    this.createStructure()
+  }
+
+  componentWillUpdate() {
+    this.createStructure()
   }
 
   render() {

@@ -17,7 +17,7 @@ Publish.prototype.getStartupMessage = function () {
 
   if (env !== 'test') {
     dadiBoot.started({
-      server: `${config.get('server.host')}:${config.get('server.port')}`,
+      server: `http://${config.get('server.host')}:${config.get('server.port')} (Public URL: ${config.get('publicUrl.protocol')}://${config.get('publicUrl.host')}:${config.get('publicUrl.port')})`,
       header: {
         app: `${config.get('app.name')}${config.get('app.publisher') && config.get('app.publisher') !== '' ? ' - ' + config.get('app.publisher') : ''}`
       },

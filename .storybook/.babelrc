@@ -1,0 +1,15 @@
+{
+  "presets": [
+    "env",
+    "stage-2"
+  ],
+  "plugins": [
+    ["babel-plugin-transform-undefined-to-void"],
+    ["babel-plugin-transform-react-jsx", { "pragma": "h" }],
+    ["babel-plugin-transform-decorators-legacy"],
+    ["babel-plugin-transform-es2015-template-literals", {
+      "loose": true,
+      "spec": true
+    }]
+  ]
+}
