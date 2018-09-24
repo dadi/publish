@@ -25,71 +25,64 @@ import DropdownNative from 'components/DropdownNative/DropdownNative'
 import Peer from 'components/Peer/Peer'
 import Toolbar from 'components/Toolbar/Toolbar'
 
-const FIELD_PUBLISH_SAVE_OPTIONS_LAST_USED = 'publishSaveOptionsLastUsed',
-  SAVE_AND_CONTINUE = 'Save and continue',
-  SAVE_AND_CREATE_NEW = 'Save and create new',
-  SAVE_AND_GO_BACK = 'Save and go back',
-  SAVE_AS_DUPLICATE = 'Save as duplicate',
-  
-  ACTION_SAVE = 'save',
-  ACTION_SAVE_AND_CREATE_NEW = 'saveAndCreateNew',
-  ACTION_SAVE_AND_GO_BACK = 'saveAndGoBack',
-  ACTION_SAVE_AS_DUPLICATE = 'saveAsDuplicate',
-  
-  METHOD_EDIT = 'edit',
-  METHOD_NEW = 'new',
-  
-  availableSaveOptions = {
+const FIELD_PUBLISH_SAVE_OPTIONS_LAST_USED = 'publishSaveOptionsLastUsed'
+const SAVE_AND_CONTINUE = 'Save and continue'
+const SAVE_AND_CREATE_NEW = 'Save and create new'
+const SAVE_AND_GO_BACK = 'Save and go back'
+const SAVE_AS_DUPLICATE = 'Save as duplicate'
+const ACTION_SAVE = 'save'
+const ACTION_SAVE_AND_CREATE_NEW = 'saveAndCreateNew'
+const ACTION_SAVE_AND_GO_BACK = 'saveAndGoBack'
+const ACTION_SAVE_AS_DUPLICATE = 'saveAsDuplicate'
+const METHOD_EDIT = 'edit'
+const METHOD_NEW = 'new'
+const availableSaveOptions = {
     default: SAVE_AND_CONTINUE,
-    options: new Map(
+    options: [
       [
-        [
-          SAVE_AND_CONTINUE,
-          {
-            action: ACTION_SAVE,
-            methods: [
+        SAVE_AND_CONTINUE,
+        {
+          action: ACTION_SAVE,
+          methods: [
+            METHOD_EDIT,
+            METHOD_NEW
+          ]
+        }
+      ],
+      [
+        SAVE_AND_CREATE_NEW,
+        {
+          action: ACTION_SAVE_AND_CREATE_NEW,
+          methods: [
               METHOD_EDIT,
               METHOD_NEW
-            ]
-          }
-        ],
-        [
-          SAVE_AND_CREATE_NEW,
-          {
-            action: ACTION_SAVE_AND_CREATE_NEW,
-            methods: [
-              METHOD_EDIT,
-              METHOD_NEW
-            ]
-          }
-        ],
-        [
-          SAVE_AND_GO_BACK,
-          {
-            action: ACTION_SAVE_AND_GO_BACK,
-            methods: [
-              METHOD_EDIT,
-              METHOD_NEW
-            ]
-          }
-        ],
-        [
-          SAVE_AS_DUPLICATE,
-          {
-            action: ACTION_SAVE_AS_DUPLICATE,
-            methods: [
-              // If we're editing an existing document, we also allow users to duplicate
-              // the document.
-              METHOD_EDIT
-            ]
-          }
-        ]
+          ]
+        }
+      ],
+      [
+        SAVE_AND_GO_BACK,
+        {
+          action: ACTION_SAVE_AND_GO_BACK,
+          methods: [
+            METHOD_EDIT,
+            METHOD_NEW
+          ]
+        }
+      ],
+      [
+        SAVE_AS_DUPLICATE,
+        {
+          action: ACTION_SAVE_AS_DUPLICATE,
+          methods: [
+            // If we're editing an existing document, we also allow users to duplicate
+            // the document.
+            METHOD_EDIT
+          ]
+        }
       ]
-    )
+    ]
   }
-
-const filterMap = fn => map => new Map(Array.from(map).filter(fn))
-
+  
 /**
  * A toolbar used in a document edit view.
  */
@@ -207,10 +200,8 @@ class DocumentEditToolbar extends Component {
 
     const savedSaveOption = savedSaveOptionOnUser || availableSaveOptions.default
 
-    const localSaveOptions = filterMap(
+    const localSaveOptions = availableSaveOptions.options.filter(
       ([,option]) => option.methods.includes(method)
-    )(
-      availableSaveOptions.options
     )
 
     // Change based on user data
@@ -219,7 +210,9 @@ class DocumentEditToolbar extends Component {
       savedSaveOption :
       availableSaveOptions.default
 
-    const invisibleSaveOptions = filterMap(([name]) => name !== defaultSaveOptionName)(localSaveOptions)
+    const invisibleSaveOptions = localSaveOptions.filter(
+      ([name]) => name !== defaultSaveOptionName
+    )
 
     let languages = Boolean(state.api.currentApi) &&
       Boolean(state.api.currentApi.languages) &&
@@ -299,10 +292,10 @@ class DocumentEditToolbar extends Component {
           <div class={styles.button}>
             <ButtonWithOptions
               accent="save"
+              callback={this.saveDefaultActionAndExecute.bind(this)}
               disabled={hasConnectionIssues || hasValidationErrors || isSaving}
               onClick={this.saveDefaultActionAndExecute.bind(this, defaultSaveOptionName)}
               options={invisibleSaveOptions}
-              callback={this.saveDefaultActionAndExecute.bind(this)}
             >
               {defaultSaveOptionName}
             </ButtonWithOptions>
@@ -322,7 +315,7 @@ class DocumentEditToolbar extends Component {
       collection,
       group,
       referencedField,
-      state
+      state,
     } = this.props
     const {currentApi, currentCollection} = state.api
     const document = state.document.remote
@@ -355,7 +348,7 @@ class DocumentEditToolbar extends Component {
       group,
       onBuildBaseUrl,
       section,
-      state
+      state,
     } = this.props
     const newDocument = !Boolean(this.props.documentId)
 
@@ -460,7 +453,7 @@ class DocumentEditToolbar extends Component {
       state
     } = this.props
 
-    actions.updateLocalUser(`data.${FIELD_PUBLISH_SAVE_OPTIONS_LAST_USED}`, defaultActionName);
+    actions.updateLocalUser(`data.${FIELD_PUBLISH_SAVE_OPTIONS_LAST_USED}`, defaultActionName)
     actions.saveUser()
   }
 
