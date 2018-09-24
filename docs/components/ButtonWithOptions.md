@@ -56,7 +56,7 @@ Object containing the secondary options. Keys define the text of the option and 
  ```jsx
  <ButtonWithOptions
    onClick={this.mainCallback()}
-   options={new Map(
+   options={[
      [
       'Save and continue',
        {
@@ -67,13 +67,13 @@ Object containing the secondary options. Keys define the text of the option and 
          ]
        }
      ]
-   ])}
+   ]}
  >
    Save
  </ButtonWithOptions>
  ```
 
-- type: `custom`
+- type: `array`
 
 
 ### `type`
