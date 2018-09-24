@@ -36,16 +36,16 @@ Server.prototype.getOptions = function (override = {}) {
   const formatters = {
     'text/plain': (req, res, body) => {
       if (body instanceof Error) {
-        // catch our Error
         log.error(body.stack)
+
         return body.message
       }
     }
   }
 
   return Object.assign({
-    port: config.get('server.port'),
     host: config.get('server.host'),
+    port: config.get('server.port'),
     formatters
   }, override)
 }
@@ -56,9 +56,12 @@ Server.prototype.getOptions = function (override = {}) {
  */
 Server.prototype.start = function () {
   let listenerQueue = []
-    // Inject API UUIDs in config
+
+  // Inject API UUIDs in config
   config.set('apis', getApisBlockWithUUIDs(config.get('apis')))
+
   listenerQueue.push(this.createPrimaryServer())
+
   // If we're using ssl, create a server on port 80 to handle
   // redirects and challenge authentication
   if (config.get('server.ssl.enabled')) {
@@ -111,6 +114,7 @@ Server.prototype.createRedirectServer = function () {
   const options = this.getOptions({
     port: 80
   })
+
   this.redirectServer = restify.createServer(options)
 
   this.addSSL(this.redirectServer)
