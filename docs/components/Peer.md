@@ -6,7 +6,7 @@
 Props
 -----
 
-### `active` (required)
+### `active`
 
 The peer is currently active.
 

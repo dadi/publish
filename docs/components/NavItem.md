@@ -6,7 +6,7 @@ An item of the main navigation component.
 Props
 -----
 
-### `active` (required)
+### `active`
 
 Whether the component corresponds to the currently active page.
 
@@ -21,7 +21,7 @@ The link to be followed when the navigation item is clicked.
 - type: `string`
 
 
-### `mobile` (required)
+### `mobile`
 
 Whether the navigation item is part of a navigation component in mobile mode.
 
