@@ -48,16 +48,29 @@ export default class ButtonWithOptions extends Component {
      *  ```jsx
      *  <ButtonWithOptions
      *    onClick={this.mainCallback()}
-     *    options={{
-     *      'Save and continue': this.saveAndContinueCallback()
-     *      'Save and go back': this.saveAndGoBackeCallback()
-     *    }}
+     *    options={[
+     *      [
+     *       'Save and continue',
+     *        {
+     *          action: 'save',
+     *          methods: [
+     *            'edit',
+     *            'new'
+     *          ]
+     *        }
+     *      ]
+     *    ]}
      *  >
      *    Save
      *  </ButtonWithOptions>
      *  ```
      */
-    options: proptypes.object,
+    options: proptypes.array,
+
+    /**
+     * function to call with the value of the action
+     */
+    callback: proptypes.func,
 
     /**
      * Type/function of the button
@@ -91,6 +104,7 @@ export default class ButtonWithOptions extends Component {
   render() {
     const {
       accent,
+      callback,
       children,
       disabled,
       href,
@@ -134,11 +148,9 @@ export default class ButtonWithOptions extends Component {
         {open && !disabled &&
           <div class={styles.options}>
             <Dropdown tooltip="right">
-              {Object.keys(options).map(option => {
-                return (
-                  <DropdownItem onClick={options[option]}>{option}</DropdownItem>
-                )
-              })}
+              {options.map(([name]) =>
+                  <DropdownItem onClick={() => callback(name)}>{name}</DropdownItem>
+              )}
             </Dropdown>
           </div>
         }
