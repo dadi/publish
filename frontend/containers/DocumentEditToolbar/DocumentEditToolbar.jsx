@@ -315,7 +315,7 @@ class DocumentEditToolbar extends Component {
       collection,
       group,
       referencedField,
-      state,
+      state
     } = this.props
     const {currentApi, currentCollection} = state.api
     const document = state.document.remote
@@ -348,7 +348,7 @@ class DocumentEditToolbar extends Component {
       group,
       onBuildBaseUrl,
       section,
-      state,
+      state
     } = this.props
     const newDocument = !Boolean(this.props.documentId)
 
@@ -470,7 +470,7 @@ class DocumentEditToolbar extends Component {
     this.handleSave.call(
       this,
       availableSaveOptions.options.find(option => defaultActionName === option[0]).action
-    );
+    )
   }
 
   saveDocument() {
