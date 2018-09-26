@@ -484,6 +484,7 @@ class DocumentEdit extends Component {
     const fieldComponentName = `Field${fieldType}`
     const FieldComponent = fieldComponents[fieldComponentName] &&
       fieldComponents[fieldComponentName].edit
+    const fieldExample = field.example
 
     if (!FieldComponent) {
       console.warn('Unknown field type:', fieldType)
@@ -515,6 +516,7 @@ class DocumentEdit extends Component {
           required={field.required && !isTranslation}
           schema={field}
           value={value}
+          example={fieldExample}
         />
       </div>
     )
