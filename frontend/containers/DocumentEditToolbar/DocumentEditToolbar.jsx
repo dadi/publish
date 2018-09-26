@@ -25,63 +25,37 @@ import DropdownNative from 'components/DropdownNative/DropdownNative'
 import Peer from 'components/Peer/Peer'
 import Toolbar from 'components/Toolbar/Toolbar'
 
-const FIELD_PUBLISH_SAVE_OPTIONS_LAST_USED = 'publishSaveOptionsLastUsed'
-const SAVE_AND_CONTINUE = 'Save and continue'
-const SAVE_AND_CREATE_NEW = 'Save and create new'
-const SAVE_AND_GO_BACK = 'Save and go back'
-const SAVE_AS_DUPLICATE = 'Save as duplicate'
 const ACTION_SAVE = 'save'
 const ACTION_SAVE_AND_CREATE_NEW = 'saveAndCreateNew'
 const ACTION_SAVE_AND_GO_BACK = 'saveAndGoBack'
 const ACTION_SAVE_AS_DUPLICATE = 'saveAsDuplicate'
-const METHOD_EDIT = 'edit'
-const METHOD_NEW = 'new'
-const availableSaveOptions = {
-    default: SAVE_AND_CONTINUE,
-    options: [
-      [
-        SAVE_AND_CONTINUE,
-        {
-          action: ACTION_SAVE,
-          methods: [
-            METHOD_EDIT,
-            METHOD_NEW
-          ]
-        }
-      ],
-      [
-        SAVE_AND_CREATE_NEW,
-        {
-          action: ACTION_SAVE_AND_CREATE_NEW,
-          methods: [
-              METHOD_EDIT,
-              METHOD_NEW
-          ]
-        }
-      ],
-      [
-        SAVE_AND_GO_BACK,
-        {
-          action: ACTION_SAVE_AND_GO_BACK,
-          methods: [
-            METHOD_EDIT,
-            METHOD_NEW
-          ]
-        }
-      ],
-      [
-        SAVE_AS_DUPLICATE,
-        {
-          action: ACTION_SAVE_AS_DUPLICATE,
-          methods: [
-            // If we're editing an existing document, we also allow users to duplicate
-            // the document.
-            METHOD_EDIT
-          ]
-        }
-      ]
-    ]
+
+const availableSaveOptions = [
+  {
+    default: true,
+    label: 'Save and continue',
+    action: ACTION_SAVE,
+    enableForExistingDocuments: true,
+    enableForNewDocuments: true
+  },
+  {
+    label: 'Save and create new',
+    action: ACTION_SAVE_AND_CREATE_NEW,
+    enableForExistingDocuments: true,
+    enableForNewDocuments: true
+  },
+  {
+    label: 'Save and go back',
+    action: ACTION_SAVE_AND_GO_BACK,
+    enableForExistingDocuments: true,
+    enableForNewDocuments: true
+  },
+  {
+    label: 'Save as duplicate',
+    action: ACTION_SAVE_AS_DUPLICATE,
+    enableForExistingDocuments: true
   }
+]
   
 /**
  * A toolbar used in a document edit view.
@@ -155,7 +129,7 @@ class DocumentEditToolbar extends Component {
 
     // Have we just saved a document?
     if (previousDocument.isSaving && !document.isSaving) {
-      if (typeof this.onSave.callback === 'function') {
+      if (this.onSave && typeof this.onSave.callback === 'function') {
         this.onSave.callback(state.document.remote ? state.document.remote._id : null)
       }
     }
@@ -194,26 +168,8 @@ class DocumentEditToolbar extends Component {
     const hasValidationErrors = validationErrors && Object.keys(validationErrors)
       .filter(field => validationErrors[field])
       .length
-    const method = documentId ? 'edit' : 'new'
 
-    const savedSaveOptionOnUser = state.user.remote.data[FIELD_PUBLISH_SAVE_OPTIONS_LAST_USED]
-
-    const savedSaveOption = savedSaveOptionOnUser || availableSaveOptions.default
-
-    const localSaveOptions = availableSaveOptions.options.filter(
-      ([,option]) => option.methods.includes(method)
-    )
-
-    // Change based on user data
-
-    const defaultSaveOptionName = localSaveOptions.find(option => savedSaveOption === option[0]) ?
-      savedSaveOption :
-      availableSaveOptions.default
-
-    const invisibleSaveOptions = localSaveOptions.filter(
-      ([name]) => name !== defaultSaveOptionName
-    )
-
+    let saveOptions = this.getSaveOptions(documentId)
     let languages = Boolean(state.api.currentApi) &&
       Boolean(state.api.currentApi.languages) &&
       (state.api.currentApi.languages.length > 1) &&
@@ -292,12 +248,11 @@ class DocumentEditToolbar extends Component {
           <div class={styles.button}>
             <ButtonWithOptions
               accent="save"
-              callback={this.saveDefaultActionAndExecute.bind(this)}
               disabled={hasConnectionIssues || hasValidationErrors || isSaving}
-              onClick={this.saveDefaultActionAndExecute.bind(this, defaultSaveOptionName)}
-              options={invisibleSaveOptions}
+              onClick={this.handleSave.bind(this, saveOptions.primary.action)}
+              options={saveOptions.secondary}
             >
-              {defaultSaveOptionName}
+              {saveOptions.primary.label}
             </ButtonWithOptions>
           </div>
         </div>
@@ -307,6 +262,55 @@ class DocumentEditToolbar extends Component {
 
   componentWillUnmount() {
     this.keyboard.off()
+  }
+
+  getSaveOptions(documentId) {
+    const {state} = this.props
+
+    // We start by filtering the available save options based on whether we're
+    // editing an existing document or creating a new one, as some options may
+    // not be available in both contexts.
+    let saveOptions = availableSaveOptions.filter(option => {
+      if (documentId && !option.enableForExistingDocuments) return false
+      if (!documentId && !option.enableForNewDocuments) return false
+
+      return true
+    })
+
+    let userSavedOption = state.user.remote.data[
+      Constants.FIELD_SAVE_OPTIONS
+    ]
+
+    // Our first choice for primary save option is any option saved against
+    // the user record.
+    let primaryOption = userSavedOption && saveOptions.find(option => {
+      return option.action === userSavedOption
+    })
+
+    // If the above yields nothing, or if the saved option doesn't correspond
+    // to a valid save option, we'll grab the first available option with the
+    // `default` property. If that doesn't work either, we'll simply take the
+    // first option from the list.
+    if (!primaryOption) {
+      primaryOption = saveOptions.find(option => option.default) ||
+        saveOptions[0]
+    }
+
+    // The secondary options will be all the available options that aren't the
+    // primary one. For convenience, we return them as an Object with a format
+    // that ButtonWithOptions will accept.
+    let secondaryOptions = saveOptions.reduce((options, option) => {
+      if (option.action !== primaryOption.action) {
+        options[option.label] = this.handleSave.bind(this, option.action)  
+      }
+
+      return options
+    }, {})
+
+    return {
+      primary: primaryOption,
+      secondary: secondaryOptions
+    }
   }
 
   handleDelete() {
@@ -438,39 +442,7 @@ class DocumentEditToolbar extends Component {
         break
     }    
 
-    actions.registerSaveAttempt()
-  }
-
-  /**
-   * Saves the default action.
-   * 
-   * @param {string} defaultActionName
-   * @return void
-   */
-  saveDefaultAction(defaultActionName) {
-    const {
-      actions,
-      state
-    } = this.props
-
-    actions.updateLocalUser(`data.${FIELD_PUBLISH_SAVE_OPTIONS_LAST_USED}`, defaultActionName)
-    actions.saveUser()
-  }
-
-  /**
-   * Saves the default action and executes the action.
-   * 
-   * @param {string} defaultActionName
-   * @return void
-   */
-  saveDefaultActionAndExecute(defaultActionName) {
-    this.saveDefaultAction(defaultActionName)
-
-    // Execute the action
-    this.handleSave.call(
-      this,
-      availableSaveOptions.options.find(option => defaultActionName === option[0]).action
-    )
+    actions.registerSaveAttempt(saveMode)
   }
 
   saveDocument() {
