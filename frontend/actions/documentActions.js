@@ -1,8 +1,9 @@
 import 'fetch'
-
 import * as Constants from 'lib/constants'
 import * as LocalStorage from 'lib/local-storage'
 import * as Types from 'actions/actionTypes'
+import * as userActions from 'actions/userActions'
+import {batchActions} from 'lib/redux'
 import apiBridgeClient from 'lib/api-bridge-client'
 
 export function clearRemoteDocument () {
@@ -88,9 +89,20 @@ function getLocalStorageKey ({
   return JSON.stringify({collection, group})
 }
 
-export function registerSaveAttempt () {
-  return {
-    type: Types.ATTEMPT_SAVE_DOCUMENT
+export function registerSaveAttempt (saveMode) {
+  let actions = [
+    {
+      type: Types.ATTEMPT_SAVE_DOCUMENT
+    },
+    userActions.updateLocalUser(`data.${Constants.FIELD_SAVE_OPTIONS}`, saveMode)
+  ]
+
+  return (dispatch, getState) => {
+    dispatch(
+      batchActions(actions)
+    )
+
+    dispatch(userActions.saveUser())
   }
 }
 
