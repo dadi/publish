@@ -455,12 +455,12 @@ class DocumentEditToolbar extends Component {
       state
     } = this.props
     const creatingNew = this.onSave && this.onSave.createNew
-    const validationErrors = state.document.validationErrors
-    const hasValidationErrors = !validationErrors || Object.keys(validationErrors)
+    const {hasBeenValidated, validationErrors} = state.document
+    const hasValidationErrors = validationErrors && Object.keys(validationErrors)
       .filter(field => validationErrors[field])
       .length
 
-    if (hasValidationErrors) return
+    if (!hasBeenValidated || hasValidationErrors) return
 
     let document = state.document.local
 
