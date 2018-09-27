@@ -150,7 +150,9 @@ export function signIn (clientId, secret) {
         })
 
         if (missingFeatures.length > 0) {
-          return Promise.reject(501)
+          return Promise.reject({
+            status: 501
+          })
         }
 
         if (response.status === 200) {
@@ -164,7 +166,9 @@ export function signIn (clientId, secret) {
         let accessTokenTTL = response.expiresIn
 
         if (typeof accessToken !== 'string') {
-          return Promise.reject(401)
+          return Promise.reject({
+            status: 401
+          })
         }
 
         return fetch(`/config?accessToken=${accessToken}`)
