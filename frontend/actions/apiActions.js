@@ -32,27 +32,16 @@ export function loadApis () {
         }).getCollections()
       })
       .then(({collections}) => {
-        // 3: Get collection schema.
-        let queue = collections.map(collection => {
-          return apiBridgeClient({
-            accessToken: getState().user.accessToken,
-            api,
-            collection
-          }).getConfig().then(collectionSchema => {
-            return Object.assign({}, collection, collectionSchema)
-          })
-        })
-
-        return Promise.all(queue)
-      })
-      .then(apiCollections => {
-        // 4: Augmenting collection schemas with default Publish
+        // 3: Augmenting collection schemas with default Publish
         // parameters.
-        let augmentedCollections = apiCollections
-          .map((schema, index) => {
+        let augmentedCollections = collections
+          .map(collection => {
             return Object.assign(
               {},
-              applyDefaultPublishParams(schema)
+              collection,
+              {
+                fields: applyDefaultPublishParams(collection.fields)
+              }
             )
           })
           .filter(collection => {
@@ -111,11 +100,12 @@ export function setCurrentCollection ({collection, group, referencedField}) {
 
 /**
  * Apply Required Mutations
- * @param  {Object} schema     Collection schema.
+ * @param  {Object} fields     Collection fields.
+ * @param  {Object} settings     Collection settings.
  * @return {Object} Mutated collection schema.
  */
-const applyDefaultPublishParams = schema => {
-  const publish = {
+const applyDefaultPublishParams = fields => {
+  let defaultPublishBlock = {
     display: {
       edit: true,
       list: false
@@ -125,18 +115,19 @@ const applyDefaultPublishParams = schema => {
   }
 
   // Mutate fields to include required publish config.
-  const fields = Object.assign(schema.fields, ...Object.keys(schema.fields)
+  let mutatedFields = Object.assign(fields, ...Object.keys(fields)
     .map(key => {
-      let field = schema.fields[key]
+      let field = fields[key]
 
-      if (!field.publish) field.publish = publish
+      field.publish = field.publish || defaultPublishBlock
+      field.publish.section = field.publish.section || defaultPublishBlock.section
+      field.publish.placement = field.publish.placement || defaultPublishBlock.placement
+      field.publish.display = field.publish.display || defaultPublishBlock.display
 
-      field.publish.section = field.publish.section || publish.section
-      field.publish.placement = field.publish.placement || publish.placement
-      field.publish.display = field.publish.display || publish.display
-
-      return {[key]: field}
+      return {
+        [key]: field
+      }
     }))
 
-  return Object.assign(schema, {fields})
+  return mutatedFields
 }
