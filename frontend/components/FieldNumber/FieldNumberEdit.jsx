@@ -137,7 +137,7 @@ export default class FieldNumberEdit extends Component {
       <Label
         error={Boolean(error)}
         errorMessage={typeof error === 'string' ? error : null}
-        label={displayName || ''}
+        label={displayName}
         comment={comment}
       >
         <TextInput
