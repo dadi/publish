@@ -17,6 +17,11 @@ export default class FieldNumberEdit extends Component {
     collection: proptypes.string,
 
     /**
+     * The text to be rendered on the top-right corner of the field.
+     */
+    comment: proptypes.string,
+
+    /**
      * A subset of the app config containing data specific to this field type.
      */
     config: proptypes.object,
@@ -117,7 +122,8 @@ export default class FieldNumberEdit extends Component {
   }
 
   render() {
-    const {
+    let {
+      comment,
       displayName,
       error,
       required,
@@ -125,13 +131,14 @@ export default class FieldNumberEdit extends Component {
       value
     } = this.props
     const publishBlock = schema.publish || {}
-
+    comment = comment || (required && 'Required')
+    
     return (
       <Label
         error={Boolean(error)}
         errorMessage={typeof error === 'string' ? error : null}
         label={displayName}
-        comment={required && 'Required'}
+        comment={comment}
       >
         <TextInput
           onChange={this.handleOnChange.bind(this)}

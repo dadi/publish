@@ -490,6 +490,7 @@ class DocumentEdit extends Component {
     const fieldComponentName = `Field${fieldType}`
     const FieldComponent = fieldComponents[fieldComponentName] &&
       fieldComponents[fieldComponentName].edit
+    const fieldComment = field.comment || field.example
 
     if (!FieldComponent) {
       console.warn('Unknown field type:', fieldType)
@@ -505,6 +506,7 @@ class DocumentEdit extends Component {
       <div class={fieldStyles.getClasses()}>
         <FieldComponent
           collection={collection}
+          comment={fieldComment}
           config={app.config}
           currentApi={api.currentApi}
           currentCollection={api.currentCollection}

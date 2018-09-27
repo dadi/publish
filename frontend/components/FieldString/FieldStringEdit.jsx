@@ -20,6 +20,11 @@ export default class FieldStringEdit extends Component {
     collection: proptypes.string,
 
     /**
+     * The text to be rendered on the top-right corner of the field.
+     */
+    comment: proptypes.string,
+
+    /**
      * A subset of the app config containing data specific to this field type.
      */
     config: proptypes.object,
@@ -136,7 +141,8 @@ export default class FieldStringEdit extends Component {
   }
 
   renderAsFreeInput() {
-    const {
+    let {
+      comment,
       displayName,
       error,
       placeholder,
@@ -148,13 +154,14 @@ export default class FieldStringEdit extends Component {
     const {heightType, rows, resizable} = publishBlock
     const type = publishBlock.multiline ? 'multiline' : 'text'
     const readOnly = publishBlock.readonly === true
+    comment = comment || (required && 'Required')
 
     return (
       <Label
         error={error}
         errorMessage={typeof error === 'string' ? error : null}
         label={displayName}
-        comment={required && 'Required'}
+        comment={comment}
       >
         <TextInput
           heightType={heightType}
@@ -172,7 +179,8 @@ export default class FieldStringEdit extends Component {
   }
 
   renderAsDropdown() {
-    const {
+    let {
+      comment,
       displayName,
       error,
       name,
@@ -189,13 +197,14 @@ export default class FieldStringEdit extends Component {
     const dropdownStyle = new Style(styles, 'dropdown')
       .addIf('dropdown-error', error)
       .addIf('dropdown-multiple', multiple)
+    comment = comment || (required && 'Required')
 
     return (
       <Label
         error={error}
         errorMessage={typeof error === 'string' ? error : null}
         label={displayName}
-        comment={required && 'Required'}
+        comment={comment}
       >
         <select
           class={dropdownStyle.getClasses()}
