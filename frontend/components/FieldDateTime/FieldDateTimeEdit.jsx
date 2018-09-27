@@ -23,6 +23,11 @@ export default class FieldDateTimeEdit extends Component {
     collection: proptypes.string,
 
     /**
+     * The text to be rendered on the top-right corner of the field.
+     */
+    comment: proptypes.string,
+
+    /**
      * A subset of the app config containing data specific to this field type.
      */
     config: proptypes.object,
@@ -97,12 +102,7 @@ export default class FieldDateTimeEdit extends Component {
     /**
      * The field value.
      */
-    value: proptypes.bool,
-
-    /**
-     * The field tip.
-     */
-    example: proptypes.string
+    value: proptypes.bool
   }
 
   constructor(props) {
@@ -117,18 +117,18 @@ export default class FieldDateTimeEdit extends Component {
   }
 
   render() {
-    const {
+    let {
+      comment,
       config,
       displayName,
       error, 
       required,
       schema, 
-      value,
-      example
+      value
     } = this.props
     const {pickerVisible} = this.state
     const publishBlock = schema.publish || {}
-    const comment = example || (required && 'Required')
+    comment = comment || (required && 'Required')
 
     let dateObj = null
 

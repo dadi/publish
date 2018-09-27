@@ -20,6 +20,11 @@ export default class FieldStringEdit extends Component {
     collection: proptypes.string,
 
     /**
+     * The text to be rendered on the top-right corner of the field.
+     */
+    comment: proptypes.string,
+
+    /**
      * A subset of the app config containing data specific to this field type.
      */
     config: proptypes.object,
@@ -99,12 +104,7 @@ export default class FieldStringEdit extends Component {
     /**
      * The field value.
      */
-    value: proptypes.bool,
-
-    /**
-     * The field tip.
-     */
-    example: proptypes.string
+    value: proptypes.bool
   }
 
   static defaultProps = {
@@ -141,20 +141,20 @@ export default class FieldStringEdit extends Component {
   }
 
   renderAsFreeInput() {
-    const {
+    let {
+      comment,
       displayName,
       error,
       placeholder,
       required,
       schema,
-      value,
-      example
+      value
     } = this.props
     const publishBlock = schema.publish || {}
     const {heightType, rows, resizable} = publishBlock
     const type = publishBlock.multiline ? 'multiline' : 'text'
     const readOnly = publishBlock.readonly === true
-    const comment = example || (required && 'Required')
+    comment = comment || (required && 'Required')
 
     return (
       <Label
@@ -179,14 +179,14 @@ export default class FieldStringEdit extends Component {
   }
 
   renderAsDropdown() {
-    const {
+    let {
+      comment,
       displayName,
       error,
       name,
       required,
       schema,
-      value,
-      example
+      value
     } = this.props
     const publishBlock = schema.publish || {}
     const options = publishBlock.options
@@ -197,7 +197,7 @@ export default class FieldStringEdit extends Component {
     const dropdownStyle = new Style(styles, 'dropdown')
       .addIf('dropdown-error', error)
       .addIf('dropdown-multiple', multiple)
-    const comment = example || (required && 'Required')
+    comment = comment || (required && 'Required')
 
     return (
       <Label
