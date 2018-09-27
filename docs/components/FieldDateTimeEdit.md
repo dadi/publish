@@ -13,6 +13,13 @@ The name of the collection being edited, as per the URL.
 - type: `string`
 
 
+### `comment`
+
+The text to be rendered on the top-right corner of the field.
+
+- type: `string`
+
+
 ### `config`
 
 A subset of the app config containing data specific to this field type.
@@ -51,13 +58,6 @@ The ID of the document being edited.
 ### `error`
 
 If defined, contains an error message to be displayed by the field.
-
-- type: `string`
-
-
-### `example`
-
-The field tip.
 
 - type: `string`
 
