@@ -115,7 +115,11 @@ export function signIn (clientId, secret) {
   return (dispatch, getState) => {
     let api = getState().app.config.apis[0]
     let apiUrl = api.host
-    let requiredFeatures = ['aclv1']
+    let requiredFeatures = [
+      'aclv1',
+      'i18nv2',
+      'collectionsv1'
+    ]
 
     if (api.port) {
       apiUrl += ':' + api.port
@@ -146,7 +150,9 @@ export function signIn (clientId, secret) {
         })
 
         if (missingFeatures.length > 0) {
-          return Promise.reject(501)
+          return Promise.reject({
+            status: 501
+          })
         }
 
         if (response.status === 200) {
@@ -160,7 +166,9 @@ export function signIn (clientId, secret) {
         let accessTokenTTL = response.expiresIn
 
         if (typeof accessToken !== 'string') {
-          return Promise.reject(401)
+          return Promise.reject({
+            status: 401
+          })
         }
 
         return fetch(`/config?accessToken=${accessToken}`)
