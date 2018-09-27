@@ -115,7 +115,11 @@ export function signIn (clientId, secret) {
   return (dispatch, getState) => {
     let api = getState().app.config.apis[0]
     let apiUrl = api.host
-    let requiredFeatures = ['aclv1']
+    let requiredFeatures = [
+      'aclv1',
+      'i18nv2',
+      'collectionsv1'
+    ]
 
     if (api.port) {
       apiUrl += ':' + api.port
