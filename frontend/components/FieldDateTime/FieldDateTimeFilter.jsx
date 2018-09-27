@@ -67,16 +67,18 @@ export default class FieldDateTimeFilter extends Component {
   }
 
   render() {
-    const {
+    let {
       analyserStyles,
-      config,
+      config = {},
       containerStyles,
       type,
       value,
       valueStyles
     } = this.props
 
-    const format=(((config || {}).formats || {}).date || {}).short
+    const formats = config.formats || {}
+    const date = formats.date || {}
+    const format = date.short
 
     return (
       <div class={containerStyles}>
@@ -109,7 +111,7 @@ export default class FieldDateTimeFilter extends Component {
   }
 
   handleChange(elementId, data) {
-    const {config, onUpdate, index} = this.props
+    const {config = {}, onUpdate, index} = this.props
 
     let newValue = null
 
