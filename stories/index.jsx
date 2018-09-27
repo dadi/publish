@@ -1,6 +1,8 @@
 import { h } from 'preact'
 import { storiesOf } from '@storybook/react'
 
+import {styles} from "../frontend/components/Main/Main.css"
+
 import FieldStringEdit from '../frontend/components/FieldString/FieldStringEdit'
 import FieldStringFilter from '../frontend/components/FieldString/FieldStringFilter'
 import FieldStringList from '../frontend/components/FieldString/FieldStringList'
