@@ -13,23 +13,30 @@ The global actions object.
 - type: `object`
 
 
-### `collection` (required)
+### `api`
 
-The name of the collection currently being listed.
+The API to operate on.
 
-- type: `string`
+- type: `object`
+
+
+### `collection`
+
+The collection to operate on.
+
+- type: `object`
+
+
+### `collectionParent`
+
+The parent collection to operate on, when dealing with a reference field.
+
+- type: `object`
 
 
 ### `documentId`
 
 The ID of the document being edited.
-
-- type: `string`
-
-
-### `group`
-
-The name of the group where the current collection belongs (if any).
 
 - type: `string`
 

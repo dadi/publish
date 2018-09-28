@@ -77,16 +77,17 @@ App
 │ │ │ ├── Button
 │ │ │ └── HeroMessage
 │ │ ├── HeroMessage
-│ │ └─┬ SyncTable
-│ │   ├── Table
-│ │   ├─┬ TableHead
-│ │   │ └─┬ TableHeadCell
-│ │   │   └── IconArrow
-│ │   ├─┬ TableHeadCell
-│ │   │ └── IconArrow
-│ │   ├─┬ TableRow
-│ │   │ └── TableRowCell
-│ │   └── TableRowCell
+│ │ ├─┬ SyncTable
+│ │ │ ├── Table
+│ │ │ ├─┬ TableHead
+│ │ │ │ └─┬ TableHeadCell
+│ │ │ │   └── IconArrow
+│ │ │ ├─┬ TableHeadCell
+│ │ │ │ └── IconArrow
+│ │ │ ├─┬ TableRow
+│ │ │ │ └── TableRowCell
+│ │ │ └── TableRowCell
+│ │ └── SpinningWheel
 │ ├─┬ DocumentListController
 │ │ ├── Button
 │ │ ├─┬ DocumentFilters
@@ -206,11 +207,6 @@ App
     ├── Page
     ├─┬ ProfileEditToolbar
     │ ├── Button
-    │ ├─┬ ButtonWithOptions
-    │ │ ├── Button
-    │ │ ├── Dropdown
-    │ │ ├── DropdownItem
-    │ │ └── IconArrow
     │ ├─┬ ButtonWithPrompt
     │ │ ├── Button
     │ │ └─┬ Prompt
