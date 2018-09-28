@@ -21,8 +21,8 @@ import {connectHelper} from 'lib/util'
 import Button from 'components/Button/Button'
 import ErrorMessage from 'components/ErrorMessage/ErrorMessage'
 import HeroMessage from 'components/HeroMessage/HeroMessage'
-import SyncTable from 'components/SyncTable/SyncTable'
 import SpinningWheel from 'components/SpinningWheel/SpinningWheel'
+import SyncTable from 'components/SyncTable/SyncTable'
 
 /**
  * A table view with a list of documents.
@@ -359,7 +359,6 @@ class DocumentList extends Component {
     if (
       !documents.list ||
       !documents.list.results ||
-      documents.isLoading ||
       !collection
     ) {
       return null

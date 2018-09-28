@@ -23,6 +23,7 @@ import {connectHelper} from 'lib/util'
 import {Format} from 'lib/util/string'
 
 import ErrorMessage from 'components/ErrorMessage/ErrorMessage'
+import SpinningWheel from 'components/SpinningWheel/SpinningWheel'
 import TabbedFieldSections from 'components/TabbedFieldSections/TabbedFieldSections'
 
 /**
@@ -247,6 +248,12 @@ class DocumentEdit extends Component {
     } = this.props
     const document = state.document
 
+    if (state.api.isLoading || document.isLoading) {
+      return (
+        <SpinningWheel />
+      )
+    }
+
     if (document.remoteError) {
       return (
         <ErrorMessage
@@ -256,7 +263,7 @@ class DocumentEdit extends Component {
       )
     }
 
-    if (document.isLoading || !document.local) {
+    if (!document.local) {
       return null
     }
 
