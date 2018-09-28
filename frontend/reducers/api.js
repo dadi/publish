@@ -6,9 +6,9 @@ import {Format} from 'lib/util/string'
 
 export const initialState = {
   apis: [],
-  currentApi: null,
-  currentCollection: null,
-  currentParentCollection: null,
+  currentApi: undefined,
+  currentCollection: undefined,
+  currentParentCollection: undefined,
   error: undefined,
   isLoading: false,
   paths: window.__documentRoutes__,
@@ -57,7 +57,7 @@ export default function api (state = initialState, action = {}) {
             collection: parameters.collection,
             group: parameters.group
           }) :
-          null
+          undefined
       }
 
       return newState
@@ -231,7 +231,7 @@ function getApiForParameters ({
   collection: urlCollection,
   group: urlGroup
 }) {
-  if (!urlCollection) return null
+  if (!urlCollection) return
 
   // Are we looking at a collection name with a prefix (e.g. 'users-2')?
   let urlCollectionParts = urlCollection.match(/(.*)-([0-9]+)/)
@@ -250,21 +250,23 @@ function getApiForParameters ({
         return menuItem.collections && menuItem.collections.includes(urlCollectionName)
       })
 
+      matchesFound++
+
       // If there isn't a group in the URL and the candidate collection isn't
       // inside a group, then it's a match.
       if (!urlGroup && !group) {
-        return (++matchesFound === urlCollectionNumber)
+        return matchesFound === urlCollectionNumber
       }
 
       // If there is a group in the URL and that matches the group of the candidate
       // collection, then it's a match.
       if (urlGroup && group && (Format.slugify(group.title) === urlGroup)) {
-        return (++matchesFound === urlCollectionNumber)
+        return matchesFound === urlCollectionNumber
       }
     }
   })
 
-  return api
+  return api || (apis.length > 0 ? null : undefined)
 }
 
 /**
@@ -286,7 +288,7 @@ function getCollectionForParameters ({
   group,
   referencedField
 }) {
-  if (!api || !api.collections) return null
+  if (!api || !api.collections) return api
 
   let collectionMatch
 
@@ -322,5 +324,5 @@ function getCollectionForParameters ({
     }
   }
 
-  return collectionMatch
+  return collectionMatch || null
 }

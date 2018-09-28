@@ -13,13 +13,6 @@ Colour accent.
 - type: `enum('system')`
 
 
-### `callback`
-
-function to call with the value of the action
-
-- type: `func`
-
-
 ### `children`
 
 The text to be rendered inside the main button.
@@ -56,24 +49,16 @@ Object containing the secondary options. Keys define the text of the option and 
  ```jsx
  <ButtonWithOptions
    onClick={this.mainCallback()}
-   options={[
-     [
-      'Save and continue',
-       {
-         action: 'save',
-         methods: [
-           'edit',
-           'new'
-         ]
-       }
-     ]
-   ]}
+   options={{
+    'Save and continue': this.saveAndContinueCallback()
+    'Save and go back': this.saveAndGoBackeCallback()
+   }}
  >
    Save
  </ButtonWithOptions>
  ```
 
-- type: `array`
+- type: `object`
 
 
 ### `type`

@@ -22,6 +22,21 @@ import ListController from 'components/ListController/ListController'
 class DocumentListController extends Component {
   static propTypes = {
     /**
+     * The API to operate on.
+     */
+    api: proptypes.object,
+
+    /**
+     * The collection to operate on.
+     */
+    collection: proptypes.object,
+
+    /**
+     * The parent collection to operate on, when dealing with a reference field.
+     */
+    collectionParent: proptypes.object,
+
+    /**
      * The JSON-stringified object of active filters.
      */
     filter: proptypes.string,
@@ -30,11 +45,6 @@ class DocumentListController extends Component {
     * Whether we are editing a new filter.
     */
     newFilter: proptypes.bool,
-
-    /**
-     * The name of the group where the current collection belongs (if any).
-     */
-    group: proptypes.string,
 
     /**
      * The global state object.
@@ -59,6 +69,7 @@ class DocumentListController extends Component {
 
   render() {
     const {
+      api,
       collection,
       filter,
       group,
@@ -68,7 +79,6 @@ class DocumentListController extends Component {
       referencedField,
       state
     } = this.props
-    const {currentApi, currentCollection} = state.api
     const hasDocuments = state.documents.list &&
       state.documents.list.results &&
       state.documents.list.results.length > 0
@@ -76,27 +86,27 @@ class DocumentListController extends Component {
     const params = state.router.search
     const filters = params && params.filter ? params.filter : null
     const filterLimitReached = filters 
-      && currentCollection 
-      && Object.keys(filters).length === Object.keys(currentCollection.fields).length
+      && collection 
+      && Object.keys(filters).length === Object.keys(collection.fields).length
     const newHref = onBuildBaseUrl({
       createNew: true
     })
 
-    if (!currentCollection || state.documents.remoteError) {
+    if (!collection || state.documents.remoteError) {
       return null
     }
 
     let currentGroup = state.router.parameters &&
       state.router.parameters.group &&
-      state.api.currentApi.menu &&
-      state.api.currentApi.menu.find(item => {
+      api.menu &&
+      api.menu.find(item => {
         return Format.slugify(item.title) === state.router.parameters.group
       })
 
     return (
       <div>
         <ListController 
-          breadcrumbs={[currentGroup && currentGroup.title, currentCollection.name]}
+          breadcrumbs={[currentGroup && currentGroup.title, collection.name]}
         >
           <Button
             type="fill"
@@ -104,7 +114,7 @@ class DocumentListController extends Component {
             accent="data"
             onClick={this.handleAddNewFilter.bind(this)}
           >Add Filter</Button>
-          {!currentCollection._isAuthCollection && !isReference && (
+          {!collection._isAuthCollection && !isReference && (
             <Button
               type="fill"
               accent="save"
@@ -116,7 +126,7 @@ class DocumentListController extends Component {
           config={state.app.config}
           filters={filters}
           newFilter={newFilter}
-          collection={currentCollection}
+          collection={collection}
           updateUrlParams={this.updateUrlParams.bind(this)}
         />
       </div>
@@ -125,6 +135,7 @@ class DocumentListController extends Component {
 
   handleAddNewFilter() {
     const {onAddNewFilter} = this.props
+
     onAddNewFilter(true)
   }
 

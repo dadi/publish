@@ -118,8 +118,7 @@ class DocumentEditToolbar extends Component {
   componentDidUpdate(prevProps, prevState) {
     const {
       actions,
-      collection,
-      group,
+      onBuildBaseUrl,
       state
     } = this.props
     const document = state.document
@@ -145,7 +144,7 @@ class DocumentEditToolbar extends Component {
     // Have we deleted a document?
     if (previousDocument.remote && !document.remote) {
       // Redirect to document list view
-      route(buildUrl(group, collection))
+      route(onBuildBaseUrl())
 
       actions.setNotification({
         message: 'The documents have been deleted'
@@ -155,6 +154,7 @@ class DocumentEditToolbar extends Component {
 
   render() {
     const {
+      api,
       documentId,
       state
     } = this.props
@@ -170,10 +170,10 @@ class DocumentEditToolbar extends Component {
       .length
 
     let saveOptions = this.getSaveOptions(documentId)
-    let languages = Boolean(state.api.currentApi) &&
-      Boolean(state.api.currentApi.languages) &&
-      (state.api.currentApi.languages.length > 1) &&
-      state.api.currentApi.languages.reduce((languagesObject, language) => {
+    let languages = Boolean(api) &&
+      Boolean(api.languages) &&
+      (api.languages.length > 1) &&
+      api.languages.reduce((languagesObject, language) => {
         languagesObject[language.code] = language.name
 
         return languagesObject
@@ -183,7 +183,7 @@ class DocumentEditToolbar extends Component {
     // No language is selected, so we'll set the value of the dropdown to the
     // value of the default language.
     if (languages && !currentLanguage) {
-      let defaultLanguage = state.api.currentApi.languages.find(language => {
+      let defaultLanguage = api.languages.find(language => {
         return Boolean(language.default)
       })
 
@@ -316,18 +316,17 @@ class DocumentEditToolbar extends Component {
   handleDelete() {
     const {
       actions,
+      api,
       collection,
-      group,
       referencedField,
       state
     } = this.props
-    const {currentApi, currentCollection} = state.api
     const document = state.document.remote
 
     if (document._id) {
       actions.deleteDocuments({
-        api: currentApi,
-        collection: currentCollection,
+        api,
+        collection,
         ids: [document._id]
       })
     }
@@ -348,8 +347,6 @@ class DocumentEditToolbar extends Component {
   handleSave(saveMode) {
     const {
       actions,
-      collection,
-      group,
       onBuildBaseUrl,
       section,
       state
@@ -448,6 +445,7 @@ class DocumentEditToolbar extends Component {
   saveDocument() {
     const {
       actions,
+      api,
       collection,
       documentId,
       group,
@@ -471,12 +469,10 @@ class DocumentEditToolbar extends Component {
     }
 
     actions.saveDocument({
-      api: state.api.currentApi,
-      collection: state.api.currentCollection,
+      api,
+      collection,
       document,
-      documentId: creatingNew ? null : documentId,
-      group,
-      urlCollection: collection
+      documentId: creatingNew ? null : documentId
     })
   }
 }

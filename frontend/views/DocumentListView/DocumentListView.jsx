@@ -1,13 +1,12 @@
 'use strict'
 
 import {Component, h} from 'preact'
+import {bindActionCreators} from 'redux'
+import {connectHelper, setPageTitle} from 'lib/util'
+import {urlHelper} from 'lib/util/url-helper'
 
 import Style from 'lib/Style'
 import styles from './DocumentListView.css'
-
-import {DocumentRoutes} from 'lib/document-routes'
-import {isValidJSON, setPageTitle} from 'lib/util'
-import {urlHelper} from 'lib/util/url-helper'
 
 import DocumentList from 'containers/DocumentList/DocumentList'
 import DocumentListController from 'containers/DocumentListController/DocumentListController'
@@ -17,7 +16,7 @@ import Main from 'components/Main/Main'
 import Page from 'components/Page/Page'
 import ReferencedDocumentHeader from 'containers/ReferencedDocumentHeader/ReferencedDocumentHeader'
 
-export default class DocumentListView extends Component {
+class DocumentListView extends Component {
   constructor(props) {
     super(props)
 
@@ -40,13 +39,17 @@ export default class DocumentListView extends Component {
       state
     } = this.props
     const {newFilter} = this.state
+    const {
+      currentApi,
+      currentCollection,
+      currentParentCollection
+    } = state.api
 
     return (
       <Page>
         {referencedField ?
           <ReferencedDocumentHeader
-            collection={collection}
-            group={group}
+            collectionParent={currentParentCollection}
             onBuildBaseUrl={this.handleBuildBaseUrl.bind(this)}
             documentId={documentId}
             referencedField={referencedField}
@@ -57,8 +60,8 @@ export default class DocumentListView extends Component {
         <Main>
           <div class={styles.container}>
             <DocumentListController
-              collection={collection}
-              group={group}
+              api={currentApi}
+              collection={currentCollection}
               filter={filter}
               newFilter={newFilter}
               onAddNewFilter={this.handleAddNewFilter.bind(this)}
@@ -68,9 +71,10 @@ export default class DocumentListView extends Component {
             />
 
             <DocumentList
-              collection={collection}
+              api={currentApi}
+              collection={currentCollection}
+              collectionParent={currentParentCollection}
               filter={filter}
-              group={group}
               onBuildBaseUrl={this.handleBuildBaseUrl.bind(this)}
               onPageTitle={this.handlePageTitle}
               order={order}
@@ -83,8 +87,8 @@ export default class DocumentListView extends Component {
         </Main>
 
         <DocumentListToolbar
-          collection={collection}
-          group={group}
+          api={currentApi}
+          collection={currentCollection}
           onBuildBaseUrl={this.handleBuildBaseUrl.bind(this)}
           referencedField={referencedField}
         />
@@ -159,3 +163,9 @@ export default class DocumentListView extends Component {
     setPageTitle(title)
   }
 }
+
+export default connectHelper(
+  state => ({
+    api: state.api
+  })
+)(DocumentListView)

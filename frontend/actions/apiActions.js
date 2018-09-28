@@ -89,15 +89,6 @@ export function setApiStatus (status, error) {
   }
 }
 
-export function setCurrentCollection ({collection, group, referencedField}) {
-  return {
-    collection,
-    group,
-    referencedField,
-    type: Types.SET_API_CURRENT_COLLECTION
-  }
-}
-
 /**
  * Apply Required Mutations
  * @param  {Object} fields     Collection fields.
