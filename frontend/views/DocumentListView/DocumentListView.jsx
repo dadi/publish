@@ -17,15 +17,6 @@ import Page from 'components/Page/Page'
 import ReferencedDocumentHeader from 'containers/ReferencedDocumentHeader/ReferencedDocumentHeader'
 
 class DocumentListView extends Component {
-  constructor(props) {
-    super(props)
-
-    // If we have a valid filter when we mount the component for the first time,
-    // then we start with the filters visible by default. Otherwise, they're
-    // hidden.
-    this.state.newFilter = false
-  }
-
   render() {
     const {
       collection,
@@ -62,11 +53,10 @@ class DocumentListView extends Component {
             <DocumentListController
               api={currentApi}
               collection={currentCollection}
+              documentId={documentId}
               filter={filter}
               newFilter={newFilter}
-              onAddNewFilter={this.handleAddNewFilter.bind(this)}
               onBuildBaseUrl={this.handleBuildBaseUrl.bind(this)}
-              documentId={documentId}
               referencedField={referencedField}
             />
 
@@ -74,12 +64,12 @@ class DocumentListView extends Component {
               api={currentApi}
               collection={currentCollection}
               collectionParent={currentParentCollection}
+              documentId={documentId}
               filter={filter}
               onBuildBaseUrl={this.handleBuildBaseUrl.bind(this)}
               onPageTitle={this.handlePageTitle}
               order={order}
               page={page}
-              documentId={documentId}
               referencedField={referencedField}
               sort={sort}
             />
@@ -94,20 +84,6 @@ class DocumentListView extends Component {
         />
       </Page>
     )
-  }
-
-  componentDidUpdate(prevProps, prevState) {
-    if (prevProps.collection !== this.props.collection) {
-      this.setState({
-        newFilter: false
-      })
-    }
-  }
-
-  handleAddNewFilter(isNewFilter) {
-    this.setState({
-      newFilter: isNewFilter
-    })
   }
 
   handleBuildBaseUrl({

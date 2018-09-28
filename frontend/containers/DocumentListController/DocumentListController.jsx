@@ -47,11 +47,6 @@ class DocumentListController extends Component {
     newFilter: proptypes.bool,
 
     /**
-     * The global state object.
-     */
-    state: proptypes.object,
-
-    /**
     * Whether a new filter has been added.
     */
     onAddNewFilter: proptypes.func,
@@ -60,11 +55,18 @@ class DocumentListController extends Component {
     * A callback to be used to obtain the base URL for the given page, as
     * determined by the view.
     */
-    onBuildBaseUrl: proptypes.func
+    onBuildBaseUrl: proptypes.func,
+
+    /**
+     * The global state object.
+     */
+    state: proptypes.object
   }
 
   constructor(props) {
     super(props)
+
+    this.state.forceNewFilters = 0
   }
 
   render() {
@@ -82,7 +84,6 @@ class DocumentListController extends Component {
     const hasDocuments = state.documents.list &&
       state.documents.list.results &&
       state.documents.list.results.length > 0
-    const isReference = referencedField // Temporary to disable create new in reference fields until reference save is ready.
     const params = state.router.search
     const filters = params && params.filter ? params.filter : null
     const filterLimitReached = filters 
@@ -109,24 +110,26 @@ class DocumentListController extends Component {
           breadcrumbs={[currentGroup && currentGroup.title, collection.name]}
         >
           <Button
-            type="fill"
-            disabled={filterLimitReached}
             accent="data"
+            disabled={filterLimitReached}
             onClick={this.handleAddNewFilter.bind(this)}
+            type="fill"
           >Add Filter</Button>
-          {!collection._isAuthCollection && !isReference && (
+
+          {!Boolean(referencedField) && (
             <Button
-              type="fill"
               accent="save"
               href={newHref}
+              type="fill"
             >Create new</Button>
           )}
         </ListController>
+
         <DocumentFilters
+          collection={collection}
           config={state.app.config}
           filters={filters}
-          newFilter={newFilter}
-          collection={collection}
+          forceNewFilters={this.state.forceNewFilters}
           updateUrlParams={this.updateUrlParams.bind(this)}
         />
       </div>
@@ -134,9 +137,11 @@ class DocumentListController extends Component {
   }
 
   handleAddNewFilter() {
-    const {onAddNewFilter} = this.props
+    const {forceNewFilters} = this.state
 
-    onAddNewFilter(true)
+    this.setState({
+      forceNewFilters: forceNewFilters + 1
+    })
   }
 
   handleGoToPage(event) {
@@ -155,11 +160,10 @@ class DocumentListController extends Component {
   }
 
   updateUrlParams(filters) {
-    const {actions, onAddNewFilter, state} = this.props
+    const {actions, state} = this.props
     
     // Replace existing filters
     router({params: {filter: filters}, update: true})
-    onAddNewFilter(false)
   }
 }
 
