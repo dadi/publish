@@ -23,6 +23,7 @@ import {connectHelper} from 'lib/util'
 import {Format} from 'lib/util/string'
 
 import ErrorMessage from 'components/ErrorMessage/ErrorMessage'
+import SpinningWheel from 'components/SpinningWheel/SpinningWheel'
 import TabbedFieldSections from 'components/TabbedFieldSections/TabbedFieldSections'
 
 /**
@@ -37,19 +38,24 @@ class DocumentEdit extends Component {
     actions: proptypes.object,
 
     /**
-     * The name of the collection currently being listed.
+     * The API to operate on.
      */
-    collection: proptypes.string.isRequired,
+    api: proptypes.object,
+
+    /**
+     * The collection to operate on.
+     */
+    collection: proptypes.object,
+
+    /**
+     * The parent collection to operate on, when dealing with a reference field.
+     */
+    collectionParent: proptypes.object,
 
     /**
      * The ID of the document being edited.
      */
     documentId: proptypes.string,
-
-    /**
-     * The name of the group where the current collection belongs (if any).
-     */
-    group: proptypes.string,
 
     /**
     * A callback to be used to obtain the base URL for the given page, as
@@ -89,22 +95,19 @@ class DocumentEdit extends Component {
     const {
       collection,
       documentId,
-      group,
       onPageTitle,
       section,
       state
     } = this.props
-
-    const {currentApi, currentCollection} = state.api
     const method = documentId ? 'edit' : 'new'
 
     if (typeof onPageTitle === 'function') {
       onPageTitle(`${Format.sentenceCase(method)} document`)  
     }
 
-    if (currentCollection) {
+    if (collection) {
       const collectionFields = filterVisibleFields({
-        fields: currentCollection.fields,
+        fields: collection.fields,
         view: 'edit'
       })
       const fields = this.groupFields(collectionFields)
@@ -145,10 +148,8 @@ class DocumentEdit extends Component {
       actions,
       collection,
       documentId,
-      group,
       state
     } = this.props
-    const {currentApi, currentCollection} = state.api
     const document = state.document
     const previousDocument = previousProps.state.document
 
@@ -164,8 +165,7 @@ class DocumentEdit extends Component {
         message: 'You have unsaved changes',
         options: {
           'Discard them?': actions.discardUnsavedChanges.bind(this, {
-            collection,
-            group
+            collection
           })
         }
       }
@@ -180,10 +180,9 @@ class DocumentEdit extends Component {
 
     // There's no document ID, so it means we're creating a new document.
     if (!documentId) {
-      if (currentCollection) {
+      if (collection) {
         actions.startNewDocument({
-          collection: currentCollection,
-          group
+          collection
         })
       }
 
@@ -203,7 +202,7 @@ class DocumentEdit extends Component {
     if (
       !document.isLoading &&
       needsFetch &&
-      currentCollection &&
+      collection &&
       state.api.apis.length > 0
     ) {
       this.handleRoomChange()
@@ -243,12 +242,17 @@ class DocumentEdit extends Component {
     const {
       collection,
       documentId,
-      group,
       referencedField,
       section,
       state
     } = this.props
     const document = state.document
+
+    if (state.api.isLoading || document.isLoading) {
+      return (
+        <SpinningWheel />
+      )
+    }
 
     if (document.remoteError) {
       return (
@@ -259,12 +263,12 @@ class DocumentEdit extends Component {
       )
     }
 
-    if (document.isLoading || !document.local) {
+    if (!document.local) {
       return null
     }
 
     const collectionFields = filterVisibleFields({
-      fields: state.api.currentCollection.fields,
+      fields: collection.fields,
       view: 'edit'
     })
     const fields = this.groupFields(collectionFields)
@@ -310,13 +314,14 @@ class DocumentEdit extends Component {
     const {
       actions,
       collection,
+      collectionParent,
       documentId,
       state
     } = this.props
 
     // As far as the fetch method is concerned, we're only interested in the
     // collection of the main document, not the referenced one.
-    let parentCollection = state.api.currentParentCollection || state.api.currentCollection
+    let parentCollection = collectionParent || collection
     let collectionFields = visibleFieldList({
       fields: parentCollection.fields,
       view: 'edit'
@@ -418,15 +423,15 @@ class DocumentEdit extends Component {
   handleUserLeavingDocument() {
     const {
       actions,
+      collection,
       documentId,
       group,
       state
     } = this.props
 
     actions.registerUserLeavingDocument({
-      collection: state.api.currentCollection.name,
-      documentId,
-      group
+      collection,
+      documentId
     })
   }
 
@@ -505,11 +510,11 @@ class DocumentEdit extends Component {
     return (
       <div class={fieldStyles.getClasses()}>
         <FieldComponent
-          collection={collection}
+          collection={collection.slug}
           comment={fieldComment}
           config={app.config}
           currentApi={api.currentApi}
-          currentCollection={api.currentCollection}
+          currentCollection={collection}
           displayName={displayName}
           documentId={documentId}
           error={error}

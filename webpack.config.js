@@ -44,7 +44,11 @@ module.exports = {
         }
       },
       {
-        test: /\.(png|woff|woff2|eot|ttf|svg)(\?.*$|$)/,
+        test: /\.svg$/,
+        use: ['preact-svg-loader']
+      },
+      {
+        test: /\.(png|woff|woff2|eot|ttf)(\?.*$|$)/,
         use: {
           loader: 'url-loader'
         }

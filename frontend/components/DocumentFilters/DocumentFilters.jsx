@@ -6,7 +6,7 @@ import proptypes from 'proptypes'
 import Style from 'lib/Style'
 import styles from './DocumentFilters.css'
 
-import {isValidJSON, objectToArray, arrayToObject} from 'lib/util'
+import {arrayToObject, isValidJSON, objectToArray} from 'lib/util'
 import {Keyboard} from 'lib/keyboard'
 
 import DocumentFilter from 'components/DocumentFilter/DocumentFilter'
@@ -33,9 +33,9 @@ export default class DocumentFilters extends Component {
     filter: proptypes.string.isRequired,
 
     /**
-     * Whether we are creating a new filter.
+     * Counter to mark the addition of new filters.
      */
-    newFilter: proptypes.bool,
+    forceNewFilters: proptypes.number,
 
     /**
      * Change callback method to trigger rendering new url parameters.
@@ -46,58 +46,48 @@ export default class DocumentFilters extends Component {
   constructor(props) {
     super(props)
 
-    const {collection} = this.props
-    const paramFilters = this.getFiltersFromParams()
-
     this.keyboard = new Keyboard()
     this.state = {
       dirty: false,
-      filters: paramFilters
+      filters: this.getFiltersFromParams()
     }
-  }
-
-  getFiltersFromParams () {
-    const {filters} = this.props
-
-    return (filters ? objectToArray(filters, 'field') : [])
-      .map(this.deconstructFilters.bind(this))
   }
 
   componentDidMount() {
-    this.keyboard.on('cmd+f')
-      .do(cmd => {
-        const blankFilter = this.createEmptyFilter()
-        this.setState({
-          filters: this.state.filters.concat([blankFilter])
-        })
+    this.keyboard.on('cmd+f').do(cmd => {
+      this.setState({
+        filters: this.state.filters.concat(this.createEmptyFilter())
       })
-  }
-
-  componentWillUpdate(nextProps, nextState) {
-    const {collection} = this.props
-    const {newFilter} = nextProps
-
-    if (nextProps.collection !== collection) {
-      // If we're changing collection, reset all filters
-      this.setState({filters: []})
-    } else {
-      this.createOrAppendFilters(newFilter)
-    }
-  }
-
-  createOrAppendFilters(newFilter) {
-    // If we aren't changing collection
-    let paramFilters = this.getFiltersFromParams()
-    if (newFilter) {
-      const blankFilter = this.createEmptyFilter()
-      paramFilters.push(blankFilter)
-    }
-
-    this.setState({filters: paramFilters})
+    })
   }
 
   componentWillUnmount() {
     this.keyboard.off()
+  }
+
+  componentDidUpdate(prevProps) {
+    const {collection, forceNewFilters} = this.props
+    const currentCollection = collection || {}
+    const previousCollection = prevProps.collection || {}
+
+    // If we're changing collection, reset all filters.
+    if (currentCollection.path !== previousCollection.path) {
+      this.setState({
+        filters: []
+      })
+    } else if (forceNewFilters && (forceNewFilters > prevProps.forceNewFilters)) {
+      let filters = this.getFiltersFromParams()
+
+      this.setState({
+        filters: filters.concat(this.createEmptyFilter())
+      })
+    }
+  }
+
+  constructFilters(filters) {
+    return filters.map(filter => {
+      return Object.assign({}, filter, {value: {[filter.type]: filter.value}})
+    })
   }
 
   createEmptyFilter() {
@@ -113,56 +103,27 @@ export default class DocumentFilters extends Component {
     }   
   }
 
-  render() {
-    const {dirty, filters} = this.state
-    const {collection, config} = this.props
+  getFiltersFromParams() {
+    const {filters} = this.props
 
-    if (!filters || !collection) return null
-    return (
-      <form class={styles.filters}>
-        {filters && collection && filters.map((filter, index) => (
-          <DocumentFilter
-            config={config}
-            field={filter.field}
-            fields={collection.fields}
-            filters={filters}
-            index={index}
-            onUpdate={this.handleUpdateFilter.bind(this)}
-            onRemove={this.handleRemoveFilter.bind(this)}
-            type={filter.type}
-            value={filter.value}
-          />
-        ))}
-        {filters && collection && (filters.length > 0) && (
-          <Button
-            className={styles.submit}
-            accent="data"
-            disabled={!dirty}
-            onClick={this.updateUrl.bind(this)}
-            type="submit"
-          >Apply {filters.length > 1 ? 'filters' : 'filter'}</Button>
-        )}
-      </form>
-    )
-  }
+    if (!filters) return []
 
-  deconstructFilters(filter) {
-    // If there is no filter type and the field value is a string, add a type
-    if (typeof filter.value === 'string') {
+    let deconstructedFilters = objectToArray(filters, 'field')
+      .map(filter => {
+        if (typeof filter.value === 'string') {
+          return Object.assign(filter, {type: '$eq'})
+        }
 
-      return Object.assign(filter, {type: '$eq'})
-    } else {
-      const type = Object.keys(filter.value)[0]
-      const value = filter.value[type]
+        let type = Object.keys(filter.value)[0]
+        let value = filter.value[type]
 
-      return Object.assign(filter, {type: type, value: value})
-    }
-  }
+        return Object.assign({}, filter, {
+          type,
+          value
+        })
+      })
 
-  constructFilters(filters) {
-    return filters.map(filter => {
-      return Object.assign({}, filter, {value: {[filter.type]: filter.value}})
-    })
+    return deconstructedFilters
   }
 
   handleRemoveFilter(index) {
@@ -184,6 +145,45 @@ export default class DocumentFilters extends Component {
     Object.assign(newFilters[index], filter)
 
     this.setState({filters: newFilters, dirty: true})
+  }
+
+  render() {
+    const {dirty, filters} = this.state
+    const {
+      collection,
+      config,
+      forceFirstFilter
+    } = this.props
+
+    if (!collection || !filters) return null
+
+    return (
+      <form class={styles.filters}>
+        {filters.map((filter, index) => (
+          <DocumentFilter
+            config={config}
+            field={filter.field}
+            fields={collection.fields}
+            filters={filters}
+            index={index}
+            onRemove={this.handleRemoveFilter.bind(this)}
+            onUpdate={this.handleUpdateFilter.bind(this)}
+            type={filter.type}
+            value={filter.value}
+          />
+        ))}
+
+        {(filters.length > 0) && (
+          <Button
+            accent="data"
+            className={styles.submit}
+            disabled={!dirty}
+            onClick={this.updateUrl.bind(this)}
+            type="submit"
+          >Apply {filters.length > 1 ? 'filters' : 'filter'}</Button>
+        )}
+      </form>
+    )
   }
 
   updateUrl(clear) {

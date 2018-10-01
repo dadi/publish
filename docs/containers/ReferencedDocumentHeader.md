@@ -13,18 +13,11 @@ The global actions object.
 - type: `object`
 
 
-### `collection`
+### `collectionParent`
 
-The name of the collection currently being listed.
+The parent collection to operate on, when dealing with a reference field.
 
-- type: `string`
-
-
-### `group`
-
-The name of the group where the current collection belongs (if any).
-
-- type: `string`
+- type: `object`
 
 
 ### `onBuildBaseUrl`

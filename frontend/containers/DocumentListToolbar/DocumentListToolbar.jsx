@@ -34,14 +34,19 @@ class DocumentListToolbar extends Component {
     actions: proptypes.object,
 
     /**
-     * The name of the collection being used.
+     * The API to operate on.
      */
-    collection: proptypes.string,
+    api: proptypes.object,
 
     /**
-     * The name of the group where the current collection belongs (if any).
+     * The collection to operate on.
      */
-    group: proptypes.string,
+    collection: proptypes.object,
+
+    /**
+     * The parent collection to operate on, when dealing with a reference field.
+     */
+    collectionParent: proptypes.object,
 
     /**
     * A callback to be used to obtain the base URL for the given page, as
@@ -86,8 +91,6 @@ class DocumentListToolbar extends Component {
 
   render() {
     const {
-      collection,
-      group,
       onBuildBaseUrl,
       referencedField,
       state
@@ -207,16 +210,16 @@ class DocumentListToolbar extends Component {
 
     const {
       actions,
+      api,
       collection,
       group,
       state
     } = this.props
-    const {currentApi, currentCollection} = state.api
 
     if (bulkActionSelected === 'delete') {
       actions.deleteDocuments({
-        api: currentApi,
-        collection: currentCollection,
+        api,
+        collection,
         ids: state.documents.selected
       })
     }
@@ -276,8 +279,7 @@ class DocumentListToolbar extends Component {
     actions.updateLocalDocument({
       [referencedField]: selectedDocuments
     }, {
-      collection,
-      group
+      path: collection.path
     })
 
     let redirectUrl = onBuildBaseUrl({
