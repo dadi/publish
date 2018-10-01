@@ -15,6 +15,7 @@ import DocumentEditView from 'views/DocumentEditView/DocumentEditView'
 import DocumentListView from 'views/DocumentListView/DocumentListView'
 import ErrorView from 'views/ErrorView/ErrorView'
 import HomeView from 'views/HomeView/HomeView'
+import MediaListView from 'views/MediaListView/MediaListView'
 import PasswordResetView from 'views/PasswordResetView/PasswordResetView'
 import SignInView from 'views/SignInView/SignInView'
 import SignOutView from 'views/SignOutView/SignOutView'
@@ -154,6 +155,11 @@ class App extends Component {
         <SignOutView
           path="/sign-out"
         />
+
+        <MediaListView
+          authenticate
+          path="/media"
+        />        
 
         {createPaths.map(path => (
           <DocumentCreateView

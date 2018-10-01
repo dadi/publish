@@ -145,6 +145,13 @@ class CollectionNav extends Component {
       })
     })
 
+    // Attaching a link to the media collection.
+    ungrouped.push({
+      id: 'media',
+      label: 'Media',
+      href: '/media'
+    })
+
     return grouped.concat(ungrouped)
   }
 
@@ -168,7 +175,7 @@ class CollectionNav extends Component {
   }
 
   render() {
-    const {currentCollection, state, actions} = this.props
+    const {actions, currentCollection, state} = this.props
 
     if (!this.groups) {
       return null

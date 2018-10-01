@@ -20,6 +20,7 @@ import {connectHelper} from 'lib/util'
 
 import Button from 'components/Button/Button'
 import ErrorMessage from 'components/ErrorMessage/ErrorMessage'
+import GridList from 'components/GridList/GridList'
 import HeroMessage from 'components/HeroMessage/HeroMessage'
 import SpinningWheel from 'components/SpinningWheel/SpinningWheel'
 import SyncTable from 'components/SyncTable/SyncTable'
@@ -364,9 +365,23 @@ class DocumentList extends Component {
       return null
     }
 
-    const documentsList = documents.list
+    // Do we have an empty set of documents?
+    if (documents.list.results.length === 0) {
+      // Do we have any filters applied?
+      if (documents.query) {
+        return (
+          <HeroMessage
+            title="No documents found."
+            subtitle="We can't find anything matching those filters."
+          >
+            <Button
+              accent="system"
+              href={onBuildBaseUrl()}
+            >Clear filters</Button>
+          </HeroMessage>
+        )
+      }
 
-    if (!documentsList.results.length && !documents.query) {
       return (
         <HeroMessage
           title="No documents yet."
@@ -382,7 +397,11 @@ class DocumentList extends Component {
       )
     }
 
-    return this.renderDocumentList()
+    if (collection._media) {
+      return this.renderDocumentsInGrid()
+    }
+
+    return this.renderDocumentsInTable()
   }
 
   renderAnnotation(schema) {
@@ -399,20 +418,21 @@ class DocumentList extends Component {
     }
   }
 
-  renderDocumentList() {
+  renderDocumentsInTable() {
     const {
       collection,
       collectionParent,
-      referencedField,
       onBuildBaseUrl,
       onPageTitle,
       order,
+      referencedField,
       sort,
       state
     } = this.props
     const config = state.app.config
     const documents = state.documents.list.results
     const selectedRows = this.getSelectedRows()
+    const collectionSettings = collection.settings || {}
 
     let selectLimit = Infinity
 
@@ -450,10 +470,10 @@ class DocumentList extends Component {
 
       onPageTitle(`Select ${(fieldSchema.label || referencedField).toLowerCase()}`)
     } else {
-      onPageTitle(collection.settings.description || collection.name)
+      onPageTitle(collectionSettings.description || collection.name)
     }
     const listableFields = filterVisibleFields({
-      fields: collection.fields,
+      fields: collection.fields || {},
       view: 'list'
     })
 
@@ -468,33 +488,44 @@ class DocumentList extends Component {
         }
       })
 
-    if (documents.length > 0) {
-      return (
-        <SyncTable
-          columns={tableColumns}
-          data={documents}
-          onRender={this.handleAnchorRender.bind(this)}
-          onSelect={this.handleRowSelect.bind(this)}
-          onSort={this.handleTableSort.bind(this)}
-          selectedRows={selectedRows}
-          selectLimit={selectLimit}
-          sortable={true}
-          sortBy={sort}
-          sortOrder={order}
-        />
-      )
-    }
+    return (
+      <SyncTable
+        columns={tableColumns}
+        data={documents}
+        onRender={this.handleAnchorRender.bind(this)}
+        onSelect={this.handleRowSelect.bind(this)}
+        onSort={this.handleTableSort.bind(this)}
+        selectedRows={selectedRows}
+        selectLimit={selectLimit}
+        sortable={true}
+        sortBy={sort}
+        sortOrder={order}
+      />
+    )
+  }
+
+  renderDocumentsInGrid() {
+    const {
+      onBuildBaseUrl,
+      order,
+      sort,
+      state
+    } = this.props
+
+    let hrefBuilder = item => onBuildBaseUrl({
+      documentId: item._id
+    })
 
     return (
-      <HeroMessage
-        title="No documents found."
-        subtitle="We can't find anything matching those filters."
-      >
-        <Button
-          accent="system"
-          href={onBuildBaseUrl()}
-        >Clear filters</Button>
-      </HeroMessage>
+      <GridList
+        data={state.documents.list.results}
+        href={hrefBuilder}
+        onSelect={this.handleRowSelect.bind(this)}
+        onSort={this.handleTableSort.bind(this)}
+        selectedRows={this.getSelectedRows()}
+        sortBy={sort}
+        sortOrder={order}
+      />
     )
   }
 

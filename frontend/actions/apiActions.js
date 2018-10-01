@@ -31,7 +31,7 @@ export function loadApis () {
           api
         }).getCollections()
       })
-      .then(({collections}) => {
+      .then(({collections, media}) => {
         // 3: Augmenting collection schemas with default Publish
         // parameters.
         let augmentedCollections = collections
@@ -49,6 +49,7 @@ export function loadApis () {
           })
 
         apiList[apiIndex].collections = augmentedCollections
+        apiList[apiIndex].media = media
 
         return apiList[apiIndex]
       })

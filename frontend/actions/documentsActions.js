@@ -87,11 +87,15 @@ export function fetchDocuments ({
       ]
       let listQuery
 
-      if (collection === Constants.MEDIA_COLLECTION) {
+      if (collection._media || (collection === Constants.MEDIA_COLLECTION)) {
+        let mediaBucket = typeof collection._media === 'string' ?
+          collection._media :
+          undefined
+
         listQuery = apiBridgeClient({
           accessToken: getState().user.accessToken,
           api
-        }).inMedia()
+        }).inMedia(mediaBucket)
       } else {
         const fields = visibleFieldList({fields: collection.fields, view: 'list'})
 
