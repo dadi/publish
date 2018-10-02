@@ -190,7 +190,6 @@ export default class FieldStringEdit extends Component {
     this.validate(value)
 
     if (typeof onChange === 'function') {
-      console.log('----> Calling:', name, value)
       onChange.call(this, name, value)
     }
   }
@@ -323,9 +322,9 @@ export default class FieldStringEdit extends Component {
         comment={required && 'Required'}
       >
         <RichEditor
-          onChangeMarkdown={this.handleOnChange.bind(this)}
+          format={format}
+          onChange={this.handleOnChange.bind(this)}
           value={value}
-          valueFormat={format}
         />        
       </Label>
     )

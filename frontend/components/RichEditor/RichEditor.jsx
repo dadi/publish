@@ -6,6 +6,7 @@ import proptypes from 'proptypes'
 import Style from 'lib/Style'
 import styles from './RichEditor.css'
 
+import Button from 'components/Button/Button'
 import pell from 'pell'
 import snarkdown from 'snarkdown'
 import TurndownService from 'turndown'
@@ -27,89 +28,37 @@ export default class RichEditor extends Component {
     children: proptypes.node,
 
     /**
-     * A callback function that is fired whenever the content changes.
-     * Called with the new value as a Markdown string.
+     * The format used for input and output.
      */
-    onChangeMarkdown: proptypes.func,
+    format: proptypes.oneOf([
+      MODE.HTML,
+      MODE.MARKDOWN
+    ]),
+
+    /**
+     * A callback function that is fired whenever the content changes.
+     */
+    onChange: proptypes.func,
 
     /**
      * The initial value of the editor.
      */
-    value: proptypes.string,
-
-    /**
-     * The format of the initial value.
-     */
-    valueFormat: proptypes.oneOf([
-      MODE.HTML,
-      MODE.MARKDOWN
-    ])    
+    value: proptypes.string
   }
 
   constructor(props) {
     super(props)
 
     this.state.html = null
-    this.state.mode = MODE.WYSIWYG
-  }
-
-  getHTMLFromMarkdown(markdown) {
-    return snarkdown(markdown)
-  }
-
-  getMarkdownFromHTML(html) {
-    return this.turndownService.turndown(html)
-  }
-
-  getNextMode() {
-    const currentMode = this.state.mode
-
-    let modes = Object.keys(MODE)
-    let currentIndex = modes.findIndex(mode => {
-      return currentMode === MODE[mode]
-    })
-    let nextIndex = (currentIndex + 1) % modes.length
-    
-    return MODE[modes[nextIndex]]
-  }
-
-  handleChange(value, initialRender) {
-    const {onChangeMarkdown} = this.props
-    const {mode} = this.state
-
-    let html
-    let markdown
-
-    if (mode === MODE.MARKDOWN) {
-      html = this.getHTMLFromMarkdown(value)
-      markdown = value
-    } else {
-      html = value
-      markdown = this.getMarkdownFromHTML(value)
-    }
-
-    this.setState({
-      html,
-      markdown
-    })
-
-    if (initialRender || (mode !== MODE.WYSIWYG)) {
-      this.editor.content.innerHTML = html
-    }
-
-    if (!initialRender) {
-      if (typeof onChangeMarkdown === 'function') {
-        onChangeMarkdown(markdown)
-      }
-
-      if (typeof onChangeHTML === 'function') {
-        onChangeHTML(html)
-      }
-    }
+    this.state.inTextMode = false
+    this.state.linkBeingEdited = null
+    this.state.selection = null
+    this.state.showLinkModal = false
+    this.state.text = null
   }
 
   componentDidMount() {
-    const {children, value, valueFormat} = this.props
+    const {children, format, value} = this.props
 
     this.turndownService = new TurndownService()
 
@@ -139,6 +88,12 @@ export default class RichEditor extends Component {
       actions: [
         'bold',
         'italic',
+        {
+          name: 'link',
+          result: () => this.setState({
+            showLinkModal: true
+          })
+        },
         'heading1',
         'heading2',
         'quote',
@@ -146,11 +101,10 @@ export default class RichEditor extends Component {
         'ulist',
         'code',
         {
-          name: 'mode',
-          icon: 'Mode',
-          title: 'Mode',
+          icon: `<span class="${styles['text-mode-toggle']}">Text</span>`,
+          title: 'Text',
           result: () => this.setState({
-            mode: this.getNextMode()
+            inTextMode: !this.state.inTextMode
           })
         }
       ],
@@ -165,43 +119,201 @@ export default class RichEditor extends Component {
       }
     })
 
-    let initialValue = valueFormat === MODE.MARKDOWN ?
+    let initialValue = format === MODE.MARKDOWN ?
       this.getHTMLFromMarkdown(value) :
       value
 
     this.handleChange(initialValue, true)
+
+    this.editorElement.addEventListener('click', this.handleClick.bind(this))
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    const {showLinkModal} = this.state
+
+    if (showLinkModal && !prevState.showLinkModal) {
+      console.log('---> Saving selection')
+      this.setState({
+        selection: window.getSelection().getRangeAt(0)
+      })
+    }
+  }
+
+  getHTMLFromText(text) {
+    const {format} = this.props
+
+    switch (format) {
+      case MODE.HTML:
+        return text
+
+      case MODE.MARKDOWN:
+        return this.getHTMLFromMarkdown(text)
+    }
+  }
+
+  getHTMLFromMarkdown(markdown) {
+    return snarkdown(markdown)
+  }
+
+  getMarkdownFromHTML(html) {
+    return this.turndownService.turndown(html)
+  }
+
+  getTextFromHTML(html) {
+    const {format} = this.props
+
+    switch (format) {
+      case MODE.HTML:
+        return html
+
+      case MODE.MARKDOWN:
+        return this.getMarkdownFromHTML(html)
+    }    
+  }
+
+  handleChange(value, initialRender) {
+    const {format, onChange} = this.props
+    const {inTextMode} = this.state
+
+    let html
+    let text
+
+    console.log('!!! CHANGE')
+
+    if (inTextMode) {
+      html = this.getHTMLFromText(value)
+      text = value
+    } else {
+      html = value
+      text = this.getTextFromHTML(value)
+    }
+
+    this.setState({
+      html,
+      text
+    })
+
+    if (initialRender || inTextMode) {
+      this.editor.content.innerHTML = html
+    }
+
+    if (!initialRender && (typeof onChange === 'function')) {
+      onChange(text)
+    }
+  }
+
+  handleClick(event) {
+    const {linkBeingEdited} = this.state
+    const {target} = event
+
+    if (target.tagName !== 'A') {
+      // this.closeLinkModal()
+
+      return
+    }
+
+    let href = target.attributes.href.value
+    let range = document.createRange()
+
+    range.setStart(target, 0)
+    range.setEnd(target, 1)    
+
+    this.setSelection(range)
+
+    this.setState({
+      linkBeingEdited: href,
+      linkRange: range
+    })
+  }
+
+  handleLinkChange(event) {
+    this.setState({
+      linkBeingEdited: event.target.value
+    })
+  }
+
+  handleLinkRemove() {
+    const {linkRange} = this.state
+
+    if (linkRange) {
+      this.setSelection(linkRange)
+    }
+
+    pell.exec('unlink')
+
+    this.closeLinkModal()
+  }
+
+  handleLinkSave() {
+    const {selection} = this.state
+
+    if (selection) {
+      this.setSelection(selection)  
+    }
+
+    pell.exec('createLink', this.state.linkBeingEdited)
   }
 
   render() {
     const {children} = this.props
-    const {html, markdown, mode} = this.state
-    const wrapper = new Style(styles, 'wrapper', `wrapper-mode-${mode}`)
-    const editorHTML = new Style(styles, 'editor', 'editor-html')
-    const editorMarkdown = new Style(styles, 'editor', 'editor-markdown')
+    const {
+      html,
+      inTextMode,
+      linkBeingEdited,
+      showLinkModal,
+      text
+    } = this.state
+    const wrapper = new Style(styles, 'wrapper')
+      .addIf('wrapper-mode-text', inTextMode)
+    const editorText = new Style(styles, 'editor', 'editor-text')
 
     return (
-      <div>
+      <div class={styles['outer-wrapper']}>
         <div
           class={wrapper.getClasses()}
           ref={el => this.editorElement = el}
         />
 
-        {(mode === MODE.MARKDOWN) && (
+        {inTextMode && (
           <textarea
-            class={editorMarkdown.getClasses()}
+            class={editorText.getClasses()}
             onKeyUp={event => this.handleChange(event.target.value)}
-            value={markdown}
+            value={text}
           />
         )}
 
-        {(mode === MODE.HTML) && (
-          <textarea
-            class={editorHTML.getClasses()}
-            onKeyUp={event => this.handleChange(event.target.value)}
-            value={html}
-          />
+        {showLinkModal && (
+          <div class={styles['link-modal']}>
+            <span class={styles['link-label']}>Link:</span>
+
+            <input
+              class={styles['link-input']}
+              onChange={this.handleLinkChange.bind(this)}              
+              type="text"
+              value={linkBeingEdited}
+            />
+
+            <Button
+              accent="save"
+              className={styles['link-control']}
+              onClick={this.handleLinkSave.bind(this)}
+            >Save</Button>
+
+            <Button
+              accent="destruct"
+              className={styles['link-control']}
+              onClick={this.handleLinkRemove.bind(this)}
+            >Remove</Button>
+          </div>
         )}
       </div>
     )
+  }
+
+  setSelection(range) {
+    let selection = window.getSelection()
+
+    selection.removeAllRanges()
+    selection.addRange(range)    
   }
 }
