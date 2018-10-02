@@ -207,6 +207,7 @@ export default class RichEditor extends Component {
 
     if (target.tagName !== 'A') {
       this.setState({
+        linkBeingEdited: null,
         showLinkModal: false
       })
 
@@ -223,7 +224,8 @@ export default class RichEditor extends Component {
 
     this.setState({
       linkBeingEdited: href,
-      linkRange: range
+      selection: range,
+      showLinkModal: true
     })
   }
 
@@ -240,25 +242,29 @@ export default class RichEditor extends Component {
       this.setSelection(linkRange)
     }
 
+    pell.exec('unlink')
+
     this.setState({
+      linkBeingEdited: null,
       showLinkModal: false
     })
-
-    pell.exec('unlink')
   }
 
-  handleLinkSave() {
-    const {selection} = this.state
+  handleLinkSave(event) {
+    const {linkBeingEdited, selection} = this.state
+
+    event.preventDefault()
 
     if (selection) {
       this.setSelection(selection)  
     }
 
+    pell.exec('createLink', linkBeingEdited)
+
     this.setState({
+      linkBeingEdited: null,
       showLinkModal: false
     })
-
-    pell.exec('createLink', this.state.linkBeingEdited)
   }
 
   render() {
@@ -290,12 +296,14 @@ export default class RichEditor extends Component {
         )}
 
         {showLinkModal && (
-          <div class={styles['link-modal']}>
-            <span class={styles['link-label']}>Link:</span>
-
+          <form
+            class={styles['link-modal']}
+            onSubmit={this.handleLinkSave.bind(this)}
+          >
             <input
               class={styles['link-input']}
-              onChange={this.handleLinkChange.bind(this)}              
+              onChange={this.handleLinkChange.bind(this)}
+              placeholder="Link address"
               type="text"
               value={linkBeingEdited}
             />
@@ -303,7 +311,7 @@ export default class RichEditor extends Component {
             <Button
               accent="save"
               className={styles['link-control']}
-              onClick={this.handleLinkSave.bind(this)}
+              type="submit"
             >Save</Button>
 
             <Button
@@ -311,7 +319,7 @@ export default class RichEditor extends Component {
               className={styles['link-control']}
               onClick={this.handleLinkRemove.bind(this)}
             >Remove</Button>
-          </div>
+          </form>
         )}
       </div>
     )
