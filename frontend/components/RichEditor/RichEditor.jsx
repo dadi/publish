@@ -125,14 +125,15 @@ export default class RichEditor extends Component {
 
     this.handleChange(initialValue, true)
 
-    this.editorElement.addEventListener('click', this.handleClick.bind(this))
+    let editor = this.editorElement.getElementsByClassName(styles.editor)[0] 
+
+    editor.addEventListener('click', this.handleClick.bind(this))
   }
 
   componentDidUpdate(prevProps, prevState) {
     const {showLinkModal} = this.state
 
     if (showLinkModal && !prevState.showLinkModal) {
-      console.log('---> Saving selection')
       this.setState({
         selection: window.getSelection().getRangeAt(0)
       })
@@ -178,8 +179,6 @@ export default class RichEditor extends Component {
     let html
     let text
 
-    console.log('!!! CHANGE')
-
     if (inTextMode) {
       html = this.getHTMLFromText(value)
       text = value
@@ -207,7 +206,9 @@ export default class RichEditor extends Component {
     const {target} = event
 
     if (target.tagName !== 'A') {
-      // this.closeLinkModal()
+      this.setState({
+        showLinkModal: false
+      })
 
       return
     }
@@ -239,9 +240,11 @@ export default class RichEditor extends Component {
       this.setSelection(linkRange)
     }
 
-    pell.exec('unlink')
+    this.setState({
+      showLinkModal: false
+    })
 
-    this.closeLinkModal()
+    pell.exec('unlink')
   }
 
   handleLinkSave() {
@@ -250,6 +253,10 @@ export default class RichEditor extends Component {
     if (selection) {
       this.setSelection(selection)  
     }
+
+    this.setState({
+      showLinkModal: false
+    })
 
     pell.exec('createLink', this.state.linkBeingEdited)
   }
