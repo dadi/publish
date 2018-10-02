@@ -21,7 +21,7 @@ This function will receive the page number as an argument.
 - type: `func`
 
 
-### `maxPages` (required)
+### `maxPages`
 
 Maximum number of page links to display.
 
@@ -29,7 +29,7 @@ Maximum number of page links to display.
 - default value: `10`
 
 
-### `prevNext` (required)
+### `prevNext`
 
 Whether to render `Prev` and `Next` links.
 

@@ -13,10 +13,16 @@ The content of the editor.
 - type: `node`
 
 
-### `onChangeMarkdown`
+### `format`
+
+The format used for input and output.
+
+- type: `enum('html'|'markdown')`
+
+
+### `onChange`
 
 A callback function that is fired whenever the content changes.
-Called with the new value as a Markdown string.
 
 - type: `func`
 
@@ -26,11 +32,4 @@ Called with the new value as a Markdown string.
 The initial value of the editor.
 
 - type: `string`
-
-
-### `valueFormat`
-
-The format of the initial value.
-
-- type: `enum('html'|'markdown')`
 

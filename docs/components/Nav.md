@@ -11,7 +11,7 @@ Props
 - type: `object`
 
 
-### `items` (required)
+### `items`
 
 Grouped list of navigation elements to render.
 

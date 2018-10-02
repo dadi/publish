@@ -59,7 +59,7 @@ The text to be rendered inside the label.
 - type: `string`
 
 
-### `required` (required)
+### `required`
 
 Should apply a required attribute to all children.
 
