@@ -242,6 +242,7 @@ class DocumentEdit extends Component {
     const {
       collection,
       documentId,
+      onBuildBaseUrl,
       referencedField,
       section,
       state
@@ -255,9 +256,13 @@ class DocumentEdit extends Component {
     }
 
     if (document.remoteError) {
+      let listRoute = onBuildBaseUrl({
+        documentId: null
+      })
+
       return (
         <ErrorMessage
-          data={{href: buildUrl(group, collection)}}
+          data={{href: listRoute}}
           type={Constants.ERROR_DOCUMENT_NOT_FOUND}
         />
       )

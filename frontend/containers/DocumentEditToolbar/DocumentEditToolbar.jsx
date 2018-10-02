@@ -143,8 +143,10 @@ class DocumentEditToolbar extends Component {
 
     // Have we deleted a document?
     if (previousDocument.remote && !document.remote) {
-      // Redirect to document list view
-      route(onBuildBaseUrl())
+      // Redirect to document list view.
+      route(onBuildBaseUrl({
+        documentId: null
+      }))
 
       actions.setNotification({
         message: 'The documents have been deleted'
