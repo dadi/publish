@@ -52,39 +52,21 @@ export default class RichEditor extends Component {
     this.state.html = null
     this.state.inTextMode = false
     this.state.linkBeingEdited = null
-    this.state.selection = null
     this.state.showLinkModal = false
-    this.state.text = null
+    this.state.text = props.value
   }
 
   componentDidMount() {
     const {children, format, value} = this.props
 
-    this.turndownService = new TurndownService()
+    this.turndownService = new TurndownService({
+      codeBlockStyle: 'fenced'
+    })
 
     // Initialize pell on an HTMLElement
     this.editor = pell.init({
-      // <HTMLElement>, required
       element: this.editorElement,
-
-      // <Function>, required
-      // Use the output html, triggered by element's `oninput` event
       onChange: this.handleChange.bind(this),
-
-      // <string>, optional, default = 'div'
-      // Instructs the editor which element to inject via the return key
-      defaultParagraphSeparator: 'div',
-
-      // <boolean>, optional, default = false
-      // Outputs <span style="font-weight: bold;"></span> instead of <b></b>
-      styleWithCSS: false,
-
-      // <Array[string | Object]>, string if overwriting, object if customizing/creating
-      // action.name<string> (only required if overwriting)
-      // action.icon<string> (optional if overwriting, required if custom action)
-      // action.title<string> (optional)
-      // action.result<Function> (required)
-      // Specify the actions you specifically want (in order)
       actions: [
         'bold',
         'italic',
@@ -108,9 +90,6 @@ export default class RichEditor extends Component {
           })
         }
       ],
-
-      // classes<Array[string]> (optional)
-      // Choose your custom class names
       classes: {
         actionbar: styles['pell-actionbar'],
         button: styles['pell-button'],
@@ -123,7 +102,7 @@ export default class RichEditor extends Component {
       this.getHTMLFromMarkdown(value) :
       value
 
-    this.handleChange(initialValue, true)
+    this.setEditorContents(initialValue)
 
     let editor = this.editorElement.getElementsByClassName(styles.editor)[0] 
 
@@ -131,11 +110,19 @@ export default class RichEditor extends Component {
   }
 
   componentDidUpdate(prevProps, prevState) {
-    const {showLinkModal} = this.state
+    const {value} = this.props
+    const {showLinkModal, text} = this.state
 
+    // Saving selection before the user interacts with the modal and setting
+    // the focus to the link input element.
     if (showLinkModal && !prevState.showLinkModal) {
-      this.setState({
-        selection: window.getSelection().getRangeAt(0)
+      this.selection = window.getSelection().getRangeAt(0)
+      this.linkInputElement.focus()
+    }
+
+    if (value !== text) {
+      this.handleChange(value, {
+        fromTextMode: true
       })
     }
   }
@@ -172,14 +159,16 @@ export default class RichEditor extends Component {
     }    
   }
 
-  handleChange(value, initialRender) {
+  handleChange(value, {
+    fromTextMode = this.state.inTextMode,
+    initialRender
+  } = {}) {
     const {format, onChange} = this.props
-    const {inTextMode} = this.state
 
     let html
     let text
 
-    if (inTextMode) {
+    if (fromTextMode) {
       html = this.getHTMLFromText(value)
       text = value
     } else {
@@ -192,8 +181,8 @@ export default class RichEditor extends Component {
       text
     })
 
-    if (initialRender || inTextMode) {
-      this.editor.content.innerHTML = html
+    if (initialRender || fromTextMode) {
+      this.setEditorContents(html)
     }
 
     if (!initialRender && (typeof onChange === 'function')) {
@@ -221,10 +210,10 @@ export default class RichEditor extends Component {
     range.setEnd(target, 1)    
 
     this.setSelection(range)
+    this.selection = range
 
     this.setState({
       linkBeingEdited: href,
-      selection: range,
       showLinkModal: true
     })
   }
@@ -251,12 +240,12 @@ export default class RichEditor extends Component {
   }
 
   handleLinkSave(event) {
-    const {linkBeingEdited, selection} = this.state
+    const {linkBeingEdited} = this.state
 
     event.preventDefault()
 
-    if (selection) {
-      this.setSelection(selection)  
+    if (this.selection) {
+      this.setSelection(this.selection)  
     }
 
     pell.exec('createLink', linkBeingEdited)
@@ -304,6 +293,7 @@ export default class RichEditor extends Component {
               class={styles['link-input']}
               onChange={this.handleLinkChange.bind(this)}
               placeholder="Link address"
+              ref={el => this.linkInputElement = el}
               type="text"
               value={linkBeingEdited}
             />
@@ -323,6 +313,10 @@ export default class RichEditor extends Component {
         )}
       </div>
     )
+  }
+
+  setEditorContents(html) {
+    this.editor.content.innerHTML = html
   }
 
   setSelection(range) {
