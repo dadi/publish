@@ -147,6 +147,7 @@ class DocumentListToolbar extends Component {
     const {bulkActionSelected} = this.state
     const {state} = this.props
     const selectedDocuments = state.documents.selected
+    const multiple = selectedDocuments.length > 1
 
     return (
       <div class={styles.actions}>
@@ -164,8 +165,8 @@ class DocumentListToolbar extends Component {
           className={styles['select-button']}
           disabled={(bulkActionSelected === this.BULK_ACTIONS_PLACEHOLDER) || !selectedDocuments.length}
           onClick={this.handleBulkActionApply.bind(this)}
-          promptCallToAction="Yes, delete them."
-          promptMessage="Are you sure you want to delete the selected documents?"
+          promptCallToAction={`Yes, delete ${multiple ? 'them' : 'it'}.`}
+          promptMessage={`Are you sure you want to delete the selected ${multiple ? 'documents' : 'document'}?`}
           size="small"
         >Apply</ButtonWithPrompt>
       </div>

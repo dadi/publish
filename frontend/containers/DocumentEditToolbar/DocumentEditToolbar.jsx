@@ -121,8 +121,14 @@ class DocumentEditToolbar extends Component {
       onBuildBaseUrl,
       state
     } = this.props
-    const document = state.document
-    const previousDocument = prevProps.state.document
+    const {
+      document,
+      documents
+    } = state
+    const {
+      document: previousDocument,
+      documents: previousDocuments
+    } = prevProps.state
     const wasFirstValidated = !previousDocument.hasBeenValidated &&
       document.hasBeenValidated
 
@@ -142,14 +148,18 @@ class DocumentEditToolbar extends Component {
     }
 
     // Have we deleted a document?
-    if (previousDocument.remote && !document.remote) {
+    if (previousDocuments.isDeleting && !documents.isDeleting) {
       // Redirect to document list view.
       route(onBuildBaseUrl({
         documentId: null
       }))
 
+      let message = previousDocuments.isDeleting > 1 ?
+        'The documents have been deleted' :
+        'The document has been deleted'
+
       actions.setNotification({
-        message: 'The documents have been deleted'
+        message
       })
     }
   }
@@ -484,6 +494,7 @@ export default connectHelper(
     api: state.api,
     app: state.app,
     document: state.document,
+    documents: state.documents,
     router: state.router,
     user: state.user
   }),
