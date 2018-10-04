@@ -78,7 +78,7 @@ export default class FieldStringList extends Component {
     maxLength = Math.floor(maxLength) || this.props.maxLength
 
     if (value.length > maxLength) {
-      return value.slice(0, maxLength - 1) + '…'
+      return value.slice(0, maxLength - 1).trim() + '…'
     }
 
     return value
