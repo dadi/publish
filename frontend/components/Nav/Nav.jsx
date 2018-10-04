@@ -47,9 +47,9 @@ export default class Nav extends Component {
       <nav class={styles.nav}>
         <ul>
           {items.map(item => {
-            let itemActive = currentCollection && item.id === currentCollection.path
+            let itemActive = currentCollection && item.href === currentCollection._publishLink
             let activeSubItem = item.subItems && item.subItems
-              .find(subItem => currentCollection && subItem.id === currentCollection.path)
+              .find(subItem => currentCollection && subItem.href === currentCollection._publishLink)
 
             if (activeSubItem) {
               itemActive = true
@@ -58,7 +58,7 @@ export default class Nav extends Component {
 
             if (item.subItems) {
               let children = item.subItems.map(subItem => {
-                let subItemActive = activeSubItem && subItem.id === activeSubItem.id
+                let subItemActive = activeSubItem && subItem.href === activeSubItem.href
 
                 if (mobile) {
                   return (
