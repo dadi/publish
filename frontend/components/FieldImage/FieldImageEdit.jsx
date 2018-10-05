@@ -140,23 +140,22 @@ export default class FieldImageEdit extends Component {
     return (
       <Label label={displayName}>
         {values &&
-          <div class={styles['value-container']}>
-            <div class={styles.thumbnails}>
-              {values.map(value => (
-                <img
-                  class={styles.thumbnail}
-                  src={this.getImageSrc(value)}
-                />
-              ))}
-            </div>
-
-            <Button
-              accent="destruct"
-              size="small"
-              className={styles['remove-existing']}
-              onClick={this.handleRemoveFile.bind(this)}
-            >Delete</Button>
-          </div>          
+          values.map(value => {
+            return(<div class={styles['value-container']}>
+              <div class={styles.thumbnails}>
+                  <img
+                    class={styles.thumbnail}
+                    src={this.getImageSrc(value)}
+                  />
+              </div>
+              <Button
+                accent="destruct"
+                size="small"
+                className={styles['remove-existing']}
+                onClick={this.handleRemoveFile.bind(this, value.fileName)}
+              >Delete</Button>
+            </div>)
+          })
         }
 
         {!values &&
@@ -217,11 +216,16 @@ export default class FieldImageEdit extends Component {
     }
   }
   
-  handleRemoveFile() {
-    const {name, onChange, schema} = this.props
+  handleRemoveFile(fileName) {
+    const {name, onChange, schema, value} = this.props
+    const values = (value && !Array.isArray(value)) ? [value] : value
+    let newValues = values.filter((v) => v.fileName !== fileName)
+    if(newValues.length == 0) {
+      newValues = null
+    }
 
     if (typeof onChange === 'function') {
-      onChange.call(this, name, null)
+      onChange.call(this, name, newValues)
     }
   }
 
