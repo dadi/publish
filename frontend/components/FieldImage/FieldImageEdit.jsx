@@ -158,8 +158,7 @@ export default class FieldImageEdit extends Component {
           })
         }
 
-        {!values &&
-          <div>
+        {<div>
             <div class={styles.placeholder}>
               <Button
                 accent="data"
@@ -229,14 +228,45 @@ export default class FieldImageEdit extends Component {
     }
   }
 
+  handleAddFiles(files) {
+    const {
+      config,
+      name,
+      onChange,
+      schema,
+      value
+    } = this.props
+    const singleFile = schema.settings && schema.settings.limit === 1
+
+    if(singleFile) {
+      return this.handleFileChange([files[0]])
+    }
+
+    let values = []
+    if(value) {
+      values = Array.isArray(value) ? value : [value]
+    }
+
+    //filter for uniqueness by file name and concat
+    const fileNames = values.map((value) => value.fileName)
+    processedFiles = processedFiles.filter((value) => !fileNames.includes(value.fileName))
+    onChange.call(this, name,  values.concat(processedFiles))
+  }
+
   handleFileChange(files) {
     const {
       config,
       name,
       onChange,
-      schema
+      schema,
+      value
     } = this.props
     const singleFile = schema.settings && schema.settings.limit === 1
+
+    let values = []
+    if(value) {
+      values = Array.isArray(value) ? value : [value]
+    }
 
     let processedFiles = []
 
@@ -257,9 +287,15 @@ export default class FieldImageEdit extends Component {
           processedFiles.length === files.length &&
           typeof onChange === 'function'
         ) {
-          const finalFiles = singleFile ? processedFiles[0] : processedFiles
 
-          onChange.call(this, name, finalFiles)
+          if(singleFile) {
+            return onChange.call(this, name, processedFiles[0])
+          }
+
+          //filter for uniqueness by file name and concat
+          const fileNames = values.map((value) => value.fileName)
+          processedFiles = processedFiles.filter((value) => !fileNames.includes(value.fileName))
+          onChange.call(this, name,  values.concat(processedFiles))
         }
       }
 
