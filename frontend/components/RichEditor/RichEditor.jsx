@@ -7,8 +7,8 @@ import Style from 'lib/Style'
 import styles from './RichEditor.css'
 
 import Button from 'components/Button/Button'
+import marked from 'marked'
 import pell from 'pell'
-import snarkdown from 'snarkdown'
 import TurndownService from 'turndown'
 
 const MODE = {
@@ -62,6 +62,23 @@ export default class RichEditor extends Component {
     this.turndownService = new TurndownService({
       codeBlockStyle: 'fenced'
     })
+    this.turndownService.addRule('pre', {
+      filter: (node, options) => {
+        return node.classList.contains(styles.code)
+      },
+      replacement: (content, node) => {
+        let language = typeof node.dataset.language === 'string' ?
+          node.dataset.language :
+          ''
+
+        return '```' + language + '\n' + content + '\n```'
+      }
+    })    
+
+    this.markdownRenderer = new marked.Renderer()
+    this.markdownRenderer.code = (code, language = '', escaped) => {
+      return `<pre class="${styles.code}" data-language="${language.trim()}">${code}</pre>`
+    }
 
     // Initialize pell on an HTMLElement
     this.editor = pell.init({
@@ -81,7 +98,15 @@ export default class RichEditor extends Component {
         'quote',
         'olist',
         'ulist',
-        'code',
+        {
+          name: 'code',
+          result: () => {
+            let selection = window.getSelection()
+            let html = `<pre class="${styles.code}">${selection.toString()}</pre>`
+
+            pell.exec('insertHTML', html)
+          }
+        },
         {
           icon: `<span class="${styles['text-mode-toggle']}">Text</span>`,
           title: 'Text',
@@ -140,7 +165,9 @@ export default class RichEditor extends Component {
   }
 
   getHTMLFromMarkdown(markdown) {
-    return snarkdown(markdown)
+    return marked(markdown, {
+      renderer: this.markdownRenderer
+    }) 
   }
 
   getMarkdownFromHTML(html) {
