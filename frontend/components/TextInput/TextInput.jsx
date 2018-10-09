@@ -160,11 +160,11 @@ export default class TextInput extends Component {
           onBlur={this.handleEvent.bind(this, 'onBlur')}
           onChange={this.handleChange.bind(this)}
           onFocus={this.handleEvent.bind(this, 'onFocus')}
-          onKeyUp={this.handleChange.bind(this)}
+          onInput={this.handleChange.bind(this)}
           placeholder={placeholder}
           readonly={readonly}
           required={required}
-          rows={heightType === 'static' ? rows : ''}
+          rows={heightType === 'static' ? rows : '1'}
           value={value}
         />
       )
@@ -191,13 +191,13 @@ export default class TextInput extends Component {
   adjustHeightIfNeeded()
   {
     if (this.props.heightType === 'content') {
-      this.base.style.height = "5px"
-      this.base.style.height = (this.base.scrollHeight + 20) + 'px';
+      this.base.style.height = 'auto'
+      this.base.style.height = this.base.scrollHeight + 'px'
     }
   }
 
   handleChange(event) {
-    const {onChange, onKeyUp} = this.props
+    const {onChange, onInput} = this.props
 
     this.adjustHeightIfNeeded()
 
@@ -205,7 +205,7 @@ export default class TextInput extends Component {
       onChange.call(this, event)
     }
 
-    if (event.type === 'keyup' && typeof onKeyUp === 'function') {
+    if (event.type === 'input' && typeof onKeyUp === 'function') {
       onKeyUp.call(this, event)
     }
 
