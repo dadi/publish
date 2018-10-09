@@ -158,7 +158,8 @@ export default class FieldImageEdit extends Component {
           })
         }
 
-        {<div>
+        {(!singleFile || !values) &&
+          <div>
             <div class={styles.placeholder}>
               <Button
                 accent="data"
