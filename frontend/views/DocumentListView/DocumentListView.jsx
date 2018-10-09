@@ -107,15 +107,15 @@ class DocumentListView extends Component {
       urlNodes.push(documentId)
     }
 
-    if (page) {
-      urlNodes.push(page)
-    }
-
     if (referenceFieldSelect) {
       urlNodes = urlNodes.concat(['select', referenceFieldSelect])
     } else {
       urlNodes.push(section)
     }
+
+    if (page) {
+      urlNodes.push(page)
+    }    
 
     let url = urlNodes.filter(Boolean).join('/')
 
