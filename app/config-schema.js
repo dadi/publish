@@ -258,7 +258,7 @@ module.exports = {
     backgroundImage: {
       doc: 'The background image URL',
       format: String,
-      default: '/public/images/bg-dark.jpg'
+      default: ''
     },
     logo: {
       doc: 'The logo URL',
