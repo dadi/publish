@@ -1,6 +1,9 @@
 'use strict'
 
 import {h, Component} from 'preact'
+import {bindActionCreators} from 'redux'
+import {connectHelper, setPageTitle} from 'lib/util'
+import {urlHelper} from 'lib/util/url-helper'
 
 import DocumentEdit from 'containers/DocumentEdit/DocumentEdit'
 import DocumentEditToolbar from 'containers/DocumentEditToolbar/DocumentEditToolbar'
@@ -8,18 +11,15 @@ import Header from 'containers/Header/Header'
 import Main from 'components/Main/Main'
 import Page from 'components/Page/Page'
 
-import {setPageTitle} from 'lib/util'
-import {urlHelper} from 'lib/util/url-helper'
-
-export default class DocumentCreateView extends Component {
+class DocumentCreateView extends Component {
   render() {
     const {
-      collection,
       documentId,
-      group,
       referencedField,
-      section
+      section,
+      state
     } = this.props
+    const {currentApi, currentCollection} = state.api
 
     return (
       <Page>
@@ -27,8 +27,8 @@ export default class DocumentCreateView extends Component {
 
         <Main>
           <DocumentEdit
-            collection={collection}
-            group={group}
+            api={currentApi}
+            collection={currentCollection}
             onBuildBaseUrl={this.handleBuildBaseUrl.bind(this)}
             onPageTitle={this.handlePageTitle}
             section={section}
@@ -36,8 +36,8 @@ export default class DocumentCreateView extends Component {
         </Main>
 
         <DocumentEditToolbar
-          collection={collection}
-          group={group}
+          api={currentApi}
+          collection={currentCollection}
           onBuildBaseUrl={this.handleBuildBaseUrl.bind(this)}
           section={section}
         />        
@@ -87,3 +87,9 @@ export default class DocumentCreateView extends Component {
     setPageTitle(title)
   }
 }
+
+export default connectHelper(
+  state => ({
+    api: state.api
+  })
+)(DocumentCreateView)

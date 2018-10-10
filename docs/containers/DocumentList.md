@@ -13,11 +13,25 @@ The global actions object.
 - type: `object`
 
 
+### `api`
+
+The API to operate on.
+
+- type: `object`
+
+
 ### `collection`
 
-The name of the collection currently being listed.
+The collection to operate on.
 
-- type: `string`
+- type: `object`
+
+
+### `collectionParent`
+
+The parent collection to operate on, when dealing with a reference field.
+
+- type: `object`
 
 
 ### `documentId`
@@ -30,13 +44,6 @@ When on a reference field, contains the ID of the parent document.
 ### `filter`
 
 The JSON-stringified object of active filters.
-
-- type: `string`
-
-
-### `group`
-
-The name of the group where the current collection belongs (if any).
 
 - type: `string`
 

@@ -49,8 +49,8 @@ export default class ButtonWithOptions extends Component {
      *  <ButtonWithOptions
      *    onClick={this.mainCallback()}
      *    options={{
-     *      'Save and continue': this.saveAndContinueCallback()
-     *      'Save and go back': this.saveAndGoBackeCallback()
+     *     'Save and continue': this.saveAndContinueCallback()
+     *     'Save and go back': this.saveAndGoBackeCallback()
      *    }}
      *  >
      *    Save
@@ -91,6 +91,7 @@ export default class ButtonWithOptions extends Component {
   render() {
     const {
       accent,
+      callback,
       children,
       disabled,
       href,

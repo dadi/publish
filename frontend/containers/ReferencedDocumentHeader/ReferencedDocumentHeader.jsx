@@ -24,14 +24,9 @@ class ReferencedDocumentHeader extends Component {
     actions: proptypes.object,
 
     /**
-     * The name of the collection currently being listed.
+     * The parent collection to operate on, when dealing with a reference field.
      */
-    collection: proptypes.string,
-
-    /**
-     * The name of the group where the current collection belongs (if any).
-     */
-    group: proptypes.string,
+    collectionParent: proptypes.object,
 
     /**
     * A callback to be used to obtain the base URL for the given page, as
@@ -52,19 +47,16 @@ class ReferencedDocumentHeader extends Component {
 
   render() {
     const {
-      collection,
-      group,
+      collectionParent,
       onBuildBaseUrl,
       parentDocumentId,
       referencedField,
       state
     } = this.props
-    const {currentParentCollection} = state.api
-
     // Render nothing if we don't have the collection schema available.
-    if (!currentParentCollection) return null
+    if (!collectionParent) return null
 
-    const fieldSchema = currentParentCollection.fields[referencedField]
+    const fieldSchema = collectionParent.fields[referencedField]
     
     // Render nothing if we don't have a matching field in the collection.
     if (!fieldSchema) return null

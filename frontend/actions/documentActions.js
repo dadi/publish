@@ -1,8 +1,9 @@
 import 'fetch'
-
 import * as Constants from 'lib/constants'
 import * as LocalStorage from 'lib/local-storage'
 import * as Types from 'actions/actionTypes'
+import * as userActions from 'actions/userActions'
+import {batchActions} from 'lib/redux'
 import apiBridgeClient from 'lib/api-bridge-client'
 
 export function clearRemoteDocument () {
@@ -12,13 +13,11 @@ export function clearRemoteDocument () {
 }
 
 export function discardUnsavedChanges ({
-  collection,
-  group
+  collection
 }) {
   return (dispatch, getState) => {
     let localStorageKey = getLocalStorageKey({
-      collection,
-      group,
+      path: collection.path,
       state: getState()
     })
 
@@ -69,14 +68,12 @@ export function fetchDocument ({
 }
 
 function getLocalStorageKey ({
-  collection,
   documentId,
-  group,
+  path,
   state
 }) {
   // If we're editing an existing document, its ID is used as the local
-  // storage key. Otherwise, we'll use a hash of the current group and
-  // collection.
+  // storage key. Otherwise, we'll use the collection path.
   if (documentId) {
     return documentId
   }
@@ -85,25 +82,34 @@ function getLocalStorageKey ({
     return state.document.remote._id
   }
 
-  return JSON.stringify({collection, group})
+  return path
 }
 
-export function registerSaveAttempt () {
-  return {
-    type: Types.ATTEMPT_SAVE_DOCUMENT
+export function registerSaveAttempt (saveMode) {
+  let actions = [
+    {
+      type: Types.ATTEMPT_SAVE_DOCUMENT
+    },
+    userActions.updateLocalUser(`data.${Constants.FIELD_SAVE_OPTIONS}`, saveMode)
+  ]
+
+  return (dispatch, getState) => {
+    dispatch(
+      batchActions(actions)
+    )
+
+    dispatch(userActions.saveUser())
   }
 }
 
 export function registerUserLeavingDocument ({
   collection,
-  documentId,
-  group
+  documentId
 }) {
   return (dispatch, getState) => {
     let localStorageKey = getLocalStorageKey({
-      collection,
       documentId,
-      group,
+      path: collection.path,
       state: getState()
     })
 
@@ -122,9 +128,7 @@ export function saveDocument ({
   api,
   collection,
   document,
-  documentId,
-  group,
-  urlCollection
+  documentId
 }) {
   // A method that returns `true`:
   // 1) If the objects are different and `false`
@@ -314,12 +318,10 @@ export function saveDocument ({
 
             // We've successfully saved the document, so we now need to clear
             // the local storage key corresponding to the unsaved document for
-            // the given group/collection pair.
+            // the given collection path.
             const localStorageKey = isUpdate ?
-              documentId : JSON.stringify({
-                collection: urlCollection,
-                group
-              })
+              documentId :
+              collection.path
 
             LocalStorage.clearDocument(localStorageKey)
           } else {
@@ -424,7 +426,7 @@ export function setRemoteDocumentStatus (status, data) {
  * Start New Document
  * @return {Function} State dispatcher
  */
-export function startNewDocument ({collection, group}) {
+export function startNewDocument ({collection}) {
   return (dispatch, getState) => {
     let currentCollection = getState().document.collection
 
@@ -434,8 +436,7 @@ export function startNewDocument ({collection, group}) {
       currentCollection.version !== collection.version
     ) {
       let localStorageKey = getLocalStorageKey({
-        collection: collection.slug,
-        group
+        path: collection.path
       })
       let document = LocalStorage.readDocument(localStorageKey) || {}
 
@@ -453,8 +454,7 @@ export function startNewDocument ({collection, group}) {
 }
 
 export function updateLocalDocument (change, {
-  collection,
-  group,
+  path,
   persistInLocalStorage = true
 } = {}) {
   return (dispatch, getState) => {
@@ -463,8 +463,7 @@ export function updateLocalDocument (change, {
       getState().document.fieldsNotPersistedInLocalStorage :
       getState().document.fieldsNotPersistedInLocalStorage.concat(Object.keys(change))
     let localStorageKey = getLocalStorageKey({
-      collection,
-      group,
+      path,
       state: getState()
     })
 

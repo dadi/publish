@@ -112,9 +112,9 @@ export default class FieldImageEdit extends Component {
   }
 
   render() {
-    const {
+    let {
       collection,
-      config,
+      config = {},
       displayName,
       documentId,
       group,
@@ -123,12 +123,16 @@ export default class FieldImageEdit extends Component {
       schema,
       value
     } = this.props
+
+    const fieldImage = config.FieldImage || {}
+    const accept = fieldImage.accept
     const fieldLocalType = schema.publish && schema.publish.subType ? schema.publish.subType : schema.type
-    const href = onBuildBaseUrl({
+    const href = onBuildBaseUrl ?  onBuildBaseUrl({
       createNew: !Boolean(documentId),
       documentId,
       referenceFieldSelect: name
-    })
+    }) : ''
+
     const isReference = schema.type === 'Reference'
     const singleFile = schema.settings && schema.settings.limit === 1
     const values = (value && !Array.isArray(value)) ? [value] : value
@@ -156,10 +160,7 @@ export default class FieldImageEdit extends Component {
         }
 
         {!values &&
-          <DropArea
-            draggingText={`Drop image${singleFile ? '' : 's'} here`}
-            onDrop={this.handleFileChange.bind(this)}
-          >
+          <div>
             <div class={styles.placeholder}>
               <Button
                 accent="data"
@@ -170,20 +171,25 @@ export default class FieldImageEdit extends Component {
             </div>
 
             <div class={styles['upload-options']}>
-              <div class={styles['upload-drop']}>
-                Drop file{singleFile ? '' : 's'} to upload
-              </div>
-              <div>
-                <span>or </span>
-                <FileUpload
-                  allowDrop={true}
-                  accept={config['FieldImage'].accept}
-                  multiple={!singleFile}
-                  onChange={this.handleFileChange.bind(this)}
-                />
-              </div>
+              <DropArea
+                draggingText={`Drop image${singleFile ? '' : 's'} here`}
+                onDrop={this.handleFileChange.bind(this)}
+              >
+                <div class={styles['upload-drop']}>
+                  Drop file{singleFile ? '' : 's'} to upload
+                </div>
+              </DropArea>
             </div>
-          </DropArea>
+            <div class={styles['upload-select']}>
+              <span>or </span>
+              <FileUpload
+                allowDrop={true}
+                accept={accept}
+                multiple={!singleFile}
+                onChange={this.handleFileChange.bind(this)}
+              />
+            </div>
+          </div>
         }
       </Label>
     )

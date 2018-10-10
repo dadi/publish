@@ -6,16 +6,30 @@ A controller bar for a list of documents.
 Props
 -----
 
+### `api`
+
+The API to operate on.
+
+- type: `object`
+
+
+### `collection`
+
+The collection to operate on.
+
+- type: `object`
+
+
+### `collectionParent`
+
+The parent collection to operate on, when dealing with a reference field.
+
+- type: `object`
+
+
 ### `filter`
 
 The JSON-stringified object of active filters.
-
-- type: `string`
-
-
-### `group`
-
-The name of the group where the current collection belongs (if any).
 
 - type: `string`
 

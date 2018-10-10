@@ -72,7 +72,7 @@ export default class FieldImageReferenceSelect extends Component {
   }
 
   render() {
-    const {data} = this.props
+    const data = this.props.data || []
     const numberOfColumns = this.getNumberOfColumns()
 
     let columns = Array.apply(null, {length: numberOfColumns}).map(i => [])
@@ -93,8 +93,6 @@ export default class FieldImageReferenceSelect extends Component {
         ))}
       </div>
     )
-
-    return this.renderColumns(data)
   }
 
   getNumberOfColumns() {

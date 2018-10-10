@@ -11,6 +11,7 @@ import {Keyboard} from 'lib/keyboard'
 import * as appActions from 'actions/appActions'
 import * as documentActions from 'actions/documentActions'
 import * as documentsActions from 'actions/documentsActions'
+import * as userActions from 'actions/userActions'
 
 import {bindActionCreators} from 'redux'
 import {buildUrl} from 'lib/router'
@@ -24,6 +25,38 @@ import DropdownNative from 'components/DropdownNative/DropdownNative'
 import Peer from 'components/Peer/Peer'
 import Toolbar from 'components/Toolbar/Toolbar'
 
+const ACTION_SAVE = 'save'
+const ACTION_SAVE_AND_CREATE_NEW = 'saveAndCreateNew'
+const ACTION_SAVE_AND_GO_BACK = 'saveAndGoBack'
+const ACTION_SAVE_AS_DUPLICATE = 'saveAsDuplicate'
+
+const availableSaveOptions = [
+  {
+    default: true,
+    label: 'Save and continue',
+    action: ACTION_SAVE,
+    enableForExistingDocuments: true,
+    enableForNewDocuments: true
+  },
+  {
+    label: 'Save and create new',
+    action: ACTION_SAVE_AND_CREATE_NEW,
+    enableForExistingDocuments: true,
+    enableForNewDocuments: true
+  },
+  {
+    label: 'Save and go back',
+    action: ACTION_SAVE_AND_GO_BACK,
+    enableForExistingDocuments: true,
+    enableForNewDocuments: true
+  },
+  {
+    label: 'Save as duplicate',
+    action: ACTION_SAVE_AS_DUPLICATE,
+    enableForExistingDocuments: true
+  }
+]
+  
 /**
  * A toolbar used in a document edit view.
  */
@@ -85,18 +118,23 @@ class DocumentEditToolbar extends Component {
   componentDidUpdate(prevProps, prevState) {
     const {
       actions,
-      collection,
-      group,
+      onBuildBaseUrl,
       state
     } = this.props
-    const document = state.document
-    const previousDocument = prevProps.state.document
+    const {
+      document,
+      documents
+    } = state
+    const {
+      document: previousDocument,
+      documents: previousDocuments
+    } = prevProps.state
     const wasFirstValidated = !previousDocument.hasBeenValidated &&
       document.hasBeenValidated
 
     // Have we just saved a document?
     if (previousDocument.isSaving && !document.isSaving) {
-      if (typeof this.onSave.callback === 'function') {
+      if (this.onSave && typeof this.onSave.callback === 'function') {
         this.onSave.callback(state.document.remote ? state.document.remote._id : null)
       }
     }
@@ -110,18 +148,25 @@ class DocumentEditToolbar extends Component {
     }
 
     // Have we deleted a document?
-    if (previousDocument.remote && !document.remote) {
-      // Redirect to document list view
-      route(buildUrl(group, collection))
+    if (previousDocuments.isDeleting && !documents.isDeleting) {
+      // Redirect to document list view.
+      route(onBuildBaseUrl({
+        documentId: null
+      }))
+
+      let message = previousDocuments.isDeleting > 1 ?
+        'The documents have been deleted' :
+        'The document has been deleted'
 
       actions.setNotification({
-        message: 'The documents have been deleted'
+        message
       })
     }
   }
 
   render() {
     const {
+      api,
       documentId,
       state
     } = this.props
@@ -135,24 +180,12 @@ class DocumentEditToolbar extends Component {
     const hasValidationErrors = validationErrors && Object.keys(validationErrors)
       .filter(field => validationErrors[field])
       .length
-    const method = documentId ? 'edit' : 'new'
 
-    // By default, we support these two save modes.
-    let saveOptions = {
-      'Save and create new': this.handleSave.bind(this, 'saveAndCreateNew'),
-      'Save and go back': this.handleSave.bind(this, 'saveAndGoBack')
-    }
-
-    // If we're editing an existing document, we also allow users to duplicate
-    // the document.
-    if (method === 'edit') {
-      saveOptions['Save as duplicate'] = this.handleSave.bind(this, 'saveAsDuplicate')
-    }
-
-    let languages = Boolean(state.api.currentApi) &&
-      Boolean(state.api.currentApi.languages) &&
-      (state.api.currentApi.languages.length > 1) &&
-      state.api.currentApi.languages.reduce((languagesObject, language) => {
+    let saveOptions = this.getSaveOptions(documentId)
+    let languages = Boolean(api) &&
+      Boolean(api.languages) &&
+      (api.languages.length > 1) &&
+      api.languages.reduce((languagesObject, language) => {
         languagesObject[language.code] = language.name
 
         return languagesObject
@@ -162,7 +195,7 @@ class DocumentEditToolbar extends Component {
     // No language is selected, so we'll set the value of the dropdown to the
     // value of the default language.
     if (languages && !currentLanguage) {
-      let defaultLanguage = state.api.currentApi.languages.find(language => {
+      let defaultLanguage = api.languages.find(language => {
         return Boolean(language.default)
       })
 
@@ -228,10 +261,10 @@ class DocumentEditToolbar extends Component {
             <ButtonWithOptions
               accent="save"
               disabled={hasConnectionIssues || hasValidationErrors || isSaving}
-              onClick={this.handleSave.bind(this, 'save')}
-              options={saveOptions}
+              onClick={this.handleSave.bind(this, saveOptions.primary.action)}
+              options={saveOptions.secondary}
             >
-              Save and continue
+              {saveOptions.primary.label}
             </ButtonWithOptions>
           </div>
         </div>
@@ -243,21 +276,69 @@ class DocumentEditToolbar extends Component {
     this.keyboard.off()
   }
 
+  getSaveOptions(documentId) {
+    const {state} = this.props
+
+    // We start by filtering the available save options based on whether we're
+    // editing an existing document or creating a new one, as some options may
+    // not be available in both contexts.
+    let saveOptions = availableSaveOptions.filter(option => {
+      if (documentId && !option.enableForExistingDocuments) return false
+      if (!documentId && !option.enableForNewDocuments) return false
+
+      return true
+    })
+
+    let userSavedOption = state.user.remote.data[
+      Constants.FIELD_SAVE_OPTIONS
+    ]
+
+    // Our first choice for primary save option is any option saved against
+    // the user record.
+    let primaryOption = userSavedOption && saveOptions.find(option => {
+      return option.action === userSavedOption
+    })
+
+    // If the above yields nothing, or if the saved option doesn't correspond
+    // to a valid save option, we'll grab the first available option with the
+    // `default` property. If that doesn't work either, we'll simply take the
+    // first option from the list.
+    if (!primaryOption) {
+      primaryOption = saveOptions.find(option => option.default) ||
+        saveOptions[0]
+    }
+
+    // The secondary options will be all the available options that aren't the
+    // primary one. For convenience, we return them as an Object with a format
+    // that ButtonWithOptions will accept.
+    let secondaryOptions = saveOptions.reduce((options, option) => {
+      if (option.action !== primaryOption.action) {
+        options[option.label] = this.handleSave.bind(this, option.action)  
+      }
+
+      return options
+    }, {})
+
+    return {
+      primary: primaryOption,
+      secondary: secondaryOptions
+    }
+  }
+
   handleDelete() {
     const {
       actions,
+      api,
       collection,
-      group,
       referencedField,
       state
     } = this.props
-    const {currentApi, currentCollection} = state.api
     const document = state.document.remote
 
     if (document._id) {
       actions.deleteDocuments({
-        api: currentApi,
-        collection: currentCollection,
+        api,
+        collection,
         ids: [document._id]
       })
     }
@@ -278,8 +359,6 @@ class DocumentEditToolbar extends Component {
   handleSave(saveMode) {
     const {
       actions,
-      collection,
-      group,
       onBuildBaseUrl,
       section,
       state
@@ -372,12 +451,13 @@ class DocumentEditToolbar extends Component {
         break
     }    
 
-    actions.registerSaveAttempt()
+    actions.registerSaveAttempt(saveMode)
   }
 
   saveDocument() {
     const {
       actions,
+      api,
       collection,
       documentId,
       group,
@@ -385,12 +465,12 @@ class DocumentEditToolbar extends Component {
       state
     } = this.props
     const creatingNew = this.onSave && this.onSave.createNew
-    const validationErrors = state.document.validationErrors
-    const hasValidationErrors = !validationErrors || Object.keys(validationErrors)
+    const {hasBeenValidated, validationErrors} = state.document
+    const hasValidationErrors = validationErrors && Object.keys(validationErrors)
       .filter(field => validationErrors[field])
       .length
 
-    if (hasValidationErrors) return
+    if (!hasBeenValidated || hasValidationErrors) return
 
     let document = state.document.local
 
@@ -401,12 +481,10 @@ class DocumentEditToolbar extends Component {
     }
 
     actions.saveDocument({
-      api: state.api.currentApi,
-      collection: state.api.currentCollection,
+      api,
+      collection,
       document,
-      documentId: creatingNew ? null : documentId,
-      group,
-      urlCollection: collection
+      documentId: creatingNew ? null : documentId
     })
   }
 }
@@ -416,11 +494,14 @@ export default connectHelper(
     api: state.api,
     app: state.app,
     document: state.document,
-    router: state.router
+    documents: state.documents,
+    router: state.router,
+    user: state.user
   }),
   dispatch => bindActionCreators({
     ...appActions,
     ...documentActions,
-    ...documentsActions
+    ...documentsActions,
+    ...userActions
   }, dispatch)
 )(DocumentEditToolbar)
