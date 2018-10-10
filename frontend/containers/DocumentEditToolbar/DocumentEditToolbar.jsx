@@ -276,6 +276,18 @@ class DocumentEditToolbar extends Component {
     this.keyboard.off()
   }
 
+  shouldComponentUpdate(nextProps) {
+    const {state} = this.props
+    const {state: nextState} = nextProps
+
+    // Avoid a re-render if the user is in the process of signing out.
+    if (state.user.isSignedIn && !nextState.user.isSignedIn) {
+      return false
+    }
+
+    return true
+  }
+
   getSaveOptions(documentId) {
     const {state} = this.props
 
