@@ -89,14 +89,22 @@ export default class RichEditor extends Component {
         'italic',
         {
           name: 'link',
+          icon: 'Link',
           result: () => this.setState({
             showLinkModal: true
           })
         },
         'heading1',
         'heading2',
-        'quote',
-        'olist',
+        {
+          name: 'quote',
+          icon: '<span>“</span>'
+        },
+        {
+          name: 'olist',
+          icon: '<span>1.</span>',
+          title: 'Ordered list'
+        },
         'ulist',
         {
           name: 'code',
@@ -292,25 +300,13 @@ export default class RichEditor extends Component {
       showLinkModal,
       text
     } = this.state
+
     const wrapper = new Style(styles, 'wrapper')
       .addIf('wrapper-mode-text', inTextMode)
     const editorText = new Style(styles, 'editor', 'editor-text')
 
     return (
       <div class={styles['outer-wrapper']}>
-        <div
-          class={wrapper.getClasses()}
-          ref={el => this.editorElement = el}
-        />
-
-        {inTextMode && (
-          <textarea
-            class={editorText.getClasses()}
-            onKeyUp={event => this.handleChange(event.target.value)}
-            value={text}
-          />
-        )}
-
         {showLinkModal && (
           <form
             class={styles['link-modal']}
@@ -328,6 +324,7 @@ export default class RichEditor extends Component {
             <Button
               accent="save"
               className={styles['link-control']}
+              size="small"
               type="submit"
             >Save</Button>
 
@@ -335,8 +332,22 @@ export default class RichEditor extends Component {
               accent="destruct"
               className={styles['link-control']}
               onClick={this.handleLinkRemove.bind(this)}
+              size="small"
             >Remove</Button>
           </form>
+        )}
+
+        <div
+          class={wrapper.getClasses()}
+          ref={el => this.editorElement = el}
+        />
+
+        {inTextMode && (
+          <textarea
+            class={editorText.getClasses()}
+            onKeyUp={event => this.handleChange(event.target.value)}
+            value={text}
+          />
         )}
       </div>
     )
