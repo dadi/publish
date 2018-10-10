@@ -58,6 +58,11 @@ export default class TextInput extends Component {
     onKeyUp: proptypes.func,
 
     /**
+     * Callback to be executed when the input is changed in any way.
+     */
+    onInput: proptypes.func,
+
+    /**
      * Placeholder for the input field.
      */
     placeholder: proptypes.string,
@@ -179,6 +184,7 @@ export default class TextInput extends Component {
         onChange={this.handleChange.bind(this)}
         onFocus={this.handleEvent.bind(this, 'onFocus')}
         onKeyUp={this.handleChange.bind(this)}
+        onInput={this.handleChange.bind(this)}
         placeholder={placeholder}
         readonly={readonly}
         required={required}
@@ -197,7 +203,7 @@ export default class TextInput extends Component {
   }
 
   handleChange(event) {
-    const {onChange, onInput} = this.props
+    const {onChange, onInput, onKeyUp} = this.props
 
     this.adjustHeightIfNeeded()
 
@@ -205,7 +211,11 @@ export default class TextInput extends Component {
       onChange.call(this, event)
     }
 
-    if (event.type === 'input' && typeof onKeyUp === 'function') {
+    if (event.type === 'input' && typeof onInput === 'function') {
+      onKeyUp.call(this, event)
+    }
+
+    if (event.type === 'keyup' && typeof onKeyUp === 'function') {
       onKeyUp.call(this, event)
     }
 
