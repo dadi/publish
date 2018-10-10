@@ -68,6 +68,13 @@ Callback to be executed when the text gains focus (onFocus event).
 - type: `func`
 
 
+### `onInput`
+
+Callback to be executed when the input is changed in any way.
+
+- type: `func`
+
+
 ### `onKeyUp`
 
 Callback to be executed when a key is pressed (onKeyUp event).
