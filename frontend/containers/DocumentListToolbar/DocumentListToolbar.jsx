@@ -114,6 +114,7 @@ class DocumentListToolbar extends Component {
                 />
               </span>
             )}
+
             {metadata.totalCount > 1 && (
               <span class={styles['count-label']}>
                 <span>Showing </span>
@@ -127,7 +128,15 @@ class DocumentListToolbar extends Component {
         <div class={styles.section}>
           <Paginator
             currentPage={metadata.page}
-            linkCallback={this.handleBuildPageUrl.bind(this)}
+            linkCallback={page => {
+              let href = onBuildBaseUrl({
+                createNew: !Boolean(state.router.parameters.documentId),
+                page,
+                referenceFieldSelect: referencedField
+              })
+
+              return href
+            }}
             maxPages={8}
             totalPages={metadata.totalPages}
           />
@@ -190,18 +199,6 @@ class DocumentListToolbar extends Component {
     )
   }
 
-  handleBuildPageUrl(page) {
-    const {
-      onBuildBaseUrl,
-      referencedField
-    } = this.props
-
-    return onBuildBaseUrl({
-      page: page,
-      referenceFieldSelect: referencedField
-    })
-  }
-
   handleBulkActionApply(actionType) {
     const {bulkActionSelected} = this.state
     const validBulkActionSelected = bulkActionSelected &&
@@ -237,6 +234,7 @@ class DocumentListToolbar extends Component {
       collection,
       group,
       onBuildBaseUrl,
+      referencedField,
       state
     } = this.props
     const documentsList = state.documents.list
@@ -253,7 +251,13 @@ class DocumentListToolbar extends Component {
     // we return.
     if (parsedValue > metadata.totalPages) return
 
-    route(this.handleBuildPageUrl(parsedValue))
+    let href = onBuildBaseUrl({
+      createNew: !Boolean(state.router.parameters.documentId),
+      page: parsedValue,
+      referenceFieldSelect: referencedField
+    })
+
+    route(href)
   }
 
   handleReferencedDocumentSelect() {

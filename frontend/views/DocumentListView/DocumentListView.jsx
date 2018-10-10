@@ -113,7 +113,7 @@ class DocumentListView extends Component {
       urlNodes.push(section)
     }
 
-    if (page) {
+    if (page !== undefined) {
       urlNodes.push(page)
     }    
 
