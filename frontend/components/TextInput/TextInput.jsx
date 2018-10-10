@@ -212,7 +212,7 @@ export default class TextInput extends Component {
     }
 
     if (event.type === 'input' && typeof onInput === 'function') {
-      onKeyUp.call(this, event)
+      onInput.call(this, event)
     }
 
     if (event.type === 'keyup' && typeof onKeyUp === 'function') {
