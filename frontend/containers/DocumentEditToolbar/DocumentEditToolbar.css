@@ -16,7 +16,6 @@
 @media (min-width: 800px) {
   .metadata {
     flex-grow: 100;
-    text-align: center;
   }
 }
 
