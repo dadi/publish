@@ -16,14 +16,14 @@ export default class FieldDateTimeList extends Component {
     config: proptypes.object,
 
     /**
-     * The field value.
-     */
-    value: proptypes.string,
-
-    /**
      * The field schema.
      */
     schema: proptypes.object
+
+    /**
+     * The field value.
+     */
+    value: proptypes.string
   }
 
   render() {
