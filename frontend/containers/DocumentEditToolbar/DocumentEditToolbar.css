@@ -40,12 +40,6 @@
   }
 }
 
-.buttons {
-  position: absolute;
-  top: 0;
-  right: 0;
-}
-
 .button {
   display: inline-block;
   margin-left: 5px;
