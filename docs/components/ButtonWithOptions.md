@@ -35,6 +35,13 @@ href.
 - type: `string`
 
 
+### `isLoading`
+
+Whether to display a loading state.
+
+- type: `bool`
+
+
 ### `onClick`
 
 Callback to be executed when the main button is clicked.

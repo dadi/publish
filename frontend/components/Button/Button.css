@@ -27,7 +27,8 @@
 
 .button-loading {
   background-position: 16px 50%;
-  padding-left: 40px;   
+  padding-left: 40px;
+  transition-delay: 0.2s;
 }
 
 .button-small {
