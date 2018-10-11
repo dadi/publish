@@ -27,11 +27,11 @@ The JSON-stringified object of filters currently applied.
 - type: `string`
 
 
-### `newFilter`
+### `forceNewFilters`
 
-Whether we are creating a new filter.
+Counter to mark the addition of new filters.
 
-- type: `bool`
+- type: `number`
 
 
 ### `updateUrlParams`

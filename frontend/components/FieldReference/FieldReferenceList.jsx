@@ -40,7 +40,12 @@ export default class FieldReferenceList extends Component {
   }
 
   render() {
-    const {schema, value, currentApi} = this.props
+    const {
+      collection,
+      currentApi,
+      schema,
+      value
+    } = this.props
 
     const referencedCollectionName = schema.settings && schema.settings.collection
     if (!referencedCollectionName) return null
@@ -66,7 +71,7 @@ export default class FieldReferenceList extends Component {
         <div class={styles.values}>
           {values.map((val, idx) => {
             let collection = schema.settings.collection
-            let editLink = `${collection}/${val._id}`
+            let editLink = `${referencedCollection._publishLink}/${val._id}`
             let displayField = optionsBlock && optionsBlock.displayField || firstStringField ? firstStringField.key : null
 
             return (

@@ -150,8 +150,11 @@ class DocumentEdit extends Component {
       documentId,
       state
     } = this.props
-    const document = state.document
-    const previousDocument = previousProps.state.document
+    const {document, documents} = state
+    const {
+      document: previousDocument,
+      documents: previousDocuments
+    } = previousProps.state
 
     // Are there unsaved changes?
     if (
@@ -198,9 +201,11 @@ class DocumentEdit extends Component {
     const remoteDocumentHasChanged = document.remote &&
       (documentId !== document.remote._id)
     const needsFetch = !document.remote || remoteDocumentHasChanged
+    const hasJustDeleted = previousDocuments.isDeleting && !documents.isDeleting
 
     if (
       !document.isLoading &&
+      !hasJustDeleted &&
       needsFetch &&
       collection &&
       state.api.apis.length > 0
@@ -242,6 +247,7 @@ class DocumentEdit extends Component {
     const {
       collection,
       documentId,
+      onBuildBaseUrl,
       referencedField,
       section,
       state
@@ -255,9 +261,13 @@ class DocumentEdit extends Component {
     }
 
     if (document.remoteError) {
+      let listRoute = onBuildBaseUrl({
+        documentId: null
+      })
+
       return (
         <ErrorMessage
-          data={{href: buildUrl(group, collection)}}
+          data={{href: listRoute}}
           type={Constants.ERROR_DOCUMENT_NOT_FOUND}
         />
       )
@@ -539,6 +549,7 @@ export default connectHelper(
     api: state.api,
     app: state.app,
     document: state.document,
+    documents: state.documents,
     user: state.user,
     router: state.router
   }),

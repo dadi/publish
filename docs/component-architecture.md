@@ -5,6 +5,7 @@ App
 │ │ ├─┬ ErrorMessage
 │ │ │ ├── Button
 │ │ │ └── HeroMessage
+│ │ ├── SpinningWheel
 │ │ └─┬ TabbedFieldSections
 │ │   └── SubNavItem
 │ ├─┬ DocumentEditToolbar
@@ -40,6 +41,7 @@ App
 │ │ ├─┬ ErrorMessage
 │ │ │ ├── Button
 │ │ │ └── HeroMessage
+│ │ ├── SpinningWheel
 │ │ └─┬ TabbedFieldSections
 │ │   └── SubNavItem
 │ ├─┬ DocumentEditToolbar
@@ -77,17 +79,17 @@ App
 │ │ │ ├── Button
 │ │ │ └── HeroMessage
 │ │ ├── HeroMessage
-│ │ ├─┬ SyncTable
-│ │ │ ├── Table
-│ │ │ ├─┬ TableHead
-│ │ │ │ └─┬ TableHeadCell
-│ │ │ │   └── IconArrow
-│ │ │ ├─┬ TableHeadCell
-│ │ │ │ └── IconArrow
-│ │ │ ├─┬ TableRow
-│ │ │ │ └── TableRowCell
-│ │ │ └── TableRowCell
-│ │ └── SpinningWheel
+│ │ ├── SpinningWheel
+│ │ └─┬ SyncTable
+│ │   ├── Table
+│ │   ├─┬ TableHead
+│ │   │ └─┬ TableHeadCell
+│ │   │   └── IconArrow
+│ │   ├─┬ TableHeadCell
+│ │   │ └── IconArrow
+│ │   ├─┬ TableRow
+│ │   │ └── TableRowCell
+│ │   └── TableRowCell
 │ ├─┬ DocumentListController
 │ │ ├── Button
 │ │ ├─┬ DocumentFilters
