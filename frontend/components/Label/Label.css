@@ -11,6 +11,10 @@
   display: block;
 }
 
+.container-focus {
+  border-color: fuchsia  
+}
+
 .container-compact {
   display: flex;
   align-items: center;
