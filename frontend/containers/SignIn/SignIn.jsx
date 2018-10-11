@@ -50,11 +50,16 @@ class SignIn extends Component {
     userHasInteracted: false
   }
 
-  getErrorBanner(signInError) {
+  getErrorBanner({
+    remoteError,
+    sessionHasExpired
+  }) {
     let message
 
-    if (signInError) {
-      switch (signInError) {
+    if (sessionHasExpired) {
+      message = 'Your session has expired. Please sign in again.'
+    } else if (remoteError) {
+      switch (remoteError) {
         case 401:
           message = 'Username not found or password incorrect'
 
@@ -110,7 +115,10 @@ class SignIn extends Component {
             >
               <img class={styles.logo} src={logo} />
 
-              {this.getErrorBanner(state.user.remoteError)}
+              {this.getErrorBanner({
+                remoteError: state.user.remoteError,
+                sessionHasExpired: state.user.sessionHasExpired
+              })}
 
               <div class={styles.inputs}>
                 <div class={styles.input}>

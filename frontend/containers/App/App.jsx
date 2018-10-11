@@ -36,6 +36,8 @@ class App extends Component {
     // We only load the APIs at this point if the user is already signed in
     // (existing session). Otherwise, it will be loaded upon successful login.
     if (state.user.accessToken) {
+      this.initialiseSessionTimers()
+
       actions.loadApis()
     }
   }
@@ -83,6 +85,8 @@ class App extends Component {
 
     // State change: user has signed in.
     if (!previousState.user.accessToken && state.user.accessToken) {
+      this.initialiseSessionTimers()
+
       actions.loadApis()
 
       let redirectUri = state.router.search.redirect
@@ -250,6 +254,23 @@ class App extends Component {
     if (state.user && state.user.remote) {
       actions.setDocumentPeers(data.body.users
         .filter(socketUser => socketUser.handle !== state.user.remote.handle))
+    }
+  }
+
+  initialiseSessionTimers() {
+    const {actions, state} = this.props
+
+    if (typeof state.user.accessTokenExpiry === 'number') {
+      // We'll set a timer to sign the user out 5 seconds before their token expires.
+      let timeout = state.user.accessTokenExpiry - Date.now() - 5000
+
+      if (timeout < 0) return
+
+      setTimeout(() => {
+        actions.signOut({
+          sessionHasExpired: true
+        })
+      }, timeout)
     }
   }
 }

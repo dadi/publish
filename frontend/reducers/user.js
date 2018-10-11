@@ -7,6 +7,7 @@ import {isValidJSON} from 'lib/util'
 
 const initialState = {
   accessToken: Cookies.get('accessToken'),
+  accessTokenExpiry: parseInt(Cookies.get('accessTokenExpiry')),
   hasBeenSubmitted: false,
   hasBeenValidated: false,
   isAuthenticating: false,
@@ -15,6 +16,7 @@ const initialState = {
   local: {},
   remote: window.__client__ || {},
   remoteError: null,
+  sessionHasExpired: false,
   validationErrors: null
 }
 
@@ -65,25 +67,31 @@ export default function user (state = initialState, action = {}) {
         accessTokenTTL,
         client
       } = action
-      let expiryDate = new Date(
-        Date.now() + (accessTokenTTL * 1000)
-      )
+      let expiryTimestamp = Date.now() + (accessTokenTTL * 1000)
+      let expiryDate = new Date(expiryTimestamp)
 
       Cookies.set('accessToken', accessToken, {
+        expires: expiryDate
+      })
+
+      Cookies.set('accessTokenExpiry', expiryTimestamp, {
         expires: expiryDate
       })
 
       return {
         ...state,
         accessToken,
+        accessTokenExpiry: expiryTimestamp,
         failedSignInAttempts: 0,
         isSignedIn: true,
-        remote: client
+        remote: client,
+        sessionHasExpired: false
       }
 
     case Types.SET_API_STATUS:
       if (action.error === Constants.API_UNAUTHORISED_ERROR) {
         Cookies.remove('accessToken')
+        Cookies.remove('accessTokenExpiry')
 
         return {
           ...initialState,
@@ -140,14 +148,16 @@ export default function user (state = initialState, action = {}) {
         case Constants.STATUS_LOADING:
           return {
             ...state,
-            isAuthenticating: true
+            isAuthenticating: true,
+            sessionHasExpired: false
           }
 
         // User is signing in.
         case Constants.STATUS_SAVING:
           return {
             ...state,
-            isSaving: true
+            isSaving: true,
+            sessionHasExpired: false
           }
 
         // Sign in or save have failed.
@@ -157,6 +167,7 @@ export default function user (state = initialState, action = {}) {
             isAuthenticating: false,
             isSaving: false,
             remoteError: action.data,
+            sessionHasExpired: false
           }
       }
 
@@ -165,12 +176,14 @@ export default function user (state = initialState, action = {}) {
     // Action: clear user
     case Types.SIGN_OUT:
       Cookies.remove('accessToken')
+      Cookies.remove('accessTokenExpiry')
 
       return {
         ...initialState,
         accessToken: undefined,
         isSaving: false,
-        isSignedIn: false
+        isSignedIn: false,
+        sessionHasExpired: Boolean(action.sessionHasExpired)
       }
 
     // Action: update local user
