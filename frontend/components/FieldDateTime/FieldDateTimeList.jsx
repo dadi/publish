@@ -32,16 +32,8 @@ export default class FieldDateTimeList extends Component {
     // If there's no value, we return `null`.
     if (!value) return null
 
-    let dateObj = null
-
-    if (value) {
-      const dateTimeObj = new DateTime(value)
-
-      if (dateTimeObj.isValid()) {
-        dateObj = dateTimeObj
-      }
-    }
+    const dateTimeObj = new DateTime(value)
     
-    return (dateObj && dateObj.format(config.formats.date.long)) || value
+    return (dateTimeObj.isValid() && dateTimeObj.format(config.formats.date.long)) || value
   }
 }
