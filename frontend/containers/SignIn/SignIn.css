@@ -1,6 +1,5 @@
 .wrapper {
-  background-image: url(/public/images/bg-dark.jpg);
-  background-color: #000000;
+  background-color: #04111d;
   background-size: cover;
   height: 100%;
   height: 100vh;
@@ -16,15 +15,16 @@
 }
 
 .container {
-  max-width: 750px;
+  max-width: 500px;
   padding: 20px;
   width: 100%;
+  margin: auto;
 }
 
 .logo {
   display: block;
   height: 50px;
-  margin-bottom: 30px;
+  margin: 0 auto 40px;
 }
 
 .powered-by {
@@ -38,20 +38,22 @@
 }
 
 .inputs {
-  margin: 0 0 40px -20px;
+  margin: 0 0 30px -20px;
 }
 
 .input {
   display: inline-block;
   width: 100%;
-  margin-top: 20px;
+  margin-top: 1px;
   padding-left: 20px;
 }
 
-@media (--breakpoint-medium) {
-  .input {
-    width: 50%;
-  }
+.input label {
+  border: 0;
+  border-radius: 0 0 3px 3px;
+}
+.input:first-of-type label {
+  border-radius: 3px 3px 0 0;
 }
 
 .link {
@@ -66,4 +68,8 @@
 
 .link:hover {
   color: var(--theme-colour-system, #ffbf0d);
+}
+
+.container button {
+  width: 100%
 }
