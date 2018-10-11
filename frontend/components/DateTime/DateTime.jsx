@@ -102,7 +102,9 @@ export default class DateTime extends Component {
       ? this.getRelativeDate(dateTime.getDate())
       : dateTime.format(format)
 
-    return renderedDate
+    return (
+      <time datetime={dateTime.format(format)} title={dateTime.format(format)}>{renderedDate}</time>
+    )
   }
 
   getRelativeDate(date) {
