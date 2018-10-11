@@ -24,7 +24,7 @@
 .logo {
   display: block;
   height: 50px;
-  margin: 0 auto 40px;
+  margin: 0 0 40px;
 }
 
 .powered-by {
@@ -68,8 +68,4 @@
 
 .link:hover {
   color: var(--theme-colour-system, #ffbf0d);
-}
-
-.container button {
-  width: 100%
 }
