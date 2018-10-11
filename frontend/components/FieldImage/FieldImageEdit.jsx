@@ -161,15 +161,6 @@ export default class FieldImageEdit extends Component {
 
         {!values &&
           <div>
-            <div class={styles.placeholder}>
-              <Button
-                accent="data"
-                size="small"
-                href={href}
-                className={styles['select-existing']}
-              >Select existing {fieldLocalType.toLowerCase()}</Button>
-            </div>
-
             <div class={styles['upload-options']}>
               <DropArea
                 draggingText={`Drop image${singleFile ? '' : 's'} here`}
@@ -180,8 +171,16 @@ export default class FieldImageEdit extends Component {
                 </div>
               </DropArea>
             </div>
+
+            <div class={styles.placeholder}>
+              <Button
+                accent="neutral"
+                size="small"
+                href={href}
+              >Select existing {fieldLocalType.toLowerCase()}</Button>
+            </div>
+
             <div class={styles['upload-select']}>
-              <span>or </span>
               <FileUpload
                 allowDrop={true}
                 accept={accept}
