@@ -38,10 +38,12 @@ class HomeView extends Component {
             <SpinningWheel />
           )}
 
-          <HeroMessage
-            title={`Welcome, ${(user.remote.data && user.remote.data && user.remote.data.publishFirstName) || 'Guest'}.`}
-            subtitle={message}
-          />
+          {!api.isLoading && (
+            <HeroMessage
+              title={`Welcome, ${(user.remote.data && user.remote.data && user.remote.data.publishFirstName) || 'Guest'}.`}
+              subtitle={message}
+            />
+          )}
         </Main>
       </Page>
     )
