@@ -17,29 +17,37 @@
   display: inline-block;
   font-family: var(--theme-font-family, sans-serif);
   font-size: 15px;
-  padding: 15px 12px;
+  padding: 15px 3px;
   cursor: pointer;
   text-decoration: none;
 }
 
-.container-expanded .nav-item {
-  background-color: #fff;
-  color: #020406;
+.container-expanded .nav-item span {
+  background-color: #242a33;
+  color: #fff;
+}
+
+.nav-item span {
+  padding: 3px 8px;
+  border-radius: 2px;
 }
 
 .nav-item-active {
-  color: var(--theme-colour-system, #ffbf0d);
+  background: none;
+}
+.nav-item-active span {
+  background: #ffbf0e;
+  color: #040609;
 }
 
-.container-expanded .nav-item-active {
-  color: #020406;
-}
 
 .container-desktop .children {
   display: none;
   position: absolute;
   min-width: 180px;
   top: 100%;
+  margin-top: -2px;
+  margin-left: 3px;
   z-index: 4;
 }
 

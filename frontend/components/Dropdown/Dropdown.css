@@ -1,6 +1,6 @@
 .dropdown {
   background-color: var(--theme-colour-background-shade-1, #FAFAFA);
-  border-radius: 0 0 4px 4px;
+  border-radius: 4px;
   box-shadow: 7px 6px 25px rgba(0, 0, 0, 0.3);
   padding: 10px;
   position: relative;
