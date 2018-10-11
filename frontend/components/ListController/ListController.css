@@ -2,9 +2,13 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background-color: var(--theme-colour-background-shade-3, #DDDDDD);
   font-family: var(--theme-font-family, sans-serif);
   padding: 15px 20px;
+  color: #ffffff;
+  border-top: 1px solid #282f39;
+  background-image: linear-gradient(-180deg, #0b131f 10%, #17273f 100%);
+  z-index: 1000;
+  position: relative;
 }
 
 .control + .control {
@@ -31,7 +35,7 @@
 }
 
 .breadcrumbs-tail {
-  color: var(--theme-colour-primary-shade-1, #777777);
+  color: #fff;
 }
 
 .arrow {
