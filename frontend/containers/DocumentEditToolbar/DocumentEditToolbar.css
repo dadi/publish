@@ -44,13 +44,6 @@
   position: absolute;
   top: 0;
   right: 0;
-  padding: 13px;
-}
-
-@media (--breakpoint-medium) {
-  .buttons {
-    border-left: 1px solid #e4e4e4;
-  }
 }
 
 .button {
