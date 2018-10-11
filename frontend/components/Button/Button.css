@@ -3,6 +3,10 @@
   display: inline-block;
   position: relative;
   background-color: #fff;
+  background-image: url(./loading-small.svg);
+  background-position: -16px 50%;
+  background-repeat: no-repeat;
+  background-size: auto 16px;  
   color: var(--theme-colour-primary, #000000);
   line-height: 1.25;
   font-weight: bold;
@@ -18,6 +22,12 @@
   font-size: 15px;
   text-decoration: none;
   border-radius: 2px;
+  transition: background-color 0.1s, padding 0.3s, background-position 0.3s;
+}
+
+.button-loading {
+  background-position: 16px 50%;
+  padding-left: 40px;   
 }
 
 .button-small {
