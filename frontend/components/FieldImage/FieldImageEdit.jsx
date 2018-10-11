@@ -140,7 +140,7 @@ export default class FieldImageEdit extends Component {
     return (
       <Label label={displayName}>
         {values &&
-          values.map(value => {
+          values.map((value, index) => {
             return(<div class={styles['value-container']}>
               <div class={styles.thumbnails}>
                   <img
@@ -152,7 +152,7 @@ export default class FieldImageEdit extends Component {
                 accent="destruct"
                 size="small"
                 className={styles['remove-existing']}
-                onClick={this.handleRemoveFile.bind(this, value.fileName)}
+                onClick={this.handleRemoveFile.bind(this, index)}
               >Delete</Button>
             </div>)
           })
@@ -216,16 +216,16 @@ export default class FieldImageEdit extends Component {
     }
   }
   
-  handleRemoveFile(fileName) {
+  handleRemoveFile(index) {
     const {name, onChange, schema, value} = this.props
-    const values = (value && !Array.isArray(value)) ? [value] : value
-    let newValues = values.filter((v) => v.fileName !== fileName)
-    if(newValues.length == 0) {
-      newValues = null
+    let values = (value && !Array.isArray(value)) ? [value] : value
+    values.splice(index, 1)
+    if(values.length == 0) {
+      values = null
     }
 
     if (typeof onChange === 'function') {
-      onChange.call(this, name, newValues)
+      onChange.call(this, name, values)
     }
   }
 
