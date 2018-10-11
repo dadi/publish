@@ -18,7 +18,7 @@ export default class FieldDateTimeList extends Component {
     /**
      * The field schema.
      */
-    schema: proptypes.object
+    schema: proptypes.object,
 
     /**
      * The field value.
