@@ -40,7 +40,7 @@ class HomeView extends Component {
 
           {!api.isLoading && (
             <HeroMessage
-              title={`Welcome, ${(user.remote.data && user.remote.data && user.remote.data.publishFirstName) || 'Guest'}.`}
+              title={user.remote.data && user.remote.data && user.remote.data.publishFirstName ? `Welcome, ${user.remote.data.publishFirstName}` : 'Welcome'}
               subtitle={message}
             />
           )}
