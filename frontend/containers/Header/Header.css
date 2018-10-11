@@ -32,10 +32,15 @@
   }
 }
 
+.account {
+  margin: 15px 20px;
+  float: right;
+}
+
 .signout {
   text-decoration: none;
   color: #4A596F;
-  margin-right: 10px;
+  margin-right: 8px;
   cursor: pointer;
 }
 
