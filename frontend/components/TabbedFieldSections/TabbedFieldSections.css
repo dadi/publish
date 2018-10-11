@@ -5,10 +5,18 @@
 .section {
   display: none;
   flex-wrap: wrap;
+  align-items: flex-start;
 }
 
 .section-active {
   display: flex;
+  padding: 10px 15px;
+}
+
+@media (--breakpoint-medium) {
+  .section-active {
+    padding: 10px 25px;
+  }
 }
 
 .navigation {
@@ -24,27 +32,37 @@
 
 .main {
   width: 100%;
-  padding: 10px 25px;
+  padding: 20px;
+  padding-bottom: 5px;
+  background: #ffffff;
+  border-radius: 4px;
+  box-shadow: 2px 2px 10px 0 rgba(0,0,0,.03);
+  border: 1px solid #eee;
+  /*padding: 10px 25px;*/
 }
 
 @media (--breakpoint-medium) {
   .main:not(.main-full) {
     width: 66.6666%;
+    margin-left: auto;
     width: calc(2 * (100% / 3));
-    padding: 10px 15px 10px 25px;  
+    /*padding: 10px 15px 10px 25px;  */
   }
 }
 
 .sidebar {
   width: 100%;
-  padding: 10px;
+  position: sticky;
+  top: 0;
+  /*padding: 10px;*/
 }
 
 @media (--breakpoint-medium) {
   .sidebar {
     width: 33.3333%;
     width: calc(100% / 3);
-    padding: 10px 25px 10px 15px;
+    padding: 21px 0 0 20px;
+    /*apdding: 10px 25px 10px 15px;*/
   }
 }
 
