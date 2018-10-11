@@ -190,7 +190,7 @@ export default class FieldReferenceEdit extends Component {
           : (
             <div class={styles.placeholder}>
               <Button
-                accent="data"
+                accent="neutral"
                 href={editLink}
                 size="small"
               >Select existing {displayName.toLowerCase()}</Button>
