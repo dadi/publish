@@ -78,7 +78,7 @@ export default class FieldReferenceList extends Component {
               <div>
                 <a class={styles['value-link']} href={editLink}>
                   {displayField && val[displayField] || `Referenced ${collection}`}
-                </a>{idx < values.length - 1 ? ', ' : ''}
+                </a>
               </div>
             )
           })}
