@@ -77,7 +77,7 @@ class Header extends Component {
         }
         
         <div class={contentStyle.getClasses()} onClick={this.toggleCollapsed.bind(this, false)}>
-          <div style="float: right; padding: 15px;">
+          <div class={styles.account}>
             <a href="/" style="display:none;">
               <img class={styles.logo} src="/public/images/publish.png" />
             </a>
