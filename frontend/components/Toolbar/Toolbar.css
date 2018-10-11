@@ -1,11 +1,8 @@
 .container {
-  position: fixed;
-  bottom: 0;
-  left: 0;
   width: 100%;
   min-height: var(--theme-toolbar-height, 63px);
   box-shadow: 0 0 1px rgba(0, 0, 0, 0.08);
-  border-top: 1px solid #e4e4e4;
+  border-bottom: 1px solid #e4e4e4;
   box-shadow: 0 -5px 5px rgba(0,0,0,0.05);
   background-color: rgba(255,255,255,0.97);
   display: flex;
@@ -16,8 +13,17 @@
   z-index: 1000;
 }
 
+@media (--breakpoint-medium) {
+  .container {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    border-top: 1px solid #e4e4e4;
+  }
+}
+
 .container-padded {
-  padding: 13px 20px;
+  padding: 13px 25px;
 }
 
 .input {
