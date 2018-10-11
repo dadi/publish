@@ -80,6 +80,7 @@
 /* Accent: destruct */
 .button-destruct {
   background-color: var(--theme-colour-error, #ffbf0d);
+  background-image: url(./loading-small-white.svg);
   color: var(--theme-colour-secondary, #FFFFFF);
 }
 
@@ -93,6 +94,7 @@
 /* Accent: save */
 .button-save {
   background-color: var(--theme-colour-save, #88c24c);
+  background-image: url(./loading-small-white.svg);
   color: var(--theme-colour-secondary, #FFFFFF);
 }
 
@@ -106,6 +108,7 @@
 /* Accent: data */
 .button-data {
   background-color: var(--theme-colour-data, #4A91FF);
+  background-image: url(./loading-small-white.svg);
   color: var(--theme-colour-secondary, #FFFFFF);
 }
 
