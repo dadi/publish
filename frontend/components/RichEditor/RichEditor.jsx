@@ -94,8 +94,14 @@ export default class RichEditor extends Component {
       element: this.editorElement,
       onChange: this.handleChange.bind(this),
       actions: [
-        'bold',
-        'italic',
+        {
+          'name': 'bold',
+          'icon': '<b>Bold</b>'
+        },
+        {
+          'name': 'italic',
+          'icon': '<i>Italic</i>'
+        },
         {
           name: 'link',
           icon: 'Link',
