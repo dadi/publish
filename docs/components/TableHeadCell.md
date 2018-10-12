@@ -27,3 +27,10 @@ The text content of the table head cell.
 
 - type: `node`
 
+
+### `select`
+
+Whether the row is used to hold a selection checkbox.
+
+- type: `bool`
+

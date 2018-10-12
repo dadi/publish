@@ -11,6 +11,7 @@
     <link rel="icon" type="image/png" href="/public/images/favicon.png">
   </head>
   <body>
+    <script>/* Ugly workaround to mock JSdom */ var jsdom = { JSDOM: function () { return window; } };</script>
     <script>/*@@client@@*/</script>
     <script>/*@@config@@*/</script>
     <script>/*@@documentRoutes@@*/</script>

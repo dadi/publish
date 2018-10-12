@@ -114,6 +114,7 @@ class DocumentListToolbar extends Component {
                 />
               </span>
             )}
+
             {metadata.totalCount > 1 && (
               <span class={styles['count-label']}>
                 <span>Showing </span>
@@ -127,7 +128,15 @@ class DocumentListToolbar extends Component {
         <div class={styles.section}>
           <Paginator
             currentPage={metadata.page}
-            linkCallback={this.handleBuildPageUrl.bind(this)}
+            linkCallback={page => {
+              let href = onBuildBaseUrl({
+                createNew: referencedField && !state.router.parameters.documentId,
+                page,
+                referenceFieldSelect: referencedField
+              })
+
+              return href
+            }}
             maxPages={8}
             totalPages={metadata.totalPages}
           />
@@ -147,6 +156,7 @@ class DocumentListToolbar extends Component {
     const {bulkActionSelected} = this.state
     const {state} = this.props
     const selectedDocuments = state.documents.selected
+    const multiple = selectedDocuments.length > 1
 
     return (
       <div class={styles.actions}>
@@ -164,8 +174,8 @@ class DocumentListToolbar extends Component {
           className={styles['select-button']}
           disabled={(bulkActionSelected === this.BULK_ACTIONS_PLACEHOLDER) || !selectedDocuments.length}
           onClick={this.handleBulkActionApply.bind(this)}
-          promptCallToAction="Yes, delete them."
-          promptMessage="Are you sure you want to delete the selected documents?"
+          promptCallToAction={`Yes, delete ${multiple ? 'them' : 'it'}.`}
+          promptMessage={`Are you sure you want to delete the selected ${multiple ? 'documents' : 'document'}?`}
           size="small"
         >Apply</ButtonWithPrompt>
       </div>
@@ -187,18 +197,6 @@ class DocumentListToolbar extends Component {
         >{ctaText}</Button>
       </div>
     )
-  }
-
-  handleBuildPageUrl(page) {
-    const {
-      onBuildBaseUrl,
-      referencedField
-    } = this.props
-
-    return onBuildBaseUrl({
-      page: page,
-      referenceFieldSelect: referencedField
-    })
   }
 
   handleBulkActionApply(actionType) {
@@ -236,6 +234,7 @@ class DocumentListToolbar extends Component {
       collection,
       group,
       onBuildBaseUrl,
+      referencedField,
       state
     } = this.props
     const documentsList = state.documents.list
@@ -252,7 +251,13 @@ class DocumentListToolbar extends Component {
     // we return.
     if (parsedValue > metadata.totalPages) return
 
-    route(this.handleBuildPageUrl(parsedValue))
+    let href = onBuildBaseUrl({
+      createNew: referencedField && !state.router.parameters.documentId,
+      page: parsedValue,
+      referenceFieldSelect: referencedField
+    })
+
+    route(href)
   }
 
   handleReferencedDocumentSelect() {

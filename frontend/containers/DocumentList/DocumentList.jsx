@@ -512,6 +512,7 @@ class DocumentList extends Component {
     if (FieldComponentList) {
       return (
         <FieldComponentList
+          config={state.app.config}
           collection={collection}
           currentApi={api}
           schema={schema}
