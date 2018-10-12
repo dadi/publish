@@ -130,7 +130,7 @@ class DocumentListToolbar extends Component {
             currentPage={metadata.page}
             linkCallback={page => {
               let href = onBuildBaseUrl({
-                createNew: !Boolean(state.router.parameters.documentId),
+                createNew: referencedField && !state.router.parameters.documentId,
                 page,
                 referenceFieldSelect: referencedField
               })
@@ -252,7 +252,7 @@ class DocumentListToolbar extends Component {
     if (parsedValue > metadata.totalPages) return
 
     let href = onBuildBaseUrl({
-      createNew: !Boolean(state.router.parameters.documentId),
+      createNew: referencedField && !state.router.parameters.documentId,
       page: parsedValue,
       referenceFieldSelect: referencedField
     })

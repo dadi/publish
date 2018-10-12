@@ -4,6 +4,35 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [1.0.12-beta] (2018-10-12)
+
+### Changed
+
+- [#379](https://github.com/dadi/publish/issues/379): remember previously selected save options in document edit view
+- [#448](https://github.com/dadi/publish/issues/448): format DateTime fields in document list view
+- [#510](https://github.com/dadi/publish/pull/510): add rich editor component with Markdown support
+- [#514](https://github.com/dadi/publish/pull/514): batch load API collections
+- [#521](https://github.com/dadi/publish/pull/521): further improvements to auto-resize feature of text inputs
+- [#523](https://github.com/dadi/publish/pull/523): various UI tweaks
+- [#534](https://github.com/dadi/publish/pull/534): add loading states to home view and to sign in and document save actions
+
+### Fixed
+
+- [#513](https://github.com/dadi/publish/pull/513): fix error when saving documents
+- [#515](https://github.com/dadi/publish/pull/515): ensure document is saved on first attempt
+- [#522](https://github.com/dadi/publish/pull/522): fix error on sign out in document edit view
+- [#531](https://github.com/dadi/publish/pull/531): fix links on reference field select (create new document view)
+
+## [1.0.11-beta] (2018-09-26)
+
+- Fix problem with application bundle.
+
+## [1.0.10-beta] (2018-09-25)
+
+### Fixed
+
+- Fix problem with application bundle.
+
 ## [1.0.9-beta] (2018-09-25)
 
 ### Changed

@@ -9,11 +9,11 @@ import Header from 'containers/Header/Header'
 import HeroMessage from 'components/HeroMessage/HeroMessage'
 import Main from 'components/Main/Main'
 import Page from 'components/Page/Page'
+import SpinningWheel from 'components/SpinningWheel/SpinningWheel'
 
 class HomeView extends Component {
   render() {
-    const {state} = this.props
-    const {api, user} = state
+    const {api, user} = this.props.state
 
     if (!user.isSignedIn) {
       return null
@@ -34,10 +34,16 @@ class HomeView extends Component {
         <Header />
 
         <Main>
-          <HeroMessage
-            title={`Welcome, ${(user.remote.data && user.remote.data && user.remote.data.publishFirstName) || 'Guest'}.`}
-            subtitle={message}
-          />
+          {api.isLoading && (
+            <SpinningWheel />
+          )}
+
+          {!api.isLoading && (
+            <HeroMessage
+              title={`Welcome, ${(user.remote.data && user.remote.data && user.remote.data.publishFirstName) || 'Guest'}.`}
+              subtitle={message}
+            />
+          )}
         </Main>
       </Page>
     )
