@@ -49,22 +49,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - [#475](https://github.com/dadi/publish/issues/475): Pagination fixed in document list view
 - [#478](https://github.com/dadi/publish/issues/478): DateTime no longer editable when set to readonly
 
-## [1.0.9-beta] (2018-09-25)
-
-### Changed
-
-- [#470](https://github.com/dadi/publish/issues/470): use shorter notification duration
-- [#476](https://github.com/dadi/publish/issues/476): show value of reference field in document list view, or "None" if no value selected
-- [#497](https://github.com/dadi/publish/pull/497): add annotations to table head in document list view
-- [#499](https://github.com/dadi/publish/issues/499): adds the public URL to the boot message
-- [66d8b37](https://github.com/dadi/publish/commit/66d8b374c542acb009ce313bd87243fea9c54c2b): display image thumbnails in list view
-
-### Fixed
-
-- [#447](https://github.com/dadi/publish/issues/447): show nav on profile page
-- [#475](https://github.com/dadi/publish/issues/475): Pagination fixed in document list view
-- [#478](https://github.com/dadi/publish/issues/478): DateTime no longer editable when set to readonly
-
 ## [1.0.8-beta] (2018-09-04)
 
 ### Changed
