@@ -11,6 +11,8 @@ import styles from './MediaListView.css'
 import DocumentList from 'containers/DocumentList/DocumentList'
 import DocumentListController from 'containers/DocumentListController/DocumentListController'
 import DocumentListToolbar from 'containers/DocumentListToolbar/DocumentListToolbar'
+import DropArea from 'components/DropArea/DropArea'
+import FileUpload from 'components/FileUpload/FileUpload'
 import Header from 'containers/Header/Header'
 import Main from 'components/Main/Main'
 import Page from 'components/Page/Page'
@@ -44,25 +46,47 @@ class MediaListView extends Component {
     return (
       <Page>
         <Header/>
-
         <Main>
           <div class={styles.container}>
             <DocumentListController
               api={currentApi}
               collection={currentCollection}
               onBuildBaseUrl={this.handleBuildBaseUrl.bind(this)}
+              referencedField={true}
             />
-
-            <DocumentList
-              api={currentApi}
-              collection={currentCollection}
-              onBuildBaseUrl={this.handleBuildBaseUrl.bind(this)}
-              onPageTitle={this.handlePageTitle}
-              order={order}
-              page={page}
-              sort={sort}
-            />
-          </div>        
+            <div class={styles.placeholder}>
+              <div class={styles['upload-options']}>
+                <DropArea
+                  draggingText={`Drop image(s) here`}
+                  onDrop={this.handleFileChange.bind(this)}
+                >
+                  <div class={styles['upload-drop']}>
+                    Drop file(s) to upload
+                  </div>
+                </DropArea>
+              </div>
+              <div class={styles['upload-select']}>
+                <span>or </span>
+                <FileUpload
+                  allowDrop={true}
+                  accept="image/*;capture=camera"
+                  multiple={true}
+                  onChange={this.handleFileChange.bind(this)}
+                />
+              </div>
+            </div>
+            <div style="position:relative">
+              <DocumentList
+                api={currentApi}
+                collection={currentCollection}
+                onBuildBaseUrl={this.handleBuildBaseUrl.bind(this)}
+                onPageTitle={this.handlePageTitle}
+                order={order}
+                page={page}
+                sort={sort}
+              />
+            </div>
+          </div>
         </Main>
 
         <DocumentListToolbar
@@ -72,6 +96,11 @@ class MediaListView extends Component {
         />
       </Page>
     )
+  }
+
+  handleFileChange(fileList) {
+    // /media, with file
+    console.log(`File changed`, fileList)
   }
 
   handleBuildBaseUrl({
