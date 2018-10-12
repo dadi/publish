@@ -15,6 +15,7 @@ import Header from 'containers/Header/Header'
 import Main from 'components/Main/Main'
 import Page from 'components/Page/Page'
 import ReferencedDocumentHeader from 'containers/ReferencedDocumentHeader/ReferencedDocumentHeader'
+import FieldImageEdit from '../../components/FieldImage/FieldImageEdit';
 
 class MediaListView extends Component {
   render() {

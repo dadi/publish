@@ -1,6 +1,7 @@
 'use strict'
 
 import {h, render} from 'preact'
+import 'preact/debug'
 import {Provider} from 'preact-redux'
 import {
   applyMiddleware,
