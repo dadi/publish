@@ -193,7 +193,6 @@
       "./test/jestSetup.js"
     ],
     "testMatch": [
-      "**/frontend/**/*.test.jsx",
       "**/test/**/*.test.js"
     ],
     "testURL": "http://localhost"
