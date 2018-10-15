@@ -140,6 +140,7 @@ class SignIn extends Component {
               <Button
                 accent="system"
                 disabled={hasConnectionIssues || (userHasInteracted && !formDataIsValid)}
+                isLoading={state.user.isAuthenticating}
                 type="submit"
               >Sign In</Button>
 

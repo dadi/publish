@@ -271,6 +271,7 @@ class DocumentEditToolbar extends Component {
             <ButtonWithOptions
               accent="save"
               disabled={hasConnectionIssues || hasValidationErrors || isSaving}
+              isLoading={isSaving}
               onClick={this.handleSave.bind(this, saveOptions.primary.action)}
               options={saveOptions.secondary}
             >
