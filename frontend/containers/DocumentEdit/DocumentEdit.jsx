@@ -518,7 +518,7 @@ class DocumentEdit extends Component {
     fieldStyles.addIf('field-disabled', isTranslation && !isTranslatable)
 
     return (
-      <div class={fieldStyles.getClasses()}>
+      <div class={fieldStyles.getClasses()} data-field-name={fieldName}>
         <FieldComponent
           collection={collection.slug}
           comment={fieldComment}
