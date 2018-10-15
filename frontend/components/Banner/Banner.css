@@ -3,6 +3,8 @@
   font-size: 15px;
   font-weight: bold;
   padding: 10px;
+  border-radius: 2px;
+  margin-bottom: 20px;
 }
 
 .banner-error {
