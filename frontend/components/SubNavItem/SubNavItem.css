@@ -20,7 +20,7 @@
 }
 
 .sub-nav-item-error {
-  color: #fafafa;
+  color: var(--theme-colour-error, #E5462C);
 }
 
 .sub-nav-item-error:after {
