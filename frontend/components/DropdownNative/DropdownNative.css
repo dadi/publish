@@ -5,7 +5,13 @@
   display: flex;
   position: relative;
   transition: background-color 0.1s;
-  margin-right: 20px;
+  margin: 0 0 10px 0;
+}
+
+@media (--breakpoint-medium) {
+  .wrapper {
+    margin: 0 20px 0 0;
+  }
 }
 
 .wrapper:hover {
@@ -51,7 +57,13 @@
   border: 0;
   font-family: var(--theme-font-family, sans-serif);
   font-size: var(--theme-font-size-normal, 16px);
-  padding: 0 30px 0 10px;
+  padding: 8px 10px;
   position: relative;
   cursor: pointer;
+}
+
+@media (--breakpoint-medium) {
+  .dropdown {
+    padding: 0 30px 0 10px;
+  }
 }
