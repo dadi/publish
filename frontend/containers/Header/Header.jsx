@@ -8,8 +8,6 @@ import {connectHelper} from 'lib/util'
 import * as Constants from 'lib/constants'
 
 import CollectionNav from 'containers/CollectionNav/CollectionNav'
-import IconBurger from 'components/IconBurger/IconBurger'
-import IconCross from 'components/IconCross/IconCross'
 
 import Style from 'lib/Style'
 import styles from './Header.css'
@@ -41,6 +39,12 @@ class Header extends Component {
     const compact = state.app.breakpoint === null
     const {currentCollection} = state.api
 
+    const {
+      whitelabel: {logo, poweredBy, backgroundImage}
+    } = state.app.config || {
+      whitelabel: {logo: '', poweredBy: false, backgroundImage: ''}
+    }
+
     if (!state.user.isSignedIn) {
       return null
     }
@@ -59,44 +63,36 @@ class Header extends Component {
 
     return (
       <header class={styles.header}>
-        {compact &&
-          <button
-            type="button"
-            class={styles.toggle}
-            onClick={this.toggleCollapsed.bind(this, undefined)}
-          >
-            <span class={styles['toggle-icon']}>
-              {this.state.expanded ?
-                <IconCross width="16" height="16" />
-                :
-                <IconBurger width="12" height="16" />
-              }
-            </span>
-            <span class={styles['toggle-label']}>Menu</span>
-          </button>
-        }
-        
-        <div class={contentStyle.getClasses()} onClick={this.toggleCollapsed.bind(this, false)}>
+        <div class={contentStyle.getClasses()}>
           <div class={styles.account}>
-            <a href="/" style="display:none;">
-              <img class={styles.logo} src="/public/images/publish.png" />
-            </a>
+            {logo !== '' && (
+              <div class={styles.logo}>
+                <img src={logo} />
+              </div>
+            )}
 
-              {state.user.accessToken && (
-                <div class={styles.controls}>
-                  <button
-                    class={styles.signout}
-                    onClick={this.handleSignOut.bind(this)}
-                  >
-                    Sign out
-                  </button>
+            <div class={styles['toggle-icon']} onClick={this.toggleCollapsed.bind(this, undefined)}>
+              {this.state.expanded ?
+                <span class={styles['icon-close']}>Close</span>
+                :
+                <span class={styles['icon-open']}>Open</span>
+              }
+            </div>
 
-                  <a href="/profile" class={styles.user}>{displayName}</a>
-                </div>
-              )}
+            {state.user.accessToken && this.state.expanded && (
+              <div class={styles.controls}>
+                <a href="/profile" class={styles.user}>{displayName}</a>
+                <button
+                  class={styles.signout}
+                  onClick={this.handleSignOut.bind(this)}
+                >
+                  Sign out
+                </button>
+              </div>
+            )}
           </div>
 
-          <div class={innerStyle.getClasses()}>
+          <div class={innerStyle.getClasses()} onClick={this.toggleCollapsed.bind(this, false)}>
             <CollectionNav
               currentCollection={currentCollection}
             />
