@@ -46,6 +46,8 @@
 }
 @media (--breakpoint-medium) {
   .buttons {
+    overflow: visible;
+    white-space: normal;
     margin-top: 0;
   }
 }
