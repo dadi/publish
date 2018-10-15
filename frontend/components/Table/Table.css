@@ -86,7 +86,7 @@
   border-bottom: 1px solid #eee;
 }
 
-.row:nth-child(even) {
+.row:nth-child(odd) {
   background-color: var(--theme-colour-background-shade-1, #FAFAFA);
 }
 
