@@ -47,7 +47,7 @@ export default class FieldImageList extends Component {
                 src={this.getImageSrc(values[0])}
               />
             {multiple &&
-              <div>and {values.length - 1} more</div>
+              (<div>and {values.length - 1} more</div>)
             }
           </div>
         }

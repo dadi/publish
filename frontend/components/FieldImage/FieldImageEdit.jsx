@@ -140,8 +140,8 @@ export default class FieldImageEdit extends Component {
     return (
       <Label label={displayName}>
         {values &&
-          values.map(value => {
-            return(<div class={styles['value-container']}>
+          values.map(value =>
+            <div class={styles['value-container']}>
               <div class={styles.thumbnails}>
                   <img
                     class={styles.thumbnail}
@@ -150,45 +150,42 @@ export default class FieldImageEdit extends Component {
               </div>
               <Button
                 accent="destruct"
-                size="small"
                 className={styles['remove-existing']}
                 onClick={this.handleRemoveFile.bind(this, value.fileName)}
-              >Delete</Button>
-            </div>)
-          })
-        }
-
-        {<div>
-            <div class={styles.placeholder}>
-              <Button
-                accent="data"
                 size="small"
-                href={href}
-                className={styles['select-existing']}
-              >Select existing {fieldLocalType.toLowerCase()}</Button>
+              >Delete</Button>
             </div>
-
-            <div class={styles['upload-options']}>
-              <DropArea
-                draggingText={`Drop image${singleFile ? '' : 's'} here`}
-                onDrop={this.handleFileChange.bind(this)}
-              >
-                <div class={styles['upload-drop']}>
-                  Drop file{singleFile ? '' : 's'} to upload
-                </div>
-              </DropArea>
-            </div>
-            <div class={styles['upload-select']}>
-              <span>or </span>
-              <FileUpload
-                allowDrop={true}
-                accept={accept}
-                multiple={!singleFile}
-                onChange={this.handleFileChange.bind(this)}
-              />
-            </div>
-          </div>
+          )
         }
+        <div>
+          <div class={styles.placeholder}>
+            <Button
+              accent="data"
+              className={styles['select-existing']}
+              href={href}
+              size="small"
+            >Select existing {fieldLocalType.toLowerCase()}</Button>
+          </div>
+          <div class={styles['upload-options']}>
+            <DropArea
+              draggingText={`Drop image${singleFile ? '' : 's'} here`}
+              onDrop={this.handleFileChange.bind(this)}
+            >
+              <div class={styles['upload-drop']}>
+                Drop file{singleFile ? '' : 's'} to upload
+              </div>
+            </DropArea>
+          </div>
+          <div class={styles['upload-select']}>
+            <span>or </span>
+            <FileUpload
+              allowDrop={true}
+              accept={accept}
+              multiple={!singleFile}
+              onChange={this.handleFileChange.bind(this)}
+            />
+          </div>
+        </div>
       </Label>
     )
   }
@@ -219,7 +216,8 @@ export default class FieldImageEdit extends Component {
     const {name, onChange, schema, value} = this.props
     const values = (value && !Array.isArray(value)) ? [value] : value
     let newValues = values.filter((v) => v.fileName !== fileName)
-    if(newValues.length == 0) {
+
+    if (newValues.length === 0) {
       newValues = null
     }
 
