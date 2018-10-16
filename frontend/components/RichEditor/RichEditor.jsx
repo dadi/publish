@@ -36,9 +36,19 @@ export default class RichEditor extends Component {
     ]),
 
     /**
+     * Callback to be executed when the text loses focus (onBlur event).
+     */
+    onBlur: proptypes.func,
+
+    /**
      * A callback function that is fired whenever the content changes.
      */
-    onChange: proptypes.func,
+    onChange: proptypes.func,    
+
+    /**
+     * Callback to be executed when the text gains focus (onFocus event).
+     */
+    onFocus: proptypes.func,
 
     /**
      * The initial value of the editor.
@@ -154,7 +164,9 @@ export default class RichEditor extends Component {
 
     let editor = this.editorElement.getElementsByClassName(styles.editor)[0] 
 
+    editor.addEventListener('blur', this.handleEvent.bind(this, 'onBlur'))
     editor.addEventListener('click', this.handleClick.bind(this))
+    editor.addEventListener('focus', this.handleEvent.bind(this, 'onFocus'))
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -315,7 +327,6 @@ export default class RichEditor extends Component {
       showLinkModal,
       text
     } = this.state
-
     const wrapper = new Style(styles, 'wrapper')
       .addIf('wrapper-mode-text', inTextMode)
     const editorText = new Style(styles, 'editor', 'editor-text')
@@ -360,6 +371,8 @@ export default class RichEditor extends Component {
         {inTextMode && (
           <textarea
             class={editorText.getClasses()}
+            onBlur={this.handleEvent.bind(this, 'onBlur')}
+            onFocus={this.handleEvent.bind(this, 'onFocus')}
             onKeyUp={event => this.handleChange(event.target.value)}
             value={text}
           />
@@ -377,5 +390,11 @@ export default class RichEditor extends Component {
 
     selection.removeAllRanges()
     selection.addRange(range)    
+  }
+
+  handleEvent(callback, event) {
+    if (typeof this.props[callback] === 'function') {
+      this.props[callback].call(this, event)
+    }
   }
 }

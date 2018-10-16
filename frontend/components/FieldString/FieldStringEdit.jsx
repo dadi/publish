@@ -338,16 +338,21 @@ export default class FieldStringEdit extends Component {
       schema,
       value
     } = this.props
+    const {hasFocus} = this.state
+    
     return (
       <Label
         error={error}
         errorMessage={typeof error === 'string' ? error : null}
+        hasFocus={hasFocus}
         label={displayName}
         comment={required && 'Required'}
       >
         <RichEditor
           format={format}
+          onBlur={this.handleFocusChange.bind(this, false)}
           onChange={this.handleOnChange.bind(this)}
+          onFocus={this.handleFocusChange.bind(this, true)}
           value={value}
         />        
       </Label>
