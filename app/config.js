@@ -73,11 +73,6 @@ const initialiseConfig = () => {
     console.log(`Failed to load ${envConfigPath}, dropping to defaults`)
   }
 
-  // Force port 443 if ssl is enabled.
-  if (config.get('server.ssl.enabled')) {
-    config.set('server.port', 443)
-  }
-
   // Perform validation
   config.validate({})
 
