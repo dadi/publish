@@ -98,6 +98,7 @@
 
 .code {
   font-family: monospace;
+  font-size: 13px;
   overflow: scroll;
   -webkit-overflow-scrolling: touch; 
   background: hsla(0,0%,4%,.05);
