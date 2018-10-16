@@ -40,14 +40,10 @@
 }
 
 .buttons {
-  overflow: scroll;
-  white-space: nowrap;
   margin-top: 10px;
 }
 @media (--breakpoint-medium) {
   .buttons {
-    overflow: visible;
-    white-space: normal;
     margin-top: 0;
   }
 }
