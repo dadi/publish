@@ -25,7 +25,7 @@ const Router = function (server) {
  */
 Router.prototype.addRoutes = function () {
   if (!this.server) {
-    log.error({module: 'router'}, '`setHeaders failed: this.server is undefined')
+    log.error({module: 'router'}, 'setHeaders failed: this.server is undefined')
 
     return
   }
@@ -59,7 +59,7 @@ Router.prototype.getRoutes = function () {
  */
 Router.prototype.webRoutes = function () {
   if (!this.server) {
-    log.error({module: 'router'}, `setHeaders failed: this.server is undefined`)
+    log.error({module: 'router'}, 'setHeaders failed: this.server is undefined')
 
     return
   }
