@@ -8,6 +8,9 @@ import {urlHelper} from 'lib/util/url-helper'
 import Style from 'lib/Style'
 import styles from './MediaListView.css'
 
+import * as documentActions from 'actions/documentActions'
+import * as documentsActions from 'actions/documentsActions'
+
 import DocumentList from 'containers/DocumentList/DocumentList'
 import DocumentListController from 'containers/DocumentListController/DocumentListController'
 import DocumentListToolbar from 'containers/DocumentListToolbar/DocumentListToolbar'
@@ -17,7 +20,6 @@ import Header from 'containers/Header/Header'
 import Main from 'components/Main/Main'
 import Page from 'components/Page/Page'
 import ReferencedDocumentHeader from 'containers/ReferencedDocumentHeader/ReferencedDocumentHeader'
-import FieldImageEdit from '../../components/FieldImage/FieldImageEdit';
 
 class MediaListView extends Component {
   render() {
@@ -91,16 +93,40 @@ class MediaListView extends Component {
 
         <DocumentListToolbar
           api={currentApi}
-          collection={currentCollection}
+          collection="mediaStore"
           onBuildBaseUrl={this.handleBuildBaseUrl.bind(this)}
         />
       </Page>
     )
   }
 
-  handleFileChange(fileList) {
-    // /media, with file
-    console.log(`File changed`, fileList)
+  handleFileChange(files) {
+    const {
+      actions: {
+        uploadMediaToBucket
+      },
+      collectionName,
+      state
+    } = this.props
+
+    const api = state.api.apis[0]
+    const collection = {
+      _media: collectionName || true,
+      fields: {
+        fileName: {
+          label: 'Filename'
+        }
+      },
+      name: 'Media'
+    }
+
+    uploadMediaToBucket(
+      {
+        api,
+        bucket: 'mediaStore',
+        files
+      }
+    )
   }
 
   handleBuildBaseUrl({
@@ -133,5 +159,9 @@ class MediaListView extends Component {
 export default connectHelper(
   state => ({
     api: state.api
-  })
+  }),
+  dispatch => bindActionCreators({
+    ...documentActions,
+    ...documentsActions
+  }, dispatch)
 )(MediaListView)
