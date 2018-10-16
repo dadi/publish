@@ -121,7 +121,6 @@
   background-color: var(--theme-colour-background, #FFFFFF);
   color: var(--theme-colour-primary, #000000);
   outline: 0;
-  padding: 10px 0 0 0;
   width: 100%;
 }
 
