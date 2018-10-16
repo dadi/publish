@@ -15,9 +15,11 @@ Publish.prototype.getStartupMessage = function () {
 
   log.init(config.get('logging'), {}, env)
 
+  let port = config.get('server.protocol') === 'https' ? 443 : config.get('server.port')
+
   if (env !== 'test') {
     dadiBoot.started({
-      server: `http://${config.get('server.host')}:${config.get('server.port')} (Public URL: ${config.get('publicUrl.protocol')}://${config.get('publicUrl.host')}:${config.get('publicUrl.port')})`,
+      server: `http://${config.get('server.host')}:${port} (Public URL: ${config.get('publicUrl.protocol')}://${config.get('publicUrl.host')}:${port})`,
       header: {
         app: `${config.get('app.name')}${config.get('app.publisher') && config.get('app.publisher') !== '' ? ' - ' + config.get('app.publisher') : ''}`
       },
@@ -34,9 +36,10 @@ Publish.prototype.getStartupMessage = function () {
 Publish.prototype.run = function () {
   dadiBoot.start(require('./package.json'))
 
-  app.start()
+  app
+    .start()
     .then(this.getStartupMessage)
-    .catch((err) => {
+    .catch(err => {
       console.log('App failed to start', err)
     })
 }
