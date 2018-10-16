@@ -155,9 +155,10 @@ export default class RichEditor extends Component {
 
     let editor = this.editorElement.getElementsByClassName(styles.editor)[0] 
 
-    editor.addEventListener('blur', this.handleEvent.bind(this, 'onBlur'))
+    // These cause issues with the formatting
+    //editor.addEventListener('blur', this.handleEvent.bind(this, 'onBlur'))
+    //editor.addEventListener('focus', this.handleEvent.bind(this, 'onFocus'))
     editor.addEventListener('click', this.handleClick.bind(this))
-    editor.addEventListener('focus', this.handleEvent.bind(this, 'onFocus'))
   }
 
   componentDidUpdate(prevProps, prevState) {
