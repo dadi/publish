@@ -215,11 +215,19 @@ class DocumentListToolbar extends Component {
     } = this.props
 
     if (bulkActionSelected === 'delete') {
-      actions.deleteDocuments({
-        api,
-        collection,
-        ids: state.documents.selected
-      })
+      if (collection == "mediaStore") {
+        actions.deleteMedia({
+          api,
+          collection,
+          ids: state.documents.selected
+        })
+      } else {
+        actions.deleteDocuments({
+          api,
+          collection,
+          ids: state.documents.selected
+        })
+      }
     }
   }
 
