@@ -115,7 +115,7 @@
 }
 
 .editor {
-  height: calc(100vh - 185px);
+  /*height: calc(100vh - 185px);*/
   border: 0;
   background-color: var(--theme-colour-background, #FFFFFF);
   color: var(--theme-colour-primary, #000000);
