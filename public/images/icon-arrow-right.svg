@@ -1,9 +1,1 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<svg width="29px" height="23px" viewBox="0 0 29 23" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-    <!-- Generator: Sketch 52 (66869) - http://www.bohemiancoding.com/sketch -->
-    <title>Path</title>
-    <desc>Created with Sketch.</desc>
-    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
-        <polygon id="Path" fill="#326FF4" transform="translate(13.650000, 11.350000) rotate(45.000000) translate(-13.650000, -11.350000) " points="23.9 16.7 23.9 1.1 8.3 1.1 8.3 3.1 20.5 3.1 3.4 20.2 4.8 21.6 21.9 4.5 21.9 16.7"></polygon>
-    </g>
-</svg>
+<svg height="23" viewBox="0 0 29 23" width="29" xmlns="http://www.w3.org/2000/svg"><path d="m23.9 16.7v-15.6h-15.6v2h12.2l-17.1 17.1 1.4 1.4 17.1-17.1v12.2z" fill="#326ff4" fill-rule="evenodd" transform="matrix(.70710678 .70710678 -.70710678 .70710678 12.023654 -6.32767)"/></svg>
