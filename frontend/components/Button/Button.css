@@ -19,10 +19,19 @@
   outline: none;
   cursor: pointer;
   border: 0;
-  font-size: 15px;
+  font-size: 16px;
   text-decoration: none;
   border-radius: 2px;
   transition: background-color 0.1s, padding 0.3s, background-position 0.3s;
+  box-shadow: 0 -3px 0 0 rgba(0,0,0,0.05) inset;
+  position: relative;
+}
+
+.button:hover {
+  box-shadow: 0 -3px 0 0 rgba(0,0,0,0.05) inset, 0 0 5px 0px rgba(0,0,0,0.15);
+}
+.button:active {
+  top: 1px;
 }
 
 .button-loading {
