@@ -191,7 +191,7 @@ export default class FieldReferenceEdit extends Component {
         {!value && !isReadOnly && (
           <div class={styles.placeholder}>
             <Button
-              accent="data"
+              accent="neutral"
               href={editLink}
               size="small"
             >Select existing {displayName.toLowerCase()}</Button>
