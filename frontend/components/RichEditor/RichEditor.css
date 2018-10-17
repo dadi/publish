@@ -156,6 +156,7 @@
   background: #fff;
   color: var(--theme-colour-primary, #000000);
 }
+
 .pell-actionbar:after {
   position: absolute;
   top: 100%;
