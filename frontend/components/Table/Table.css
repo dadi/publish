@@ -20,7 +20,7 @@
  */
 .cell {
   cursor: default;
-  padding: 15px;
+  padding: 16px 15px;
   overflow: hidden;
   vertical-align: middle;
   line-height: 1.3;

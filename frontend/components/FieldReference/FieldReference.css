@@ -28,9 +28,13 @@
 .value-link {
   display: inline-block;
   border-bottom: 1px solid var(--theme-colour-background-shade-4, #E4E4E4);
-  /*transition: border-bottom-color 0.1s ease-in-out;*/
-  margin: 4px 0;
+  margin-top: 5px;
   position: relative;
+  clear: both;
+  float: left;
+}
+.value-link:first-of-type {
+  margin-top: 0;
 }
 
 .value-link:after {
