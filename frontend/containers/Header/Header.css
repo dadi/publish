@@ -120,6 +120,7 @@
   width: 21px; height: 21px;
   display: block;
 }
+
 .icon-close {
   background-image: url('/public/images/icon-close.svg');
 }
