@@ -86,6 +86,7 @@
 .controls {
   padding: 10px;
 }
+
 @media (--breakpoint-medium) {
   .controls {
     position: absolute;
