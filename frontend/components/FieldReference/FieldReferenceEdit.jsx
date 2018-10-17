@@ -159,11 +159,11 @@ export default class FieldReferenceEdit extends Component {
                 let editLink = `${referencedCollection._publishLink}/${value._id}`
 
                 return (
-                  <p class={styles.value}>
-                    <a class={styles['value-link']} href={editLink}>
+                  <a class={styles['value-link']} href={editLink}>
+                    <span class={styles.value}>
                       {displayField && value[displayField] || `Referenced ${displayName}`}
-                    </a>
-                  </p>
+                    </span>
+                  </a>
                 )
               })}
             </div>
