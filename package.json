@@ -61,7 +61,7 @@
   },
   "devDependencies": {
     "@dadi/api-wrapper-core": "^3.1.0",
-    "@dadi/preact-router": "^2.6.2",
+    "@dadi/preact-router": "^2.6.3",
     "@storybook/react": "^3.4.10",
     "archy": "^1.0.0",
     "autoprefixer": "^6.7.3",
