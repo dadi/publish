@@ -3,6 +3,9 @@
 import {h, Component} from 'preact'
 import proptypes from 'proptypes'
 
+import Style from 'lib/Style'
+import styles from './FieldBoolean.css'
+
 /**
  * Component for rendering API fields of type Boolean on a list view.
  */
@@ -22,6 +25,10 @@ export default class FieldBooleanList extends Component {
   render() {
     const {value} = this.props
 
-    return value ? 'Yes' : 'No'
+    return value ? (
+      <span class={styles.enabled}>Yes</span>
+    ) : (
+      <span class={styles.disabled}>No</span>
+    )
   }
 }
