@@ -59,11 +59,6 @@ export default class FieldReferenceEdit extends Component {
     forceValidation: proptypes.bool,
 
     /**
-     * If defined, specifies a group where the current collection belongs.
-     */
-    group: proptypes.string,
-
-    /**
      * The name of the field within the collection. May be a path using
      * dot-notation.
      */
@@ -126,10 +121,11 @@ export default class FieldReferenceEdit extends Component {
       onBuildBaseUrl,
       onChange,
       onError,
-      value,
-      schema
+      schema,
+      value
     } = this.props
     const referencedCollectionName = schema.settings && schema.settings.collection
+
     if (!referencedCollectionName) return null
 
     const referencedCollection = currentApi.collections.find(collection => {
@@ -149,54 +145,62 @@ export default class FieldReferenceEdit extends Component {
       referenceFieldSelect: name
     })
     const values = value && !(value instanceof Array) ? [value] : value
+    const publishBlock = schema.publish || {}
+    const isReadOnly = publishBlock.readonly === true
 
     return (
       <Label
         label={displayName}
       >
-        {value
-          ? (
-            <div class={styles['value-container']}>
-              <div class={styles.values}>
-                {values.map(value => {
-                  let editLink = `${referencedCollection._publishLink}/${value._id}`
+        {value && (
+          <div class={styles['value-container']}>
+            <div class={styles.values}>
+              {values.map(value => {
+                let editLink = `${referencedCollection._publishLink}/${value._id}`
 
-                  return (
-                    <p class={styles.value}>
-                      <a class={styles['value-link']} href={editLink}>
-                        {displayField && value[displayField] || `Referenced ${displayName}`}
-                      </a>
-                    </p>
-                  )
-                })}
-              </div>
+                return (
+                  <p class={styles.value}>
+                    <a class={styles['value-link']} href={editLink}>
+                      {displayField && value[displayField] || `Referenced ${displayName}`}
+                    </a>
+                  </p>
+                )
+              })}
+            </div>
 
+            {!isReadOnly && (
               <Button
                 accent="data"
                 className={styles['control-button']}
                 href={editLink}
                 size="small"
               >Edit</Button>
+            )}
 
+            {!isReadOnly && (
               <Button
                 accent="destruct"
                 className={styles['control-button']}
                 onClick={this.handleRemove.bind(this)}
                 size="small"
               >Remove</Button>
-            </div>
-          )
+            )}
+          </div>
+        )}
 
-          : (
-            <div class={styles.placeholder}>
-              <Button
-                accent="neutral"
-                href={editLink}
-                size="small"
-              >Select existing {displayName.toLowerCase()}</Button>
-            </div>
-          )
-        }
+        {!value && !isReadOnly && (
+          <div class={styles.placeholder}>
+            <Button
+              accent="data"
+              href={editLink}
+              size="small"
+            >Select existing {displayName.toLowerCase()}</Button>
+          </div>
+        )}
+
+        {!value && isReadOnly && (
+          <span>None</span>
+        )}
       </Label>
     )
   }
