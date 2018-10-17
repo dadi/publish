@@ -103,7 +103,10 @@ export default class DateTime extends Component {
       : dateTime.format(format)
 
     return (
-      <time datetime={dateTime.format(format)} title={dateTime.format(format)}>{renderedDate}</time>
+      <time
+        datetime={dateTime.format(format)}
+        title={dateTime.format(format)}
+      >{renderedDate}</time>
     )
   }
 
