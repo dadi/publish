@@ -1,0 +1,29 @@
+.container {
+}
+
+.placeholder {
+  padding-top: 5px;
+  text-align: center;
+}
+
+.upload-options {
+  display: inline-block;
+  margin-right: 5px;
+  justify-content: space-around;
+}
+
+.upload-drop {
+  display: inline-block;
+  box-shadow: inset 0 0 5px #e4e4e4;
+  background: #fdfdfd;
+  padding: 20px;
+  text-align: center;
+  width: 100%;
+}
+
+.upload-select {
+  display: inline-block;
+  margin-top: 20px;
+  margin-bottom: 5px;
+  text-align: center;
+}
