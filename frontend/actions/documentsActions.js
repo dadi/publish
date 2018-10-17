@@ -35,21 +35,22 @@ export function deleteDocuments ({api, collection, ids}) {
 
 export function deleteMedia ({api, collection, ids}) {
   return (dispatch, getState) => {
-    fetch(
-      `${api.host}:${api.port}/media/${ids[0]}`,
-      {
-        headers: {
-          'Accept': 'application/json',
-          'Authorization': `Bearer ${getState().user.accessToken}`
-        },
-        method: 'DELETE'
-      }
+    Promise.all(
+      ids.map(id =>
+        fetch(
+          `${api.host}:${api.port}/media/${id}`,
+          {
+            headers: {
+              'Accept': 'application/json',
+              'Authorization': `Bearer ${getState().user.accessToken}`
+            },
+            method: 'DELETE'
+          }
+        )
+      )
     )
     .then(
-      response => response.json()
-    )
-    .then(
-      response => {
+      responses => {
         dispatch(
           setDocumentListStatus(Constants.STATUS_DELETING, ids.length)
         )
