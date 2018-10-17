@@ -3,6 +3,7 @@ import * as Constants from 'lib/constants'
 import * as LocalStorage from 'lib/local-storage'
 import * as Types from 'actions/actionTypes'
 import * as userActions from 'actions/userActions'
+import * as documentsActions from 'actions/documentsActions'
 import {batchActions} from 'lib/redux'
 import apiBridgeClient from 'lib/api-bridge-client'
 
@@ -136,8 +137,8 @@ export function uploadMediaToBucket ({
 
     const body = new FormData()
 
-    for (let i in files) {
-      body.append('file', files[i])
+    for (let file of files) {
+      body.append('file', file)
     }
 
     fetch(
@@ -155,13 +156,12 @@ export function uploadMediaToBucket ({
       response => response.json()
     )
     .then(
-      response =>
+      () =>
         dispatch(
-          setRemoteDocument(
-            response.results[0],
+          documentsActions.fetchDocuments(
             {
-              clearLocal: true,
-              forceUpdate: true
+              api,
+              collection: bucket
             }
           )
         )
