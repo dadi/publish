@@ -112,7 +112,6 @@ class DocumentListToolbar extends Component {
             </span>
           </div>
         )}
-        
         <div class={styles.section}>
           <Paginator
             currentPage={metadata.page}
