@@ -107,6 +107,7 @@ export default class FieldNumberEdit extends Component {
 
   constructor(props) {
     super(props)
+
     this.state.hasFocus = false
   }
 

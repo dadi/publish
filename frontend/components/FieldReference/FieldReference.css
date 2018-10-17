@@ -32,6 +32,7 @@
   margin: 4px 0;
   position: relative;
 }
+
 .value-link:after {
   background: url(/public/images/icon-arrow-right.svg);
   content: ' ';

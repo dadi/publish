@@ -7,6 +7,7 @@
   .container {
     display: inline-block;
   }
+
   .nav-item {
     position: relative;
     z-index: 3;
@@ -17,6 +18,7 @@
     cursor: pointer;
     text-decoration: none;
   }
+
   .container-expanded .nav-item span {
     background-color: #242a33;
     color: #fff;
@@ -61,13 +63,16 @@
     padding: 15px 0 8px 0;
     display: block;
   }
+
   .nav-item span {
     padding: 0;
   }
+
   .nav-item-active span {
     color: #ffbf0e;
     background: none;
   }
+
   .children a {
     font-weight: normal;
     color: #fff;
