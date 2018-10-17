@@ -188,7 +188,7 @@ module.exports = {
     redirectPort: {
       doc: 'Port from which to redirect HTTP connections to HTTPS',
       format: 'port',
-      default: 8890
+      default: 0
     },
     sslPrivateKeyPath: {
       doc: 'The path to a SSL private key',

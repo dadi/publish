@@ -248,7 +248,7 @@ export default class FieldStringEdit extends Component {
       >
         <select
           class={dropdownStyle.getClasses()}
-          onChange={el => this.handleOnChange(this.getValueOfDropdown(el))}
+          onChange={el => this.handleOnChange(this.getValueOfDropdown(el.target))}
           multiple={multiple}
           disabled={readOnly}
           ref={multiple && this.selectDropdownOptions.bind(this)}
