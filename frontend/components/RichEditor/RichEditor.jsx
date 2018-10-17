@@ -62,6 +62,7 @@ export default class RichEditor extends Component {
     this.turndownService = new TurndownService({
       codeBlockStyle: 'fenced'
     })
+
     this.turndownService.addRule('pre', {
       filter: (node, options) => {
         return node.classList.contains(styles.code)
@@ -76,8 +77,16 @@ export default class RichEditor extends Component {
     })    
 
     this.markdownRenderer = new marked.Renderer()
-    this.markdownRenderer.code = (code, language = '', escaped) => {
-      return `<pre class="${styles.code}" data-language="${language.trim()}">${code}</pre>`
+
+    this.markdownRenderer.code = (code, language = '') => {
+      let escapedCode = code
+         .replace(/&/g, '&amp;')
+         .replace(/</g, '&lt;')
+         .replace(/>/g, '&gt;')
+         .replace(/"/g, '&quot;')
+         .replace(/'/g, '&#039;')
+
+      return `<pre class="${styles.code}" data-language="${language.trim()}">${escapedCode}</pre>`
     }
 
     // Initialize pell on an HTMLElement
@@ -175,7 +184,7 @@ export default class RichEditor extends Component {
   getHTMLFromMarkdown(markdown) {
     return marked(markdown, {
       renderer: this.markdownRenderer
-    }) 
+    })
   }
 
   getMarkdownFromHTML(html) {
