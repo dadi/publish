@@ -135,25 +135,26 @@ export function uploadMediaToBucket ({
       setRemoteDocumentStatus(Constants.STATUS_SAVING)
     )
 
-    const body = new FormData()
+    Promise.all(
+      Array.from(files).map(
+        file => {
+          const body = new FormData()
 
-    for (let file of files) {
-      body.append('file', file)
-    }
+          body.append('file', file)
 
-    fetch(
-      `${api.host}:${api.port}/media/upload`,
-      {
-        body,
-        headers: {
-          'Accept': 'application/json',
-          'Authorization': `Bearer ${getState().user.accessToken}`
-        },
-        method: 'POST'
-      }
-    )
-    .then(
-      response => response.json()
+          fetch(
+            `${api.host}:${api.port}/media/upload`,
+            {
+              body,
+              headers: {
+                'Accept': 'application/json',
+                'Authorization': `Bearer ${getState().user.accessToken}`
+              },
+              method: 'POST'
+            }
+          )
+        }
+      )
     )
     .then(
       () =>
