@@ -9,8 +9,7 @@ import {connectHelper} from 'lib/util'
 import Style from 'lib/Style'
 import styles from './FileUploadMedia.css'
 
-import * as documentActions from 'actions/documentActions'
-import * as documentsActions from 'actions/documentsActions'
+import * as mediaActions from 'actions/mediaActions'
 
 import DropArea from 'components/DropArea/DropArea'
 import FileUpload from 'components/FileUpload/FileUpload'
@@ -41,11 +40,13 @@ class FileUploadMedia extends Component {
             </div>
           </DropArea>
         </div>
+
         <div class={styles['upload-select']}>
           <span>or </span>
+
           <FileUpload
-            allowDrop={true}
             accept="image/*;capture=camera"
+            allowDrop={true}
             multiple={true}
             onChange={this.handleFileChange.bind(this)}
           />
@@ -60,18 +61,12 @@ class FileUploadMedia extends Component {
         uploadMediaToBucket
       },
       bucket,
-      state: {
-        api: {
-          apis: [
-            api
-          ]
-        }
-      }
+      state
     } = this.props
 
     uploadMediaToBucket(
       {
-        api,
+        api: state.api.apis[0],
         bucket,
         files
       }
@@ -84,7 +79,6 @@ export default connectHelper(
     api: state.api
   }),
   dispatch => bindActionCreators({
-    ...documentActions,
-    ...documentsActions
+    ...mediaActions
   }, dispatch)
 )(FileUploadMedia)

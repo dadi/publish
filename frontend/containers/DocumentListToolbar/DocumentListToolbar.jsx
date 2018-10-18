@@ -10,6 +10,7 @@ import * as Constants from 'lib/constants'
 import * as appActions from 'actions/appActions'
 import * as documentActions from 'actions/documentActions'
 import * as documentsActions from 'actions/documentsActions'
+import * as mediaActions from 'actions/mediaActions'
 
 import {bindActionCreators} from 'redux'
 import {connectHelper} from 'lib/util'
@@ -211,11 +212,12 @@ class DocumentListToolbar extends Component {
       api,
       collection,
       group,
+      isMedia,
       state
     } = this.props
 
     if (bulkActionSelected === 'delete') {
-      if (collection == "mediaStore") {
+      if (isMedia) {
         actions.deleteMedia({
           api,
           collection,
@@ -312,6 +314,7 @@ export default connectHelper(
   dispatch => bindActionCreators({
     ...appActions,
     ...documentActions,
-    ...documentsActions
+    ...documentsActions,
+    ...mediaActions
   }, dispatch)
 )(DocumentListToolbar)

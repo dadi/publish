@@ -44,6 +44,7 @@ class MediaListView extends Component {
     return (
       <Page>
         <Header/>
+        
         <Main>
           <div class={styles.container}>
             <DocumentListController
@@ -72,6 +73,7 @@ class MediaListView extends Component {
         <DocumentListToolbar
           api={currentApi}
           collection="mediaStore"
+          isMedia={true}
           onBuildBaseUrl={this.handleBuildBaseUrl.bind(this)}
         />
       </Page>
