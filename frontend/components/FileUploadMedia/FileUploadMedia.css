@@ -1,7 +1,6 @@
-.container {
-}
-
 .placeholder {
+  background-color: transparent;
+  font-family: var(--theme-font-family, sans-serif);
   padding-top: 5px;
   text-align: center;
 }
