@@ -121,7 +121,7 @@ export default class Button extends Component {
 
     if (type === 'mock') {
       return (
-        <span class={buttonStyle.getClasses()}>{children}</span>
+        <a href="#" class={buttonStyle.getClasses()}>{children}</a>
       )
     }
 

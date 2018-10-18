@@ -101,7 +101,7 @@ class SignIn extends Component {
     let formDataIsValid = this.validate()
 
     return (
-      <div class={styles.wrapper} style={`background-image: url(${backgroundImage}`}>
+      <div class={styles.wrapper} style={backgroundImage.length ? `background-image: url(${backgroundImage}` : ''}>
         <div class={styles.overlay}>
           <div class={styles.container}>
             <form

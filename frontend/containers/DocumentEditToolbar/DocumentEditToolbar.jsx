@@ -224,6 +224,11 @@ class DocumentEditToolbar extends Component {
           {document && document._createdAt &&
             <p>
               <span>Created </span>
+
+              {document._createdBy &&
+                <span>by <strong>{document._createdBy}</strong> </span>
+              }
+
               <DateTime
                 date={document._createdAt}
                 relative={true}
@@ -234,6 +239,11 @@ class DocumentEditToolbar extends Component {
           {document && document._lastModifiedAt &&
             <p class={styles['metadata-emphasis']}>
               <span>Last updated </span>
+
+              {document._lastModifiedBy &&
+                <span>by <strong>{document._lastModifiedBy}</strong> </span>
+              }
+
               <DateTime
                 date={document._lastModifiedAt}
                 relative={true}
