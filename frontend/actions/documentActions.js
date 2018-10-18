@@ -125,56 +125,6 @@ export function registerUserLeavingDocument ({
   }
 }
 
-export function uploadMediaToBucket ({
-  api,
-  bucket,
-  files
-}) {
-  return (dispatch, getState) => {
-    dispatch(
-      setRemoteDocumentStatus(Constants.STATUS_SAVING)
-    )
-
-    Promise.all(
-      Array.from(files).map(
-        file => {
-          const body = new FormData()
-
-          body.append('file', file)
-
-          fetch(
-            `${api.host}:${api.port}/media/upload`,
-            {
-              body,
-              headers: {
-                'Accept': 'application/json',
-                'Authorization': `Bearer ${getState().user.accessToken}`
-              },
-              method: 'POST'
-            }
-          )
-        }
-      )
-    )
-    .then(
-      () =>
-        dispatch(
-          documentsActions.fetchDocuments(
-            {
-              api,
-              collection: bucket
-            }
-          )
-        )
-    )
-    .catch(err =>
-      dispatch(
-        setRemoteDocumentStatus(Constants.STATUS_FAILED)
-      )
-    )
-  }
-}
-
 export function saveDocument ({
   api,
   collection,
