@@ -11,7 +11,7 @@ class URLParams {
     let params = this.input.replace(/^(\?)/, '')
               .replace(/"/g, '\\"')
               .replace(/&/g, '","')
-              .replace(/=/g, '":"')
+      .replace(/=/g, '":"')
 
     params = JSON.parse('{"' + decodeURI(params) + '"}')
 
