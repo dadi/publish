@@ -1,7 +1,7 @@
 'use strict'
 
 import * as Types from 'actions/actionTypes'
-import {urlHelper} from 'lib/util/url-helper'
+import {URLParams} from 'lib/util/urlParams'
 
 const defaultSelectLocationState = state => state.router
 
@@ -39,7 +39,7 @@ export default function syncRouteWithStore (history, store, {
       }
     }
 
-    const search = urlHelper().paramsToObject(history.location.search)
+    const search = new URLParams(history.location.search).toObject()
 
     // Update the store by calling action
     store.dispatch({
