@@ -1,6 +1,6 @@
 class URLParams {
   constructor (input) {
-    this.input = input
+    this.input = typeof input === 'string' ? decodeURI(input) : input
   }
 
   toObject () {
@@ -20,7 +20,7 @@ class URLParams {
         // Try to parse valid JSON parameters
         params[key] = JSON.parse(params[key])
       } catch (err) {
-        return
+
       }
     })
 
