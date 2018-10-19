@@ -93,7 +93,7 @@ class DocumentListView extends Component {
     group = this.props.group,
     referenceFieldSelect,
     page,
-    search = new URLParams(window.location.search).toObject(),
+    search = new URLParams(window.location.search).toObject() || {},
     section = this.props.section
   } = {}) {
     let urlNodes = [
@@ -120,7 +120,7 @@ class DocumentListView extends Component {
     let url = urlNodes.filter(Boolean).join('/')
 
     if (!documentId) {
-      if (search && Object.keys(search).length > 0) {
+      if (Object.keys(search).length > 0) {
         url += `?${new URLParams(search).toString()}`
       }
     }
