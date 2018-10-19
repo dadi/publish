@@ -1,14 +1,21 @@
 .container {
   position: relative;
   background-color: #ffffff;
-  border: 1px solid #ECEAEA;
+  border: 1px solid #efefef;
+  box-shadow: 2px 2px 10px 0 rgba(0,0,0,0.03);
   border-radius: 3px;
-  box-shadow: 2px 2px 10px 0 rgba(0, 0, 0, 0.05);
-  padding: 32px 13px 15px;
+  padding: 30px 13px 10px;
   font-family: var(--theme-font-family, sans-serif);
   font-size: var(--theme-font-size-small, 13px);
   color: var(--theme-colour-primary-shade-1, #FAFAFA);
   display: block;
+  transition: border-color 0.3s;
+}
+
+.container:hover,
+.container-focus {
+  border-color: #dad7d7;
+  box-shadow: 2px 2px 10px 0 rgba(0,0,0,0.1);
 }
 
 .container-compact {

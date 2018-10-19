@@ -114,7 +114,7 @@ class DocumentListController extends Component {
             disabled={filterLimitReached}
             onClick={this.handleAddNewFilter.bind(this)}
             type="fill"
-          >Add Filter</Button>
+          >Filter</Button>
 
           {!Boolean(referencedField) && (
             <Button

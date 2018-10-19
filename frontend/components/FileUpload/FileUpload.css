@@ -10,7 +10,22 @@
 }
 
 .label-file {
-  font-weight: bold;
-  color: var(--theme-colour-data, #4A91FF);
+  display: block;
+  border-radius: 2px;
+  font-size: 15px;
+  font-weight: 400;
+  padding: 3px 10px;
+  line-height: 1.25;
+  box-shadow: 0 0 0 1px #EAEAEA inset;
+  background-color: var(--theme-colour-background, #FFFFFF);
+  color: var(--theme-colour-primary, #000000);
   cursor: pointer;
+}
+
+.label-file:active,
+.label-file:focus,
+.label-file:hover {
+  box-shadow: 0 0 0 1px rgba(0,0,0,0.1) inset;
+  background-color: var(--theme-colour-data-shade-1, #1772ff);
+  color: var(--theme-colour-secondary, #FFFFFF);
 }

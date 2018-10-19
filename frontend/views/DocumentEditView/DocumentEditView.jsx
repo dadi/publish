@@ -27,6 +27,15 @@ class DocumentEditView extends Component {
       <Page>
         <Header/>
 
+        <DocumentEditToolbar
+          api={currentApi}
+          collection={currentCollection}
+          documentId={documentId}
+          onBuildBaseUrl={this.handleBuildBaseUrl.bind(this)}
+          referencedField={referencedField}
+          section={section}
+        />
+
         <Main>
           <DocumentEdit
             api={currentApi}
@@ -38,15 +47,7 @@ class DocumentEditView extends Component {
             section={section}
           />
         </Main>
-
-        <DocumentEditToolbar
-          api={currentApi}
-          collection={currentCollection}
-          documentId={documentId}
-          onBuildBaseUrl={this.handleBuildBaseUrl.bind(this)}
-          referencedField={referencedField}
-          section={section}
-        />
+        
       </Page>
     )
   }

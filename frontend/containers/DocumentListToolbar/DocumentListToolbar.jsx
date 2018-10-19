@@ -102,29 +102,16 @@ class DocumentListToolbar extends Component {
     const {metadata} = documentsList
 
     return (
-      <Toolbar>
-        <div class={styles.section}>
-          <div class={styles.information}>
-            {metadata.totalCount > metadata.limit && (
-              <span class={styles['page-input']}>
-                <ToolbarTextInput
-                  onChange={this.handleGoToPage.bind(this)}
-                  size="small"
-                  placeholder="Go to page"
-                />
-              </span>
-            )}
-
-            {metadata.totalCount > 1 && (
-              <span class={styles['count-label']}>
-                <span>Showing </span>
-                <strong>{`${metadata.offset + 1}-${Math.min(metadata.offset + metadata.limit, metadata.totalCount)} `}</strong>
-                of <strong>{metadata.totalCount}</strong>
-              </span>
-            )}   
+      <Toolbar>      
+        {metadata.totalCount > 1 && (
+          <div class={styles.section}>
+            <span class={styles['count-label']}>
+              <span>Showing </span>
+              <strong>{`${metadata.offset + 1}-${Math.min(metadata.offset + metadata.limit, metadata.totalCount)} `}</strong>
+              of <strong>{metadata.totalCount}</strong>
+            </span>
           </div>
-        </div>
-
+        )}
         <div class={styles.section}>
           <Paginator
             currentPage={metadata.page}
@@ -140,6 +127,18 @@ class DocumentListToolbar extends Component {
             maxPages={8}
             totalPages={metadata.totalPages}
           />
+
+          <div class={styles.information}>
+            {metadata.totalCount > metadata.limit && (
+              <span class={styles['page-input']}>
+                <ToolbarTextInput
+                  onChange={this.handleGoToPage.bind(this)}
+                  size="small"
+                  placeholder="Go to page"
+                />
+              </span>
+            )} 
+          </div>
         </div>
 
         <div class={styles.section}>

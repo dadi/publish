@@ -36,9 +36,19 @@ export default class RichEditor extends Component {
     ]),
 
     /**
+     * Callback to be executed when the text loses focus (onBlur event).
+     */
+    onBlur: proptypes.func,
+
+    /**
      * A callback function that is fired whenever the content changes.
      */
-    onChange: proptypes.func,
+    onChange: proptypes.func,    
+
+    /**
+     * Callback to be executed when the text gains focus (onFocus event).
+     */
+    onFocus: proptypes.func,
 
     /**
      * The initial value of the editor.
@@ -62,6 +72,7 @@ export default class RichEditor extends Component {
     this.turndownService = new TurndownService({
       codeBlockStyle: 'fenced'
     })
+
     this.turndownService.addRule('pre', {
       filter: (node, options) => {
         return node.classList.contains(styles.code)
@@ -76,8 +87,16 @@ export default class RichEditor extends Component {
     })    
 
     this.markdownRenderer = new marked.Renderer()
-    this.markdownRenderer.code = (code, language = '', escaped) => {
-      return `<pre class="${styles.code}" data-language="${language.trim()}">${code}</pre>`
+
+    this.markdownRenderer.code = (code, language = '') => {
+      let escapedCode = code
+         .replace(/&/g, '&amp;')
+         .replace(/</g, '&lt;')
+         .replace(/>/g, '&gt;')
+         .replace(/"/g, '&quot;')
+         .replace(/'/g, '&#039;')
+
+      return `<pre class="${styles.code}" data-language="${language.trim()}">${escapedCode}</pre>`
     }
 
     // Initialize pell on an HTMLElement
@@ -85,8 +104,14 @@ export default class RichEditor extends Component {
       element: this.editorElement,
       onChange: this.handleChange.bind(this),
       actions: [
-        'bold',
-        'italic',
+        {
+          'name': 'bold',
+          'icon': '<b>Bold</b>'
+        },
+        {
+          'name': 'italic',
+          'icon': '<i>Italic</i>'
+        },
         {
           name: 'link',
           icon: 'Link',
@@ -139,6 +164,9 @@ export default class RichEditor extends Component {
 
     let editor = this.editorElement.getElementsByClassName(styles.editor)[0] 
 
+    // These cause issues with the formatting
+    //editor.addEventListener('blur', this.handleEvent.bind(this, 'onBlur'))
+    //editor.addEventListener('focus', this.handleEvent.bind(this, 'onFocus'))
     editor.addEventListener('click', this.handleClick.bind(this))
   }
 
@@ -175,7 +203,7 @@ export default class RichEditor extends Component {
   getHTMLFromMarkdown(markdown) {
     return marked(markdown, {
       renderer: this.markdownRenderer
-    }) 
+    })
   }
 
   getMarkdownFromHTML(html) {
@@ -300,7 +328,6 @@ export default class RichEditor extends Component {
       showLinkModal,
       text
     } = this.state
-
     const wrapper = new Style(styles, 'wrapper')
       .addIf('wrapper-mode-text', inTextMode)
     const editorText = new Style(styles, 'editor', 'editor-text')
@@ -345,6 +372,8 @@ export default class RichEditor extends Component {
         {inTextMode && (
           <textarea
             class={editorText.getClasses()}
+            onBlur={this.handleEvent.bind(this, 'onBlur')}
+            onFocus={this.handleEvent.bind(this, 'onFocus')}
             onKeyUp={event => this.handleChange(event.target.value)}
             value={text}
           />
@@ -362,5 +391,11 @@ export default class RichEditor extends Component {
 
     selection.removeAllRanges()
     selection.addRange(range)    
+  }
+
+  handleEvent(callback, event) {
+    if (typeof this.props[callback] === 'function') {
+      this.props[callback].call(this, event)
+    }
   }
 }

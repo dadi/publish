@@ -114,6 +114,7 @@ export default class FieldDateTimeEdit extends Component {
     this.pickerEventHandler = this.handlePickerClick.bind(this, true)
     this.pickerOutsideEventHandler = this.handlePickerClick.bind(this, false)
     this.losingFocusTimeout = null
+    this.state.hasFocus = false
   }
 
   render() {
@@ -126,6 +127,7 @@ export default class FieldDateTimeEdit extends Component {
       schema, 
       value
     } = this.props
+    const {hasFocus} = this.state
     const {pickerVisible} = this.state
     const publishBlock = schema.publish || {}
     comment = comment || (required && 'Required')
@@ -144,6 +146,7 @@ export default class FieldDateTimeEdit extends Component {
       <Label
         error={Boolean(error)}
         errorMessage={typeof error === 'string' ? error : null}
+        hasFocus={hasFocus}
         label={displayName}
         comment={comment}
       >
@@ -218,6 +221,10 @@ export default class FieldDateTimeEdit extends Component {
     }
 
     this.hasFocus = hasFocus
+
+    this.setState({
+      hasFocus
+    })
 
     if (!pickerVisible) {
       this.setState({
