@@ -63,13 +63,6 @@ waiting for a change event.
 - type: `bool`
 
 
-### `group`
-
-If defined, specifies a group where the current collection belongs.
-
-- type: `string`
-
-
 ### `name`
 
 The name of the field within the collection. May be a path using

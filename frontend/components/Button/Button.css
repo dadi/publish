@@ -3,11 +3,15 @@
   display: inline-block;
   position: relative;
   background-color: #fff;
+  background-image: url(./loading-small.svg);
+  background-position: -16px 50%;
+  background-repeat: no-repeat;
+  background-size: auto 16px;  
   color: var(--theme-colour-primary, #000000);
   line-height: 1.25;
   font-weight: bold;
   font-family: var(--theme-font-family, sans-serif);
-  padding: 9px 16px;
+  padding: 8px 17px;
   text-align: center;
   word-wrap: break-word;
   margin: 0;
@@ -18,12 +22,28 @@
   font-size: 15px;
   text-decoration: none;
   border-radius: 2px;
+  transition: background-color 0.1s, padding 0.3s, background-position 0.3s;
+  box-shadow: 0 -2px 0 0 rgba(0,0,0,0.05) inset;
+  position: relative;
+}
+
+.button:hover {
+  box-shadow: 0 -3px 0 0 rgba(0,0,0,0.05) inset, 0 0 5px 0px rgba(0,0,0,0.15);
+}
+.button:active {
+  top: 1px;
+}
+
+.button-loading {
+  background-position: 16px 50%;
+  padding-left: 40px;
+  transition-delay: 0.2s;
 }
 
 .button-small {
   font-size: 15px;
   font-weight: 400;
-  padding: 4px 8px;
+  padding: 3px 10px;
 }
 
 .button-mock {
@@ -70,6 +90,7 @@
 /* Accent: destruct */
 .button-destruct {
   background-color: var(--theme-colour-error, #ffbf0d);
+  background-image: url(./loading-small-white.svg);
   color: var(--theme-colour-secondary, #FFFFFF);
 }
 
@@ -83,6 +104,7 @@
 /* Accent: save */
 .button-save {
   background-color: var(--theme-colour-save, #88c24c);
+  background-image: url(./loading-small-white.svg);
   color: var(--theme-colour-secondary, #FFFFFF);
 }
 
@@ -96,6 +118,7 @@
 /* Accent: data */
 .button-data {
   background-color: var(--theme-colour-data, #4A91FF);
+  background-image: url(./loading-small-white.svg);
   color: var(--theme-colour-secondary, #FFFFFF);
 }
 
@@ -108,6 +131,7 @@
 
 /* Accent: neutral */
 .button-neutral {
+  box-shadow: 0 0 0 1px #EAEAEA inset;
   background-color: var(--theme-colour-background, #FFFFFF);
   color: var(--theme-colour-primary, #000000);
 }
@@ -115,6 +139,7 @@
 .button-neutral:active,
 .button-neutral:focus,
 .button-neutral:hover {
+  box-shadow: 0 0 0 1px rgba(0,0,0,0.1) inset;
   background-color: var(--theme-colour-data-shade-1, #1772ff);
   color: var(--theme-colour-secondary, #FFFFFF);
 }

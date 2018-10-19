@@ -133,8 +133,6 @@ export default class Paginator extends Component {
 
     return (
       <div>
-        {items}
-
         {prevNext && (currentPage > 1) &&
           <Button
             className={prevNextStyle.getClasses()}
@@ -144,6 +142,8 @@ export default class Paginator extends Component {
             })}
           >Prev</Button>
         }
+
+        {items}
 
         {prevNext && (currentPage < totalPages) &&
           <Button

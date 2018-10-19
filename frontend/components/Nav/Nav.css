@@ -1,9 +1,9 @@
 .nav {
-  border-top: 1px solid #293547;
-  padding: 0 9px;
+  padding: 0 20px 15px 20px;
 }
 
-.children {
-  border-left: 3px solid #293547;
-  margin: 5px 10px;
+@media (--breakpoint-medium) {
+  .nav {
+    padding: 0 10px;
+  }
 }

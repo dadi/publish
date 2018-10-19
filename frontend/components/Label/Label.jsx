@@ -45,6 +45,11 @@ export default class Label extends Component {
     errorMessage: proptypes.string,
 
     /**
+     * Whether the label, or a component inside it, has focus.
+     */
+    hasFocus: proptypes.bool,    
+
+    /**
      * The text to be rendered inside the label.
      */
     label: proptypes.string.isRequired,
@@ -108,12 +113,14 @@ export default class Label extends Component {
       compact,
       label,
       error,
-      errorMessage
+      errorMessage,
+      hasFocus
     } = this.props
     const labelStyle = new Style(styles, 'container')
       .addIf('container-compact', compact)
       .addIf('container-error', error)
       .addIf('container-error-message', errorMessage)
+      .addIf('container-focus', hasFocus)
       .addIf('container-with-comment', comment)
       .addResolved(className)
 
