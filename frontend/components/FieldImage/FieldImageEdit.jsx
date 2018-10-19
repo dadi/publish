@@ -9,6 +9,8 @@ import {buildUrl} from 'lib/router'
 import Style from 'lib/Style'
 import styles from './FieldImage.css'
 
+import * as Constants from 'lib/constants'
+
 import Button from 'components/Button/Button'
 import DropArea from 'components/DropArea/DropArea'
 import FileUpload from 'components/FileUpload/FileUpload'
@@ -117,9 +119,11 @@ export default class FieldImageEdit extends Component {
       config = {},
       displayName,
       documentId,
+      error,
       group,
       name,
       onBuildBaseUrl,
+      onError,
       schema,
       value
     } = this.props
@@ -136,9 +140,13 @@ export default class FieldImageEdit extends Component {
     const isReference = schema.type === 'Reference'
     const singleFile = schema.settings && schema.settings.limit === 1
     const values = (value && !Array.isArray(value)) ? [value] : value
+    const wrongFormat = error && error.includes(Constants.ERROR_WRONG_FILE_FORMAT)
 
     return (
-      <Label label={displayName}>
+      <Label
+        error={wrongFormat}
+        errorMessage={wrongFormat && 'Only image files are accepted'}
+        label={displayName}>
         {values &&
           values.map(value => {
             return(<div class={styles['value-container']}>
@@ -228,36 +236,12 @@ export default class FieldImageEdit extends Component {
     }
   }
 
-  handleAddFiles(files) {
-    const {
-      config,
-      name,
-      onChange,
-      schema,
-      value
-    } = this.props
-    const singleFile = schema.settings && schema.settings.limit === 1
-
-    if(singleFile) {
-      return this.handleFileChange([files[0]])
-    }
-
-    let values = []
-    if(value) {
-      values = Array.isArray(value) ? value : [value]
-    }
-
-    //filter for uniqueness by file name and concat
-    const fileNames = values.map((value) => value.fileName)
-    processedFiles = processedFiles.filter((value) => !fileNames.includes(value.fileName))
-    onChange.call(this, name,  values.concat(processedFiles))
-  }
-
   handleFileChange(files) {
     const {
       config,
       name,
       onChange,
+      onError,
       schema,
       value
     } = this.props
@@ -268,7 +252,16 @@ export default class FieldImageEdit extends Component {
       values = Array.isArray(value) ? value : [value]
     }
 
+    files = files ? Object.values(files) : []
+    this.validate(files)
+    files = files.filter(file => (file.type && file.type.substr(0, 5) === 'image'))
+
+    if (!files.length) {
+      return onChange.call(this, name, values)
+    }
+
     let processedFiles = []
+    let numProcessed = 0
 
     for (let index = 0; index < files.length; index++) {
       const file = files[index]
@@ -284,22 +277,40 @@ export default class FieldImageEdit extends Component {
         }
 
         if (
-          processedFiles.length === files.length &&
+          ++numProcessed === files.length &&
           typeof onChange === 'function'
         ) {
-
-          if(singleFile) {
+          if (singleFile) {
             return onChange.call(this, name, processedFiles[0])
           }
 
           //filter for uniqueness by file name and concat
           const fileNames = values.map((value) => value.fileName)
           processedFiles = processedFiles.filter((value) => !fileNames.includes(value.fileName))
-          onChange.call(this, name,  values.concat(processedFiles))
+          onChange.call(this, name, values.concat(processedFiles))
         }
       }
 
       reader.readAsDataURL(file)
+    }
+  }
+
+  validate(files) {
+    const {
+      error,
+      name,
+      onError,
+    } = this.props
+    let validationErrors = []
+
+    files && files.forEach(file => {
+      if (!file.type || file.type.substr(0, 5) !== 'image') {
+        validationErrors = [Constants.WRONG_FILE_FORMAT]
+      }
+    })
+
+    if (typeof onError === 'function') {
+      onError.call(this, name, validationErrors)
     }
   }
 }
