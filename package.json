@@ -152,10 +152,10 @@
   },
   "jest": {
     "verbose": true,
-    "collectCoverage": false,
+    "collectCoverage": true,
     "automock": false,
     "collectCoverageFrom": [
-      "**/frontend/**/*.{js,jsx}",
+      "**/frontend/**/*.{js}",
       "**/app/**/*.{js}",
       "!**/frontend/**/Mock*.{js,jsx}"
     ],

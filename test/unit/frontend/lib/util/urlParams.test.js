@@ -1,70 +1,60 @@
 const globals = require(`${__dirname}/../../../../../app/globals`) // Always required
-const URLHelper = require(`${__dirname}/../../../../../frontend/lib/util/url-helper`).urlHelper
+const URLParams = require(`${__dirname}/../../../../../frontend/lib/util/urlParams`).URLParams
 
-let urlHelper
-
-beforeEach(() => {
-  urlHelper = URLHelper()
-})
-
-describe('URLHelper', () => {
-  it('should export object', () => {
-    expect(URLHelper).toBeInstanceOf(Function)
-  })
-
-  describe('paramsToObject()', () => {
+describe('URLParams', () => {
+  describe('toObject()', () => {
     it('should should return falsy if source is undefined', () => {
-      expect(urlHelper.paramsToObject())
+      expect(new URLParams().toObject())
         .toBeFalsy()
     })
 
     it('should return falsy if source is incorrect prototype', () => {
-      expect(urlHelper.paramsToObject({foo: 'bar'}))
+      expect(new URLParams({foo: 'bar'}).toObject())
         .toBeFalsy()
     })
 
     it('should convert valid parameters into an Object', () => {
-      expect(urlHelper.paramsToObject('?filter={"title":{"$eq":"Foo%20Bar"}}'))
+      expect(new URLParams('?filter={"title":{"$eq":"Foo%20Bar"}}').toObject())
         .toEqual(expect.objectContaining({
           filter: expect.objectContaining({
             title: expect.objectContaining({
-              $eq: "Foo Bar"
+              $eq: 'Foo Bar'
             })
           })
         }))
     })
 
     it('should parse string parameters', () => {
-      expect(urlHelper.paramsToObject('?filter=foo'))
+      expect(new URLParams('?filter=foo').toObject())
         .toEqual(expect.objectContaining({
           filter: 'foo'
         }))
     })
   })
 
-  describe('paramsToString()', () => {
+  describe('toString()', () => {
     it('should return falsy if params are undefined', () => {
-      expect(urlHelper.paramsToString())
+      expect(new URLParams().toString())
         .toBeFalsy()
     })
 
     it('should return falsy if params is incorrect prototype', () => {
-      expect(urlHelper.paramsToString('incorrect'))
+      expect(new URLParams('incorrect').toString())
         .toBeFalsy()
     })
 
     it('should convert parameter object to url friendly param', () => {
-      expect(urlHelper.paramsToString({foo: 'bar'}))
+      expect(new URLParams({foo: 'bar'}).toString())
         .toBe('foo=bar')
     })
 
     it('should convert parameter object to url friendly param', () => {
-      expect(urlHelper.paramsToString({foo: 'bar', baz: 'qux'}))
+      expect(new URLParams({foo: 'bar', baz: 'qux'}).toString())
         .toBe('foo=bar&baz=qux')
     })
 
     it('should convert parameter object to readable param', () => {
-      expect(urlHelper.paramsToString({foo: 'bar', baz: 'foo qux'}))
+      expect(new URLParams({foo: 'bar', baz: 'foo qux'}).toString())
         .toBe('foo=bar&baz=foo qux')
     })
   })

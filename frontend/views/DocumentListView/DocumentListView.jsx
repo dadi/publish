@@ -3,7 +3,7 @@
 import {Component, h} from 'preact'
 import {bindActionCreators} from 'redux'
 import {connectHelper, setPageTitle} from 'lib/util'
-import {urlHelper} from 'lib/util/url-helper'
+import {URLParams} from 'lib/util/urlParams'
 
 import Style from 'lib/Style'
 import styles from './DocumentListView.css'
@@ -86,14 +86,14 @@ class DocumentListView extends Component {
     )
   }
 
-  handleBuildBaseUrl({
+  handleBuildBaseUrl ({
     collection = this.props.collection,
     createNew,
     documentId = this.props.documentId,
     group = this.props.group,
     referenceFieldSelect,
     page,
-    search = urlHelper().paramsToObject(window.location.search),
+    search = new URLParams(window.location.search).toObject() || {},
     section = this.props.section
   } = {}) {
     let urlNodes = [
@@ -113,22 +113,22 @@ class DocumentListView extends Component {
       urlNodes.push(section)
     }
 
-    if (page !== undefined) {
+    if (page) {
       urlNodes.push(page)
-    }    
+    }
 
     let url = urlNodes.filter(Boolean).join('/')
 
-    if (search && Object.keys(search).length) {
-      let searchString = urlHelper().paramsToString(search)
-
-      url += `?${searchString}`
+    if (!documentId) {
+      if (Object.keys(search).length > 0) {
+        url += `?${new URLParams(search).toString()}`
+      }
     }
 
     return `/${url}`
-  } 
+  }
 
-  handlePageTitle(title) {
+  handlePageTitle (title) {
     // We could have containers calling `setPageTitle()` directly, but it should
     // be up to the views to control the page title, otherwise we'd risk having
     // multiple containers wanting to set their own titles. Instead, containers

@@ -25,7 +25,7 @@ const Router = function (server) {
  */
 Router.prototype.addRoutes = function () {
   if (!this.server) {
-    log.error({module: 'router'}, 'setHeaders failed: this.server is undefined')
+    log.error({module: 'router'}, 'addRoutes failed: this.server is undefined')
 
     return
   }
@@ -59,7 +59,7 @@ Router.prototype.getRoutes = function () {
  */
 Router.prototype.webRoutes = function () {
   if (!this.server) {
-    log.error({module: 'router'}, 'setHeaders failed: this.server is undefined')
+    log.error({module: 'router'}, 'webRoutes failed: this.server is undefined')
 
     return
   }
@@ -107,7 +107,8 @@ Router.prototype.webRoutes = function () {
             json: true,
             uri: `${api.host}:${api.port}/api/client`
           })
-        }).then(({results}) => {
+        })
+        .then(({results}) => {
           entryPointPage = entryPointPage
             .replace(
               '/*@@client@@*/',
@@ -148,7 +149,7 @@ Router.prototype.webRoutes = function () {
  */
 Router.prototype.componentRoutes = function (dir, match) {
   if (!this.server) {
-    log.error({module: 'router'}, `setHeaders failed: this.server is undefined`)
+    log.error({module: 'router'}, 'componentRoutes failed: this.server is undefined')
 
     return
   }
@@ -196,6 +197,20 @@ Router.prototype.setHeaders = function () {
 }
 
 /**
+ * Pre Middleware
+ * @param  {restify} app Restify web server instance
+ */
+Router.prototype.pre = function () {
+  if (!this.server) {
+    log.error({module: 'router'}, 'pre failed: this.server is undefined')
+
+    return
+  }
+
+  this.server.pre(restify.plugins.pre.sanitizePath())
+}
+
+/**
  * Middleware
  * @param  {restify} app Restify web server instance
  */
@@ -219,20 +234,6 @@ Router.prototype.use = function () {
       secret: 'keyboard cat'
     }))
     .use(flash())
-}
-
-/**
- * Pre Middleware
- * @param  {restify} app Restify web server instance
- */
-Router.prototype.pre = function () {
-  if (!this.server) {
-    log.error({module: 'router'}, 'use failed: this.server is undefined')
-
-    return
-  }
-
-  this.server.pre(restify.plugins.pre.sanitizePath())
 }
 
 module.exports = function (server) {

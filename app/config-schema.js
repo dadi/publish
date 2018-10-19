@@ -81,33 +81,6 @@ module.exports = {
       default: 'DADI'
     }
   },
-  assets: {
-    doc: 'Asset API Endpoint',
-    format: Object,
-    default: {
-      enabled: true
-    },
-    enabled: {
-      format: Boolean,
-      default: true
-    },
-    name: {
-      format: String,
-      default: 'No Name'
-    },
-    host: {
-      format: 'ipaddress',
-      default: '0.0.0.0'
-    },
-    port: {
-      format: 'port',
-      default: 3000
-    },
-    endpoint: {
-      format: String,
-      default: ''
-    }
-  },
   cdn: {
     publicUrl: {
       doc: 'The host of the URL where the CDN instance can be publicly reached',
@@ -227,15 +200,19 @@ module.exports = {
         default: true
       },
       frequency: {
-        doc: 'Interval between checks (MS)',
-        format: Number,
+        doc: 'Interval between health checks, in milliseconds',
+        format: function check (val) {
+          if (isNaN(val)) {
+            throw new Error('Healthcheck frequency must be a valid number and greater than 1000')
+          }
+
+          if (val < 1000) {
+            throw new Error('Healthcheck frequency must be greater than 1000 milliseconds')
+          }
+        },
         default: 2000
       }
     }
-  },
-  TZ: {
-    doc: 'Process Timezone',
-    default: 'Europe/London'
   },
   logging: {
     enabled: {

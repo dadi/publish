@@ -51,11 +51,6 @@ describe('Status', () => {
   })
 
   describe('isServerOnline()', () => {
-    it('should return false when fetch rejects', () => {
-      expect.assertions(1)
-      return expect(Status.isServerOnline()).resolves.toBeFalsy()
-    })
-
     it('should return true when fetch to domain route returns 200 status', () => {
       expect.assertions(1)
       window.fetch = jest.fn().mockImplementation(() => Promise.resolve({
@@ -79,14 +74,6 @@ describe('Status', () => {
     })
 
     describe('watch()', () => {
-      it('should throw an error if the watch interval is invalid', () => {
-        const monitorCall = () => {
-          connectionMonitor.watch()
-        }
-        expect(monitorCall)
-          .toThrowError(`Watch interval should be a number greater than ${Status.minWatchInterval}`)
-      })
-
       it('should set variable monitor to be a setInterval function', () => {
         connectionMonitor.watch(1000)
 
