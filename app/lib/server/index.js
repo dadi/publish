@@ -8,8 +8,6 @@ const restify = require('restify')
 const Router = require(paths.lib.router)
 const Socket = require(`${paths.lib.server}/socket`)
 
-process.env.TZ = config.get('TZ')
-
 // (!) This should probably be moved to a more suitable place
 const getApisBlockWithUUIDs = apis => {
   return apis.map(api => {
