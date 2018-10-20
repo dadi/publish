@@ -262,6 +262,18 @@ class DocumentList extends Component {
     return selectedRows
   }
 
+  getFieldType (schema) {
+    let fieldType = (schema.publish && schema.publish.subType) ?
+      schema.publish.subType :
+      schema.type
+
+    if (fieldType === 'Image') {
+      fieldType = 'Media'
+    }
+
+    return fieldType
+  }
+
   handleAnchorRender(value, data, column, index) {
     const {
       collection,
@@ -386,8 +398,8 @@ class DocumentList extends Component {
   }
 
   renderAnnotation(schema) {
-    const fieldType = (schema.publish && schema.publish.subType) ?
-      schema.publish.subType : schema.type
+    const fieldType = this.getFieldType(schema)
+
     const fieldComponentName = `Field${fieldType}`
     const FieldComponentListHeadAnnotation = fieldComponents[fieldComponentName] &&
       fieldComponents[fieldComponentName].listHeadAnnotation
@@ -422,7 +434,7 @@ class DocumentList extends Component {
     // to render the results.
     if (referencedField) {
       const fieldSchema = collectionParent.fields[referencedField]
-      const fieldType = (fieldSchema.publish && fieldSchema.publish.subType) || fieldSchema.type
+      const fieldType = this.getFieldType(fieldSchema)
       const fieldComponentName = `Field${fieldType}`
       const FieldComponentReferenceSelect = fieldComponents[fieldComponentName].referenceSelect
       if (
@@ -503,8 +515,7 @@ class DocumentList extends Component {
 
     const {api, collection, state} = this.props
 
-    const fieldType = (schema.publish && schema.publish.subType) ?
-      schema.publish.subType : schema.type
+    const fieldType = this.getFieldType(schema)
     const fieldComponentName = `Field${fieldType}`
     const FieldComponentList = fieldComponents[fieldComponentName] &&
       fieldComponents[fieldComponentName].list
