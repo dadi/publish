@@ -4,13 +4,11 @@ import {h, Component} from 'preact'
 import proptypes from 'proptypes'
 import 'fetch'
 
-import {buildUrl} from 'lib/router'
-
-import Style from 'lib/Style'
 import styles from './FieldMedia.css'
 
 import Button from 'components/Button/Button'
 import DropArea from 'components/DropArea/DropArea'
+import FieldMediaItem from './FieldMediaItem'
 import FileUpload from 'components/FileUpload/FileUpload'
 import Label from 'components/Label/Label'
 
@@ -111,46 +109,10 @@ export default class FieldMediaEdit extends Component {
     this.state.signedUrl = null
   }
 
-  getSource (value) {
-    const {config} = this.props
-    const cdn = config ? config.cdn : null
-
-    if (!value) return null
-
-    let metaData = [
-      value.fileName,
-      `${value.contentLength ? '(' + Math.floor(value.contentLength / 1000) + 'kB)' : ''}`
-    ]
-
-    if (value.mimetype) {
-      if (value.mimetype.indexOf('image') > -1) {
-        let src = ''
-        if (value._previewData) {
-          src = value._previewData
-        } else if (value.url) {
-          src = value.url
-        } else if (value.path) {
-          if (cdn && cdn.publicUrl) {
-            src = `${cdn.publicUrl}/${value.path}`
-          } else {
-            src = value.path
-          }
-        }
-
-        return (
-          <img class={styles.thumbnail} src={src} title={metaData.join(' ')} />
-        )
-      } else {
-        return (
-          <span class={styles.thumbnail}>{metaData.join(' ')}</span>
-        )
-      }
-    }
-  }
-
   render() {
     let {
       collection,
+      config = {},
       displayName,
       documentId,
       group,
@@ -178,7 +140,10 @@ export default class FieldMediaEdit extends Component {
           values.map(value =>
             <div class={styles['value-container']}>
               <div class={styles.thumbnails}>
-                {this.getSource(value)}
+                <FieldMediaItem
+                  config={config}
+                  value={value}
+                />
               </div>
               <Button
                 accent="destruct"
