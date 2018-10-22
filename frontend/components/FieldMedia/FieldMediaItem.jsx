@@ -55,7 +55,10 @@ export default class FieldMediaItem extends Component {
         }
 
         return (
-          <img class={style.getClasses()} src={src} title={metaData.join(' ')} />
+          <div class={style.getClasses()}>
+            <img src={src} />
+            <span>{metaData.join(' ')}</span>
+          </div>
         )
       } else {
         return (

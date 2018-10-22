@@ -4,6 +4,7 @@ import {h, Component} from 'preact'
 import proptypes from 'proptypes'
 import 'fetch'
 
+import Style from 'lib/Style'
 import styles from './FieldMedia.css'
 
 import Button from 'components/Button/Button'
@@ -134,28 +135,36 @@ export default class FieldMediaEdit extends Component {
     const singleFile = schema.settings && schema.settings.limit === 1
     const values = (value && !Array.isArray(value)) ? [value] : value
 
+
     return (
-      <Label label={displayName}>
+      <Label label={displayName} className={styles.label}>
         {values &&
-          values.map(value =>
-            <div class={styles['value-container']}>
-              <div class={styles.thumbnails}>
-                <FieldMediaItem
-                  config={config}
-                  value={value}
-                />
+          values.map((value, idx) => {
+
+            let styleValueContainer = new Style(styles, 'value-container')
+              .addIf('value-container-first', (values.length > 1 && idx === 0))
+              .addIf('value-container-last', (values.length > 1 && idx === values.length - 1))
+
+            return ( 
+              <div class={styleValueContainer.getClasses()}>
+                <div class={styles.thumbnails}>
+                  <FieldMediaItem
+                    config={config}
+                    value={value}
+                  />
+                </div>
+                <Button
+                  accent="destruct"
+                  className={styles['remove-existing']}
+                  onClick={this.handleRemoveFile.bind(this, value.fileName)}
+                  size="small"
+                >Delete</Button>
               </div>
-              <Button
-                accent="destruct"
-                className={styles['remove-existing']}
-                onClick={this.handleRemoveFile.bind(this, value.fileName)}
-                size="small"
-              >Delete</Button>
-            </div>
-          )
+            )
+          })
         }
 
-        <div>
+        <div class={styles.upload}>
           <div class={styles['upload-options']}>
             <DropArea
               draggingText={`Drop file${singleFile ? '' : 's'} here`}

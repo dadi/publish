@@ -4,19 +4,29 @@
   align-items: center;
   background-color: var(--theme-colour-background-shade-1, #FAFAFA);
   border: 1px solid var(--theme-colour-background-shade-4, #E4E4E4);
-  border-radius: 5px;
   padding: 8px 10px;
+  margin-bottom: -1px;
+}
+
+.value-container-first {
+  border-radius: 5px 5px 0 0;
+}
+.value-container-last {
+  border-radius: 0 0 5px 5px;
+  margin-bottom: 0;
 }
 
 .thumbnails {
   margin-right: 20px;
+  color: #000;
 }
 
-.thumbnail {
+.thumbnail img {
   display: block;
   border-radius: 3px;
   max-width: 250px;
   width: 100%;
+  margin-bottom: 5px;
 }
 
 .list {
