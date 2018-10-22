@@ -235,14 +235,15 @@ export default class FieldMediaEdit extends Component {
       schema,
       value
     } = this.props
+
     const singleFile = schema.settings && schema.settings.limit === 1
 
+    let processedFiles = []
     let values = []
-    if(value) {
+
+    if (value) {
       values = Array.isArray(value) ? value : [value]
     }
-
-    let processedFiles = []
 
     for (let index = 0; index < files.length; index++) {
       const file = files[index]
@@ -266,7 +267,7 @@ export default class FieldMediaEdit extends Component {
             return onChange.call(this, name, processedFiles[0])
           }
 
-          //filter for uniqueness by file name and concat
+          // Filter for uniqueness by file name and concat.
           const fileNames = values.map(value => value.fileName)
           processedFiles = processedFiles.filter(value => !fileNames.includes(value.fileName))
           onChange.call(this, name,  values.concat(processedFiles))
