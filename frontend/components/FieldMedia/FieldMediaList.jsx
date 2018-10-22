@@ -73,14 +73,18 @@ export default class FieldMediaList extends Component {
   render() {
     const {value} = this.props
     const values = (value && !Array.isArray(value)) ? [value] : value
+    const multiple = values && values.length > 1
 
     return (
       <div>
         {values &&
           <div class={styles.thumbnails}>
-            {values.map(value => (
-              this.getSource(value)
-            ))}
+            {
+              this.getSource(values[0])
+            }
+            {multiple &&
+              (<div>and {values.length - 1} more</div>)
+            }
           </div>
         }
       </div>
