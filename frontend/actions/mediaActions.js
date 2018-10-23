@@ -1,7 +1,8 @@
 import 'fetch'
 import * as Constants from 'lib/constants'
 import * as Types from 'actions/actionTypes'
-import * as documentsActions from 'actions/documentsActions'
+import {fetchDocuments} from 'actions/documentsActions'
+import {setRemoteDocumentStatus} from 'actions/documentActions'
 
 export function deleteMedia ({api, bucket, ids}) {
   return (dispatch, getState) => {
@@ -57,7 +58,7 @@ export function uploadMediaToBucket ({
       )
     }))
     .then(() => dispatch(
-      documentsActions.fetchDocuments({
+      fetchDocuments({
         api,
         collection: bucket
       })
