@@ -44,6 +44,9 @@
   display: inline-block;
   vertical-align: middle;
 }
+.file-list {
+  margin-right: 10px;
+}
 .file img {
   display: block;
 }
@@ -59,12 +62,7 @@
   padding: 1px 2px;
   font-weight: bold;
 }
-.ext.list {
-  position: relative;
-  left: 0;
-  bottom: 2px;
-  margin-right: 5px;
-}
+
 
 .file-name {
   white-space: nowrap;

@@ -28,8 +28,8 @@ export default class FieldMediaItem extends Component {
 
     if (!value) return null
 
-    const styleExt = new Style(styles, 'ext')
-      .addIf('list', isList)
+    const styleFile = new Style(styles, 'file')
+      .addIf('file-list', isList)
 
     // Get the image path if applicable
     if (value.mimetype && value.mimetype.indexOf('image') > -1) {
@@ -54,9 +54,9 @@ export default class FieldMediaItem extends Component {
       )
     } else {
       return (
-        <div class={styles.file}>
-          {!isList && (<img src="/public/images/icon-file.svg" width="25" />)}
-          <span class={styleExt.getClasses()}>{value.fileName.split('.').pop()}</span>
+        <div class={styleFile.getClasses()}>
+          <img src="/public/images/icon-file.svg" width="25" />
+          <span class={styles.ext}>{value.fileName.split('.').pop()}</span>
         </div>
       )
     }
