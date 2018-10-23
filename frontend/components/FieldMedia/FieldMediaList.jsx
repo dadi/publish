@@ -41,7 +41,7 @@ export default class FieldMediaList extends Component {
     return (
       <div>
         {values &&
-          <div class={styles.thumbnails}>
+          <div>
             <FieldMediaItem
               config={config}
               isList={true}
@@ -49,7 +49,7 @@ export default class FieldMediaList extends Component {
             />
 
             {multiple &&
-              (<div>and {values.length - 1} more</div>)
+              (<span>+ {values.length - 1} more</span>)
             }
           </div>
         }

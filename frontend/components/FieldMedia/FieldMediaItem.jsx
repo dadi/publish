@@ -5,8 +5,6 @@ import proptypes from 'proptypes'
 import Style from 'lib/Style'
 import styles from './FieldMedia.css'
 
-const fileSize = require('file-size')
-
 export default class FieldMediaItem extends Component { 
   static propTypes = {
     /**
@@ -30,41 +28,37 @@ export default class FieldMediaItem extends Component {
 
     if (!value) return null
 
-    let metaData = [
-      value.fileName,
-      `${value.contentLength ? '(' + fileSize(value.contentLength).human('si') + ')' : ''}`
-    ]
-
-    const style = new Style(styles, 'thumbnail')
+    const styleExt = new Style(styles, 'ext')
       .addIf('list', isList)
 
-    if (value.mimetype) {
-      if (value.mimetype.indexOf('image') > -1) {
-        let src = ''
+    // Get the image path if applicable
+    if (value.mimetype && value.mimetype.indexOf('image') > -1) {
+      let src = ''
 
-        if (value._previewData) {
-          src = value._previewData
-        } else if (value.url) {
-          src = value.url
-        } else if (value.path) {
-          if (cdn && cdn.publicUrl) {
-            src = `${cdn.publicUrl}/${value.path}`
-          } else {
-            src = value.path
-          }
+      if (value._previewData) {
+        src = value._previewData
+      } else if (value.url) {
+        src = value.url
+      } else if (value.path) {
+        if (cdn && cdn.publicUrl) {
+          src = `${cdn.publicUrl}/${value.path}`
+        } else {
+          src = value.path
         }
-
-        return (
-          <div class={style.getClasses()}>
-            <img src={src} />
-            <span>{metaData.join(' ')}</span>
-          </div>
-        )
-      } else {
-        return (
-          <span class={style.getClasses()}>{metaData.join(' ')}</span>
-        )
       }
+
+      return (
+        <div class={styles.image}>
+          <img src={src} />
+        </div>
+      )
+    } else {
+      return (
+        <div class={styles.file}>
+          {!isList && (<img src="/public/images/icon-file.svg" width="25" />)}
+          <span class={styleExt.getClasses()}>{value.fileName.split('.').pop()}</span>
+        </div>
+      )
     }
   }
 

@@ -13,6 +13,8 @@ import FieldMediaItem from './FieldMediaItem'
 import FileUpload from 'components/FileUpload/FileUpload'
 import Label from 'components/Label/Label'
 
+const fileSize = require('file-size')
+
 export default class FieldMediaEdit extends Component { 
   static propTypes = {
     /**
@@ -141,24 +143,31 @@ export default class FieldMediaEdit extends Component {
         {values &&
           values.map((value, idx) => {
 
+            let file = {}
+            file.name = value.fileName.split('.').slice(0, -1).join('.')
+            file.size = fileSize(value.contentLength).human('si') || ''
+            file.ext  = value.fileName.split('.').pop()
+
             let styleValueContainer = new Style(styles, 'value-container')
-              .addIf('value-container-first', (values.length > 1 && idx === 0))
-              .addIf('value-container-last', (values.length > 1 && idx === values.length - 1))
+              .addIf('value-container-first', values.length > 1 && idx === 0)
+              .addIf('value-container-last', values.length > 1 && idx === values.length - 1)
+              .addIf('value-container-solo', values.length === 1)
 
             return ( 
               <div class={styleValueContainer.getClasses()}>
-                <div class={styles.thumbnails}>
-                  <FieldMediaItem
-                    config={config}
-                    value={value}
-                  />
-                </div>
+                <FieldMediaItem
+                  config={config}
+                  value={value}
+                />
+                <abbr class={styles['file-name']} title={value.fileName}>{file.name}</abbr>
+                <span class={styles['file-size']}>{file.size}</span>
+                <span class={styles['file-ext']}>{file.ext}</span>
                 <Button
                   accent="destruct"
                   className={styles['remove-existing']}
                   onClick={this.handleRemoveFile.bind(this, value.fileName)}
                   size="small"
-                >Delete</Button>
+                ><span>×</span></Button>
               </div>
             )
           })
