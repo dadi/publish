@@ -114,6 +114,12 @@ export default class FieldStringEdit extends Component {
     value: ''
   }
 
+  constructor(props) {
+    super(props)
+
+    this.state.hasFocus = false
+  }
+
   componentDidMount() {
     const {forceValidation, value} = this.props
 
@@ -187,6 +193,12 @@ export default class FieldStringEdit extends Component {
     }
 
     return value
+  }
+
+  handleFocusChange(hasFocus) {
+    this.setState({
+      hasFocus
+    })
   }
 
   handleOnChange(value) {
@@ -286,6 +298,7 @@ export default class FieldStringEdit extends Component {
       schema,
       value
     } = this.props
+    const {hasFocus} = this.state
     const publishBlock = schema.publish || {}
     const {heightType, rows, resizable} = publishBlock
     const type = publishBlock.multiline ? 'multiline' : 'text'
@@ -295,12 +308,15 @@ export default class FieldStringEdit extends Component {
       <Label
         error={error}
         errorMessage={typeof error === 'string' ? error : null}
+        hasFocus={hasFocus}
         label={displayName}
         comment={comment || (required && 'Required')}
       >
         <TextInput
           heightType={heightType}
+          onBlur={this.handleFocusChange.bind(this, false)}
           onChange={el => this.handleOnChange(el.target.value)}
+          onFocus={this.handleFocusChange.bind(this, true)}
           onKeyUp={el => this.handleOnKeyUp.bind(el.target.value)}
           placeholder={placeholder}
           readonly={readOnly}
@@ -322,16 +338,21 @@ export default class FieldStringEdit extends Component {
       schema,
       value
     } = this.props
+    const {hasFocus} = this.state
+    
     return (
       <Label
         error={error}
         errorMessage={typeof error === 'string' ? error : null}
+        hasFocus={hasFocus}
         label={displayName}
         comment={required && 'Required'}
       >
         <RichEditor
           format={format}
+          onBlur={this.handleFocusChange.bind(this, false)}
           onChange={this.handleOnChange.bind(this)}
+          onFocus={this.handleFocusChange.bind(this, true)}
           value={value}
         />        
       </Label>

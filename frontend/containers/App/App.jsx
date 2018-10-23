@@ -22,14 +22,14 @@ import SignOutView from 'views/SignOutView/SignOutView'
 import ProfileEditView from 'views/ProfileEditView/ProfileEditView'
 
 import {connectHelper, debounce} from 'lib/util'
-import {urlHelper} from 'lib/util/url-helper'
 import Analytics from 'lib/analytics'
 import ConnectionMonitor from 'lib/status'
 import apiBridgeClient from 'lib/api-bridge-client'
+import {URLParams} from 'lib/util/urlParams'
 
 class App extends Component {
 
-  componentWillMount() {
+  componentWillMount () {
     const {actions, state} = this.props
 
     apiBridgeClient.registerProgressCallback(actions.registerNetworkCall)
@@ -41,9 +41,21 @@ class App extends Component {
     }
   }
 
-  componentDidMount() {
+  componentDidMount () {
     const {actions, state} = this.props
     const conf = state.app.config
+
+    if (!this.monitor && conf.server.healthcheck.enabled) {
+      this.monitor = new ConnectionMonitor()
+        .watch(conf.server.healthcheck.frequency)
+        .registerStatusChangeCallback(actions.setNetworkStatus)
+    }
+
+    if (!this.analytics && conf.ga.enabled) {
+      this.analytics = new Analytics()
+        .register(conf.ga.trackingId)
+        .pageview(state.router.locationBeforeTransitions.pathname)
+    }
 
     // this.socket = new Socket(
     //   conf.publicUrl.port || conf.server.port
@@ -60,35 +72,20 @@ class App extends Component {
     document.addEventListener('drop', this.handleDragDropEvents, false)
   }
 
-  componentDidUpdate(previousProps) {
+  componentDidUpdate (previousProps) {
     const {actions, state} = this.props
     const previousState = previousProps.state
     const room = previousState.router.room
     const conf = state.app.config
     const prevConf = previousState.app.config
 
-    if (
-      (!prevConf && conf) &&
-      conf.server.healthcheck.enabled
-    ) {
-      this.monitor = new ConnectionMonitor()
-        .watch(conf.server.healthcheck.frequency)
-        .registerStatusChangeCallback(actions.setNetworkStatus)
-
-      if (conf.ga.enabled) {
-        this.analytics = new Analytics()
-          .register(conf.ga.trackingId)
-          .pageview(state.router.locationBeforeTransitions.pathname)
-      }
-    }
-
     // State change: user has signed in.
     if (!previousState.user.accessToken && state.user.accessToken) {
       actions.loadApis()
 
-      let redirectUri = state.router.search.redirect
-        ? decodeURIComponent(state.router.search.redirect)
-        : '/'
+      let redirectUri = state.router.search.redirect ?
+        decodeURIComponent(state.router.search.redirect) :
+        '/'
 
       return route(redirectUri)
     }
@@ -111,7 +108,7 @@ class App extends Component {
     }
   }
 
-  render() {
+  render () {
     const {history, state} = this.props
 
     if (state.api.error) {
@@ -197,11 +194,11 @@ class App extends Component {
    * drop outside of FileUpload and other asset drop handlers.
    * @param  {Event} event Event listener object.
    */
-  handleDragDropEvents(event) {
+  handleDragDropEvents (event) {
     event.preventDefault()
   }
 
-  handleRouteChange(event) {
+  handleRouteChange (event) {
     const {actions, state} = this.props
     const currentRouteAttributes =
       (event.current && event.current.attributes) || {}
@@ -209,11 +206,11 @@ class App extends Component {
       currentRouteAttributes.authenticate
     )
 
-    let search = urlHelper().paramsToObject(window.location.search)
+    let search = new URLParams(window.location.search).toObject() || {}
     let parameters = currentRouteAttributes.matches
 
     // Remove `search` parameters from `parameters`
-    Object.keys(search || {}).forEach(key => {
+    Object.keys(search).forEach(key => {
       delete parameters[key]
     })
 
@@ -240,15 +237,15 @@ class App extends Component {
       (currentRouteIsAuthenticated && !state.user.accessToken) ||
       event.url === '/sign-out'
     ) {
-      let redirectParam = event.url === '/'
-        ? ''
-        : `?redirect=${encodeURIComponent(event.url)}`
+      let redirectParam = event.url === '/' ?
+        '' :
+        `?redirect=${encodeURIComponent(event.url)}`
 
       return route(`/sign-in${redirectParam}`)
     }
   }
 
-  handleUserListChange(data) {
+  handleUserListChange (data) {
     const {state, actions} = this.props
 
     // Store connected users in state.

@@ -61,11 +61,17 @@ const Restify = function () {
   this.session = () => () => {}
   this.serializeUser = () => () => {}
   this.deserializeUser = () => () => {}
-  this.gzipResponse = () => () => {}
   this.requestLogger = () => () => {}
-  this.queryParser = () => () => {}
-  this.bodyParser = () => () => {}
-  this.serveStatic = () => () => {}
+
+  this.plugins = {
+    bodyParser: () => () => {},
+    gzipResponse: () => () => {},
+    pre: {
+      sanitizePath: this.sanitizePath
+    },
+    queryParser: () => () => {},
+    serveStatic: () => () => {}
+  }
 
   return this
 }

@@ -18,7 +18,7 @@ File type acceptance.
 The text to be displayed in the call-to-action button.
 
 - type: `string`
-- default value: `'select from device'`
+- default value: `'Select from device'`
 
 
 ### `multiple`
