@@ -1,9 +1,7 @@
 'use strict'
 
 import {Component, h} from 'preact'
-import {bindActionCreators} from 'redux'
 import {connectHelper, setPageTitle} from 'lib/util'
-import {urlHelper} from 'lib/util/url-helper'
 
 import Style from 'lib/Style'
 import styles from './MediaListView.css'
