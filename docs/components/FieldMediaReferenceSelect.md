@@ -1,7 +1,7 @@
-`FieldImageReferenceSelect`
+`FieldMediaReferenceSelect`
 ===========================
 
-Component for rendering API fields of type Image on a reference field select
+Component for rendering API fields of type Media on a reference field select
 list view.
 
 Props

@@ -6,15 +6,15 @@ import proptypes from 'proptypes'
 import {debounce} from 'lib/util'
 
 import Style from 'lib/Style'
-import styles from './FieldImageReferenceSelect.css'
+import styles from './FieldMediaReferenceSelect.css'
 
 const fileSize = require('file-size')
 
 /**
- * Component for rendering API fields of type Image on a reference field select
+ * Component for rendering API fields of type Media on a reference field select
  * list view.
  */
-export default class FieldImageReferenceSelect extends Component {
+export default class FieldMediaReferenceSelect extends Component {
   static propTypes = {
     /**
      * A subset of the app config containing data specific to this field type.

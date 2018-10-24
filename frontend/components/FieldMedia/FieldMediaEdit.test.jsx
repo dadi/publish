@@ -5,7 +5,7 @@ import * as utils from 'lib/util'
 
 utils.getUniqueId = () => 'c-1'
 
-import FieldImageEdit from './FieldImageEdit'
+import FieldMediaEdit from './FieldMediaEdit'
 import MockStore from './MockStore'
 
 import * as Constants from 'lib/constants'
@@ -32,7 +32,7 @@ afterEach(() => {
 const mockBuildBaseUrl = () => ['articles']
 
 const mockConfig = {
-  FieldImage: {
+  FieldMedia: {
     accept: 'test'
   }
 }
@@ -57,10 +57,10 @@ const mockSchema = {
   }
 }
 
-describe('FieldImageEdit component', () => {
+describe('FieldMediaEdit component', () => {
   it('has propTypes', () => {
     const component = (
-      <FieldImageEdit />
+      <FieldMediaEdit />
     )
 
     expect(component.nodeName.propTypes).to.exist
@@ -69,7 +69,7 @@ describe('FieldImageEdit component', () => {
 
   it('renders a Label component', () => {
     const component = (
-      <FieldImageEdit
+      <FieldMediaEdit
         config={mockConfig}
         onBuildBaseUrl={mockBuildBaseUrl}
         schema={mockSchema}
@@ -89,7 +89,7 @@ describe('FieldImageEdit component', () => {
     it('when the `value` prop contains an image', () => {
       const component = (
         <MockStore>
-          <FieldImageEdit
+          <FieldMediaEdit
             config={mockConfig}
             onBuildBaseUrl={mockBuildBaseUrl}
             schema={mockSchema}
@@ -115,7 +115,7 @@ describe('FieldImageEdit component', () => {
     it('when the `value` prop contains multiple images', () => {
       const component = (
         <MockStore>
-          <FieldImageEdit
+          <FieldMediaEdit
             config={mockConfig}
             onBuildBaseUrl={mockBuildBaseUrl}
             schema={mockSchema}
@@ -153,7 +153,7 @@ describe('FieldImageEdit component', () => {
     it('when the `value` prop contains a raw image', () => {
       const component = (
         <MockStore>
-          <FieldImageEdit
+          <FieldMediaEdit
             config={mockConfig}
             onBuildBaseUrl={mockBuildBaseUrl}
             schema={mockSchema}
@@ -179,7 +179,7 @@ describe('FieldImageEdit component', () => {
     it('when the `value` prop contains multiple raw images', () => {
       const component = (
         <MockStore>
-          <FieldImageEdit
+          <FieldMediaEdit
             config={mockConfig}
             onBuildBaseUrl={mockBuildBaseUrl}
             schema={mockSchema}
@@ -220,7 +220,7 @@ describe('FieldImageEdit component', () => {
 
     mount(
       <MockStore>
-        <FieldImageEdit
+        <FieldMediaEdit
           config={mockConfig}
           onBuildBaseUrl={mockBuildBaseUrl}
           onChange={onChange}
@@ -242,7 +242,7 @@ describe('FieldImageEdit component', () => {
   })
 
   describe('renders a DropArea if the `value` prop is missing', () => {
-    it('with the text "Drop image" (singular) if the field schema\'s `limit` property is `1`', () => {
+    it('with the text "Drop file" (singular) if the field schema\'s `limit` property is `1`', () => {
       const mockSchemaWithLimit = {
         ...mockSchema,
         settings: {
@@ -253,7 +253,7 @@ describe('FieldImageEdit component', () => {
 
       const component = (
         <MockStore>
-          <FieldImageEdit
+          <FieldMediaEdit
             config={mockConfig}
             onBuildBaseUrl={mockBuildBaseUrl}
             schema={mockSchemaWithLimit}
@@ -264,7 +264,7 @@ describe('FieldImageEdit component', () => {
       const template = (
         <Label label={mockSchema.label}>
           <DropArea
-            draggingText="Drop image here"
+            draggingText="Drop file here"
             onDrop={() => {}}
           >(...)</DropArea>
         </Label>
@@ -273,7 +273,7 @@ describe('FieldImageEdit component', () => {
       expect(component).to.matchTemplate(template)
     })
 
-    it('with the text "Drop images" (plural) if the field schema\'s `limit` property is missing or greater than `1`', () => {
+    it('with the text "Drop files" (plural) if the field schema\'s `limit` property is missing or greater than `1`', () => {
       const mockSchemaWithLimit = {
         ...mockSchema,
         settings: {
@@ -284,7 +284,7 @@ describe('FieldImageEdit component', () => {
 
       const component1 = (
         <MockStore>
-          <FieldImageEdit
+          <FieldMediaEdit
             config={mockConfig}
             onBuildBaseUrl={mockBuildBaseUrl}
             schema={mockSchemaWithLimit}
@@ -294,7 +294,7 @@ describe('FieldImageEdit component', () => {
 
       const component2 = (
         <MockStore>
-          <FieldImageEdit
+          <FieldMediaEdit
             config={mockConfig}
             onBuildBaseUrl={mockBuildBaseUrl}
             schema={mockSchema}
@@ -305,7 +305,7 @@ describe('FieldImageEdit component', () => {
       const template = (
         <Label label={mockSchema.label}>
           <DropArea
-            draggingText="Drop images here"
+            draggingText="Drop files here"
             onDrop={() => {}}
           >(...)</DropArea>
         </Label>
@@ -315,9 +315,9 @@ describe('FieldImageEdit component', () => {
       expect(component2).to.matchTemplate(template)
     })
 
-    it('renders a placeholder with a button to add images', () => {
+    it('renders a placeholder with a button to add files', () => {
       const component = (
-        <FieldImageEdit
+        <FieldMediaEdit
           config={mockConfig}
           onBuildBaseUrl={mockBuildBaseUrl}
           schema={mockSchema}
@@ -350,7 +350,7 @@ describe('FieldImageEdit component', () => {
       }
 
       const component = (
-        <FieldImageEdit
+        <FieldMediaEdit
           config={mockConfig}
           onBuildBaseUrl={mockBuildBaseUrl}
           schema={mockSchemaWithLimit}
@@ -364,7 +364,7 @@ describe('FieldImageEdit component', () => {
             <span>or </span>
             <FileUpload
               allowDrop={true}
-              accept={mockConfig.FieldImage.accept}
+              accept={mockConfig.FieldMedia.accept}
               multiple={false}
               onChange={() => {}}
             />
@@ -383,7 +383,7 @@ describe('FieldImageEdit component', () => {
       }
 
       const component1 = (
-        <FieldImageEdit
+        <FieldMediaEdit
           config={mockConfig}
           onBuildBaseUrl={mockBuildBaseUrl}
           schema={mockSchemaWithLimit}
@@ -391,7 +391,7 @@ describe('FieldImageEdit component', () => {
       )
 
       const component2 = (
-        <FieldImageEdit
+        <FieldMediaEdit
           config={mockConfig}
           onBuildBaseUrl={mockBuildBaseUrl}
           schema={mockSchema}
@@ -407,7 +407,7 @@ describe('FieldImageEdit component', () => {
             <span>or </span>
             <FileUpload
               allowDrop={true}
-              accept={mockConfig.FieldImage.accept}
+              accept={mockConfig.FieldMedia.accept}
               multiple={true}
               onChange={() => {}}
             />
@@ -424,7 +424,7 @@ describe('FieldImageEdit component', () => {
       let component
 
       mount(
-        <FieldImageEdit
+        <FieldMediaEdit
           config={mockConfig}
           onBuildBaseUrl={mockBuildBaseUrl}
           onChange={onChange}

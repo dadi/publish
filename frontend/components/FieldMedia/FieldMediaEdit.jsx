@@ -4,17 +4,18 @@ import {h, Component} from 'preact'
 import proptypes from 'proptypes'
 import 'fetch'
 
-import {buildUrl} from 'lib/router'
-
 import Style from 'lib/Style'
-import styles from './FieldImage.css'
+import styles from './FieldMedia.css'
 
 import Button from 'components/Button/Button'
 import DropArea from 'components/DropArea/DropArea'
+import FieldMediaItem from './FieldMediaItem'
 import FileUpload from 'components/FileUpload/FileUpload'
 import Label from 'components/Label/Label'
 
-export default class FieldImageEdit extends Component { 
+const fileSize = require('file-size')
+
+export default class FieldMediaEdit extends Component { 
   static propTypes = {
     /**
      * The name of the collection being edited, as per the URL.
@@ -124,8 +125,7 @@ export default class FieldImageEdit extends Component {
       value
     } = this.props
 
-    const fieldImage = config.FieldImage || {}
-    const accept = fieldImage.accept
+    const acceptedMimeTypes = schema.validation && schema.validation.mimeTypes || ['*/*']
     const fieldLocalType = schema.publish && schema.publish.subType ? schema.publish.subType : schema.type
     const href = onBuildBaseUrl ?  onBuildBaseUrl({
       createNew: !Boolean(documentId),
@@ -137,103 +137,97 @@ export default class FieldImageEdit extends Component {
     const singleFile = schema.settings && schema.settings.limit === 1
     const values = (value && !Array.isArray(value)) ? [value] : value
 
+
     return (
-      <Label label={displayName}>
-        {values &&
-          <div class={styles['value-container']}>
-            <div class={styles.thumbnails}>
-              {values.map(value => (
-                <img
-                  class={styles.thumbnail}
-                  src={this.getImageSrc(value)}
-                />
-              ))}
-            </div>
-
-            <Button
-              accent="destruct"
-              size="small"
-              className={styles['remove-existing']}
-              onClick={this.handleRemoveFile.bind(this)}
-            >Delete</Button>
-          </div>          
-        }
-
-        {!values &&
-          <div>
-            <div class={styles['upload-options']}>
-              <DropArea
-                draggingText={`Drop image${singleFile ? '' : 's'} here`}
-                onDrop={this.handleFileChange.bind(this)}
-              >
-                <div class={styles['upload-drop']}>
-                  Drop file{singleFile ? '' : 's'} to upload
-                </div>
-              </DropArea>
-            </div>
-
-            <div class={styles.placeholder}>
-              <Button
-                accent="neutral"
-                size="small"
-                href={href}
-              >Select existing {fieldLocalType.toLowerCase()}</Button>
-            </div>
-
-            <div class={styles['upload-select']}>
-              <FileUpload
-                allowDrop={true}
-                accept={accept}
-                multiple={!singleFile}
-                onChange={this.handleFileChange.bind(this)}
-              />
-            </div>
+      <Label label={displayName} className={styles.label}>
+        {values && (
+          <div class={styles.values}>
+            {values.map((value, idx) => {
+                return ( 
+                  <div class={styles.value}>
+                    <FieldMediaItem
+                      config={config}
+                      value={value}
+                    />
+                    <span class={styles['file-size']}>{fileSize(value.contentLength).human('si') || ''}</span>
+                    <span class={styles['file-ext']}>{value.fileName.split('.').pop()}</span>
+                    <Button
+                      accent="destruct"
+                      className={styles['remove-existing']}
+                      onClick={this.handleRemoveFile.bind(this, value.fileName)}
+                      size="small"
+                    ><span>×</span></Button>
+                  </div>
+                )
+              })
+            }
           </div>
-        }
+        )}
+
+        <div class={styles.upload}>
+          <div class={styles['upload-options']}>
+            <DropArea
+              draggingText={`Drop file${singleFile ? '' : 's'} here`}
+              onDrop={this.handleFileChange.bind(this)}
+            >
+              <div class={styles['upload-drop']}>
+                Drop file{singleFile ? '' : 's'} to upload
+              </div>
+            </DropArea>
+          </div>
+
+          <div class={styles.placeholder}>
+            <Button
+              accent="neutral"
+              size="small"
+              href={href}
+            >Select existing {fieldLocalType.toLowerCase()}</Button>
+          </div>
+
+          <div class={styles['upload-select']}>
+            <FileUpload
+              accept={acceptedMimeTypes}
+              allowDrop={true}
+              multiple={!singleFile}
+              onChange={this.handleFileChange.bind(this)}
+            />
+          </div>
+        </div>
       </Label>
     )
   }
-
-  getImageSrc(value) {
-    const {config} = this.props
-    const cdn = config ? config.cdn : null
-
-    if (!value) return null
-
-    if (value._previewData) return value._previewData
-
-    if (value.url) return value.url
-
-    if (value.path) {
-      if (
-        cdn &&
-        cdn.publicUrl
-      ) {
-        return `${cdn.publicUrl}/${value.path}`
-      } else {
-        return value.path
-      }
-    }
-  }
   
-  handleRemoveFile() {
-    const {name, onChange, schema} = this.props
+  handleRemoveFile(fileName) {
+    const {name, onChange, schema, value} = this.props
+    const values = (value && !Array.isArray(value)) ? [value] : value
+    let newValues = values.filter((v) => v.fileName !== fileName)
+
+    if (newValues.length === 0) {
+      newValues = null
+    }
 
     if (typeof onChange === 'function') {
-      onChange.call(this, name, null)
+      onChange.call(this, name, newValues)
     }
   }
 
-  handleFileChange(files) {
+  handleFileChange (files) {
     const {
       config,
       name,
       onChange,
-      schema
+      schema,
+      value
     } = this.props
+
     const singleFile = schema.settings && schema.settings.limit === 1
 
     let processedFiles = []
+    let values = []
+
+    if (value) {
+      values = Array.isArray(value) ? value : [value]
+    }
 
     for (let index = 0; index < files.length; index++) {
       const file = files[index]
@@ -252,9 +246,16 @@ export default class FieldImageEdit extends Component {
           processedFiles.length === files.length &&
           typeof onChange === 'function'
         ) {
-          const finalFiles = singleFile ? processedFiles[0] : processedFiles
 
-          onChange.call(this, name, finalFiles)
+          if (singleFile) {
+            return onChange.call(this, name, processedFiles[0])
+          }
+
+          // Filter for uniqueness by file name and concat.
+          const fileNames = values.map(value => value.fileName)
+
+          processedFiles = processedFiles.filter(value => !fileNames.includes(value.fileName))
+          onChange.call(this, name, values.concat(processedFiles))
         }
       }
 
