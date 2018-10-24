@@ -33,18 +33,11 @@ export default class FieldMediaItem extends Component {
 
     // Get the image path if applicable
     if (value.mimetype && value.mimetype.indexOf('image') > -1) {
-      let src = ''
+      
+      let src = value._previewData ? value._previewData : value.url || value.path
 
-      if (value._previewData) {
-        src = value._previewData
-      } else if (value.url) {
-        src = value.url
-      } else if (value.path) {
-        if (cdn && cdn.publicUrl) {
-          src = `${cdn.publicUrl}/${value.path}`
-        } else {
-          src = value.path
-        }
+      if (value.path && cdn && cdn.publicUrl) {
+        src = `${cdn.publicUrl}/${value.path}?width=80`
       }
 
       return (
