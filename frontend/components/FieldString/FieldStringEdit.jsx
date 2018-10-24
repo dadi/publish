@@ -307,6 +307,7 @@ export default class FieldStringEdit extends Component {
 
     let link = publishBlock.display && publishBlock.display.link
     let linkFormatted = false
+
     if (link && typeof link === 'string') {
       linkFormatted = link.replace(/{value}/, value)
     }
