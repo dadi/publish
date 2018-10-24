@@ -95,7 +95,7 @@ export default class FieldStringList extends Component {
         .replace(/(^\w+:|^)\/\//, '')
         .replace(/\/$/, '')
 
-    if (typeof template  === 'string') {
+    if (typeof template === 'string') {
       value = template.replace(/{value}/, value)
     }
 
