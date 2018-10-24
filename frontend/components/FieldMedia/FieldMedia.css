@@ -4,7 +4,7 @@
   align-items: center;
   background-color: var(--theme-colour-background-shade-1, #FAFAFA);
   border: 1px solid var(--theme-colour-background-shade-4, #E4E4E4);
-  padding: 13px 11px;
+  padding: 0 11px;
   margin-bottom: -1px;
   font-size: 15px;
 }
@@ -29,16 +29,24 @@
 
 .icon {
   flex: 1;
-  display: inline-block;
+  min-width: 0;
+  display: inline-flex;
+  align-items: center;
+  vertical-align: middle;
+}
+
+.value .icon {
+  padding: 11px 0;
 }
 
 .image {
-  display: inline-block;
+  display: inline-flex;
   vertical-align: middle;
-  width: 40px;
-  height: 30px;
+  width: 35px;
+  height: 35px;
   overflow: hidden;
-  margin: -6px 0;
+  margin: -7px 0;
+  min-width: 35px;
 }
 .image img {
   max-width: 100%;
@@ -48,9 +56,9 @@
 }
 
 .file {
-  margin: -6px 0;
+  margin: -5px 2px -5px 3px;
   position: relative;
-  margin-left: 3px;
+  padding-left: 5px;
   user-select: none;
   display: inline-block;
   vertical-align: middle;
@@ -65,7 +73,7 @@
   font-size: 9px;
   text-transform: uppercase;
   position: absolute;
-  left: -5px;
+  left: 0;
   bottom: 8px;
   background: #888;
   color: #fff;
@@ -76,13 +84,14 @@
 
 
 .file-name {
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
   margin-left: 10px;
   color: #000;
   text-decoration: none;
   border-bottom: 1px solid #eee;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  min-width: 0;
 }
 .value:hover .file-name {
   border-bottom-color: var(--theme-colour-data,#4a91ff);
@@ -113,7 +122,7 @@
 }
 .remove-existing span {
   position: absolute;
-  top: 8.5px; left: 0; right: 0;
+  top: 9px; left: 0; right: 0;
   font-size: 19px;
 }
 
