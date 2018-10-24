@@ -296,10 +296,9 @@ export default class FieldStringEdit extends Component {
       error,
       placeholder,
       required,
-      schema
+      schema,
+      value
     } = this.props
-    let {value} = this.props
-
     const {hasFocus} = this.state
     const publishBlock = schema.publish || {}
     const {heightType, rows, resizable} = publishBlock
