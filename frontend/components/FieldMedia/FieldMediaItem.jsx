@@ -33,29 +33,43 @@ export default class FieldMediaItem extends Component {
 
     if (!value) return null
 
-    const styleFile = new Style(styles, 'file')
-      .addIf('file-list', isList)
+    // File location on disk
+    let src = value._previewData ? value._previewData : value.url || value.path
+
+    // Filename without extension
+    const fileName = value.fileName.split('.').slice(0, -1).join('.')
+
+    let icon = (
+      <div class={styles.file}>
+        <img src="/public/images/icon-file.svg" width="25" />
+        <span class={styles.ext}>{value.fileName.split('.').pop()}</span>
+      </div>
+    )
 
     // Render an image document.
     if (value.mimetype && value.mimetype.indexOf('image') > -1) {
-      let src = value._previewData ? value._previewData : value.url || value.path
-
       if (value.path && cdn && cdn.publicUrl) {
         src = `${cdn.publicUrl}/${value.path}?width=80`
       }
 
-      return (
+      icon = (
         <div class={styles.image}>
           <img src={src} />
         </div>
       )
     }
 
-    // Render a non-image document.
     return (
-      <div class={styleFile.getClasses()}>
-        <img src="/public/images/icon-file.svg" width="25" />
-        <span class={styles.ext}>{value.fileName.split('.').pop()}</span>
+      <div class={styles.icon}>
+        {icon}
+        <a
+          href={src}
+          target="_blank"
+          class={styles['file-name']}
+          title={value.fileName}
+        >
+          {fileName}
+        </a>
       </div>
     )
   }

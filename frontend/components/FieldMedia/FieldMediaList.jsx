@@ -49,7 +49,7 @@ export default class FieldMediaList extends Component {
             />
 
             {multiple &&
-              (<span>+ {values.length - 1} more</span>)
+              (<span class={styles.more}>and {values.length - 1} more</span>)
             }
           </div>
         }
