@@ -6,6 +6,7 @@ import proptypes from 'proptypes'
 import Style from 'lib/Style'
 import styles from './FieldString.css'
 
+import Button from 'components/Button/Button'
 import Label from 'components/Label/Label'
 import RichEditor from 'components/RichEditor/RichEditor'
 import TextInput from 'components/TextInput/TextInput'
@@ -295,14 +296,21 @@ export default class FieldStringEdit extends Component {
       error,
       placeholder,
       required,
-      schema,
-      value
+      schema
     } = this.props
+    let {value} = this.props
+
     const {hasFocus} = this.state
     const publishBlock = schema.publish || {}
     const {heightType, rows, resizable} = publishBlock
     const type = publishBlock.multiline ? 'multiline' : 'text'
     const readOnly = publishBlock.readonly === true
+
+    let link = publishBlock.display && publishBlock.display.link
+    let linkFormatted = false
+    if (link && typeof link  === 'string') {
+      linkFormatted = link.replace(/{value}/, value)
+    }
 
     return (
       <Label
@@ -325,6 +333,14 @@ export default class FieldStringEdit extends Component {
           type={type}
           value={value}
         />
+        {link && (
+          <Button
+            accent="neutral"
+            size="small"
+            href={linkFormatted || value} 
+            className={styles['link-preview']}
+          >Open in new window</Button>
+        )}
       </Label>
     )
   }

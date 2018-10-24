@@ -27,3 +27,8 @@
 .dropdown-option:first-of-type {
   padding-top: 6px;
 }
+
+.link-preview {
+  width: 100%;
+  margin-top: 5px;
+}
