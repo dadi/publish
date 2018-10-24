@@ -1,7 +1,7 @@
 import 'fetch'
 import * as Constants from 'lib/constants'
 import * as Types from 'actions/actionTypes'
-import {fetchDocuments} from 'actions/documentsActions'
+import {fetchDocuments, setDocumentListStatus} from 'actions/documentsActions'
 import {setRemoteDocumentStatus} from 'actions/documentActions'
 
 export function deleteMedia ({api, bucket, ids}) {
