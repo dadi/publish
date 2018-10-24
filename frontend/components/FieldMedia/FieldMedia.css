@@ -1,4 +1,4 @@
-.value-container {
+.value {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -9,21 +9,32 @@
   font-size: 15px;
 }
 
-.value-container-solo {
-  margin-bottom: 10px;
-  border-radius: 5px;
-}
-.value-container-first {
+.values .value:first-child {
   margin-top: 5px;
   border-radius: 5px 5px 0 0;
 }
-.value-container-last {
+.values .value:last-child {
   border-radius: 0 0 5px 5px;
   margin-bottom: 10px;
 }
+.values .value:first-child:last-child {
+  margin-bottom: 10px;
+  border-radius: 5px;
+}
+
+.more {
+  color: var(--theme-colour-background-shade-2,#aaa);
+  margin-left: 5px;
+}
+
+.icon {
+  flex: 1;
+  display: inline-block;
+}
 
 .image {
-  display: flex;
+  display: inline-block;
+  vertical-align: middle;
   width: 40px;
   height: 30px;
   overflow: hidden;
@@ -68,11 +79,13 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  flex: 1;
-  padding: 2px 0;
   margin-left: 10px;
   color: #000;
   text-decoration: none;
+  border-bottom: 1px solid #eee;
+}
+.value:hover .file-name {
+  border-bottom-color: var(--theme-colour-data,#4a91ff);
 }
 .file-ext {
   font-size: 13px;

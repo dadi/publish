@@ -140,39 +140,29 @@ export default class FieldMediaEdit extends Component {
 
     return (
       <Label label={displayName} className={styles.label}>
-        {values &&
-          values.map((value, idx) => {
-
-            let file = {
-              name: value.fileName.split('.').slice(0, -1).join('.'),
-              size: fileSize(value.contentLength).human('si') || '',
-              ext: value.fileName.split('.').pop()  
+        {values && (
+          <div class={styles.values}>
+            {values.map((value, idx) => {
+                return ( 
+                  <div class={styles.value}>
+                    <FieldMediaItem
+                      config={config}
+                      value={value}
+                    />
+                    <span class={styles['file-size']}>{fileSize(value.contentLength).human('si') || ''}</span>
+                    <span class={styles['file-ext']}>{value.fileName.split('.').pop()}</span>
+                    <Button
+                      accent="destruct"
+                      className={styles['remove-existing']}
+                      onClick={this.handleRemoveFile.bind(this, value.fileName)}
+                      size="small"
+                    ><span>×</span></Button>
+                  </div>
+                )
+              })
             }
-
-            let styleValueContainer = new Style(styles, 'value-container')
-              .addIf('value-container-first', values.length > 1 && idx === 0)
-              .addIf('value-container-last', values.length > 1 && idx === values.length - 1)
-              .addIf('value-container-solo', values.length === 1)
-
-            return ( 
-              <div class={styleValueContainer.getClasses()}>
-                <FieldMediaItem
-                  config={config}
-                  value={value}
-                />
-                <abbr class={styles['file-name']} title={value.fileName}>{file.name}</abbr>
-                <span class={styles['file-size']}>{file.size}</span>
-                <span class={styles['file-ext']}>{file.ext}</span>
-                <Button
-                  accent="destruct"
-                  className={styles['remove-existing']}
-                  onClick={this.handleRemoveFile.bind(this, value.fileName)}
-                  size="small"
-                ><span>×</span></Button>
-              </div>
-            )
-          })
-        }
+          </div>
+        )}
 
         <div class={styles.upload}>
           <div class={styles['upload-options']}>
