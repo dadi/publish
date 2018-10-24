@@ -170,7 +170,7 @@ export default class TextInput extends Component {
           placeholder={placeholder}
           readonly={readonly}
           required={required}
-          rows={heightType === 'static' ? rows : '1'}
+          rows={heightType === 'content' ? '1' : rows}
           value={value}
         />
       )
