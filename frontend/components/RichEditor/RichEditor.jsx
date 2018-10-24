@@ -146,6 +146,12 @@ export default class RichEditor extends Component {
           result: () => this.setState({
             inTextMode: !this.state.inTextMode
           })
+        },
+        {
+          name: 'image',
+          result: () => {
+            console.log(`Image chooser`)
+          }
         }
       ],
       classes: {
