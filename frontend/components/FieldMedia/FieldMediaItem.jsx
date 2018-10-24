@@ -13,9 +13,14 @@ export default class FieldMediaItem extends Component {
     config: proptypes.object,
 
     /**
+     * A value indicating whether or not it is a list view being rendered.
+     */
+    isList: proptypes.bool,
+
+    /**
      * The field value.
      */
-    value: proptypes.bool
+    value: proptypes.object
   }
 
   constructor(props) {
@@ -33,7 +38,6 @@ export default class FieldMediaItem extends Component {
 
     // Get the image path if applicable
     if (value.mimetype && value.mimetype.indexOf('image') > -1) {
-      
       let src = value._previewData ? value._previewData : value.url || value.path
 
       if (value.path && cdn && cdn.publicUrl) {

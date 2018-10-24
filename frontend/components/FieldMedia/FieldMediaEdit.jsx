@@ -125,7 +125,7 @@ export default class FieldMediaEdit extends Component {
       value
     } = this.props
 
-    const accept = schema.validation && schema.validation.accept || ['*/*']
+    const acceptedMimeTypes = schema.validation && schema.validation.mimeTypes || ['*/*']
     const fieldLocalType = schema.publish && schema.publish.subType ? schema.publish.subType : schema.type
     const href = onBuildBaseUrl ?  onBuildBaseUrl({
       createNew: !Boolean(documentId),
@@ -143,10 +143,11 @@ export default class FieldMediaEdit extends Component {
         {values &&
           values.map((value, idx) => {
 
-            let file = {}
-            file.name = value.fileName.split('.').slice(0, -1).join('.')
-            file.size = fileSize(value.contentLength).human('si') || ''
-            file.ext  = value.fileName.split('.').pop()
+            let file = {
+              name: value.fileName.split('.').slice(0, -1).join('.'),
+              size: fileSize(value.contentLength).human('si') || '',
+              ext: value.fileName.split('.').pop()  
+            }
 
             let styleValueContainer = new Style(styles, 'value-container')
               .addIf('value-container-first', values.length > 1 && idx === 0)
@@ -195,7 +196,7 @@ export default class FieldMediaEdit extends Component {
 
           <div class={styles['upload-select']}>
             <FileUpload
-              accept={accept}
+              accept={acceptedMimeTypes}
               allowDrop={true}
               multiple={!singleFile}
               onChange={this.handleFileChange.bind(this)}
@@ -218,31 +219,6 @@ export default class FieldMediaEdit extends Component {
     if (typeof onChange === 'function') {
       onChange.call(this, name, newValues)
     }
-  }
-
-  handleAddFiles(files) {
-    const {
-      config,
-      name,
-      onChange,
-      schema,
-      value
-    } = this.props
-    const singleFile = schema.settings && schema.settings.limit === 1
-
-    if (singleFile) {
-      return this.handleFileChange([files[0]])
-    }
-
-    let values = []
-    if (value) {
-      values = Array.isArray(value) ? value : [value]
-    }
-
-    // Filter for uniqueness by file name and concat.
-    const fileNames = values.map(value => value.fileName)
-    processedFiles = processedFiles.filter(value => !fileNames.includes(value.fileName))
-    onChange.call(this, name,  values.concat(processedFiles))
   }
 
   handleFileChange (files) {
@@ -287,8 +263,9 @@ export default class FieldMediaEdit extends Component {
 
           // Filter for uniqueness by file name and concat.
           const fileNames = values.map(value => value.fileName)
+
           processedFiles = processedFiles.filter(value => !fileNames.includes(value.fileName))
-          onChange.call(this, name,  values.concat(processedFiles))
+          onChange.call(this, name, values.concat(processedFiles))
         }
       }
 
