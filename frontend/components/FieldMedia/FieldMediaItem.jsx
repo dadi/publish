@@ -39,7 +39,7 @@ export default class FieldMediaItem extends Component {
         src = value._previewData
       } else if (value.path) {
         if (cdn && cdn.publicUrl) {
-          src = `${cdn.publicUrl}/${value.path}`
+          src = `${cdn.publicUrl}/${value.path}?width=80`
         } else {
           src = value.path
         }
