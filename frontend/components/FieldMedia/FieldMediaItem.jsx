@@ -36,7 +36,7 @@ export default class FieldMediaItem extends Component {
     const styleFile = new Style(styles, 'file')
       .addIf('file-list', isList)
 
-    // Get the image path if applicable
+    // Render an image document.
     if (value.mimetype && value.mimetype.indexOf('image') > -1) {
       let src = value._previewData ? value._previewData : value.url || value.path
 
@@ -49,14 +49,15 @@ export default class FieldMediaItem extends Component {
           <img src={src} />
         </div>
       )
-    } else {
-      return (
-        <div class={styleFile.getClasses()}>
-          <img src="/public/images/icon-file.svg" width="25" />
-          <span class={styles.ext}>{value.fileName.split('.').pop()}</span>
-        </div>
-      )
     }
+
+    // Render a non-image document.
+    return (
+      <div class={styleFile.getClasses()}>
+        <img src="/public/images/icon-file.svg" width="25" />
+        <span class={styles.ext}>{value.fileName.split('.').pop()}</span>
+      </div>
+    )
   }
 
   render() {
