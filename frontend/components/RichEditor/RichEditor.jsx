@@ -61,6 +61,7 @@ export default class RichEditor extends Component {
 
     this.state.html = null
     this.state.inTextMode = false
+    this.state.inFullscreenMode = false
     this.state.linkBeingEdited = null
     this.state.showLinkModal = false
     this.state.text = props.value
@@ -139,6 +140,13 @@ export default class RichEditor extends Component {
 
             pell.exec('insertHTML', html)
           }
+        },
+        {
+          icon: `<span class="${styles['fullscreen-toggle']}">Fullscreen</span>`,
+          title: 'Fullscreen',
+          result: () => this.setState({
+            inFullscreenMode: !this.state.inFullscreenMode
+          })
         },
         {
           icon: `<span class="${styles['text-mode-toggle']}">Text</span>`,
@@ -323,6 +331,7 @@ export default class RichEditor extends Component {
     const {children} = this.props
     const {
       html,
+      inFullscreenMode,
       inTextMode,
       linkBeingEdited,
       showLinkModal,
@@ -330,10 +339,14 @@ export default class RichEditor extends Component {
     } = this.state
     const wrapper = new Style(styles, 'wrapper')
       .addIf('wrapper-mode-text', inTextMode)
+
+    const outerWrapper = new Style(styles, 'outer-wrapper')
+      .addIf('wrapper-mode-fullscreen', inFullscreenMode)
+
     const editorText = new Style(styles, 'editor', 'editor-text')
 
     return (
-      <div class={styles['outer-wrapper']}>
+      <div class={outerWrapper.getClasses()}>
         {showLinkModal && (
           <form
             class={styles['link-modal']}

@@ -190,7 +190,44 @@
   background-color: #ccc;
 }
 
-.pell-button[Title="Text"] {
+.wrapper-mode-fullscreen {
+  position: fixed;
+  z-index: 1002;
+  top: 0;
+  right: 0;
+  left: 0;
+  bottom: 0;
+  background: #fff;
+  text-align: center;
+  overflow: scroll;
+  display: flex;
+}
+.wrapper-mode-fullscreen .wrapper {
+  flex: auto;
+  display: flex;
+}
+.wrapper-mode-fullscreen .editor,
+.wrapper-mode-fullscreen .editor-text {
+  max-width: 1100px;
+  margin: auto;
+  padding: 70px 3%;
+  text-align: left;
+  box-sizing: border-box;
+}
+.wrapper-mode-fullscreen .pell-actionbar {
+  position: fixed;
+  top: 0; right: 0; left: 0;
+  margin: 0;
+  z-index: 1003;
+  text-align: left;
+}
+
+/*.fullscreen-toggle {
+  font-size: 13px;
+}*/
+
+.pell-button[Title="Text"],
+.pell-button[Title="Fullscreen"] {
   width: auto;
   float: right;
 }
