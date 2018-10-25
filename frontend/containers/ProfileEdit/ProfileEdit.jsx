@@ -102,13 +102,13 @@ class ProfileEdit extends Component {
         <Header />
 
         <Main>
+          <ProfileEditToolbar />
+
           <TabbedFieldSections
             activeSection={section}
             renderField={this.renderField.bind(this)}
             sections={sections}
           />
-
-          <ProfileEditToolbar />
         </Main>
       </Page>
     )

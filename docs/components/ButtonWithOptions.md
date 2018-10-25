@@ -35,6 +35,13 @@ href.
 - type: `string`
 
 
+### `isLoading`
+
+Whether to display a loading state.
+
+- type: `bool`
+
+
 ### `onClick`
 
 Callback to be executed when the main button is clicked.
@@ -50,8 +57,8 @@ Object containing the secondary options. Keys define the text of the option and 
  <ButtonWithOptions
    onClick={this.mainCallback()}
    options={{
-     'Save and continue': this.saveAndContinueCallback()
-     'Save and go back': this.saveAndGoBackeCallback()
+    'Save and continue': this.saveAndContinueCallback()
+    'Save and go back': this.saveAndGoBackeCallback()
    }}
  >
    Save

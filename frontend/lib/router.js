@@ -1,7 +1,7 @@
 'use strict'
 
 import {route} from '@dadi/preact-router'
-import {urlHelper} from 'lib/util/url-helper'
+import {URLParams} from 'lib/util/urlParams'
 
 /**
  * @constructor Router
@@ -37,7 +37,7 @@ export function createRoute ({
 
   if (update && window.location.search) {
     // Retain existing params
-    newParams = urlHelper().paramsToObject(window.location.search)
+    newParams = new URLParams(window.location.search).toObject()
   }
 
   if (params) {
@@ -45,13 +45,15 @@ export function createRoute ({
     newParams = Object.assign({}, newParams, params)
   }
 
-  if (newParams && Object.keys(newParams).length) {
-    let encodedParams = urlHelper().paramsToString(newParams)
-
-    return `${fullPath}${encodedParams ? `?${encodedParams}` : ''}`
-  } else {
-    return `${fullPath}`
+  if (fullPath.indexOf('?') > 0) {
+    fullPath = fullPath.substring(0, fullPath.indexOf('?'))
   }
+
+  if (newParams && Object.keys(newParams).length > 0) {
+    fullPath += `?${new URLParams(newParams).toString()}`
+  }
+
+  return fullPath
 }
 
 /**

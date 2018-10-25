@@ -1,36 +1,65 @@
 'use strict'
 
-const CollectionRoutes = require(`${paths.lib.helpers}/collection-routes`)
 const config = require(paths.config)
 const DadiAPI = require('@dadi/api-wrapper')
 const log = require('@dadi/logger')
+
+const REGEX_NUMBER = '[^\\d+$]'
+const REGEX_DOCUMENT_ID = '[^(?:[a-f0-9]{24}|[a-f0-9]{32}|[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12})]'
+const REGEX_SLUG = '[^[a-z-]]'
 
 const Collection = function ({accessToken} = {}) {
   this.accessToken = accessToken
 }
 
-const formatAPIError = err => {
-  switch (err.code) {
-    case 404:
-      return {
-        detail: 'One or more APIs are unreachable. Please check your config.'
-      }
-
-    case 401:
-      return {
-        detail: 'The credentials for your API are incorrect.'
-      }
-  }
-}
-
 Collection.prototype.buildCollectionRoutes = function () {
   log.debug({ module: 'collection' }, 'Building collection Routes')
 
-  return this.getCollections()
-    .then(apiCollections => {
-      return new CollectionRoutes().generateApiRoutes(apiCollections)
-    })
-    .catch(err => Promise.reject(formatAPIError(err)))
+  let routes = {
+    create: [
+      // Create a new document, pointing to a specific section.
+      `:collection${REGEX_SLUG}/new/:section?`,
+
+      // Create a new document in a collection within a group,
+      // pointing to a specific section.
+      `:group${REGEX_SLUG}/:collection${REGEX_SLUG}/new/:section?`
+    ],
+    edit: [
+      // Edit a document with a given ID, pointing to a specific section.
+      `:collection${REGEX_SLUG}/:documentId${REGEX_DOCUMENT_ID}/:section?`,
+
+      // Edit a document in a collection within a group, pointing to a
+      // specific section.
+      `:group${REGEX_SLUG}/:collection${REGEX_SLUG}/:documentId${REGEX_DOCUMENT_ID}/:section?`
+    ],
+    list: [
+      // List documents in a collection at a given page.
+      `:collection${REGEX_SLUG}/:page?${REGEX_NUMBER}`,
+
+      // Selects a document to be assigned to a reference field of a
+      // document that is being created, with pagination.
+      `:collection${REGEX_SLUG}/new/select/:referencedField/:page?${REGEX_NUMBER}`,
+
+      // Selects a document to be assigned to a reference field of an
+      // existing document with a given ID, with pagination.
+      `:collection${REGEX_SLUG}/:documentId${REGEX_DOCUMENT_ID}/select/:referencedField/:page?${REGEX_NUMBER}`,
+
+      // List documents in a collection within a group, at a given page.
+      `:group${REGEX_SLUG}/:collection${REGEX_SLUG}/:page?${REGEX_NUMBER}`,
+
+      // Selects a document to be assigned to a reference field of a
+      // document that is being created in a collection within a group,
+      // with pagination.
+      `:group${REGEX_SLUG}/:collection${REGEX_SLUG}/new/select/:referencedField/:page?${REGEX_NUMBER}`,
+
+      // Selects a document to be assigned to a reference field of an
+      // existing document with a given ID, in a collection within a
+      // group, with pagination.
+      `:group${REGEX_SLUG}/:collection${REGEX_SLUG}/:documentId${REGEX_DOCUMENT_ID}/select/:referencedField/:page?${REGEX_NUMBER}`
+    ]
+  }
+
+  return Promise.resolve(routes)
 }
 
 Collection.prototype.getCollections = function () {

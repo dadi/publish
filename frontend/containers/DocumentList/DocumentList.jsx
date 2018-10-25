@@ -14,13 +14,14 @@ import * as documentsActions from 'actions/documentsActions'
 import * as fieldComponents from 'lib/field-components'
 
 import APIBridge from 'lib/api-bridge-client'
-import {buildUrl, createRoute} from 'lib/router'
+import {createRoute} from 'lib/router'
 import {filterVisibleFields} from 'lib/fields'
 import {connectHelper} from 'lib/util'
 
 import Button from 'components/Button/Button'
 import ErrorMessage from 'components/ErrorMessage/ErrorMessage'
 import HeroMessage from 'components/HeroMessage/HeroMessage'
+import SpinningWheel from 'components/SpinningWheel/SpinningWheel'
 import SyncTable from 'components/SyncTable/SyncTable'
 
 /**
@@ -34,19 +35,24 @@ class DocumentList extends Component {
     actions: proptypes.object,
 
     /**
-     * The name of the collection currently being listed.
+     * The API to operate on.
      */
-    collection: proptypes.string,
+    api: proptypes.object,
+
+    /**
+     * The collection to operate on.
+     */
+    collection: proptypes.object,
+
+    /**
+     * The parent collection to operate on, when dealing with a reference field.
+     */
+    collectionParent: proptypes.object,
 
     /**
      * The JSON-stringified object of active filters.
      */
     filter: proptypes.string,
-
-    /**
-     * The name of the group where the current collection belongs (if any).
-     */
-    group: proptypes.string,
 
     /**
     * A callback to be used to obtain the base URL for the given page, as
@@ -99,7 +105,21 @@ class DocumentList extends Component {
     super(props)
 
     this.keyboard = new Keyboard()
-  }
+  }  
+
+  checkStatusAndFetch() {
+    const {collection, state} = this.props
+    const {isLoading, list, status} = state.documents
+
+    // Don't do anything until the current API and collection have been loaded.
+    if (!state.app.config || !state.api.apis.length || !collection) {
+      return
+    }
+
+    if (!isLoading) {
+      this.fetchDocuments()  
+    }
+  }  
 
   componentDidMount() {
     const {
@@ -111,10 +131,10 @@ class DocumentList extends Component {
     const nextPage = currentPage + 1
     const previousPage = Math.abs(currentPage -1)
 
-    this.keyboard.on('cmd+right')
-      .do(cmd => route(buildUrl(...onBuildBaseUrl(), nextPage)))
-    this.keyboard.on('cmd+left')
-      .do(cmd => route(buildUrl(...onBuildBaseUrl(), previousPage)))
+    // this.keyboard.on('cmd+right')
+    //   .do(cmd => route(buildUrl(...onBuildBaseUrl(), nextPage)))
+    // this.keyboard.on('cmd+left')
+    //   .do(cmd => route(buildUrl(...onBuildBaseUrl(), previousPage)))
   }
 
   componentDidUpdate(prevProps) {
@@ -157,10 +177,14 @@ class DocumentList extends Component {
   }
 
   componentWillUpdate(nextProps) {
-    const {actions, state} = this.props
-    const {state: nextState} = nextProps
-    const currentCollection = state.api.currentCollection
-    const nextCollection = nextState.api.currentCollection
+    const {
+      actions,
+      collection,
+      state
+    } = this.props
+
+    let currentCollection = collection || {}
+    let nextCollection = nextProps.collection || {}
 
     // This is required to recover from an error. If the document list has
     // errored and we're about to navigate to a different collection, we
@@ -168,85 +192,14 @@ class DocumentList extends Component {
     // container fetch again.
     if (
       state.documents.remoteError &&
-      currentCollection &&
-      nextCollection &&
-      (currentCollection.path !== nextCollection.path)
+      currentCollection.path !== nextCollection.path
     ) {
       actions.setDocumentListStatus(Constants.STATUS_IDLE)
     }
   }
 
-  render() {
-    const {
-      collection,
-      filter,
-      group,
-      onBuildBaseUrl,
-      order,
-      referencedField,
-      sort,
-      state
-    } = this.props
-    const documents = state.documents
-    const {currentCollection} = state.api
-    const createLink = onBuildBaseUrl({
-      createNew: true
-    })
-
-    if (documents.remoteError) {
-      return (
-        <ErrorMessage
-          type={Constants.ERROR_ROUTE_NOT_FOUND}
-        />
-      )      
-    }
-
-    if (
-      !documents.list ||
-      !documents.list.results ||
-      documents.isLoading ||
-      !currentCollection
-    ) {
-      return null
-    }
-
-    const documentsList = documents.list
-
-    if (!documentsList.results.length && !documents.query) {
-      return (
-        <HeroMessage
-          title="No documents yet."
-          subtitle="Once created, they will appear here."
-        >
-          {!referencedField && (
-            <Button
-              accent="save"
-              href={createLink}
-            >Create new document</Button>
-          )}
-        </HeroMessage>
-      )
-    }
-
-    return this.renderDocumentList()
-  }
-
   componentWillMount() {
     this.checkStatusAndFetch()
-  }
-
-  checkStatusAndFetch() {
-    const {state} = this.props
-    const {isLoading, list, status} = state.documents
-
-    // State check: reject when missing config, session, or apis
-    if (!state.app.config || !state.api.apis.length || !state.api.currentCollection) {
-      return
-    }
-
-    if (!isLoading) {
-      this.fetchDocuments()  
-    }
   }
 
   componentWillUnmount() {
@@ -259,9 +212,10 @@ class DocumentList extends Component {
   fetchDocuments() {
     const {
       actions,
+      api,
       collection,
+      collectionParent,
       filter,
-      group,
       order,
       page,
       documentId,
@@ -269,27 +223,22 @@ class DocumentList extends Component {
       sort,
       state
     } = this.props
-    const {
-      currentApi,
-      currentCollection,
-      currentParentCollection
-    } = state.api
 
     if (state.documents.remoteError) {
       return
     }
 
-    let count = (currentCollection.settings && currentCollection.settings.count)
+    let count = (collection.settings && collection.settings.count)
       || 20
     let filterValue = state.router.search ? state.router.search.filter : null
 
     actions.fetchDocuments({
-      api: currentApi,
-      collection: currentCollection,
+      api,
+      collection,
       count,
       filters: filterValue,
       page,
-      parentCollection: currentParentCollection,
+      parentCollection: collectionParent,
       parentDocumentId: documentId,
       referencedField,
       sortBy: sort,
@@ -313,11 +262,22 @@ class DocumentList extends Component {
     return selectedRows
   }
 
+  getFieldType (schema) {
+    let fieldType = (schema.publish && schema.publish.subType) ?
+      schema.publish.subType :
+      schema.type
+
+    if (fieldType === 'Image') {
+      fieldType = 'Media'
+    }
+
+    return fieldType
+  }
+
   handleAnchorRender(value, data, column, index) {
     const {
       collection,
       documentId,
-      group,
       onBuildBaseUrl,
       referencedField,
       state
@@ -332,8 +292,7 @@ class DocumentList extends Component {
     let editLink = onBuildBaseUrl({
       documentId: documentId || data._id
     })
-    let currentCollection = state.api.currentCollection
-    let fieldSchema = currentCollection.fields[column.id]
+    let fieldSchema = collection.fields[column.id]
     let renderedValue = this.renderField(column.id, fieldSchema, value)
 
     if (index === 0) {
@@ -380,19 +339,91 @@ class DocumentList extends Component {
     )
   }
 
+  render() {
+    const {
+      collection,
+      filter,
+      onBuildBaseUrl,
+      order,
+      referencedField,
+      sort,
+      state
+    } = this.props
+    const documents = state.documents
+    const createLink = onBuildBaseUrl({
+      createNew: true
+    })
+
+    if (state.api.isLoading || documents.isLoading) {
+      return (
+        <SpinningWheel/>
+      )
+    }
+
+    if (documents.remoteError || (collection === null)) {
+      return (
+        <ErrorMessage
+          type={Constants.ERROR_ROUTE_NOT_FOUND}
+        />
+      )      
+    }
+
+    if (
+      !documents.list ||
+      !documents.list.results ||
+      !collection
+    ) {
+      return null
+    }
+
+    const documentsList = documents.list
+
+    if (!documentsList.results.length && !documents.query) {
+      return (
+        <HeroMessage
+          title="No documents yet."
+          subtitle="Once created, they will appear here."
+        >
+          {!referencedField && (
+            <Button
+              accent="save"
+              href={createLink}
+            >Create new document</Button>
+          )}
+        </HeroMessage>
+      )
+    }
+
+    return this.renderDocumentList()
+  }
+
+  renderAnnotation(schema) {
+    const fieldType = this.getFieldType(schema)
+
+    const fieldComponentName = `Field${fieldType}`
+    const FieldComponentListHeadAnnotation = fieldComponents[fieldComponentName] &&
+      fieldComponents[fieldComponentName].listHeadAnnotation
+
+    if (FieldComponentListHeadAnnotation) {
+      return (
+        <FieldComponentListHeadAnnotation />
+      )  
+    }
+  }
+
   renderDocumentList() {
     const {
       collection,
-      group,
+      collectionParent,
       referencedField,
+      onBuildBaseUrl,
       onPageTitle,
       order,
       sort,
       state
     } = this.props
-    const {currentCollection, currentParentCollection} = state.api
-    const documents = state.documents.list.results
     const config = state.app.config
+    const documents = state.documents.list.results
     const selectedRows = this.getSelectedRows()
 
     let selectLimit = Infinity
@@ -402,8 +433,8 @@ class DocumentList extends Component {
     // context. If it does, we'll use that instead of the default `SyncTable`
     // to render the results.
     if (referencedField) {
-      const fieldSchema = currentParentCollection.fields[referencedField]
-      const fieldType = (fieldSchema.publish && fieldSchema.publish.subType) || fieldSchema.type
+      const fieldSchema = collectionParent.fields[referencedField]
+      const fieldType = this.getFieldType(fieldSchema)
       const fieldComponentName = `Field${fieldType}`
       const FieldComponentReferenceSelect = fieldComponents[fieldComponentName].referenceSelect
       if (
@@ -431,20 +462,21 @@ class DocumentList extends Component {
 
       onPageTitle(`Select ${(fieldSchema.label || referencedField).toLowerCase()}`)
     } else {
-      onPageTitle(currentCollection.settings.description || currentCollection.name)
+      onPageTitle(collection.settings.description || collection.name)
     }
     const listableFields = filterVisibleFields({
-      fields: currentCollection.fields,
+      fields: collection.fields,
       view: 'list'
     })
 
     const tableColumns = Object.keys(listableFields)
       .map(field => {
-        if (!currentCollection.fields[field]) return
+        if (!collection.fields[field]) return
 
         return {
+          annotation: this.renderAnnotation(collection.fields[field]),
           id: field,
-          label: currentCollection.fields[field].label
+          label: collection.fields[field].label
         }
       })
 
@@ -472,7 +504,7 @@ class DocumentList extends Component {
       >
         <Button
           accent="system"
-          href={buildUrl(group, collection, 'documents')}
+          href={onBuildBaseUrl()}
         >Clear filters</Button>
       </HeroMessage>
     )
@@ -481,8 +513,9 @@ class DocumentList extends Component {
   renderField(fieldName, schema, value) {
     if (!schema) return
 
-    const fieldType = (schema.publish && schema.publish.subType) ?
-      schema.publish.subType : schema.type
+    const {api, collection, state} = this.props
+
+    const fieldType = this.getFieldType(schema)
     const fieldComponentName = `Field${fieldType}`
     const FieldComponentList = fieldComponents[fieldComponentName] &&
       fieldComponents[fieldComponentName].list
@@ -490,6 +523,9 @@ class DocumentList extends Component {
     if (FieldComponentList) {
       return (
         <FieldComponentList
+          config={state.app.config}
+          collection={collection}
+          currentApi={api}
           schema={schema}
           value={value}
         />

@@ -58,6 +58,11 @@ export default class TextInput extends Component {
     onKeyUp: proptypes.func,
 
     /**
+     * Callback to be executed when the input is changed in any way.
+     */
+    onInput: proptypes.func,
+
+    /**
      * Placeholder for the input field.
      */
     placeholder: proptypes.string,
@@ -144,12 +149,13 @@ export default class TextInput extends Component {
 
     inputStyle.addIf('input-in-label', inLabel)
     inputStyle.add(resizable ? 'resizable' : 'not-resizable')
+    inputStyle.addResolved(className)
+
     if (heightType === 'full') {
       inputStyle.add('full-height')
     } else if (heightType === 'content') {
       inputStyle.add('content-height')
     }
-    inputStyle.addResolved(className)
 
     // If type is `multiline`, we render a `<textarea>`
     if (type === 'multiline') {
@@ -159,12 +165,12 @@ export default class TextInput extends Component {
           id={id}
           onBlur={this.handleEvent.bind(this, 'onBlur')}
           onChange={this.handleChange.bind(this)}
+          onInput={this.handleChange.bind(this)}
           onFocus={this.handleEvent.bind(this, 'onFocus')}
-          onKeyUp={this.handleChange.bind(this)}
           placeholder={placeholder}
           readonly={readonly}
           required={required}
-          rows={heightType === 'static' ? rows : ''}
+          rows={heightType === 'content' ? '1' : rows}
           value={value}
         />
       )
@@ -178,6 +184,7 @@ export default class TextInput extends Component {
         onBlur={this.handleEvent.bind(this, 'onBlur')}
         onChange={this.handleChange.bind(this)}
         onFocus={this.handleEvent.bind(this, 'onFocus')}
+        onInput={this.handleChange.bind(this)}
         onKeyUp={this.handleChange.bind(this)}
         placeholder={placeholder}
         readonly={readonly}
@@ -188,21 +195,24 @@ export default class TextInput extends Component {
     )
   }
 
-  adjustHeightIfNeeded()
-  {
+  adjustHeightIfNeeded() {
     if (this.props.heightType === 'content') {
-      this.base.style.height = 0
-      this.base.style.height = this.base.scrollHeight + 'px';
+      this.base.style.height = 'auto'
+      this.base.style.height = this.base.scrollHeight + 'px'
     }
   }
 
   handleChange(event) {
-    const {onChange, onKeyUp} = this.props
+    const {onChange, onInput, onKeyUp} = this.props
 
     this.adjustHeightIfNeeded()
 
     if (event.type === 'change' && typeof onChange === 'function') {
       onChange.call(this, event)
+    }
+
+    if (event.type === 'input' && typeof onInput === 'function') {
+      onInput.call(this, event)
     }
 
     if (event.type === 'keyup' && typeof onKeyUp === 'function') {

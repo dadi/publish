@@ -21,7 +21,17 @@ export default class TableHeadCell extends Component {
     /**
      * The text content of the table head cell.
      */
-    children: proptypes.node
+    annotation: proptypes.string,
+
+    /**
+     * The text content of the table head cell.
+     */
+    children: proptypes.node,
+
+    /**
+     * Whether the row is used to hold a selection checkbox.
+     */
+    select: proptypes.bool
   }
 
   static defaultProps = {
@@ -29,18 +39,19 @@ export default class TableHeadCell extends Component {
   }
 
   render() {
-    const {arrow} = this.props
+    const {arrow, annotation, select} = this.props
     let cellStyle = new Style(styles, 'cell', 'head-cell')
 
-    cellStyle.addIf('select-cell', this.props.select)
+    cellStyle.addIf('head-cell-selected', arrow)
+    cellStyle.addIf('select-cell', select)
 
     return (
       <th class={cellStyle.getClasses()}>
         {arrow &&
           <IconArrow
-            class={styles['head-cell-arrow']}
-            width={10}
-            height={10}
+            className={styles['head-cell-arrow']}
+            width={8}
+            height={5}
             direction={arrow}
           />
         }
@@ -48,7 +59,8 @@ export default class TableHeadCell extends Component {
         <span class={styles['head-cell-label']}>
           {this.props.children}
         </span>
+        {annotation}
       </th>
     )
-  }
+  }     
 }

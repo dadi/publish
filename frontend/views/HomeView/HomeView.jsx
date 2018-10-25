@@ -9,15 +9,23 @@ import Header from 'containers/Header/Header'
 import HeroMessage from 'components/HeroMessage/HeroMessage'
 import Main from 'components/Main/Main'
 import Page from 'components/Page/Page'
+import SpinningWheel from 'components/SpinningWheel/SpinningWheel'
 
 class HomeView extends Component {
   render() {
-    const {state} = this.props
-    const {user} = state
+    const {api, user} = this.props.state
 
     if (!user.isSignedIn) {
       return null
     }
+
+    let hasAccessToCollections = api.apis.length &&
+      api.apis.find(api => {
+        return api.collections.length > 0
+      })
+    let message = hasAccessToCollections ?
+      'You can use the menu to navigate collections and start editing documents.' :
+      'You do not currently have access to any collections, please contact an administrator.'
 
     setPageTitle()
 
@@ -26,10 +34,16 @@ class HomeView extends Component {
         <Header />
 
         <Main>
-          <HeroMessage
-            title={`Welcome, ${(user.remote.data && user.remote.data && user.remote.data.publishFirstName) || 'Guest'}.`}
-            subtitle="You can use the menu to navigate collections and start editing documents."
-          />
+          {api.isLoading && (
+            <SpinningWheel />
+          )}
+
+          {!api.isLoading && (
+            <HeroMessage
+              title={`Welcome, ${(user.remote.data && user.remote.data && user.remote.data.publishFirstName) || user.remote.clientId}.`}
+              subtitle={message}
+            />
+          )}
         </Main>
       </Page>
     )
@@ -38,6 +52,7 @@ class HomeView extends Component {
 
 export default connectHelper(
   state => ({
+    api: state.api,
     user: state.user
   }),
   dispatch => bindActionCreators(userActions, dispatch)

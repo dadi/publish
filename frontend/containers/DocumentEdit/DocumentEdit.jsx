@@ -23,6 +23,7 @@ import {connectHelper} from 'lib/util'
 import {Format} from 'lib/util/string'
 
 import ErrorMessage from 'components/ErrorMessage/ErrorMessage'
+import SpinningWheel from 'components/SpinningWheel/SpinningWheel'
 import TabbedFieldSections from 'components/TabbedFieldSections/TabbedFieldSections'
 
 /**
@@ -37,19 +38,24 @@ class DocumentEdit extends Component {
     actions: proptypes.object,
 
     /**
-     * The name of the collection currently being listed.
+     * The API to operate on.
      */
-    collection: proptypes.string.isRequired,
+    api: proptypes.object,
+
+    /**
+     * The collection to operate on.
+     */
+    collection: proptypes.object,
+
+    /**
+     * The parent collection to operate on, when dealing with a reference field.
+     */
+    collectionParent: proptypes.object,
 
     /**
      * The ID of the document being edited.
      */
     documentId: proptypes.string,
-
-    /**
-     * The name of the group where the current collection belongs (if any).
-     */
-    group: proptypes.string,
 
     /**
     * A callback to be used to obtain the base URL for the given page, as
@@ -89,22 +95,19 @@ class DocumentEdit extends Component {
     const {
       collection,
       documentId,
-      group,
       onPageTitle,
       section,
       state
     } = this.props
-
-    const {currentApi, currentCollection} = state.api
     const method = documentId ? 'edit' : 'new'
 
     if (typeof onPageTitle === 'function') {
       onPageTitle(`${Format.sentenceCase(method)} document`)  
     }
 
-    if (currentCollection) {
+    if (collection) {
       const collectionFields = filterVisibleFields({
-        fields: currentCollection.fields,
+        fields: collection.fields,
         view: 'edit'
       })
       const fields = this.groupFields(collectionFields)
@@ -145,12 +148,13 @@ class DocumentEdit extends Component {
       actions,
       collection,
       documentId,
-      group,
       state
     } = this.props
-    const {currentApi, currentCollection} = state.api
-    const document = state.document
-    const previousDocument = previousProps.state.document
+    const {document, documents} = state
+    const {
+      document: previousDocument,
+      documents: previousDocuments
+    } = previousProps.state
 
     // Are there unsaved changes?
     if (
@@ -164,8 +168,7 @@ class DocumentEdit extends Component {
         message: 'You have unsaved changes',
         options: {
           'Discard them?': actions.discardUnsavedChanges.bind(this, {
-            collection,
-            group
+            collection
           })
         }
       }
@@ -180,10 +183,9 @@ class DocumentEdit extends Component {
 
     // There's no document ID, so it means we're creating a new document.
     if (!documentId) {
-      if (currentCollection) {
+      if (collection) {
         actions.startNewDocument({
-          collection: currentCollection,
-          group
+          collection
         })
       }
 
@@ -199,11 +201,13 @@ class DocumentEdit extends Component {
     const remoteDocumentHasChanged = document.remote &&
       (documentId !== document.remote._id)
     const needsFetch = !document.remote || remoteDocumentHasChanged
+    const hasJustDeleted = previousDocuments.isDeleting && !documents.isDeleting
 
     if (
       !document.isLoading &&
+      !hasJustDeleted &&
       needsFetch &&
-      currentCollection &&
+      collection &&
       state.api.apis.length > 0
     ) {
       this.handleRoomChange()
@@ -243,28 +247,38 @@ class DocumentEdit extends Component {
     const {
       collection,
       documentId,
-      group,
+      onBuildBaseUrl,
       referencedField,
       section,
       state
     } = this.props
     const document = state.document
 
+    if (state.api.isLoading || document.isLoading) {
+      return (
+        <SpinningWheel />
+      )
+    }
+
     if (document.remoteError) {
+      let listRoute = onBuildBaseUrl({
+        documentId: null
+      })
+
       return (
         <ErrorMessage
-          data={{href: buildUrl(group, collection)}}
+          data={{href: listRoute}}
           type={Constants.ERROR_DOCUMENT_NOT_FOUND}
         />
       )
     }
 
-    if (document.isLoading || !document.local) {
+    if (!document.local) {
       return null
     }
 
     const collectionFields = filterVisibleFields({
-      fields: state.api.currentCollection.fields,
+      fields: collection.fields,
       view: 'edit'
     })
     const fields = this.groupFields(collectionFields)
@@ -310,13 +324,14 @@ class DocumentEdit extends Component {
     const {
       actions,
       collection,
+      collectionParent,
       documentId,
       state
     } = this.props
 
     // As far as the fetch method is concerned, we're only interested in the
     // collection of the main document, not the referenced one.
-    let parentCollection = state.api.currentParentCollection || state.api.currentCollection
+    let parentCollection = collectionParent || collection
     let collectionFields = visibleFieldList({
       fields: parentCollection.fields,
       view: 'edit'
@@ -331,6 +346,18 @@ class DocumentEdit extends Component {
     actions.fetchDocument(query)
 
     this.hasFetched = true
+  }
+
+  getFieldType (schema) {
+    let fieldType = (schema.publish && schema.publish.subType) ?
+      schema.publish.subType :
+      schema.type
+
+    if (fieldType === 'Image') {
+      fieldType = 'Media'
+    }
+
+    return fieldType
   }
 
   // Groups fields by section based on the `section` property of the `publish`
@@ -418,15 +445,15 @@ class DocumentEdit extends Component {
   handleUserLeavingDocument() {
     const {
       actions,
+      collection,
       documentId,
       group,
       state
     } = this.props
 
     actions.registerUserLeavingDocument({
-      collection: state.api.currentCollection.name,
-      documentId,
-      group
+      collection,
+      documentId
     })
   }
 
@@ -444,12 +471,18 @@ class DocumentEdit extends Component {
     const hasError = document.validationErrors
       && document.validationErrors[field._id]
     const documentData = Object.assign({}, document.remote, document.local)
-    const defaultApiLanguage = api.currentApi.i18n.defaultLanguage
+    const defaultApiLanguage = api.currentApi.languages &&
+      api.currentApi.languages.find(language => language.default)
     const currentLanguage = state.router.search.lang
     const isTranslatable = field.type.toLowerCase() === 'string'
     const isTranslation = currentLanguage &&
-      currentLanguage !== defaultApiLanguage
+      currentLanguage !== defaultApiLanguage.code
 
+    // This needs to adapt to the i18n.fieldCharacter configuration property of
+    // the API, but currently Publish doesn't have a way of knowing this. For now,
+    // we hardcode the default character, and in a future release of API we need to
+    // expose this information in the /api/languages endpoint.
+    let languageFieldCharacter = ':'
     let displayName = field.label || field._id
     let fieldName = field._id
     let placeholder = field.placeholder
@@ -463,7 +496,7 @@ class DocumentEdit extends Component {
         displayName += ` (${language.name})`
       }
 
-      fieldName += api.currentApi.i18n.fieldCharacter + currentLanguage
+      fieldName += languageFieldCharacter + currentLanguage
       placeholder = documentData[field._id] || placeholder
     }
 
@@ -477,13 +510,11 @@ class DocumentEdit extends Component {
     const error = typeof hasError === 'string' ?
       'This field ' + hasError :
       hasError
-    const fieldType = field.publish &&
-      field.publish.subType ?
-        field.publish.subType :
-        field.type
+    const fieldType = this.getFieldType(field)
     const fieldComponentName = `Field${fieldType}`
     const FieldComponent = fieldComponents[fieldComponentName] &&
       fieldComponents[fieldComponentName].edit
+    const fieldComment = field.comment || field.example
 
     if (!FieldComponent) {
       console.warn('Unknown field type:', fieldType)
@@ -496,12 +527,13 @@ class DocumentEdit extends Component {
     fieldStyles.addIf('field-disabled', isTranslation && !isTranslatable)
 
     return (
-      <div class={fieldStyles.getClasses()}>
+      <div class={fieldStyles.getClasses()} data-field-name={fieldName}>
         <FieldComponent
-          collection={collection}
+          collection={collection.slug}
+          comment={fieldComment}
           config={app.config}
           currentApi={api.currentApi}
-          currentCollection={api.currentCollection}
+          currentCollection={collection}
           displayName={displayName}
           documentId={documentId}
           error={error}
@@ -526,6 +558,7 @@ export default connectHelper(
     api: state.api,
     app: state.app,
     document: state.document,
+    documents: state.documents,
     user: state.user,
     router: state.router
   }),

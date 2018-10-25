@@ -1,6 +1,9 @@
 'use strict'
 
 import {h, Component} from 'preact'
+import {bindActionCreators} from 'redux'
+import {connectHelper, setPageTitle} from 'lib/util'
+import {URLParams} from 'lib/util/urlParams'
 
 import DocumentEdit from 'containers/DocumentEdit/DocumentEdit'
 import DocumentEditToolbar from 'containers/DocumentEditToolbar/DocumentEditToolbar'
@@ -8,56 +11,55 @@ import Header from 'containers/Header/Header'
 import Main from 'components/Main/Main'
 import Page from 'components/Page/Page'
 
-import {DocumentRoutes} from 'lib/document-routes'
-import {setPageTitle} from 'lib/util'
-import {urlHelper} from 'lib/util/url-helper'
-
-export default class DocumentEditView extends Component {
+class DocumentEditView extends Component {
   render() {
     const {
       collection,
       documentId,
       group,
       referencedField,
-      section
+      section,
+      state
     } = this.props
+    const {currentApi, currentCollection} = state.api
 
     return (
       <Page>
         <Header/>
 
+        <DocumentEditToolbar
+          api={currentApi}
+          collection={currentCollection}
+          documentId={documentId}
+          onBuildBaseUrl={this.handleBuildBaseUrl.bind(this)}
+          referencedField={referencedField}
+          section={section}
+        />
+
         <Main>
           <DocumentEdit
-            collection={collection}
+            api={currentApi}
+            collection={currentCollection}
             documentId={documentId}
-            group={group}
             onBuildBaseUrl={this.handleBuildBaseUrl.bind(this)}
             onPageTitle={this.handlePageTitle}
             referencedField={referencedField}
             section={section}
           />
         </Main>
-
-        <DocumentEditToolbar
-          collection={collection}
-          documentId={documentId}
-          group={group}
-          onBuildBaseUrl={this.handleBuildBaseUrl.bind(this)}
-          referencedField={referencedField}
-          section={section}
-        />
+        
       </Page>
     )
   }
 
-  handleBuildBaseUrl({
+  handleBuildBaseUrl ({
     collection = this.props.collection,
     createNew,
     documentId = this.props.documentId,
     group = this.props.group,
     referenceFieldSelect,
-    search = urlHelper().paramsToObject(window.location.search),
-    section =  this.props.section
+    search = new URLParams(window.location.search).toObject(),
+    section = this.props.section
   } = {}) {
     let urlNodes = [
       group,
@@ -78,17 +80,21 @@ export default class DocumentEditView extends Component {
 
     let url = urlNodes.filter(Boolean).join('/')
 
-    if (search && Object.keys(search).length) {
-      let searchString = urlHelper().paramsToString(search)
-
-      url += `?${searchString}`
+    if (search && Object.keys(search).length > 0) {
+      url += `?${new URLParams(search).toString()}`
     }
 
     return `/${url}`
   }
 
-  handlePageTitle(title) {
+  handlePageTitle (title) {
     // View should always control page title, as it has a direct relationship to route
     setPageTitle(title)
   }
 }
+
+export default connectHelper(
+  state => ({
+    api: state.api
+  })
+)(DocumentEditView)

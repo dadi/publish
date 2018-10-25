@@ -23,6 +23,11 @@ export default class FieldDateTimeEdit extends Component {
     collection: proptypes.string,
 
     /**
+     * The text to be rendered on the top-right corner of the field.
+     */
+    comment: proptypes.string,
+
+    /**
      * A subset of the app config containing data specific to this field type.
      */
     config: proptypes.object,
@@ -109,10 +114,12 @@ export default class FieldDateTimeEdit extends Component {
     this.pickerEventHandler = this.handlePickerClick.bind(this, true)
     this.pickerOutsideEventHandler = this.handlePickerClick.bind(this, false)
     this.losingFocusTimeout = null
+    this.state.hasFocus = false
   }
 
   render() {
-    const {
+    let {
+      comment,
       config,
       displayName,
       error, 
@@ -120,8 +127,10 @@ export default class FieldDateTimeEdit extends Component {
       schema, 
       value
     } = this.props
+    const {hasFocus} = this.state
     const {pickerVisible} = this.state
     const publishBlock = schema.publish || {}
+    comment = comment || (required && 'Required')
 
     let dateObj = null
 
@@ -137,8 +146,9 @@ export default class FieldDateTimeEdit extends Component {
       <Label
         error={Boolean(error)}
         errorMessage={typeof error === 'string' ? error : null}
+        hasFocus={hasFocus}
         label={displayName}
-        comment={required && 'Required'}
+        comment={comment}
       >
         <TextInput
           onBlur={this.handleFocus.bind(this, false)}
@@ -201,8 +211,20 @@ export default class FieldDateTimeEdit extends Component {
 
   handleFocus(hasFocus) {
     const {pickerVisible} = this.state
+    const {schema} = this.props
+
+    const publishBlock = schema.publish || {}
+
+    // Return from focus event so picker doesn't display
+    if (publishBlock.readonly === true) {
+      return
+    }
 
     this.hasFocus = hasFocus
+
+    this.setState({
+      hasFocus
+    })
 
     if (!pickerVisible) {
       this.setState({

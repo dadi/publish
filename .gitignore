@@ -1,3 +1,5 @@
+.DS_Store
+
 # NPM
 node_modules/
 
@@ -27,6 +29,7 @@ public/bundle.js
 public/main.css
 public/bundle.js.map
 public/main.css.map
+public/storybook
 
 # Webpack-generated files
 component-map.json
@@ -34,3 +37,4 @@ frontend/lib/field-components.js
 stats.json
 jest*
 workspace/
+.DS_Store

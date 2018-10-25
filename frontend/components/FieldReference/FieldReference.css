@@ -5,7 +5,9 @@
   background-color: var(--theme-colour-background-shade-1, #FAFAFA);
   border: 1px solid var(--theme-colour-background-shade-4, #E4E4E4);
   border-radius: 5px;
-  padding: 8px 10px;
+  padding: 5px;
+  padding-left: 10px;
+  margin: 3px 0;
 }
 
 .values {
@@ -19,11 +21,35 @@
   padding-top: 2px;
 }
 
+.empty {
+  color: var(--theme-colour-background-shade-2, #AAAAAA);
+}
+
 .value-link {
   display: inline-block;
   border-bottom: 1px solid var(--theme-colour-background-shade-4, #E4E4E4);
-  transition: border-bottom-color 0.1s ease-in-out;
-  margin: 4px 0;
+  margin-top: 5px;
+  position: relative;
+  clear: both;
+  float: left;
+}
+.value-link:first-of-type {
+  margin-top: 0;
+}
+
+.value-link:after {
+  background: url(/public/images/icon-arrow-right.svg);
+  content: ' ';
+  width: 13px;
+  height: auto;
+  background-position: 50%;
+  background-size: 100% auto;
+  background-repeat: no-repeat;
+  top: 0;
+  bottom: 0;
+  left: 100%;
+  margin-left: 5px;
+  position: absolute;
 }
 
 .value-link:hover {
@@ -31,10 +57,26 @@
 }
 
 .placeholder {
-  padding-top: 5px;
+  padding: 5px 0 3px;
   text-align: center;
 }
 
+.placeholder a {
+  width: 100%;
+}
+
 .control-button {
-  margin-left: 10px;
+  margin-left: 5px;
+}
+
+.list-head-annotation {
+  background: rgba(0,0,0,0.2);
+  color: #000000;
+  font-size: 10px;
+  font-family: var(--theme-font-family, sans-serif);
+  padding: 2px 4px;
+  display: inline-block;
+  border-radius: 2px;
+  margin-left: 0px;
+  vertical-align: middle;
 }

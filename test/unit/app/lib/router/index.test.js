@@ -162,15 +162,3 @@ describe('Router', () => {
     })
   })
 })
-
-// addRoutes √
-// addSecureRedirect
-// secureRedirect
-// getRoutes
-// setPassportStrategies
-// webRoutes
-// componentRoutes
-// setHeaders
-// use
-// pre √
-

@@ -61,6 +61,13 @@ Whether the button is part of a group of buttons, and which position this partic
 - default value: `null`
 
 
+### `isLoading`
+
+Whether to display a loading state.
+
+- type: `bool`
+
+
 ### `onClick`
 
 Callback to be executed when the button is clicked.

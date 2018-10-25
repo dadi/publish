@@ -1,8 +1,7 @@
 .icon {
   display: inline-block;
   vertical-align: middle;
-  color: currentColor;
   width: 0;
   height: 0;
-  border-style: solid;  
+  border-style: solid;
 }

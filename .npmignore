@@ -1,0 +1,23 @@
+# NPM
+node_modules/
+
+# Logging
+log/
+npm-debug.log
+
+# Test suite
+coverage/
+
+# Config
+config/
+
+.wallet
+.tmp
+frontend/
+!frontend/components
+
+# Webpack-generated files
+component-map.json
+stats.json
+jest*
+workspace/

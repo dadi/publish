@@ -25,6 +25,7 @@ export default function document (state = initialState, action = {}) {
     case Types.ATTEMPT_SAVE_DOCUMENT:
       return {
         ...state,
+        hasBeenValidated: true,
         saveAttempts: state.saveAttempts + 1
       }
 

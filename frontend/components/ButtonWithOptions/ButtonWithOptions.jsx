@@ -38,6 +38,11 @@ export default class ButtonWithOptions extends Component {
     href: proptypes.string,
 
     /**
+     * Whether to display a loading state.
+     */
+    isLoading: proptypes.bool,    
+
+    /**
      * Callback to be executed when the main button is clicked.
      */
     onClick: proptypes.func,
@@ -49,8 +54,8 @@ export default class ButtonWithOptions extends Component {
      *  <ButtonWithOptions
      *    onClick={this.mainCallback()}
      *    options={{
-     *      'Save and continue': this.saveAndContinueCallback()
-     *      'Save and go back': this.saveAndGoBackeCallback()
+     *     'Save and continue': this.saveAndContinueCallback()
+     *     'Save and go back': this.saveAndGoBackeCallback()
      *    }}
      *  >
      *    Save
@@ -91,9 +96,11 @@ export default class ButtonWithOptions extends Component {
   render() {
     const {
       accent,
+      callback,
       children,
       disabled,
       href,
+      isLoading,
       onClick,
       options,
       type
@@ -111,6 +118,7 @@ export default class ButtonWithOptions extends Component {
           disabled={disabled}
           href={href}
           inGroup="left"
+          isLoading={isLoading}
           onClick={onClick}
           type={type}
         >

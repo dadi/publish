@@ -1,13 +1,12 @@
 'use strict'
 
 import {Component, h} from 'preact'
+import {bindActionCreators} from 'redux'
+import {connectHelper, setPageTitle} from 'lib/util'
+import {URLParams} from 'lib/util/urlParams'
 
 import Style from 'lib/Style'
 import styles from './DocumentListView.css'
-
-import {DocumentRoutes} from 'lib/document-routes'
-import {isValidJSON, setPageTitle} from 'lib/util'
-import {urlHelper} from 'lib/util/url-helper'
 
 import DocumentList from 'containers/DocumentList/DocumentList'
 import DocumentListController from 'containers/DocumentListController/DocumentListController'
@@ -17,16 +16,7 @@ import Main from 'components/Main/Main'
 import Page from 'components/Page/Page'
 import ReferencedDocumentHeader from 'containers/ReferencedDocumentHeader/ReferencedDocumentHeader'
 
-export default class DocumentListView extends Component {
-  constructor(props) {
-    super(props)
-
-    // If we have a valid filter when we mount the component for the first time,
-    // then we start with the filters visible by default. Otherwise, they're
-    // hidden.
-    this.state.newFilter = false
-  }
-
+class DocumentListView extends Component {
   render() {
     const {
       collection,
@@ -40,13 +30,17 @@ export default class DocumentListView extends Component {
       state
     } = this.props
     const {newFilter} = this.state
+    const {
+      currentApi,
+      currentCollection,
+      currentParentCollection
+    } = state.api
 
     return (
       <Page>
         {referencedField ?
           <ReferencedDocumentHeader
-            collection={collection}
-            group={group}
+            collectionParent={currentParentCollection}
             onBuildBaseUrl={this.handleBuildBaseUrl.bind(this)}
             documentId={documentId}
             referencedField={referencedField}
@@ -57,25 +51,25 @@ export default class DocumentListView extends Component {
         <Main>
           <div class={styles.container}>
             <DocumentListController
-              collection={collection}
-              group={group}
+              api={currentApi}
+              collection={currentCollection}
+              documentId={documentId}
               filter={filter}
               newFilter={newFilter}
-              onAddNewFilter={this.handleAddNewFilter.bind(this)}
               onBuildBaseUrl={this.handleBuildBaseUrl.bind(this)}
-              documentId={documentId}
               referencedField={referencedField}
             />
 
             <DocumentList
-              collection={collection}
+              api={currentApi}
+              collection={currentCollection}
+              collectionParent={currentParentCollection}
+              documentId={documentId}
               filter={filter}
-              group={group}
               onBuildBaseUrl={this.handleBuildBaseUrl.bind(this)}
               onPageTitle={this.handlePageTitle}
               order={order}
               page={page}
-              documentId={documentId}
               referencedField={referencedField}
               sort={sort}
             />
@@ -83,8 +77,8 @@ export default class DocumentListView extends Component {
         </Main>
 
         <DocumentListToolbar
-          collection={collection}
-          group={group}
+          api={currentApi}
+          collection={currentCollection}
           onBuildBaseUrl={this.handleBuildBaseUrl.bind(this)}
           referencedField={referencedField}
         />
@@ -92,28 +86,15 @@ export default class DocumentListView extends Component {
     )
   }
 
-  componentDidUpdate(prevProps, prevState) {
-    if (prevProps.collection !== this.props.collection) {
-      this.setState({
-        newFilter: false
-      })
-    }
-  }
-
-  handleAddNewFilter(isNewFilter) {
-    this.setState({
-      newFilter: isNewFilter
-    })
-  }
-
-  handleBuildBaseUrl({
+  handleBuildBaseUrl ({
     collection = this.props.collection,
     createNew,
     documentId = this.props.documentId,
     group = this.props.group,
     referenceFieldSelect,
-    search = urlHelper().paramsToObject(window.location.search),
-    section =  this.props.section
+    page,
+    search = new URLParams(window.location.search).toObject() || {},
+    section = this.props.section
   } = {}) {
     let urlNodes = [
       group,
@@ -132,18 +113,22 @@ export default class DocumentListView extends Component {
       urlNodes.push(section)
     }
 
+    if (page) {
+      urlNodes.push(page)
+    }
+
     let url = urlNodes.filter(Boolean).join('/')
 
-    if (search && Object.keys(search).length) {
-      let searchString = urlHelper().paramsToString(search)
-
-      url += `?${searchString}`
+    if (!documentId) {
+      if (Object.keys(search).length > 0) {
+        url += `?${new URLParams(search).toString()}`
+      }
     }
 
     return `/${url}`
-  } 
+  }
 
-  handlePageTitle(title) {
+  handlePageTitle (title) {
     // We could have containers calling `setPageTitle()` directly, but it should
     // be up to the views to control the page title, otherwise we'd risk having
     // multiple containers wanting to set their own titles. Instead, containers
@@ -154,3 +139,9 @@ export default class DocumentListView extends Component {
     setPageTitle(title)
   }
 }
+
+export default connectHelper(
+  state => ({
+    api: state.api
+  })
+)(DocumentListView)

@@ -13,18 +13,25 @@ The global actions object.
 - type: `object`
 
 
+### `api`
+
+The API to operate on.
+
+- type: `object`
+
+
 ### `collection`
 
-The name of the collection being used.
+The collection to operate on.
 
-- type: `string`
+- type: `object`
 
 
-### `group`
+### `collectionParent`
 
-The name of the group where the current collection belongs (if any).
+The parent collection to operate on, when dealing with a reference field.
 
-- type: `string`
+- type: `object`
 
 
 ### `onBuildBaseUrl`

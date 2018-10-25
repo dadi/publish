@@ -1,6 +1,3 @@
-'use strict'
-const path = require('path')
-
 module.exports = {
   auth: {
     doc: 'Auth API Collection',
@@ -84,33 +81,6 @@ module.exports = {
       default: 'DADI'
     }
   },
-  assets: {
-    doc: 'Asset API Endpoint',
-    format: Object,
-    default: {
-      enabled: true
-    },
-    enabled: {
-      format: Boolean,
-      default: true
-    },
-    name: {
-      format: String,
-      default: 'No Name'
-    },
-    host: {
-      format: 'ipaddress',
-      default: '0.0.0.0'
-    },
-    port: {
-      format: 'port',
-      default: 3000
-    },
-    endpoint: {
-      format: String,
-      default: ''
-    }
-  },
   cdn: {
     publicUrl: {
       doc: 'The host of the URL where the CDN instance can be publicly reached',
@@ -182,25 +152,46 @@ module.exports = {
       format: 'port',
       default: 3001
     },
-    ssl: {
-      enabled: {
-        type: Boolean,
-        default: false
-      },
-      dir: {
-        doc: 'Directory for certificate store.',
-        type: String,
-        default: path.join(__dirname, '/../workspace/certs')
-      },
-      domains: {
-        doc: 'Domains to secure.',
-        format: Array,
-        default: []
-      },
-      email: {
-        format: String,
-        default: 'publish@dadi.co'
-      }
+    protocol: {
+      doc: 'The protocol the application will use',
+      format: String,
+      default: 'http',
+      env: 'PROTOCOL'
+    },
+    redirectPort: {
+      doc: 'Port from which to redirect HTTP connections to HTTPS',
+      format: 'port',
+      default: 0
+    },
+    sslPrivateKeyPath: {
+      doc: 'The path to a SSL private key',
+      format: String,
+      default: '',
+      env: 'SSL_PRIVATE_KEY_PATH'
+    },
+    sslCertificatePath: {
+      doc: 'The path to a SSL certificate',
+      format: String,
+      default: '',
+      env: 'SSL_CERTIFICATE_PATH'
+    },
+    sslPassphrase: {
+      doc: 'The passphrase of the SSL private key',
+      format: String,
+      default: '',
+      env: 'SSL_PRIVATE_KEY_PASSPHRASE'
+    },
+    sslIntermediateCertificatePath: {
+      doc: 'The path to a SSL intermediate certificate, if any',
+      format: String,
+      default: '',
+      env: 'SSL_INTERMEDIATE_CERTIFICATE_PATH'
+    },
+    sslIntermediateCertificatePaths: {
+      doc: 'The paths to SSL intermediate certificates, overrides sslIntermediateCertificate (singular)',
+      format: Array,
+      default: [],
+      env: 'SSL_INTERMEDIATE_CERTIFICATE_PATHS'
     },
     healthcheck: {
       enabled: {
@@ -209,21 +200,18 @@ module.exports = {
         default: true
       },
       frequency: {
-        doc: 'Interval between checks (MS)',
-        format: Number,
+        doc: 'Interval between health checks, in milliseconds',
+        format: function check (val) {
+          if (isNaN(val)) {
+            throw new Error('Healthcheck frequency must be a valid number and greater than 1000')
+          }
+
+          if (val < 1000) {
+            throw new Error('Healthcheck frequency must be greater than 1000 milliseconds')
+          }
+        },
         default: 2000
       }
-    }
-  },
-  TZ: {
-    doc: 'Process Timezone',
-    default: 'Europe/London'
-  },
-  ui: {
-    inputDelay: {
-      doc: 'Delay in ms to debounce inputs by',
-      format: 'integer',
-      default: 100
     }
   },
   logging: {
@@ -265,7 +253,7 @@ module.exports = {
     backgroundImage: {
       doc: 'The background image URL',
       format: String,
-      default: '/public/images/bg-dark.jpg'
+      default: ''
     },
     logo: {
       doc: 'The logo URL',
