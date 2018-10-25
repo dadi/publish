@@ -4,6 +4,22 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [1.0.13-beta] (2018-10-25)
+
+In this release, Publish gets a UI refresh. Additional changes linked below.
+
+[#477](https://github.com/dadi/publish/issue/477): Linkable fields
+[#489](https://github.com/dadi/publish/issue/489): Reference field is still editable when set to readonly
+[#511](https://github.com/dadi/publish/issue/511): Refactor SSL, resolves installation issue using Node.js 10
+[#526](https://github.com/dadi/publish/pull/526): Support multiple referenced images 
+[#532](https://github.com/dadi/publish/issue/532): Rich editor uses auto-height by default 
+[#538](https://github.com/dadi/publish/pull/538): Render first image only in list view when a field contains multiple images
+[#544](https://github.com/dadi/publish/issue/544): Fields with dropdown options fail to save 
+[#545](https://github.com/dadi/publish/issue/545): Pagination links incorrect when sorting
+[#554](https://github.com/dadi/publish/pull/554): Media field added to replace subType "Image". Use `"subType": "Media"` in field configurations
+[#555](https://github.com/dadi/publish/pull/555): Image fields use CDN for preview if configured
+
+
 ## [1.0.12-beta] (2018-10-12)
 
 ### Changed
