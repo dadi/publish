@@ -274,7 +274,8 @@
   list-style-position: inside;  
 }
 
-.editor .code {
+.editor .code,
+.editor code {
   font-family: 'Roboto Mono', monospace;
   font-size: 13px;
   overflow: scroll;
@@ -282,6 +283,9 @@
   background: hsla(0,0%,4%,.05);
   padding: 10px;
   max-width: 100%;
+}
+.editor code {
+  padding: 1px 3px;
 }
 
 .editor img {
