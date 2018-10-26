@@ -295,7 +295,14 @@ class DocumentList extends Component {
     let fieldSchema = collection.fields[column.id]
     let renderedValue = this.renderField(column.id, fieldSchema, value)
 
-    if (index === 0) {
+    let firstStringField = Object.keys(collection.fields).filter(field => {
+      return collection.fields[field].type === 'String'
+    })[0]
+
+    if (
+      (firstStringField && firstStringField === column.id) || 
+      (!firstStringField && index === 0)
+    ) {
       return (
         <a href={editLink}>{renderedValue}</a>
       )
