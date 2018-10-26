@@ -295,8 +295,13 @@ class DocumentList extends Component {
     let fieldSchema = collection.fields[column.id]
     let renderedValue = this.renderField(column.id, fieldSchema, value)
 
-    let firstStringField = Object.keys(collection.fields).filter(field => {
-      return collection.fields[field].type === 'String'
+    const listableFields = filterVisibleFields({
+      fields: collection.fields,
+      view: 'list'
+    })
+
+    let firstStringField = Object.keys(listableFields).filter(field => {
+      return listableFields[field].type === 'String'
     })[0]
 
     if (
