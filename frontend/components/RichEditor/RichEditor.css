@@ -54,7 +54,6 @@
   background: #fff;
   text-align: center;
   overflow: scroll;
-  display: flex;
 }
 .wrapper-mode-fullscreen .editor,
 .wrapper-mode-fullscreen .editor-text {
@@ -70,6 +69,18 @@
   margin: 0;
   z-index: 1003;
   text-align: left;
+}
+
+.wrapper-mode-fullscreen .link-modal {
+  margin-top: 37px;
+  border-top: 0;
+  border-left: 0;
+  border-right: 0;
+  border-radius: 0;
+  position: fixed;
+}
+.wrapper-mode-fullscreen .link-modal:before {
+  display: none;
 }
 
 /* Toolbar */
