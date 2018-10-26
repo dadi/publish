@@ -295,7 +295,7 @@ class DocumentList extends Component {
     let fieldSchema = collection.fields[column.id]
     let renderedValue = this.renderField(column.id, fieldSchema, value)
 
-    let firstStringField = Object.keys(collection.fields).filter(i => {
+    let firstStringField = Object.keys(collection.fields).filter(field => {
       return collection.fields[i].type === 'String'
     })[0]
 
