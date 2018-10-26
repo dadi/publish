@@ -73,7 +73,8 @@ export default class RichEditor extends Component {
     const {children, format, value} = this.props
 
     this.turndownService = new TurndownService({
-      codeBlockStyle: 'fenced'
+      codeBlockStyle: 'fenced',
+      headingStyle: 'atx'
     })
 
     this.turndownService.addRule('pre', {
