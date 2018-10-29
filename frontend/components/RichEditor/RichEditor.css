@@ -55,6 +55,7 @@
   text-align: center;
   overflow: scroll;
 }
+
 .wrapper-mode-fullscreen .editor,
 .wrapper-mode-fullscreen .editor-text {
   max-width: 1100px;
