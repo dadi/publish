@@ -168,6 +168,7 @@
 .pell-button[Title="Italic"] {
   font-style: italic;
 }
+
 .pell-button[Title="Link"] {
   text-decoration: underline;
 }
