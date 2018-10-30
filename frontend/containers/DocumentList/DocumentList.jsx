@@ -488,7 +488,7 @@ class DocumentList extends Component {
         return {
           annotation: this.renderAnnotation(collection.fields[field]),
           id: field,
-          label: collection.fields[field].label
+          label: collection.fields[field].label || field
         }
       })
 
