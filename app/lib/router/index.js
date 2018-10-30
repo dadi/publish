@@ -96,6 +96,16 @@ Router.prototype.webRoutes = function () {
                 '/*@@config@@*/',
                 `window.__config__ = ${config.toString()};`
               )
+              .replace(
+                '/*@@templatePreview@@*/',
+                `window.registerPreviewTemplate = function (collection, factoryFn) {
+                  window.previewTemplates = window.previewTemplates || {}
+                  window.previewTemplates[collection] = factoryFn
+                }
+                window.renderPreviewTemplate = function (collection, document) {
+                  return window.previewTemplates[collection] && window.previewTemplates[collection](document)
+                }`
+              )
           }
 
           let api = config.get('apis.0')
