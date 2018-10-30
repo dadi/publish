@@ -26,7 +26,7 @@ import ErrorMessage from 'components/ErrorMessage/ErrorMessage'
 import SpinningWheel from 'components/SpinningWheel/SpinningWheel'
 import TabbedFieldSections from 'components/TabbedFieldSections/TabbedFieldSections'
 
-import DocumentPreview from '../DocumentPreview/DocumentPreview';
+import DocumentPreview from '../DocumentPreview/DocumentPreview'
 
 /**
  * The interface for editing a document.
