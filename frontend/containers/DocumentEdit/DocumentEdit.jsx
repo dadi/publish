@@ -26,6 +26,8 @@ import ErrorMessage from 'components/ErrorMessage/ErrorMessage'
 import SpinningWheel from 'components/SpinningWheel/SpinningWheel'
 import TabbedFieldSections from 'components/TabbedFieldSections/TabbedFieldSections'
 
+import DocumentPreview from '../DocumentPreview/DocumentPreview';
+
 /**
  * The interface for editing a document.
  */
@@ -100,6 +102,10 @@ class DocumentEdit extends Component {
       state
     } = this.props
     const method = documentId ? 'edit' : 'new'
+
+    if (section === 'preview') {
+      return false
+    }
 
     if (typeof onPageTitle === 'function') {
       onPageTitle(`${Format.sentenceCase(method)} document`)  
@@ -290,10 +296,21 @@ class DocumentEdit extends Component {
     const hasValidationErrors = document.validationErrors
     const method = documentId ? 'edit' : 'new'
 
+    sections.push( { name: 'Preview', slug: 'preview', fields: [] })
+
     // Add a link to each section before passing it down.
     sections.forEach(section => {
       section.href = this.buildHref(method, section)
     })
+
+    if (activeSection === 'preview') {
+      return (
+        <DocumentPreview
+          collection={collection}
+          document={document}
+        />
+      )
+    }
 
     return (
       <TabbedFieldSections
