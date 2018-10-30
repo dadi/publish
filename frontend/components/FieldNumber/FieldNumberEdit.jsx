@@ -132,6 +132,7 @@ export default class FieldNumberEdit extends Component {
       comment,
       displayName,
       error,
+      name,
       required,
       schema,
       value
@@ -149,6 +150,7 @@ export default class FieldNumberEdit extends Component {
         comment={comment}
       >
         <TextInput
+          name={name}
           onBlur={this.handleFocusChange.bind(this, false)}
           onChange={this.handleOnChange.bind(this)}
           onFocus={this.handleFocusChange.bind(this, true)}

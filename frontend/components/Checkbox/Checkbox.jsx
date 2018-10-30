@@ -17,6 +17,11 @@ export default class Checkbox extends Component {
     id: proptypes.string,
 
     /**
+     * The name of the input element.
+     */
+    name: proptypes.string,
+
+    /**
      * A callback function to be fired whenever the value changes.
      */
     onChange: proptypes.func,
@@ -37,6 +42,7 @@ export default class Checkbox extends Component {
   render() {
     const {
       id,
+      name,
       onChange,
       readonly,
       value
@@ -48,6 +54,7 @@ export default class Checkbox extends Component {
         class={styles.checkbox}
         disabled={readonly}
         id={id}
+        name={name}
         onChange={onChange}
         type="checkbox"
       />
