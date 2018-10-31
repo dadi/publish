@@ -47,6 +47,13 @@ Whether the field is part of a `<Label/>` component. This makes it inherit certa
 - default value: `false`
 
 
+### `name`
+
+DOM name for the input field.
+
+- type: `string`
+
+
 ### `onBlur`
 
 Callback to be executed when the text loses focus (onBlur event).

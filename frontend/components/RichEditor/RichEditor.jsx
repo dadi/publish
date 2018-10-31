@@ -7,6 +7,8 @@ import Style from 'lib/Style'
 import styles from './RichEditor.css'
 
 import Button from 'components/Button/Button'
+import TextInput from 'components/TextInput/TextInput'
+
 import marked from 'marked'
 import pell from 'pell'
 import TurndownService from 'turndown'
@@ -61,6 +63,7 @@ export default class RichEditor extends Component {
 
     this.state.html = null
     this.state.inTextMode = false
+    this.state.inFullscreenMode = false
     this.state.linkBeingEdited = null
     this.state.showLinkModal = false
     this.state.text = props.value
@@ -70,7 +73,8 @@ export default class RichEditor extends Component {
     const {children, format, value} = this.props
 
     this.turndownService = new TurndownService({
-      codeBlockStyle: 'fenced'
+      codeBlockStyle: 'fenced',
+      headingStyle: 'atx'
     })
 
     this.turndownService.addRule('pre', {
@@ -155,6 +159,13 @@ export default class RichEditor extends Component {
 
             pell.exec('insertHTML', html)
           }
+        },
+        {
+          icon: `<span class="${styles['fullscreen-toggle']}">Fullscreen</span>`,
+          title: 'Fullscreen',
+          result: () => this.setState({
+            inFullscreenMode: !this.state.inFullscreenMode
+          })
         },
         {
           icon: `<span class="${styles['text-mode-toggle']}">Text</span>`,
@@ -339,6 +350,7 @@ export default class RichEditor extends Component {
     const {children} = this.props
     const {
       html,
+      inFullscreenMode,
       inTextMode,
       linkBeingEdited,
       showLinkModal,
@@ -346,10 +358,14 @@ export default class RichEditor extends Component {
     } = this.state
     const wrapper = new Style(styles, 'wrapper')
       .addIf('wrapper-mode-text', inTextMode)
-    const editorText = new Style(styles, 'editor', 'editor-text')
+
+    const outerWrapper = new Style(styles, 'outer-wrapper')
+      .addIf('wrapper-mode-fullscreen', inFullscreenMode)
+
+    const editorText = new Style(styles, 'editor', 'editor-text', 'content-height')
 
     return (
-      <div class={styles['outer-wrapper']}>
+      <div class={outerWrapper.getClasses()}>
         {showLinkModal && (
           <form
             class={styles['link-modal']}
@@ -380,20 +396,21 @@ export default class RichEditor extends Component {
           </form>
         )}
 
-        <div
-          class={wrapper.getClasses()}
-          ref={el => this.editorElement = el}
-        />
+        <div class={wrapper.getClasses()}>
+          <div ref={el => this.editorElement = el} />
 
-        {inTextMode && (
-          <textarea
-            class={editorText.getClasses()}
-            onBlur={this.handleEvent.bind(this, 'onBlur')}
-            onFocus={this.handleEvent.bind(this, 'onFocus')}
-            onKeyUp={event => this.handleChange(event.target.value)}
-            value={text}
-          />
-        )}
+          {inTextMode && (
+            <TextInput
+              className={editorText.getClasses()}
+              heightType="content"
+              onBlur={this.handleEvent.bind(this, 'onBlur')}
+              onFocus={this.handleEvent.bind(this, 'onFocus')}
+              onChange={event => this.handleChange(event.target.value)}
+              value={text}
+              type="multiline"
+            />
+          )}
+        </div>
       </div>
     )
   }

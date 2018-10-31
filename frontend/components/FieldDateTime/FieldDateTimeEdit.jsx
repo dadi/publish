@@ -123,6 +123,7 @@ export default class FieldDateTimeEdit extends Component {
       config,
       displayName,
       error, 
+      name,
       required,
       schema, 
       value
@@ -151,6 +152,7 @@ export default class FieldDateTimeEdit extends Component {
         comment={comment}
       >
         <TextInput
+          name={name}
           onBlur={this.handleFocus.bind(this, false)}
           onChange={this.handleChange.bind(this)}
           onFocus={this.handleFocus.bind(this, true)}

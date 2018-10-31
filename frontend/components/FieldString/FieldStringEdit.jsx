@@ -261,9 +261,10 @@ export default class FieldStringEdit extends Component {
       >
         <select
           class={dropdownStyle.getClasses()}
+          disabled={readOnly}
           onChange={el => this.handleOnChange(this.getValueOfDropdown(el.target))}
           multiple={multiple}
-          disabled={readOnly}
+          name={name}
           ref={multiple && this.selectDropdownOptions.bind(this)}
           value={selectedValue}
         >
@@ -294,6 +295,7 @@ export default class FieldStringEdit extends Component {
       comment,
       displayName,
       error,
+      name,
       placeholder,
       required,
       schema,
@@ -322,6 +324,7 @@ export default class FieldStringEdit extends Component {
       >
         <TextInput
           heightType={heightType}
+          name={name}
           onBlur={this.handleFocusChange.bind(this, false)}
           onChange={el => this.handleOnChange(el.target.value)}
           onFocus={this.handleFocusChange.bind(this, true)}
