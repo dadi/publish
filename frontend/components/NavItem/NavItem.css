@@ -3,6 +3,10 @@
   position: relative;
 }
 
+.nav-item {
+  outline: none;
+}
+
 @media (--breakpoint-medium) {
   .container {
     display: inline-block;
