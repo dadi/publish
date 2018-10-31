@@ -296,11 +296,13 @@ class DocumentEdit extends Component {
     })
 
     return (
-      <TabbedFieldSections
-        activeSection={activeSection}
-        renderField={this.renderField.bind(this)}
-        sections={sections}
-      />
+      <form autocomplete="off" onSubmit={e => e.preventDefault()}>
+        <TabbedFieldSections
+          activeSection={activeSection}
+          renderField={this.renderField.bind(this)}
+          sections={sections}
+        />
+      </form>
     )
   }
 
