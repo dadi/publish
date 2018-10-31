@@ -51,7 +51,7 @@
   right: 0;
   left: 0;
   bottom: 0;
-  background: #fff;
+  background: #fafafa;
   text-align: center;
   overflow: scroll;
 }
@@ -63,6 +63,7 @@
   padding: 70px 5%;
   text-align: left;
   box-sizing: border-box;
+  background: #fafafa;
 }
 
 .wrapper-mode-fullscreen .pell-actionbar {
