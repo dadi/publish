@@ -167,6 +167,7 @@ export default class TextInput extends Component {
     if (type === 'multiline') {
       return (
         <textarea
+          autocomplete="off"
           class={inputStyle.getClasses()}
           id={id}
           name={name}
@@ -186,6 +187,7 @@ export default class TextInput extends Component {
     // Otherwise, we render an `<input>`
     return (
       <input
+        autocomplete="off"
         class={inputStyle.getClasses()}
         id={id}
         name={name}
