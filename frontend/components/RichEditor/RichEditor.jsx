@@ -110,13 +110,7 @@ export default class RichEditor extends Component {
       actions: [
         {
           name: 'bold',
-          icon: '<b>Bold</b>',
-          state: () => {
-            let tag = window.getSelection().focusNode.parentNode.tagName
-
-            return tag === 'B' ||
-              tag === 'STRONG'
-          }
+          icon: '<b>Bold</b>'
         },
         {
           name: 'italic',
