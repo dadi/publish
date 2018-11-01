@@ -40,10 +40,8 @@ class Header extends Component {
     const {currentCollection} = state.api
 
     const {
-      whitelabel: {logo, poweredBy, backgroundImage}
-    } = state.app.config || {
-      whitelabel: {logo: '', poweredBy: false, backgroundImage: ''}
-    }
+      whitelabel: {enabled, path, logo, poweredBy, backgroundImage}
+    } = state.app.config
 
     if (!state.user.isSignedIn) {
       return null
@@ -65,11 +63,9 @@ class Header extends Component {
       <header class={styles.header}>
         <div class={contentStyle.getClasses()}>
           <div class={styles.account}>
-            {logo !== '' && (
-              <div class={styles.logo}>
-                <img src={logo} />
-              </div>
-            )}
+            <div class={styles.logo}>
+              <img src={(enabled && logo) ? (path + '/' + logo) : './public/images/publish.png'} />
+            </div>
 
             <div class={styles['toggle-icon']} onClick={this.toggleCollapsed.bind(this, undefined)}>
               {this.state.expanded ?

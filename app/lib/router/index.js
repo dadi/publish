@@ -68,6 +68,14 @@ Router.prototype.webRoutes = function () {
     directory: path.resolve(__dirname, '../../..')
   }))
 
+  // The user public folder
+  if (config.get('whitelabel.enabled')) {
+    this.server.get('/whitelabel/*', restify.plugins.serveStatic({
+      appendRequestPath: false,
+      directory: path.resolve(config.get('whitelabel.path'))
+    }))
+  }
+
   // Respond to HEAD requests - this is used by ConnectionMonitor in App.jsx.
   this.server.head('*', (req, res, next) => {
     res.header('Content-Type', 'application/json')

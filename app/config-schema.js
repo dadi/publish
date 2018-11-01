@@ -251,15 +251,30 @@ module.exports = {
   },
   whitelabel: {
     requireAuthentication: false,
+    enabled: {
+      doc: 'If whitelabel mode is enabled',
+      format: Boolean,
+      default: false
+    },
+    path: {
+      doc: 'Where user whitelabel assets are served from',
+      format: String,
+      default: './whitelabel'
+    },
     backgroundImage: {
       doc: 'The background image URL',
       format: String,
-      default: ''
+      default: 'bg.png'
     },
     logo: {
       doc: 'The logo URL',
       format: String,
-      default: '/public/images/publish.png'
+      default: 'logo.png'
+    },
+    css: {
+      doc: 'The CSS URL',
+      format: String,
+      default: './overrides.css'
     },
     poweredBy: {
       doc: 'Whether to include a "Powered by DADI Publish" section',
