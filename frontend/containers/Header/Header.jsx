@@ -64,7 +64,7 @@ class Header extends Component {
         <div class={contentStyle.getClasses()}>
           <div class={styles.account}>
             <div class={styles.logo}>
-              <img src={(enabled && logo) ? (path + '/' + logo) : './public/images/publish.png'} />
+              <img src={(enabled && logo) ? ('/whitelabel/' + logo) : '/public/images/publish.png'} />
             </div>
 
             <div class={styles['toggle-icon']} onClick={this.toggleCollapsed.bind(this, undefined)}>

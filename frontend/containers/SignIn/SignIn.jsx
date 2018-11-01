@@ -99,14 +99,14 @@ class SignIn extends Component {
     let formDataIsValid = this.validate()
 
     return (
-      <div class={styles.wrapper} style={(enabled && backgroundImage) ? `background-image: url(${path}/${backgroundImage}` : ''}>
+      <div class={styles.wrapper} style={(enabled && backgroundImage) ? `background-image: url(/whitelabel/${backgroundImage}` : ''}>
         <div class={styles.overlay}>
           <div class={styles.container}>
             <form
               method="POST"
               onSubmit={this.handleSignIn.bind(this)}
             >
-            <img class={styles.logo} src={(enabled && logo) ? (path + '/' + logo) : './public/images/publish.png'} />
+            <img class={styles.logo} src={(enabled && logo) ? ('/whitelabel/' + logo) : '/public/images/publish.png'} />
 
               {this.getErrorBanner(state.user.remoteError)}
 
