@@ -271,11 +271,6 @@ module.exports = {
       format: String,
       default: 'logo.png'
     },
-    css: {
-      doc: 'The CSS URL',
-      format: String,
-      default: './overrides.css'
-    },
     poweredBy: {
       doc: 'Whether to include a "Powered by DADI Publish" section',
       format: Boolean,
