@@ -109,12 +109,12 @@ export default class RichEditor extends Component {
       onChange: this.handleChange.bind(this),
       actions: [
         {
-          'name': 'bold',
-          'icon': '<b>Bold</b>'
+          name: 'bold',
+          icon: '<b>Bold</b>'
         },
         {
-          'name': 'italic',
-          'icon': '<i>Italic</i>'
+          name: 'italic',
+          icon: '<i>Italic</i>'
         },
         {
           name: 'link',
@@ -123,8 +123,18 @@ export default class RichEditor extends Component {
             showLinkModal: true
           })
         },
-        'heading1',
-        'heading2',
+        {
+          name: 'heading1',
+          state: () => {
+            return window.getSelection().focusNode.parentNode.tagName === 'H1'
+          }
+        },
+        {
+          name: 'heading2',
+          state: () => {
+            return window.getSelection().focusNode.parentNode.tagName === 'H2'
+          }
+        },
         {
           name: 'quote',
           icon: '<span>“</span>'
