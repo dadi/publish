@@ -31,7 +31,6 @@ class DocumentPreview extends Component {
 
     try {
       const collectionFullName = `${collection.version}/${collection.database}/${collection.name}`
-      require(`workspace/preview/${collectionFullName}/index.js`)
       const previewHTML = window.renderPreviewTemplate(collectionFullName, document) || 
                       'No preview available'
       return <div dangerouslySetInnerHTML={{__html: previewHTML}} />

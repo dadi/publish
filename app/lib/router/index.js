@@ -15,9 +15,26 @@ const session = require('cookie-session')
  */
 const Router = function (server) {
   this.publicDir = path.resolve(__dirname, '../../../public')
+  this.templatePreviewDir = path.resolve(__dirname, '../../../workspace/preview')
   this.routesDir = path.join(__dirname, 'routes')
   this.server = server
   this.entryPointTemplate = fs.readFileSync(path.join(this.publicDir, 'index.html'), 'utf8')
+}
+
+const listFilesHelper = function (dir, files) {
+  files = files || []
+
+  fs.existsSync(dir) && fs.readdirSync(dir).forEach(file => {
+    const filePath = path.join(dir, file)
+
+    if (fs.statSync(filePath).isDirectory()) {
+      listFilesHelper(filePath, files)
+    } else {
+      files.push(filePath)
+    }
+  })
+
+  return files
 }
 
 /**
@@ -87,6 +104,11 @@ Router.prototype.webRoutes = function () {
         .buildCollectionRoutes()
         .then(documentRoutes => {
           if (documentRoutes) {
+            let templateRegistration = listFilesHelper(this.templatePreviewDir)
+                                        .filter(file => (file.substr(-'index.js'.length) === 'index.js'))
+                                        .map(file => fs.readFileSync(file))
+                                        .join('\n')
+
             entryPointPage = entryPointPage
               .replace(
                 '/*@@documentRoutes@@*/',
@@ -103,8 +125,13 @@ Router.prototype.webRoutes = function () {
                   window.previewTemplates[collection] = factoryFn
                 }
                 window.renderPreviewTemplate = function (collection, document) {
+                  window.previewTemplates = window.previewTemplates || {}
                   return window.previewTemplates[collection] && window.previewTemplates[collection](document)
                 }`
+              )
+              .replace(
+                '/*@@templatePreviewRegistration@@*/',
+                templateRegistration
               )
           }
 
