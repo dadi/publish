@@ -148,7 +148,7 @@ class SignIn extends Component {
 
               {poweredBy && (
                 <p class={styles['powered-by']}>
-                  Powered by <a href="https://dadi.cloud/en/publish/" target="_blank">DADI Publish</a>
+                  Powered by <a href="https://dadi.cloud/publish/" target="_blank">DADI Publish</a>
                 </p>
               )}
             </form>
