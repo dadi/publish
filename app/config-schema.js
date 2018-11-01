@@ -142,6 +142,7 @@ module.exports = {
     }
   },
   server: {
+    requireAuthentication: false,
     host: {
       doc: 'The IP address or interface to bind to',
       format: 'ipaddress',
