@@ -54,6 +54,7 @@
   background: #fafafa;
   text-align: center;
   overflow: scroll;
+  -webkit-overflow-scrolling: touch;
 }
 
 .wrapper-mode-fullscreen .editor,
