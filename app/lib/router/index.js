@@ -70,7 +70,7 @@ Router.prototype.webRoutes = function () {
 
   // The user public folder
   if (config.get('whitelabel.enabled')) {
-    this.server.get('/whitelabel/*', restify.plugins.serveStatic({
+    this.server.get('/_user/*', restify.plugins.serveStatic({
       appendRequestPath: false,
       directory: path.resolve(config.get('whitelabel.path'))
     }))

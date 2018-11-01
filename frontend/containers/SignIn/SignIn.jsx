@@ -99,14 +99,14 @@ class SignIn extends Component {
     let formDataIsValid = this.validate()
 
     return (
-      <div class={styles.wrapper} style={(enabled && backgroundImage) ? `background-image: url(/whitelabel/${backgroundImage}` : ''}>
+      <div class={styles.wrapper} style={(enabled && backgroundImage) ? `background-image: url(/_user/${backgroundImage}` : ''}>
         <div class={styles.overlay}>
           <div class={styles.container}>
             <form
               method="POST"
               onSubmit={this.handleSignIn.bind(this)}
             >
-            <img class={styles.logo} src={(enabled && logo) ? ('/whitelabel/' + logo) : '/public/images/publish.png'} />
+            <img class={styles.logo} src={(enabled && logo) ? ('/_user/' + logo) : '/public/images/publish.png'} />
 
               {this.getErrorBanner(state.user.remoteError)}
 
@@ -148,7 +148,10 @@ class SignIn extends Component {
 
               {poweredBy && (
                 <p class={styles['powered-by']}>
-                  Powered by <a href="https://dadi.cloud/publish/" target="_blank">DADI Publish</a>
+                  <span>Powered by</span>
+                  <a href="https://dadi.cloud/publish/" target="_blank">
+                    <img src="/public/images/publish.png" height="25" />
+                  </a>
                 </p>
               )}
             </form>

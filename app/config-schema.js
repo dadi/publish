@@ -259,7 +259,7 @@ module.exports = {
     path: {
       doc: 'Where user whitelabel assets are served from',
       format: String,
-      default: './whitelabel'
+      default: './workspace/public'
     },
     backgroundImage: {
       doc: 'The background image URL',
