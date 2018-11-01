@@ -250,14 +250,13 @@ export default class FieldStringEdit extends Component {
     const dropdownStyle = new Style(styles, 'dropdown')
       .addIf('dropdown-error', error)
       .addIf('dropdown-multiple', multiple)
-    comment = comment || (required && 'Required')
 
     return (
       <Label
         error={error}
         errorMessage={typeof error === 'string' ? error : null}
         label={displayName}
-        comment={comment}
+        comment={comment || (required && 'Required') || (readOnly && 'Read only')}
       >
         <select
           class={dropdownStyle.getClasses()}
@@ -320,7 +319,7 @@ export default class FieldStringEdit extends Component {
         errorMessage={typeof error === 'string' ? error : null}
         hasFocus={hasFocus}
         label={displayName}
-        comment={comment || (required && 'Required')}
+        comment={comment || (required && 'Required') || (readOnly && 'Read only')}
       >
         <TextInput
           heightType={heightType}
