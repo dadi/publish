@@ -356,11 +356,6 @@ export default class RichEditor extends Component {
     const outerWrapper = new Style(styles, 'outer-wrapper')
       .addIf('wrapper-mode-fullscreen', inFullscreenMode)
 
-    // Prevent the body scrolling behind the overlay
-    if (inFullscreenMode) {
-      document.body.style.overflow = 'hidden'
-    }
-
     const editorText = new Style(styles, 'editor', 'editor-text', 'content-height')
 
     return (
