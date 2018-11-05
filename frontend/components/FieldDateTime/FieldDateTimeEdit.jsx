@@ -123,6 +123,7 @@ export default class FieldDateTimeEdit extends Component {
       config,
       displayName,
       error, 
+      name,
       required,
       schema, 
       value
@@ -130,7 +131,6 @@ export default class FieldDateTimeEdit extends Component {
     const {hasFocus} = this.state
     const {pickerVisible} = this.state
     const publishBlock = schema.publish || {}
-    comment = comment || (required && 'Required')
 
     let dateObj = null
 
@@ -148,9 +148,10 @@ export default class FieldDateTimeEdit extends Component {
         errorMessage={typeof error === 'string' ? error : null}
         hasFocus={hasFocus}
         label={displayName}
-        comment={comment}
+        comment={comment || (required && 'Required') || (publishBlock.readonly && 'Read only')}
       >
         <TextInput
+          name={name}
           onBlur={this.handleFocus.bind(this, false)}
           onChange={this.handleChange.bind(this)}
           onFocus={this.handleFocus.bind(this, true)}

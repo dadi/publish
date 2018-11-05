@@ -50,7 +50,7 @@ class App extends Component {
         .registerStatusChangeCallback(actions.setNetworkStatus)
     }
 
-    if (!this.analytics && conf.ga.enabled) {
+    if (!this.analytics && conf.ga && conf.ga.enabled) {
       this.analytics = new Analytics()
         .register(conf.ga.trackingId)
         .pageview(state.router.locationBeforeTransitions.pathname)

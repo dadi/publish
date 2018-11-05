@@ -295,7 +295,19 @@ class DocumentList extends Component {
     let fieldSchema = collection.fields[column.id]
     let renderedValue = this.renderField(column.id, fieldSchema, value)
 
-    if (index === 0) {
+    const listableFields = filterVisibleFields({
+      fields: collection.fields,
+      view: 'list'
+    })
+
+    let firstStringField = Object.keys(listableFields).filter(field => {
+      return listableFields[field].type === 'String'
+    })[0]
+
+    if (
+      (firstStringField && firstStringField === column.id) || 
+      (!firstStringField && index === 0)
+    ) {
       return (
         <a href={editLink}>{renderedValue}</a>
       )
@@ -476,7 +488,7 @@ class DocumentList extends Component {
         return {
           annotation: this.renderAnnotation(collection.fields[field]),
           id: field,
-          label: collection.fields[field].label
+          label: collection.fields[field].label || field
         }
       })
 

@@ -151,6 +151,7 @@ export default class FieldReferenceEdit extends Component {
     return (
       <Label
         label={displayName}
+        comment={isReadOnly && 'Read only'}
       >
         {value && (
           <div class={styles['value-container']}>
@@ -199,7 +200,11 @@ export default class FieldReferenceEdit extends Component {
         )}
 
         {!value && isReadOnly && (
-          <span>None</span>
+          <div class={styles['value-container']}>
+            <span class={styles.value}>
+              None
+            </span>
+          </div>
         )}
       </Label>
     )

@@ -99,7 +99,13 @@ export default class FieldBooleanEdit extends Component {
   }
 
   render() {
-    const {displayName, onChange, value, schema} = this.props
+    const {
+      displayName,
+      name,
+      onChange,
+      schema,
+      value
+    } = this.props
 
     const publishBlock = schema.publish || {}
     const readOnly = publishBlock.readonly === true
@@ -110,6 +116,7 @@ export default class FieldBooleanEdit extends Component {
         label={displayName}
       >
         <Checkbox
+          name={name}
           onChange={this.handleOnChange.bind(this)}
           value={value}
           readonly={readOnly}

@@ -33,7 +33,7 @@ export default class FieldMediaItem extends Component {
 
     if (!value) return null
 
-    // File location on disk
+    // File location url
     let src = value._previewData ? value._previewData : value.url || value.path
 
     // Filename without extension
@@ -47,14 +47,17 @@ export default class FieldMediaItem extends Component {
     )
 
     // Render an image document.
+    let cdnThumb = false
+
     if (value.mimetype && value.mimetype.indexOf('image') > -1) {
       if (value.path && cdn && cdn.publicUrl) {
-        src = `${cdn.publicUrl}/${value.path}?width=80`
+        src = `${cdn.publicUrl}/${value.path}`
+        cdnThumb = src + '?width=80'
       }
 
       icon = (
         <div class={styles.image}>
-          <img src={src} />
+          <img src={cdnThumb || src} />
         </div>
       )
     }
