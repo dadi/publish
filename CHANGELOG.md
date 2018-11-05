@@ -4,6 +4,57 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [1.0.14-beta] (2018-11-05)
+
+### Added
+
+#### "Linkable" fields
+
+Linkable fields allow you to use the value of a field to create links to external resources in the Publish interface.
+An example use case for this is a Twitter username. By specifying a `display.link` property, Publish creates a full
+link for display, using the value of the field in place of the `{value}` placeholder.
+
+**Example API schema**
+```json
+"twitter": {
+  "type": "String",
+  "label": "Twitter",
+  "publish": {
+    "section": "Details",
+    "display": {
+      "edit": true,
+      "list": true,
+      "link": "https://twitter.com/{value}"
+    }
+  }
+}
+```
+
+If the value of your field is already a fully formed URL, set the `link` property to `true` to have Publish create a clickable link:
+
+```json
+"twitter": {
+  "type": "String",
+  "label": "Twitter",
+  "publish": {
+    "section": "Details",
+    "display": {
+      "edit": true,
+      "list": true,
+      "link": true
+    }
+  }
+}
+```
+
+### Changed
+
+* [#559](https://github.com/dadi/publish/pull/559): This PR addresses a small issue if you set a Reference field or Media field as the first displayed field in your API schema you are unable to click through from the list view (both those fields override the link).
+* [#562](https://github.com/dadi/publish/pull/562): adds a basic fullscreen mode for the rich editor
+* [#565](https://github.com/dadi/publish/issues/565): use field name as label in columns when no label specified
+* [#568](https://github.com/dadi/publish/pull/568): disable autocomplete in input elements
+
+
 ## [1.0.13-beta] (2018-10-25)
 
 In this release, Publish gets a UI refresh. Additional changes linked below.
