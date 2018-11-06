@@ -25,7 +25,9 @@ class DocumentEditView extends Component {
 
     return (
       <Page>
-        <Header/>
+        <Header
+          currentCollection={currentCollection}
+        />
 
         <DocumentEditToolbar
           api={currentApi}

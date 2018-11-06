@@ -23,6 +23,11 @@ class Header extends Component {
     actions: proptypes.object,
 
     /**
+     * The schema of the collection being edited.
+     */
+    currentCollection: proptypes.object,
+
+    /**
      * The global state object.
      */
     state: proptypes.object
@@ -35,9 +40,8 @@ class Header extends Component {
   }
 
   render() {
-    const {state} = this.props
+    const {currentCollection, state} = this.props
     const compact = state.app.breakpoint === null
-    const {currentCollection} = state.api
 
     const {
       whitelabel: {logo, poweredBy, backgroundImage}

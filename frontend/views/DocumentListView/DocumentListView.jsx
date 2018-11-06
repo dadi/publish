@@ -11,6 +11,7 @@ import styles from './DocumentListView.css'
 import DocumentList from 'containers/DocumentList/DocumentList'
 import DocumentListController from 'containers/DocumentListController/DocumentListController'
 import DocumentListToolbar from 'containers/DocumentListToolbar/DocumentListToolbar'
+import DocumentTableList from 'components/DocumentTableList/DocumentTableList'
 import Header from 'containers/Header/Header'
 import Main from 'components/Main/Main'
 import Page from 'components/Page/Page'
@@ -45,7 +46,9 @@ class DocumentListView extends Component {
             documentId={documentId}
             referencedField={referencedField}
           /> : 
-          <Header/>
+          <Header
+            currentCollection={currentCollection}
+          />
         }
 
         <Main>
@@ -67,7 +70,10 @@ class DocumentListView extends Component {
               documentId={documentId}
               filter={filter}
               onBuildBaseUrl={this.handleBuildBaseUrl.bind(this)}
-              onPageTitle={this.handlePageTitle}
+              onPageTitle={setPageTitle}
+              onRenderDocuments={props => (
+                <DocumentTableList {...props} />
+              )}
               order={order}
               page={page}
               referencedField={referencedField}
@@ -126,17 +132,6 @@ class DocumentListView extends Component {
     }
 
     return `/${url}`
-  }
-
-  handlePageTitle (title) {
-    // We could have containers calling `setPageTitle()` directly, but it should
-    // be up to the views to control the page title, otherwise we'd risk having
-    // multiple containers wanting to set their own titles. Instead, containers
-    // have a `onPageTitle` callback that they fire whenever they want to set
-    // the title of the page. It's then up to the parent view to decide which
-    // of those callbacks will set the title.
-
-    setPageTitle(title)
   }
 }
 
