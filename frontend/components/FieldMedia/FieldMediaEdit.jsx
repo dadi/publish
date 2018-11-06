@@ -126,10 +126,6 @@ export default class FieldMediaEdit extends Component {
     } = this.props
 
     let acceptedMimeTypes = schema.validation && schema.validation.mimeTypes || ['*/*']
-    if (!Array.isArray(acceptedMimeTypes)) {
-      acceptedMimeTypes = [acceptedMimeTypes]
-    }
-
     let fieldLocalType = schema.publish && schema.publish.subType ? schema.publish.subType : schema.type
     let href = onBuildBaseUrl ?  onBuildBaseUrl({
       createNew: !Boolean(documentId),
@@ -140,15 +136,6 @@ export default class FieldMediaEdit extends Component {
     const isReference = schema.type === 'Reference'
     const singleFile = schema.settings && schema.settings.limit === 1
     const values = (value && !Array.isArray(value)) ? [value] : value
-
-    // Extend the reference select URL to include a mimetype filter,
-    // if the accepted mime types doesn't includ the ALL filter (*/*)
-    if (
-      ['image', 'media'].includes(fieldLocalType.toLowerCase())
-      && !acceptedMimeTypes.includes('*/*')
-    ) {
-      href += `?filter={"mimetype":{"$in":${JSON.stringify(acceptedMimeTypes)}}}`
-    }
 
     return (
       <Label label={displayName} className={styles.label}>

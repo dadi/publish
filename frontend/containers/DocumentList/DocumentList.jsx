@@ -457,11 +457,38 @@ class DocumentList extends Component {
         selectLimit = fieldSchema.settings.limit
       }
 
+      let filteredDocuments = documents.filter(document => {
+        if (fieldSchema.validation && fieldSchema.validation.mimeTypes) {
+          let acceptedMimeTypes = fieldSchema.validation.mimeTypes
+          
+          if (!Array.isArray(acceptedMimeTypes)) {
+            acceptedMimeTypes = [acceptedMimeTypes]
+          }
+   
+          // Include the document if validation specifies the ALL filter.
+          if (acceptedMimeTypes.includes('*/*')) {
+            return document
+          }
+
+          // Exclude the document if it has a mimetype other than
+          // those explicitly allowed.
+          if (
+            !acceptedMimeTypes.includes(document.mimeType)
+            && !acceptedMimeTypes.includes(document.mimetype)
+          ) {
+            return false
+          }
+        }
+    
+        return document
+      })
+  
+
       if (FieldComponentReferenceSelect) {
         return (
           <FieldComponentReferenceSelect
             config={config}
-            data={documents}
+            data={filteredDocuments}
             onSelect={this.handleRowSelect.bind(this)}
             onSort={this.handleTableSort.bind(this)}
             selectedRows={selectedRows}
