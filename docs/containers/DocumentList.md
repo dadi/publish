@@ -81,9 +81,28 @@ The number of the current active page.
 
 ### `referencedField`
 
-The name of a reference field currently being edited.
+The name of a reference field currently being edited (if any).
 
 - type: `string`
+
+
+### `renderDocuments`
+
+A function responsible for rendering the documents. It is called with the
+following named parameters:
+
+- collection
+- config
+- documentId
+- documents
+- onBuildBaseUrl
+- onSelect
+- order
+- referencedField
+- selectedDocuments
+- sort
+
+- type: `func`
 
 
 ### `sort`
