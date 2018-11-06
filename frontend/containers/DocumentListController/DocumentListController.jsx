@@ -86,8 +86,9 @@ class DocumentListController extends Component {
       state.documents.list.results.length > 0
     const params = state.router.search
     const filters = params && params.filter ? params.filter : null
-    const filterLimitReached = filters 
-      && collection 
+    const filterLimitReached = filters
+      && collection
+      && collection.fields 
       && Object.keys(filters).length === Object.keys(collection.fields).length
     const newHref = onBuildBaseUrl({
       createNew: true

@@ -125,9 +125,13 @@ export default class FieldMediaEdit extends Component {
       value
     } = this.props
 
-    const acceptedMimeTypes = schema.validation && schema.validation.mimeTypes || ['*/*']
-    const fieldLocalType = schema.publish && schema.publish.subType ? schema.publish.subType : schema.type
-    const href = onBuildBaseUrl ?  onBuildBaseUrl({
+    let acceptedMimeTypes = schema.validation && schema.validation.mimeTypes || ['*/*']
+    if (!Array.isArray(acceptedMimeTypes)) {
+      acceptedMimeTypes = [acceptedMimeTypes]
+    }
+
+    let fieldLocalType = schema.publish && schema.publish.subType ? schema.publish.subType : schema.type
+    let href = onBuildBaseUrl ?  onBuildBaseUrl({
       createNew: !Boolean(documentId),
       documentId,
       referenceFieldSelect: name
@@ -137,6 +141,14 @@ export default class FieldMediaEdit extends Component {
     const singleFile = schema.settings && schema.settings.limit === 1
     const values = (value && !Array.isArray(value)) ? [value] : value
 
+    // Extend the reference select URL to include a mimetype filter,
+    // if the accepted mime types doesn't includ the ALL filter (*/*)
+    if (
+      ['image', 'media'].includes(fieldLocalType.toLowerCase())
+      && !acceptedMimeTypes.includes('*/*')
+    ) {
+      href += `?filter={"mimetype":{"$in":${JSON.stringify(acceptedMimeTypes)}}}`
+    }
 
     return (
       <Label label={displayName} className={styles.label}>
@@ -149,7 +161,7 @@ export default class FieldMediaEdit extends Component {
                       config={config}
                       value={value}
                     />
-                    <span class={styles['file-size']}>{fileSize(value.contentLength).human('si') || ''}</span>
+                    <span class={styles['file-size']}>{fileSize(value.contentLength, { fixed: value.contentLength > 1000000 ? 2 : 0 }).human('si') || ''}</span>
                     <span class={styles['file-ext']}>{value.fileName.split('.').pop()}</span>
                     <Button
                       accent="destruct"

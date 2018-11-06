@@ -5,6 +5,8 @@ import proptypes from 'proptypes'
 
 import {debounce} from 'lib/util'
 
+import FieldMediaItem from './FieldMediaItem'
+
 import Style from 'lib/Style'
 import styles from './FieldMediaReferenceSelect.css'
 
@@ -72,8 +74,8 @@ export default class FieldMediaReferenceSelect extends Component {
   }
 
   render() {
-    const data = this.props.data || []
-    const numberOfColumns = this.getNumberOfColumns()
+    let data = this.props.data || []
+    let numberOfColumns = this.getNumberOfColumns()
 
     let columns = Array.apply(null, {length: numberOfColumns}).map(i => [])
 
@@ -138,30 +140,9 @@ export default class FieldMediaReferenceSelect extends Component {
     }
   }
 
-  getImageSrc(value) {
-    const {config} = this.props
-    const cdn = config ? config.cdn : null
-
-    if (!value) return null
-
-    if (value._previewData) return value._previewData
-
-    if (value.url) return value.url
-
-    if (value.path) {
-      if (
-        cdn &&
-        cdn.publicUrl
-      ) {
-        return `${cdn.publicUrl}/${value.path}`
-      } else {
-        return value.path
-      }
-    }
-  }
-
   renderItem(item, index) {
     const {
+      config,
       selectedRows,
       selectLimit
     } = this.props
@@ -183,9 +164,12 @@ export default class FieldMediaReferenceSelect extends Component {
 
         <div
           class={styles['item-image-holder']}
-          style={`padding-bottom: ${aspectRatio}%`}
+          style={`padding-bottom: ${aspectRatio || 100}%`}
         >
-          <img class={styles['item-image']} src={this.getImageSrc(item)}/>
+          <FieldMediaItem
+            config={config}
+            value={item}
+          />
         </div>
 
         <div class={styles['item-overlay']}>
@@ -194,8 +178,8 @@ export default class FieldMediaReferenceSelect extends Component {
 
         <div class={styles['item-info']}>
           <div>
-            <span class={styles['item-size']}>{fileSize(item.contentLength).human('si')}</span>,<br/>
-            <span class={styles['item-dimensions']}>{item.width}x{item.height}</span>
+            <span class={styles['item-size']}>{fileSize(item.contentLength, { fixed: item.contentLength > 1000000 ? 2 : 0 }).human('si')}</span>
+            <span class={styles['item-dimensions']}>{item.width ? `, ${item.width}x${item.height}` : ''}</span>
           </div>
           <div>
             <span class={styles['item-mimetype']}>{item.mimetype}</span>
