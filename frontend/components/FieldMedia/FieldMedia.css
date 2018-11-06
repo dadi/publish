@@ -13,10 +13,12 @@
   margin-top: 5px;
   border-radius: 5px 5px 0 0;
 }
+
 .values .value:last-child {
   border-radius: 0 0 5px 5px;
   margin-bottom: 10px;
 }
+
 .values .value:first-child:last-child {
   margin-bottom: 10px;
   border-radius: 5px;
@@ -48,6 +50,7 @@
   margin: -7px 0;
   min-width: 35px;
 }
+
 .image img {
   max-width: 100%;
   max-height: 100%;
@@ -63,12 +66,15 @@
   display: inline-block;
   vertical-align: middle;
 }
+
 .file-list {
   margin-right: 10px;
 }
+
 .file img {
   display: block;
 }
+
 .ext {
   font-size: 9px;
   text-transform: uppercase;
@@ -82,7 +88,6 @@
   font-weight: bold;
 }
 
-
 .file-name {
   margin-left: 10px;
   color: #000;
@@ -93,15 +98,18 @@
   text-overflow: ellipsis;
   min-width: 0;
 }
+
 .value:hover .file-name {
   border-bottom-color: var(--theme-colour-data,#4a91ff);
 }
+
 .file-ext {
   font-size: 13px;
   margin-left: 5px;
   text-transform: uppercase;
   color: var(--theme-colour-background-shade-2);
 }
+
 .file-size {
   font-size: 13px;
   margin-left: 9px;
@@ -117,9 +125,11 @@
   position: relative;
   margin-left: 8px;
 }
+
 .remove-existing:hover {
   background-color: var(--theme-colour-error);
 }
+
 .remove-existing span {
   position: absolute;
   top: 9px; left: 0; right: 0;
@@ -130,6 +140,7 @@
   padding-top: 10px;
   text-align: center;
 }
+
 .placeholder a {
   width: 100%;
 }
@@ -153,7 +164,5 @@
 }
 
 .upload-select {
-  margin-top: 10px;
-  margin-bottom: 3px;
-  text-align: center;
+  width: 100%;
 }
