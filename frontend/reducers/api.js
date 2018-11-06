@@ -11,19 +11,11 @@ export const initialState = {
   currentParentCollection: undefined,
   error: undefined,
   isLoading: false,
-  paths: window.__documentRoutes__,
   remoteError: null
 }
 
 export default function api (state = initialState, action = {}) {
   switch (action.type) {
-
-    // App action: authenticate
-    case Types.AUTHENTICATE:
-      return {
-        ...state,
-        paths: action.routes
-      }
 
     // Action: set API list
     case Types.SET_API_LIST:

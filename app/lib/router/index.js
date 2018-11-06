@@ -1,4 +1,3 @@
-const Collection = require(`${paths.lib.models}/collection`)
 const config = require(paths.config)
 const cookieParser = require('restify-cookies')
 const flash = require('connect-flash')
@@ -83,51 +82,37 @@ Router.prototype.webRoutes = function () {
     let authenticate = Promise.resolve()
 
     if (accessToken) {
-      authenticate = new Collection({accessToken})
-        .buildCollectionRoutes()
-        .then(documentRoutes => {
-          if (documentRoutes) {
-            entryPointPage = entryPointPage
-              .replace(
-                '/*@@documentRoutes@@*/',
-                `window.__documentRoutes__ = ${JSON.stringify(documentRoutes)};`
-              )
-              .replace(
-                '/*@@config@@*/',
-                `window.__config__ = ${config.toString()};`
-              )
-          }
+      let api = config.get('apis.0')
 
-          let api = config.get('apis.0')
+      authenticate = request({
+        headers: {
+          Authorization: `Bearer ${accessToken}`
+        },
+        json: true,
+        uri: `${api.host}:${api.port}/api/client`
+      }).then(({results}) => {
+        entryPointPage = entryPointPage
+          .replace(
+            '/*@@config@@*/',
+            `window.__config__ = ${config.toString()};`
+          )
+          .replace(
+            '/*@@client@@*/',
+            `window.__client__ = ${JSON.stringify(results[0])};`
+          )
+      }).catch(error => {
+        log.error({module: 'router'}, error)
 
-          return request({
-            headers: {
-              Authorization: `Bearer ${accessToken}`
-            },
-            json: true,
-            uri: `${api.host}:${api.port}/api/client`
-          })
-        })
-        .then(({results}) => {
-          entryPointPage = entryPointPage
-            .replace(
-              '/*@@client@@*/',
-              `window.__client__ = ${JSON.stringify(results[0])};`
-            )
-        })
-        .catch(e => {
-          log.error({module: 'router'}, `buildCollectionRoutes failed: ${JSON.stringify(e)}`)
-
-          entryPointPage = entryPointPage
-            .replace(
-              '/*@@apiError@@*/',
-              `window.__apiError__ = ${JSON.stringify(e)};`
-            )
-            .replace(
-              '/*@@config@@*/',
-              `window.__config__ = ${JSON.stringify(config.getUnauthenticatedConfig())};`
-            )
-        })
+        entryPointPage = entryPointPage
+          .replace(
+            '/*@@apiError@@*/',
+            `window.__apiError__ = ${JSON.stringify(error)};`
+          )
+          .replace(
+            '/*@@config@@*/',
+            `window.__config__ = ${JSON.stringify(config.getUnauthenticatedConfig())};`
+          )
+      })
     } else {
       entryPointPage = entryPointPage
         .replace(
