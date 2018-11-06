@@ -307,7 +307,7 @@ function getCollectionForParameters ({
     if (referencedCollection) {
       // Is this field referencing a media collection?
       if (referencedCollection === Constants.MEDIA_COLLECTION) {
-        collectionMatch = Constants.MEDIA_COLLECTION
+        collectionMatch = Constants.MEDIA_COLLECTION_SCHEMA
       } else {
         collectionMatch = api.collections.find(collection => {
           return collection.slug === referencedCollection

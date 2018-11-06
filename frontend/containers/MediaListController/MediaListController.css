@@ -1,0 +1,15 @@
+.wrapper {
+  align-items: center;
+  display: flex;
+  font-family: var(--theme-font-family, sans-serif);
+  justify-content: center;
+  margin: 30px 0;
+}
+
+.wrapper > * + * {
+  margin-left: 10px;
+}
+
+.separator {
+  color: var(--theme-colour-primary-shade-1, #777777);
+}
