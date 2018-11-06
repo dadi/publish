@@ -61,6 +61,11 @@
   margin-right: 20px;
 }
 
+.item-info {
+  font-size: 13px;
+  padding: 11px 15px;
+}
+
 .item-selected .item-info {
   background-color: #475160;
   color: var(--theme-colour-secondary, #FFFFFF);
