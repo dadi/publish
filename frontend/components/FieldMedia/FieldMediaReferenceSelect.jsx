@@ -58,20 +58,6 @@ export default class FieldMediaReferenceSelect extends Component {
     sortOrder: proptypes.oneOf(['asc', 'desc'])
   }
 
-  constructor(props) {
-    super(props)
-
-    this.debouncedResizeHandler = debounce(this.forceUpdate.bind(this), 500)
-  }
-
-  componentDidMount() {
-    window.addEventListener('resize', this.debouncedResizeHandler)
-  }
-
-  componentWillUnmount() {
-    window.removeEventListener('resize', this.debouncedResizeHandler)
-  }
-
   render() {
     const {
       data,
@@ -82,8 +68,8 @@ export default class FieldMediaReferenceSelect extends Component {
 
     return (
       <DocumentGridList
-        items={data}
-        onRenderCard={item => {
+        documents={data}
+        onRenderCard={(item, onSelect, isSelected) => {
           let itemWithSrc = Object.assign(
             {},
             item,
@@ -91,11 +77,15 @@ export default class FieldMediaReferenceSelect extends Component {
           )
 
           return (
-            <MediaGridCard item={itemWithSrc} />
+            <MediaGridCard
+              item={itemWithSrc}
+              isSelected={isSelected}
+              onSelect={onSelect}
+            />
           )
         }}
         onSelect={onSelect}
-        selectedRows={selectedRows}
+        selectedDocuments={selectedRows}
         selectLimit={selectLimit}
       />
     )
@@ -116,7 +106,7 @@ export default class FieldMediaReferenceSelect extends Component {
         cdn &&
         cdn.publicUrl
       ) {
-        return `${cdn.publicUrl}/${value.path}`
+        return `${cdn.publicUrl}/${value.path}?width=500`
       } else {
         return value.path
       }

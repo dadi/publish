@@ -46,16 +46,25 @@ class MediaListView extends Component {
   }
 
   handleRenderDocument(documentProps) {
+    const {state} = this.props
+    const {config} = state.app
+
     return (
       <DocumentGridList
         {...documentProps}
-        onRenderCard={(item, onSelect, isSelected) => (
-          <MediaGridCard
-            item={item}
-            isSelected={isSelected}
-            onSelect={onSelect}
-          />
-        )}
+        onRenderCard={(item, onSelect, isSelected) => {
+          if (config.cdn && config.cdn.publicUrl) {
+            item.url = `${cdn.publicUrl}/${item.url}?width=500`
+          }
+
+          return (
+            <MediaGridCard
+              item={item}
+              isSelected={isSelected}
+              onSelect={onSelect}
+            />
+          )
+        }}
       />
     )
   }
@@ -116,6 +125,7 @@ class MediaListView extends Component {
 export default connectHelper(
   state => ({
     api: state.api,
+    app: state.app,
     user: state.user
   }),
   dispatch => bindActionCreators({

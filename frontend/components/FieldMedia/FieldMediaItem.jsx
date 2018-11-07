@@ -23,11 +23,7 @@ export default class FieldMediaItem extends Component {
     value: proptypes.object
   }
 
-  constructor(props) {
-    super(props)
-  }
-
-  getSource () {
+  getSource() {
     const {config, isList, value} = this.props
     const cdn = config ? config.cdn : null
 
@@ -46,10 +42,13 @@ export default class FieldMediaItem extends Component {
       </div>
     )
 
+    // For backwards compatibility.
+    let mimeType = value.mimeType || value.mimetype
+
     // Render an image document.
     let cdnThumb = false
 
-    if (value.mimetype && value.mimetype.indexOf('image') > -1) {
+    if (mimeType && mimeType.indexOf('image/') === 0) {
       if (value.path && cdn && cdn.publicUrl) {
         src = `${cdn.publicUrl}/${value.path}`
         cdnThumb = src + '?width=80'
