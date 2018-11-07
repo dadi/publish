@@ -34,6 +34,46 @@ export function deleteDocuments ({api, collection, ids}) {
   }
 }
 
+export function deleteMedia ({api, ids}) {
+  return (dispatch, getState) => {
+    dispatch(
+      setDocumentListStatus(Constants.STATUS_DELETING, ids.length)
+    )
+
+    let bearerToken = getState().user.accessToken
+    let url = `${api.host}:${api.port}/media`
+    let body = JSON.stringify({
+      query: {
+        _id: {
+          $in: ids
+        }
+      }
+    })
+
+    fetch(url, {
+      body,
+      headers: {
+        Authorization: `Bearer ${bearerToken}`,
+        'Content-Type': 'application/json',
+      },
+      method: 'DELETE'
+    }).then(response => {
+      if (response.ok) {
+        dispatch(
+          setDocumentListStatus(Constants.STATUS_IDLE)
+        )
+      }
+
+      return Promise.reject(response)
+    })
+    .catch(error => {
+      dispatch(
+        setDocumentListStatus(Constants.STATUS_FAILED, error)
+      )
+    })
+  }
+}
+
 export function fetchDocuments ({
   api,
   collection,

@@ -55,6 +55,12 @@ class DocumentListToolbar extends Component {
     onBuildBaseUrl: proptypes.func,
 
     /**
+    * A callback to be called when the user has chosen to delete a selection
+    * of documents. An array of document IDs will be sent as a parameter.
+    */
+    onDelete: proptypes.func,
+
+    /**
      * The name of a reference field currently being edited.
      */
     referencedField: proptypes.string,
@@ -199,6 +205,7 @@ class DocumentListToolbar extends Component {
   }
 
   handleBulkActionApply(actionType) {
+    const {onDelete} = this.props
     const {bulkActionSelected} = this.state
     const validBulkActionSelected = bulkActionSelected &&
       (bulkActionSelected !== this.BULK_ACTIONS_PLACEHOLDER)
@@ -213,12 +220,8 @@ class DocumentListToolbar extends Component {
       state
     } = this.props
 
-    if (bulkActionSelected === 'delete') {
-      actions.deleteDocuments({
-        api,
-        collection,
-        ids: state.documents.selected
-      })
+    if (bulkActionSelected === 'delete' && typeof onDelete === 'function') {
+      onDelete(state.documents.selected)
     }
   }
 
