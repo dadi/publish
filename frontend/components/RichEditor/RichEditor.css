@@ -282,6 +282,10 @@
   list-style-position: inside;  
 }
 
+.editor-wysiwyg [data-publish-link-edit] {
+  background-color: highlight;
+}
+
 .editor .code,
 .editor code {
   font-family: 'Roboto Mono', monospace;
