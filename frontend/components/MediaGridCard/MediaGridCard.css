@@ -21,6 +21,7 @@
 }
 
 .image-holder {
+  background-color: #ddd;
   position: relative;
   height: 0;
   overflow: hidden;
@@ -45,24 +46,16 @@
   position: absolute;
   z-index: 1;
   top: 10px;
-  right: 10px;
-}
-
-.overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  background: rgba(0, 0, 0, 0.8);
-  background: linear-gradient(-180deg, rgba(0, 0, 0, 0.8), transparent);
-  text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.2);
-  color: var(--theme-colour-secondary, #FFFFFF);
-  padding: 10px 15px 30px;
+  left: 10px;
 }
 
 .filename {
-  word-wrap: break-word;
-  margin-right: 20px;
+  white-space: nowrap;
+  width: 100%;
+  text-overflow: ellipsis;
+  border-bottom: 1px solid #eaeaea;
+  padding-bottom: 5px;
+  margin-bottom: 5px;
 }
 
 .metadata {
@@ -71,6 +64,7 @@
   justify-content: space-between;  
   font-size: 13px;
   padding: 11px 15px;
+  flex-wrap: wrap;
 }
 
 .wrapper-selected .metadata {

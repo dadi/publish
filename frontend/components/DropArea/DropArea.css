@@ -1,8 +1,10 @@
 .droparea {
-  border: 1px solid transparent;
+  margin: 10px;
+  border: 1px solid #eaeaea;
   border-radius: 2px;
   position: relative;
-  width: 100%;
+  border-radius: 5px;
+  background: #fdfdfd;
 }
 
 .droparea-active {

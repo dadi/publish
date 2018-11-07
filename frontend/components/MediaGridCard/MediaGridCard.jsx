@@ -81,11 +81,8 @@ export default class MediaCard extends Component {
           {this.renderHead({isImage})}
         </div>
 
-        <div class={styles.overlay}>
-          <p class={styles.filename}>{item.fileName}</p>
-        </div>
-
         <div class={styles.metadata}>
+          <p class={styles.filename}>{item.fileName}</p>
           <div>
             <span class={styles.size}>{fileSize(item.contentLength, { fixed: item.contentLength > 1000000 ? 2 : 0 }).human('si')}</span>
             {isImage && (
