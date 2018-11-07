@@ -18,9 +18,7 @@ import {createRoute} from 'lib/router'
 import {filterVisibleFields} from 'lib/fields'
 import {connectHelper} from 'lib/util'
 
-import Button from 'components/Button/Button'
 import ErrorMessage from 'components/ErrorMessage/ErrorMessage'
-import HeroMessage from 'components/HeroMessage/HeroMessage'
 import SpinningWheel from 'components/SpinningWheel/SpinningWheel'
 import SyncTable from 'components/SyncTable/SyncTable'
 
@@ -72,16 +70,6 @@ class DocumentList extends Component {
     onPageTitle: proptypes.func,
 
     /**
-     * The order used to sort the documents by the `sort` field.
-     */
-    order: proptypes.oneOf(['asc', 'desc']),
-
-    /**
-     * The number of the current active page.
-     */
-    page: proptypes.number,
-
-    /**
      * A function responsible for rendering the documents. It is called with the
      * following named parameters:
      *
@@ -96,7 +84,22 @@ class DocumentList extends Component {
      * - selectedDocuments
      * - sort
      */
-    renderDocuments: proptypes.func,
+    onRenderDocuments: proptypes.func,
+
+    /**
+     * A function responsible for rendering an empty list of documents.
+     */
+    onRenderEmptyDocumentList: proptypes.func,
+
+    /**
+     * The order used to sort the documents by the `sort` field.
+     */
+    order: proptypes.oneOf(['asc', 'desc']),
+
+    /**
+     * The number of the current active page.
+     */
+    page: proptypes.number,
 
     /**
      * The name of a reference field currently being edited (if any).
@@ -299,6 +302,7 @@ class DocumentList extends Component {
       onBuildBaseUrl,
       onPageTitle,
       onRenderDocuments,
+      onRenderEmptyDocumentList,
       order,
       referencedField,
       sort,
@@ -306,10 +310,7 @@ class DocumentList extends Component {
     } = this.props
     const config = state.app.config
     const documents = state.documents
-    const createLink = onBuildBaseUrl({
-      createNew: true
-    })
-
+    
     if (state.api.isLoading || documents.isLoading) {
       return (
         <SpinningWheel/>
@@ -347,33 +348,11 @@ class DocumentList extends Component {
     const items = documents.list.results
 
     if (items.length === 0) {
-      if (document.query) {
-        return (
-          <HeroMessage
-            title="No documents found."
-            subtitle="We can't find anything matching those filters."
-          >
-            <Button
-              accent="system"
-              href={onBuildBaseUrl()}
-            >Clear filters</Button>
-          </HeroMessage>
-        )        
+      if (typeof onRenderEmptyDocumentList !== 'function') {
+        return null
       }
 
-      return (
-        <HeroMessage
-          title="No documents yet."
-          subtitle="Once created, they will appear here."
-        >
-          {!referencedField && (
-            <Button
-              accent="save"
-              href={createLink}
-            >Create new document</Button>
-          )}
-        </HeroMessage>
-      )
+      return onRenderEmptyDocumentList()
     }
 
     if (typeof onRenderDocuments !== 'function') {

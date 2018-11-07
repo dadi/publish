@@ -5,10 +5,13 @@ import {connectHelper, setPageTitle} from 'lib/util'
 import * as Constants from 'lib/constants'
 import * as userActions from 'actions/userActions'
 
+import * as documentsActions from 'actions/documentsActions'
+
 import DocumentList from 'containers/DocumentList/DocumentList'
 import DocumentGridList from 'components/DocumentGridList/DocumentGridList'
 import DocumentListToolbar from 'containers/DocumentListToolbar/DocumentListToolbar'
 import Header from 'containers/Header/Header'
+import HeroMessage from 'components/HeroMessage/HeroMessage'
 import Main from 'components/Main/Main'
 import MediaGridCard from 'components/MediaGridCard/MediaGridCard'
 import MediaListController from 'containers/MediaListController/MediaListController'
@@ -19,8 +22,31 @@ class MediaListView extends Component {
     return '/media'
   }
 
-  handlePageTitle() {
+  handleDelete(ids) {
+    const {actions, state} = this.props
+    const api = state.api.apis[0]
 
+    actions.deleteMedia({
+      api,
+      ids
+    })
+  }
+
+  handleEmptyDocumentList() {
+    const {
+      referencedField
+    } = this.props+
+
+    return (
+      <HeroMessage
+        title="No media yet."
+        subtitle="Once you upload media files, they will appear here."
+      />
+    )    
+  }
+
+  handlePageTitle() {
+    setPageTitle('Media')
   }
 
   render() {
@@ -36,8 +62,6 @@ class MediaListView extends Component {
       _publishLink: '/media',
       fields: {}
     }
-
-    setPageTitle('Media')
 
     return (
       <Page>
@@ -63,6 +87,7 @@ class MediaListView extends Component {
                 )}
               />
             )}
+            onRenderEmptyDocumentList={this.handleEmptyDocumentList.bind(this)}
             order={order}
             page={page}
             sort={sort}
@@ -73,6 +98,7 @@ class MediaListView extends Component {
           api={currentApi}
           collection={currentCollection}
           onBuildBaseUrl={this.handleBuildBaseUrl.bind(this)}
+          onDelete={this.handleDelete.bind(this)}
         />
       </Page>
     )
@@ -84,5 +110,7 @@ export default connectHelper(
     api: state.api,
     user: state.user
   }),
-  dispatch => bindActionCreators(userActions, dispatch)
+  dispatch => bindActionCreators({
+    ...documentsActions
+  }, dispatch)
 )(MediaListView)
