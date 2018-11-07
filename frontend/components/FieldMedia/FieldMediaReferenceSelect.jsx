@@ -95,21 +95,19 @@ export default class FieldMediaReferenceSelect extends Component {
     const {config} = this.props
     const cdn = config ? config.cdn : null
 
+    // If the value is null, there's nothing to render.
     if (!value) return null
 
+    // If the value contains raw image data, let's render
+    // that.
     if (value._previewData) return value._previewData
 
-    if (value.url) return value.url
-
-    if (value.path) {
-      if (
-        cdn &&
-        cdn.publicUrl
-      ) {
-        return `${cdn.publicUrl}/${value.path}?width=500`
-      } else {
-        return value.path
-      }
+    // If there is an instance of CDN configured, we take
+    // the `path` property and append it to the CDN URL.
+    if (cdn && cdn.publicUrl && value.path) {
+      return `${cdn.publicUrl}${value.path}?width=500`
     }
+
+    return value.url || null
   }
 }

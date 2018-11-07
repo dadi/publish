@@ -54,7 +54,7 @@ class MediaListView extends Component {
         {...documentProps}
         onRenderCard={(item, onSelect, isSelected) => {
           if (config.cdn && config.cdn.publicUrl) {
-            item.url = `${config.cdn.publicUrl}/${item.path}?width=500`
+            item.url = `${config.cdn.publicUrl}${item.path}?width=500`
           }
 
           return (
