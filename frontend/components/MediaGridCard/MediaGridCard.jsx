@@ -87,11 +87,10 @@ export default class MediaCard extends Component {
 
         <div class={styles.metadata}>
           <div>
-            <span class={styles.size}>{fileSize(item.contentLength).human('si')}</span>
+            <span class={styles.size}>{fileSize(item.contentLength, { fixed: item.contentLength > 1000000 ? 2 : 0 }).human('si')}</span>
             {isImage && (
               <span class={styles.dimensions}>
-                ,<br/>
-                {item.width}x{item.height}
+                {`, ${item.width}x${item.height}`}
               </span>
             )}
           </div>
