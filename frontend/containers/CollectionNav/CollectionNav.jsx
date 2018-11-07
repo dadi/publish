@@ -145,6 +145,13 @@ class CollectionNav extends Component {
       })
     })
 
+    // Add static menu item for media.
+    ungrouped.push({
+      id: '_media',
+      label: 'Media Library',
+      href: '/media'
+    })
+
     return grouped.concat(ungrouped)
   }
 

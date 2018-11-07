@@ -11,6 +11,7 @@ import Page from 'components/Page/Page'
 class ErrorView extends Component {
   render() {
     const {data, state, type} = this.props
+    const {currentCollection} = state.api
     const hasConfig = state.app && state.app.config
 
     // We only treat this as an actual error, and therefore display the error
@@ -18,7 +19,9 @@ class ErrorView extends Component {
     // showing a flashing 404 page whilst routes are still being loaded.
     return (
       <Page>
-        <Header />
+        <Header
+          currentCollection={currentCollection}
+        />
 
         <Main>
           {(hasConfig || data) &&

@@ -15,6 +15,7 @@ import DocumentEditView from 'views/DocumentEditView/DocumentEditView'
 import DocumentListView from 'views/DocumentListView/DocumentListView'
 import ErrorView from 'views/ErrorView/ErrorView'
 import HomeView from 'views/HomeView/HomeView'
+import MediaListView from 'views/MediaListView/MediaListView'
 import PasswordResetView from 'views/PasswordResetView/PasswordResetView'
 import SignInView from 'views/SignInView/SignInView'
 import SignOutView from 'views/SignOutView/SignOutView'
@@ -25,6 +26,10 @@ import Analytics from 'lib/analytics'
 import ConnectionMonitor from 'lib/status'
 import apiBridgeClient from 'lib/api-bridge-client'
 import {URLParams} from 'lib/util/urlParams'
+
+const REGEX_NUMBER = '[^\\d+$]'
+const REGEX_DOCUMENT_ID = '[^(?:[a-f0-9]{24}|[a-f0-9]{32}|[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12})]'
+const REGEX_SLUG = '[^[a-z-]]'
 
 class App extends Component {
 
@@ -116,10 +121,6 @@ class App extends Component {
       )
     }
 
-    let createPaths = (state.api.paths && state.api.paths.create) || []
-    let editPaths = (state.api.paths && state.api.paths.edit) || []
-    let listPaths = (state.api.paths && state.api.paths.list) || []
-
     return (
       <Router
         history={history}
@@ -152,26 +153,60 @@ class App extends Component {
           path="/sign-out"
         />
 
-        {createPaths.map(path => (
-          <DocumentCreateView
-            authenticate
-            path={path}
-          />
-        ))}
+        <MediaListView
+          authenticate
+          path="/media"
+        />
 
-        {editPaths.map(path => (
-          <DocumentEditView
-            authenticate
-            path={path}
-          />
-        ))}
+        <DocumentCreateView
+          authenticate
+          path={`:collection${REGEX_SLUG}/new/:section?`}
+        />
 
-        {listPaths.map(path => (
-          <DocumentListView
-            authenticate
-            path={path}
-          />
-        ))}        
+        <DocumentCreateView
+          authenticate
+          path={`:group${REGEX_SLUG}/:collection${REGEX_SLUG}/new/:section?`}
+        />
+
+        <DocumentEditView
+          authenticate
+          path={`:collection${REGEX_SLUG}/:documentId${REGEX_DOCUMENT_ID}/:section?`}
+        />
+
+        <DocumentEditView
+          authenticate
+          path={`:group${REGEX_SLUG}/:collection${REGEX_SLUG}/:documentId${REGEX_DOCUMENT_ID}/:section?`}
+        />
+
+        <DocumentListView
+          authenticate
+          path={`:collection${REGEX_SLUG}/:page?${REGEX_NUMBER}`}
+        />
+
+        <DocumentListView
+          authenticate
+          path={`:collection${REGEX_SLUG}/new/select/:referencedField/:page?${REGEX_NUMBER}`}
+        />
+
+        <DocumentListView
+          authenticate
+          path={`:collection${REGEX_SLUG}/:documentId${REGEX_DOCUMENT_ID}/select/:referencedField/:page?${REGEX_NUMBER}`}
+        />
+
+        <DocumentListView
+          authenticate
+          path={`:group${REGEX_SLUG}/:collection${REGEX_SLUG}/:page?${REGEX_NUMBER}`}
+        />
+
+        <DocumentListView
+          authenticate
+          path={`:group${REGEX_SLUG}/:collection${REGEX_SLUG}/new/select/:referencedField/:page?${REGEX_NUMBER}`}
+        />
+
+        <DocumentListView
+          authenticate
+          path={`:group${REGEX_SLUG}/:collection${REGEX_SLUG}/:documentId${REGEX_DOCUMENT_ID}/select/:referencedField/:page?${REGEX_NUMBER}`}
+        />      
 
         <ErrorView
           authenticate

@@ -74,7 +74,7 @@ export default class Button extends Component {
      * Type/function of the button. When set to `mock`, a static element will be
      * rendered (as a `span`).
      */
-    type: proptypes.oneOf(['button', 'mock', 'submit'])
+    type: proptypes.oneOf(['button', 'mock', 'mock-stateful', 'submit'])
   }
 
   static defaultProps = {
@@ -119,9 +119,9 @@ export default class Button extends Component {
       )
     }
 
-    if (type === 'mock') {
+    if (type === 'mock' || type === 'mock-stateful') {
       return (
-        <a href="#" class={buttonStyle.getClasses()}>{children}</a>
+        <span class={buttonStyle.getClasses()}>{children}</span>
       )
     }
 

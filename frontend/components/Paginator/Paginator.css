@@ -4,11 +4,11 @@
   border-radius: 0;
 }
 
-.page:first-of-type {
+.page:first-child {
   border-radius: 4px 0 0 4px;
 }
 
-.page:last-of-type {
+.page:last-child {
   border-radius: 0 4px 4px 0;
   margin-right: 10px;
 }

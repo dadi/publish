@@ -1,3 +1,4 @@
+import 'fetch'
 import * as Constants from 'lib/constants'
 import * as Types from 'actions/actionTypes'
 import apiBridgeClient from 'lib/api-bridge-client'
@@ -29,6 +30,46 @@ export function deleteDocuments ({api, collection, ids}) {
         ids,
         type: Types.DELETE_DOCUMENTS
       })
+    })
+  }
+}
+
+export function deleteMedia ({api, ids}) {
+  return (dispatch, getState) => {
+    dispatch(
+      setDocumentListStatus(Constants.STATUS_DELETING, ids.length)
+    )
+
+    let bearerToken = getState().user.accessToken
+    let url = `${api.host}:${api.port}/media`
+    let body = JSON.stringify({
+      query: {
+        _id: {
+          $in: ids
+        }
+      }
+    })
+
+    fetch(url, {
+      body,
+      headers: {
+        Authorization: `Bearer ${bearerToken}`,
+        'Content-Type': 'application/json',
+      },
+      method: 'DELETE'
+    }).then(response => {
+      if (response.ok) {
+        dispatch(
+          setDocumentListStatus(Constants.STATUS_IDLE)
+        )
+      }
+
+      return Promise.reject(response)
+    })
+    .catch(error => {
+      dispatch(
+        setDocumentListStatus(Constants.STATUS_FAILED, error)
+      )
     })
   }
 }
@@ -87,7 +128,7 @@ export function fetchDocuments ({
       ]
       let listQuery
 
-      if (collection === Constants.MEDIA_COLLECTION) {
+      if (collection.IS_MEDIA_BUCKET || collection === Constants.MEDIA_COLLECTION) {
         listQuery = apiBridgeClient({
           accessToken: getState().user.accessToken,
           api
@@ -151,5 +192,41 @@ export function setDocumentListStatus (status, data) {
     data,
     status,
     type: Types.SET_DOCUMENT_LIST_STATUS
+  }
+}
+
+export function uploadMedia ({
+  api,
+  files
+}) {
+  return (dispatch, getState) => {
+    dispatch(
+      setDocumentListStatus(Constants.STATUS_SAVING)
+    )
+
+    let bearerToken = getState().user.accessToken
+    let url = `${api.host}:${api.port}/media/upload`
+    let body = new FormData()
+
+    files.forEach((file, index) => {
+      body.append(`file${index}`, file)
+    })
+
+    fetch(url, {
+      body,
+      headers: {
+        Authorization: `Bearer ${bearerToken}`
+      },
+      method: 'POST'
+    }).then(response => response.json()).then(response => {
+      dispatch(
+        setDocumentListStatus(Constants.STATUS_IDLE)
+      )
+    })
+    .catch(error => {
+      dispatch(
+        setDocumentListStatus(Constants.STATUS_FAILED, error)
+      )
+    })
   }
 }

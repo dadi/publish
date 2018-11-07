@@ -6,6 +6,7 @@ import * as Types from 'actions/actionTypes'
 const initialState = {
   isDeleting: false,
   isLoading: false,
+  isSaving: false,
   list: null,
   query: null,
   remoteError: null,
@@ -55,6 +56,7 @@ export default function document (state = initialState, action = {}) {
             ...state,
             isDeleting: false,
             isLoading: false,
+            isSaving: false,
             remoteError: null
           }
 
@@ -71,6 +73,12 @@ export default function document (state = initialState, action = {}) {
             isLoading: false,
             list: null,
             remoteError: action.data,
+          }
+
+        case Constants.STATUS_SAVING:
+          return {
+            ...state,
+            isSaving: true
           }
 
         default:

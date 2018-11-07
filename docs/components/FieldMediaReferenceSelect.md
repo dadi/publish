@@ -44,9 +44,9 @@ The maximum number of documents that can be selected.
 
 ### `selectedRows`
 
-The indexes of the currently selected documents.
+A hash map of the indices of the currently selected rows.
 
-- type: `array`
+- type: `custom`
 
 
 ### `sortBy`

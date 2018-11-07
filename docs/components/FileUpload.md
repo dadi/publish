@@ -13,12 +13,11 @@ File type acceptance.
 - type: `string`
 
 
-### `ctaText`
+### `children`
 
-The text to be displayed in the call-to-action button.
+The elements to be rendered inside of the component.
 
-- type: `string`
-- default value: `'Select from device'`
+- type: `node`
 
 
 ### `multiple`

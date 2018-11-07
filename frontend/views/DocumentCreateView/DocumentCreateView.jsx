@@ -23,7 +23,9 @@ class DocumentCreateView extends Component {
 
     return (
       <Page>
-        <Header/>
+        <Header
+          currentCollection={currentCollection}
+        />
 
         <Main>
           <DocumentEdit

@@ -42,6 +42,14 @@ determined by the view.
 - type: `func`
 
 
+### `onDelete`
+
+A callback to be called when the user has chosen to delete a selection
+of documents. An array of document IDs will be sent as a parameter.
+
+- type: `func`
+
+
 ### `referencedField`
 
 The name of a reference field currently being edited.
