@@ -35,7 +35,7 @@ class MediaListView extends Component {
   handleEmptyDocumentList() {
     const {
       referencedField
-    } = this.props+
+    } = this.props
 
     return (
       <HeroMessage
@@ -43,6 +43,21 @@ class MediaListView extends Component {
         subtitle="Once you upload media files, they will appear here."
       />
     )    
+  }
+
+  handleRenderDocument(documentProps) {
+    return (
+      <DocumentGridList
+        {...documentProps}
+        onRenderCard={(item, onSelect, isSelected) => (
+          <MediaGridCard
+            item={item}
+            isSelected={isSelected}
+            onSelect={onSelect}
+          />
+        )}
+      />
+    )
   }
 
   handlePageTitle() {
@@ -79,14 +94,7 @@ class MediaListView extends Component {
             collection={currentCollection}
             onBuildBaseUrl={this.handleBuildBaseUrl.bind(this)}
             onPageTitle={this.handlePageTitle}
-            onRenderDocuments={props => (
-              <DocumentGridList
-                {...props}
-                onRenderCard={document => (
-                  <MediaGridCard item={document} />
-                )}
-              />
-            )}
+            onRenderDocuments={this.handleRenderDocument.bind(this)}
             onRenderEmptyDocumentList={this.handleEmptyDocumentList.bind(this)}
             order={order}
             page={page}

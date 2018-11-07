@@ -16,27 +16,104 @@ export default class MediaCard extends Component {
     /**
      * The media object to be rendered.
      */
-    item: proptypes.object
+    item: proptypes.object,
+
+    /**
+     * Whether the item is selected.
+     */
+    isSelected: proptypes.object,
+
+    /**
+     * Callback to be fired when the item's selection state
+     * changes.
+     */
+    onSelect: proptypes.func,
+
+    /**
+     * The maximum number of items that can be selected.
+     */
+    selectLimit: proptypes.number    
+  }
+
+  static defaultProps = {
+    selectLimit: Infinity
   }
 
   render() {
     const {
-      contentLength,
-      height,
-      mimetype: mimeType,
-      width
-    } = this.props.item
+      item,
+      isSelected,
+      onSelect,
+      selectLimit
+    } = this.props
+    const itemStyle = new Style(styles, 'wrapper')
+      .addIf('wrapper-selected', isSelected)
+
+    // For backwards compatibility.
+    let mimeType = item.mimeType || item.mimetype
+
+    // If we're dealing with an image that has a width and a height,
+    // we set the aspect ratio of the card accordingly. If not, we
+    // make it a square.
+    const isImage = mimeType &&
+      mimeType.includes('image/') &&
+      typeof item.width === 'number' &&
+      typeof item.height === 'number'
+    const aspectRatio = isImage ?
+      (item.height / item.width) * 100 :
+      100
 
     return (
-      <div class={styles.wrapper}>
-        <div>
-          <span class={styles.size}>{fileSize(contentLength).human('si')}</span>,<br/>
-          <span class={styles.dimensions}>{width}x{height}</span>
+      <div
+        class={itemStyle.getClasses()}
+        onClick={onSelect}
+      >
+        <input
+          class={styles.select}
+          checked={isSelected}
+          type={selectLimit === 1 ? 'radio' : 'checkbox'}
+        />
+
+        <div
+          class={styles['image-holder']}
+          style={`padding-bottom: ${aspectRatio}%`}
+        >
+          {this.renderHead({isImage})}
         </div>
-        <div>
-          <span class={styles.mimetype}>{mimeType}</span>
+
+        <div class={styles.overlay}>
+          <p class={styles.filename}>{item.fileName}</p>
+        </div>
+
+        <div class={styles.metadata}>
+          <div>
+            <span class={styles.size}>{fileSize(item.contentLength).human('si')}</span>
+            {isImage && (
+              <span class={styles.dimensions}>
+                ,<br/>
+                {item.width}x{item.height}
+              </span>
+            )}
+          </div>
+          <div>
+            <span class={styles.mimetype}>{item.mimeType}</span>
+          </div>
         </div>
       </div>
+    )
+  }
+
+  renderHead({isImage}) {
+    const {item} = this.props
+
+    if (isImage) {
+      return (
+        <img class={styles.image} src={item.url}/>
+      )
+    }
+
+    return (
+      <div class={styles['generic-thumbnail']}/>
     )
   }
 }

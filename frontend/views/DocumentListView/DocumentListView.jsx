@@ -6,7 +6,6 @@ import {connectHelper, setPageTitle} from 'lib/util'
 import {URLParams} from 'lib/util/urlParams'
 
 import Style from 'lib/Style'
-import styles from './DocumentListView.css'
 
 import * as documentsActions from 'actions/documentsActions'
 
@@ -151,35 +150,33 @@ class DocumentListView extends Component {
         }
 
         <Main>
-          <div class={styles.container}>
-            <DocumentListController
-              api={currentApi}
-              collection={currentCollection}
-              documentId={documentId}
-              filter={filter}
-              newFilter={newFilter}
-              onBuildBaseUrl={this.handleBuildBaseUrl.bind(this)}
-              referencedField={referencedField}
-            />
+          <DocumentListController
+            api={currentApi}
+            collection={currentCollection}
+            documentId={documentId}
+            filter={filter}
+            newFilter={newFilter}
+            onBuildBaseUrl={this.handleBuildBaseUrl.bind(this)}
+            referencedField={referencedField}
+          />
 
-            <DocumentList
-              api={currentApi}
-              collection={currentCollection}
-              collectionParent={currentParentCollection}
-              documentId={documentId}
-              filter={filter}
-              onBuildBaseUrl={this.handleBuildBaseUrl.bind(this)}
-              onPageTitle={setPageTitle}
-              onRenderDocuments={props => (
-                <DocumentTableList {...props} />
-              )}
-              onRenderEmptyDocumentList={this.handleEmptyDocumentList.bind(this)}
-              order={order}
-              page={page}
-              referencedField={referencedField}
-              sort={sort}
-            />
-          </div>        
+          <DocumentList
+            api={currentApi}
+            collection={currentCollection}
+            collectionParent={currentParentCollection}
+            documentId={documentId}
+            filter={filter}
+            onBuildBaseUrl={this.handleBuildBaseUrl.bind(this)}
+            onPageTitle={setPageTitle}
+            onRenderDocuments={props => (
+              <DocumentTableList {...props} />
+            )}
+            onRenderEmptyDocumentList={this.handleEmptyDocumentList.bind(this)}
+            order={order}
+            page={page}
+            referencedField={referencedField}
+            sort={sort}
+          />
         </Main>
 
         <DocumentListToolbar

@@ -65,6 +65,32 @@ page title.
 - default value: `function () {}`
 
 
+### `onRenderDocuments`
+
+A function responsible for rendering the documents. It is called with the
+following named parameters:
+
+- collection
+- config
+- documentId
+- documents
+- onBuildBaseUrl
+- onSelect
+- order
+- referencedField
+- selectedDocuments
+- sort
+
+- type: `func`
+
+
+### `onRenderEmptyDocumentList`
+
+A function responsible for rendering an empty list of documents.
+
+- type: `func`
+
+
 ### `order`
 
 The order used to sort the documents by the `sort` field.
@@ -84,25 +110,6 @@ The number of the current active page.
 The name of a reference field currently being edited (if any).
 
 - type: `string`
-
-
-### `renderDocuments`
-
-A function responsible for rendering the documents. It is called with the
-following named parameters:
-
-- collection
-- config
-- documentId
-- documents
-- onBuildBaseUrl
-- onSelect
-- order
-- referencedField
-- selectedDocuments
-- sort
-
-- type: `func`
 
 
 ### `sort`

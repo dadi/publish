@@ -117,7 +117,7 @@ export default class DocumentGridList extends Component {
     }
   }
 
-  handleItemSelect(index, event) {
+  handleItemSelect(index) {
     const {
       onSelect,
       selectLimit,
@@ -148,7 +148,16 @@ export default class DocumentGridList extends Component {
   }
 
   render() {
-    const {documents} = this.props
+    const {
+      documents,
+      onRenderCard,
+      selectedDocuments
+    } = this.props
+
+    if (typeof onRenderCard !== 'function') {
+      return null
+    }
+
     const numberOfColumns = this.getNumberOfColumns()
 
     let columns = Array.apply(null, {length: numberOfColumns}).map(i => [])
@@ -164,49 +173,14 @@ export default class DocumentGridList extends Component {
             class={styles.column}
             style={`width: ${100 / numberOfColumns}%`}
           >
-            {column.map(this.renderItem.bind(this))}
+            {column.map((item, index) => {
+              let isSelected = selectedDocuments[index] === true
+              let onSelect = this.handleItemSelect.bind(this, index)
+
+              return onRenderCard(item, onSelect, isSelected)
+            })}
           </div>
         ))}
-      </div>
-    )
-  }
-
-  renderItem(item, index) {
-    const {
-      onRenderCard,
-      selectedDocuments,
-      selectLimit
-    } = this.props
-    const aspectRatio = (item.height / item.width) * 100
-    const isSelected = selectedDocuments[index] === true
-    const itemStyle = new Style(styles, 'item')
-      .addIf('item-selected', isSelected)
-
-    return (
-      <div
-        class={itemStyle.getClasses()}
-        onClick={this.handleItemSelect.bind(this, index)}
-      >
-        <input
-          class={styles['item-select']}
-          checked={isSelected}
-          type={selectLimit === 1 ? 'radio' : 'checkbox'}
-        />
-
-        <div
-          class={styles['item-image-holder']}
-          style={`padding-bottom: ${aspectRatio}%`}
-        >
-          <img class={styles['item-image']} src={item.url}/>
-        </div>
-
-        <div class={styles['item-overlay']}>
-          <p class={styles['item-filename']}>{item.fileName}</p>
-        </div>
-
-        <div class={styles['item-info']}>
-          {typeof onRenderCard === 'function' && onRenderCard(item)}
-        </div>
       </div>
     )
   }
