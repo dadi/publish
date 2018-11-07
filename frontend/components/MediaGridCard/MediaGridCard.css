@@ -1,7 +1,7 @@
 .wrapper {
   position: relative;
   box-shadow: 2px 2px 10px 0 rgba(0, 0, 0, 0.05);
-  margin: 0 0 15px;
+  margin: 0 0 20px;
   line-height: 1.1em;
   overflow: hidden;
   cursor: pointer; 
@@ -50,15 +50,17 @@
 }
 
 .filename {
-  white-space: nowrap;
   width: 100%;
+  white-space: nowrap;
   text-overflow: ellipsis;
+  overflow: hidden;
   border-bottom: 1px solid #eaeaea;
   padding-bottom: 5px;
   margin-bottom: 5px;
 }
 
 .metadata {
+  background: #fff;
   display: flex;
   align-items: center;
   justify-content: space-between;  
