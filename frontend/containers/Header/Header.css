@@ -79,6 +79,7 @@
 
 @media (--breakpoint-medium) {
   .content {
+    max-height: none;
     overflow: visible;
   }
 }
