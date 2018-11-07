@@ -96,7 +96,7 @@ export default class MediaCard extends Component {
             )}
           </div>
           <div>
-            <span class={styles.mimetype}>{item.mimeType}</span>
+            <span class={styles.mimetype}>{mimeType}</span>
           </div>
         </div>
       </div>
