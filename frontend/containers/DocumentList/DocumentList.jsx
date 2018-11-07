@@ -256,7 +256,11 @@ class DocumentList extends Component {
       || 20
     let filterValue = state.router.search ? state.router.search.filter : null
 
-    actions.fetchDocuments({
+    // This is the object we'll send to the `fetchDocuments` action. If we're
+    // dealing with a reference field select, we'll pass this object to any
+    // existing `beforeReferenceSelect` hook so that field components have the
+    // chance to modify the criteria used to retrieve documents from the API.
+    let fetchObject = {
       api,
       collection,
       count,
@@ -267,7 +271,22 @@ class DocumentList extends Component {
       referencedField,
       sortBy: sort,
       sortOrder: order
-    })
+    }
+
+    if (referencedField && collectionParent) {
+      const fieldSchema = collectionParent.fields[referencedField]
+      const fieldComponentName = `Field${this.getFieldType(fieldSchema)}`
+      const fieldComponent = fieldComponents[fieldComponentName]
+
+      if (
+        fieldComponent &&
+        typeof fieldComponent.beforeReferenceSelect === 'function'
+      ) {
+        fetchObject = fieldComponent.beforeReferenceSelect(fetchObject)
+      }
+    }
+
+    actions.fetchDocuments(fetchObject)
   }
 
   getFieldType(schema) {
@@ -280,15 +299,6 @@ class DocumentList extends Component {
     }
 
     return fieldType
-  }
-
-  handleTableSort(value, sortBy, sortOrder) {
-    return (
-      <a href={createRoute({
-        params: {sort: sortBy, order: sortOrder},
-        update: true
-      })}>{value}</a>
-    )
   }
 
   render() {
@@ -406,45 +416,6 @@ class DocumentList extends Component {
       selectedDocuments,
       sort
     })
-  }
-
-  renderAnnotation(schema) {
-    const fieldType = this.getFieldType(schema)
-
-    const fieldComponentName = `Field${fieldType}`
-    const FieldComponentListHeadAnnotation = fieldComponents[fieldComponentName] &&
-      fieldComponents[fieldComponentName].listHeadAnnotation
-
-    if (FieldComponentListHeadAnnotation) {
-      return (
-        <FieldComponentListHeadAnnotation />
-      )  
-    }
-  }
-
-  renderField(fieldName, schema, value) {
-    if (!schema) return
-
-    const {api, collection, state} = this.props
-
-    const fieldType = this.getFieldType(schema)
-    const fieldComponentName = `Field${fieldType}`
-    const FieldComponentList = fieldComponents[fieldComponentName] &&
-      fieldComponents[fieldComponentName].list
-
-    if (FieldComponentList) {
-      return (
-        <FieldComponentList
-          config={state.app.config}
-          collection={collection}
-          currentApi={api}
-          schema={schema}
-          value={value}
-        />
-      )
-    }
-
-    return value
   }
 }
 
