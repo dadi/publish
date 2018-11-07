@@ -15,6 +15,7 @@ import {connectHelper} from 'lib/util'
 import Button from 'components/Button/Button'
 import DropArea from 'components/DropArea/DropArea'
 import FileUpload from 'components/FileUpload/FileUpload'
+import ListController from 'components/ListController/ListController'
 
 /**
  * A controller bar for a list of media documents.
@@ -43,25 +44,29 @@ class DocumentListController extends Component {
 
   render() {
     return (
-      <DropArea
-        onDrop={this.handleUpload.bind(this)}
-      >
-        <div class={styles.wrapper}>
-          <p>Drop files to upload</p>
+      <div>
+        <ListController breadcrumbs={['Media Library']} />
 
-          <span class={styles.separator}>or</span>
+        <DropArea
+          onDrop={this.handleUpload.bind(this)}
+        >
+          <div class={styles.wrapper}>
+            <p>Drop files to upload</p>
 
-          <FileUpload
-            multiple={true}
-            onChange={this.handleUpload.bind(this)}
-          >
-            <Button
-              accent="data"
-              type="mock-stateful"
-            >Select files</Button>
-          </FileUpload>
-        </div>
-      </DropArea>
+            <span class={styles.separator}>or</span>
+
+            <FileUpload
+              multiple={true}
+              onChange={this.handleUpload.bind(this)}
+            >
+              <Button
+                accent="data"
+                type="mock-stateful"
+              >Select files</Button>
+            </FileUpload>
+          </div>
+        </DropArea>
+      </div>
     )
   }
 }
