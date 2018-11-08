@@ -5,8 +5,6 @@ import {bindActionCreators} from 'redux'
 import {connectHelper, setPageTitle} from 'lib/util'
 import {URLParams} from 'lib/util/urlParams'
 
-import Style from 'lib/Style'
-
 import * as documentsActions from 'actions/documentsActions'
 
 import Button from 'components/Button/Button'
