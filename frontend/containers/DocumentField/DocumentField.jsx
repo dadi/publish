@@ -6,8 +6,7 @@ import {connectHelper} from 'lib/util'
 import * as documentActions from 'actions/documentActions'
 import * as fieldComponents from 'lib/field-components'
 
-import Style from 'lib/Style'
-import styles from './DocumentField.css'
+import Field from 'components/Field/Field'
 
 /**
  * Renders the appropriate input element(s) for editing a document field
@@ -148,12 +147,11 @@ class DocumentField extends Component {
       return null
     }
 
-    let fieldStyles = new Style(styles, 'field')
-
-    fieldStyles.addIf('field-disabled', isTranslation && !isTranslatable)
-
     return (
-      <div class={fieldStyles.getClasses()} data-field-name={fieldName}>
+      <Field
+        isDisabled={isTranslation && !isTranslatable}
+        name={fieldName}
+      >
         <FieldComponent
           collection={collection.slug}
           comment={fieldComment}
@@ -172,8 +170,8 @@ class DocumentField extends Component {
           required={field.required && !isTranslation}
           schema={field}
           value={value}
-        />
-      </div>
+        />      
+      </Field>
     )
   }
 }

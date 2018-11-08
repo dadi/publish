@@ -14,6 +14,7 @@ import DocumentEditView from 'views/DocumentEditView/DocumentEditView'
 import DocumentListView from 'views/DocumentListView/DocumentListView'
 import ErrorView from 'views/ErrorView/ErrorView'
 import HomeView from 'views/HomeView/HomeView'
+import MediaEditView from 'views/MediaEditView/MediaEditView'
 import MediaListView from 'views/MediaListView/MediaListView'
 import PasswordResetView from 'views/PasswordResetView/PasswordResetView'
 import SignInView from 'views/SignInView/SignInView'
@@ -155,6 +156,11 @@ class App extends Component {
         <MediaListView
           authenticate
           path={`/media/:page?${REGEX_NUMBER}`}
+        />
+
+        <MediaEditView
+          authenticate
+          path={`/media/:documentId${REGEX_DOCUMENT_ID}/:section?`}
         />
 
         <DocumentEditView

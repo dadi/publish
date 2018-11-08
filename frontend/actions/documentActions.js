@@ -36,11 +36,18 @@ export function fetchDocument ({
   fields
 }) {
   return (dispatch, getState) => {
-    const apiBridge = apiBridgeClient({
+    let apiBridge = apiBridgeClient({
       accessToken: getState().user.accessToken,
       api,
       collection
-    }).whereFieldIsEqualTo('_id', id)
+    })
+
+    // Are we dealing with a media document?
+    if (collection.IS_MEDIA_BUCKET) {
+      apiBridge = apiBridge.inMedia()
+    }
+
+    apiBridge = apiBridge.whereFieldIsEqualTo('_id', id)
 
     if (fields) {
       apiBridge.useFields(fields)

@@ -83,6 +83,11 @@ class DocumentEditToolbar extends Component {
     group: proptypes.string,
 
     /**
+     * Whether to render a control for selecting different languages.
+     */
+    multiLanguage: proptypes.bool,
+
+    /**
     * A callback to be used to obtain the base URL for the given page, as
     * determined by the view.
     */
@@ -168,6 +173,7 @@ class DocumentEditToolbar extends Component {
     const {
       api,
       documentId,
+      multiLanguage,
       state
     } = this.props
     const {
@@ -212,7 +218,7 @@ class DocumentEditToolbar extends Component {
           </div>
         }
 
-        {languages && (
+        {multiLanguage && languages && (
           <DropdownNative
             onChange={this.handleLanguageChange.bind(this)}
             options={languages}

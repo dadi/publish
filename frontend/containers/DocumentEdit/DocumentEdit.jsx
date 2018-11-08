@@ -200,6 +200,7 @@ class DocumentEdit extends Component {
   fetchDocument() {
     const {
       actions,
+      api,
       collection,
       collectionParent,
       documentId,
@@ -209,15 +210,10 @@ class DocumentEdit extends Component {
     // As far as the fetch method is concerned, we're only interested in the
     // collection of the main document, not the referenced one.
     let parentCollection = collectionParent || collection
-    let collectionFields = visibleFieldList({
-      fields: parentCollection.fields,
-      view: 'edit'
-    })
     let query = {
-      api: state.api.currentApi,
+      api,
       collection: parentCollection,
-      id: documentId,
-      fields: collectionFields
+      id: documentId
     }
 
     actions.fetchDocument(query)
@@ -283,7 +279,9 @@ class DocumentEdit extends Component {
       return null
     }
 
-    return onRender()
+    let documentData = Object.assign({}, document.remote, document.local)
+
+    return onRender(documentData)
   }
 }
 

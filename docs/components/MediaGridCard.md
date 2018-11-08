@@ -6,6 +6,13 @@ Renders the information part of a media-specific grid card.
 Props
 -----
 
+### `href`
+
+The link to be followed when the card is clicked.
+
+- type: `string`
+
+
 ### `isSelected`
 
 Whether the item is selected.

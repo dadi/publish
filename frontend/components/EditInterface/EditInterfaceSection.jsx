@@ -52,21 +52,11 @@ export default class EditInterfaceSection extends Component {
     return (
       <section class={sectionStyle.getClasses()}>
         <div class={mainBodyStyle.getClasses()}>
-          {/*main.map(field => (
-            <div class={styles.field}>
-              {field}
-            </div>
-          ))*/}
           {main}
         </div>
 
         {sidebar &&
           <div class={styles.sidebar}>
-            {/*sidebar.map(field => (
-              <div class={styles.field}>
-                {field}
-              </div>
-            ))*/}
             {sidebar}
           </div>
         }
