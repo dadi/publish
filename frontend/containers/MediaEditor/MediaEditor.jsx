@@ -9,6 +9,7 @@ import * as fieldComponents from 'lib/field-components'
 import Style from 'lib/Style'
 import styles from './MediaEditor.css'
 
+import Button from 'components/Button/Button'
 import EditInterface from 'components/EditInterface/EditInterface'
 import EditInterfaceSection from 'components/EditInterface/EditInterfaceSection'
 import Field from 'components/Field/Field'
@@ -160,6 +161,38 @@ class MediaEditor extends Component {
             />
           </Label>
         </Field>
+
+        <Field>
+          <Label
+            label="File path"
+          >
+            <TextInput
+              readonly={true}
+              value={documentData.path}
+            />
+          </Label>
+        </Field>
+
+        {documentData.url !== undefined && (
+          <Field>
+            <Label
+              label="Public URL"
+            >
+              <TextInput
+                readonly={true}
+                value={documentData.url}
+              />
+
+              <Button
+                accent="neutral"
+                className={styles['link-button']}
+                href={documentData.url} 
+                openInNewWindow={true}
+                size="small"
+              >Open in new window</Button>
+            </Label>
+          </Field>
+        )}
 
         {documentData.width !== undefined && (
           <Field>
