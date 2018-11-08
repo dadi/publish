@@ -18,8 +18,16 @@ import MediaListController from 'containers/MediaListController/MediaListControl
 import Page from 'components/Page/Page'
 
 class MediaListView extends Component {
-  handleBuildBaseUrl() {
-    return '/media'
+  handleBuildBaseUrl({
+    page
+  }) {
+    let url = ['/media']
+
+    if (page) {
+      url.push(page)
+    }
+
+    return url.join('/')
   }
 
   handleDelete(ids) {
@@ -46,7 +54,7 @@ class MediaListView extends Component {
   }
 
   handleRenderDocument(documentProps) {
-    const {state} = this.props
+    const {page, state} = this.props
     const {config} = state.app
 
     return (

@@ -155,7 +155,7 @@ class App extends Component {
 
         <MediaListView
           authenticate
-          path="/media"
+          path={`/media/:page?${REGEX_NUMBER}`}
         />
 
         <DocumentCreateView
