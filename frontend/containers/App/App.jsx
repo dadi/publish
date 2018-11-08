@@ -10,7 +10,6 @@ import * as documentActions from 'actions/documentActions'
 import * as routerActions from 'actions/routerActions'
 import * as Constants from 'lib/constants'
 
-import DocumentCreateView from 'views/DocumentCreateView/DocumentCreateView'
 import DocumentEditView from 'views/DocumentEditView/DocumentEditView'
 import DocumentListView from 'views/DocumentListView/DocumentListView'
 import ErrorView from 'views/ErrorView/ErrorView'
@@ -158,12 +157,12 @@ class App extends Component {
           path="/media"
         />
 
-        <DocumentCreateView
+        <DocumentEditView
           authenticate
           path={`:collection${REGEX_SLUG}/new/:section?`}
         />
 
-        <DocumentCreateView
+        <DocumentEditView
           authenticate
           path={`:group${REGEX_SLUG}/:collection${REGEX_SLUG}/new/:section?`}
         />
