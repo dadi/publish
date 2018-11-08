@@ -3,11 +3,7 @@
 import {h, Component} from 'preact'
 import proptypes from 'proptypes'
 import {connect} from 'preact-redux'
-import {route} from '@dadi/preact-router'
 import {bindActionCreators} from 'redux'
-
-import Style from 'lib/Style'
-import styles from './DocumentEdit.css'
 
 import * as Constants from 'lib/constants'
 import * as appActions from 'actions/appActions'
@@ -22,6 +18,7 @@ import {buildUrl} from 'lib/router'
 import {connectHelper} from 'lib/util'
 import {Format} from 'lib/util/string'
 
+import DocumentField from 'containers/DocumentField/DocumentField'
 import ErrorMessage from 'components/ErrorMessage/ErrorMessage'
 import SpinningWheel from 'components/SpinningWheel/SpinningWheel'
 import TabbedFieldSections from 'components/TabbedFieldSections/TabbedFieldSections'
@@ -31,7 +28,6 @@ import TabbedFieldSections from 'components/TabbedFieldSections/TabbedFieldSecti
  */
 class DocumentEdit extends Component {
   static propTypes = {
-
     /**
       * The global actions object.
     */
@@ -70,6 +66,11 @@ class DocumentEdit extends Component {
     onPageTitle: proptypes.func,
 
     /**
+    * A callback responsible for rendering individual fields.
+    */
+    onRenderField: proptypes.func,
+
+    /**
      * The name of a reference field currently being edited.
      */
     referencedField: proptypes.string,
@@ -89,58 +90,6 @@ class DocumentEdit extends Component {
     super(props)
 
     this.hasFetched = false
-  }
-
-  shouldComponentUpdate(nextProps, nextState) {
-    const {
-      collection,
-      documentId,
-      onPageTitle,
-      section,
-      state
-    } = this.props
-    const method = documentId ? 'edit' : 'new'
-
-    if (typeof onPageTitle === 'function') {
-      onPageTitle(`${Format.sentenceCase(method)} document`)  
-    }
-
-    if (collection) {
-      const collectionFields = filterVisibleFields({
-        fields: collection.fields,
-        view: 'edit'
-      })
-      const fields = this.groupFields(collectionFields)
-
-      if (section) {
-        const sectionMatch = fields.sections.find(fieldSection => {
-          return fieldSection.slug === section
-        })
-
-        if (!sectionMatch) {
-          const firstSection = fields.sections[0]
-
-          // Redirect to first section.
-          route(
-            this.buildHref(method, firstSection)
-          )
-
-          return false
-        }
-      }
-    }
-  }
-
-  handleRoomChange() {
-    const {state, actions, documentId} = this.props
-
-    if (documentId && state.router.room !== documentId) {
-      actions.roomChange(documentId)
-    }
-  }
-
-  componentWillUpdate(nextProps, nextState) {
-    this.handleRoomChange()
   }
 
   componentDidUpdate(previousProps, previousState) {
@@ -232,7 +181,7 @@ class DocumentEdit extends Component {
     if (state.document.remote && state.document.remote._id !== documentId) {
       actions.clearRemoteDocument()
     }
-  }
+  }  
 
   componentWillUnmount() {
     const {
@@ -243,80 +192,8 @@ class DocumentEdit extends Component {
     actions.roomChange(null)
   }
 
-  render() {
-    const {
-      collection,
-      documentId,
-      onBuildBaseUrl,
-      referencedField,
-      section,
-      state
-    } = this.props
-    const document = state.document
-
-    if (state.api.isLoading || document.isLoading) {
-      return (
-        <SpinningWheel />
-      )
-    }
-
-    if (document.remoteError) {
-      let listRoute = onBuildBaseUrl({
-        documentId: null
-      })
-
-      return (
-        <ErrorMessage
-          data={{href: listRoute}}
-          type={Constants.ERROR_DOCUMENT_NOT_FOUND}
-        />
-      )
-    }
-
-    if (!document.local) {
-      return null
-    }
-
-    const collectionFields = filterVisibleFields({
-      fields: collection.fields,
-      view: 'edit'
-    })
-    const fields = this.groupFields(collectionFields)
-    const sections = fields.sections || [{
-      slug: 'other',
-      fields: fields.other
-    }]
-    const activeSection = section || sections[0].slug
-    const hasValidationErrors = document.validationErrors
-    const method = documentId ? 'edit' : 'new'
-
-    // Add a link to each section before passing it down.
-    sections.forEach(section => {
-      section.href = this.buildHref(method, section)
-    })
-
-    return (
-      <TabbedFieldSections
-        activeSection={activeSection}
-        renderField={this.renderField.bind(this)}
-        sections={sections}
-      />
-    )
-  }
-
-  buildHref(method, section) {
-    const {
-      collection,
-      documentId,
-      onBuildBaseUrl,
-      state
-    } = this.props
-
-    return onBuildBaseUrl({
-      createNew: !Boolean(documentId),
-      search: state.router.search,
-      section: section && section.slug,
-    })
+  componentWillUpdate(nextProps, nextState) {
+    this.handleRoomChange()
   }
 
   // Fetches a document from the remote API
@@ -348,99 +225,13 @@ class DocumentEdit extends Component {
     this.hasFetched = true
   }
 
-  getFieldType (schema) {
-    let fieldType = (schema.publish && schema.publish.subType) ?
-      schema.publish.subType :
-      schema.type
+  handleRoomChange() {
+    const {state, actions, documentId} = this.props
 
-    if (fieldType === 'Image') {
-      fieldType = 'Media'
+    if (documentId && state.router.room !== documentId) {
+      actions.roomChange(documentId)
     }
-
-    return fieldType
-  }
-
-  // Groups fields by section based on the `section` property of the `publish`
-  // block present in their schema. It returns an object with two properties:
-  //
-  // - `sections`: an array of sections, each containing:
-  //    - `fields`: array containing the schema of the fields in the section
-  //    - `hasErrors`: Boolean indicating whether there are fields with errors
-  //                   in the section
-  //    - `name`: name of the section
-  //    - `slug`: slug of the section
-  // - `other`: array containing the schemas of fields without a section
-  groupFields(fields) {
-    const {state} = this.props
-    const document = state.document
-
-    let sections = {}
-    let sectionsArray = null
-    let other = []
-
-    Object.keys(fields).forEach(fieldSlug => {
-      const field = Object.assign({}, fields[fieldSlug], {
-        _id: fieldSlug
-      })
-      const section = field.publish && field.publish.section
-
-      if (section) {
-        sections[section] = sections[section] || []
-        sections[section].push(field)
-      } else {
-        other.push(field)
-      }
-    })
-
-    // Converting sections to an array including slug
-    if (Object.keys(sections).length) {
-      sectionsArray = Object.keys(sections).map(sectionName => {
-        const fields = sections[sectionName]
-        const sectionHasErrors = document.validationErrors
-          && fields.some(field => document.validationErrors[field._id])
-
-        let section = {
-          fields,
-          hasErrors: sectionHasErrors,
-          name: sectionName,
-          slug: Format.slugify(sectionName)
-        }
-
-        return section
-      })
-    }
-
-    return {
-      sections: sectionsArray,
-      other
-    }
-  }
-
-  // Handles the callback that fires whenever a field changes and the new value
-  // is ready to be sent to the store.
-  handleFieldChange(fieldName, value, persistInLocalStorage = true) {
-    const {
-      actions,
-      collection,
-      group
-    } = this.props
-
-    actions.updateLocalDocument({
-      [fieldName]: value
-    }, {
-      collection,
-      group,
-      persistInLocalStorage
-    })
-  }
-
-  // Handles the callback that fires whenever there's a new validation error
-  // in a field or when a validation error has been cleared.
-  handleFieldError(fieldName, hasError, value) {
-    const {actions} = this.props
-
-    actions.setFieldErrorStatus(fieldName, value, hasError)
-  }
+  } 
 
   handleUserLeavingDocument() {
     const {
@@ -457,99 +248,42 @@ class DocumentEdit extends Component {
     })
   }
 
-  // Renders a field, deciding which component to use based on the field type
-  renderField(field) {
+  render() {
     const {
       collection,
       documentId,
-      group,
       onBuildBaseUrl,
+      onRender,
+      referencedField,
+      section,
       state
     } = this.props
-    const {api, app, document} = state
-    const hasAttemptedSaving = document.saveAttempts > 0
-    const hasError = document.validationErrors
-      && document.validationErrors[field._id]
-    const documentData = Object.assign({}, document.remote, document.local)
-    const defaultApiLanguage = api.currentApi.languages &&
-      api.currentApi.languages.find(language => language.default)
-    const currentLanguage = state.router.search.lang
-    const isTranslatable = field.type.toLowerCase() === 'string'
-    const isTranslation = currentLanguage &&
-      currentLanguage !== defaultApiLanguage.code
+    const document = state.document
 
-    // This needs to adapt to the i18n.fieldCharacter configuration property of
-    // the API, but currently Publish doesn't have a way of knowing this. For now,
-    // we hardcode the default character, and in a future release of API we need to
-    // expose this information in the /api/languages endpoint.
-    let languageFieldCharacter = ':'
-    let displayName = field.label || field._id
-    let fieldName = field._id
-    let placeholder = field.placeholder
-
-    if (isTranslation && isTranslatable) {
-      let language = api.currentApi.languages.find(language => {
-        return language.code === currentLanguage
-      })
-
-      if (language) {
-        displayName += ` (${language.name})`
-      }
-
-      fieldName += languageFieldCharacter + currentLanguage
-      placeholder = documentData[field._id] || placeholder
+    if (state.api.isLoading || document.isLoading) {
+      return (
+        <SpinningWheel />
+      )
     }
 
-    let value = documentData[fieldName]
+    if (document.remoteError) {
+      let listRoute = onBuildBaseUrl({
+        documentId: null
+      })
 
-    // As per API docs, validation messages are in the format "must be xxx", which
-    // assumes that something (probably the name of the field) will be prepended to
-    // the string to form a final error message. For this reason, we're prepending
-    // the validation message with "This field", but this is something that we can
-    // easily revisit.
-    const error = typeof hasError === 'string' ?
-      'This field ' + hasError :
-      hasError
-    const fieldType = this.getFieldType(field)
-    const fieldComponentName = `Field${fieldType}`
-    const FieldComponent = fieldComponents[fieldComponentName] &&
-      fieldComponents[fieldComponentName].edit
-    const fieldComment = field.comment || field.example
+      return (
+        <ErrorMessage
+          data={{href: listRoute}}
+          type={Constants.ERROR_DOCUMENT_NOT_FOUND}
+        />
+      )
+    }
 
-    if (!FieldComponent) {
-      console.warn('Unknown field type:', fieldType)
-
+    if (!document.local || typeof onRender !== 'function') {
       return null
     }
 
-    let fieldStyles = new Style(styles, 'field')
-
-    fieldStyles.addIf('field-disabled', isTranslation && !isTranslatable)
-
-    return (
-      <div class={fieldStyles.getClasses()} data-field-name={fieldName}>
-        <FieldComponent
-          collection={collection.slug}
-          comment={fieldComment}
-          config={app.config}
-          currentApi={api.currentApi}
-          currentCollection={collection}
-          displayName={displayName}
-          documentId={documentId}
-          error={error}
-          forceValidation={hasAttemptedSaving}
-          group={group}
-          name={fieldName}
-          onBuildBaseUrl={onBuildBaseUrl}
-          onChange={this.handleFieldChange.bind(this)}
-          onError={this.handleFieldError.bind(this)}
-          placeholder={placeholder}
-          required={field.required && !isTranslation}
-          schema={field}
-          value={value}
-        />
-      </div>
-    )
+    return onRender()
   }
 }
 
