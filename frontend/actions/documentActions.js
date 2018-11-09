@@ -287,7 +287,7 @@ export function saveDocument ({
             setRemoteDocumentStatus(Constants.STATUS_SAVING)
           )
 
-          const mediaUpload = uploadMedia(
+          const mediaUpload = uploadMediaToSignedURL(
             api,
             response.url,
             payload[referenceField][queueMapEntry.index]
@@ -349,6 +349,53 @@ export function saveDocument ({
         }
       })
     }).catch(err => {
+      dispatch(
+        setRemoteDocumentStatus(Constants.STATUS_FAILED)
+      )
+    })
+  }
+}
+
+export function saveMedia ({
+  api,
+  document,
+  documentId
+}) {
+  return (dispatch, getState) => {
+    dispatch(
+      setRemoteDocumentStatus(Constants.STATUS_SAVING)
+    )
+
+    let bearerToken = getState().user.accessToken
+    let url = `${api.host}:${api.port}/media/${documentId}`
+
+    fetch(url, {
+      body: JSON.stringify(document),
+      headers: {
+        Authorization: `Bearer ${bearerToken}`,
+        'Content-Type': 'application/json',
+      },
+      method: 'PUT'
+    }).then(response => {
+      if (!response.ok) {
+        return Promise.reject(response)
+      }
+
+      return response.json()
+    }).then(response => {
+      dispatch(
+        setRemoteDocument(response.results[0], {
+          clearLocal: true,
+          forceUpdate: true
+        })
+      )
+
+      // We've successfully saved the document, so we now need to clear
+      // the local storage key corresponding to the unsaved document for
+      // the given collection path.
+      LocalStorage.clearDocument(documentId)
+    })
+    .catch(response => {
       dispatch(
         setRemoteDocumentStatus(Constants.STATUS_FAILED)
       )
@@ -489,7 +536,7 @@ export function updateLocalDocument (change, {
   }
 }
 
-function uploadMedia (api, signedUrl, content) {
+function uploadMediaToSignedURL (api, signedUrl, content) {
   const url = `${api.host}:${api.port}${signedUrl}`
   const payload = new FormData()
 

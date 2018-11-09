@@ -13,7 +13,7 @@ import * as documentActions from 'actions/documentActions'
 
 import DocumentEdit from 'containers/DocumentEdit/DocumentEdit'
 import DocumentField from 'containers/DocumentField/DocumentField'
-import DocumentEditToolbar from 'containers/DocumentEditToolbar/DocumentEditToolbar'
+import MediaEditToolbar from 'containers/MediaEditToolbar/MediaEditToolbar'
 import Header from 'containers/Header/Header'
 import Main from 'components/Main/Main'
 import MediaEditor from 'containers/MediaEditor/MediaEditor'
@@ -129,7 +129,7 @@ class MediaEditView extends Component {
   } = {}) {
     let urlNodes = ['media']
 
-    if (createNew || !documentId) {
+    if (createNew) {
       urlNodes.push('new')
     } else {
       urlNodes.push(documentId)
@@ -160,7 +160,7 @@ class MediaEditView extends Component {
           currentCollection={Constants.MEDIA_COLLECTION_SCHEMA}
         />
 
-        <DocumentEditToolbar
+        <MediaEditToolbar
           api={currentApi}
           collection={Constants.MEDIA_COLLECTION_SCHEMA}
           documentId={documentId}
@@ -177,6 +177,7 @@ class MediaEditView extends Component {
             onPageTitle={setPageTitle}
             onRender={documentData => (
               <MediaEditor
+                api={currentApi}
                 documentData={documentData}
               />
             )}

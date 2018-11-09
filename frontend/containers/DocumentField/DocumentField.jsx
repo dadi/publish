@@ -20,6 +20,11 @@ class DocumentField extends Component {
     actions: proptypes.object,
 
     /**
+     * The API to operate on.
+     */
+    api: proptypes.object,    
+
+    /**
      * The collection to operate on.
      */
     collection: proptypes.object,
@@ -85,19 +90,20 @@ class DocumentField extends Component {
   // Renders a field, deciding which component to use based on the field type.
   render() {
     const {
+      api,
       collection,
       documentId,
       field,
       onBuildBaseUrl,
       state
     } = this.props
-    const {api, app, document} = state
+    const {app, document} = state
     const hasAttemptedSaving = document.saveAttempts > 0
     const hasError = document.validationErrors
       && document.validationErrors[field._id]
     const documentData = Object.assign({}, document.remote, document.local)
-    const defaultApiLanguage = api.currentApi.languages &&
-      api.currentApi.languages.find(language => language.default)
+    const defaultApiLanguage = api.languages &&
+      api.languages.find(language => language.default)
     const currentLanguage = state.router.search.lang
     const isTranslatable = field.type.toLowerCase() === 'string'
     const isTranslation = currentLanguage &&
@@ -113,7 +119,7 @@ class DocumentField extends Component {
     let placeholder = field.placeholder
 
     if (isTranslation && isTranslatable) {
-      let language = api.currentApi.languages.find(language => {
+      let language = api.languages.find(language => {
         return language.code === currentLanguage
       })
 
@@ -156,7 +162,7 @@ class DocumentField extends Component {
           collection={collection.slug}
           comment={fieldComment}
           config={app.config}
-          currentApi={api.currentApi}
+          currentApi={api}
           currentCollection={collection}
           displayName={displayName}
           documentId={documentId}

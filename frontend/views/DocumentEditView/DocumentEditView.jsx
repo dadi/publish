@@ -208,6 +208,7 @@ class DocumentEditView extends Component {
                     label={item.name}
                     main={item.fields.main.map(field => (
                       <DocumentField
+                        api={currentApi}
                         collection={currentCollection}
                         documentId={documentId}
                         field={field}
@@ -216,6 +217,7 @@ class DocumentEditView extends Component {
                     ))}
                     sidebar={item.fields.sidebar.map(field => (
                       <DocumentField
+                        api={currentApi}
                         collection={currentCollection}
                         documentId={documentId}
                         field={field}

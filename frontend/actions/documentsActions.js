@@ -59,7 +59,7 @@ export function deleteMedia ({api, ids}) {
       method: 'DELETE'
     }).then(response => {
       if (response.ok) {
-        dispatch(
+        return dispatch(
           setDocumentListStatus(Constants.STATUS_IDLE)
         )
       }

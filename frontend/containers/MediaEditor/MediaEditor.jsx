@@ -3,6 +3,7 @@ import proptypes from 'proptypes'
 import {bindActionCreators} from 'redux'
 import {connectHelper} from 'lib/util'
 
+import * as Constants from 'lib/constants'
 import * as documentActions from 'actions/documentActions'
 import * as fieldComponents from 'lib/field-components'
 
@@ -10,6 +11,7 @@ import Style from 'lib/Style'
 import styles from './MediaEditor.css'
 
 import Button from 'components/Button/Button'
+import DocumentField from 'containers/DocumentField/DocumentField'
 import EditInterface from 'components/EditInterface/EditInterface'
 import EditInterfaceSection from 'components/EditInterface/EditInterfaceSection'
 import Field from 'components/Field/Field'
@@ -27,6 +29,21 @@ class MediaEditor extends Component {
       * The global actions object.
     */
     actions: proptypes.object,
+
+    /**
+     * The API to operate on.
+     */
+    api: proptypes.object,    
+
+    /**
+     * The collection to operate on.
+     */
+    collection: proptypes.object,
+
+    /**
+     * The document to operate on.
+     */
+    documentData: proptypes.object,
 
     /**
      * The global state object.
@@ -63,10 +80,9 @@ class MediaEditor extends Component {
     const {
       state
     } = this.props
-    const {api, app, document} = state
+    const {app, document} = state
     const hasAttemptedSaving = document.saveAttempts > 0
     const hasError = document.validationErrors
-      && document.validationErrors[field._id]
 
     // As per API docs, validation messages are in the format "must be xxx", which
     // assumes that something (probably the name of the field) will be prepended to
@@ -139,7 +155,10 @@ class MediaEditor extends Component {
   }
 
   renderSidebar(fields) {
-    const {documentData} = this.props
+    const {
+      api,
+      documentData
+    } = this.props
 
     return (
       <div>
@@ -176,16 +195,16 @@ class MediaEditor extends Component {
           </Label>
         </Field>
 
-        {documentData.url !== undefined && (
-          <Field>
-            <Label
-              label="Public URL"
-            >
-              <TextInput
-                readonly={true}
-                value={documentData.url}
-              />
+        <Field>
+          <Label
+            label="Public URL"
+          >
+            <TextInput
+              readonly={true}
+              value={documentData.url}
+            />
 
+            {documentData.url && (
               <Button
                 accent="neutral"
                 className={styles['link-button']}
@@ -193,9 +212,9 @@ class MediaEditor extends Component {
                 openInNewWindow={true}
                 size="small"
               >Open in new window</Button>
-            </Label>
-          </Field>
-        )}
+            )}
+          </Label>
+        </Field>
 
         {documentData.width !== undefined && (
           <Field>
@@ -222,6 +241,36 @@ class MediaEditor extends Component {
             </Label>
           </Field>
         )}
+
+        <DocumentField
+          api={api}
+          collection={Constants.MEDIA_COLLECTION_SCHEMA}
+          field={{
+            _id: 'caption',
+            type: 'String',
+            label: 'Caption'
+          }}
+        />
+
+        <DocumentField
+          api={api}
+          collection={Constants.MEDIA_COLLECTION_SCHEMA}
+          field={{
+            _id: 'altText',
+            type: 'String',
+            label: 'Alt text'
+          }}
+        />
+
+        <DocumentField
+          api={api}
+          collection={Constants.MEDIA_COLLECTION_SCHEMA}
+          field={{
+            _id: 'copyright',
+            type: 'String',
+            label: 'Copyright Information'
+          }}
+        />
       </div>
     )
   }
