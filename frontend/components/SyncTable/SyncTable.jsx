@@ -10,7 +10,8 @@ import TableRow from 'components/Table/TableRow'
 import TableRowCell from 'components/Table/TableRowCell'
 
 /**
- * An advanced table that controls which properties of an object are displayed and ensures that table headings and row cells stay in sync.
+ * An advanced table that controls which properties of an object are displayed
+ * and ensures that table headings and row cells stay in sync.
  */
 export default class SyncTable extends Component {
   static propTypes = {

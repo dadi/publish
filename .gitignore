@@ -1,3 +1,5 @@
+.DS_Store
+
 # NPM
 node_modules/
 
@@ -35,3 +37,4 @@ frontend/lib/field-components.js
 stats.json
 jest*
 workspace/
+.DS_Store

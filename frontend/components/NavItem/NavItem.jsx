@@ -76,7 +76,7 @@ export default class NavItem extends Component {
           class={navItemClass.getClasses()}
           href={href}
         >
-          {text}
+          <span>{text}</span>
         </a>
 
         {children.length ?

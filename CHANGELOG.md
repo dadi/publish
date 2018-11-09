@@ -4,6 +4,102 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [1.0.14-beta] (2018-11-05)
+
+### Added
+
+#### "Linkable" fields
+
+Linkable fields allow you to use the value of a field to create links to external resources in the Publish interface.
+An example use case for this is a Twitter username. By specifying a `display.link` property, Publish creates a full
+link for display, using the value of the field in place of the `{value}` placeholder.
+
+**Example API schema**
+```json
+"twitter": {
+  "type": "String",
+  "label": "Twitter",
+  "publish": {
+    "section": "Details",
+    "display": {
+      "edit": true,
+      "list": true,
+      "link": "https://twitter.com/{value}"
+    }
+  }
+}
+```
+
+If the value of your field is already a fully formed URL, set the `link` property to `true` to have Publish create a clickable link:
+
+```json
+"twitter": {
+  "type": "String",
+  "label": "Twitter",
+  "publish": {
+    "section": "Details",
+    "display": {
+      "edit": true,
+      "list": true,
+      "link": true
+    }
+  }
+}
+```
+
+### Changed
+
+* [#559](https://github.com/dadi/publish/pull/559): This PR addresses a small issue if you set a Reference field or Media field as the first displayed field in your API schema you are unable to click through from the list view (both those fields override the link).
+* [#562](https://github.com/dadi/publish/pull/562): adds a basic fullscreen mode for the rich editor
+* [#565](https://github.com/dadi/publish/issues/565): use field name as label in columns when no label specified
+* [#568](https://github.com/dadi/publish/pull/568): disable autocomplete in input elements
+
+
+## [1.0.13-beta] (2018-10-25)
+
+In this release, Publish gets a UI refresh. Additional changes linked below.
+
+[#477](https://github.com/dadi/publish/issue/477): Linkable fields
+[#489](https://github.com/dadi/publish/issue/489): Reference field is still editable when set to readonly
+[#511](https://github.com/dadi/publish/issue/511): Refactor SSL, resolves installation issue using Node.js 10
+[#526](https://github.com/dadi/publish/pull/526): Support multiple referenced images 
+[#532](https://github.com/dadi/publish/issue/532): Rich editor uses auto-height by default 
+[#538](https://github.com/dadi/publish/pull/538): Render first image only in list view when a field contains multiple images
+[#544](https://github.com/dadi/publish/issue/544): Fields with dropdown options fail to save 
+[#545](https://github.com/dadi/publish/issue/545): Pagination links incorrect when sorting
+[#554](https://github.com/dadi/publish/pull/554): Media field added to replace subType "Image". Use `"subType": "Media"` in field configurations
+[#555](https://github.com/dadi/publish/pull/555): Image fields use CDN for preview if configured
+
+
+## [1.0.12-beta] (2018-10-12)
+
+### Changed
+
+- [#379](https://github.com/dadi/publish/issues/379): remember previously selected save options in document edit view
+- [#448](https://github.com/dadi/publish/issues/448): format DateTime fields in document list view
+- [#510](https://github.com/dadi/publish/pull/510): add rich editor component with Markdown support
+- [#514](https://github.com/dadi/publish/pull/514): batch load API collections
+- [#521](https://github.com/dadi/publish/pull/521): further improvements to auto-resize feature of text inputs
+- [#523](https://github.com/dadi/publish/pull/523): various UI tweaks
+- [#534](https://github.com/dadi/publish/pull/534): add loading states to home view and to sign in and document save actions
+
+### Fixed
+
+- [#513](https://github.com/dadi/publish/pull/513): fix error when saving documents
+- [#515](https://github.com/dadi/publish/pull/515): ensure document is saved on first attempt
+- [#522](https://github.com/dadi/publish/pull/522): fix error on sign out in document edit view
+- [#531](https://github.com/dadi/publish/pull/531): fix links on reference field select (create new document view)
+
+## [1.0.11-beta] (2018-09-26)
+
+- Fix problem with application bundle.
+
+## [1.0.10-beta] (2018-09-25)
+
+### Fixed
+
+- Fix problem with application bundle.
+
 ## [1.0.9-beta] (2018-09-25)
 
 ### Changed

@@ -52,6 +52,13 @@ An error message to display on the label.
 - default value: `null`
 
 
+### `hasFocus`
+
+Whether the label, or a component inside it, has focus.
+
+- type: `bool`
+
+
 ### `label` (required)
 
 The text to be rendered inside the label.

@@ -348,6 +348,18 @@ class DocumentEdit extends Component {
     this.hasFetched = true
   }
 
+  getFieldType (schema) {
+    let fieldType = (schema.publish && schema.publish.subType) ?
+      schema.publish.subType :
+      schema.type
+
+    if (fieldType === 'Image') {
+      fieldType = 'Media'
+    }
+
+    return fieldType
+  }
+
   // Groups fields by section based on the `section` property of the `publish`
   // block present in their schema. It returns an object with two properties:
   //
@@ -498,10 +510,7 @@ class DocumentEdit extends Component {
     const error = typeof hasError === 'string' ?
       'This field ' + hasError :
       hasError
-    const fieldType = field.publish &&
-      field.publish.subType ?
-        field.publish.subType :
-        field.type
+    const fieldType = this.getFieldType(field)
     const fieldComponentName = `Field${fieldType}`
     const FieldComponent = fieldComponents[fieldComponentName] &&
       fieldComponents[fieldComponentName].edit
@@ -518,7 +527,7 @@ class DocumentEdit extends Component {
     fieldStyles.addIf('field-disabled', isTranslation && !isTranslatable)
 
     return (
-      <div class={fieldStyles.getClasses()}>
+      <div class={fieldStyles.getClasses()} data-field-name={fieldName}>
         <FieldComponent
           collection={collection.slug}
           comment={fieldComment}

@@ -8,8 +8,6 @@ import {connectHelper} from 'lib/util'
 import * as Constants from 'lib/constants'
 
 import CollectionNav from 'containers/CollectionNav/CollectionNav'
-import IconBurger from 'components/IconBurger/IconBurger'
-import IconCross from 'components/IconCross/IconCross'
 
 import Style from 'lib/Style'
 import styles from './Header.css'
@@ -25,6 +23,11 @@ class Header extends Component {
     actions: proptypes.object,
 
     /**
+     * The schema of the collection being edited.
+     */
+    currentCollection: proptypes.object,
+
+    /**
      * The global state object.
      */
     state: proptypes.object
@@ -37,9 +40,14 @@ class Header extends Component {
   }
 
   render() {
-    const {state} = this.props
+    const {currentCollection, state} = this.props
     const compact = state.app.breakpoint === null
-    const {currentCollection} = state.api
+
+    const {
+      whitelabel: {logo, poweredBy, backgroundImage}
+    } = state.app.config || {
+      whitelabel: {logo: '', poweredBy: false, backgroundImage: ''}
+    }
 
     if (!state.user.isSignedIn) {
       return null
@@ -59,44 +67,36 @@ class Header extends Component {
 
     return (
       <header class={styles.header}>
-        {compact &&
-          <button
-            type="button"
-            class={styles.toggle}
-            onClick={this.toggleCollapsed.bind(this, undefined)}
-          >
-            <span class={styles['toggle-icon']}>
+        <div class={contentStyle.getClasses()}>
+          <div class={styles.account}>
+            {logo !== '' && (
+              <div class={styles.logo}>
+                <img src={logo} />
+              </div>
+            )}
+
+            <div class={styles['toggle-icon']} onClick={this.toggleCollapsed.bind(this, undefined)}>
               {this.state.expanded ?
-                <IconCross width="16" height="16" />
+                <span class={styles['icon-close']}>Close</span>
                 :
-                <IconBurger width="12" height="16" />
+                <span class={styles['icon-open']}>Open</span>
               }
-            </span>
-            <span class={styles['toggle-label']}>Menu</span>
-          </button>
-        }
-        
-        <div class={contentStyle.getClasses()} onClick={this.toggleCollapsed.bind(this, false)}>
-          <div class={styles.masthead}>
-            <a href="/">
-              <img class={styles.logo} src="/public/images/publish.png" />
-            </a>
+            </div>
 
-              {state.user.accessToken && (
-                <div class={styles.controls}>
-                  <button
-                    class={styles.signout}
-                    onClick={this.handleSignOut.bind(this)}
-                  >
-                    Sign out
-                  </button>
-
-                  <a href="/profile" class={styles.user}>{displayName}</a>
-                </div>
-              )}
+            {state.user.accessToken && this.state.expanded && (
+              <div class={styles.controls}>
+                <a href="/profile" class={styles.user}>{displayName}</a>
+                <button
+                  class={styles.signout}
+                  onClick={this.handleSignOut.bind(this)}
+                >
+                  Sign out
+                </button>
+              </div>
+            )}
           </div>
 
-          <div class={innerStyle.getClasses()}>
+          <div class={innerStyle.getClasses()} onClick={this.toggleCollapsed.bind(this, false)}>
             <CollectionNav
               currentCollection={currentCollection}
             />

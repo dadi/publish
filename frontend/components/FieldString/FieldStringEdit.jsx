@@ -6,6 +6,7 @@ import proptypes from 'proptypes'
 import Style from 'lib/Style'
 import styles from './FieldString.css'
 
+import Button from 'components/Button/Button'
 import Label from 'components/Label/Label'
 import RichEditor from 'components/RichEditor/RichEditor'
 import TextInput from 'components/TextInput/TextInput'
@@ -114,6 +115,12 @@ export default class FieldStringEdit extends Component {
     value: ''
   }
 
+  constructor(props) {
+    super(props)
+
+    this.state.hasFocus = false
+  }
+
   componentDidMount() {
     const {forceValidation, value} = this.props
 
@@ -189,6 +196,12 @@ export default class FieldStringEdit extends Component {
     return value
   }
 
+  handleFocusChange(hasFocus) {
+    this.setState({
+      hasFocus
+    })
+  }
+
   handleOnChange(value) {
     const {name, onChange, schema} = this.props
 
@@ -233,20 +246,20 @@ export default class FieldStringEdit extends Component {
     const dropdownStyle = new Style(styles, 'dropdown')
       .addIf('dropdown-error', error)
       .addIf('dropdown-multiple', multiple)
-    comment = comment || (required && 'Required')
 
     return (
       <Label
         error={error}
         errorMessage={typeof error === 'string' ? error : null}
         label={displayName}
-        comment={comment}
+        comment={comment || (required && 'Required') || (readOnly && 'Read only')}
       >
         <select
           class={dropdownStyle.getClasses()}
-          onChange={el => this.handleOnChange(this.getValueOfDropdown(el))}
-          multiple={multiple}
           disabled={readOnly}
+          onChange={el => this.handleOnChange(this.getValueOfDropdown(el.target))}
+          multiple={multiple}
+          name={name}
           ref={multiple && this.selectDropdownOptions.bind(this)}
           value={selectedValue}
         >
@@ -277,26 +290,40 @@ export default class FieldStringEdit extends Component {
       comment,
       displayName,
       error,
+      name,
       placeholder,
       required,
       schema,
       value
     } = this.props
+    const {hasFocus} = this.state
     const publishBlock = schema.publish || {}
     const {heightType, rows, resizable} = publishBlock
     const type = publishBlock.multiline ? 'multiline' : 'text'
     const readOnly = publishBlock.readonly === true
 
+    let link = publishBlock.display && publishBlock.display.link
+    let linkFormatted = false
+
+    if (link && typeof link === 'string') {
+      linkFormatted = link.replace(/{value}/, value)
+    }
+
     return (
       <Label
         error={error}
         errorMessage={typeof error === 'string' ? error : null}
+        hasFocus={hasFocus}
         label={displayName}
-        comment={comment || (required && 'Required')}
+        comment={comment || (required && 'Required') || (readOnly && 'Read only')}
       >
         <TextInput
           heightType={heightType}
+          name={name}
+          onBlur={this.handleFocusChange.bind(this, false)}
           onKeyUp={el => this.handleOnChange(el.target.value)}
+          onFocus={this.handleFocusChange.bind(this, true)}
+          onKeyUp={el => this.handleOnKeyUp.bind(el.target.value)}
           placeholder={placeholder}
           readonly={readOnly}
           resizable={resizable}
@@ -304,6 +331,14 @@ export default class FieldStringEdit extends Component {
           type={type}
           value={value}
         />
+        {link && (
+          <Button
+            accent="neutral"
+            size="small"
+            href={linkFormatted || value} 
+            className={styles['link-preview']}
+          >Open in new window</Button>
+        )}
       </Label>
     )
   }
@@ -317,16 +352,21 @@ export default class FieldStringEdit extends Component {
       schema,
       value
     } = this.props
+    const {hasFocus} = this.state
+    
     return (
       <Label
         error={error}
         errorMessage={typeof error === 'string' ? error : null}
+        hasFocus={hasFocus}
         label={displayName}
         comment={required && 'Required'}
       >
         <RichEditor
           format={format}
+          onBlur={this.handleFocusChange.bind(this, false)}
           onChange={this.handleOnChange.bind(this)}
+          onFocus={this.handleFocusChange.bind(this, true)}
           value={value}
         />        
       </Label>

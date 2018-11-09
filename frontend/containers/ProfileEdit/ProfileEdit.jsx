@@ -102,13 +102,13 @@ class ProfileEdit extends Component {
         <Header />
 
         <Main>
+          <ProfileEditToolbar />
+
           <TabbedFieldSections
             activeSection={section}
             renderField={this.renderField.bind(this)}
             sections={sections}
           />
-
-          <ProfileEditToolbar />
         </Main>
       </Page>
     )
@@ -134,61 +134,69 @@ class ProfileEdit extends Component {
 
     if (field === 'clientId') {
       return (
-        <FieldString
-          displayName="Username"
-          error={error}
-          name="clientId"
-          onChange={this.handleFieldChange.bind(this)}
-          onError={this.handleFieldError.bind(this)}
-          schema={{
-            ...schema,
-            publish: {
-              readonly: true
-            }
-          }}
-          value={state.remote.clientId}
-        />
+        <div data-field-name="userName">
+          <FieldString
+            displayName="Username"
+            error={error}
+            name="clientId"
+            onChange={this.handleFieldChange.bind(this)}
+            onError={this.handleFieldError.bind(this)}
+            schema={{
+              ...schema,
+              publish: {
+                readonly: true
+              }
+            }}
+            value={state.remote.clientId}
+          />
+        </div>
       )
     }
 
     if (field === 'secret') {
       return (
-        <FieldPassword
-          displayName="Password"
-          error={error}
-          name="secret"
-          onChange={this.handleFieldChange.bind(this)}
-          onError={this.handleFieldError.bind(this)}
-          schema={schema}
-        />
+        <div data-field-name="password">
+          <FieldPassword
+            displayName="Password"
+            error={error}
+            name="secret"
+            onChange={this.handleFieldChange.bind(this)}
+            onError={this.handleFieldError.bind(this)}
+            schema={schema}
+          />
+        </div>
       )
     }
 
     if (field === 'data.publishFirstName') {
       return (
-        <FieldString
-          displayName="First name"
-          error={error}
-          name="data.publishFirstName"
-          onChange={this.handleFieldChange.bind(this)}
-          onError={this.handleFieldError.bind(this)}
-          schema={schema}
-          value={userData.publishFirstName}
-        />
+        <div data-field-name="firstName">
+          <FieldString
+            displayName="First name"
+            error={error}
+            name="data.publishFirstName"
+            onChange={this.handleFieldChange.bind(this)}
+            onError={this.handleFieldError.bind(this)}
+            schema={schema}
+            value={userData.publishFirstName}
+          />
+        </div>
       )
     }
 
     if (field === 'data.publishLastName') {
       return (
-        <FieldString
-          displayName="Last name"
-          error={error}
-          name="data.publishLastName"
-          onChange={this.handleFieldChange.bind(this)}
-          onError={this.handleFieldError.bind(this)}
-          schema={schema}
-          value={userData.publishLastName}
-        />
+        <div data-field-name="lastName">
+          <FieldString
+            displayName="Last name"
+            error={error}
+            name="data.publishLastName"
+            onChange={this.handleFieldChange.bind(this)}
+            onError={this.handleFieldError.bind(this)}
+            schema={schema}
+            value={userData.publishLastName}
+          />
+        </div>
       )
     }
   }

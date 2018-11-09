@@ -1,6 +1,5 @@
 'use strict'
 
-const Collection = require(`${paths.lib.models}/collection`)
 const config = require(paths.config)
 const request = require('request-promise')
 
@@ -35,19 +34,14 @@ module.exports = function (app) {
         return Promise.reject()
       }
 
-      return new Collection({accessToken})
-        .buildCollectionRoutes()
-        .then(routes => {
-          let response = {
-            client: results[0],
-            config: config.get(),
-            routes
-          }
+      let response = {
+        client: results[0],
+        config: config.get()
+      }
 
-          return res.end(
-            JSON.stringify(response)
-          )
-        })
+      return res.end(
+        JSON.stringify(response)
+      )
     }).catch(() => {
       return res.end(
         JSON.stringify(emptyResponse)

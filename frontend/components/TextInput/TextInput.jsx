@@ -38,6 +38,11 @@ export default class TextInput extends Component {
     heightType: proptypes.string,
 
     /**
+     * DOM name for the input field.
+     */
+    name: proptypes.string,
+
+    /**
      * Callback to be executed when the text loses focus (onBlur event).
      */
     onBlur: proptypes.func,
@@ -128,6 +133,16 @@ export default class TextInput extends Component {
 
   componentDidMount() {
     this.adjustHeightIfNeeded()
+
+    // This is a *temporary* measure to stop Preact from recycling the DOM
+    // nodes of this component, which has caused issues with username/passwords
+    // being autofilled in other fields. Should be removed once Preact drops
+    // this feature.
+    //
+    // https://github.com/developit/preact/issues/957#issuecomment-352780885
+    setTimeout(() => {
+      this.nextBase = null
+    })
   }
 
   render() {
@@ -136,6 +151,7 @@ export default class TextInput extends Component {
       heightType,
       id,
       inLabel,
+      name,
       placeholder,
       readonly,
       required,
@@ -163,6 +179,7 @@ export default class TextInput extends Component {
         <textarea
           class={inputStyle.getClasses()}
           id={id}
+          name={name}
           onBlur={this.handleEvent.bind(this, 'onBlur')}
           onChange={this.handleChange.bind(this)}
           onInput={this.handleChange.bind(this)}
@@ -170,7 +187,7 @@ export default class TextInput extends Component {
           placeholder={placeholder}
           readonly={readonly}
           required={required}
-          rows={heightType === 'static' ? rows : '1'}
+          rows={heightType === 'content' ? '1' : rows}
           value={value}
         />
       )
@@ -181,6 +198,7 @@ export default class TextInput extends Component {
       <input
         class={inputStyle.getClasses()}
         id={id}
+        name={name}
         onBlur={this.handleEvent.bind(this, 'onBlur')}
         onChange={this.handleChange.bind(this)}
         onFocus={this.handleEvent.bind(this, 'onFocus')}

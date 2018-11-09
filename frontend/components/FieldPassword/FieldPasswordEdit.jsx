@@ -135,6 +135,7 @@ export default class FieldPasswordEdit extends Component {
     const {
       displayName,
       error,
+      name,
       schema
     } = this.props
     const {
@@ -157,6 +158,7 @@ export default class FieldPasswordEdit extends Component {
           label={`Current ${(displayName || '').toLowerCase()}`}
         >
           <TextInput
+            name={name}
             onChange={this.handleOnChange.bind(this, 'currentPassword')}
             onKeyUp={this.handleKeyUp.bind(this, 'currentPassword')}
             placeholder={schema.placeholder}
@@ -171,6 +173,7 @@ export default class FieldPasswordEdit extends Component {
           label={`New ${(displayName || '').toLowerCase()}`}
         >
           <TextInput
+            name={`${name}-new`}
             onChange={this.handleOnChange.bind(this, 'newPassword')}
             onKeyUp={this.handleKeyUp.bind(this, 'newPassword')}
             placeholder={schema.placeholder}
@@ -187,6 +190,7 @@ export default class FieldPasswordEdit extends Component {
           label={`New ${(displayName || '').toLowerCase()} (confirm)`}
         >
           <TextInput
+            name={`${name}-confirm`}
             onChange={this.handleOnChange.bind(this, 'newPasswordConfirm')}
             onKeyUp={this.handleKeyUp.bind(this, 'newPasswordConfirm')}
             placeholder={schema.placeholder}

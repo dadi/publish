@@ -5,7 +5,6 @@ App
 │ │ ├─┬ ErrorMessage
 │ │ │ ├── Button
 │ │ │ └── HeroMessage
-│ │ ├── SpinningWheel
 │ │ └─┬ TabbedFieldSections
 │ │   └── SubNavItem
 │ ├─┬ DocumentEditToolbar
@@ -41,7 +40,6 @@ App
 │ │ ├─┬ ErrorMessage
 │ │ │ ├── Button
 │ │ │ └── HeroMessage
-│ │ ├── SpinningWheel
 │ │ └─┬ TabbedFieldSections
 │ │   └── SubNavItem
 │ ├─┬ DocumentEditToolbar
@@ -79,7 +77,6 @@ App
 │ │ │ ├── Button
 │ │ │ └── HeroMessage
 │ │ ├── HeroMessage
-│ │ ├── SpinningWheel
 │ │ └─┬ SyncTable
 │ │   ├── Table
 │ │   ├─┬ TableHead
@@ -209,6 +206,11 @@ App
     ├── Page
     ├─┬ ProfileEditToolbar
     │ ├── Button
+    │ ├─┬ ButtonWithOptions
+    │ │ ├── Button
+    │ │ ├── Dropdown
+    │ │ ├── DropdownItem
+    │ │ └── IconArrow
     │ ├─┬ ButtonWithPrompt
     │ │ ├── Button
     │ │ └─┬ Prompt

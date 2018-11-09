@@ -1,6 +1,6 @@
 .filters {
   background-color: var(--theme-colour-background-shade-3, #DDDDDD);
-  padding: 1px 20px;
+  padding: 0 10px;
 }
 
 .submit {

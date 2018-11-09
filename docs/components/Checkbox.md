@@ -13,6 +13,13 @@ The ID of the input element.
 - type: `string`
 
 
+### `name`
+
+The name of the input element.
+
+- type: `string`
+
+
 ### `onChange`
 
 A callback function to be fired whenever the value changes.

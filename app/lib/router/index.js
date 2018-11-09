@@ -1,6 +1,3 @@
-'use strict'
-
-const Collection = require(`${paths.lib.models}/collection`)
 const config = require(paths.config)
 const cookieParser = require('restify-cookies')
 const flash = require('connect-flash')
@@ -27,7 +24,7 @@ const Router = function (server) {
  */
 Router.prototype.addRoutes = function () {
   if (!this.server) {
-    log.error({module: 'router'}, `setHeaders failed: this.server is undefined`)
+    log.error({module: 'router'}, 'addRoutes failed: this.server is undefined')
 
     return
   }
@@ -38,32 +35,14 @@ Router.prototype.addRoutes = function () {
   this.componentRoutes(path.resolve(`${paths.frontend.components}`), /Routes$/g)
   this.setHeaders()
   this.webRoutes()
+
   return this
-}
-
-Router.prototype.addSecureRedirect = function (ssl) {
-  this.server.use(this.secureRedirect(ssl))
-  return this
-}
-
-Router.prototype.secureRedirect = function (ssl) {
-  return (req, res, next) => {
-    // Skip redirect if ssl is not present
-    if (!ssl.getKey() || !ssl.getCertificate()) return next()
-
-    const hostname = req.headers.host.split(':')[0]
-    const location = `https://${hostname}${req.url}`
-
-    res.setHeader('Location', location)
-    res.statusCode = 301
-    return res.end()
-  }
 }
 
 Router.prototype.getRoutes = function () {
   try {
     fs.readdirSync(path.resolve(this.routesDir)).forEach((file) => {
-      /* require module with its name (from filename), passing app */
+      // Require module with its name (from filename), passing app
       let controller = require(path.join(this.routesDir, file))
 
       controller(this.server)
@@ -79,23 +58,23 @@ Router.prototype.getRoutes = function () {
  */
 Router.prototype.webRoutes = function () {
   if (!this.server) {
-    log.error({module: 'router'}, `setHeaders failed: this.server is undefined`)
+    log.error({module: 'router'}, 'webRoutes failed: this.server is undefined')
 
     return
   }
 
-  this.server.get(/\/public\/?.*/, restify.serveStatic({
+  this.server.get('/public/*', restify.plugins.serveStatic({
     directory: path.resolve(__dirname, '../../..')
   }))
 
   // Respond to HEAD requests - this is used by ConnectionMonitor in App.jsx.
-  this.server.head(/.*/, (req, res, next) => {
+  this.server.head('*', (req, res, next) => {
     res.header('Content-Type', 'application/json')
 
     return res.end()
   })
 
-  this.server.get(/.*/, (req, res, next) => {
+  this.server.get('*', (req, res, next) => {
     res.header('Content-Type', 'text/html; charset=utf-8')
 
     let entryPointPage = this.entryPointTemplate
@@ -103,50 +82,37 @@ Router.prototype.webRoutes = function () {
     let authenticate = Promise.resolve()
 
     if (accessToken) {
-      authenticate = new Collection({accessToken})
-        .buildCollectionRoutes()
-        .then(documentRoutes => {
-          if (documentRoutes) {
-            entryPointPage = entryPointPage
-              .replace(
-                '/*@@documentRoutes@@*/',
-                `window.__documentRoutes__ = ${JSON.stringify(documentRoutes)};`
-              )
-              .replace(
-                '/*@@config@@*/',
-                `window.__config__ = ${config.toString()};`
-              )
-          }
+      let api = config.get('apis.0')
 
-          let api = config.get('apis.0')
+      authenticate = request({
+        headers: {
+          Authorization: `Bearer ${accessToken}`
+        },
+        json: true,
+        uri: `${api.host}:${api.port}/api/client`
+      }).then(({results}) => {
+        entryPointPage = entryPointPage
+          .replace(
+            '/*@@config@@*/',
+            `window.__config__ = ${config.toString()};`
+          )
+          .replace(
+            '/*@@client@@*/',
+            `window.__client__ = ${JSON.stringify(results[0])};`
+          )
+      }).catch(error => {
+        log.error({module: 'router'}, error)
 
-          return request({
-            headers: {
-              Authorization: `Bearer ${accessToken}`
-            },
-            json: true,
-            uri: `${api.host}:${api.port}/api/client`
-          })
-        }).then(({results}) => {
-          entryPointPage = entryPointPage
-            .replace(
-              '/*@@client@@*/',
-              `window.__client__ = ${JSON.stringify(results[0])};`
-            )
-        })
-        .catch(e => {
-          log.error({module: 'router'}, `buildCollectionRoutes failed: ${JSON.stringify(e)}`)
-
-          entryPointPage = entryPointPage
-            .replace(
-              '/*@@apiError@@*/',
-              `window.__apiError__ = ${JSON.stringify(e)};`
-            )
-            .replace(
-              '/*@@config@@*/',
-              `window.__config__ = ${JSON.stringify(config.getUnauthenticatedConfig())};`
-            )
-        })
+        entryPointPage = entryPointPage
+          .replace(
+            '/*@@apiError@@*/',
+            `window.__apiError__ = ${JSON.stringify(error)};`
+          )
+          .replace(
+            '/*@@config@@*/',
+            `window.__config__ = ${JSON.stringify(config.getUnauthenticatedConfig())};`
+          )
+      })
     } else {
       entryPointPage = entryPointPage
         .replace(
@@ -168,25 +134,25 @@ Router.prototype.webRoutes = function () {
  */
 Router.prototype.componentRoutes = function (dir, match) {
   if (!this.server) {
-    log.error({module: 'router'}, `setHeaders failed: this.server is undefined`)
+    log.error({module: 'router'}, 'componentRoutes failed: this.server is undefined')
 
     return
   }
 
   // Fetch aditional component schema
   fs.readdirSync(dir).forEach(folder => {
-    const sub = path.resolve(dir, folder)
+    let sub = path.resolve(dir, folder)
 
     if (fs.lstatSync(sub).isDirectory()) {
       this.componentRoutes(sub, match)
     } else if (fs.lstatSync(sub).isFile()) {
-      const file = path.parse(sub)
+      let file = path.parse(sub)
 
       if (
         (file.ext === '.js') &&
         file.name.match(match)
       ) {
-        const controller = require(sub)
+        let controller = require(sub)
 
         controller(this.server)
       }
@@ -199,15 +165,15 @@ Router.prototype.componentRoutes = function (dir, match) {
  */
 Router.prototype.setHeaders = function () {
   if (!this.server) {
-    log.error({module: 'router'}, `setHeaders failed: this.server is undefined`)
+    log.error({module: 'router'}, 'setHeaders failed: this.server is undefined')
 
     return
   }
 
   this.server.use((req, res, next) => {
     res.set({
-      'Last-Modified': new Date(),
       'ETag': 'publish-etag',
+      'Last-Modified': new Date(),
       'Vary': 'Accept-Encoding'
     })
 
@@ -216,45 +182,43 @@ Router.prototype.setHeaders = function () {
 }
 
 /**
- * Middleware
- * @param  {restify} app Restify web server instance
- */
-Router.prototype.use = function () {
-  if (!this.server) {
-    log.error({module: 'router'}, `use failed: this.server is undefined`)
-
-    return
-  }
-
-  this.server
-    .use(restify.gzipResponse())
-    .use(restify.queryParser())
-    .use(restify.bodyParser({mapParams: true})) // Changing to false throws issues with auth. Needs addressing
-    .use(cookieParser.parse)
-    // Request logging middleware.
-    .use(log.requestLogger)
-    // Add session.
-    .use(session({
-      key: 'dadi-publish',
-      secret: 'keyboard cat',
-      saveUninitialized: true,
-      resave: true
-    }))
-    .use(flash())
-}
-
-/**
  * Pre Middleware
  * @param  {restify} app Restify web server instance
  */
 Router.prototype.pre = function () {
   if (!this.server) {
-    log.error({module: 'router'}, `use failed: this.server is undefined`)
+    log.error({module: 'router'}, 'pre failed: this.server is undefined')
 
     return
   }
 
-  this.server.pre(restify.pre.sanitizePath())
+  this.server.pre(restify.plugins.pre.sanitizePath())
+}
+
+/**
+ * Middleware
+ * @param  {restify} app Restify web server instance
+ */
+Router.prototype.use = function () {
+  if (!this.server) {
+    log.error({module: 'router'}, 'use failed: this.server is undefined')
+
+    return
+  }
+
+  this.server
+    .use(restify.plugins.gzipResponse())
+    .use(restify.plugins.queryParser({mapParams: true}))
+    .use(restify.plugins.bodyParser({mapParams: true}))
+    .use(cookieParser.parse)
+    .use(log.requestLogger)
+    .use(session({
+      key: 'dadi-publish',
+      resave: true,
+      saveUninitialized: true,
+      secret: 'keyboard cat'
+    }))
+    .use(flash())
 }
 
 module.exports = function (server) {

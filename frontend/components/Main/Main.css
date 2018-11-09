@@ -34,6 +34,17 @@
        url('/public/fonts/karla-v5-latin-700italic.woff2') format('woff2'), /* Chrome 26+, Opera 23+, Firefox 39+ */
        url('/public/fonts/karla-v5-latin-700italic.woff') format('woff'); /* Chrome 6+, Firefox 3.6+, IE 9+, Safari 5.1+ */
 }
+/* roboto-mono-regular - latin */
+/* roboto-mono-regular - latin */
+@font-face {
+  font-family: 'Roboto Mono';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Roboto Mono'), local('RobotoMono-Regular'),
+       url('/public/fonts/roboto-mono-v5-latin-regular.woff2') format('woff2'), /* Chrome 26+, Opera 23+, Firefox 39+ */
+       url('/public/fonts/roboto-mono-v5-latin-regular.woff') format('woff'); /* Chrome 6+, Firefox 3.6+, IE 9+, Safari 5.1+ */
+}
+
 
 :root strong {
   font-weight: bold;
@@ -48,6 +59,7 @@ body {
 
 .main {
   border-bottom: 1px solid transparent;
+  padding-bottom: 80px;
 }
 
 :global :root {
@@ -80,5 +92,6 @@ body {
   --theme-toolbar-height: 63px;
 }
 
+@custom-media --breakpoint-small (max-width: 600px);
 @custom-media --breakpoint-medium (min-width: 600px);
 @custom-media --breakpoint-large (min-width: 800px);

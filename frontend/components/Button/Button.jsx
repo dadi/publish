@@ -56,6 +56,11 @@ export default class Button extends Component {
     inGroup: proptypes.oneOf(['left', 'middle', 'right']),
 
     /**
+     * Whether to display a loading state.
+     */
+    isLoading: proptypes.bool,
+
+    /**
      * Callback to be executed when the button is clicked.
      */
     onClick: proptypes.func,
@@ -69,7 +74,7 @@ export default class Button extends Component {
      * Type/function of the button. When set to `mock`, a static element will be
      * rendered (as a `span`).
      */
-    type: proptypes.oneOf(['button', 'mock', 'submit'])
+    type: proptypes.oneOf(['button', 'mock', 'mock-stateful', 'submit'])
   }
 
   static defaultProps = {
@@ -90,6 +95,7 @@ export default class Button extends Component {
       forId,
       href,
       inGroup,
+      isLoading,
       onClick,
       size,
       type
@@ -97,6 +103,7 @@ export default class Button extends Component {
     const buttonStyle = new Style(styles, 'button')
 
     buttonStyle.add(`button-${accent}`)
+      .addIf('button-loading', isLoading)
       .addIf(`button-in-group-${inGroup}`, inGroup)
       .addIf('button-mock', type === 'mock')
       .addIf(`button-${size}`, size !== 'normal')
@@ -112,7 +119,7 @@ export default class Button extends Component {
       )
     }
 
-    if (type === 'mock') {
+    if (type === 'mock' || type === 'mock-stateful') {
       return (
         <span class={buttonStyle.getClasses()}>{children}</span>
       )
@@ -130,7 +137,7 @@ export default class Button extends Component {
     return (
       <button
         class={buttonStyle.getClasses()}
-        disabled={disabled}
+        disabled={disabled || isLoading}
         onClick={onClick}
         type={type}
       >{children}</button>

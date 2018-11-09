@@ -61,6 +61,13 @@ Whether the button is part of a group of buttons, and which position this partic
 - default value: `null`
 
 
+### `isLoading`
+
+Whether to display a loading state.
+
+- type: `bool`
+
+
 ### `onClick`
 
 Callback to be executed when the button is clicked.
@@ -81,6 +88,6 @@ The size variation of the button.
 Type/function of the button. When set to `mock`, a static element will be
 rendered (as a `span`).
 
-- type: `enum('button'|'mock'|'submit')`
+- type: `enum('button'|'mock'|'mock-stateful'|'submit')`
 - default value: `'button'`
 

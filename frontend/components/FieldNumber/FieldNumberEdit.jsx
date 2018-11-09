@@ -105,6 +105,12 @@ export default class FieldNumberEdit extends Component {
     value: null
   }
 
+  constructor(props) {
+    super(props)
+
+    this.state.hasFocus = false
+  }
+
   componentDidMount() {
     const {forceValidation, value} = this.props
 
@@ -126,10 +132,12 @@ export default class FieldNumberEdit extends Component {
       comment,
       displayName,
       error,
+      name,
       required,
       schema,
       value
     } = this.props
+    const {hasFocus} = this.state
     const publishBlock = schema.publish || {}
     comment = comment || (required && 'Required')
     
@@ -137,11 +145,15 @@ export default class FieldNumberEdit extends Component {
       <Label
         error={Boolean(error)}
         errorMessage={typeof error === 'string' ? error : null}
+        hasFocus={hasFocus}
         label={displayName}
         comment={comment}
       >
         <TextInput
+          name={name}
+          onBlur={this.handleFocusChange.bind(this, false)}
           onChange={this.handleOnChange.bind(this)}
+          onFocus={this.handleFocusChange.bind(this, true)}
           onKeyUp={this.handleOnKeyUp.bind(this)}
           readonly={publishBlock.readonly === true}
           type="number"
@@ -153,6 +165,12 @@ export default class FieldNumberEdit extends Component {
 
   getValueOfInput(input) {
     return parseFloat(input.value)
+  }
+
+  handleFocusChange(hasFocus) {
+    this.setState({
+      hasFocus
+    })
   }
 
   handleOnChange(event) {

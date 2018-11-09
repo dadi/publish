@@ -75,11 +75,9 @@ export default class FieldReferenceList extends Component {
             let displayField = optionsBlock && optionsBlock.displayField || firstStringField ? firstStringField.key : null
 
             return (
-              <div>
-                <a class={styles['value-link']} href={editLink}>
-                  {displayField && val[displayField] || `Referenced ${collection}`}
-                </a>{idx < values.length - 1 ? ', ' : ''}
-              </div>
+              <a class={styles['value-link']} href={editLink}>
+                {displayField && val[displayField] || `Referenced ${collection}`}
+              </a>
             )
           })}
         </div>

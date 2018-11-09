@@ -1,5 +1,6 @@
 'use strict'
 
+import {debounce} from 'lib/util'
 import {h, Component} from 'preact'
 import proptypes from 'proptypes'
 
@@ -7,6 +8,8 @@ import Style from 'lib/Style'
 import styles from './RichEditor.css'
 
 import Button from 'components/Button/Button'
+import TextInput from 'components/TextInput/TextInput'
+
 import marked from 'marked'
 import pell from 'pell'
 import TurndownService from 'turndown'
@@ -36,9 +39,19 @@ export default class RichEditor extends Component {
     ]),
 
     /**
+     * Callback to be executed when the text loses focus (onBlur event).
+     */
+    onBlur: proptypes.func,
+
+    /**
      * A callback function that is fired whenever the content changes.
      */
-    onChange: proptypes.func,
+    onChange: proptypes.func,    
+
+    /**
+     * Callback to be executed when the text gains focus (onFocus event).
+     */
+    onFocus: proptypes.func,
 
     /**
      * The initial value of the editor.
@@ -50,9 +63,10 @@ export default class RichEditor extends Component {
     super(props)
 
     this.state.html = null
+    this.state.inEditLinkMode = false
+    this.state.inFullscreenMode = false
     this.state.inTextMode = false
-    this.state.linkBeingEdited = null
-    this.state.showLinkModal = false
+    this.state.editLinkText = null
     this.state.text = props.value
   }
 
@@ -60,8 +74,10 @@ export default class RichEditor extends Component {
     const {children, format, value} = this.props
 
     this.turndownService = new TurndownService({
-      codeBlockStyle: 'fenced'
+      codeBlockStyle: 'fenced',
+      headingStyle: 'atx'
     })
+
     this.turndownService.addRule('pre', {
       filter: (node, options) => {
         return node.classList.contains(styles.code)
@@ -76,8 +92,16 @@ export default class RichEditor extends Component {
     })    
 
     this.markdownRenderer = new marked.Renderer()
-    this.markdownRenderer.code = (code, language = '', escaped) => {
-      return `<pre class="${styles.code}" data-language="${language.trim()}">${code}</pre>`
+
+    this.markdownRenderer.code = (code, language = '') => {
+      let escapedCode = code
+         .replace(/&/g, '&amp;')
+         .replace(/</g, '&lt;')
+         .replace(/>/g, '&gt;')
+         .replace(/"/g, '&quot;')
+         .replace(/'/g, '&#039;')
+
+      return `<pre class="${styles.code}" data-language="${language.trim()}">${escapedCode}</pre>`
     }
 
     // Initialize pell on an HTMLElement
@@ -85,20 +109,40 @@ export default class RichEditor extends Component {
       element: this.editorElement,
       onChange: this.handleChange.bind(this),
       actions: [
-        'bold',
-        'italic',
+        {
+          name: 'bold',
+          icon: '<b>Bold</b>'
+        },
+        {
+          name: 'italic',
+          icon: '<i>Italic</i>'
+        },
         {
           name: 'link',
           icon: 'Link',
-          result: () => this.setState({
-            showLinkModal: true
-          })
+          result: this.handleLinkModeSelect.bind(this),
+          state: () => {
+            return this.getNodeTagPathsInSelection().find(e => e.tagName === 'A')
+          }          
         },
-        'heading1',
-        'heading2',
+        {
+          name: 'heading1',
+          state: () => {
+            return this.getNodeTagPathsInSelection().find(e => e.tagName === 'H1')
+          }
+        },
+        {
+          name: 'heading2',
+          state: () => {
+            return this.getNodeTagPathsInSelection().find(e => e.tagName === 'H2')
+          }
+        },
         {
           name: 'quote',
-          icon: '<span>“</span>'
+          icon: '<span>“</span>',
+          state: () => {
+            return this.getNodeTagPathsInSelection().find(e => e.tagName === 'BLOCKQUOTE')
+          }
         },
         {
           name: 'olist',
@@ -114,6 +158,13 @@ export default class RichEditor extends Component {
 
             pell.exec('insertHTML', html)
           }
+        },
+        {
+          icon: `<span class="${styles['fullscreen-toggle']}">Fullscreen</span>`,
+          title: 'Fullscreen',
+          result: () => this.setState({
+            inFullscreenMode: !this.state.inFullscreenMode
+          })
         },
         {
           icon: `<span class="${styles['text-mode-toggle']}">Text</span>`,
@@ -139,25 +190,57 @@ export default class RichEditor extends Component {
 
     let editor = this.editorElement.getElementsByClassName(styles.editor)[0] 
 
-    editor.addEventListener('click', this.handleClick.bind(this))
+    // These cause issues with the formatting
+    //editor.addEventListener('blur', this.handleEvent.bind(this, 'onBlur'))
+    //editor.addEventListener('focus', this.handleEvent.bind(this, 'onFocus'))
+    
+    this.selectionHandler = debounce(this.handleSelectionChange.bind(this), 200)
+
+    document.addEventListener('selectionchange', this.selectionHandler)
   }
 
   componentDidUpdate(prevProps, prevState) {
     const {value} = this.props
-    const {showLinkModal, text} = this.state
+    const {inEditLinkMode, text} = this.state
 
     // Saving selection before the user interacts with the modal and setting
     // the focus to the link input element.
-    if (showLinkModal && !prevState.showLinkModal) {
-      this.selection = window.getSelection().getRangeAt(0)
+    if (inEditLinkMode && !prevState.inEditLinkMode) {
+      this.savedSelection = window.getSelection().getRangeAt(0)
       this.linkInputElement.focus()
     }
 
     if (value !== text) {
       this.handleChange(value, {
-        fromTextMode: true
+        needsConversion: true
       })
     }
+  }
+
+  getNodeTagPathsInSelection() {
+    // This is a super basic caching mechanism that prevents this function from
+    // traversing the DOM multiple times for the same selection. It keeps track
+    // of the last tag path computed and the timestamp at which it occurred. If
+    // another call comes in within the next millisecond, we reuse that value
+    // instead of computing a new one.
+    if (
+      !this.nodeTagPathsTimestamp ||
+      !this.nodeTagPaths ||
+      ((this.nodeTagPathsTimestamp + 1) < Date.now())
+    ) {
+      let node = window.getSelection().focusNode
+      let tags = []
+
+      do {
+        tags.push(node)
+        node = node.parentNode
+      } while (!node.classList.contains(styles['outer-wrapper']))
+
+      this.nodeTagPaths = tags
+      this.nodeTagPathsTimestamp = Date.now()
+    }
+
+    return this.nodeTagPaths
   }
 
   getHTMLFromText(text) {
@@ -175,7 +258,7 @@ export default class RichEditor extends Component {
   getHTMLFromMarkdown(markdown) {
     return marked(markdown, {
       renderer: this.markdownRenderer
-    }) 
+    })
   }
 
   getMarkdownFromHTML(html) {
@@ -195,17 +278,18 @@ export default class RichEditor extends Component {
   }
 
   handleChange(value, {
-    fromTextMode = this.state.inTextMode,
-    initialRender
+    needsConversion = this.state.inTextMode
   } = {}) {
     const {format, onChange} = this.props
 
     let html
     let text
 
-    if (fromTextMode) {
+    if (needsConversion) {
       html = this.getHTMLFromText(value)
       text = value
+
+      this.setEditorContents(html)
     } else {
       html = value
       text = this.getTextFromHTML(value)
@@ -216,109 +300,161 @@ export default class RichEditor extends Component {
       text
     })
 
-    if (initialRender || fromTextMode) {
-      this.setEditorContents(html)
-    }
-
-    if (!initialRender && (typeof onChange === 'function')) {
+    if (typeof onChange === 'function') {
       onChange(text)
     }
   }
 
-  handleClick(event) {
-    const {linkBeingEdited} = this.state
-    const {target} = event
-
-    if (target.tagName !== 'A') {
-      this.setState({
-        linkBeingEdited: null,
-        showLinkModal: false
-      })
-
-      return
-    }
-
-    let href = target.attributes.href.value
-    let range = document.createRange()
-
-    range.setStart(target, 0)
-    range.setEnd(target, 1)    
-
-    this.setSelection(range)
-    this.selection = range
-
+  handleLinkChange(event) {
     this.setState({
-      linkBeingEdited: href,
-      showLinkModal: true
+      editLinkText: event.target.value
     })
   }
 
-  handleLinkChange(event) {
+  handleLinkModeSelect() {
+    let selection = window.getSelection()
+
+    this.savedSelection = selection.getRangeAt(0)
+    
+    pell.exec('insertHTML', `<span data-publish-link-edit="true">${selection.toString()}</span>`)
+
+    this.editLinkNode = document.querySelector('[data-publish-link-edit="true"]')
+
     this.setState({
-      linkBeingEdited: event.target.value
+      inEditLinkMode: true
     })
   }
 
   handleLinkRemove() {
-    const {linkRange} = this.state
-
-    if (linkRange) {
-      this.setSelection(linkRange)
+    if (this.editLinkNode) {
+      this.setSelectionOnElement(this.editLinkNode)
     }
 
     pell.exec('unlink')
 
     this.setState({
-      linkBeingEdited: null,
-      showLinkModal: false
+      inEditLinkMode: false,
+      editLinkText: null
     })
   }
 
-  handleLinkSave(event) {
-    const {linkBeingEdited} = this.state
+  handleLinkSave() {
+    const {editLinkText} = this.state
 
     event.preventDefault()
 
-    if (this.selection) {
-      this.setSelection(this.selection)  
+    if (this.editLinkNode) {
+      delete this.editLinkNode.dataset.publishLinkEdit
+
+      this.setSelectionOnElement(this.editLinkNode)
     }
 
-    pell.exec('createLink', linkBeingEdited)
+    pell.exec('createLink', editLinkText)
 
     this.setState({
-      linkBeingEdited: null,
-      showLinkModal: false
+      inEditLinkMode: false,
+      editLinkText: null
     })
   }
+
+  handleSelectionChange(event) {
+    if (this.isSettingSelection) {
+      this.isSettingSelection = false
+
+      return
+    }
+
+    const {
+      editLinkText,
+      inEditLinkMode
+    } = this.state
+
+    let tagPath = this.getNodeTagPathsInSelection()
+    let linkElement
+    let inEditor = tagPath.some(node => {
+      if (node.tagName === 'A') {
+        linkElement = node
+      }
+
+      return node.classList &&
+        node.classList.contains(styles.editor)
+    })
+
+    // If the selection wasn't made somewhere within the editor, we don't care.
+    if (!inEditor) return
+
+    // If there was a link node previously stored, we reset its state.
+    if (this.editLinkNode) {
+      delete this.editLinkNode.dataset.publishLinkEdit
+    }
+
+    if (linkElement) {
+      this.editLinkNode = linkElement
+      this.editLinkNode.dataset.publishLinkEdit = true
+
+      let href = linkElement.attributes.href.value
+
+      if (inEditLinkMode) {
+        // The user is already in the "edit link" mode but they have clicked on
+        // another link. All we need to do is update the URL.
+        this.setState({
+          editLinkText: href
+        })        
+      } else {
+        // If the user is selecting a link and entering the "edit link" mode, we
+        // need to ensure that the selection encompasses the full length of the
+        // linked text.
+        this.savedSelection = this.setSelectionOnElement(linkElement)
+
+        this.setState({
+          editLinkText: href,
+          inEditLinkMode: true
+        })        
+      }
+    } else if (inEditLinkMode) {
+      // User is leaving the "edit link" mode.
+      this.setState({
+        editLinkText: null,
+        inEditLinkMode: false
+      })
+    }
+  }  
 
   render() {
     const {children} = this.props
     const {
+      editLinkText,
       html,
+      inEditLinkMode,
+      inFullscreenMode,
       inTextMode,
-      linkBeingEdited,
-      showLinkModal,
       text
     } = this.state
-
     const wrapper = new Style(styles, 'wrapper')
       .addIf('wrapper-mode-text', inTextMode)
-    const editorText = new Style(styles, 'editor', 'editor-text')
+
+    const outerWrapper = new Style(styles, 'outer-wrapper')
+      .addIf('wrapper-mode-fullscreen', inFullscreenMode)
+
+    // Prevent the body scrolling behind the overlay
+    document.body.style.overflow = inFullscreenMode ? 'hidden' : 'visible' 
+
+    const editorText = new Style(styles, 'editor', 'editor-text', 'content-height')
 
     return (
-      <div class={styles['outer-wrapper']}>
-        {showLinkModal && (
+      <div class={outerWrapper.getClasses()}>
+        {inEditLinkMode && (
           <form
             class={styles['link-modal']}
             onSubmit={this.handleLinkSave.bind(this)}
           >
             <input
               class={styles['link-input']}
-              onChange={this.handleLinkChange.bind(this)}
+              onInput={this.handleLinkChange.bind(this)}
               placeholder="Link address"
               ref={el => this.linkInputElement = el}
               type="text"
-              value={linkBeingEdited}
+              value={editLinkText}
             />
 
             <Button
@@ -337,18 +473,21 @@ export default class RichEditor extends Component {
           </form>
         )}
 
-        <div
-          class={wrapper.getClasses()}
-          ref={el => this.editorElement = el}
-        />
+        <div class={wrapper.getClasses()}>
+          <div ref={el => this.editorElement = el} />
 
-        {inTextMode && (
-          <textarea
-            class={editorText.getClasses()}
-            onKeyUp={event => this.handleChange(event.target.value)}
-            value={text}
-          />
-        )}
+          {inTextMode && (
+            <TextInput
+              className={editorText.getClasses()}
+              heightType="content"
+              onBlur={this.handleEvent.bind(this, 'onBlur')}
+              onFocus={this.handleEvent.bind(this, 'onFocus')}
+              onChange={event => this.handleChange(event.target.value)}
+              value={text}
+              type="multiline"
+            />
+          )}
+        </div>
       </div>
     )
   }
@@ -360,7 +499,26 @@ export default class RichEditor extends Component {
   setSelection(range) {
     let selection = window.getSelection()
 
+    this.isSettingSelection = true
+
     selection.removeAllRanges()
-    selection.addRange(range)    
+    selection.addRange(range)
+  }
+
+  setSelectionOnElement(element) {
+    let range = document.createRange()
+
+    range.setStart(element, 0)
+    range.setEnd(element, 1)
+
+    this.setSelection(range)
+
+    return range
+  }
+
+  handleEvent(callback, event) {
+    if (typeof this.props[callback] === 'function') {
+      this.props[callback].call(this, event)
+    }
   }
 }

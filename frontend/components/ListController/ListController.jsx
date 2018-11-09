@@ -26,16 +26,14 @@ export default class ListController extends Component {
 
   render() {
     const {
-      children
+      children = []
     } = this.props
-
-    if (!children.length) return null
 
     let breadcrumbs = (this.props.breadcrumbs || []).filter(Boolean)
 
     return (
       <div class={styles.container}>
-        <span>
+        <div class={styles['breadcrumbs']}>
           {(breadcrumbs.length > 1) && breadcrumbs.slice(0, -1).map(node => (
             <span class={styles['breadcrumbs-tail']}>
               <span>{node} </span>
@@ -48,8 +46,8 @@ export default class ListController extends Component {
               {breadcrumbs.slice(-1)}
             </span>
           )}
-        </span>
-        <span>
+        </div>
+        <div>
           {children.map(control => {
             return (
               <div class={styles.control}>
@@ -57,7 +55,7 @@ export default class ListController extends Component {
               </div>
             )
           })}
-        </span>
+        </div>
       </div>
     )
   }

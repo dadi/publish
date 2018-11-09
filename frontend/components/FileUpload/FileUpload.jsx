@@ -18,9 +18,9 @@ export default class FileUpload extends Component {
     accept: proptypes.string,
 
     /**
-     * The text to be displayed in the call-to-action button.
+     * The elements to be rendered inside of the component.
      */
-    ctaText: proptypes.string,
+    children: proptypes.node,
 
     /**
      * Whether to accept multiple files.
@@ -39,7 +39,6 @@ export default class FileUpload extends Component {
   }
 
   static defaultProps = {
-    ctaText: 'select from device',
     multiple: false
   }
 
@@ -50,12 +49,12 @@ export default class FileUpload extends Component {
   render() {
     const {
       accept,
-      ctaText,
+      children,
       multiple
     } = this.props
 
     return (
-      <span>
+      <div>
         <input 
           accept={accept}
           class={styles['file-input']}
@@ -67,8 +66,8 @@ export default class FileUpload extends Component {
         <label
           class={styles['label-file']}
           for={this.fileInputId}
-        >{ctaText}</label>
-      </span>
+        >{children}</label>
+      </div>
     )
   }
 

@@ -106,7 +106,7 @@ class SignIn extends Component {
     let formDataIsValid = this.validate()
 
     return (
-      <div class={styles.wrapper} style={`background-image: url(${backgroundImage}`}>
+      <div class={styles.wrapper} style={backgroundImage.length ? `background-image: url(${backgroundImage}` : ''}>
         <div class={styles.overlay}>
           <div class={styles.container}>
             <form
@@ -124,6 +124,7 @@ class SignIn extends Component {
                 <div class={styles.input}>
                   <Label label="Username">
                     <TextInput
+                      name="username"
                       onChange={this.handleInputChange.bind(this, 'email')}
                       onKeyUp={this.handleInputChange.bind(this, 'email')}
                       placeholder="Your username"
@@ -135,6 +136,7 @@ class SignIn extends Component {
                 <div class={styles.input}>
                   <Label label="Password">
                     <TextInput
+                      name="password"
                       onChange={this.handleInputChange.bind(this, 'password')}
                       onKeyUp={this.handleInputChange.bind(this, 'password')}
                       placeholder={"Your password"}
@@ -148,6 +150,7 @@ class SignIn extends Component {
               <Button
                 accent="system"
                 disabled={hasConnectionIssues || (userHasInteracted && !formDataIsValid)}
+                isLoading={state.user.isAuthenticating}
                 type="submit"
               >Sign In</Button>
 
