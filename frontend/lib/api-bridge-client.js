@@ -36,7 +36,7 @@ const apiBridgeFetch = function (requestObject) {
       return null
     }
 
-    if (response.status === 200) {
+    if (response.ok) {
       return response.json()
     }
 

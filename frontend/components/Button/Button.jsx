@@ -66,6 +66,12 @@ export default class Button extends Component {
     onClick: proptypes.func,
 
     /**
+     * Whether to open a link in a new window (i.e. target="_blank"). Only
+     * applicable when the prop `href` is supplied.
+     */
+    openInNewWindow: proptypes.bool,
+
+    /**
      * The size variation of the button.
      */
     size: proptypes.oneOf(['normal', 'small']),
@@ -97,6 +103,7 @@ export default class Button extends Component {
       inGroup,
       isLoading,
       onClick,
+      openInNewWindow,
       size,
       type
     } = this.props
@@ -130,6 +137,7 @@ export default class Button extends Component {
         <a
           class={buttonStyle.getClasses()}
           href={href}
+          target={openInNewWindow && '_blank'}
         >{children}</a>
       )
     }

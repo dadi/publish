@@ -233,8 +233,8 @@ export default class RichEditor extends Component {
 
       do {
         tags.push(node)
-        node = node.parentNode
-      } while (!node.classList.contains(styles['outer-wrapper']))
+        node = node.tagName === 'BODY' ? null : node.parentNode
+      } while (node && !node.classList.contains(styles['outer-wrapper']))
 
       this.nodeTagPaths = tags
       this.nodeTagPathsTimestamp = Date.now()

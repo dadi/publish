@@ -67,6 +67,7 @@ class MediaListView extends Component {
 
           return (
             <MediaGridCard
+              href={`/media/${item._id}`}
               item={item}
               isSelected={isSelected}
               onSelect={onSelect}
@@ -89,16 +90,11 @@ class MediaListView extends Component {
       state
     } = this.props
     const currentApi = state.api.apis[0]
-    const currentCollection = {
-      IS_MEDIA_BUCKET: true,
-      _publishLink: '/media',
-      fields: {}
-    }
 
     return (
       <Page>
         <Header
-          currentCollection={currentCollection}
+          currentCollection={Constants.MEDIA_COLLECTION_SCHEMA}
         />
 
         <Main>
@@ -108,7 +104,7 @@ class MediaListView extends Component {
 
           <DocumentList
             api={currentApi}
-            collection={currentCollection}
+            collection={Constants.MEDIA_COLLECTION_SCHEMA}
             onBuildBaseUrl={this.handleBuildBaseUrl.bind(this)}
             onPageTitle={this.handlePageTitle}
             onRenderDocuments={this.handleRenderDocument.bind(this)}
@@ -121,7 +117,7 @@ class MediaListView extends Component {
 
         <DocumentListToolbar
           api={currentApi}
-          collection={currentCollection}
+          collection={Constants.MEDIA_COLLECTION_SCHEMA}
           onBuildBaseUrl={this.handleBuildBaseUrl.bind(this)}
           onDelete={this.handleDelete.bind(this)}
         />

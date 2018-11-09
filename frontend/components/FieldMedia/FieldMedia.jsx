@@ -6,7 +6,7 @@ const beforeReferenceSelect = fetchObject => {
   const {parentCollection, referencedField} = fetchObject
   const fieldSchema = parentCollection.fields[referencedField]
 
-  if (fieldSchema.validation.mimeTypes) {
+  if (fieldSchema.validation && fieldSchema.validation.mimeTypes) {
     fetchObject.filters = {
       mimeType: {
         '$in': fieldSchema.validation.mimeTypes

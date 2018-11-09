@@ -8,18 +8,18 @@ import {Format} from 'lib/util/string'
 import {route} from '@dadi/preact-router'
 import {URLParams} from 'lib/util/urlParams'
 
+import * as Constants from 'lib/constants'
 import * as documentActions from 'actions/documentActions'
 
 import DocumentEdit from 'containers/DocumentEdit/DocumentEdit'
 import DocumentField from 'containers/DocumentField/DocumentField'
-import DocumentEditToolbar from 'containers/DocumentEditToolbar/DocumentEditToolbar'
-import EditInterface from 'components/EditInterface/EditInterface'
-import EditInterfaceSection from 'components/EditInterface/EditInterfaceSection'
+import MediaEditToolbar from 'containers/MediaEditToolbar/MediaEditToolbar'
 import Header from 'containers/Header/Header'
 import Main from 'components/Main/Main'
+import MediaEditor from 'containers/MediaEditor/MediaEditor'
 import Page from 'components/Page/Page'
 
-class DocumentEditView extends Component {
+class MediaEditView extends Component {
   constructor(props) {
     super(props)
 
@@ -121,18 +121,13 @@ class DocumentEditView extends Component {
   }
 
   handleBuildBaseUrl({
-    collection = this.props.collection,
     createNew,
     documentId = this.props.documentId,
     group = this.props.group,
-    referenceFieldSelect,
     search = new URLParams(window.location.search).toObject(),
     section = this.props.section
   } = {}) {
-    let urlNodes = [
-      group,
-      collection
-    ]
+    let urlNodes = ['media']
 
     if (createNew) {
       urlNodes.push('new')
@@ -140,11 +135,7 @@ class DocumentEditView extends Component {
       urlNodes.push(documentId)
     }
 
-    if (referenceFieldSelect) {
-      urlNodes = urlNodes.concat(['select', referenceFieldSelect])
-    } else {
-      urlNodes.push(section)
-    }
+    urlNodes.push(section)
 
     let url = urlNodes.filter(Boolean).join('/')
 
@@ -157,79 +148,39 @@ class DocumentEditView extends Component {
 
  render() {
     const {
-      collection,
       documentId,
-      group,
-      referencedField,
       section,
       state
     } = this.props
-    const {currentApi, currentCollection} = state.api
-
-    if (currentCollection) {
-      let collectionFields = filterVisibleFields({
-        fields: currentCollection.fields,
-        view: 'edit'
-      })
-
-      this.sections = this.groupFieldsIntoSections(collectionFields)
-    }
+    const currentApi = state.api.apis[0]
 
     return (
       <Page>
         <Header
-          currentCollection={currentCollection}
+          currentCollection={Constants.MEDIA_COLLECTION_SCHEMA}
         />
 
-        <DocumentEditToolbar
+        <MediaEditToolbar
           api={currentApi}
-          collection={currentCollection}
+          collection={Constants.MEDIA_COLLECTION_SCHEMA}
           documentId={documentId}
-          multiLanguage={true}
           onBuildBaseUrl={this.handleBuildBaseUrl.bind(this)}
-          referencedField={referencedField}
           section={section}
         />
 
         <Main>
           <DocumentEdit
             api={currentApi}
-            collection={currentCollection}
+            collection={Constants.MEDIA_COLLECTION_SCHEMA}
             documentId={documentId}
             onBuildBaseUrl={this.handleBuildBaseUrl.bind(this)}
             onPageTitle={setPageTitle}
-            onRender={() => (
-              <EditInterface>
-                {this.sections.map(item => (
-                  <EditInterfaceSection
-                    hasErrors={item.hasErrors}
-                    href={item.href}
-                    isActive={item.isActive}
-                    label={item.name}
-                    main={item.fields.main.map(field => (
-                      <DocumentField
-                        api={currentApi}
-                        collection={currentCollection}
-                        documentId={documentId}
-                        field={field}
-                        onBuildBaseUrl={this.handleBuildBaseUrl.bind(this)}
-                      />
-                    ))}
-                    sidebar={item.fields.sidebar.map(field => (
-                      <DocumentField
-                        api={currentApi}
-                        collection={currentCollection}
-                        documentId={documentId}
-                        field={field}
-                        onBuildBaseUrl={this.handleBuildBaseUrl.bind(this)}
-                      />
-                    ))}
-                    slug={item.slug}
-                  />
-                ))}
-              </EditInterface>
+            onRender={documentData => (
+              <MediaEditor
+                api={currentApi}
+                documentData={documentData}
+              />
             )}
-            referencedField={referencedField}
             section={section}
           />
         </Main>
@@ -238,33 +189,33 @@ class DocumentEditView extends Component {
     )
   }
 
-  shouldComponentUpdate(nextProps, nextState) {
-    const {
-      collection,
-      documentId,
-      section
-    } = this.props
-    const method = documentId ? 'edit' : 'new'
+  // shouldComponentUpdate(nextProps, nextState) {
+  //   const {
+  //     collection,
+  //     documentId,
+  //     section
+  //   } = this.props
+  //   const method = documentId ? 'edit' : 'new'
 
-    if (collection && section && this.sections.length) {
-      let sectionMatch = this.sections.find(item => {
-        return item.slug === section
-      })
+  //   if (collection && section && this.sections.length) {
+  //     let sectionMatch = this.sections.find(item => {
+  //       return item.slug === section
+  //     })
 
-      // If the section is not valid, we redirect to the first valid one.
-      if (!sectionMatch && !this.isRedirecting) {
-        this.isRedirecting = true
+  //     // If the section is not valid, we redirect to the first valid one.
+  //     if (!sectionMatch && !this.isRedirecting) {
+  //       this.isRedirecting = true
 
-        let redirectUrl = this.handleBuildBaseUrl({
-          section: this.sections[0].slug
-        })
+  //       let redirectUrl = this.handleBuildBaseUrl({
+  //         section: this.sections[0].slug
+  //       })
 
-        route(redirectUrl)
+  //       route(redirectUrl)
 
-        return false
-      }
-    }
-  }
+  //       return false
+  //     }
+  //   }
+  // }
 }
 
 export default connectHelper(
@@ -275,4 +226,4 @@ export default connectHelper(
   dispatch => bindActionCreators({
     ...documentActions
   }, dispatch)
-)(DocumentEditView)
+)(MediaEditView)

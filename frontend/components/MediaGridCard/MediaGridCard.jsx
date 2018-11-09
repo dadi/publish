@@ -14,6 +14,11 @@ const fileSize = require('file-size')
 export default class MediaCard extends Component {
   static propTypes = {
     /**
+     * The link to be followed when the card is clicked.
+     */
+    href: proptypes.string,
+
+    /**
      * The media object to be rendered.
      */
     item: proptypes.object,
@@ -39,6 +44,31 @@ export default class MediaCard extends Component {
     selectLimit: Infinity
   }
 
+  handleCardClick(event) {
+    const {
+      href,
+      onSelect
+    } = this.props
+
+    if (typeof href !== 'string' && typeof onSelect === 'function') {
+      onSelect(event)
+
+      event.stopPropagation()
+    }
+  }
+
+  handleSelectClick(event) {
+    const {
+      onSelect
+    } = this.props
+
+    if (typeof onSelect === 'function') {
+      onSelect(event)
+    }
+
+    event.stopPropagation()
+  }
+
   render() {
     const {
       item,
@@ -59,32 +89,31 @@ export default class MediaCard extends Component {
       mimeType.includes('image/') &&
       typeof item.width === 'number' &&
       typeof item.height === 'number'
-    const aspectRatio = isImage ?
-      (item.height / item.width) * 100 :
-      100
+
+    // Human-friendly file size.
+    let humanFileSize = fileSize(item.contentLength, {
+      fixed: item.contentLength > 1000000 ? 2 : 0
+    }).human('si')
 
     return (
       <div
         class={itemStyle.getClasses()}
-        onClick={onSelect}
+        onClick={this.handleCardClick.bind(this)}
       >
         <input
           class={styles.select}
           checked={isSelected}
+          onClick={this.handleSelectClick.bind(this)}
           type={selectLimit === 1 ? 'radio' : 'checkbox'}
         />
 
-        <div
-          class={styles['image-holder']}
-          style={`padding-bottom: ${aspectRatio}%`}
-        >
-          {this.renderHead({isImage})}
-        </div>
+        {this.renderHead({isImage})}
 
         <div class={styles.metadata}>
           <p class={styles.filename}>{item.fileName}</p>
           <div>
-            <span class={styles.size}>{fileSize(item.contentLength, { fixed: item.contentLength > 1000000 ? 2 : 0 }).human('si')}</span>
+            <span class={styles.size}>{humanFileSize}</span>
+
             {isImage && (
               <span class={styles.dimensions}>
                 {`, ${item.width}x${item.height}`}
@@ -100,16 +129,35 @@ export default class MediaCard extends Component {
   }
 
   renderHead({isImage}) {
-    const {item} = this.props
+    const {
+      href,
+      item,
+      onSelect
+    } = this.props
+    const aspectRatio = isImage ?
+      (item.height / item.width) * 100 :
+      100
 
-    if (isImage) {
+    let headElement = isImage ?
+      <img class={styles.image} src={item.url}/> :
+      <div class={styles['generic-thumbnail']}/>
+
+    if (typeof href === 'string') {
       return (
-        <img class={styles.image} src={item.url}/>
+        <a
+          class={styles['image-holder']}
+          href={href}
+          style={`padding-bottom: ${aspectRatio}%`}
+        >{headElement}</a>
       )
     }
 
     return (
-      <div class={styles['generic-thumbnail']}/>
+      <div
+        class={styles['image-holder']}
+        onClick={this.handleCardClick.bind(this)}
+        style={`padding-bottom: ${aspectRatio}%`}
+      >{headElement}</div>
     )
   }
 }

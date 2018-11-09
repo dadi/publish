@@ -83,6 +83,11 @@ class DocumentEditToolbar extends Component {
     group: proptypes.string,
 
     /**
+     * Whether to render a control for selecting different languages.
+     */
+    multiLanguage: proptypes.bool,
+
+    /**
     * A callback to be used to obtain the base URL for the given page, as
     * determined by the view.
     */
@@ -164,139 +169,8 @@ class DocumentEditToolbar extends Component {
     }
   }
 
-  render() {
-    const {
-      api,
-      documentId,
-      state
-    } = this.props
-    const {
-      isSaving,
-      peers,
-      remote: document
-    } = state.document || {}
-    const hasConnectionIssues = state.app.networkStatus !== Constants.NETWORK_OK
-    const validationErrors = state.document.validationErrors
-    const hasValidationErrors = validationErrors && Object.keys(validationErrors)
-      .filter(field => validationErrors[field])
-      .length
-
-    let saveOptions = this.getSaveOptions(documentId)
-    let languages = Boolean(api) &&
-      Boolean(api.languages) &&
-      (api.languages.length > 1) &&
-      api.languages.reduce((languagesObject, language) => {
-        languagesObject[language.code] = language.name
-
-        return languagesObject
-      }, {})
-    let currentLanguage = state.router.search.lang
-
-    // No language is selected, so we'll set the value of the dropdown to the
-    // value of the default language.
-    if (languages && !currentLanguage) {
-      let defaultLanguage = api.languages.find(language => {
-        return Boolean(language.default)
-      })
-
-      currentLanguage = defaultLanguage && defaultLanguage.code
-    }
-
-    return (
-      <Toolbar>
-        {peers && (peers.length > 0) &&
-          <div class={styles.peers}>
-            {peers.map(peer => (
-              <Peer peer={peer} />
-            ))}
-          </div>
-        }
-
-        {languages && (
-          <DropdownNative
-            onChange={this.handleLanguageChange.bind(this)}
-            options={languages}
-            value={currentLanguage}
-          />
-        )}
-
-        <div class={styles.metadata}>
-          {document && document._createdAt &&
-            <p>
-              <span>Created </span>
-
-              {document._createdBy &&
-                <span>by <strong>{document._createdBy}</strong> </span>
-              }
-
-              <DateTime
-                date={document._createdAt}
-                relative={true}
-              />
-            </p>
-          }
-
-          {document && document._lastModifiedAt &&
-            <p class={styles['metadata-emphasis']}>
-              <span>Last updated </span>
-
-              {document._lastModifiedBy &&
-                <span>by <strong>{document._lastModifiedBy}</strong> </span>
-              }
-
-              <DateTime
-                date={document._lastModifiedAt}
-                relative={true}
-              />
-            </p>
-          }
-        </div>
-
-        <div class={styles.buttons}>
-          {document && (
-            <div class={styles.button}>
-              <ButtonWithPrompt
-                accent="destruct"
-                className={styles.button}
-                disabled={hasConnectionIssues}
-                onClick={this.handleDelete.bind(this)}
-                promptCallToAction="Yes, delete it."
-                position="left"
-                promptMessage="Are you sure you want to delete this document?"
-              >Delete</ButtonWithPrompt> 
-            </div>
-          )}
-
-          <div class={styles.button}>
-            <ButtonWithOptions
-              accent="save"
-              disabled={hasConnectionIssues || hasValidationErrors || isSaving}
-              isLoading={isSaving}
-              onClick={this.handleSave.bind(this, saveOptions.primary.action)}
-              options={saveOptions.secondary}
-            >
-              {saveOptions.primary.label}
-            </ButtonWithOptions>
-          </div>
-        </div>
-      </Toolbar>
-    )
-  }
-
   componentWillUnmount() {
     this.keyboard.off()
-  }
-
-  shouldComponentUpdate(nextProps) {
-    const {state} = this.props
-    const {state: nextState} = nextProps
-
-    // Avoid a re-render if the user is in the process of signing out.
-    if (state.user.isSignedIn && !nextState.user.isSignedIn) {
-      return false
-    }
-
-    return true
   }
 
   getSaveOptions(documentId) {
@@ -390,7 +264,7 @@ class DocumentEditToolbar extends Component {
 
     switch (saveMode) {
       // Save
-      case 'save':
+      case ACTION_SAVE:
         this.onSave = {
           callback: documentId => {
             if (!documentId) {
@@ -415,7 +289,7 @@ class DocumentEditToolbar extends Component {
         break
 
       // Save and create new
-      case 'saveAndCreateNew':
+      case ACTION_SAVE_AND_CREATE_NEW:
         this.onSave = {
           callback: documentId => {
             let newUrl = onBuildBaseUrl({
@@ -436,7 +310,7 @@ class DocumentEditToolbar extends Component {
         break
 
       // Save and go back
-      case 'saveAndGoBack':
+      case ACTION_SAVE_AND_GO_BACK:
         this.onSave = {
           callback: documentId => {
             let newUrl = onBuildBaseUrl({
@@ -455,7 +329,7 @@ class DocumentEditToolbar extends Component {
         break
 
       // Save as duplicate
-      case 'saveAsDuplicate':
+      case ACTION_SAVE_AS_DUPLICATE:
         this.onSave = {
           callback: documentId => {
             let newUrl = onBuildBaseUrl({
@@ -475,6 +349,126 @@ class DocumentEditToolbar extends Component {
     }    
 
     actions.registerSaveAttempt(saveMode)
+  }  
+
+  render() {
+    const {
+      api,
+      documentId,
+      multiLanguage,
+      state
+    } = this.props
+    const {
+      isSaving,
+      peers,
+      remote: document
+    } = state.document || {}
+    const hasConnectionIssues = state.app.networkStatus !== Constants.NETWORK_OK
+    const validationErrors = state.document.validationErrors
+    const hasValidationErrors = validationErrors && Object.keys(validationErrors)
+      .filter(field => validationErrors[field])
+      .length
+
+    let saveOptions = this.getSaveOptions(documentId)
+    let languages = Boolean(api) &&
+      Boolean(api.languages) &&
+      (api.languages.length > 1) &&
+      api.languages.reduce((languagesObject, language) => {
+        languagesObject[language.code] = language.name
+
+        return languagesObject
+      }, {})
+    let currentLanguage = state.router.search.lang
+
+    // No language is selected, so we'll set the value of the dropdown to the
+    // value of the default language.
+    if (languages && !currentLanguage) {
+      let defaultLanguage = api.languages.find(language => {
+        return Boolean(language.default)
+      })
+
+      currentLanguage = defaultLanguage && defaultLanguage.code
+    }
+
+    return (
+      <Toolbar>
+        {peers && (peers.length > 0) &&
+          <div class={styles.peers}>
+            {peers.map(peer => (
+              <Peer peer={peer} />
+            ))}
+          </div>
+        }
+
+        {multiLanguage && languages && (
+          <DropdownNative
+            onChange={this.handleLanguageChange.bind(this)}
+            options={languages}
+            value={currentLanguage}
+          />
+        )}
+
+        <div class={styles.metadata}>
+          {document && document._createdAt &&
+            <p>
+              <span>Created </span>
+
+              {document._createdBy &&
+                <span>by <strong>{document._createdBy}</strong> </span>
+              }
+
+              <DateTime
+                date={document._createdAt}
+                relative={true}
+              />
+            </p>
+          }
+
+          {document && document._lastModifiedAt &&
+            <p class={styles['metadata-emphasis']}>
+              <span>Last updated </span>
+
+              {document._lastModifiedBy &&
+                <span>by <strong>{document._lastModifiedBy}</strong> </span>
+              }
+
+              <DateTime
+                date={document._lastModifiedAt}
+                relative={true}
+              />
+            </p>
+          }
+        </div>
+
+        <div class={styles.buttons}>
+          {document && (
+            <div class={styles.button}>
+              <ButtonWithPrompt
+                accent="destruct"
+                className={styles.button}
+                disabled={hasConnectionIssues}
+                onClick={this.handleDelete.bind(this)}
+                promptCallToAction="Yes, delete it."
+                position="left"
+                promptMessage="Are you sure you want to delete this document?"
+              >Delete</ButtonWithPrompt> 
+            </div>
+          )}
+
+          <div class={styles.button}>
+            <ButtonWithOptions
+              accent="save"
+              disabled={hasConnectionIssues || hasValidationErrors || isSaving}
+              isLoading={isSaving}
+              onClick={this.handleSave.bind(this, saveOptions.primary.action)}
+              options={saveOptions.secondary}
+            >
+              {saveOptions.primary.label}
+            </ButtonWithOptions>
+          </div>
+        </div>
+      </Toolbar>
+    )
   }
 
   saveDocument() {
@@ -509,6 +503,18 @@ class DocumentEditToolbar extends Component {
       document,
       documentId: creatingNew ? null : documentId
     })
+  }  
+
+  shouldComponentUpdate(nextProps) {
+    const {state} = this.props
+    const {state: nextState} = nextProps
+
+    // Avoid a re-render if the user is in the process of signing out.
+    if (state.user.isSignedIn && !nextState.user.isSignedIn) {
+      return false
+    }
+
+    return true
   }
 }
 

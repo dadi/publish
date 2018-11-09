@@ -10,11 +10,11 @@ import * as documentActions from 'actions/documentActions'
 import * as routerActions from 'actions/routerActions'
 import * as Constants from 'lib/constants'
 
-import DocumentCreateView from 'views/DocumentCreateView/DocumentCreateView'
 import DocumentEditView from 'views/DocumentEditView/DocumentEditView'
 import DocumentListView from 'views/DocumentListView/DocumentListView'
 import ErrorView from 'views/ErrorView/ErrorView'
 import HomeView from 'views/HomeView/HomeView'
+import MediaEditView from 'views/MediaEditView/MediaEditView'
 import MediaListView from 'views/MediaListView/MediaListView'
 import PasswordResetView from 'views/PasswordResetView/PasswordResetView'
 import SignInView from 'views/SignInView/SignInView'
@@ -158,12 +158,17 @@ class App extends Component {
           path={`/media/:page?${REGEX_NUMBER}`}
         />
 
-        <DocumentCreateView
+        <MediaEditView
+          authenticate
+          path={`/media/:documentId${REGEX_DOCUMENT_ID}/:section?`}
+        />
+
+        <DocumentEditView
           authenticate
           path={`:collection${REGEX_SLUG}/new/:section?`}
         />
 
-        <DocumentCreateView
+        <DocumentEditView
           authenticate
           path={`:group${REGEX_SLUG}/:collection${REGEX_SLUG}/new/:section?`}
         />

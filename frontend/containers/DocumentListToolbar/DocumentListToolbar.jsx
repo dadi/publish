@@ -289,8 +289,12 @@ class DocumentListToolbar extends Component {
       path: collection.path
     })
 
+    let referenceFieldSchema = currentParentCollection.fields[referencedField]
     let redirectUrl = onBuildBaseUrl({
-      createNew: !Boolean(state.router.parameters.documentId)
+      createNew: !Boolean(state.router.parameters.documentId),
+      section: referenceFieldSchema &&
+        referenceFieldSchema.publish &&
+        Format.slugify(referenceFieldSchema.publish.section)
     })
 
     route(redirectUrl)
