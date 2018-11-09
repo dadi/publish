@@ -107,7 +107,10 @@ class MediaEditor extends Component {
   }
 
   renderPreview(document) {
-    const {mimeType, url} = document
+    const {
+      mimeType = '',
+      url
+    } = document
 
     if (mimeType.includes('image/')) {
       return (

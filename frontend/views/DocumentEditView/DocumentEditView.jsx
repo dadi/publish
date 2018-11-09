@@ -134,7 +134,7 @@ class DocumentEditView extends Component {
       collection
     ]
 
-    if (createNew || !documentId) {
+    if (createNew) {
       urlNodes.push('new')
     } else {
       urlNodes.push(documentId)

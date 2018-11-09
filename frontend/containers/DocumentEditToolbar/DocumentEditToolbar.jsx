@@ -396,7 +396,7 @@ class DocumentEditToolbar extends Component {
 
     switch (saveMode) {
       // Save
-      case 'save':
+      case ACTION_SAVE:
         this.onSave = {
           callback: documentId => {
             if (!documentId) {
@@ -421,7 +421,7 @@ class DocumentEditToolbar extends Component {
         break
 
       // Save and create new
-      case 'saveAndCreateNew':
+      case ACTION_SAVE_AND_CREATE_NEW:
         this.onSave = {
           callback: documentId => {
             let newUrl = onBuildBaseUrl({
@@ -442,7 +442,7 @@ class DocumentEditToolbar extends Component {
         break
 
       // Save and go back
-      case 'saveAndGoBack':
+      case ACTION_SAVE_AND_GO_BACK:
         this.onSave = {
           callback: documentId => {
             let newUrl = onBuildBaseUrl({
@@ -461,7 +461,7 @@ class DocumentEditToolbar extends Component {
         break
 
       // Save as duplicate
-      case 'saveAsDuplicate':
+      case ACTION_SAVE_AS_DUPLICATE:
         this.onSave = {
           callback: documentId => {
             let newUrl = onBuildBaseUrl({
