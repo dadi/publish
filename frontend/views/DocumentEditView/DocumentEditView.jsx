@@ -148,7 +148,7 @@ class DocumentEditView extends Component {
 
     let url = urlNodes.filter(Boolean).join('/')
 
-    if (search && Object.keys(search).length > 0) {
+    if (!createNew && search && Object.keys(search).length > 0) {
       url += `?${new URLParams(search).toString()}`
     }
 
