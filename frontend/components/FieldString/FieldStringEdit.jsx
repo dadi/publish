@@ -212,10 +212,6 @@ export default class FieldStringEdit extends Component {
     }
   }
 
-  handleOnKeyUp(value) {
-    this.validate(value)
-  }
-
   render() {
     const {schema} = this.props
     const publishBlock = schema.publish
@@ -325,7 +321,7 @@ export default class FieldStringEdit extends Component {
           heightType={heightType}
           name={name}
           onBlur={this.handleFocusChange.bind(this, false)}
-          onChange={el => this.handleOnChange(el.target.value)}
+          onKeyUp={el => this.handleOnChange(el.target.value)}
           onFocus={this.handleFocusChange.bind(this, true)}
           onKeyUp={el => this.handleOnKeyUp.bind(el.target.value)}
           placeholder={placeholder}

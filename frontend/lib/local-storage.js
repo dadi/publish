@@ -6,10 +6,6 @@ function clear (key) {
   try {
     window.localStorage.removeItem(key)
 
-    if (process.env.NODE_ENV === 'development') {
-      console.log(`Removing from local storage key ${key}`)
-    }
-
     return true
   } catch (err) {
     return false
@@ -38,10 +34,6 @@ function write (key, payload) {
 
   try {
     const serialisedItem = JSON.stringify(payload)
-
-    if (process.env.NODE_ENV === 'development') {
-      console.log(`Writing to local storage with key ${key}:`, payload)
-    }
 
     window.localStorage.setItem(key, serialisedItem)
 
