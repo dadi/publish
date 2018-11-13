@@ -120,7 +120,7 @@ export default class RichEditor extends Component {
 
     // Initialize pell on an HTMLElement
     this.editor = pell.init({
-      element: this.editorElement,
+      element: this.editorWrapper,
       onChange: this.handleChange.bind(this),
       actions: [
         {
@@ -212,8 +212,7 @@ export default class RichEditor extends Component {
       value
 
     this.setEditorContents(initialValue)
-
-    let editor = this.editorElement.getElementsByClassName(styles.editor)[0]
+    this.editorElement = this.editorWrapper.getElementsByClassName(styles.editor)[0]
 
     // These cause issues with the formatting
     //editor.addEventListener('blur', this.handleEvent.bind(this, 'onBlur'))
@@ -258,7 +257,7 @@ export default class RichEditor extends Component {
     if (hasInvalidNode) return null
 
     let startOffset = parsedNodes.shift()
-    let baseNode = this.editorElement.getElementsByClassName(styles.editor)[0] 
+    let baseNode = this.editorElement
 
     parsedNodes.forEach(index => {
       baseNode = baseNode.childNodes[index]
@@ -361,12 +360,17 @@ export default class RichEditor extends Component {
   }
 
   handleInsertImage(url, position) {
+    // If there is a specific cursor position to insert the image, we set the
+    // selection to that. If not, we set the selection to the start of the
+    // editor.
     if (position) {
       let newSelection = this.deserialiseSelection(position)
 
       if (newSelection) {
         this.setSelection(newSelection)
       }
+    } else {
+      this.setSelectionOnElement(this.editorElement)
     }
 
     pell.exec('insertImage', url)
@@ -405,7 +409,7 @@ export default class RichEditor extends Component {
     })
   }
 
-  handleLinkSave() {
+  handleLinkSave(event) {
     const {editLinkText} = this.state
 
     event.preventDefault()
@@ -541,7 +545,7 @@ export default class RichEditor extends Component {
         )}
 
         <div class={wrapper.getClasses()}>
-          <div ref={el => this.editorElement = el} />
+          <div ref={el => this.editorWrapper = el} />
 
           {inTextMode && (
             <TextInput
@@ -561,7 +565,7 @@ export default class RichEditor extends Component {
 
   serialiseSelection(selection) {
     let selectionRange = selection &&
-      selection.baseNode &&
+      selection.anchorNode &&
       selection.getRangeAt(0)
 
     if (!selectionRange) return
@@ -581,7 +585,7 @@ export default class RichEditor extends Component {
 
       node = node.parentNode
 
-      if (node.classList && node.classList.contains(styles.editor)) {
+      if (node && node.classList && node.classList.contains(styles.editor)) {
         node = null
       }
     }
