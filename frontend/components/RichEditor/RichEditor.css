@@ -159,9 +159,11 @@
 }
 
 .pell-button[Title="Text"],
+.pell-button[Title="Text"]:focus,
 .pell-button[Title="Fullscreen"] {
   width: auto;
   float: right;
+  outline: none;
 }
 
 .pell-button[Title="Bold"] {

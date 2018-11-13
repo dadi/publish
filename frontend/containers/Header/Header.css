@@ -70,11 +70,10 @@
   max-height: 45px;
   position: relative;
   overflow: hidden;
-  transition: max-height 0.2s;
 }
 
 .content-expanded {
-  max-height: 100vh;
+  max-height: none;
 }
 
 @media (--breakpoint-medium) {

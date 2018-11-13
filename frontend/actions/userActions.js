@@ -219,8 +219,11 @@ export function signIn (clientId, secret) {
   }
 }
 
-export function signOut () {
+export function signOut ({
+  sessionHasExpired = false
+} = {}) {
   return {
+    sessionHasExpired,
     type: Types.SIGN_OUT
   }
 }
