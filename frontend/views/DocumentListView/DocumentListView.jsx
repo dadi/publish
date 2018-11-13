@@ -52,7 +52,7 @@ class DocumentListView extends Component {
 
     let url = urlNodes.filter(Boolean).join('/')
 
-    if (!documentId) {
+    if (!documentId && !createNew) {
       if (Object.keys(search).length > 0) {
         url += `?${new URLParams(search).toString()}`
       }
