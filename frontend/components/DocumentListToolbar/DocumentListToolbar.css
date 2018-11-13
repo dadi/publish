@@ -16,27 +16,10 @@
 .section {
   display: flex;
   align-items: center;
-}
-
-.select {
-  height: 25px;
-  line-height: 25px;
-  font-size: 13px;
-  box-sizing: border-box;
-  border: 1px solid #e4e4e4;
-  border-radius: 7px;
-  outline: 0;
-}
-
-.select-button {
-  margin-left: 10px;
+  text-align: center;
 }
 
 .page-input {
   width: 6em;
-  text-align: center;
-}
-
-.actions {
   text-align: center;
 }

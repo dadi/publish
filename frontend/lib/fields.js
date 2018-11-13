@@ -1,5 +1,18 @@
 import * as Constants from 'lib/constants'
 
+export function getFieldType (schema) {
+  let fieldType = (schema.publish && schema.publish.subType) ?
+    schema.publish.subType :
+    schema.type
+
+  // For backwards compatibility.
+  if (fieldType === 'Image') {
+    fieldType = 'Media'
+  }
+
+  return fieldType
+}
+
 export function visibleFieldList ({
   fields,
   view = 'list'

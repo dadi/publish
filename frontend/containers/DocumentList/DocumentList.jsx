@@ -15,7 +15,7 @@ import * as fieldComponents from 'lib/field-components'
 
 import APIBridge from 'lib/api-bridge-client'
 import {createRoute} from 'lib/router'
-import {filterVisibleFields} from 'lib/fields'
+import {filterVisibleFields, getFieldType} from 'lib/fields'
 import {connectHelper} from 'lib/util'
 
 import ErrorMessage from 'components/ErrorMessage/ErrorMessage'
@@ -239,7 +239,7 @@ class DocumentList extends Component {
       api,
       collection,
       collectionParent,
-      filter,
+      filter = {},
       order,
       page,
       documentId,
@@ -254,7 +254,11 @@ class DocumentList extends Component {
 
     let count = (collection.settings && collection.settings.count)
       || 20
-    let filterValue = state.router.search ? state.router.search.filter : null
+    let filters = Object.assign(
+      {},
+      filter,
+      state.router.search && state.router.search.filter
+    )
 
     // This is the object we'll send to the `fetchDocuments` action. If we're
     // dealing with a reference field select, we'll pass this object to any
@@ -264,7 +268,7 @@ class DocumentList extends Component {
       api,
       collection,
       count,
-      filters: filterValue,
+      filters,
       page,
       parentCollection: collectionParent,
       parentDocumentId: documentId,
@@ -273,32 +277,7 @@ class DocumentList extends Component {
       sortOrder: order
     }
 
-    if (referencedField && collectionParent) {
-      const fieldSchema = collectionParent.fields[referencedField]
-      const fieldComponentName = `Field${this.getFieldType(fieldSchema)}`
-      const fieldComponent = fieldComponents[fieldComponentName]
-
-      if (
-        fieldComponent &&
-        typeof fieldComponent.beforeReferenceSelect === 'function'
-      ) {
-        fetchObject = fieldComponent.beforeReferenceSelect(fetchObject)
-      }
-    }
-
     actions.fetchDocuments(fetchObject)
-  }
-
-  getFieldType(schema) {
-    let fieldType = (schema.publish && schema.publish.subType) ?
-      schema.publish.subType :
-      schema.type
-
-    if (fieldType === 'Image') {
-      fieldType = 'Media'
-    }
-
-    return fieldType
   }
 
   render() {
@@ -374,30 +353,38 @@ class DocumentList extends Component {
     // this data as a hash map, since each row will need to lookup this object
     // to assess whether it is selected or not. Making it a hash map means that
     // said lookup can be done in O(1) rather than O(n) time.
-    let selectedDocuments = documents.selected.reduce((selectedDocuments, id, index) => {
+    // We create two objects: `selectedDocuments` and `selectedDocumentsInView`.
+    // The first one contains all selected documents, mapping their IDs to a
+    // `true` Boolean. The second one contains all selected documents that are
+    // currently into view, mapping their index to a `true` Boolean.
+    let selectedDocuments = {}
+    let selectedDocumentsInView = documents.selected.reduce((result, id, index) => {
       let matchingDocumentIndex = items.findIndex(item => item._id === id)
 
       if (matchingDocumentIndex !== -1) {
-        selectedDocuments[matchingDocumentIndex] = true  
+        result[matchingDocumentIndex] = true  
       }
 
-      return selectedDocuments
+      selectedDocuments[id] = true
+
+      return result
     }, {})
 
-    // The new selection is formed by merging the new selection hash with the
-    // currently selected documents (which may be out of view).
-    let onSelectFn = newSelection => {
-      let mergedSelection = Object.assign(
-        {},
-        selectedDocuments,
-        newSelection
-      )
+    // The new selection is formed by merging the new selection hash with any
+    // previously selected documents that are not in view (i.e. are on a
+    // different page).
+    let onSelectFn = selectedIndexes => {
+      let newSelection = Object.assign({}, selectedDocuments)
+
+      items.forEach((item, index) => {
+        newSelection[item._id] = Boolean(selectedIndexes[index])
+      })
 
       // Converting a new selection hash to the array format that the store
       // is expecting.
-      let newSelectionArray = Object.keys(mergedSelection).map(index => {
-        return mergedSelection[index] && items[index]._id
-      }).filter(Boolean)
+      let newSelectionArray = Object.keys(newSelection).filter(id => {
+        return Boolean(newSelection[id])
+      })
 
       actions.setDocumentSelection(newSelectionArray)
     }
@@ -413,7 +400,7 @@ class DocumentList extends Component {
       onSelect: onSelectFn,
       order,
       referencedField,
-      selectedDocuments,
+      selectedDocuments: selectedDocumentsInView,
       sort
     })
   }

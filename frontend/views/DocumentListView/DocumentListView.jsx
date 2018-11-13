@@ -5,60 +5,68 @@ import {bindActionCreators} from 'redux'
 import {connectHelper, setPageTitle} from 'lib/util'
 import {URLParams} from 'lib/util/urlParams'
 
+import * as appActions from 'actions/appActions'
 import * as documentsActions from 'actions/documentsActions'
 
 import Button from 'components/Button/Button'
+import ButtonWithPrompt from 'components/ButtonWithPrompt/ButtonWithPrompt'
 import DocumentList from 'containers/DocumentList/DocumentList'
 import DocumentListController from 'containers/DocumentListController/DocumentListController'
-import DocumentListToolbar from 'containers/DocumentListToolbar/DocumentListToolbar'
+import DocumentListToolbar from 'components/DocumentListToolbar/DocumentListToolbar'
 import DocumentTableList from 'components/DocumentTableList/DocumentTableList'
 import Header from 'containers/Header/Header'
 import HeroMessage from 'components/HeroMessage/HeroMessage'
 import Main from 'components/Main/Main'
 import Page from 'components/Page/Page'
-import ReferencedDocumentHeader from 'containers/ReferencedDocumentHeader/ReferencedDocumentHeader'
+import Style from 'lib/Style'
+import styles from './DocumentListView.css'
+
+const BULK_ACTIONS = {
+  DELETE: 'BULK_ACTIONS_DELETE',
+  PLACEHOLDER: 'BULK_ACTIONS_PLACEHOLDER'
+}
 
 class DocumentListView extends Component {
-  handleBuildBaseUrl ({
-    collection = this.props.collection,
-    createNew,
-    documentId = this.props.documentId,
-    group = this.props.group,
-    referenceFieldSelect,
-    page,
-    search = new URLParams(window.location.search).toObject() || {},
-    section = this.props.section
-  } = {}) {
-    let urlNodes = [
-      group,
-      collection
-    ]
+  constructor(props) {
+    super(props)
 
-    if (createNew) {
-      urlNodes.push('new')
-    } else {
-      urlNodes.push(documentId)
+    this.state.bulkActionSelected = BULK_ACTIONS.PLACEHOLDER
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    const {actions, state} = this.props
+    const {isDeleting, list} = state.documents
+    const wasDeleting = prevProps.state.documents.isDeleting
+
+    // Have we just deleted some documents?
+    if (wasDeleting && !isDeleting) {
+      let message = wasDeleting > 1 ?
+        `${wasDeleting} documents have been deleted` :
+        'The document has been deleted'
+
+      actions.setNotification({
+        message
+      })
     }
+  }
 
-    if (referenceFieldSelect) {
-      urlNodes = urlNodes.concat(['select', referenceFieldSelect])
-    } else {
-      urlNodes.push(section)
+  handleBulkActionApply(actionType) {
+    const {state} = this.props    
+    const {bulkActionSelected} = this.state
+    const validBulkActionSelected = bulkActionSelected &&
+      (bulkActionSelected !== BULK_ACTIONS.PLACEHOLDER)
+
+    if (!validBulkActionSelected) return
+
+    if (bulkActionSelected === BULK_ACTIONS.DELETE) {
+      this.handleDocumentDelete(state.documents.selected)
     }
+  }
 
-    if (page) {
-      urlNodes.push(page)
-    }
-
-    let url = urlNodes.filter(Boolean).join('/')
-
-    if (!documentId && !createNew) {
-      if (Object.keys(search).length > 0) {
-        url += `?${new URLParams(search).toString()}`
-      }
-    }
-
-    return `/${url}`
+  handleBulkActionSelect(event) {
+    this.setState({
+      bulkActionSelected: event.target.value
+    })
   }
 
   handleDocumentDelete(ids) {
@@ -78,7 +86,7 @@ class DocumentListView extends Component {
   handleEmptyDocumentList() {
     const {
       filter,
-      referencedField
+      onBuildBaseUrl
     } = this.props
 
     if (filter) {
@@ -89,7 +97,7 @@ class DocumentListView extends Component {
         >
           <Button
             accent="system"
-            href={this.handleBuildBaseUrl({
+            href={onBuildBaseUrl({
               search: {}
             })}
           >Clear filters</Button>
@@ -102,14 +110,12 @@ class DocumentListView extends Component {
         title="No documents yet."
         subtitle="Once created, they will appear here."
       >
-        {!referencedField && (
-          <Button
-            accent="save"
-            href={this.handleBuildBaseUrl({
-              createNew: true
-            })}
-          >Create new document</Button>
-        )}
+        <Button
+          accent="save"
+          href={onBuildBaseUrl({
+            createNew: true
+          })}
+        >Create new document</Button>
       </HeroMessage>
     )    
   }
@@ -120,32 +126,29 @@ class DocumentListView extends Component {
       documentId,
       filter,
       group,
+      onBuildBaseUrl,
       order,
       page,
-      referencedField,
       sort,
       state
     } = this.props
+    const {bulkActionSelected} = this.state
     const {newFilter} = this.state
     const {
       currentApi,
       currentCollection,
       currentParentCollection
     } = state.api
+    const {
+      list: documents,
+      selected: selectedDocuments
+    } = state.documents
 
     return (
       <Page>
-        {referencedField ?
-          <ReferencedDocumentHeader
-            collectionParent={currentParentCollection}
-            onBuildBaseUrl={this.handleBuildBaseUrl.bind(this)}
-            documentId={documentId}
-            referencedField={referencedField}
-          /> : 
-          <Header
-            currentCollection={currentCollection}
-          />
-        }
+        <Header
+          currentCollection={currentCollection}
+        />
 
         <Main>
           <DocumentListController
@@ -154,8 +157,7 @@ class DocumentListView extends Component {
             documentId={documentId}
             filter={filter}
             newFilter={newFilter}
-            onBuildBaseUrl={this.handleBuildBaseUrl.bind(this)}
-            referencedField={referencedField}
+            onBuildBaseUrl={onBuildBaseUrl.bind(this)}
           />
 
           <DocumentList
@@ -164,7 +166,7 @@ class DocumentListView extends Component {
             collectionParent={currentParentCollection}
             documentId={documentId}
             filter={filter}
-            onBuildBaseUrl={this.handleBuildBaseUrl.bind(this)}
+            onBuildBaseUrl={onBuildBaseUrl.bind(this)}
             onPageTitle={setPageTitle}
             onRenderDocuments={props => (
               <DocumentTableList {...props} />
@@ -172,18 +174,37 @@ class DocumentListView extends Component {
             onRenderEmptyDocumentList={this.handleEmptyDocumentList.bind(this)}
             order={order}
             page={page}
-            referencedField={referencedField}
             sort={sort}
           />
         </Main>
 
         <DocumentListToolbar
-          api={currentApi}
-          collection={currentCollection}
-          onBuildBaseUrl={this.handleBuildBaseUrl.bind(this)}
-          onDelete={this.handleDocumentDelete.bind(this)}
-          referencedField={referencedField}
-        />
+          documentsMetadata={documents && documents.metadata}
+          onBuildBaseUrl={onBuildBaseUrl.bind(this)}
+        >
+          <div>
+            <select
+              class={styles['bulk-action-select']}
+              onChange={this.handleBulkActionSelect.bind(this)}
+              value={bulkActionSelected}
+            >
+              <option
+                disabled
+                value={BULK_ACTIONS.PLACEHOLDER}
+              >With selected...</option>
+              <option value={BULK_ACTIONS.DELETE}>Delete</option>
+            </select>
+
+            <ButtonWithPrompt
+              accent="data"
+              disabled={(bulkActionSelected === BULK_ACTIONS.PLACEHOLDER) || !selectedDocuments.length}
+              onClick={this.handleBulkActionApply.bind(this)}
+              promptCallToAction={`Yes, delete ${selectedDocuments.length > 1 ? 'them' : 'it'}.`}
+              promptMessage={`Are you sure you want to delete the selected ${selectedDocuments.length > 1 ? 'documents' : 'document'}?`}
+              size="small"
+            >Apply</ButtonWithPrompt>
+          </div>        
+        </DocumentListToolbar>
       </Page>
     )
   }
@@ -195,6 +216,7 @@ export default connectHelper(
     documents: state.documents
   }),
   dispatch => bindActionCreators({
+    ...appActions,
     ...documentsActions
   }, dispatch)
 )(DocumentListView)

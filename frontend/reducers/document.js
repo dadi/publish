@@ -11,6 +11,7 @@ const initialState = {
   isLoading: false,
   isSaving: false,
   local: null,
+  localMeta: null,
   peers: null,
   remote: null,
   remoteError: null,
@@ -39,6 +40,7 @@ export default function document (state = initialState, action = {}) {
         ...state,
         hasLoadedFromLocalStorage: false,
         local: {},
+        localMeta: {},
         validationErrors: null
       }
 
@@ -112,7 +114,8 @@ export default function document (state = initialState, action = {}) {
       }
 
       let local = action.clearLocal ?
-        {} : state.local || action.fromLocalStorage || {}
+        {} :
+        state.local || action.fromLocalStorage || {}
 
       return {
         ...state,
@@ -121,6 +124,7 @@ export default function document (state = initialState, action = {}) {
         isLoading: false,
         isSaving: false,
         local,
+        localMeta: {},
         remote: action.remote,
         saveAttempts: 0
       }
@@ -170,6 +174,7 @@ export default function document (state = initialState, action = {}) {
         hasLoadedFromLocalStorage,
         isLoading: false,
         local: action.document,
+        localMeta: {},
         remote: null
       }
 
@@ -178,7 +183,7 @@ export default function document (state = initialState, action = {}) {
       let newFieldsNotPersistedInLocalStorage = state.fieldsNotPersistedInLocalStorage
 
       if (!action.persistInLocalStorage) {
-        Object.keys(action.change).forEach(fieldName => {
+        Object.keys(action.update).forEach(fieldName => {
           if (!newFieldsNotPersistedInLocalStorage.includes(fieldName)) {
             newFieldsNotPersistedInLocalStorage.push(fieldName)
           }
@@ -191,8 +196,9 @@ export default function document (state = initialState, action = {}) {
         hasBeenValidated: true,
         local: {
           ...state.local,
-          ...action.change
-        }
+          ...action.update
+        },
+        localMeta: Object.assign({}, action.meta)
       }
 
       return newState
