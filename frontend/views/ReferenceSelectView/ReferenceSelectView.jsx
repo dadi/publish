@@ -221,7 +221,7 @@ class ReferenceSelectView extends Component {
         <Main>
           <DocumentListController
             api={currentApi}
-            collection={currentCollection}
+            collection={reference.collection}
             documentId={documentId}
             filter={filter}
             newFilter={newFilter}
