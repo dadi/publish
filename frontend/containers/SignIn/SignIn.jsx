@@ -126,7 +126,7 @@ class SignIn extends Component {
                     <TextInput
                       name="username"
                       onChange={this.handleInputChange.bind(this, 'email')}
-                      onKeyUp={this.handleInputChange.bind(this, 'email')}
+                      onInput={this.handleInputChange.bind(this, 'email')}
                       placeholder="Your username"
                       value={email}
                     />
@@ -138,7 +138,7 @@ class SignIn extends Component {
                     <TextInput
                       name="password"
                       onChange={this.handleInputChange.bind(this, 'password')}
-                      onKeyUp={this.handleInputChange.bind(this, 'password')}
+                      onInput={this.handleInputChange.bind(this, 'password')}
                       placeholder={"Your password"}
                       type="password"
                       value={password}

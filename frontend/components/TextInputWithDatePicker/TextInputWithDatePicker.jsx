@@ -54,11 +54,6 @@ export default class TextInputWithDatePicker extends Component {
     onFocus: proptypes.func,
 
     /**
-     * Callback to be executed when a key is pressed (onKeyUp event).
-     */
-    onKeyUp: proptypes.func,
-
-    /**
      * Placeholder for the input field.
      */
     placeholder: proptypes.string,

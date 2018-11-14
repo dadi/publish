@@ -321,7 +321,7 @@ export default class FieldStringEdit extends Component {
           heightType={heightType}
           name={name}
           onBlur={this.handleFocusChange.bind(this, false)}
-          onKeyUp={el => this.handleOnChange(el.target.value)}
+          onInput={el => this.handleOnChange(el.target.value)}
           onFocus={this.handleFocusChange.bind(this, true)}
           placeholder={placeholder}
           readonly={readOnly}

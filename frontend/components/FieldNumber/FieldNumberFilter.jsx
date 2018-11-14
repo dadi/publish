@@ -92,7 +92,7 @@ export default class FieldNumberFilter extends Component {
           className={valueStyles}
           value={value}
           onChange={this.handleChange.bind(this, 'value')}
-          onKeyUp={this.handleChange.bind(this, 'value')}
+          onInput={this.handleChange.bind(this, 'value')}
           placeholder="Numeric value"
         />
       </div>
