@@ -160,7 +160,7 @@ export default class FieldPasswordEdit extends Component {
           <TextInput
             name={name}
             onChange={this.handleOnChange.bind(this, 'currentPassword')}
-            onKeyUp={this.handleKeyUp.bind(this, 'currentPassword')}
+            onInput={this.handleKeyUp.bind(this, 'currentPassword')}
             placeholder={schema.placeholder}
             type="password"
             value={currentPassword}
@@ -175,7 +175,7 @@ export default class FieldPasswordEdit extends Component {
           <TextInput
             name={`${name}-new`}
             onChange={this.handleOnChange.bind(this, 'newPassword')}
-            onKeyUp={this.handleKeyUp.bind(this, 'newPassword')}
+            onInput={this.handleKeyUp.bind(this, 'newPassword')}
             placeholder={schema.placeholder}
             ref={element => this.newPasswordRef = element}
             type="password"
@@ -192,7 +192,7 @@ export default class FieldPasswordEdit extends Component {
           <TextInput
             name={`${name}-confirm`}
             onChange={this.handleOnChange.bind(this, 'newPasswordConfirm')}
-            onKeyUp={this.handleKeyUp.bind(this, 'newPasswordConfirm')}
+            onInput={this.handleKeyUp.bind(this, 'newPasswordConfirm')}
             placeholder={schema.placeholder}
             ref={element => this.newPasswordConfirmRef = element}
             type="password"

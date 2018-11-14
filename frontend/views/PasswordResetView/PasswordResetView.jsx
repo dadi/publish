@@ -64,7 +64,7 @@ class PasswordResetView extends Component {
                     <TextInput
                       placeholder="Your email address"
                       onChange={this.handleInputChange.bind(this, 'email')}
-                      onKeyUp={this.handleInputChange.bind(this, 'email')}
+                      onInput={this.handleInputChange.bind(this, 'email')}
                       validation={this.validation.email}
                       value={this.state.email}
                     />
