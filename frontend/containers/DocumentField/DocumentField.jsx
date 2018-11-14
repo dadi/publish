@@ -97,6 +97,9 @@ class DocumentField extends Component {
       onBuildBaseUrl,
       state
     } = this.props
+
+    if (!api || !collection) return null
+
     const {app, document} = state
     const hasAttemptedSaving = document.saveAttempts > 0
     const hasError = document.validationErrors

@@ -358,11 +358,15 @@ class DocumentEditToolbar extends Component {
       multiLanguage,
       state
     } = this.props
+    const {user} = state
     const {
       isSaving,
       peers,
       remote: document
     } = state.document || {}
+
+    if (!user || !user.isSignedIn) return null
+
     const hasConnectionIssues = state.app.networkStatus !== Constants.NETWORK_OK
     const validationErrors = state.document.validationErrors
     const hasValidationErrors = validationErrors && Object.keys(validationErrors)
