@@ -121,6 +121,7 @@ class App extends Component {
     createNew,
     documentId = this.props.documentId,
     group = this.props.group,
+    page,
     referenceFieldSelect,
     search = new URLParams(window.location.search).toObject(),
     section = this.props.section
@@ -140,6 +141,10 @@ class App extends Component {
       urlNodes = urlNodes.concat(['select', referenceFieldSelect])
     } else {
       urlNodes.push(section)
+    }
+
+    if (page) {
+      urlNodes.push(page)
     }
 
     let url = urlNodes.filter(Boolean).join('/')

@@ -155,7 +155,9 @@ class MediaListView extends Component {
 
         <DocumentListToolbar
           documentsMetadata={documents && documents.metadata}
-          onBuildBaseUrl={this.handleBuildBaseUrl.bind(this)}
+          onBuildPageUrl={page => this.handleBuildBaseUrl({
+            page
+          })}
         >
           <div>
             <select

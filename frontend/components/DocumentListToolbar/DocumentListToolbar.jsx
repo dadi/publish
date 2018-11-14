@@ -30,16 +30,15 @@ export default class DocumentListToolbar extends Component {
     documentsMetada: proptypes.object,
 
     /**
-    * A callback to be used to obtain the base URL for the given page, as
-    * determined by the view.
+    * A callback to be used to obtain the URL for a given page.
     */
-    onBuildBaseUrl: proptypes.func
+    onBuildPageUrl: proptypes.func
   }
 
   handleGoToPage(event) {
     const {
       documentsMetadata,
-      onBuildBaseUrl
+      onBuildPageUrl
     } = this.props
     const inputValue = event.target.value
     const parsedValue = parseInt(inputValue)
@@ -53,9 +52,7 @@ export default class DocumentListToolbar extends Component {
     // we return.
     if (parsedValue > documentsMetadata.totalPages) return
 
-    let href = onBuildBaseUrl({
-      page: parsedValue
-    })
+    let href = onBuildPageUrl(parsedValue)
 
     route(href)
   }
@@ -64,7 +61,7 @@ export default class DocumentListToolbar extends Component {
     const {
       children,
       documentsMetadata: metadata,
-      onBuildBaseUrl
+      onBuildPageUrl
     } = this.props
 
     if (!metadata) return null
@@ -83,9 +80,7 @@ export default class DocumentListToolbar extends Component {
         <div class={styles.section}>
           <Paginator
             currentPage={metadata.page}
-            linkCallback={page => onBuildBaseUrl({
-              page
-            })}
+            linkCallback={page => onBuildPageUrl(page)}
             maxPages={8}
             totalPages={metadata.totalPages}
           />

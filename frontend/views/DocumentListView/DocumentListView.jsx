@@ -180,7 +180,9 @@ class DocumentListView extends Component {
 
         <DocumentListToolbar
           documentsMetadata={documents && documents.metadata}
-          onBuildBaseUrl={onBuildBaseUrl.bind(this)}
+          onBuildPageUrl={page => onBuildBaseUrl.call(this, {
+            page
+          })}
         >
           <div>
             <select
