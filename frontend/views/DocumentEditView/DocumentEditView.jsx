@@ -65,6 +65,7 @@ class DocumentEditView extends Component {
   // - `slug`: slug of the section
   groupFieldsIntoSections(fields) {
     const {
+      documentId,
       onBuildBaseUrl,
       section: activeSectionSlug,
       state
@@ -108,7 +109,10 @@ class DocumentEditView extends Component {
           hasErrors: sectionHasErrors,
           href: onBuildBaseUrl.call(
             this,
-            {section: slug}            
+            {
+              createNew: !Boolean(documentId),
+              section: slug
+            }
           ),
           isActive,
           name: sectionName,
