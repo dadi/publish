@@ -359,6 +359,12 @@ export default class RichEditor extends Component {
     }
   }
 
+  handleEvent(callback, event) {
+    if (typeof this.props[callback] === 'function') {
+      this.props[callback].call(this, event)
+    }
+  }
+
   handleInsertImage(url, position) {
     // If there is a specific cursor position to insert the image, we set the
     // selection to that. If not, we set the selection to the start of the
@@ -489,7 +495,17 @@ export default class RichEditor extends Component {
         inEditLinkMode: false
       })
     }
-  }  
+  }
+
+  isNodeOutsideEditor(node) {
+    if (node && node.tagName === 'BODY') {
+      return true
+    }
+
+    return node &&
+      node.classList &&
+      node.classList.contains(styles.editor)
+  }
 
   render() {
     const {children} = this.props
@@ -571,6 +587,10 @@ export default class RichEditor extends Component {
     if (!selectionRange) return
 
     let node = selectionRange.startContainer
+    let isOutsideEditor = this.isNodeOutsideEditor(node)
+
+    if (isOutsideEditor) return
+
     let indices = []
 
     while (node) {
@@ -585,7 +605,9 @@ export default class RichEditor extends Component {
 
       node = node.parentNode
 
-      if (node && node.classList && node.classList.contains(styles.editor)) {
+      isOutsideEditor = this.isNodeOutsideEditor(node)
+
+      if (isOutsideEditor) {
         node = null
       }
     }
@@ -618,11 +640,5 @@ export default class RichEditor extends Component {
     this.setSelection(range)
 
     return range
-  }
-
-  handleEvent(callback, event) {
-    if (typeof this.props[callback] === 'function') {
-      this.props[callback].call(this, event)
-    }
   }
 }
