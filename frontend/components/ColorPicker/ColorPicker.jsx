@@ -48,8 +48,6 @@ export default class ColorPicker extends Component {
     this.paletteCoordinate = false
     this.paletteElement = false
     this.paletteIndicator = false
-
-    this.state.updatingPalette = false
   }
 
   componentDidMount() {
