@@ -14,7 +14,7 @@ export function clearRemoteDocument () {
 
 export function discardUnsavedChanges ({
   collection,
-  test
+  test2
 }) {
   return (dispatch, getState) => {
     let localStorageKey = getLocalStorageKey({
