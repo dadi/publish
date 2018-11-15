@@ -242,6 +242,7 @@ class App extends Component {
   }
 
   render() {
+    return null
     const {history, state} = this.props
 
     if (state.api.error) {
