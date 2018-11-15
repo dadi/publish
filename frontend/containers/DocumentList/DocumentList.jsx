@@ -227,7 +227,7 @@ class DocumentList extends Component {
       api.apis.length > 0 &&
       collection &&
       !documents.isLoading
-    ) 
+    ) {
       this.fetchDocuments()
     }
   }
