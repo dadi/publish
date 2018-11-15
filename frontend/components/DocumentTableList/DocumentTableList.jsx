@@ -5,7 +5,7 @@ import {debounce} from 'lib/util'
 import proptypes from 'proptypes'
 
 import * as fieldComponents from 'lib/field-components'
-import {filterVisibleFields} from 'lib/fields'
+import {filterVisibleFields, getFieldType} from 'lib/fields'
 
 import SyncTable from 'components/SyncTable/SyncTable'
 
@@ -79,18 +79,6 @@ export default class DocumentTableList extends Component {
      * The name of the field currently being used to sort the documents.
      */
     sort: proptypes.string
-  }
-
-  getFieldType(schema) {
-    let fieldType = (schema.publish && schema.publish.subType) ?
-      schema.publish.subType :
-      schema.type
-
-    if (fieldType === 'Image') {
-      fieldType = 'Media'
-    }
-
-    return fieldType
   }
 
   getSelectedRows() {
@@ -180,43 +168,6 @@ export default class DocumentTableList extends Component {
       fields: collection.fields,
       view: 'list'
     })
-
-    let selectLimit = Infinity
-
-    // If we're on a reference field select view, we'll see if there's a field
-    // component for the referenced field type that exports a `referenceSelect`
-    // context. If it does, we'll use that instead of the default `SyncTable`
-    // to render the results.
-    if (referencedField) {
-      const fieldSchema = collectionParent.fields[referencedField]
-      const fieldType = this.getFieldType(fieldSchema)
-      const fieldComponentName = `Field${fieldType}`
-      const FieldComponentReferenceSelect = fieldComponents[fieldComponentName].referenceSelect
-
-      if (
-        fieldSchema.settings &&
-        fieldSchema.settings.limit &&
-        fieldSchema.settings.limit > 0
-      ) {
-        selectLimit = fieldSchema.settings.limit
-      }
-
-      if (FieldComponentReferenceSelect) {
-        return (
-          <FieldComponentReferenceSelect
-            config={config}
-            data={documents}
-            onSelect={onSelect}
-            onSort={this.handleTableSort.bind(this)}
-            selectedRows={selectedRows}
-            selectLimit={selectLimit}
-            sortBy={sort}
-            sortOrder={order}
-          />
-        )
-      }
-    }
-
     const tableColumns = Object.keys(listableFields).map(field => {
       if (!collection.fields[field]) return
 
@@ -235,7 +186,7 @@ export default class DocumentTableList extends Component {
         onSelect={onSelect}
         onSort={this.handleTableSort.bind(this)}
         selectedRows={selectedRows}
-        selectLimit={selectLimit}
+        selectLimit={Infinity}
         sortable={true}
         sortBy={sort}
         sortOrder={order}
@@ -244,7 +195,7 @@ export default class DocumentTableList extends Component {
   }
 
   renderAnnotation(schema) {
-    const fieldType = this.getFieldType(schema)
+    const fieldType = getFieldType(schema)
 
     const fieldComponentName = `Field${fieldType}`
     const FieldComponentListHeadAnnotation = fieldComponents[fieldComponentName] &&
@@ -266,7 +217,7 @@ export default class DocumentTableList extends Component {
       config
     } = this.props
 
-    const fieldType = this.getFieldType(schema)
+    const fieldType = getFieldType(schema)
     const fieldComponentName = `Field${fieldType}`
     const FieldComponentList = fieldComponents[fieldComponentName] &&
       fieldComponents[fieldComponentName].list

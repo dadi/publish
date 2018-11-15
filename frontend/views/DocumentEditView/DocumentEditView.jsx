@@ -65,6 +65,8 @@ class DocumentEditView extends Component {
   // - `slug`: slug of the section
   groupFieldsIntoSections(fields) {
     const {
+      documentId,
+      onBuildBaseUrl,
       section: activeSectionSlug,
       state
     } = this.props
@@ -105,9 +107,13 @@ class DocumentEditView extends Component {
         let section = {
           fields: fieldsInPlacements,
           hasErrors: sectionHasErrors,
-          href: this.handleBuildBaseUrl({
-            section: slug
-          }),
+          href: onBuildBaseUrl.call(
+            this,
+            {
+              createNew: !Boolean(documentId),
+              section: slug
+            }
+          ),
           isActive,
           name: sectionName,
           slug
@@ -120,46 +126,12 @@ class DocumentEditView extends Component {
     return sectionsArray
   }
 
-  handleBuildBaseUrl({
-    collection = this.props.collection,
-    createNew,
-    documentId = this.props.documentId,
-    group = this.props.group,
-    referenceFieldSelect,
-    search = new URLParams(window.location.search).toObject(),
-    section = this.props.section
-  } = {}) {
-    let urlNodes = [
-      group,
-      collection
-    ]
-
-    if (createNew) {
-      urlNodes.push('new')
-    } else {
-      urlNodes.push(documentId)
-    }
-
-    if (referenceFieldSelect) {
-      urlNodes = urlNodes.concat(['select', referenceFieldSelect])
-    } else {
-      urlNodes.push(section)
-    }
-
-    let url = urlNodes.filter(Boolean).join('/')
-
-    if (!createNew && search && Object.keys(search).length > 0) {
-      url += `?${new URLParams(search).toString()}`
-    }
-
-    return `/${url}`
-  }
-
- render() {
+  render() {
     const {
       collection,
       documentId,
       group,
+      onBuildBaseUrl,
       referencedField,
       section,
       state
@@ -186,7 +158,7 @@ class DocumentEditView extends Component {
           collection={currentCollection}
           documentId={documentId}
           multiLanguage={true}
-          onBuildBaseUrl={this.handleBuildBaseUrl.bind(this)}
+          onBuildBaseUrl={onBuildBaseUrl.bind(this)}
           referencedField={referencedField}
           section={section}
         />
@@ -196,7 +168,7 @@ class DocumentEditView extends Component {
             api={currentApi}
             collection={currentCollection}
             documentId={documentId}
-            onBuildBaseUrl={this.handleBuildBaseUrl.bind(this)}
+            onBuildBaseUrl={onBuildBaseUrl.bind(this)}
             onPageTitle={setPageTitle}
             onRender={() => (
               <EditInterface>
@@ -212,7 +184,7 @@ class DocumentEditView extends Component {
                         collection={currentCollection}
                         documentId={documentId}
                         field={field}
-                        onBuildBaseUrl={this.handleBuildBaseUrl.bind(this)}
+                        onBuildBaseUrl={onBuildBaseUrl.bind(this)}
                       />
                     ))}
                     sidebar={item.fields.sidebar.map(field => (
@@ -221,7 +193,7 @@ class DocumentEditView extends Component {
                         collection={currentCollection}
                         documentId={documentId}
                         field={field}
-                        onBuildBaseUrl={this.handleBuildBaseUrl.bind(this)}
+                        onBuildBaseUrl={onBuildBaseUrl.bind(this)}
                       />
                     ))}
                     slug={item.slug}
@@ -242,6 +214,7 @@ class DocumentEditView extends Component {
     const {
       collection,
       documentId,
+      onBuildBaseUrl,
       section
     } = this.props
     const method = documentId ? 'edit' : 'new'
@@ -255,7 +228,7 @@ class DocumentEditView extends Component {
       if (!sectionMatch && !this.isRedirecting) {
         this.isRedirecting = true
 
-        let redirectUrl = this.handleBuildBaseUrl({
+        let redirectUrl = onBuildBaseUrl({
           section: this.sections[0].slug
         })
 

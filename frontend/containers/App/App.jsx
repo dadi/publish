@@ -17,6 +17,7 @@ import HomeView from 'views/HomeView/HomeView'
 import MediaEditView from 'views/MediaEditView/MediaEditView'
 import MediaListView from 'views/MediaListView/MediaListView'
 import PasswordResetView from 'views/PasswordResetView/PasswordResetView'
+import ReferenceSelectView from 'views/ReferenceSelectView/ReferenceSelectView'
 import SignInView from 'views/SignInView/SignInView'
 import SignOutView from 'views/SignOutView/SignOutView'
 import ProfileEditView from 'views/ProfileEditView/ProfileEditView'
@@ -32,8 +33,7 @@ const REGEX_DOCUMENT_ID = '[^(?:[a-f0-9]{24}|[a-f0-9]{32}|[0-9a-f]{8}-[0-9a-f]{4
 const REGEX_SLUG = '[^[a-z-]]'
 
 class App extends Component {
-
-  componentWillMount () {
+  componentWillMount() {
     const {actions, state} = this.props
 
     apiBridgeClient.registerProgressCallback(actions.registerNetworkCall)
@@ -47,7 +47,7 @@ class App extends Component {
     }
   }
 
-  componentDidMount () {
+  componentDidMount() {
     const {actions, state} = this.props
     const conf = state.app.config
 
@@ -78,7 +78,7 @@ class App extends Component {
     document.addEventListener('drop', this.handleDragDropEvents, false)
   }
 
-  componentDidUpdate (previousProps) {
+  componentDidUpdate(previousProps) {
     const {actions, state} = this.props
     const previousState = previousProps.state
     const room = previousState.router.room
@@ -116,114 +116,44 @@ class App extends Component {
     }
   }
 
-  render () {
-    const {history, state} = this.props
+  handleBuildBaseUrl({
+    collection = this.props.collection,
+    createNew,
+    documentId = this.props.documentId,
+    group = this.props.group,
+    page,
+    referenceFieldSelect,
+    search = new URLParams(window.location.search).toObject(),
+    section = this.props.section
+  } = {}) {
+    let urlNodes = [
+      group,
+      collection
+    ]
 
-    if (state.api.error) {
-      return (
-        <ErrorView type={Constants.API_CONNECTION_ERROR} data={state.api.error} />
-      )
+    if (createNew) {
+      urlNodes.push('new')
+    } else {
+      urlNodes.push(documentId)
     }
 
-    return (
-      <Router
-        history={history}
-        onChange={this.handleRouteChange.bind(this)}
-      >
-        <HomeView
-          authenticate
-          path="/"
-        />
+    if (referenceFieldSelect) {
+      urlNodes = urlNodes.concat(['select', referenceFieldSelect])
+    } else {
+      urlNodes.push(section)
+    }
 
-        <PasswordResetView
-          path="/reset"
-        />
+    if (page) {
+      urlNodes.push(page)
+    }
 
-        <ProfileEditView
-          authenticate
-          path="/profile/:section?"
-        />
+    let url = urlNodes.filter(Boolean).join('/')
 
-        <ProfileEditView
-          authenticate
-          path="/profile/select/:referencedField?/:page?[^\d+$]"
-        />
+    if (search && Object.keys(search).length > 0) {
+      url += `?${new URLParams(search).toString()}`
+    }
 
-        <SignInView
-          path="/sign-in/:token?"
-        />
-
-        <SignOutView
-          path="/sign-out"
-        />
-
-        <MediaListView
-          authenticate
-          path={`/media/:page?${REGEX_NUMBER}`}
-        />
-
-        <MediaEditView
-          authenticate
-          path={`/media/:documentId${REGEX_DOCUMENT_ID}/:section?`}
-        />
-
-        <DocumentEditView
-          authenticate
-          path={`:collection${REGEX_SLUG}/new/:section?`}
-        />
-
-        <DocumentEditView
-          authenticate
-          path={`:group${REGEX_SLUG}/:collection${REGEX_SLUG}/new/:section?`}
-        />
-
-        <DocumentEditView
-          authenticate
-          path={`:collection${REGEX_SLUG}/:documentId${REGEX_DOCUMENT_ID}/:section?`}
-        />
-
-        <DocumentEditView
-          authenticate
-          path={`:group${REGEX_SLUG}/:collection${REGEX_SLUG}/:documentId${REGEX_DOCUMENT_ID}/:section?`}
-        />
-
-        <DocumentListView
-          authenticate
-          path={`:collection${REGEX_SLUG}/:page?${REGEX_NUMBER}`}
-        />
-
-        <DocumentListView
-          authenticate
-          path={`:collection${REGEX_SLUG}/new/select/:referencedField/:page?${REGEX_NUMBER}`}
-        />
-
-        <DocumentListView
-          authenticate
-          path={`:collection${REGEX_SLUG}/:documentId${REGEX_DOCUMENT_ID}/select/:referencedField/:page?${REGEX_NUMBER}`}
-        />
-
-        <DocumentListView
-          authenticate
-          path={`:group${REGEX_SLUG}/:collection${REGEX_SLUG}/:page?${REGEX_NUMBER}`}
-        />
-
-        <DocumentListView
-          authenticate
-          path={`:group${REGEX_SLUG}/:collection${REGEX_SLUG}/new/select/:referencedField/:page?${REGEX_NUMBER}`}
-        />
-
-        <DocumentListView
-          authenticate
-          path={`:group${REGEX_SLUG}/:collection${REGEX_SLUG}/:documentId${REGEX_DOCUMENT_ID}/select/:referencedField/:page?${REGEX_NUMBER}`}
-        />      
-
-        <ErrorView
-          authenticate
-          default
-          type={Constants.ERROR_ROUTE_NOT_FOUND}
-        />
-      </Router>
-    )
+    return `/${url}`
   }
 
   /**
@@ -232,11 +162,11 @@ class App extends Component {
    * drop outside of FileUpload and other asset drop handlers.
    * @param  {Event} event Event listener object.
    */
-  handleDragDropEvents (event) {
+  handleDragDropEvents(event) {
     event.preventDefault()
-  }
+  }  
 
-  handleRouteChange (event) {
+  handleRouteChange(event) {
     const {actions, state} = this.props
     const currentRouteAttributes =
       (event.current && event.current.attributes) || {}
@@ -283,7 +213,7 @@ class App extends Component {
     }
   }
 
-  handleUserListChange (data) {
+  handleUserListChange(data) {
     const {state, actions} = this.props
 
     // Store connected users in state.
@@ -309,6 +239,128 @@ class App extends Component {
         })
       }, timeout)
     }
+  }
+
+  render() {
+    const {history, state} = this.props
+
+    if (state.api.error) {
+      return (
+        <ErrorView type={Constants.API_CONNECTION_ERROR} data={state.api.error} />
+      )
+    }
+
+    return (
+      <Router
+        history={history}
+        onChange={this.handleRouteChange.bind(this)}
+      >
+        <HomeView
+          authenticate
+          path="/"
+        />
+
+        <PasswordResetView
+          path="/reset"
+        />
+
+        <ProfileEditView
+          authenticate
+          path="/profile/:section?"
+        />
+
+        <ProfileEditView
+          authenticate
+          path="/profile/select/:referencedField?/:page?[^\d+$]"
+        />
+
+        <SignInView
+          path="/sign-in/:token?"
+        />
+
+        <SignOutView
+          path="/sign-out"
+        />
+
+        <MediaListView
+          authenticate
+          onBuildBaseUrl={this.handleBuildBaseUrl}
+          path={`/media/:page?${REGEX_NUMBER}`}
+        />
+
+        <MediaEditView
+          authenticate
+          onBuildBaseUrl={this.handleBuildBaseUrl}
+          path={`/media/:documentId${REGEX_DOCUMENT_ID}/:section?`}
+        />
+
+        <DocumentEditView
+          authenticate
+          onBuildBaseUrl={this.handleBuildBaseUrl}
+          path={`:collection${REGEX_SLUG}/new/:section?`}
+        />
+
+        <DocumentEditView
+          authenticate
+          onBuildBaseUrl={this.handleBuildBaseUrl}
+          path={`:group${REGEX_SLUG}/:collection${REGEX_SLUG}/new/:section?`}
+        />
+
+        <DocumentEditView
+          authenticate
+          onBuildBaseUrl={this.handleBuildBaseUrl}
+          path={`:collection${REGEX_SLUG}/:documentId${REGEX_DOCUMENT_ID}/:section?`}
+        />
+
+        <DocumentEditView
+          authenticate
+          onBuildBaseUrl={this.handleBuildBaseUrl}
+          path={`:group${REGEX_SLUG}/:collection${REGEX_SLUG}/:documentId${REGEX_DOCUMENT_ID}/:section?`}
+        />
+
+        <DocumentListView
+          authenticate
+          onBuildBaseUrl={this.handleBuildBaseUrl}
+          path={`:collection${REGEX_SLUG}/:page?${REGEX_NUMBER}`}
+        />
+
+        <ReferenceSelectView
+          authenticate
+          onBuildBaseUrl={this.handleBuildBaseUrl}
+          path={`:collection${REGEX_SLUG}/new/select/:referencedField/:page?${REGEX_NUMBER}`}
+        />
+
+        <ReferenceSelectView
+          authenticate
+          onBuildBaseUrl={this.handleBuildBaseUrl}
+          path={`:collection${REGEX_SLUG}/:documentId${REGEX_DOCUMENT_ID}/select/:referencedField/:page?${REGEX_NUMBER}`}
+        />
+
+        <DocumentListView
+          authenticate
+          onBuildBaseUrl={this.handleBuildBaseUrl}
+          path={`:group${REGEX_SLUG}/:collection${REGEX_SLUG}/:page?${REGEX_NUMBER}`}
+        />
+
+        <ReferenceSelectView
+          authenticate
+          onBuildBaseUrl={this.handleBuildBaseUrl}
+          path={`:group${REGEX_SLUG}/:collection${REGEX_SLUG}/new/select/:referencedField/:page?${REGEX_NUMBER}`}
+        />
+
+        <ReferenceSelectView
+          authenticate
+          onBuildBaseUrl={this.handleBuildBaseUrl}
+          path={`:group${REGEX_SLUG}/:collection${REGEX_SLUG}/:documentId${REGEX_DOCUMENT_ID}/select/:referencedField/:page?${REGEX_NUMBER}`}
+        />      
+
+        <ErrorView
+          authenticate
+          default
+          type={Constants.ERROR_ROUTE_NOT_FOUND}
+        />
+      </Router>
+    )
   }
 }
 

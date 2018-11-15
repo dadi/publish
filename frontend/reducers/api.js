@@ -39,17 +39,8 @@ export default function api (state = initialState, action = {}) {
         newState.currentCollection = getCollectionForParameters({
           api: newState.currentApi,
           collection: parameters.collection,
-          group: parameters.group,
-          referencedField: parameters.referencedField
+          group: parameters.group
         })
-
-        newState.currentParentCollection = parameters.referencedField ?
-          getCollectionForParameters({
-            api: newState.currentApi,
-            collection: parameters.collection,
-            group: parameters.group
-          }) :
-          undefined
       }
 
       return newState
@@ -269,52 +260,21 @@ function getApiForParameters ({
  * @param {string} filter.collection - The name of the collectiuon present in
  *   the URL.
  * @param {string} filter.group - The name of the group present in the URL.
- * @param {string} filter.referencedField - The name of a referenced field being
- *   edited.
  *
  * @return {object} The schema for the given collection.
  */
 function getCollectionForParameters ({
   api,
   collection,
-  group,
-  referencedField
+  group
 }) {
   if (!api || !api.collections) return api
 
-  let collectionMatch
-
-  // Are we after the auth collection?
-  if (collection === Constants.AUTH_COLLECTION) {
-    collectionMatch = api.collections.find(collection => collection._isAuthCollection)
-  } else {
-    const collectionParts = collection.match(/(.*)-([0-9]+)/)
-    const collectionName = collectionParts ? collectionParts[1] : collection
-
-    collectionMatch = api.collections.find(collection => {
-      return collection.slug === collectionName
-    })
-  }
-
-  // If we have a referenced referencedField with a valid referenced collection,
-  // we need to return the schema of that collection instead.
-  if (referencedField) {
-    const fieldSchema = collectionMatch.fields[referencedField]
-    const referencedCollection = fieldSchema &&
-      fieldSchema.settings &&
-      fieldSchema.settings.collection
-
-    if (referencedCollection) {
-      // Is this field referencing a media collection?
-      if (referencedCollection === Constants.MEDIA_COLLECTION) {
-        collectionMatch = Constants.MEDIA_COLLECTION_SCHEMA
-      } else {
-        collectionMatch = api.collections.find(collection => {
-          return collection.slug === referencedCollection
-        })
-      }
-    }
-  }
+  const collectionParts = collection.match(/(.*)-([0-9]+)/)
+  const collectionName = collectionParts ? collectionParts[1] : collection
+  const collectionMatch = api.collections.find(collection => {
+    return collection.slug === collectionName
+  })
 
   return collectionMatch || null
 }

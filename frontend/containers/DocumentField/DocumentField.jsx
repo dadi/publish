@@ -2,6 +2,7 @@ import {h, Component} from 'preact'
 import proptypes from 'proptypes'
 import {bindActionCreators} from 'redux'
 import {connectHelper} from 'lib/util'
+import {getFieldType} from 'lib/fields'
 
 import * as documentActions from 'actions/documentActions'
 import * as fieldComponents from 'lib/field-components'
@@ -51,18 +52,6 @@ class DocumentField extends Component {
     state: proptypes.object
   }
 
-  getFieldType(schema) {
-    let fieldType = (schema.publish && schema.publish.subType) ?
-      schema.publish.subType :
-      schema.type
-
-    if (fieldType === 'Image') {
-      fieldType = 'Media'
-    }
-
-    return fieldType
-  }  
-
   // Handles the callback that fires whenever a field changes and the new value
   // is ready to be sent to the store.
   handleFieldChange(fieldName, value, persistInLocalStorage = true) {
@@ -72,10 +61,11 @@ class DocumentField extends Component {
     } = this.props
 
     actions.updateLocalDocument({
-      [fieldName]: value
-    }, {
       path: collection.path,
-      persistInLocalStorage
+      persistInLocalStorage,
+      update: {
+        [fieldName]: value
+      }
     })
   }
 
@@ -105,6 +95,7 @@ class DocumentField extends Component {
     const hasError = document.validationErrors
       && document.validationErrors[field._id]
     const documentData = Object.assign({}, document.remote, document.local)
+    const documentMetadata = document.localMeta || {}
     const defaultApiLanguage = api.languages &&
       api.languages.find(language => language.default)
     const currentLanguage = state.router.search.lang
@@ -134,8 +125,6 @@ class DocumentField extends Component {
       placeholder = documentData[field._id] || placeholder
     }
 
-    let value = documentData[fieldName]
-
     // As per API docs, validation messages are in the format "must be xxx", which
     // assumes that something (probably the name of the field) will be prepended to
     // the string to form a final error message. For this reason, we're prepending
@@ -144,7 +133,7 @@ class DocumentField extends Component {
     const error = typeof hasError === 'string' ?
       'This field ' + hasError :
       hasError
-    const fieldType = this.getFieldType(field)
+    const fieldType = getFieldType(field)
     const fieldComponentName = `Field${fieldType}`
     const FieldComponent = fieldComponents[fieldComponentName] &&
       fieldComponents[fieldComponentName].edit
@@ -171,6 +160,7 @@ class DocumentField extends Component {
           documentId={documentId}
           error={error}
           forceValidation={hasAttemptedSaving}
+          meta={documentMetadata[fieldName]}
           name={fieldName}
           onBuildBaseUrl={onBuildBaseUrl}
           onChange={this.handleFieldChange.bind(this)}
@@ -178,7 +168,7 @@ class DocumentField extends Component {
           placeholder={placeholder}
           required={field.required && !isTranslation}
           schema={field}
-          value={value}
+          value={documentData[fieldName]}
         />      
       </Field>
     )

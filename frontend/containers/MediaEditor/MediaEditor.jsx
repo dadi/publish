@@ -60,10 +60,11 @@ class MediaEditor extends Component {
     } = this.props
 
     actions.updateLocalDocument({
-      [fieldName]: value
-    }, {
       path: collection.path,
-      persistInLocalStorage
+      persistInLocalStorage,
+      update: {
+        [fieldName]: value
+      }
     })
   }
 
