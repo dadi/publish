@@ -147,6 +147,7 @@ class DocumentList extends Component {
     const {
       actions,
       collection,
+      page,
       referencedField,
       state
     } = this.props
@@ -175,14 +176,19 @@ class DocumentList extends Component {
       }
     }
 
+    const {path: collectionPath} = collection || {}
+    const {path: previousCollectionPath} = prevProps.collection || {}
     const hasJustSaved = previousDocuments.isSaving && !documents.isSaving
+    const resourceIsTheSame = collectionPath === previousCollectionPath &&
+      referencedField === prevProps.referencedField &&
+      page === prevProps.page
 
     if (
       !app.config ||
       api.apis.length === 0 ||
       !collection ||
       documents.isLoading ||
-      (!hasJustSaved && documents.list && (pathKey === previousPathKey))
+      (!hasJustSaved && documents.list && resourceIsTheSame)
     ) {
       return
     }
@@ -221,7 +227,7 @@ class DocumentList extends Component {
       api.apis.length > 0 &&
       collection &&
       !documents.isLoading
-    ) {
+    ) 
       this.fetchDocuments()
     }
   }

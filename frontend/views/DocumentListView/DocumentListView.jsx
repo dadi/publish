@@ -3,6 +3,7 @@
 import {Component, h} from 'preact'
 import {bindActionCreators} from 'redux'
 import {connectHelper, setPageTitle} from 'lib/util'
+import {route} from '@dadi/preact-router'
 import {URLParams} from 'lib/util/urlParams'
 
 import * as appActions from 'actions/appActions'
@@ -47,6 +48,22 @@ class DocumentListView extends Component {
       actions.setNotification({
         message
       })
+    }
+  }
+
+  componentWillUpdate(nextProps) {
+    const {onBuildBaseUrl} = this.props
+    const {metadata} = nextProps.state.documents.list || {}
+    const {page, totalPages} = metadata || {}
+
+    if (page && totalPages && page > totalPages && !this.isRedirecting) {
+      this.isRedirecting = true
+
+      let redirectUrl = onBuildBaseUrl.call(this, {
+        page: totalPages
+      })
+
+      route(redirectUrl)
     }
   }
 
@@ -97,7 +114,7 @@ class DocumentListView extends Component {
         >
           <Button
             accent="system"
-            href={onBuildBaseUrl({
+            href={onBuildBaseUrl.call(this, {
               search: {}
             })}
           >Clear filters</Button>
@@ -112,7 +129,7 @@ class DocumentListView extends Component {
       >
         <Button
           accent="save"
-          href={onBuildBaseUrl({
+          href={onBuildBaseUrl.call(this, {
             createNew: true
           })}
         >Create new document</Button>
