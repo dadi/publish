@@ -125,26 +125,10 @@ export default class ColorPicker extends Component {
   enableDragging(element, listener) {
     let mousedown = false
 
-    element.addEventListener('mousedown', event => (mousedown = true))
-    element.addEventListener('mouseup', event => (mousedown = false))
-    element.addEventListener('mouseout', event => (mousedown = false))
-    element.addEventListener('mousemove', event => {
-      if (mousedown) listener(event)
-    })
-  }
-
-  mousePosition(event) {
-    // ie
-    if (window.event && window.event.contentOverflow !== undefined) {
-      return {x: window.event.offsetX, y: window.event.offsetY}
-    }
-    // webkit
-    if (event.offsetX !== undefined && event.offsetY !== undefined) {
-      return {x: event.offsetX, y: event.offsetY}
-    }
-    // firefox
-    let wrapper = event.target.parentNode.parentNode
-    return {x: event.layerX - wrapper.offsetLeft, y: event.layerY - wrapper.offsetTop}
+    element.addEventListener('mousedown', event => mousedown = true)
+    element.addEventListener('mouseup', event => mousedown = false)
+    element.addEventListener('mouseout', event => mousedown = false)
+    element.addEventListener('mousemove', event => mousedown && listener(event))
   }
 
   hueListener(event) {
@@ -168,6 +152,20 @@ export default class ColorPicker extends Component {
     this.hsv.v = (height - this.paletteCoordinate.y) / height
 
     this.handleColorPick()
+  }
+ 
+  mousePosition(event) {
+    // ie
+    if (window.event && window.event.contentOverflow !== undefined) {
+      return {x: window.event.offsetX, y: window.event.offsetY}
+    }
+    // webkit
+    if (event.offsetX !== undefined && event.offsetY !== undefined) {
+      return {x: event.offsetX, y: event.offsetY}
+    }
+    // firefox
+    let wrapper = event.target.parentNode.parentNode
+    return {x: event.layerX - wrapper.offsetLeft, y: event.layerY - wrapper.offsetTop}
   }
 
   handleColorPick() {
