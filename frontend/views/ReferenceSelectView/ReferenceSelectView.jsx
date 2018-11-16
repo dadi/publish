@@ -88,7 +88,9 @@ class ReferenceSelectView extends Component {
 
   handleEmptyDocumentList() {
     const {
-      filter
+      filter,
+      onBuildBaseUrl,
+      referencedField
     } = this.props
 
     if (filter) {
@@ -99,7 +101,8 @@ class ReferenceSelectView extends Component {
         >
           <Button
             accent="system"
-            href={onBuildBaseUrl({
+            href={onBuildBaseUrl.call(this, {
+              referenceFieldSelect: referencedField,
               search: {}
             })}
           >Clear filters</Button>
@@ -210,6 +213,8 @@ class ReferenceSelectView extends Component {
       fieldComponent.getCtaText(selectedDocuments) :
       `Add selected ${selectedDocuments.length > 1 ? 'documents' : 'document'}`
 
+    let filters = Object.assign({}, reference.filter, search.filter)
+
     return (
       <Page>
         <ReferenceSelectHeader
@@ -219,13 +224,14 @@ class ReferenceSelectView extends Component {
           instructionText={instructionText}
           referencedField={referencedField}
           returnCtaText={returnCtaText}
-        >
-          <DocumentListController
-            collection={reference.collection}
-            onBuildBaseUrl={onBuildBaseUrl.bind(this)}
-            search={search}
-          />
-        </ReferenceSelectHeader>      
+        />
+          
+        <DocumentListController
+          collection={reference.collection}
+          onBuildBaseUrl={onBuildBaseUrl.bind(this)}
+          referencedField={referencedField}
+          search={search}
+        />
 
         <Main>
           <DocumentList
@@ -233,7 +239,7 @@ class ReferenceSelectView extends Component {
             collection={reference.collection}
             collectionParent={currentCollection}
             documentId={documentId}
-            filter={reference.filter}
+            filters={filters}
             onBuildBaseUrl={onBuildBaseUrl.bind(this)}
             onPageTitle={setPageTitle}
             onRenderDocuments={this.handleRenderDocuments.bind(this, reference)}

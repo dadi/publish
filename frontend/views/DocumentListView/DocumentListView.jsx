@@ -167,7 +167,10 @@ class DocumentListView extends Component {
         <Header currentCollection={currentCollection}>
           <DocumentListController
             collection={currentCollection}
-            onBuildBaseUrl={onBuildBaseUrl.bind(this)}
+            createNewHref={onBuildBaseUrl.call(this, {
+              createNew: true,
+              search: null
+            })}
             search={search}
           />
         </Header>

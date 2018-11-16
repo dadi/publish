@@ -61,6 +61,7 @@
 
 .form {
   background-color: var(--theme-colour-background, #FFFFFF);
+  border-radius: 4px;
   padding: 6px 10px 7px 10px;
   position: relative;
 }

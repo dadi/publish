@@ -20,10 +20,22 @@ export default class DocumentListController extends Component {
     collection: proptypes.object,
 
     /**
+     * The link to a "Create new" button. If not present, the button will not
+     * be rendered.
+     */
+    createNewHref: proptypes.string,
+
+    /**
     * A callback to be used to obtain the base URL for the given page, as
     * determined by the view.
     */
     onBuildBaseUrl: proptypes.func,
+
+    /**
+     * When selecting a value for a referenced field, this should contain its
+     * name.
+     */
+    referencedField: proptypes.string,
 
     /**
      * The hash map of search parameters.
@@ -33,17 +45,11 @@ export default class DocumentListController extends Component {
 
   render() {
     const {
-      api,
       collection,
-      group,
+      createNewHref,
       onBuildBaseUrl,
-      referencedField,
       search = {}
     } = this.props
-    const newHref = onBuildBaseUrl({
-      createNew: true,
-      search: null
-    })
 
     if (!collection) {
       return null
@@ -60,11 +66,13 @@ export default class DocumentListController extends Component {
         </div>
 
         <div class={styles.actions}>
-          <Button
-            accent="save"
-            href={newHref}
-            type="fill"
-          >Create new</Button>
+          {createNewHref &&
+            <Button
+              accent="save"
+              href={createNewHref}
+              type="fill"
+            >Create new</Button>
+          }
         </div>
       </div>
     )
@@ -90,7 +98,11 @@ export default class DocumentListController extends Component {
   }
 
   handleFiltersUpdate(newFilters) {
-    const {onBuildBaseUrl, search} = this.props
+    const {
+      onBuildBaseUrl,
+      referencedField,
+      search
+    } = this.props
     const newFilterValue = Object.keys(newFilters).length > 0 ?
       newFilters :
       null
@@ -98,6 +110,7 @@ export default class DocumentListController extends Component {
       filter: newFilterValue
     })
     const newUrl = onBuildBaseUrl({
+      referenceFieldSelect: referencedField,
       search: newSearch
     })
 
