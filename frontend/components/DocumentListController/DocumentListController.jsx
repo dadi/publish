@@ -26,6 +26,11 @@ export default class DocumentListController extends Component {
     createNewHref: proptypes.string,
 
     /**
+     * Whether to enable filters.
+     */
+    enableFilters: proptypes.bool,
+
+    /**
     * A callback to be used to obtain the base URL for the given page, as
     * determined by the view.
     */
@@ -47,6 +52,7 @@ export default class DocumentListController extends Component {
     const {
       collection,
       createNewHref,
+      enableFilters,
       onBuildBaseUrl,
       search = {}
     } = this.props
@@ -58,11 +64,13 @@ export default class DocumentListController extends Component {
     return (
       <div class={styles.wrapper}>
         <div class={styles.filters}>
-          <DocumentFilters
-            collection={collection}
-            filters={search.filter}
-            onUpdateFilters={this.handleFiltersUpdate.bind(this)}
-          />
+          {enableFilters &&
+            <DocumentFilters
+              collection={collection}
+              filters={search.filter}
+              onUpdateFilters={this.handleFiltersUpdate.bind(this)}
+            />
+          }
         </div>
 
         <div class={styles.actions}>

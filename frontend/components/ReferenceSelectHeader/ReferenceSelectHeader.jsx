@@ -76,6 +76,7 @@ export default class ReferenceSelectHeader extends Component {
     const returnUrl = onBuildBaseUrl({
       createNew: false,//!Boolean(state.router.parameters.documentId),
       referencedField: null,
+      search: null,
       section
     })
 

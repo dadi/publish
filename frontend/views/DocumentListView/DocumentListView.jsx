@@ -171,6 +171,7 @@ class DocumentListView extends Component {
               createNew: true,
               search: null
             })}
+            enableFilters={true}
             search={search}
           />
         </Header>
