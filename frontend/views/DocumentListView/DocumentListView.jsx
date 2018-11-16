@@ -172,6 +172,7 @@ class DocumentListView extends Component {
               search: null
             })}
             enableFilters={true}
+            onBuildBaseUrl={onBuildBaseUrl.bind(this)}
             search={search}
           />
         </Header>
