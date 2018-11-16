@@ -53,9 +53,9 @@ class DocumentList extends Component {
     documentId: proptypes.string,
 
     /**
-     * The JSON-stringified object of active filters.
+     * The hash map of active filters.
      */
-    filter: proptypes.string,
+    filters: proptypes.object,
 
     /**
     * A callback to be used to obtain the base URL for the given page, as
@@ -152,9 +152,7 @@ class DocumentList extends Component {
       state
     } = this.props
     const {app, api, documents} = state
-    const pathKey = prevProps.state.router.locationBeforeTransitions.key
     const previousDocuments = prevProps.state.documents
-    const previousPathKey = state.router.locationBeforeTransitions.key
 
     // If we are have just loaded a list of documents for a nested document,
     // let's update the selection with the value of the reference field, if
@@ -178,10 +176,13 @@ class DocumentList extends Component {
 
     const {path: collectionPath} = collection || {}
     const {path: previousCollectionPath} = prevProps.collection || {}
+    const {search} = state.router.locationBeforeTransitions
+    const {search: previousSearch} = prevProps.state.router.locationBeforeTransitions
     const hasJustSaved = previousDocuments.isSaving && !documents.isSaving
     const resourceIsTheSame = collectionPath === previousCollectionPath &&
       referencedField === prevProps.referencedField &&
-      page === prevProps.page
+      page === prevProps.page &&
+      JSON.stringify(search) === JSON.stringify(previousSearch)
 
     if (
       !app.config ||
@@ -245,7 +246,7 @@ class DocumentList extends Component {
       api,
       collection,
       collectionParent,
-      filter = {},
+      filters = {},
       order,
       page,
       documentId,
@@ -260,11 +261,6 @@ class DocumentList extends Component {
 
     let count = (collection.settings && collection.settings.count)
       || 20
-    let filters = Object.assign(
-      {},
-      filter,
-      state.router.search && state.router.search.filter
-    )
 
     // This is the object we'll send to the `fetchDocuments` action. If we're
     // dealing with a reference field select, we'll pass this object to any
@@ -292,8 +288,7 @@ class DocumentList extends Component {
       api,      
       collection,
       collectionParent,
-      documentId,      
-      filter,
+      documentId,
       onBuildBaseUrl,
       onPageTitle,
       onRenderDocuments,

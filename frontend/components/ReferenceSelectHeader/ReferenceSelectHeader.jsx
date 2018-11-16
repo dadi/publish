@@ -15,6 +15,11 @@ import Button from 'components/Button/Button'
 export default class ReferenceSelectHeader extends Component {
   static propTypes = {
     /**
+     * The text/elements to be rendered inside the header.
+     */
+    children: proptypes.node,
+
+    /**
      * The parent collection to operate on, when dealing with a reference field.
      */
     collectionParent: proptypes.object,
@@ -48,6 +53,7 @@ export default class ReferenceSelectHeader extends Component {
 
   render() {
     const {
+      children,
       collectionParent,
       instructionText,
       onBuildBaseUrl,
@@ -85,6 +91,8 @@ export default class ReferenceSelectHeader extends Component {
           href={returnUrl}
           size="small"
         >{returnCtaText}</Button>
+
+        {children}
       </div>
     )
   }

@@ -15,7 +15,7 @@ import * as fieldComponents from 'lib/field-components'
 import Button from 'components/Button/Button'
 import DocumentGridList from 'components/DocumentGridList/DocumentGridList'
 import DocumentList from 'containers/DocumentList/DocumentList'
-import DocumentListController from 'containers/DocumentListController/DocumentListController'
+import DocumentListController from 'components/DocumentListController/DocumentListController'
 import DocumentListToolbar from 'components/DocumentListToolbar/DocumentListToolbar'
 import DocumentTableList from 'components/DocumentTableList/DocumentTableList'
 import Header from 'containers/Header/Header'
@@ -162,6 +162,9 @@ class ReferenceSelectView extends Component {
       list: documents,
       selected: selectedDocuments
     } = state.documents
+    const {
+      search = {}
+    } = state.router
 
     if (
       !currentApi ||
@@ -216,19 +219,15 @@ class ReferenceSelectView extends Component {
           instructionText={instructionText}
           referencedField={referencedField}
           returnCtaText={returnCtaText}
-        />
+        >
+          <DocumentListController
+            collection={reference.collection}
+            onBuildBaseUrl={onBuildBaseUrl.bind(this)}
+            search={search}
+          />
+        </ReferenceSelectHeader>      
 
         <Main>
-          <DocumentListController
-            api={currentApi}
-            collection={reference.collection}
-            documentId={documentId}
-            filter={filter}
-            newFilter={newFilter}
-            onBuildBaseUrl={onBuildBaseUrl.bind(this)}
-            referencedField={referencedField}
-          />
-
           <DocumentList
             api={currentApi}
             collection={reference.collection}
