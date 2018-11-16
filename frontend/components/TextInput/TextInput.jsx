@@ -128,7 +128,9 @@ export default class TextInput extends Component {
 
   componentDidMount() {
     this.adjustHeightIfNeeded()
+  }
 
+  componentWillUnmount() {
     // This is a *temporary* measure to stop Preact from recycling the DOM
     // nodes of this component, which has caused issues with username/passwords
     // being autofilled in other fields. Should be removed once Preact drops
@@ -136,7 +138,7 @@ export default class TextInput extends Component {
     //
     // https://github.com/developit/preact/issues/957#issuecomment-352780885
     setTimeout(() => {
-      this.nextBase = null
+      this.nextBase = this.__b = null
     })
   }
 
