@@ -5,7 +5,6 @@ import filter from './FieldStringFilter'
 import list from './FieldStringList'
 
 const operators = {
-  $eq: 'equals',
   $ne: 'does not equal',
   $regex: 'contains'
 }

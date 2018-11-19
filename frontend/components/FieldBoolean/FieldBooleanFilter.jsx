@@ -3,73 +3,64 @@
 import {h, Component} from 'preact'
 import proptypes from 'proptypes'
 
+import DropdownNative from 'components/DropdownNative/DropdownNative'
+
 /**
  * Component for rendering API fields of type Boolean in a filter.
  */
 export default class FieldBooleanFilter extends Component {
   static propTypes = {
     /**
-     * Classes for the analyser selection.
-     */
-    analyserStyles: proptypes.string,
-
-    /**
-     * Classes for the container.
-     */
-    containerStyles: proptypes.string,
-
-    /**
-     * Filter array position.
-     */
-    index: proptypes.number,
-
-    /**
-     * Input update callback.
+     * Callback to fire every time the value changes. The function is called
+     * with the new value as the only parameter.
      */
     onUpdate: proptypes.func,
 
     /**
-     * Field value.
+     * The filter value.
      */
     value: proptypes.string
   }
 
-  constructor(props) {
-    super(props)
+  coerceToBoolean(value) {
+    if (typeof value === 'boolean') {
+      return value
+    }
+
+    return value === 'true'
+  }
+
+  componentDidMount() {
+    const {onUpdate, value} = this.props
+
+    // If the initial value isn't accepted for this field type,
+    // we update it with one that is and propagate it to the
+    // parent.
+    if (typeof value !== 'boolean' && value !== 'true' && value !== 'false') {
+      onUpdate(
+        this.coerceToBoolean(value)
+      )
+    }
   }
 
   render() {
     const {
-      analyserStyles,
-      containerStyles,
       onUpdate,
       value
     } = this.props
 
     return (
-      <div class={containerStyles}>
-        <select
-          class={analyserStyles}
-          onChange={this.handleChange.bind(this, 'value')}
-          value={value ? 'true' : 'false'}
-        >
-          <option
-            value="true"
-          >Yes</option>
-          <option
-            value="false"
-          >No</option>
-        </select>
-      </div>
+      <DropdownNative
+        onChange={value => onUpdate(
+          this.coerceToBoolean(value)
+        )}
+        options={{
+          'true': 'Yes',
+          'false': 'No'
+        }}
+        textSize="small"
+        value={this.coerceToBoolean(value)}
+      />
     )
-  }
-
-  handleChange(elementId, event) {
-    const {onUpdate, index} = this.props
-    const value = !Boolean(event.target.selectedIndex)
-
-    onUpdate({
-      [elementId]: value
-    }, index)
   }
 }

@@ -12,7 +12,7 @@ import styles from './TextInput.css'
 export default class TextInput extends Component {
   static propTypes = {
     /**
-     * Classes to append to the button element.
+     * Classes to append to the input element.
      */
     className: proptypes.string,
 
