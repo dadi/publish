@@ -122,14 +122,19 @@ export default class RichEditor extends Component {
     this.editor = pell.init({
       element: this.editorWrapper,
       onChange: this.handleChange.bind(this),
+      styleWithCSS: true,
       actions: [
         {
           name: 'bold',
-          icon: '<b>Bold</b>'
+          icon: 'Bold'
         },
         {
           name: 'italic',
-          icon: '<i>Italic</i>'
+          icon: 'Italic'
+        },
+        {
+          name: 'underline',
+          icon: 'Underline'
         },
         {
           name: 'link',
@@ -141,31 +146,36 @@ export default class RichEditor extends Component {
         },
         {
           name: 'heading1',
+          icon: 'Heading 1',
           state: () => {
             return this.getNodeTagPathsInSelection().find(e => e.tagName === 'H1')
           }
         },
         {
           name: 'heading2',
+          icon: 'Heading 2',
           state: () => {
             return this.getNodeTagPathsInSelection().find(e => e.tagName === 'H2')
           }
         },
         {
           name: 'quote',
-          icon: '<span>“</span>',
+          icon: 'Quote',
           state: () => {
             return this.getNodeTagPathsInSelection().find(e => e.tagName === 'BLOCKQUOTE')
           }
         },
         {
           name: 'olist',
-          icon: '<span>1.</span>',
-          title: 'Ordered list'
+          icon: 'Ordered list'
         },
-        'ulist',
+        {
+          name: 'ulist',
+          icon: 'Unordered list'
+        },
         {
           name: 'code',
+          icon: 'Code',
           result: () => {
             let selection = window.getSelection()
             let html = `<pre class="${styles.code}">${selection.toString()}</pre>`
@@ -175,6 +185,7 @@ export default class RichEditor extends Component {
         },
         {
           name: 'image',
+          icon: 'Image',
           result: () => {
             let selection = window.getSelection()
             let serialisedSelection = this.serialiseSelection(selection)
@@ -185,14 +196,14 @@ export default class RichEditor extends Component {
           }
         },
         {
-          icon: `<span class="${styles['fullscreen-toggle']}">Fullscreen</span>`,
+          icon: `Fullscreen`,
           title: 'Fullscreen',
           result: () => this.setState({
             inFullscreenMode: !this.state.inFullscreenMode
           })
         },
         {
-          icon: `<span class="${styles['text-mode-toggle']}">Text</span>`,
+          icon: `Text mode`,
           title: 'Text',
           result: () => this.setState({
             inTextMode: !this.state.inTextMode
@@ -214,10 +225,6 @@ export default class RichEditor extends Component {
     this.setEditorContents(initialValue)
     this.editorElement = this.editorWrapper.getElementsByClassName(styles.editor)[0]
 
-    // These cause issues with the formatting
-    //editor.addEventListener('blur', this.handleEvent.bind(this, 'onBlur'))
-    //editor.addEventListener('focus', this.handleEvent.bind(this, 'onFocus'))
-    
     this.selectionHandler = debounce(this.handleSelectionChange.bind(this), 200)
 
     document.addEventListener('selectionchange', this.selectionHandler)
