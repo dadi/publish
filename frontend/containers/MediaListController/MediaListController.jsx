@@ -48,6 +48,7 @@ class DocumentListController extends Component {
         <ListController breadcrumbs={['Media Library']} />
 
         <DropArea
+          className={styles.droparea}
           onDrop={this.handleUpload.bind(this)}
         >
           <div class={styles.wrapper}>
