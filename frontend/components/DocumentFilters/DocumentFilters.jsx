@@ -410,10 +410,11 @@ export default class DocumentFilters extends Component {
     // Applying defaults.
     field = field || Object.keys(filterableFields)[0]
 
-    const {
+    let {
       filter: FilterComponent,
       operators
     } = this.getFieldComponent(field) || {}
+    let valueIsEmpty = !value || value === ''
 
     const tooltipStyle = new Style(styles, 'tooltip')
       .addIf('tooltip-right', !Boolean(isUpdate))
@@ -473,6 +474,7 @@ export default class DocumentFilters extends Component {
         <Button
           accent="data"
           className={styles['tooltip-cta']}
+          disabled={valueIsEmpty}
           type="submit"
         >{isUpdate ? 'Update' : 'Add'} filter</Button>
       </form>
