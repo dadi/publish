@@ -414,7 +414,7 @@ export default class DocumentFilters extends Component {
       filter: FilterComponent,
       operators
     } = this.getFieldComponent(field) || {}
-    let valueIsEmpty = !value || value === ''
+    let valueIsEmpty = value === null || value === undefined || value === ''
 
     const tooltipStyle = new Style(styles, 'tooltip')
       .addIf('tooltip-right', !Boolean(isUpdate))
