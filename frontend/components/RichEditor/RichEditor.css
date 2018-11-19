@@ -198,6 +198,7 @@
 .pell-button[Title="Image"] {
   background-image: url(./icons/image.svg);
   background-size: auto 20px;
+  background-position: 50% 1px;
 }
 .pell-button[Title="Fullscreen"] {
   background-image: url(./icons/fullscreen.svg);
