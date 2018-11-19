@@ -58,11 +58,6 @@ export default class TextInput extends Component {
     onFocus: proptypes.func,
 
     /**
-     * Callback to be executed when a key is pressed (onKeyUp event).
-     */
-    onKeyUp: proptypes.func,
-
-    /**
      * Callback to be executed when the input is changed in any way.
      */
     onInput: proptypes.func,
@@ -181,8 +176,8 @@ export default class TextInput extends Component {
           id={id}
           name={name}
           onBlur={this.handleEvent.bind(this, 'onBlur')}
-          onChange={this.handleChange.bind(this)}
-          onInput={this.handleChange.bind(this)}
+          onChange={this.handleChange.bind(this, 'onChange')}
+          onInput={this.handleChange.bind(this, 'onInput')}
           onFocus={this.handleEvent.bind(this, 'onFocus')}
           placeholder={placeholder}
           readonly={readonly}
@@ -200,10 +195,9 @@ export default class TextInput extends Component {
         id={id}
         name={name}
         onBlur={this.handleEvent.bind(this, 'onBlur')}
-        onChange={this.handleChange.bind(this)}
+        onChange={this.handleChange.bind(this, 'onChange')}
         onFocus={this.handleEvent.bind(this, 'onFocus')}
-        onInput={this.handleChange.bind(this)}
-        onKeyUp={this.handleChange.bind(this)}
+        onInput={this.handleChange.bind(this, 'onInput')}
         placeholder={placeholder}
         readonly={readonly}
         required={required}
@@ -220,21 +214,17 @@ export default class TextInput extends Component {
     }
   }
 
-  handleChange(event) {
-    const {onChange, onInput, onKeyUp} = this.props
+  handleChange(type, event) {
+    const {onChange, onInput} = this.props
 
     this.adjustHeightIfNeeded()
 
-    if (event.type === 'change' && typeof onChange === 'function') {
+    if (type === 'onChange' && typeof onChange === 'function') {
       onChange.call(this, event)
     }
 
-    if (event.type === 'input' && typeof onInput === 'function') {
+    if (type === 'onInput' && typeof onInput === 'function') {
       onInput.call(this, event)
-    }
-
-    if (event.type === 'keyup' && typeof onKeyUp === 'function') {
-      onKeyUp.call(this, event)
     }
 
     return true

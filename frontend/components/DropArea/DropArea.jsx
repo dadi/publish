@@ -14,6 +14,11 @@ export default class FileUpload extends Component {
     children: proptypes.node,
 
     /**
+     * Classes to append to the button element.
+     */
+    className: proptypes.string,
+
+    /**
      * The text to be displayed when a file is being dragged.
      */
     draggingText: proptypes.string,
@@ -25,6 +30,7 @@ export default class FileUpload extends Component {
   }
 
   static defaultProps = {
+    className: '',
     draggingText: 'Drop files here'
   }
 
@@ -37,11 +43,13 @@ export default class FileUpload extends Component {
   render() {
     const {
       children,
+      className,
       draggingText
     } = this.props
     const {isDragging} = this.state
     const dropStyles = new Style(styles, 'droparea')
       .addIf('droparea-active', isDragging)
+      .addResolved(className)
 
     return (
       <div

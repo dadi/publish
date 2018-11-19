@@ -152,9 +152,8 @@ export default class FieldNumberEdit extends Component {
         <TextInput
           name={name}
           onBlur={this.handleFocusChange.bind(this, false)}
-          onChange={this.handleOnChange.bind(this)}
+          onInput={this.handleOnChange.bind(this)}
           onFocus={this.handleFocusChange.bind(this, true)}
-          onKeyUp={this.handleOnKeyUp.bind(this)}
           readonly={publishBlock.readonly === true}
           type="number"
           value={value}
@@ -182,12 +181,6 @@ export default class FieldNumberEdit extends Component {
     if (typeof onChange === 'function') {
       onChange.call(this, name, parseFloat(event.target.value))
     }
-  }
-
-  handleOnKeyUp(event) {
-    const value = this.getValueOfInput(event.target)
-
-    this.validate(value)
   }
 
   validate(value) {

@@ -507,15 +507,17 @@ export function startNewDocument ({collection}) {
   }
 }
 
-export function updateLocalDocument (change, {
+export function updateLocalDocument ({
+  meta = {},
   path,
-  persistInLocalStorage = true
+  persistInLocalStorage = true,
+  update = {}
 } = {}) {
   return (dispatch, getState) => {
-    let newLocal = Object.assign({}, getState().document.local, change)
+    let newLocal = Object.assign({}, getState().document.local, update)
     let newFieldsNotPersistedInLocalStorage = persistInLocalStorage ?
       getState().document.fieldsNotPersistedInLocalStorage :
-      getState().document.fieldsNotPersistedInLocalStorage.concat(Object.keys(change))
+      getState().document.fieldsNotPersistedInLocalStorage.concat(Object.keys(update))
     let localStorageKey = getLocalStorageKey({
       path,
       state: getState()
@@ -529,9 +531,10 @@ export function updateLocalDocument (change, {
     })
 
     dispatch({
-      change,
+      meta,
       persistInLocalStorage,
-      type: Types.UPDATE_LOCAL_DOCUMENT
+      type: Types.UPDATE_LOCAL_DOCUMENT,
+      update
     })
   }
 }

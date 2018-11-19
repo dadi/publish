@@ -13,3 +13,8 @@
 .separator {
   color: var(--theme-colour-primary-shade-1, #777777);
 }
+
+.droparea {
+  border-radius: 0;
+  border-bottom: 1px solid #eaeaea;
+}

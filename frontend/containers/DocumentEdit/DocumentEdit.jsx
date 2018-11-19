@@ -281,7 +281,7 @@ class DocumentEdit extends Component {
 
     let documentData = Object.assign({}, document.remote, document.local)
 
-    return onRender(documentData)
+    return onRender(documentData, document.localMeta)
   }
 }
 

@@ -2,31 +2,27 @@
 
 import {h, Component} from 'preact'
 import proptypes from 'proptypes'
-import {bindActionCreators} from 'redux'
-
-import * as apiActions from 'actions/apiActions'
-import {connectHelper} from 'lib/util'
 import {Format} from 'lib/util/string'
 
 import Style from 'lib/Style'
-import styles from './ReferencedDocumentHeader.css'
+import styles from './ReferenceSelectHeader.css'
 
 import Button from 'components/Button/Button'
 
 /**
  * A header to be used when navigating referenced documents.
  */
-class ReferencedDocumentHeader extends Component {
+export default class ReferenceSelectHeader extends Component {
   static propTypes = {
-    /**
-     * The global actions object.
-     */
-    actions: proptypes.object,
-
     /**
      * The parent collection to operate on, when dealing with a reference field.
      */
     collectionParent: proptypes.object,
+
+    /**
+     * The instructional text to display on the top-left corner of the header.
+     */
+    instructionText: proptypes.string,
 
     /**
     * A callback to be used to obtain the base URL for the given page, as
@@ -40,53 +36,56 @@ class ReferencedDocumentHeader extends Component {
     referencedField: proptypes.string,
 
     /**
-     * The global state object.
+     * The CTA text to display on the "return to document" button.
      */
-    state: proptypes.object
+    returnCtaText: proptypes.string,
+  }
+
+  static defaultProps = {
+    instructionText: 'choose document to reference',
+    returnCtaText: 'Nevermind, back to document'
   }
 
   render() {
     const {
       collectionParent,
+      instructionText,
       onBuildBaseUrl,
       parentDocumentId,
       referencedField,
-      state
+      returnCtaText
     } = this.props
     // Render nothing if we don't have the collection schema available.
     if (!collectionParent) return null
 
     const fieldSchema = collectionParent.fields[referencedField]
-    
+
     // Render nothing if we don't have a matching field in the collection.
     if (!fieldSchema) return null
 
     const displayName = fieldSchema.label || referencedField
+    const section = fieldSchema.publish &&
+      fieldSchema.publish.section &&
+      Format.slugify(fieldSchema.publish.section)
     const returnUrl = onBuildBaseUrl({
-      createNew: !Boolean(state.router.parameters.documentId)
+      createNew: false,//!Boolean(state.router.parameters.documentId),
+      referencedField: null,
+      section
     })
 
     return (
       <div class={styles.container}>
         <p>
           <strong>{displayName}</strong>
-          <span> — choose document to reference</span>
+          <span> — {instructionText}</span>
         </p>
 
         <Button
           accent="destruct"
           href={returnUrl}
           size="small"
-        >Nevermind, back to document</Button>
+        >{returnCtaText}</Button>
       </div>
     )
   }
 }
-
-export default connectHelper(
-  state => ({
-    api: state.api,
-    router: state.router
-  }),
-  dispatch => bindActionCreators(apiActions, dispatch)
-)(ReferencedDocumentHeader)

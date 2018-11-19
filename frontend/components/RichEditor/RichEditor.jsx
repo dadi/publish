@@ -54,6 +54,11 @@ export default class RichEditor extends Component {
     onFocus: proptypes.func,
 
     /**
+    * A callback to be used when the user clicks the "Add image" button.
+    */
+    onImageInsert: proptypes.func,
+
+    /**
      * The initial value of the editor.
      */
     value: proptypes.string
@@ -71,7 +76,16 @@ export default class RichEditor extends Component {
   }
 
   componentDidMount() {
-    const {children, format, value} = this.props
+    const {
+      format,
+      insertImageCallback,
+      onImageInsert,
+      value
+    } = this.props
+
+    if (typeof insertImageCallback === 'function') {
+      insertImageCallback(this.handleInsertImage.bind(this))
+    }
 
     this.turndownService = new TurndownService({
       codeBlockStyle: 'fenced',
@@ -106,16 +120,21 @@ export default class RichEditor extends Component {
 
     // Initialize pell on an HTMLElement
     this.editor = pell.init({
-      element: this.editorElement,
+      element: this.editorWrapper,
       onChange: this.handleChange.bind(this),
+      styleWithCSS: true,
       actions: [
         {
           name: 'bold',
-          icon: '<b>Bold</b>'
+          icon: 'Bold'
         },
         {
           name: 'italic',
-          icon: '<i>Italic</i>'
+          icon: 'Italic'
+        },
+        {
+          name: 'underline',
+          icon: 'Underline'
         },
         {
           name: 'link',
@@ -127,31 +146,36 @@ export default class RichEditor extends Component {
         },
         {
           name: 'heading1',
+          icon: 'Heading 1',
           state: () => {
             return this.getNodeTagPathsInSelection().find(e => e.tagName === 'H1')
           }
         },
         {
           name: 'heading2',
+          icon: 'Heading 2',
           state: () => {
             return this.getNodeTagPathsInSelection().find(e => e.tagName === 'H2')
           }
         },
         {
           name: 'quote',
-          icon: '<span>“</span>',
+          icon: 'Quote',
           state: () => {
             return this.getNodeTagPathsInSelection().find(e => e.tagName === 'BLOCKQUOTE')
           }
         },
         {
           name: 'olist',
-          icon: '<span>1.</span>',
-          title: 'Ordered list'
+          icon: 'Ordered list'
         },
-        'ulist',
+        {
+          name: 'ulist',
+          icon: 'Unordered list'
+        },
         {
           name: 'code',
+          icon: 'Code',
           result: () => {
             let selection = window.getSelection()
             let html = `<pre class="${styles.code}">${selection.toString()}</pre>`
@@ -160,14 +184,26 @@ export default class RichEditor extends Component {
           }
         },
         {
-          icon: `<span class="${styles['fullscreen-toggle']}">Fullscreen</span>`,
+          name: 'image',
+          icon: 'Image',
+          result: () => {
+            let selection = window.getSelection()
+            let serialisedSelection = this.serialiseSelection(selection)
+
+            if (typeof onImageInsert === 'function') {
+              onImageInsert(serialisedSelection)  
+            }
+          }
+        },
+        {
+          icon: `Fullscreen`,
           title: 'Fullscreen',
           result: () => this.setState({
             inFullscreenMode: !this.state.inFullscreenMode
           })
         },
         {
-          icon: `<span class="${styles['text-mode-toggle']}">Text</span>`,
+          icon: `Text mode`,
           title: 'Text',
           result: () => this.setState({
             inTextMode: !this.state.inTextMode
@@ -187,13 +223,8 @@ export default class RichEditor extends Component {
       value
 
     this.setEditorContents(initialValue)
+    this.editorElement = this.editorWrapper.getElementsByClassName(styles.editor)[0]
 
-    let editor = this.editorElement.getElementsByClassName(styles.editor)[0] 
-
-    // These cause issues with the formatting
-    //editor.addEventListener('blur', this.handleEvent.bind(this, 'onBlur'))
-    //editor.addEventListener('focus', this.handleEvent.bind(this, 'onFocus'))
-    
     this.selectionHandler = debounce(this.handleSelectionChange.bind(this), 200)
 
     document.addEventListener('selectionchange', this.selectionHandler)
@@ -215,6 +246,36 @@ export default class RichEditor extends Component {
         needsConversion: true
       })
     }
+  }
+
+  deserialiseSelection(serialisedSelection) {
+    let nodes = serialisedSelection.split(',')
+    let parsedNodes = []
+    let hasInvalidNode = nodes.some(node => {
+      let integerNode = parseInt(node)
+
+      if (integerNode.toString() !== node) {
+        return true
+      }
+
+      parsedNodes.push(integerNode)
+    })
+
+    if (hasInvalidNode) return null
+
+    let startOffset = parsedNodes.shift()
+    let baseNode = this.editorElement
+
+    parsedNodes.forEach(index => {
+      baseNode = baseNode.childNodes[index]
+    })
+
+    let range = document.createRange()
+
+    range.setStart(baseNode, startOffset)
+    range.setEnd(baseNode, startOffset)
+
+    return range
   }
 
   getNodeTagPathsInSelection() {
@@ -305,6 +366,29 @@ export default class RichEditor extends Component {
     }
   }
 
+  handleEvent(callback, event) {
+    if (typeof this.props[callback] === 'function') {
+      this.props[callback].call(this, event)
+    }
+  }
+
+  handleInsertImage(url, position) {
+    // If there is a specific cursor position to insert the image, we set the
+    // selection to that. If not, we set the selection to the start of the
+    // editor.
+    if (position) {
+      let newSelection = this.deserialiseSelection(position)
+
+      if (newSelection) {
+        this.setSelection(newSelection)
+      }
+    } else {
+      this.setSelectionOnElement(this.editorElement)
+    }
+
+    pell.exec('insertImage', url)
+  }
+
   handleLinkChange(event) {
     this.setState({
       editLinkText: event.target.value
@@ -338,7 +422,7 @@ export default class RichEditor extends Component {
     })
   }
 
-  handleLinkSave() {
+  handleLinkSave(event) {
     const {editLinkText} = this.state
 
     event.preventDefault()
@@ -418,7 +502,17 @@ export default class RichEditor extends Component {
         inEditLinkMode: false
       })
     }
-  }  
+  }
+
+  isNodeOutsideEditor(node) {
+    if (node && node.tagName === 'BODY') {
+      return true
+    }
+
+    return node &&
+      node.classList &&
+      node.classList.contains(styles.editor)
+  }
 
   render() {
     const {children} = this.props
@@ -474,7 +568,7 @@ export default class RichEditor extends Component {
         )}
 
         <div class={wrapper.getClasses()}>
-          <div ref={el => this.editorElement = el} />
+          <div ref={el => this.editorWrapper = el} />
 
           {inTextMode && (
             <TextInput
@@ -490,6 +584,45 @@ export default class RichEditor extends Component {
         </div>
       </div>
     )
+  }
+
+  serialiseSelection(selection) {
+    let selectionRange = selection &&
+      selection.anchorNode &&
+      selection.getRangeAt(0)
+
+    if (!selectionRange) return
+
+    let node = selectionRange.startContainer
+    let isOutsideEditor = this.isNodeOutsideEditor(node)
+
+    if (isOutsideEditor) return
+
+    let indices = []
+
+    while (node) {
+      let siblingIndex = 0
+
+      while (node.previousSibling) {
+        node = node.previousSibling
+        siblingIndex++
+      }
+
+      indices.unshift(siblingIndex)
+
+      node = node.parentNode
+
+      isOutsideEditor = this.isNodeOutsideEditor(node)
+
+      if (isOutsideEditor) {
+        node = null
+      }
+    }
+
+    let serialisedSelection = [selectionRange.startOffset]
+      .concat(indices).join(',')
+
+    return serialisedSelection
   }
 
   setEditorContents(html) {
@@ -514,11 +647,5 @@ export default class RichEditor extends Component {
     this.setSelection(range)
 
     return range
-  }
-
-  handleEvent(callback, event) {
-    if (typeof this.props[callback] === 'function') {
-      this.props[callback].call(this, event)
-    }
   }
 }
