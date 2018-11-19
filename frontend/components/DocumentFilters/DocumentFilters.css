@@ -139,6 +139,7 @@
   z-index: 1;
   width: 100%;
   background-color: white;
+  margin-top: -4px;
   font-family: var(--theme-font-family, sans-serif);
   font-size: var(--theme-font-size-normal, 16px);
 }
