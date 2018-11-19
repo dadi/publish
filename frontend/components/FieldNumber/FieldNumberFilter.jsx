@@ -3,7 +3,7 @@
 import {h, Component} from 'preact'
 import proptypes from 'proptypes'
 import Style from 'lib/Style'
-import styles from './FieldString.css'
+import styles from './FieldNumber.css'
 import TextInput from 'components/TextInput/TextInput'
 
 /**
