@@ -33,6 +33,7 @@ export default class DocumentFilters extends Component {
     this.state.selectedFilterIndex = null
     this.state.selectedFilterOperator = null
     this.state.selectedFilterValue = null
+    this.state.searchableFieldsPointer = 0
 
     this.outsideTooltipHandler = this.handleClick.bind(this, false)    
   }
@@ -80,7 +81,8 @@ export default class DocumentFilters extends Component {
       selectedFilterField: null,
       selectedFilterIndex: null,
       selectedFilterOperator: null,
-      selectedFilterValue: null
+      selectedFilterValue: null,
+      searchableFieldsPointer: 0
     })
   }
 
@@ -151,16 +153,40 @@ export default class DocumentFilters extends Component {
     const {collection, filters} = this.props
     const {search: searchValue} = this.state
 
-    this.filtersArray.push({
-      field,
-      operator: '$regex',
-      value: searchValue
-    })
-
-    this.propagateFilters()
-    this.clearSearch()
-
     event.preventDefault()
+
+    if (searchValue) {
+      this.filtersArray.push({
+        field,
+        operator: '$regex',
+        value: searchValue
+      })
+
+      this.propagateFilters()
+      this.clearSearch()     
+    }
+  }
+
+  handleSearchableFieldsPointer(fields, event) {
+    const {searchableFieldsPointer} = this.state
+
+    if (event.keyCode === 38 && searchableFieldsPointer > 0) {
+      // Up.
+      this.setState(({searchableFieldsPointer}) => ({
+        searchableFieldsPointer: searchableFieldsPointer - 1
+      }))
+    } else if (event.keyCode === 40 && searchableFieldsPointer < fields.length - 1) {
+      // Down.
+      this.setState(({searchableFieldsPointer}) => ({
+        searchableFieldsPointer: searchableFieldsPointer + 1
+      }))
+    } else if ((event.keyCode === 27 || event.keyCode === 8) && !this.state.search) {
+      // ESC or backspace and no search term.
+      this.removeFilter(this.filtersArray.length - 1, event)
+    } else if (event.keyCode === 27) {
+      // Just ESC.
+      this.clearSearch()
+    }
   }
 
   handleSelectedFilterFieldChange(newField) {
@@ -288,40 +314,52 @@ export default class DocumentFilters extends Component {
       <div class={styles.wrapper}>
         <form
           class={styles.form}
-          onSubmit={this.handleFilterSubmit.bind(this, searchableFields[0])}
+          onSubmit={this.handleFilterSubmit.bind(this, searchableFields[this.state.searchableFieldsPointer])}
         >
           <TextInput
             className={styles.input}
             onInput={event => this.setState({
               search: event.target.value
             })}
+            onKeyDown={this.handleSearchableFieldsPointer.bind(this, searchableFields)}
             placeholder={`Search ${collection.name}`}
             value={searchValue}
+            tabindex="1"
           />
 
           {searchValue &&
             <div class={styles.suggestions}>
-              {searchableFields.map(fieldName => (
-                <button
-                  class={styles.suggestion}
-                  onClick={this.handleFilterSubmit.bind(this, fieldName)}
-                  type="button"
-                >
-                  <span class={styles['suggestion-prefix']}>
-                    {this.getFieldName(fieldName)} contains
-                  </span>
-                  '{searchValue}'
-                </button>
-              ))}
+              {searchableFields.map((fieldName, index) => {
+                const suggestionStyle = new Style(styles, 'suggestion')
+                  .addIf('suggestion-selected', this.state.searchableFieldsPointer === index)
+
+                return (
+                  <button
+                    class={suggestionStyle.getClasses()}
+                    onClick={this.handleFilterSubmit.bind(this, fieldName)}
+                    type="button"
+                  >
+                    <span class={styles['suggestion-prefix']}>
+                      {this.getFieldName(fieldName)} contains
+                    </span>
+                    ‘{searchValue}’
+                  </button>
+                )
+              })}
             </div>
           }          
         </form>
 
-        <button
-          class={styles.button}
+        <div class={styles.filters}>
+          {this.filtersArray.map(this.renderFilter.bind(this))}
+        </div>
+
+        <Button 
+          className={styles.button}
+          accent="data"
           onClick={this.handleFiltersButtonClick.bind(this)}
           type="button"
-        >Add filter</button>
+        >Add filter</Button>
 
         {selectedFilterIndex === -1 &&
           <div class={styles['new-filter-tooltip']}>
@@ -332,10 +370,6 @@ export default class DocumentFilters extends Component {
             })}
           </div>
         }
-
-        <div class={styles.filters}>
-          {this.filtersArray.map(this.renderFilter.bind(this))}
-        </div>
       </div>
     )
   }
@@ -361,14 +395,14 @@ export default class DocumentFilters extends Component {
           class={styles.filter}
           onClick={this.handleFilterSelect.bind(this, index)}
         >
-          <span class={styles['filter-node']}>{this.getFieldName(field)}</span>
-          <span class={styles['filter-node']}>{operatorFriendly || operator || DEFAULT_OPERATOR_NAME}</span>
-          <span class={styles['filter-node']}>'{value.toString()}'</span>
+          <span class={styles['filter-field']}>{this.getFieldName(field)}</span>
+          <span class={styles['filter-operator']}>{operatorFriendly || operator || DEFAULT_OPERATOR_NAME}</span>
+          <span class={styles['filter-value']}>‘{value.toString()}’</span>
 
           <button
             class={styles['filter-close']}
             onClick={this.removeFilter.bind(this, index)}
-          >x</button>
+          >×</button>
         </div>
 
         {selectedFilterIndex === index && this.renderFilterTooltip({

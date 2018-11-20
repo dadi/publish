@@ -62,6 +62,11 @@ export default class TextInput extends Component {
      */
     onInput: proptypes.func,
 
+     /**
+     * Callback to be executed when any key is pressed in the input.
+     */
+    onKeyDown: proptypes.func,
+
     /**
      * Placeholder for the input field.
      */
@@ -179,8 +184,9 @@ export default class TextInput extends Component {
           name={name}
           onBlur={this.handleEvent.bind(this, 'onBlur')}
           onChange={this.handleChange.bind(this, 'onChange')}
-          onInput={this.handleChange.bind(this, 'onInput')}
           onFocus={this.handleEvent.bind(this, 'onFocus')}
+          onInput={this.handleChange.bind(this, 'onInput')}
+          onKeyDown={this.handleEvent.bind(this, 'onKeyDown')}
           placeholder={placeholder}
           readonly={readonly}
           required={required}
@@ -200,6 +206,7 @@ export default class TextInput extends Component {
         onChange={this.handleChange.bind(this, 'onChange')}
         onFocus={this.handleEvent.bind(this, 'onFocus')}
         onInput={this.handleChange.bind(this, 'onInput')}
+        onKeyDown={this.handleEvent.bind(this, 'onKeyDown')}
         placeholder={placeholder}
         readonly={readonly}
         required={required}

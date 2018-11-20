@@ -12,7 +12,7 @@
   border-radius: 4px;
   font-family: var(--theme-font-family, sans-serif);
   font-size: var(--theme-font-size-normal, 16px);
-  padding: 8px 24px 8px 10px;
+  padding: 4px 24px 4px 10px;
   position: relative;
   outline: none;
 }
@@ -23,4 +23,5 @@
 
 .dropdown-text-small {
   font-size: var(--theme-font-size-small, 13px);
+  padding-left: 5px;
 }
