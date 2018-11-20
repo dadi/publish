@@ -4,6 +4,11 @@ import edit from './FieldStringEdit'
 import filter from './FieldStringFilter'
 import list from './FieldStringList'
 
+const operators = {
+  $ne: 'does not equal',
+  $regex: 'contains'
+}
+
 const beforeReferenceSelect = ({collection, field}) => {
   return {
     collection: Constants.MEDIA_COLLECTION_SCHEMA,
@@ -46,5 +51,6 @@ export {
   filter,
   getCtaText,
   getInstructionText,
-  list
+  list,
+  operators
 }

@@ -12,9 +12,10 @@ import * as documentsActions from 'actions/documentsActions'
 import Button from 'components/Button/Button'
 import ButtonWithPrompt from 'components/ButtonWithPrompt/ButtonWithPrompt'
 import DocumentList from 'containers/DocumentList/DocumentList'
-import DocumentListController from 'containers/DocumentListController/DocumentListController'
+import DocumentListController from 'components/DocumentListController/DocumentListController'
 import DocumentListToolbar from 'components/DocumentListToolbar/DocumentListToolbar'
 import DocumentTableList from 'components/DocumentTableList/DocumentTableList'
+import DropdownNative from 'components/DropdownNative/DropdownNative'
 import Header from 'containers/Header/Header'
 import HeroMessage from 'components/HeroMessage/HeroMessage'
 import Main from 'components/Main/Main'
@@ -141,7 +142,6 @@ class DocumentListView extends Component {
     const {
       collection,
       documentId,
-      filter,
       group,
       onBuildBaseUrl,
       order,
@@ -150,7 +150,6 @@ class DocumentListView extends Component {
       state
     } = this.props
     const {bulkActionSelected} = this.state
-    const {newFilter} = this.state
     const {
       currentApi,
       currentCollection,
@@ -160,29 +159,32 @@ class DocumentListView extends Component {
       list: documents,
       selected: selectedDocuments
     } = state.documents
+    const {
+      search = {}
+    } = state.router
 
     return (
       <Page>
-        <Header
-          currentCollection={currentCollection}
-        />
+        <Header currentCollection={currentCollection}>
+          <DocumentListController
+            collection={currentCollection}
+            createNewHref={onBuildBaseUrl.call(this, {
+              createNew: true,
+              search: null
+            })}
+            enableFilters={true}
+            onBuildBaseUrl={onBuildBaseUrl.bind(this)}
+            search={search}
+          />
+        </Header>
 
         <Main>
-          <DocumentListController
-            api={currentApi}
-            collection={currentCollection}
-            documentId={documentId}
-            filter={filter}
-            newFilter={newFilter}
-            onBuildBaseUrl={onBuildBaseUrl.bind(this)}
-          />
-
           <DocumentList
             api={currentApi}
             collection={currentCollection}
             collectionParent={currentParentCollection}
             documentId={documentId}
-            filter={filter}
+            filters={search.filter}
             onBuildBaseUrl={onBuildBaseUrl.bind(this)}
             onPageTitle={setPageTitle}
             onRenderDocuments={props => (
@@ -202,17 +204,17 @@ class DocumentListView extends Component {
           })}
         >
           <div>
-            <select
-              class={styles['bulk-action-select']}
+            <DropdownNative
+              className={styles['bulk-action-select']}
               onChange={this.handleBulkActionSelect.bind(this)}
+              options={{
+                [BULK_ACTIONS.DELETE]: 'Delete'
+              }}
+              placeholderLabel="With selected..."
+              placeholderValue={BULK_ACTIONS.PLACEHOLDER}
+              textSize="small"
               value={bulkActionSelected}
-            >
-              <option
-                disabled
-                value={BULK_ACTIONS.PLACEHOLDER}
-              >With selected...</option>
-              <option value={BULK_ACTIONS.DELETE}>Delete</option>
-            </select>
+            />
 
             <ButtonWithPrompt
               accent="data"
@@ -232,7 +234,8 @@ class DocumentListView extends Component {
 export default connectHelper(
   state => ({
     api: state.api,
-    documents: state.documents
+    documents: state.documents,
+    router: state.router
   }),
   dispatch => bindActionCreators({
     ...appActions,

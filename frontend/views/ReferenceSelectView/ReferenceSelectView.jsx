@@ -15,7 +15,7 @@ import * as fieldComponents from 'lib/field-components'
 import Button from 'components/Button/Button'
 import DocumentGridList from 'components/DocumentGridList/DocumentGridList'
 import DocumentList from 'containers/DocumentList/DocumentList'
-import DocumentListController from 'containers/DocumentListController/DocumentListController'
+import DocumentListController from 'components/DocumentListController/DocumentListController'
 import DocumentListToolbar from 'components/DocumentListToolbar/DocumentListToolbar'
 import DocumentTableList from 'components/DocumentTableList/DocumentTableList'
 import Header from 'containers/Header/Header'
@@ -88,7 +88,9 @@ class ReferenceSelectView extends Component {
 
   handleEmptyDocumentList() {
     const {
-      filter
+      filter,
+      onBuildBaseUrl,
+      referencedField
     } = this.props
 
     if (filter) {
@@ -99,7 +101,8 @@ class ReferenceSelectView extends Component {
         >
           <Button
             accent="system"
-            href={onBuildBaseUrl({
+            href={onBuildBaseUrl.call(this, {
+              referenceFieldSelect: referencedField,
               search: {}
             })}
           >Clear filters</Button>
@@ -162,6 +165,9 @@ class ReferenceSelectView extends Component {
       list: documents,
       selected: selectedDocuments
     } = state.documents
+    const {
+      search = {}
+    } = state.router
 
     if (
       !currentApi ||
@@ -207,6 +213,8 @@ class ReferenceSelectView extends Component {
       fieldComponent.getCtaText(selectedDocuments) :
       `Add selected ${selectedDocuments.length > 1 ? 'documents' : 'document'}`
 
+    let filters = Object.assign({}, reference.filter, search.filter)
+
     return (
       <Page>
         <ReferenceSelectHeader
@@ -217,24 +225,21 @@ class ReferenceSelectView extends Component {
           referencedField={referencedField}
           returnCtaText={returnCtaText}
         />
+          
+        <DocumentListController
+          collection={reference.collection}
+          onBuildBaseUrl={onBuildBaseUrl.bind(this)}
+          referencedField={referencedField}
+          search={search}
+        />
 
         <Main>
-          <DocumentListController
-            api={currentApi}
-            collection={reference.collection}
-            documentId={documentId}
-            filter={filter}
-            newFilter={newFilter}
-            onBuildBaseUrl={onBuildBaseUrl.bind(this)}
-            referencedField={referencedField}
-          />
-
           <DocumentList
             api={currentApi}
             collection={reference.collection}
             collectionParent={currentCollection}
             documentId={documentId}
-            filter={reference.filter}
+            filters={filters}
             onBuildBaseUrl={onBuildBaseUrl.bind(this)}
             onPageTitle={setPageTitle}
             onRenderDocuments={this.handleRenderDocuments.bind(this, reference)}
