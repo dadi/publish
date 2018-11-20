@@ -123,16 +123,26 @@ export default class ColorPicker extends Component {
   }
 
   enableDragging(element, listener) {
-    let mousedown = false
+    let pressed = false
 
-    element.addEventListener('mousedown', event => mousedown = true)
-    element.addEventListener('mouseup', event => mousedown = false)
-    element.addEventListener('mouseout', event => mousedown = false)
-    element.addEventListener('mousemove', event => mousedown && listener(event))
+    element.addEventListener('mousedown', () => pressed = true)
+    element.addEventListener('mouseup', () => pressed = false)
+    element.addEventListener('mouseout', () => pressed = false)
+    element.addEventListener('mousemove', event => pressed && listener(event))
+
+    element.addEventListener('touchstart', () => pressed = true)
+    element.addEventListener('touchend', () => pressed = false)
+    element.addEventListener('touchcancel', () => pressed = false)
+    element.addEventListener('touchmove', event => {
+      if (pressed) {
+        event.preventDefault()
+        listener(event)
+      }
+    })
   }
 
   hueListener(event) {
-    this.hueCoordinate = this.mousePosition(event).y
+    this.hueCoordinate = this.normalisePosition(event).y
 
     this.hsv.h = this.hueCoordinate / this.hueElement.offsetHeight * 360
 
@@ -143,7 +153,10 @@ export default class ColorPicker extends Component {
   }
 
   paletteListener(event) {
-    this.paletteCoordinate = this.mousePosition(event)
+    this.paletteCoordinate = this.normalisePosition(event)
+
+    console.log('######')
+    console.log(this.paletteCoordinate)
 
     let width = this.paletteElement.offsetWidth
     let height = this.paletteElement.offsetHeight
@@ -154,7 +167,17 @@ export default class ColorPicker extends Component {
     this.handleColorPick()
   }
  
-  mousePosition(event) {
+  normalisePosition(event) {
+    // touch
+    if (~event.type.indexOf('touch')) {    
+      let touch = event.touches[0] || event.changedTouches[0]
+      let rect = event.target.getBoundingClientRect()
+
+      return {
+        x: Math.round(touch.pageX - rect.left - window.scrollX),
+        y: Math.round(touch.pageY - rect.top - window.scrollY)
+      }
+    }
     // ie
     if (window.event && window.event.contentOverflow !== undefined) {
       return {x: window.event.offsetX, y: window.event.offsetY}
