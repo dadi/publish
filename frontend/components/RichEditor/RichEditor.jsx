@@ -356,13 +356,19 @@ export default class RichEditor extends Component {
       text = this.getTextFromHTML(value)
     }
 
+    // An empty string is not the best representation of an empty field.
+    // We look for that case and broadcast a `null` instead.
+    let sanitisedText = text.length > 0 ?
+      text :
+      null
+
     this.setState({
       html,
-      text
+      text: sanitisedText
     })
 
     if (typeof onChange === 'function') {
-      onChange(text)
+      onChange(sanitisedText)
     }
   }
 
