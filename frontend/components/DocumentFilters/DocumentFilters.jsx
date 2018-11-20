@@ -170,24 +170,21 @@ export default class DocumentFilters extends Component {
   handleSearchableFieldsPointer(fields, event) {
     const {searchableFieldsPointer} = this.state
 
-    // up
     if (event.keyCode === 38 && searchableFieldsPointer > 0) {
-      this.setState(prevState => ({
-        searchableFieldsPointer: prevState.searchableFieldsPointer - 1
+      // Up.
+      this.setState(({searchableFieldsPointer}) => ({
+        searchableFieldsPointer: searchableFieldsPointer - 1
       }))
-    }
-    // down
-    else if (event.keyCode === 40 && searchableFieldsPointer < fields.length - 1) {
-      this.setState(prevState => ({
-        searchableFieldsPointer: prevState.searchableFieldsPointer + 1
+    } else if (event.keyCode === 40 && searchableFieldsPointer < fields.length - 1) {
+      // Down.
+      this.setState(({searchableFieldsPointer}) => ({
+        searchableFieldsPointer: searchableFieldsPointer + 1
       }))
-    }
-    // esc or backspace && no search term
-    else if ((event.keyCode === 27 || event.keyCode === 8) && !this.state.search) {
+    } else if ((event.keyCode === 27 || event.keyCode === 8) && !this.state.search) {
+      // ESC or backspace and no search term.
       this.removeFilter(this.filtersArray.length - 1, event)
-    }
-    // just esc
-    else if (event.keyCode === 27) {
+    } else if (event.keyCode === 27) {
+      // Just ESC.
       this.clearSearch()
     }
   }
