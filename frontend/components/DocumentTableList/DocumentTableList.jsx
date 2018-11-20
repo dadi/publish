@@ -108,7 +108,8 @@ export default class DocumentTableList extends Component {
     }
 
     let editLink = onBuildBaseUrl({
-      documentId: documentId || data._id
+      documentId: documentId || data._id,
+      search: null
     })
     let fieldSchema = collection.fields[column.id]
     let renderedValue = this.renderField(column.id, fieldSchema, value)
