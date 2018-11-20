@@ -15,6 +15,7 @@ import DocumentList from 'containers/DocumentList/DocumentList'
 import DocumentListController from 'components/DocumentListController/DocumentListController'
 import DocumentListToolbar from 'components/DocumentListToolbar/DocumentListToolbar'
 import DocumentTableList from 'components/DocumentTableList/DocumentTableList'
+import DropdownNative from 'components/DropdownNative/DropdownNative'
 import Header from 'containers/Header/Header'
 import HeroMessage from 'components/HeroMessage/HeroMessage'
 import Main from 'components/Main/Main'
@@ -203,17 +204,17 @@ class DocumentListView extends Component {
           })}
         >
           <div>
-            <select
-              class={styles['bulk-action-select']}
+            <DropdownNative
+              className={styles['bulk-action-select']}
               onChange={this.handleBulkActionSelect.bind(this)}
+              options={{
+                [BULK_ACTIONS.DELETE]: 'Delete'
+              }}
+              placeholderLabel="With selected..."
+              placeholderValue={BULK_ACTIONS.PLACEHOLDER}
+              textSize="small"
               value={bulkActionSelected}
-            >
-              <option
-                disabled
-                value={BULK_ACTIONS.PLACEHOLDER}
-              >With selected...</option>
-              <option value={BULK_ACTIONS.DELETE}>Delete</option>
-            </select>
+            />
 
             <ButtonWithPrompt
               accent="data"

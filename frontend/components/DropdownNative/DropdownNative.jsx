@@ -28,6 +28,16 @@ export default class DropdownNative extends Component {
     options: proptypes.object,
 
     /**
+     * The label for a placeholder option.
+     */
+    placeholderLabel: proptypes.string,
+
+    /**
+     * The value for a placeholder option.
+     */
+    placeholderValue: proptypes.string,
+
+    /**
      * The size of the text to be rendered.
      */
     textSize: proptypes.oneOf([
@@ -46,6 +56,8 @@ export default class DropdownNative extends Component {
       className,
       onChange,
       options,
+      placeholderLabel,
+      placeholderValue,
       textSize,
       value
     } = this.props
@@ -60,6 +72,13 @@ export default class DropdownNative extends Component {
         onChange={e => onChange(e.target.value)}
         value={value}
       >
+        {placeholderValue &&
+          <option
+            disabled
+            value={placeholderValue}
+          >{placeholderLabel || placeholderValue}</option>
+        }
+
         {Object.keys(options).map(key => (
           <option
             key={key}
