@@ -81,9 +81,9 @@ class DocumentListView extends Component {
     }
   }
 
-  handleBulkActionSelect(event) {
+  handleBulkActionSelect(value) {
     this.setState({
-      bulkActionSelected: event.target.value
+      bulkActionSelected: value
     })
   }
 
