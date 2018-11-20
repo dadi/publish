@@ -409,6 +409,7 @@ class DocumentEditToolbar extends Component {
             className={styles['language-dropdown']}
             onChange={this.handleLanguageChange.bind(this)}
             options={languages}
+            textSize="small"
             value={currentLanguage}
           />
         )}
