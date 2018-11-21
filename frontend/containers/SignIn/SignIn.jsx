@@ -95,21 +95,22 @@ class SignIn extends Component {
     const {state, actions, setPageTitle} = this.props
     const {email, password, userHasInteracted} = this.state
     const hasConnectionIssues = state.app.networkStatus !== Constants.NETWORK_OK
-    const { whitelabel: {logo, poweredBy, backgroundImage} } = state.app.config
+    const {whitelabel} = state.app.config
+    const {logo, poweredBy, backgroundImage} = whitelabel
 
     setPageTitle('Sign In')
 
     let formDataIsValid = this.validate()
 
     return (
-      <div class={styles.wrapper} style={'background-image: url(/public/' + backgroundImage + ')'}>
+      <div class={styles.wrapper} style={`background-image: url(/public/${backgroundImage})`}>
         <div class={styles.overlay}>
           <div class={styles.container}>
             <form
               method="POST"
               onSubmit={this.handleSignIn.bind(this)}
             >
-            <img class={styles.logo} src={'/public/' + logo} />
+            <img class={styles.logo} src={`/public/${logo}`} />
 
               {this.getErrorBanner({
                 remoteError: state.user.remoteError,
