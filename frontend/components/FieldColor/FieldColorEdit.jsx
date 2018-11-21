@@ -114,6 +114,82 @@ export default class FieldColorEdit extends Component {
     this.state.hasFocus = false
   }
 
+  componentDidMount() {
+    window.addEventListener('click', this.pickerOutsideEventHandler)
+  }
+
+  componentWillUnmount() {
+    if (this.picker) {
+      this.picker.removeEventListener('click', this.pickerOutsideEventHandler)
+    }
+
+    clearTimeout(this.losingFocusTimeout)
+  }
+
+  handleChange(event) {
+    const {
+      name,
+      onChange
+    } = this.props
+
+    if (typeof onChange === 'function') {
+      onChange.call(this, name, event.target.value)
+    }
+  }
+
+  handleFocus(hasFocus) {
+    const {pickerVisible} = this.state
+    const {schema} = this.props
+    const publishBlock = schema.publish || {}
+
+    // Return from focus event so picker doesn't display
+    if (publishBlock.readonly === true) {
+      return
+    }
+
+    this.hasFocus = hasFocus
+
+    this.setState({
+      hasFocus
+    })
+
+    if (!pickerVisible) {
+      this.setState({
+        pickerVisible: true
+      })
+    }
+  }
+
+  handlePickerChange(newColor) {
+    const {name, onChange} = this.props
+
+    if (typeof onChange === 'function') {
+      onChange.call(this, name, newColor)
+    }
+  }
+
+  handlePickerClick(insidePicker, event) {
+    const {pickerVisible} = this.state
+
+    if (insidePicker) {
+      event.stopPropagation()
+    } else {
+      if (pickerVisible && !this.hasFocus) {
+        this.setState({
+          pickerVisible: false
+        })
+      }
+    }
+  }
+
+  handlePickerRef(element) {
+    if (this.picker) return
+
+    element.addEventListener('click', this.pickerEventHandler)
+
+    this.picker = element
+  }
+
   render() {
     const {
       comment,
@@ -165,94 +241,5 @@ export default class FieldColorEdit extends Component {
         }
       </Label>
     )
-  }
-
-  componentDidMount() {
-    window.addEventListener('click', this.pickerOutsideEventHandler)
-  }
-
-  componentWillUnmount() {
-    if (this.picker) {
-      this.picker.removeEventListener('click', this.pickerOutsideEventHandler)
-    }
-
-    clearTimeout(this.losingFocusTimeout)
-  }
-
-  handleChange(event) {
-    const {
-      config,
-      name,
-      onChange
-    } = this.props
-
-    if (typeof onChange === 'function') {
-      onChange.call(this, name, event.target.value)
-    }
-  }
-
-  handleFocus(hasFocus) {
-    const {pickerVisible} = this.state
-    const {schema} = this.props
-    const publishBlock = schema.publish || {}
-
-    // Return from focus event so picker doesn't display
-    if (publishBlock.readonly === true) {
-      return
-    }
-
-    this.hasFocus = hasFocus
-
-    this.setState({
-      hasFocus
-    })
-
-    if (!pickerVisible) {
-      this.setState({
-        pickerVisible: true
-      })
-    }
-
-    if (!hasFocus && pickerVisible) {
-      // clearTimeout(this.losingFocusTimeout)
-
-      // this.losingFocusTimeout = setTimeout(() => {
-      //   this.setState({
-      //     pickerVisible: true
-      //   })
-      // }, 200)
-    }
-  }
-
-  handlePickerChange(newColor) {
-    const {name, onChange, schema} = this.props
-
-    if (typeof onChange === 'function') {
-      onChange.call(this, name, newColor)
-    }
-  }
-
-  handlePickerClick(insidePicker, event) {
-    const {pickerVisible} = this.state
-
-    if (insidePicker) {
-      event.stopPropagation()
-
-      //clearTimeout(this.losingFocusTimeout)
-    } else {
-      if (pickerVisible && !this.hasFocus) {
-        this.setState({
-          pickerVisible: false
-        })
-      }
-    }
-  }
-
-  handlePickerRef(element) {
-    if (this.picker) return
-
-    element.addEventListener('click', this.pickerEventHandler)
-
-    this.picker = element
   }
 }
