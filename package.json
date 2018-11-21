@@ -1,6 +1,6 @@
 {
   "name": "@dadi/publish",
-  "version": "1.0.13-beta",
+  "version": "1.0.14-beta",
   "description": "DADI Publish",
   "main": "index.js",
   "scripts": {
@@ -12,7 +12,6 @@
     "api-install": "node scripts/api-install/api-install.js",
     "lint": "eslint frontend && standard --fix",
     "prepublishOnly": "npm run snyk-protect && npm run build",
-    "prepush": "npm run build-docs",
     "precommit": "npm run lint && node scripts/precommit.js",
     "snyk-protect": "snyk protect",
     "start": "NODE_ENV=development node index.js",

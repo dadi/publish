@@ -137,7 +137,6 @@ export default class FieldMediaEdit extends Component {
     const singleFile = schema.settings && schema.settings.limit === 1
     const values = (value && !Array.isArray(value)) ? [value] : value
 
-
     return (
       <Label label={displayName} className={styles.label}>
         {values && (
@@ -184,13 +183,19 @@ export default class FieldMediaEdit extends Component {
             >Select existing {fieldLocalType.toLowerCase()}</Button>
           </div>
 
-          <div class={styles['upload-select']}>
+          <div class={styles.placeholder}>
             <FileUpload
               accept={acceptedMimeTypes}
-              allowDrop={true}
               multiple={!singleFile}
               onChange={this.handleFileChange.bind(this)}
-            />
+            >
+              <Button
+                accent="neutral"
+                className={styles['upload-select']}
+                size="small"
+                type="mock-stateful"
+              >Select from device</Button>            
+            </FileUpload>
           </div>
         </div>
       </Label>

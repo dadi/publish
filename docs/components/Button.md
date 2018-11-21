@@ -88,6 +88,6 @@ The size variation of the button.
 Type/function of the button. When set to `mock`, a static element will be
 rendered (as a `span`).
 
-- type: `enum('button'|'mock'|'submit')`
+- type: `enum('button'|'mock'|'mock-stateful'|'submit')`
 - default value: `'button'`
 

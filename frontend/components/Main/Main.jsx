@@ -13,7 +13,7 @@ import NotificationCentre from 'containers/NotificationCentre/NotificationCentre
 export default class Main extends Component {
   render() {
     return (
-      <main className={styles.main}>
+      <main>
         {this.props.children}
         <LoadingBar />
         <NotificationCentre />

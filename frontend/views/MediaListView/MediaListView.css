@@ -1,0 +1,10 @@
+.bulk-action-select {
+  height: 25px;
+  line-height: 25px;
+  font-size: 13px;
+  box-sizing: border-box;
+  border: 1px solid #e4e4e4;
+  border-radius: 7px;
+  outline: 0;
+  margin-right: 10px;
+}

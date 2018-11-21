@@ -23,6 +23,16 @@ class Header extends Component {
     actions: proptypes.object,
 
     /**
+     * The text/elements to be rendered inside the header.
+     */
+    children: proptypes.node,
+
+    /**
+     * The schema of the collection being edited.
+     */
+    currentCollection: proptypes.object,
+
+    /**
      * The global state object.
      */
     state: proptypes.object
@@ -35,9 +45,12 @@ class Header extends Component {
   }
 
   render() {
-    const {state} = this.props
+    const {
+      children,
+      currentCollection,
+      state
+    } = this.props
     const compact = state.app.breakpoint === null
-    const {currentCollection} = state.api
 
     const {
       whitelabel: {enabled, path, logo, poweredBy, backgroundImage}
@@ -94,6 +107,8 @@ class Header extends Component {
             />
           </div>
         </div>
+
+        {children}
       </header>
     )
   }

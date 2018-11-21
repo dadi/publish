@@ -2,113 +2,64 @@
 
 import {h, Component} from 'preact'
 import proptypes from 'proptypes'
-
+import Style from 'lib/Style'
+import styles from './FieldNumber.css'
 import TextInput from 'components/TextInput/TextInput'
 
 /**
- * Component for rendering API fields of type Number in a filter.
+ * Component for rendering API fields of type String in a filter.
  */
-export default class FieldNumberFilter extends Component {
+export default class FieldStringFilter extends Component {
   static propTypes = {
     /**
-     * Classes for the analyser selection.
-     */
-    analyserStyles: proptypes.string,
-
-    /**
-     * Classes for the container.
-     */
-    containerStyles: proptypes.string,
-
-    /**
-     * Filter array position.
-     */
-    index: proptypes.number,
-
-    /**
-     * Input update callback.
+     * Callback to fire every time the value changes. The function is called
+     * with the new value as the only parameter.
      */
     onUpdate: proptypes.func,
 
     /**
-     * Field type.
+     * The filter value.
      */
-    type: proptypes.string,
-
-    /**
-     * Field value.
-     */
-    value: proptypes.string,
-
-    /**
-     * Classes for the value input.
-     */
-    valueStyles: proptypes.string
+    value: proptypes.string
   }
 
-  constructor(props) {
-    super(props)
+  componentDidMount() {
+    const {onUpdate, value} = this.props
 
-    this.filterTypes = {
-      '$eq': 'Equals',
-      '$gt': 'Greater than',
-      '$gte': 'Greater than or equal to',
-      '$lt': 'Less than',
-      '$lte': 'Less than or equal to',
-      '$ne': 'Is not'
+    // If the initial value isn't accepted for this field type,
+    // we update it with one that is and propagate it to the
+    // parent.
+    if (typeof value !== 'string') {
+      onUpdate(null)
     }
   }
 
-  render() {
-    const {
-      analyserStyles,
-      containerStyles,
-      type,
-      value,
-      valueStyles
-    } = this.props
-
-    return (
-      <div class={containerStyles}>
-        <select
-          class={analyserStyles}
-          onChange={this.handleChange.bind(this, 'type')}
-          value={type}
-        >
-          <option disabled>Select a type</option>
-
-          {Object.keys(this.filterTypes).map(key => (
-            <option
-              key={key}
-              value={key}
-            >
-              {this.filterTypes[key]}
-            </option>
-          ))}
-        </select>
-
-        <TextInput
-          type="number"
-          className={valueStyles}
-          value={value}
-          onChange={this.handleChange.bind(this, 'value')}
-          onKeyUp={this.handleChange.bind(this, 'value')}
-          placeholder="Numeric value"
-        />
-      </div>
-    )
-  }
-
-  handleChange(elementId, event) {
-    const {onUpdate, index} = this.props
+  handleChange(event) {
+    const {onUpdate} = this.props
     let value = isNaN(event.target.value) ? 0 : Number(event.target.value)
 
     if (!event.target.value.length) {
       value = null
     }
 
-    onUpdate({
-      [elementId]: value
-    }, index)
+    onUpdate(value)
+  }
+
+  render() {
+    const {
+      onUpdate,
+      stylesTextInput,
+      value
+    } = this.props
+
+    return (
+      <TextInput
+        className={styles['filter-input']}
+        onInput={this.handleChange.bind(this)}
+        placeholder="Search value"
+        value={value}
+      />
+    )
   }
 }
+

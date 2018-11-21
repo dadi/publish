@@ -36,11 +36,18 @@ export function fetchDocument ({
   fields
 }) {
   return (dispatch, getState) => {
-    const apiBridge = apiBridgeClient({
+    let apiBridge = apiBridgeClient({
       accessToken: getState().user.accessToken,
       api,
       collection
-    }).whereFieldIsEqualTo('_id', id)
+    })
+
+    // Are we dealing with a media document?
+    if (collection.IS_MEDIA_BUCKET) {
+      apiBridge = apiBridge.inMedia()
+    }
+
+    apiBridge = apiBridge.whereFieldIsEqualTo('_id', id)
 
     if (fields) {
       apiBridge.useFields(fields)
@@ -280,7 +287,7 @@ export function saveDocument ({
             setRemoteDocumentStatus(Constants.STATUS_SAVING)
           )
 
-          const mediaUpload = uploadMedia(
+          const mediaUpload = uploadMediaToSignedURL(
             api,
             response.url,
             payload[referenceField][queueMapEntry.index]
@@ -342,6 +349,53 @@ export function saveDocument ({
         }
       })
     }).catch(err => {
+      dispatch(
+        setRemoteDocumentStatus(Constants.STATUS_FAILED)
+      )
+    })
+  }
+}
+
+export function saveMedia ({
+  api,
+  document,
+  documentId
+}) {
+  return (dispatch, getState) => {
+    dispatch(
+      setRemoteDocumentStatus(Constants.STATUS_SAVING)
+    )
+
+    let bearerToken = getState().user.accessToken
+    let url = `${api.host}:${api.port}/media/${documentId}`
+
+    fetch(url, {
+      body: JSON.stringify(document),
+      headers: {
+        Authorization: `Bearer ${bearerToken}`,
+        'Content-Type': 'application/json',
+      },
+      method: 'PUT'
+    }).then(response => {
+      if (!response.ok) {
+        return Promise.reject(response)
+      }
+
+      return response.json()
+    }).then(response => {
+      dispatch(
+        setRemoteDocument(response.results[0], {
+          clearLocal: true,
+          forceUpdate: true
+        })
+      )
+
+      // We've successfully saved the document, so we now need to clear
+      // the local storage key corresponding to the unsaved document for
+      // the given collection path.
+      LocalStorage.clearDocument(documentId)
+    })
+    .catch(response => {
       dispatch(
         setRemoteDocumentStatus(Constants.STATUS_FAILED)
       )
@@ -453,15 +507,17 @@ export function startNewDocument ({collection}) {
   }
 }
 
-export function updateLocalDocument (change, {
+export function updateLocalDocument ({
+  meta = {},
   path,
-  persistInLocalStorage = true
+  persistInLocalStorage = true,
+  update = {}
 } = {}) {
   return (dispatch, getState) => {
-    let newLocal = Object.assign({}, getState().document.local, change)
+    let newLocal = Object.assign({}, getState().document.local, update)
     let newFieldsNotPersistedInLocalStorage = persistInLocalStorage ?
       getState().document.fieldsNotPersistedInLocalStorage :
-      getState().document.fieldsNotPersistedInLocalStorage.concat(Object.keys(change))
+      getState().document.fieldsNotPersistedInLocalStorage.concat(Object.keys(update))
     let localStorageKey = getLocalStorageKey({
       path,
       state: getState()
@@ -475,14 +531,15 @@ export function updateLocalDocument (change, {
     })
 
     dispatch({
-      change,
+      meta,
       persistInLocalStorage,
-      type: Types.UPDATE_LOCAL_DOCUMENT
+      type: Types.UPDATE_LOCAL_DOCUMENT,
+      update
     })
   }
 }
 
-function uploadMedia (api, signedUrl, content) {
+function uploadMediaToSignedURL (api, signedUrl, content) {
   const url = `${api.host}:${api.port}${signedUrl}`
   const payload = new FormData()
 

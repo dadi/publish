@@ -12,7 +12,7 @@ import styles from './TextInput.css'
 export default class TextInput extends Component {
   static propTypes = {
     /**
-     * Classes to append to the button element.
+     * Classes to append to the input element.
      */
     className: proptypes.string,
 
@@ -58,14 +58,14 @@ export default class TextInput extends Component {
     onFocus: proptypes.func,
 
     /**
-     * Callback to be executed when a key is pressed (onKeyUp event).
-     */
-    onKeyUp: proptypes.func,
-
-    /**
      * Callback to be executed when the input is changed in any way.
      */
     onInput: proptypes.func,
+
+     /**
+     * Callback to be executed when any key is pressed in the input.
+     */
+    onKeyDown: proptypes.func,
 
     /**
      * Placeholder for the input field.
@@ -133,7 +133,9 @@ export default class TextInput extends Component {
 
   componentDidMount() {
     this.adjustHeightIfNeeded()
+  }
 
+  componentWillUnmount() {
     // This is a *temporary* measure to stop Preact from recycling the DOM
     // nodes of this component, which has caused issues with username/passwords
     // being autofilled in other fields. Should be removed once Preact drops
@@ -141,7 +143,7 @@ export default class TextInput extends Component {
     //
     // https://github.com/developit/preact/issues/957#issuecomment-352780885
     setTimeout(() => {
-      this.nextBase = null
+      this.nextBase = this.__b = null
     })
   }
 
@@ -181,9 +183,10 @@ export default class TextInput extends Component {
           id={id}
           name={name}
           onBlur={this.handleEvent.bind(this, 'onBlur')}
-          onChange={this.handleChange.bind(this)}
-          onInput={this.handleChange.bind(this)}
+          onChange={this.handleChange.bind(this, 'onChange')}
           onFocus={this.handleEvent.bind(this, 'onFocus')}
+          onInput={this.handleChange.bind(this, 'onInput')}
+          onKeyDown={this.handleEvent.bind(this, 'onKeyDown')}
           placeholder={placeholder}
           readonly={readonly}
           required={required}
@@ -200,10 +203,10 @@ export default class TextInput extends Component {
         id={id}
         name={name}
         onBlur={this.handleEvent.bind(this, 'onBlur')}
-        onChange={this.handleChange.bind(this)}
+        onChange={this.handleChange.bind(this, 'onChange')}
         onFocus={this.handleEvent.bind(this, 'onFocus')}
-        onInput={this.handleChange.bind(this)}
-        onKeyUp={this.handleChange.bind(this)}
+        onInput={this.handleChange.bind(this, 'onInput')}
+        onKeyDown={this.handleEvent.bind(this, 'onKeyDown')}
         placeholder={placeholder}
         readonly={readonly}
         required={required}
@@ -220,21 +223,17 @@ export default class TextInput extends Component {
     }
   }
 
-  handleChange(event) {
-    const {onChange, onInput, onKeyUp} = this.props
+  handleChange(type, event) {
+    const {onChange, onInput} = this.props
 
     this.adjustHeightIfNeeded()
 
-    if (event.type === 'change' && typeof onChange === 'function') {
+    if (type === 'onChange' && typeof onChange === 'function') {
       onChange.call(this, event)
     }
 
-    if (event.type === 'input' && typeof onInput === 'function') {
+    if (type === 'onInput' && typeof onInput === 'function') {
       onInput.call(this, event)
-    }
-
-    if (event.type === 'keyup' && typeof onKeyUp === 'function') {
-      onKeyUp.call(this, event)
     }
 
     return true
