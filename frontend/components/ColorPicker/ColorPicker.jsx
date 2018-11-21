@@ -6,7 +6,7 @@ import proptypes from 'proptypes'
 import Style from 'lib/Style'
 import styles from './ColorPicker.css'
 
-import Color from 'lib/color'
+import Color from './utils'
 
 /**
  * Dialog for picking date and time for an input field.
@@ -49,7 +49,7 @@ export default class ColorPicker extends Component {
     this.paletteElement = false
     this.paletteIndicator = false
   }
-  
+
   render() {
     const {className, color: value} = this.props
     const containerStyle = new Style(styles, 'container').addResolved(className)
