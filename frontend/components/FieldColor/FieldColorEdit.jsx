@@ -116,7 +116,7 @@ export default class FieldColorEdit extends Component {
   }
 
   render() {
-    let {
+    const {
       comment,
       config,
       displayName,
@@ -184,9 +184,7 @@ export default class FieldColorEdit extends Component {
     const {
       config,
       name,
-      onChange,
-      schema,
-      value
+      onChange
     } = this.props
 
     if (typeof onChange === 'function') {
@@ -197,7 +195,6 @@ export default class FieldColorEdit extends Component {
   handleFocus(hasFocus) {
     const {pickerVisible} = this.state
     const {schema} = this.props
-
     const publishBlock = schema.publish || {}
 
     // Return from focus event so picker doesn't display

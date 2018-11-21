@@ -55,8 +55,7 @@ export default class ColorPicker extends Component {
   }
 
   render() {
-    const {className} = this.props
-    const value = this.props.color
+    const {className, color: value} = this.props
     const containerStyle = new Style(styles, 'container').addResolved(className)
 
     // Update hsv
@@ -74,7 +73,7 @@ export default class ColorPicker extends Component {
         >
           <div
             class={styles.picker}
-            ref={el => (this.paletteIndicator = el)}
+            ref={el => this.paletteIndicator = el}
             style={{
               backgroundColor: '#' + value,
               top: this.paletteCoordinate.y,
@@ -86,7 +85,7 @@ export default class ColorPicker extends Component {
         <div class={styles.hue} ref={this.handleHueRef.bind(this)}>
           <div
             class={styles.slider}
-            ref={el => (this.hueIndicator = el)}
+            ref={el => this.hueIndicator = el}
             style={{top: this.hueCoordinate}}
           />
         </div>
@@ -155,8 +154,6 @@ export default class ColorPicker extends Component {
   paletteListener(event) {
     this.paletteCoordinate = this.normalisePosition(event)
 
-    console.log('######')
-    console.log(this.paletteCoordinate)
 
     let width = this.paletteElement.offsetWidth
     let height = this.paletteElement.offsetHeight
@@ -178,21 +175,24 @@ export default class ColorPicker extends Component {
         y: Math.round(touch.pageY - rect.top - window.scrollY)
       }
     }
+
     // ie
     if (window.event && window.event.contentOverflow !== undefined) {
       return {x: window.event.offsetX, y: window.event.offsetY}
     }
+
     // webkit
     if (event.offsetX !== undefined && event.offsetY !== undefined) {
       return {x: event.offsetX, y: event.offsetY}
     }
+
     // firefox
     let wrapper = event.target.parentNode.parentNode
     return {x: event.layerX - wrapper.offsetLeft, y: event.layerY - wrapper.offsetTop}
   }
 
   handleColorPick() {
-    const {onChange, color} = this.props
+    const {color, onChange} = this.props
 
     if (typeof onChange === 'function') {
       onChange.call(this, Color.hsv2hex(this.hsv))

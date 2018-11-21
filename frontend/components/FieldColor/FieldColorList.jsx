@@ -28,7 +28,7 @@ export default class FieldColorList extends Component {
   }
 
   render() {
-    const {config, schema, value} = this.props
+    const {value} = this.props
     
 
     return (
