@@ -254,12 +254,12 @@ module.exports = {
     backgroundImage: {
       doc: 'The background image URL',
       format: String,
-      default: ''
+      default: 'bg.png'
     },
     logo: {
       doc: 'The logo URL',
       format: String,
-      default: '/public/images/publish.png'
+      default: 'logo.png'
     },
     poweredBy: {
       doc: 'Whether to include a "Powered by DADI Publish" section',

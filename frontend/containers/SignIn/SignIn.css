@@ -24,7 +24,7 @@
 .logo {
   display: block;
   height: 45px;
-  margin: 0 0 40px;
+  margin: 0 0 30px;
 }
 
 .powered-by {
@@ -33,8 +33,18 @@
   font-family: var(--theme-font-family, sans-serif);
 }
 
-.powered-by a {
-  font-weight: bolder;
+.powered-by {
+  font-family: 'Roboto Mono', monospace;
+  font-size: 14px;
+  margin-top: 30px;
+  display: block;
+}
+
+.powered-by img {
+  vertical-align: middle;
+  position: relative;
+  top: -3px;
+  margin-left: 13px;
 }
 
 .inputs {

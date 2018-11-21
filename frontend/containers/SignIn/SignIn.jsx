@@ -95,25 +95,22 @@ class SignIn extends Component {
     const {state, actions, setPageTitle} = this.props
     const {email, password, userHasInteracted} = this.state
     const hasConnectionIssues = state.app.networkStatus !== Constants.NETWORK_OK
-    const {
-      whitelabel: {logo, poweredBy, backgroundImage}
-    } = state.app.config || {
-      whitelabel: {logo: '', poweredBy: false, backgroundImage: ''}
-    }
+    const {whitelabel} = state.app.config
+    const {logo, poweredBy, backgroundImage} = whitelabel
 
     setPageTitle('Sign In')
 
     let formDataIsValid = this.validate()
 
     return (
-      <div class={styles.wrapper} style={backgroundImage.length ? `background-image: url(${backgroundImage}` : ''}>
+      <div class={styles.wrapper} style={`background-image: url(/public/${backgroundImage})`}>
         <div class={styles.overlay}>
           <div class={styles.container}>
             <form
               method="POST"
               onSubmit={this.handleSignIn.bind(this)}
             >
-              <img class={styles.logo} src={logo} />
+            <img class={styles.logo} src={`/public/${logo}`} />
 
               {this.getErrorBanner({
                 remoteError: state.user.remoteError,
@@ -158,7 +155,10 @@ class SignIn extends Component {
 
               {poweredBy && (
                 <p class={styles['powered-by']}>
-                  Powered by <a href="https://dadi.cloud/en/publish/" target="_blank">DADI Publish</a>
+                  <span>Powered by</span>
+                  <a href="https://dadi.cloud/publish/" target="_blank">
+                    <img src="/public/images/publish.png" height="25" />
+                  </a>
                 </p>
               )}
             </form>

@@ -52,11 +52,8 @@ class Header extends Component {
     } = this.props
     const compact = state.app.breakpoint === null
 
-    const {
-      whitelabel: {logo, poweredBy, backgroundImage}
-    } = state.app.config || {
-      whitelabel: {logo: '', poweredBy: false, backgroundImage: ''}
-    }
+    const {whitelabel} = state.app.config
+    const {logo} = whitelabel
 
     if (!state.user.isSignedIn) {
       return null
@@ -78,11 +75,9 @@ class Header extends Component {
       <header class={styles.header}>
         <div class={contentStyle.getClasses()}>
           <div class={styles.account}>
-            {logo !== '' && (
-              <div class={styles.logo}>
-                <img src={logo} />
-              </div>
-            )}
+            <div class={styles.logo}>
+              <img src={`/public/${logo}`} />
+            </div>
 
             <div class={styles['toggle-icon']} onClick={this.toggleCollapsed.bind(this, undefined)}>
               {this.state.expanded ?
