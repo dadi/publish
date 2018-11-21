@@ -63,17 +63,18 @@ Router.prototype.webRoutes = function () {
     return
   }
 
-  this.server.get('/public/*', restify.plugins.serveStatic({
-    directory: path.resolve(__dirname, '../../..')
-  }))
-
-  // The user public folder
-  if (config.get('whitelabel.enabled')) {
-    this.server.get('/_user/*', restify.plugins.serveStatic({
-      appendRequestPath: false,
-      directory: path.resolve(config.get('whitelabel.path'))
-    }))
-  }
+  // The user's /workspace/public folder can override the system one
+  this.server.get('/public/*', (req, res, next) => {
+    restify.plugins.serveStatic({
+      directory: path.join(process.cwd(), 'workspace')
+    })(req, res, (err) => {
+      if (err) {
+        restify.plugins.serveStatic({
+          directory: path.resolve(__dirname, '../../..')
+        })(req, res, next)
+      }
+    })
+  })
 
   // Respond to HEAD requests - this is used by ConnectionMonitor in App.jsx.
   this.server.head('*', (req, res, next) => {
