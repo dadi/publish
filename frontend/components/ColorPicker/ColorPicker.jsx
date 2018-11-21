@@ -6,7 +6,7 @@ import proptypes from 'proptypes'
 import Style from 'lib/Style'
 import styles from './ColorPicker.css'
 
-import Color from './utils'
+import Color from './util.js'
 
 /**
  * Dialog for picking date and time for an input field.
@@ -150,7 +150,6 @@ export default class ColorPicker extends Component {
   paletteListener(event) {
     this.paletteCoordinate = this.normalisePosition(event)
 
-
     let width = this.paletteElement.offsetWidth
     let height = this.paletteElement.offsetHeight
 
@@ -174,17 +173,26 @@ export default class ColorPicker extends Component {
 
     // ie
     if (window.event && window.event.contentOverflow !== undefined) {
-      return {x: window.event.offsetX, y: window.event.offsetY}
+      return {
+        x: window.event.offsetX,
+        y: window.event.offsetY
+      }
     }
 
     // webkit
     if (event.offsetX !== undefined && event.offsetY !== undefined) {
-      return {x: event.offsetX, y: event.offsetY}
+      return {
+        x: event.offsetX,
+        y: event.offsetY
+      }
     }
 
     // firefox
     let wrapper = event.target.parentNode.parentNode
-    return {x: event.layerX - wrapper.offsetLeft, y: event.layerY - wrapper.offsetTop}
+    return {
+      x: event.layerX - wrapper.offsetLeft,
+      y: event.layerY - wrapper.offsetTop
+    }
   }
 
   handleColorPick() {
