@@ -111,7 +111,6 @@ export default class FieldColorEdit extends Component {
     this.picker = false
     this.pickerEventHandler = this.handlePickerClick.bind(this, true)
     this.pickerOutsideEventHandler = this.handlePickerClick.bind(this, false)
-    this.losingFocusTimeout = null
     this.state.hasFocus = false
   }
 
