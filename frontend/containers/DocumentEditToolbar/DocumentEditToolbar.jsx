@@ -406,6 +406,7 @@ class DocumentEditToolbar extends Component {
 
         {multiLanguage && languages && (
           <DropdownNative
+            className={styles['language-dropdown']}
             onChange={this.handleLanguageChange.bind(this)}
             options={languages}
             value={currentLanguage}

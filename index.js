@@ -17,9 +17,20 @@ Publish.prototype.getStartupMessage = function () {
 
   let port = config.get('server.protocol') === 'https' ? 443 : config.get('server.port')
 
+  // Where can the user access Publish?
+  let server = config.get('publicUrl') ? `${config.get('publicUrl.protocol')}://${config.get('publicUrl.host')}:${port}` : `http://${config.get('server.host')}:${port}`
+
+  // Print out APIs
+  let footer = {}
+
+  for (let api in config.get('apis')) {
+    let key = config.get('apis')[api].name
+    footer[key] = config.get('apis')[api].host
+  }
+
   if (env !== 'test') {
     dadiBoot.started({
-      server: `http://${config.get('server.host')}:${port} (Public URL: ${config.get('publicUrl.protocol')}://${config.get('publicUrl.host')}:${port})`,
+      server,
       header: {
         app: `${config.get('app.name')}${config.get('app.publisher') && config.get('app.publisher') !== '' ? ' - ' + config.get('app.publisher') : ''}`
       },
@@ -28,7 +39,7 @@ Publish.prototype.getStartupMessage = function () {
         'Node.js': nodeVersion,
         'Environment': env
       },
-      footer: {}
+      footer
     })
   }
 }

@@ -7,10 +7,15 @@ import Style from 'lib/Style'
 import styles from './DropdownNative.css'
 
 /**
- * A list of grouped links.
+ * A dropdown component using the native <select> element.
  */
 export default class DropdownNative extends Component {
   static propTypes = {
+    /**
+     * Classes to append to the button element.
+     */
+    className: proptypes.string,
+
     /**
      * Callback to be executed when an option is selected.
      */
@@ -23,32 +28,64 @@ export default class DropdownNative extends Component {
     options: proptypes.object,
 
     /**
+     * The label for a placeholder option.
+     */
+    placeholderLabel: proptypes.string,
+
+    /**
+     * The value for a placeholder option.
+     */
+    placeholderValue: proptypes.string,
+
+    /**
+     * The size of the text to be rendered.
+     */
+    textSize: proptypes.oneOf([
+      'small',
+      'normal'
+    ]),
+
+    /**
      * The key of the currently selected value.
      */
     value: proptypes.string
   }
 
   render() {
-    const {onChange, options, value} = this.props
+    const {
+      className,
+      onChange,
+      options,
+      placeholderLabel,
+      placeholderValue,
+      textSize,
+      value
+    } = this.props
 
-    let dropdown = new Style(styles, 'dropdown')
-    let wrapper = new Style(styles, 'wrapper')
+    const dropdownStyle = new Style(styles, 'dropdown')
+      .addIf(`dropdown-text-${textSize}`, textSize)
+      .addResolved(className)
 
     return (
-      <div class={wrapper.getClasses()}>
-        <select
-          class={dropdown.getClasses()}
-          onChange={e => onChange(e.target.value)}
-          value={value}
-        >
-          {Object.keys(options).map(key => (
-            <option
-              key={key}
-              value={key}
-            >{options[key]}</option>
-          ))}
-        </select>
-      </div>
+      <select
+        class={dropdownStyle.getClasses()}
+        onChange={e => onChange(e.target.value)}
+        value={value}
+      >
+        {placeholderValue &&
+          <option
+            disabled
+            value={placeholderValue}
+          >{placeholderLabel || placeholderValue}</option>
+        }
+
+        {Object.keys(options).map(key => (
+          <option
+            key={key}
+            value={key}
+          >{options[key]}</option>
+        ))}
+      </select>
     )
   }
 }

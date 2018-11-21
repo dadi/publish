@@ -1,204 +1,516 @@
 'use strict'
 
+import * as fieldComponents from 'lib/field-components'
 import {h, Component} from 'preact'
+import {getFieldType} from 'lib/fields'
+import {Keyboard} from 'lib/keyboard'
+import Button from 'components/Button/Button'
+import DropdownNative from 'components/DropdownNative/DropdownNative'
 import proptypes from 'proptypes'
-
 import Style from 'lib/Style'
 import styles from './DocumentFilters.css'
+import TextInput from 'components/TextInput/TextInput'
 
-import {arrayToObject, isValidJSON, objectToArray} from 'lib/util'
-import {Keyboard} from 'lib/keyboard'
+const DEFAULT_OPERATOR_KEYWORD = '$eq'
+const DEFAULT_OPERATOR_NAME = 'is'
 
-import DocumentFilter from 'components/DocumentFilter/DocumentFilter'
-import Button from 'components/Button/Button'
+const OPERATORS = {
+  '$eq': 'is',
+  '$regex': 'contains'
+}
 
 /**
  * A list of document filters.
  */
 export default class DocumentFilters extends Component {
-  static propTypes = {
-    /**
-     * The schema of the collection being filtered.
-     */
-    collection: proptypes.object,
-
-    /**
-     * App config.
-     */
-    config: proptypes.object,
-
-    /**
-     * The JSON-stringified object of filters currently applied.
-     */
-    filter: proptypes.string.isRequired,
-
-    /**
-     * Counter to mark the addition of new filters.
-     */
-    forceNewFilters: proptypes.number,
-
-    /**
-     * Change callback method to trigger rendering new url parameters.
-     */
-    updateUrlParams: proptypes.func
-  }
+  static propTypes = {}
 
   constructor(props) {
     super(props)
 
-    this.keyboard = new Keyboard()
-    this.state = {
-      dirty: false,
-      filters: this.getFiltersFromParams()
-    }
+    this.state.search = null
+    this.state.selectedFilterField = null
+    this.state.selectedFilterIndex = null
+    this.state.selectedFilterOperator = null
+    this.state.selectedFilterValue = null
+    this.state.searchableFieldsPointer = 0
+
+    this.outsideTooltipHandler = this.handleClick.bind(this, false)    
   }
 
   componentDidMount() {
-    this.keyboard.on('cmd+f').do(cmd => {
-      this.setState({
-        filters: this.state.filters.concat(this.createEmptyFilter())
-      })
-    })
+    window.addEventListener('click', this.outsideTooltipHandler)
   }
 
   componentWillUnmount() {
-    this.keyboard.off()
+    window.removeEventListener('click', this.outsideTooltipHandler) 
   }
 
-  componentDidUpdate(prevProps) {
-    const {collection, forceNewFilters} = this.props
-    const currentCollection = collection || {}
-    const previousCollection = prevProps.collection || {}
+  buildFiltersArray(filtersObject) {
+    if (!filtersObject) return []
 
-    // If we're changing collection, reset all filters.
-    if (currentCollection.path !== previousCollection.path) {
-      this.setState({
-        filters: []
-      })
-    } else if (forceNewFilters && (forceNewFilters > prevProps.forceNewFilters)) {
-      let filters = this.getFiltersFromParams()
+    let filtersArray = Object.keys(filtersObject).map(field => {
+      const fieldComponent = this.getFieldComponent(field) || {}
+      const {
+        operators: fieldOperators = {}
+      } = fieldComponent
+      let operator = null
+      let value = filtersObject[field]
 
-      this.setState({
-        filters: filters.concat(this.createEmptyFilter())
-      })
-    }
+      // Are we looking at a filter with an operator? (i.e.
+      // {"field": {"operator": "value"}} vs. {"field": "value"}).
+      if (typeof value === 'object') {
+        operator = Object.keys(value)[0]
+        value = value[operator]
+      }
+
+      return {
+        field,
+        operator,
+        operatorFriendly: fieldOperators[operator] || DEFAULT_OPERATOR_NAME,
+        value
+      }
+    })
+
+    return filtersArray
   }
 
-  constructFilters(filters) {
-    return filters.map(filter => {
-      return Object.assign({}, filter, {value: {[filter.type]: filter.value}})
+  clearSearch() {
+    this.setState({
+      search: null,
+      selectedFilterField: null,
+      selectedFilterIndex: null,
+      selectedFilterOperator: null,
+      selectedFilterValue: null,
+      searchableFieldsPointer: 0
     })
   }
 
-  createEmptyFilter() {
+  getFieldComponent(fieldName) {
     const {collection} = this.props
-    const {filters} = this.state
-    const remainingFields = Object.keys(collection.fields)
-      .filter(collectionField => !(filters) || !filters.find(filter => filter.field === collectionField))
+    const fieldSchema = fieldName && collection.fields[fieldName]
 
-    return {
-      field: remainingFields[0],
-      type: '$eq',
-      value: null
-    }   
+    if (!fieldSchema) return null
+
+    const fieldType = getFieldType(fieldSchema)
+
+    return fieldComponents[`Field${fieldType}`]
   }
 
-  getFiltersFromParams() {
-    const {filters} = this.props
+  getFieldName(fieldName) {
+    const {collection} = this.props
+    const fieldSchema = collection.fields[fieldName]
 
-    if (!filters) return []
+    return fieldSchema.label || fieldName
+  }
 
-    let deconstructedFilters = objectToArray(filters, 'field')
-      .map(filter => {
-        if (typeof filter.value === 'string') {
-          return Object.assign(filter, {type: '$eq'})
-        }
+  handleClick(isInsideTooltip, event) {
+    event.stopPropagation()
 
-        let type = Object.keys(filter.value)[0]
-        let value = filter.value[type]
+    if (!isInsideTooltip) {
+      this.setState({
+        selectedFilterField: null,
+        selectedFilterIndex: null,
+        selectedFilterOperator: null,
+        selectedFilterValue: null
+      })
+    }
+  }
 
-        return Object.assign({}, filter, {
-          type,
-          value
-        })
+  handleFiltersButtonClick(event) {
+    const {
+      selectedFilterIndex
+    } = this.state
+
+    event.stopPropagation()
+
+    // If the "Add filter" popup is already visible, clicking on the filters
+    // button should hide the popup. Otherwise, it should show it.
+    let newIndex = selectedFilterIndex === -1 ? null : -1
+
+    this.setState({
+      selectedFilterField: null,
+      selectedFilterIndex: newIndex,
+      selectedFilterOperator: null,
+      selectedFilterValue: null
+    })
+  }
+
+  handleFilterSelect(index, event) {
+    const {field, operator, value} = this.filtersArray[index]
+
+    event.stopPropagation()
+
+    this.setState({
+      selectedFilterField: field,
+      selectedFilterIndex: index,
+      selectedFilterOperator: operator,
+      selectedFilterValue: value
+    })
+  }
+
+  handleFilterSubmit(field, event) {
+    const {collection, filters} = this.props
+    const {search: searchValue} = this.state
+
+    event.preventDefault()
+
+    if (searchValue) {
+      this.filtersArray.push({
+        field,
+        operator: '$regex',
+        value: searchValue
       })
 
-    return deconstructedFilters
+      this.propagateFilters()
+      this.clearSearch()     
+    }
   }
 
-  handleRemoveFilter(index) {
-    const {filters} = this.state
-    const {collection} = this.props
-    const newFilters = [...filters]
+  handleSearchableFieldsPointer(fields, event) {
+    const {searchableFieldsPointer} = this.state
 
-    newFilters.splice(index, 1)
-
-    this.setState({filters: newFilters})
-    this.updateUrl(!newFilters.length)
+    if (event.keyCode === 38 && searchableFieldsPointer > 0) {
+      // Up.
+      this.setState(({searchableFieldsPointer}) => ({
+        searchableFieldsPointer: searchableFieldsPointer - 1
+      }))
+    } else if (event.keyCode === 40 && searchableFieldsPointer < fields.length - 1) {
+      // Down.
+      this.setState(({searchableFieldsPointer}) => ({
+        searchableFieldsPointer: searchableFieldsPointer + 1
+      }))
+    } else if ((event.keyCode === 27 || event.keyCode === 8) && !this.state.search) {
+      // ESC or backspace and no search term.
+      this.removeFilter(this.filtersArray.length - 1, event)
+    } else if (event.keyCode === 27) {
+      // Just ESC.
+      this.clearSearch()
+    }
   }
 
-  handleUpdateFilter(filterProp, index) {
-    const {filters} = this.state
-    const filter = Object.assign({}, filters[index], filterProp)
-    const newFilters = [...filters]
+  handleSelectedFilterFieldChange(newField) {
+    const {
+      selectedFilterOperator
+    } = this.state    
+    const fieldComponent = this.getFieldComponent(newField) || {}
+    const fieldOperators = fieldComponent.operators || {}
+    
+    // If the new selected field supports the currently selected operator, we
+    // keep it. Otherwise, we use the first operator defined by the new field
+    // component.
+    const newOperator = fieldOperators[selectedFilterOperator] ?
+      selectedFilterOperator :
+      Object.keys(fieldOperators)[0]
 
-    Object.assign(newFilters[index], filter)
+    this.setState({
+      selectedFilterField: newField,
+      selectedFilterOperator: newOperator
+    })
+  }
 
-    this.setState({filters: newFilters, dirty: true})
+  handleSelectedFilterUpdate(field, event) {
+    const {
+      selectedFilterIndex: index,
+      selectedFilterOperator: operator,
+      selectedFilterValue: value
+    } = this.state
+
+    event.preventDefault()
+
+    if (typeof index !== 'number') {
+      return
+    }
+
+    // Are we updating an existing filter or creating a new one?
+    if (index === -1) {
+      this.filtersArray.push({
+        field,
+        operator,
+        value
+      })
+    } else {
+      if (!this.filtersArray[index]) {
+        return
+      }
+
+      this.filtersArray[index].field = field
+      this.filtersArray[index].operator = operator
+      this.filtersArray[index].value = value
+    }
+
+    this.setState({
+      selectedFilterIndex: null
+    })
+
+    this.propagateFilters()
+  }
+
+  propagateFilters() {
+    const {onUpdateFilters} = this.props
+
+    let newFiltersObject = this.filtersArray.reduce((result, filter) => {
+      const {field, operator, value} = filter
+
+      result[field] = (!operator || operator === DEFAULT_OPERATOR_KEYWORD) ?
+        value :
+        {[operator]: value}
+
+      return result
+    }, {})
+
+    onUpdateFilters(newFiltersObject)
+  }
+
+  removeFilter(index, event) {
+    const {
+      onUpdateFilters
+    } = this.props
+
+    let newFilters = this.filtersArray.reduce((result, filter, arrayIndex) => {
+      if (index !== arrayIndex) {
+        const {field, operator, value} = filter
+
+        result[field] = {
+          [operator]: value
+        }
+      }
+
+      return result
+    }, {})
+
+    onUpdateFilters(newFilters)
+
+    event.stopPropagation()
   }
 
   render() {
-    const {dirty, filters} = this.state
     const {
       collection,
-      config,
-      forceFirstFilter
+      filters,
     } = this.props
+    const {
+      search: searchValue,
+      selectedFilterField,
+      selectedFilterIndex,
+      selectedFilterOperator,
+      selectedFilterValue
+    } = this.state
 
-    if (!collection || !filters) return null
+    if (!collection) return null
+
+    this.filtersArray = this.buildFiltersArray(filters)
+
+    // Finding String fields that don't already have filters applied.
+    let searchableFields = Object.keys(collection.fields).filter(field => {
+      if (collection.fields[field].type.toLowerCase() !== 'string') {
+        return false
+      }
+
+      return !filters || filters[field] === undefined
+    })
 
     return (
-      <form class={styles.filters}>
-        {filters.map((filter, index) => (
-          <DocumentFilter
-            config={config}
-            field={filter.field}
-            fields={collection.fields}
-            filters={filters}
-            index={index}
-            onRemove={this.handleRemoveFilter.bind(this)}
-            onUpdate={this.handleUpdateFilter.bind(this)}
-            type={filter.type}
-            value={filter.value}
+      <div class={styles.wrapper}>
+        <form
+          class={styles.form}
+          onSubmit={this.handleFilterSubmit.bind(this, searchableFields[this.state.searchableFieldsPointer])}
+        >
+          <TextInput
+            className={styles.input}
+            onInput={event => this.setState({
+              search: event.target.value
+            })}
+            onKeyDown={this.handleSearchableFieldsPointer.bind(this, searchableFields)}
+            placeholder={`Search ${collection.name}`}
+            value={searchValue}
+            tabindex="1"
           />
-        ))}
 
-        {(filters.length > 0) && (
-          <Button
-            accent="data"
-            className={styles.submit}
-            disabled={!dirty}
-            onClick={this.updateUrl.bind(this)}
-            type="submit"
-          >Apply {filters.length > 1 ? 'filters' : 'filter'}</Button>
-        )}
-      </form>
+          {searchValue &&
+            <div class={styles.suggestions}>
+              {searchableFields.map((fieldName, index) => {
+                const suggestionStyle = new Style(styles, 'suggestion')
+                  .addIf('suggestion-selected', this.state.searchableFieldsPointer === index)
+
+                return (
+                  <button
+                    class={suggestionStyle.getClasses()}
+                    onClick={this.handleFilterSubmit.bind(this, fieldName)}
+                    type="button"
+                  >
+                    <span class={styles['suggestion-prefix']}>
+                      {this.getFieldName(fieldName)} contains
+                    </span>
+                    ‘{searchValue}’
+                  </button>
+                )
+              })}
+            </div>
+          }          
+        </form>
+
+        <div class={styles.filters}>
+          {this.filtersArray.map(this.renderFilter.bind(this))}
+        </div>
+
+        <Button 
+          className={styles.button}
+          accent="data"
+          onClick={this.handleFiltersButtonClick.bind(this)}
+          type="button"
+        >Add filter</Button>
+
+        {selectedFilterIndex === -1 &&
+          <div class={styles['new-filter-tooltip']}>
+            {this.renderFilterTooltip({
+              field: selectedFilterField,
+              operator: selectedFilterOperator,
+              value: selectedFilterValue
+            })}
+          </div>
+        }
+      </div>
     )
   }
 
-  updateUrl(clear) {
-    const {filters} = this.state
-    const {updateUrlParams} = this.props
-    const constructedFilters = this.constructFilters(filters)
-    const filterObj = arrayToObject(constructedFilters, 'field')
+  renderFilter(filter, index) {
+    const {
+      field,
+      operator,
+      operatorFriendly,
+      value
+    } = filter
+    const {collection} = this.props
+    const {
+      selectedFilterField,
+      selectedFilterIndex,
+      selectedFilterOperator,
+      selectedFilterValue
+    } = this.state
 
-    if (
-      (filterObj || clear) &&
-      typeof updateUrlParams === 'function'
-    ) {
-      updateUrlParams(filterObj)
-    }
+    return (
+      <div class={styles['filter-wrapper']}>
+        <div
+          class={styles.filter}
+          onClick={this.handleFilterSelect.bind(this, index)}
+        >
+          <span class={styles['filter-field']}>{this.getFieldName(field)}</span>
+          <span class={styles['filter-operator']}>{operatorFriendly || operator || DEFAULT_OPERATOR_NAME}</span>
+          <span class={styles['filter-value']}>‘{value.toString()}’</span>
 
-    this.setState({dirty: false})
+          <button
+            class={styles['filter-close']}
+            onClick={this.removeFilter.bind(this, index)}
+          >×</button>
+        </div>
+
+        {selectedFilterIndex === index && this.renderFilterTooltip({
+          field: selectedFilterField,
+          isUpdate: true,
+          operator: selectedFilterOperator,
+          value: selectedFilterValue
+        })}
+      </div>
+    )
+  }
+
+  renderFilterTooltip({
+    field,
+    isUpdate,
+    operator,
+    value
+  } = {}) {
+    const {collection, filters} = this.props
+
+    // Finding fields that are filterable (i.e. their component exports a
+    // `filter` component) and don't already have a filter applied. The
+    // result is an object mapping filterable field slugs to their human-
+    // friendly name.
+    let filterableFields = Object.keys(collection.fields).reduce((result, slug) => {
+      let fieldComponent = this.getFieldComponent(slug)
+
+      if (
+        fieldComponent.filter &&
+        (field === slug || !filters || filters[slug] === undefined)
+      ) {
+        result[slug] = this.getFieldName(slug)  
+      }
+
+      return result
+    }, {})
+
+    // Applying defaults.
+    field = field || Object.keys(filterableFields)[0]
+
+    let {
+      filter: FilterComponent,
+      operators
+    } = this.getFieldComponent(field) || {}
+    let valueIsEmpty = value === null || value === undefined || value === ''
+
+    const tooltipStyle = new Style(styles, 'tooltip')
+      .addIf('tooltip-right', !Boolean(isUpdate))
+    const fieldSelectorStyle = new Style(styles)
+      .addIf('tooltip-dropdown-left', Boolean(operators))
+
+    return (
+      <form
+        class={tooltipStyle.getClasses()}
+        onClick={this.handleClick.bind(this, true)}
+        onSubmit={this.handleSelectedFilterUpdate.bind(this, field)}
+      >
+        <div class={styles['tooltip-section']}>
+          <h3
+            class={styles['tooltip-heading']}
+          >Filtering</h3>
+
+          <DropdownNative
+            className={fieldSelectorStyle.getClasses()}
+            onChange={this.handleSelectedFilterFieldChange.bind(this)}
+            options={filterableFields}
+            textSize="small"
+            value={field || Object.keys(filterableFields)[0]}
+          />
+
+          {operators &&
+            <DropdownNative
+              className={styles['tooltip-dropdown-right']}
+              onChange={value => this.setState({
+                selectedFilterOperator: value
+              })}
+              options={Object.assign({
+                [DEFAULT_OPERATOR_KEYWORD]: DEFAULT_OPERATOR_NAME
+              }, operators)}
+              textSize="small"
+              value={operator || DEFAULT_OPERATOR_KEYWORD}
+            />
+          }
+        </div>
+
+        <div class={styles['tooltip-section']}>
+          <h3
+            class={styles['tooltip-heading']}
+          >Value</h3>
+
+          {FilterComponent &&
+            <FilterComponent
+              onUpdate={value => this.setState({
+                selectedFilterValue: value
+              })}
+              stylesTextInput={styles['tooltip-input']}
+              value={value}
+            />
+          }
+        </div>
+
+        <Button
+          accent="data"
+          className={styles['tooltip-cta']}
+          disabled={valueIsEmpty}
+          type="submit"
+        >{isUpdate ? 'Update' : 'Add'} filter</Button>
+      </form>
+    ) 
   }
 }
