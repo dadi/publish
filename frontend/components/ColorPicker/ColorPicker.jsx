@@ -49,11 +49,7 @@ export default class ColorPicker extends Component {
     this.paletteElement = false
     this.paletteIndicator = false
   }
-
-  componentDidMount() {
-    this.setInitial()
-  }
-
+  
   render() {
     const {className, color: value} = this.props
     const containerStyle = new Style(styles, 'container').addResolved(className)
