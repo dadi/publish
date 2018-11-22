@@ -1,6 +1,6 @@
 'use strict'
 
-import {debounce} from 'lib/util'
+import {debounce, getUniqueId} from 'lib/util'
 import {h, Component} from 'preact'
 import proptypes from 'proptypes'
 
@@ -82,6 +82,8 @@ export default class RichEditor extends Component {
       onImageInsert,
       value
     } = this.props
+
+    this.editorId = `rich-editor-${getUniqueId()}`
 
     if (typeof insertImageCallback === 'function') {
       insertImageCallback(this.handleInsertImage.bind(this))
@@ -213,7 +215,7 @@ export default class RichEditor extends Component {
       classes: {
         actionbar: styles['pell-actionbar'],
         button: styles['pell-button'],
-        content: `${styles.editor} ${styles['editor-wysiwyg']}`,
+        content: `${styles.editor} ${styles['editor-wysiwyg']} ${this.editorId}`,
         selected: styles['pell-button-selected']
       }
     })
@@ -467,7 +469,7 @@ export default class RichEditor extends Component {
       }
 
       return node.classList &&
-        node.classList.contains(styles.editor)
+        node.classList.contains(this.editorId)
     })
 
     // If the selection wasn't made somewhere within the editor, we don't care.
