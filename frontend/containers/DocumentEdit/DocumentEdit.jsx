@@ -184,15 +184,17 @@ class DocumentEdit extends Component {
 
   componentWillUnmount() {
     const {
-      actions
+      actions,
+      collection,
+      documentId
     } = this.props
 
     window.removeEventListener('beforeunload', this.userLeavingDocumentHandler)
-    actions.roomChange(null)
-  }
 
-  componentWillUpdate(nextProps, nextState) {
-    this.handleRoomChange()
+    actions.registerUserLeavingDocument({
+      collection,
+      documentId
+    })    
   }
 
   // Fetches a document from the remote API

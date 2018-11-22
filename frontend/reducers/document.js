@@ -203,6 +203,14 @@ export default function document (state = initialState, action = {}) {
 
       return newState
 
+    // Document action: user leaving the document.
+    case Types.USER_LEAVING_DOCUMENT:
+      return {
+        ...state,
+        local: {},
+        localMeta: {}
+      }
+
     default:
       return state
   }
