@@ -159,7 +159,6 @@ class DocumentEdit extends Component {
       collection &&
       state.api.apis.length > 0
     ) {
-      this.handleRoomChange()
       this.fetchDocument()
     }
   }
@@ -220,14 +219,6 @@ class DocumentEdit extends Component {
 
     this.hasFetched = true
   }
-
-  handleRoomChange() {
-    const {state, actions, documentId} = this.props
-
-    if (documentId && state.router.room !== documentId) {
-      actions.roomChange(documentId)
-    }
-  } 
 
   handleUserLeavingDocument() {
     const {
