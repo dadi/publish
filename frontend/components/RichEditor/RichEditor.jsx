@@ -177,11 +177,40 @@ export default class RichEditor extends Component {
         {
           name: 'code',
           icon: 'Code',
+          state: () => {
+            return this.getNodeTagPathsInSelection().find(e => {
+              return e.tagName === 'PRE' &&
+                e.classList &&
+                e.classList.contains(styles.code)
+            })
+          },
           result: () => {
-            let selection = window.getSelection()
-            let html = `<pre class="${styles.code}">${selection.toString()}</pre>`
+            let codeNode = this.getNodeTagPathsInSelection().find(e => {
+              return e.tagName === 'PRE' &&
+                e.classList &&
+                e.classList.contains(styles.code)
+            })
 
-            pell.exec('insertHTML', html)
+            // If we are inside a code block, we grab the contents of the HTML
+            // inside it, set the selection to a neighbouring or parent node,
+            // delete the `<pre>` and insert back the HTML.
+            if (codeNode) {
+              let {innerHTML} = codeNode
+              let nextFocus = codeNode.previousSibling ||
+                codeNode.nextSibling ||
+                codeNode.parentNode
+
+              codeNode.parentNode.removeChild(codeNode)
+
+              this.setSelectionOnElement(nextFocus)
+
+              pell.exec('insertHTML', '<br>' + innerHTML + '<br>')
+            } else {
+              let selection = window.getSelection()
+              let html = `<pre class="${styles.code}">${selection.toString()}</pre>`
+
+              pell.exec('insertHTML', html)
+            }
           }
         },
         {
