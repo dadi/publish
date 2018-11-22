@@ -190,11 +190,6 @@ class DocumentEdit extends Component {
     } = this.props
 
     window.removeEventListener('beforeunload', this.userLeavingDocumentHandler)
-
-    actions.registerUserLeavingDocument({
-      collection,
-      documentId
-    })    
   }
 
   // Fetches a document from the remote API
