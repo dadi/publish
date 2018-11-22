@@ -124,7 +124,6 @@ export default class RichEditor extends Component {
     this.editor = pell.init({
       element: this.editorWrapper,
       onChange: this.handleChange.bind(this),
-      styleWithCSS: true,
       actions: [
         {
           name: 'bold',
