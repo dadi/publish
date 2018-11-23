@@ -265,6 +265,11 @@ module.exports = {
       doc: 'Whether to include a "Powered by DADI Publish" section',
       format: Boolean,
       default: false
+    },
+    displayVersionNumber: {
+      doc: 'Whether to display the version of the application in the navigation menu',
+      format: Boolean,
+      default: true
     }
   }
 }

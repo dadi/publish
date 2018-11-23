@@ -53,7 +53,7 @@ class Header extends Component {
     const compact = state.app.breakpoint === null
 
     const {whitelabel} = state.app.config
-    const {logo} = whitelabel
+    const {displayVersionNumber, logo} = whitelabel
 
     if (!state.user.isSignedIn) {
       return null
@@ -99,9 +99,11 @@ class Header extends Component {
                   onClick={this.handleSignOut.bind(this)}
                 >Sign out</button>
 
-                <span class={styles.control}>
-                  v{state.app.version}
-                </span>
+                {displayVersionNumber &&
+                  <span class={styles.control}>
+                    v{state.app.version}
+                  </span>
+                }
               </div>
             )}
           </div>
