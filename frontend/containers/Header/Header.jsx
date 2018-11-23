@@ -89,13 +89,19 @@ class Header extends Component {
 
             {state.user.accessToken && this.state.expanded && (
               <div class={styles.controls}>
-                <a href="/profile" class={styles.user}>{displayName}</a>
+                <a
+                  class={`${styles.control} ${styles['control-action']}`}
+                  href="/profile"
+                >{displayName}</a>
+
                 <button
-                  class={styles.signout}
+                  class={`${styles.control} ${styles['control-action']}`}
                   onClick={this.handleSignOut.bind(this)}
-                >
-                  Sign out
-                </button>
+                >Sign out</button>
+
+                <span class={styles.control}>
+                  v{state.app.version}
+                </span>
               </div>
             )}
           </div>
