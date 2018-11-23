@@ -178,6 +178,7 @@ class DocumentList extends Component {
     const {path: previousCollectionPath} = prevProps.collection || {}
     const {search} = state.router.locationBeforeTransitions
     const {search: previousSearch} = prevProps.state.router.locationBeforeTransitions
+    const hasJustDeleted = previousDocuments.isDeleting && !documents.isDeleting
     const hasJustSaved = previousDocuments.isSaving && !documents.isSaving
     const resourceIsTheSame = collectionPath === previousCollectionPath &&
       referencedField === prevProps.referencedField &&
@@ -189,7 +190,7 @@ class DocumentList extends Component {
       api.apis.length === 0 ||
       !collection ||
       documents.isLoading ||
-      (!hasJustSaved && documents.list && resourceIsTheSame)
+      (!hasJustDeleted && !hasJustSaved && documents.list && resourceIsTheSame)
     ) {
       return
     }
