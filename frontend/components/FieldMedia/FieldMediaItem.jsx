@@ -27,7 +27,7 @@ export default class FieldMediaItem extends Component {
     const {config, isList, value} = this.props
     const cdn = config ? config.cdn : null
 
-    if (!value || !value.fileName) {
+    if (!value) {
       return null
     }
 
