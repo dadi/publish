@@ -118,7 +118,8 @@ export function signIn (clientId, secret) {
     let requiredFeatures = [
       'aclv1',
       'i18nv2',
-      'collectionsv1'
+      'collectionsv1',
+      'mediafieldv1'
     ]
 
     if (api.port) {

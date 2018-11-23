@@ -4,6 +4,9 @@ const flash = require('connect-flash')
 const fs = require('fs')
 const log = require('@dadi/logger')
 const path = require('path')
+const packageJson = require(
+  path.join(paths.base, 'package.json')
+)
 const request = require('request-promise')
 const restify = require('restify')
 const session = require('cookie-session')
@@ -86,7 +89,10 @@ Router.prototype.webRoutes = function () {
   this.server.get('*', (req, res, next) => {
     res.header('Content-Type', 'text/html; charset=utf-8')
 
-    let entryPointPage = this.entryPointTemplate
+    let entryPointPage = this.entryPointTemplate.replace(
+      '/*@@publishVersion@@*/',
+      `window.__version__ = ${JSON.stringify(packageJson.version)};`
+    )
     let accessToken = req.cookies && req.cookies.accessToken
     let authenticate = Promise.resolve()
 

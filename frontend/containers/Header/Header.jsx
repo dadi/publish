@@ -53,7 +53,7 @@ class Header extends Component {
     const compact = state.app.breakpoint === null
 
     const {whitelabel} = state.app.config
-    const {logo} = whitelabel
+    const {displayVersionNumber, logo} = whitelabel
 
     if (!state.user.isSignedIn) {
       return null
@@ -89,13 +89,21 @@ class Header extends Component {
 
             {state.user.accessToken && this.state.expanded && (
               <div class={styles.controls}>
-                <a href="/profile" class={styles.user}>{displayName}</a>
+                <a
+                  class={`${styles.control} ${styles['control-action']}`}
+                  href="/profile"
+                >{displayName}</a>
+
                 <button
-                  class={styles.signout}
+                  class={`${styles.control} ${styles['control-action']}`}
                   onClick={this.handleSignOut.bind(this)}
-                >
-                  Sign out
-                </button>
+                >Sign out</button>
+
+                {displayVersionNumber &&
+                  <span class={styles.control}>
+                    v{state.app.version}
+                  </span>
+                }
               </div>
             )}
           </div>
