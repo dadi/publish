@@ -159,7 +159,6 @@ class DocumentEdit extends Component {
       collection &&
       state.api.apis.length > 0
     ) {
-      this.handleRoomChange()
       this.fetchDocument()
     }
   }
@@ -185,15 +184,12 @@ class DocumentEdit extends Component {
 
   componentWillUnmount() {
     const {
-      actions
+      actions,
+      collection,
+      documentId
     } = this.props
 
     window.removeEventListener('beforeunload', this.userLeavingDocumentHandler)
-    actions.roomChange(null)
-  }
-
-  componentWillUpdate(nextProps, nextState) {
-    this.handleRoomChange()
   }
 
   // Fetches a document from the remote API
@@ -220,14 +216,6 @@ class DocumentEdit extends Component {
 
     this.hasFetched = true
   }
-
-  handleRoomChange() {
-    const {state, actions, documentId} = this.props
-
-    if (documentId && state.router.room !== documentId) {
-      actions.roomChange(documentId)
-    }
-  } 
 
   handleUserLeavingDocument() {
     const {

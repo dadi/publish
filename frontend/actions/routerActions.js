@@ -6,10 +6,3 @@ export function setRouteParameters (parameters) {
     type: Types.SET_ROUTE_PARAMETERS
   }
 }
-
-export function roomChange (room) {
-  return {
-    room,
-    type: Types.ROOM_CHANGE
-  }
-}
