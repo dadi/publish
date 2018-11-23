@@ -141,19 +141,37 @@ export default class FieldMediaEdit extends Component {
       <Label label={displayName} className={styles.label}>
         {values && (
           <div class={styles.values}>
-            {values.map((value, idx) => {
+            {values.map((value, index) => {
+                let isUncomposedValue = typeof value === 'string'
+                let id = value._id || value
+                let displayName = value.fileName ?
+                  value.fileName.split('.').pop() :
+                  'Document not found'
+
                 return ( 
-                  <div class={styles.value}>
+                  <div
+                    class={styles.value}
+                    title={id}
+                  >
                     <FieldMediaItem
                       config={config}
                       value={value}
                     />
-                    <span class={styles['file-size']}>{fileSize(value.contentLength).human('si') || ''}</span>
-                    <span class={styles['file-ext']}>{value.fileName.split('.').pop()}</span>
+
+                    {value.contentLength &&
+                      <span class={styles['file-size']}>
+                        {fileSize(value.contentLength).human('si') || ''}
+                      </span>
+                    }
+
+                    <span class={styles['file-ext']}>
+                      {displayName}
+                    </span>
+                    
                     <Button
                       accent="destruct"
                       className={styles['remove-existing']}
-                      onClick={this.handleRemoveFile.bind(this, value.fileName)}
+                      onClick={this.handleRemoveFile.bind(this, id)}
                       size="small"
                     ><span>×</span></Button>
                   </div>
@@ -202,10 +220,13 @@ export default class FieldMediaEdit extends Component {
     )
   }
   
-  handleRemoveFile(fileName) {
+  handleRemoveFile(id) {
     const {name, onChange, schema, value} = this.props
     const values = (value && !Array.isArray(value)) ? [value] : value
-    let newValues = values.filter((v) => v.fileName !== fileName)
+
+    let newValues = values.filter(value => {
+      return value !== id && value._id !== id
+    })
 
     if (newValues.length === 0) {
       newValues = null
