@@ -11,6 +11,7 @@ import ButtonWithPrompt from 'components/ButtonWithPrompt/ButtonWithPrompt'
 import DocumentList from 'containers/DocumentList/DocumentList'
 import DocumentGridList from 'components/DocumentGridList/DocumentGridList'
 import DocumentListToolbar from 'components/DocumentListToolbar/DocumentListToolbar'
+import DropdownNative from 'components/DropdownNative/DropdownNative'
 import Header from 'containers/Header/Header'
 import HeroMessage from 'components/HeroMessage/HeroMessage'
 import Main from 'components/Main/Main'
@@ -53,13 +54,13 @@ class MediaListView extends Component {
     if (!validBulkActionSelected) return
 
     if (bulkActionSelected === BULK_ACTIONS.DELETE) {
-      this.handleDocumentDelete(state.documents.selected)
+      this.handleDelete(state.documents.selected)
     }
   }
 
-  handleBulkActionSelect(event) {
+  handleBulkActionSelect(value) {
     this.setState({
-      bulkActionSelected: event.target.value
+      bulkActionSelected: value
     })
   }
 
@@ -160,17 +161,17 @@ class MediaListView extends Component {
           })}
         >
           <div>
-            <select
-              class={styles['bulk-action-select']}
+            <DropdownNative
+              className={styles['bulk-action-select']}
               onChange={this.handleBulkActionSelect.bind(this)}
+              options={{
+                [BULK_ACTIONS.DELETE]: 'Delete'
+              }}
+              placeholderLabel="With selected..."
+              placeholderValue={BULK_ACTIONS.PLACEHOLDER}
+              textSize="small"
               value={bulkActionSelected}
-            >
-              <option
-                disabled
-                value={BULK_ACTIONS.PLACEHOLDER}
-              >With selected...</option>
-              <option value="delete">Delete</option>
-            </select>
+            />
 
             <ButtonWithPrompt
               accent="data"
