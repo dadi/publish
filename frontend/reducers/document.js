@@ -113,9 +113,18 @@ export default function document (state = initialState, action = {}) {
         return state
       }
 
-      let local = action.clearLocal ?
-        {} :
-        state.local || action.fromLocalStorage || {}
+      let local = {}
+
+      if (!action.clearLocal) {
+        // We can reuse the contents of state.local if the document being edited
+        // is the same.
+        let shouldReuseExistingLocal =
+          (state.remote && state.remote._id) === (action.remote && action.remote._id)
+
+        local = (shouldReuseExistingLocal && state.local) ||
+          action.fromLocalStorage ||
+          {}
+      }
 
       return {
         ...state,
