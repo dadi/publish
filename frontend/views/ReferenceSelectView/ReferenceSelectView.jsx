@@ -21,7 +21,7 @@ import DocumentTableList from 'components/DocumentTableList/DocumentTableList'
 import Header from 'containers/Header/Header'
 import HeroMessage from 'components/HeroMessage/HeroMessage'
 import Main from 'components/Main/Main'
-import MediaGridCard from 'components/MediaGridCard/MediaGridCard'
+import MediaGridCard from 'containers/MediaGridCard/MediaGridCard'
 import Page from 'components/Page/Page'
 import ReferenceSelectHeader from 'components/ReferenceSelectHeader/ReferenceSelectHeader'
 

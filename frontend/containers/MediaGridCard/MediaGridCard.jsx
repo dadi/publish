@@ -1,18 +1,28 @@
 'use strict'
 
 import {h, Component} from 'preact'
+import {bindActionCreators} from 'redux'
+import {connectHelper} from 'lib/util'
 import proptypes from 'proptypes'
-
 import Style from 'lib/Style'
 import styles from './MediaGridCard.css'
+
+import * as Constants from 'lib/constants'
+import * as documentActions from 'actions/documentActions'
+import * as fieldComponents from 'lib/field-components'
 
 const fileSize = require('file-size')
 
 /**
  * Renders the information part of a media-specific grid card.
  */
-export default class MediaCard extends Component {
+class MediaGridCard extends Component {
   static propTypes = {
+    /**
+    * The global actions object.
+    */
+    actions: proptypes.object,
+
     /**
      * The link to be followed when the card is clicked.
      */
@@ -37,7 +47,12 @@ export default class MediaCard extends Component {
     /**
      * The maximum number of items that can be selected.
      */
-    selectLimit: proptypes.number    
+    selectLimit: proptypes.number,
+
+    /**
+     * The global state object.
+     */
+    state: proptypes.object
   }
 
   static defaultProps = {
@@ -132,14 +147,22 @@ export default class MediaCard extends Component {
     const {
       href,
       item,
-      onSelect
+      onSelect,
+      state
     } = this.props
+    const {config} = state.app
     const aspectRatio = isImage ?
       (item.height / item.width) * 100 :
       100
+    const canonicalPath = item.path && (
+      item.path.indexOf('/') === 0 ? item.path : `/${item.path}`
+    )
+    const url = (config.cdn && config.cdn.publicUrl) ?
+      `${config.cdn.publicUrl}${canonicalPath}?width=350` :
+      (item.url || canonicalPath)
 
     let headElement = isImage ?
-      <img class={styles.image} src={item.url}/> :
+      <img class={styles.image} src={url}/> :
       <div class={styles['generic-thumbnail']}/>
 
     if (typeof href === 'string') {
@@ -161,3 +184,12 @@ export default class MediaCard extends Component {
     )
   }
 }
+
+export default connectHelper(
+  state => ({
+    app: state.app
+  }),
+  dispatch => bindActionCreators({
+    ...documentActions
+  }, dispatch)
+)(MediaGridCard)

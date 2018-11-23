@@ -9,7 +9,7 @@ import Style from 'lib/Style'
 import styles from './FieldMediaReferenceSelect.css'
 
 import DocumentGridList from 'components/DocumentGridList/DocumentGridList'
-import MediaGridCard from 'components/MediaGridCard/MediaGridCard'
+import MediaGridCard from 'containers/MediaGridCard/MediaGridCard'
 
 /**
  * Component for rendering API fields of type Media on a reference field select
