@@ -54,11 +54,14 @@
   -webkit-overflow-scrolling: touch;
 }
 
+.wrapper-mode-fullscreen .wrapper {
+  padding: 70px 5%;
+}
+
 .wrapper-mode-fullscreen .editor,
 .wrapper-mode-fullscreen .editor-text {
   max-width: 1100px;
   margin: auto;
-  padding: 70px 5%;
   text-align: left;
   box-sizing: border-box;
   background: #fafafa;
