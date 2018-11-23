@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [1.0.16-beta] (2018-11-23)
+
+### Fixed
+
+* ensure images are loaded from CDN when a `cdn` block exists in the configuration
+
 ## [1.0.15-beta] (2018-11-23)
 
 ### Added
