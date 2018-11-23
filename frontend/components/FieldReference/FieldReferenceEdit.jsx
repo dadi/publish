@@ -157,14 +157,26 @@ export default class FieldReferenceEdit extends Component {
           <div class={styles['value-container']}>
             <div class={styles.values}>
               {values.map(value => {
-                let editLink = `${referencedCollection._publishLink}/${value._id}`
+                if (value._id) {
+                  return (
+                    <a
+                      class={styles['value-link']}
+                      href={`${referencedCollection._publishLink}/${value._id}`}
+                    >
+                      <span class={styles.value}>
+                        {displayField && value[displayField] || `Referenced ${displayName}`}
+                      </span>
+                    </a>
+                  )                  
+                }
 
                 return (
-                  <a class={styles['value-link']} href={editLink}>
-                    <span class={styles.value}>
-                      {displayField && value[displayField] || `Referenced ${displayName}`}
-                    </span>
-                  </a>
+                  <span
+                    class={styles.value}
+                    title={value}
+                  >
+                    Document not found
+                  </span>
                 )
               })}
             </div>
