@@ -171,7 +171,10 @@ export default class FieldReferenceEdit extends Component {
                 }
 
                 return (
-                  <span class={styles.value}>
+                  <span
+                    class={styles.value}
+                    title={value}
+                  >
                     Document not found
                   </span>
                 )
