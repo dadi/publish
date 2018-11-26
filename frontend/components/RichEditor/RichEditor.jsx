@@ -97,7 +97,12 @@ export default class RichEditor extends Component {
     this.turndownService.addRule('li', {
       filter: ['li'],
       replacement: (content, node) => {
-        return `* ${content && content.trim()}\n`
+        let parent = node.parentNode
+        let listCharacter = node.parentNode.tagName === 'OL' ?
+          '1.' :
+          '*'
+
+        return `${listCharacter} ${content && content.trim()}\n`
       }
     })
 
@@ -112,10 +117,9 @@ export default class RichEditor extends Component {
 
         return '```' + language + '\n' + content + '\n```'
       }
-    })    
+    })
 
     this.markdownRenderer = new marked.Renderer()
-
     this.markdownRenderer.code = (code, language = '') => {
       let escapedCode = code
          .replace(/&/g, '&amp;')
@@ -439,7 +443,9 @@ export default class RichEditor extends Component {
         anchorOffset: position
       } = window.getSelection()
       let text = anchorNode.textContent
-      let newText = `${text.slice(0, position)}\n${text.slice(position)}`
+      let leftPart = text.slice(0, position)
+      let rightPart = text.slice(position)
+      let newText = `${leftPart}\n${rightPart}${rightPart === '' ? '\n' : ''}`
 
       anchorNode.textContent = newText
 
