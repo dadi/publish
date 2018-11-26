@@ -124,6 +124,7 @@ export default class RichEditor extends Component {
     this.editor = pell.init({
       element: this.editorWrapper,
       onChange: this.handleChange.bind(this),
+      styleWithCSS: false,
       actions: [
         {
           name: 'bold',
@@ -438,7 +439,7 @@ export default class RichEditor extends Component {
     
     pell.exec('insertHTML', `<span data-publish-link-edit="true">${selection.toString()}</span>`)
 
-    this.editLinkNode = document.querySelector('[data-publish-link-edit="true"]')
+    this.editLinkNode = window.getSelection().anchorNode.parentNode
 
     this.setState({
       inEditLinkMode: true
