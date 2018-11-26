@@ -19,11 +19,6 @@ export default class ColorPicker extends Component {
     className: proptypes.string,
 
     /**
-     * The Color string representing the currently selected value.
-     */
-    color: proptypes.string,
-
-    /**
      * The format of the color string
      */
     format: proptypes.string,
@@ -31,8 +26,17 @@ export default class ColorPicker extends Component {
     /**
      * A callback to be fired when a new date is selected.
      */
-    onChange: proptypes.func
+    onChange: proptypes.func,
+
+    /**
+     * The Color string representing the currently selected value.
+     */
+    value: proptypes.string
   }
+
+  static defaultProps = {
+    value: '000000'
+  }  
 
   constructor(props) {
     super(props)
@@ -51,11 +55,11 @@ export default class ColorPicker extends Component {
   }
 
   render() {
-    const {className, color: value} = this.props
+    const {className, value} = this.props
     const containerStyle = new Style(styles, 'container').addResolved(className)
 
     // Update hsv
-    this.hsv = Color.hex2hsv(this.props.color)
+    this.hsv = Color.hex2hsv(value)
 
     // Set initial positions
     this.setInitial()
@@ -196,7 +200,7 @@ export default class ColorPicker extends Component {
   }
 
   handleColorPick() {
-    const {color, onChange} = this.props
+    const {onChange} = this.props
 
     if (typeof onChange === 'function') {
       onChange.call(this, Color.hsv2hex(this.hsv))

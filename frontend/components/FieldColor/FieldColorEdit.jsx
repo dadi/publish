@@ -233,9 +233,9 @@ export default class FieldColorEdit extends Component {
           <div ref={this.handlePickerRef.bind(this)}>
             <ColorPicker
               className={styles.picker}
-              color={value}
-              onChange={this.handlePickerChange.bind(this)}
               format={publishBlock.format || 'hex'}
+              onChange={this.handlePickerChange.bind(this)}
+              value={value}
             />
           </div>
         }
