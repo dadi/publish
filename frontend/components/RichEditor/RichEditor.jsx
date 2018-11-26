@@ -120,7 +120,7 @@ export default class RichEditor extends Component {
       return `<pre class="${styles.code}" data-language="${language.trim()}">${escapedCode}</pre>`
     }
 
-    // Initialize pell on an HTMLElement
+    // Initialize pell on an HTMLElement.
     this.editor = pell.init({
       element: this.editorWrapper,
       onChange: this.handleChange.bind(this),
@@ -133,10 +133,6 @@ export default class RichEditor extends Component {
         {
           name: 'italic',
           icon: 'Italic'
-        },
-        {
-          name: 'underline',
-          icon: 'Underline'
         },
         {
           name: 'link',
