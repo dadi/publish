@@ -1,6 +1,6 @@
 'use strict'
 
-import {debounce} from 'lib/util'
+import {debounce, getUniqueId} from 'lib/util'
 import {h, Component} from 'preact'
 import proptypes from 'proptypes'
 
@@ -83,6 +83,8 @@ export default class RichEditor extends Component {
       value
     } = this.props
 
+    this.editorId = `rich-editor-${getUniqueId()}`
+
     if (typeof insertImageCallback === 'function') {
       insertImageCallback(this.handleInsertImage.bind(this))
     }
@@ -118,11 +120,11 @@ export default class RichEditor extends Component {
       return `<pre class="${styles.code}" data-language="${language.trim()}">${escapedCode}</pre>`
     }
 
-    // Initialize pell on an HTMLElement
+    // Initialize pell on an HTMLElement.
     this.editor = pell.init({
       element: this.editorWrapper,
       onChange: this.handleChange.bind(this),
-      styleWithCSS: true,
+      styleWithCSS: false,
       actions: [
         {
           name: 'bold',
@@ -131,10 +133,6 @@ export default class RichEditor extends Component {
         {
           name: 'italic',
           icon: 'Italic'
-        },
-        {
-          name: 'underline',
-          icon: 'Underline'
         },
         {
           name: 'link',
@@ -176,11 +174,40 @@ export default class RichEditor extends Component {
         {
           name: 'code',
           icon: 'Code',
+          state: () => {
+            return this.getNodeTagPathsInSelection().find(e => {
+              return e.tagName === 'PRE' &&
+                e.classList &&
+                e.classList.contains(styles.code)
+            })
+          },
           result: () => {
-            let selection = window.getSelection()
-            let html = `<pre class="${styles.code}">${selection.toString()}</pre>`
+            let codeNode = this.getNodeTagPathsInSelection().find(e => {
+              return e.tagName === 'PRE' &&
+                e.classList &&
+                e.classList.contains(styles.code)
+            })
 
-            pell.exec('insertHTML', html)
+            // If we are inside a code block, we grab the contents of the HTML
+            // inside it, set the selection to a neighbouring or parent node,
+            // delete the `<pre>` and insert back the HTML.
+            if (codeNode) {
+              let {innerHTML} = codeNode
+              let nextFocus = codeNode.previousSibling ||
+                codeNode.nextSibling ||
+                codeNode.parentNode
+
+              codeNode.parentNode.removeChild(codeNode)
+
+              this.setSelectionOnElement(nextFocus)
+
+              pell.exec('insertHTML', '<br>' + innerHTML + '<br>')
+            } else {
+              let selection = window.getSelection()
+              let html = `<pre class="${styles.code}">${selection.toString()}</pre>`
+
+              pell.exec('insertHTML', html)
+            }
           }
         },
         {
@@ -213,7 +240,7 @@ export default class RichEditor extends Component {
       classes: {
         actionbar: styles['pell-actionbar'],
         button: styles['pell-button'],
-        content: `${styles.editor} ${styles['editor-wysiwyg']}`,
+        content: `${styles.editor} ${styles['editor-wysiwyg']} ${this.editorId}`,
         selected: styles['pell-button-selected']
       }
     })
@@ -408,7 +435,7 @@ export default class RichEditor extends Component {
     
     pell.exec('insertHTML', `<span data-publish-link-edit="true">${selection.toString()}</span>`)
 
-    this.editLinkNode = document.querySelector('[data-publish-link-edit="true"]')
+    this.editLinkNode = window.getSelection().anchorNode.parentNode
 
     this.setState({
       inEditLinkMode: true
@@ -467,7 +494,7 @@ export default class RichEditor extends Component {
       }
 
       return node.classList &&
-        node.classList.contains(styles.editor)
+        node.classList.contains(this.editorId)
     })
 
     // If the selection wasn't made somewhere within the editor, we don't care.
