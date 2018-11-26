@@ -300,6 +300,10 @@
   list-style-position: inside;  
 }
 
+.editor-wysiwyg li p {
+  display: inline;
+}
+
 .editor-wysiwyg [data-publish-link-edit] {
   background-color: #f3f8ff;
 }

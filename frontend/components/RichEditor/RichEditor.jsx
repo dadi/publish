@@ -94,6 +94,18 @@ export default class RichEditor extends Component {
       headingStyle: 'atx'
     })
 
+    this.turndownService.addRule('li', {
+      filter: ['li'],
+      replacement: (content, node) => {
+        let parent = node.parentNode
+        let listCharacter = node.parentNode.tagName === 'OL' ?
+          '1.' :
+          '*'
+
+        return `${listCharacter} ${content && content.trim()}\n`
+      }
+    })
+
     this.turndownService.addRule('pre', {
       filter: (node, options) => {
         return node.classList.contains(styles.code)
@@ -105,10 +117,9 @@ export default class RichEditor extends Component {
 
         return '```' + language + '\n' + content + '\n```'
       }
-    })    
+    })
 
     this.markdownRenderer = new marked.Renderer()
-
     this.markdownRenderer.code = (code, language = '') => {
       let escapedCode = code
          .replace(/&/g, '&amp;')
@@ -175,18 +186,10 @@ export default class RichEditor extends Component {
           name: 'code',
           icon: 'Code',
           state: () => {
-            return this.getNodeTagPathsInSelection().find(e => {
-              return e.tagName === 'PRE' &&
-                e.classList &&
-                e.classList.contains(styles.code)
-            })
+            return this.isSelectionInsideCodeBlock()
           },
           result: () => {
-            let codeNode = this.getNodeTagPathsInSelection().find(e => {
-              return e.tagName === 'PRE' &&
-                e.classList &&
-                e.classList.contains(styles.code)
-            })
+            let codeNode = this.isSelectionInsideCodeBlock()
 
             // If we are inside a code block, we grab the contents of the HTML
             // inside it, set the selection to a neighbouring or parent node,
@@ -255,6 +258,7 @@ export default class RichEditor extends Component {
     this.selectionHandler = debounce(this.handleSelectionChange.bind(this), 200)
 
     document.addEventListener('selectionchange', this.selectionHandler)
+    this.editorElement.addEventListener('keypress', this.handleKeyPress.bind(this))
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -270,7 +274,8 @@ export default class RichEditor extends Component {
 
     if (value !== text) {
       this.handleChange(value, {
-        needsConversion: true
+        needsConversion: true,
+        shouldPropagate: false
       })
     }
   }
@@ -366,7 +371,8 @@ export default class RichEditor extends Component {
   }
 
   handleChange(value, {
-    needsConversion = this.state.inTextMode
+    needsConversion = this.state.inTextMode,
+    shouldPropagate = true
   } = {}) {
     const {format, onChange} = this.props
 
@@ -394,7 +400,7 @@ export default class RichEditor extends Component {
       text: sanitisedText
     })
 
-    if (typeof onChange === 'function') {
+    if (shouldPropagate && typeof onChange === 'function') {
       onChange(sanitisedText)
     }
   }
@@ -420,6 +426,39 @@ export default class RichEditor extends Component {
     }
 
     pell.exec('insertImage', url)
+  }
+
+  handleKeyPress(event) {
+    const {onChange} = this.props
+
+    if (event.keyCode === 13) {
+      let codeNode = this.isSelectionInsideCodeBlock()
+
+      if (!codeNode) {
+        return
+      }
+
+      let {
+        anchorNode,
+        anchorOffset: position
+      } = window.getSelection()
+      let text = anchorNode.textContent
+      let leftPart = text.slice(0, position)
+      let rightPart = text.slice(position)
+      let newText = `${leftPart}\n${rightPart}${rightPart === '' ? '\n' : ''}`
+
+      anchorNode.textContent = newText
+
+      let range = document.createRange()
+
+      range.setStart(anchorNode, position + 1)
+      range.setEnd(anchorNode, position + 1)
+
+      this.setSelection(range)
+      this.handleChange(this.editorElement.innerHTML)
+
+      event.preventDefault()
+    }
   }
 
   handleLinkChange(event) {
@@ -545,6 +584,14 @@ export default class RichEditor extends Component {
     return node &&
       node.classList &&
       node.classList.contains(styles.editor)
+  }
+
+  isSelectionInsideCodeBlock(node) {
+    return this.getNodeTagPathsInSelection().find(e => {
+      return e.tagName === 'PRE' &&
+        e.classList &&
+        e.classList.contains(styles.code)
+    })
   }
 
   render() {
