@@ -94,6 +94,13 @@ export default class RichEditor extends Component {
       headingStyle: 'atx'
     })
 
+    this.turndownService.addRule('li', {
+      filter: ['li'],
+      replacement: (content, node) => {
+        return `* ${content && content.trim()}\n`
+      }
+    })
+
     this.turndownService.addRule('pre', {
       filter: (node, options) => {
         return node.classList.contains(styles.code)
