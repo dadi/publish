@@ -271,8 +271,13 @@
 }
 
 .editor-wysiwyg h1,
-.editor-wysiwyg h2 {
-  margin-bottom: 10px;  
+.editor-wysiwyg h2,
+.editor-wysiwyg h3,
+.editor-wysiwyg h4,
+.editor-wysiwyg h5,
+.editor-wysiwyg h6 {
+  margin-bottom: 10px;
+  font-family: 'Karla Bold';
 }
 
 .editor-wysiwyg h1 {
