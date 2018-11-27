@@ -41,130 +41,117 @@ export default class ColorPicker extends Component {
   constructor(props) {
     super(props)
 
-    this.hsv = false
+    const initialHsv = Color.hex2hsv(props.value)
 
-    this.hueCoordinate = false
-    this.hueElement = false
-    this.hueElementHeight = false
-    this.hueIndicator = false
+    this.state.hsv = initialHsv
+    this.state.huePosition = (initialHsv.h % 360) * 200 / 360
+    this.state.paletteCoordinates = {
+      x: initialHsv.s * 200,
+      y: 200 - initialHsv.v * 200
+    }
 
-    this.paletteBackground = false
-    this.paletteCoordinate = false
-    this.paletteElement = false
-    this.paletteIndicator = false
-  }
+    this.isSettingHue = false
+    this.isSettingPalette = false
 
-  render() {
-    const {className, value} = this.props
-    const containerStyle = new Style(styles, 'container').addResolved(className)
+    this.handleStartSettingHue = () => {
+      this.isSettingHue = true
+    }
+    this.handleStopSettingHue = () => {
+      this.isSettingHue = false
+    }
+    this.handleProcessHue = event => {
+      if (this.isSettingHue) {
+        this.handleHueChange(event)
+      }
+    }
+    this.handleStartSettingPalette = () => {
+      this.isSettingPalette = true
+    }
+    this.handleStopSettingPalette = () => {
+      this.isSettingPalette = false
+    }
+    this.handleProcessPalette = event => {
+      if (this.isSettingPalette) {
+        this.handlePaletteChange(event)
 
-    // Update hsv
-    this.hsv = Color.hex2hsv(value)
-
-    // Set initial positions
-    this.setInitial()
-
-    return (
-      <div class={containerStyle.getClasses()}>
-        <div
-          class={styles.palette}
-          ref={this.handlePaletteRef.bind(this)}
-          style={{backgroundColor: this.paletteBackground}}
-        >
-          <div
-            class={styles.picker}
-            ref={el => this.paletteIndicator = el}
-            style={{
-              backgroundColor: '#' + value,
-              top: this.paletteCoordinate.y,
-              left: this.paletteCoordinate.x
-            }}
-          />
-        </div>
-
-        <div class={styles.hue} ref={this.handleHueRef.bind(this)}>
-          <div
-            class={styles.slider}
-            ref={el => this.hueIndicator = el}
-            style={{top: this.hueCoordinate}}
-          />
-        </div>
-      </div>
-    )
-  }
-
-  setInitial() {
-    let paletteColor = Color.hsv2rgb({h: this.hsv.h, s: 1, v: 1})
-    this.paletteBackground = '#' + paletteColor.hex
-
-    this.hueCoordinate = (this.hsv.h % 360) * 200 / 360
-
-    this.paletteCoordinate = {
-      x: this.hsv.s * 200,
-      y: 200 - this.hsv.v * 200
+        event.preventDefault()
+      }
     }
   }
 
-  handlePaletteRef(element) {
-    if (this.paletteElement) return
-    this.paletteElement = element
+  componentDidMount() {
+    // Attach hue events.
+    this.elementHue.addEventListener('mousedown', this.handleStartSettingHue)
+    this.elementHue.addEventListener('mouseup', this.handleStopSettingHue)
+    this.elementHue.addEventListener('mouseout', this.handleStopSettingHue)
+    this.elementHue.addEventListener('mousemove', this.handleProcessHue)
 
-    element.addEventListener('click', this.paletteListener.bind(this))
-    this.enableDragging(element, this.paletteListener.bind(this))
+    // Attach palette events.
+    this.elementPalette.addEventListener('mousedown', this.handleStartSettingPalette)
+    this.elementPalette.addEventListener('mouseup', this.handleStopSettingPalette)
+    this.elementPalette.addEventListener('mouseout', this.handleStopSettingPalette)
+    this.elementPalette.addEventListener('mousemove', this.handleProcessPalette)
   }
 
-  handleHueRef(element) {
-    if (this.hueElement) return
-    this.hueElement = element
+  componentWillUnmount() {
+    // Remove hue events.
+    this.elementHue.removeEventListener('mousedown', this.handleStartSettingHue)
+    this.elementHue.removeEventListener('mouseup', this.handleStopSettingHue)
+    this.elementHue.removeEventListener('mouseout', this.handleStopSettingHue)
+    this.elementHue.removeEventListener('mousemove', this.handleProcessHue)
 
-    element.addEventListener('click', this.hueListener.bind(this))
-    this.enableDragging(element, this.hueListener.bind(this))
+    // Remove palette events.
+    this.elementPalette.removeEventListener('mousedown', this.handleStartSettingPalette)
+    this.elementPalette.removeEventListener('mouseup', this.handleStopSettingPalette)
+    this.elementPalette.removeEventListener('mouseout', this.handleStopSettingPalette)
+    this.elementPalette.removeEventListener('mousemove', this.handleProcessPalette)
   }
 
-  enableDragging(element, listener) {
-    let pressed = false
+  handleHueChange(event) {
+    const {onChange} = this.props
+    const {hsv} = this.state
+    const newHuePosition = this.normalisePosition(event).y
+    const newHsv = {
+      ...hsv,
+      h: newHuePosition / this.elementHue.offsetHeight * 360
+    }
 
-    element.addEventListener('mousedown', () => pressed = true)
-    element.addEventListener('mouseup', () => pressed = false)
-    element.addEventListener('mouseout', () => pressed = false)
-    element.addEventListener('mousemove', event => pressed && listener(event))
-
-    element.addEventListener('touchstart', () => pressed = true)
-    element.addEventListener('touchend', () => pressed = false)
-    element.addEventListener('touchcancel', () => pressed = false)
-    element.addEventListener('touchmove', event => {
-      if (pressed) {
-        event.preventDefault()
-        listener(event)
-      }
+    this.setState({
+      huePosition: newHuePosition,
+      hsv: newHsv
     })
+
+    if (typeof onChange === 'function') {
+      onChange.call(this, Color.hsv2hex(newHsv))
+    }
   }
 
-  hueListener(event) {
-    this.hueCoordinate = this.normalisePosition(event).y
+  handlePaletteChange(event) {
+    const {onChange} = this.props
+    const {hsv} = this.state
+    const {
+      offsetHeight: height,
+      offsetWidth: width
+    } = this.elementPalette
+    const newPaletteCoordinates = this.normalisePosition(event)
+    const newHsv = {
+      ...hsv,
+      s: newPaletteCoordinates.x / width,
+      v: (height - newPaletteCoordinates.y) / height
+    }
 
-    this.hsv.h = this.hueCoordinate / this.hueElement.offsetHeight * 360
+    this.setState({
+      hsv: newHsv,
+      paletteCoordinates: newPaletteCoordinates
+    })
 
-    let paletteColor = Color.hsv2rgb({h: this.hsv.h, s: 1, v: 1})
-    this.paletteBackground = '#' + paletteColor.hex
-
-    this.handleColorPick()
+    if (typeof onChange === 'function') {
+      onChange.call(this, Color.hsv2hex(newHsv))
+    }
   }
 
-  paletteListener(event) {
-    this.paletteCoordinate = this.normalisePosition(event)
-
-    let width = this.paletteElement.offsetWidth
-    let height = this.paletteElement.offsetHeight
-
-    this.hsv.s = this.paletteCoordinate.x / width
-    this.hsv.v = (height - this.paletteCoordinate.y) / height
-
-    this.handleColorPick()
-  }
- 
   normalisePosition(event) {
-    // touch
+    // Handle touch events.
     if (~event.type.indexOf('touch')) {    
       let touch = event.touches[0] || event.changedTouches[0]
       let rect = event.target.getBoundingClientRect()
@@ -175,7 +162,7 @@ export default class ColorPicker extends Component {
       }
     }
 
-    // ie
+    // Handle Internet Explorer event.
     if (window.event && window.event.contentOverflow !== undefined) {
       return {
         x: window.event.offsetX,
@@ -183,7 +170,7 @@ export default class ColorPicker extends Component {
       }
     }
 
-    // webkit
+    // Handle WebKit event.
     if (event.offsetX !== undefined && event.offsetY !== undefined) {
       return {
         x: event.offsetX,
@@ -191,19 +178,59 @@ export default class ColorPicker extends Component {
       }
     }
 
-    // firefox
+    // Handle Firefox event.
     let wrapper = event.target.parentNode.parentNode
+
     return {
       x: event.layerX - wrapper.offsetLeft,
       y: event.layerY - wrapper.offsetTop
     }
   }
 
-  handleColorPick() {
-    const {onChange} = this.props
+  render() {
+    const {className, value} = this.props
+    const {
+      hsv,
+      huePosition,
+      paletteCoordinates
+    } = this.state
+    const containerStyle = new Style(styles, 'container')
+      .addResolved(className)
+    const paletteBackgroundColor = Color.hsv2rgb({
+      h: hsv.h,
+      s: 1,
+      v: 1
+    }).hex
 
-    if (typeof onChange === 'function') {
-      onChange.call(this, Color.hsv2hex(this.hsv))
-    }
+    return (
+      <div class={containerStyle.getClasses()}>
+        <div
+          class={styles.palette}
+          ref={el => this.elementPalette = el}
+          style={{backgroundColor: `#${paletteBackgroundColor}`}}
+        >
+          <div
+            class={styles.picker}
+            ref={el => this.elementPaletteIndicator = el}
+            style={{
+              backgroundColor: `#${value}`,
+              top: paletteCoordinates.y,
+              left: paletteCoordinates.x
+            }}
+          />
+        </div>
+
+        <div
+          class={styles.hue}
+          ref={el => this.elementHue = el}
+        >
+          <div
+            class={styles.slider}
+            ref={el => this.elementHueIndicator = el}
+            style={{top: huePosition}}
+          />
+        </div>
+      </div>
+    )
   }
 }
