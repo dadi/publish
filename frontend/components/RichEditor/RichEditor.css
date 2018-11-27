@@ -331,3 +331,25 @@
   height: auto;
   display: block;
 }
+
+.editor table {
+  display: block;
+  width: 100%;
+  overflow: auto;
+}
+.editor table th {
+  font-family: 'Karla Bold';
+}
+.editor table th,
+.editor table td {
+  padding: 6px 13px;
+  border: 1px solid #dfe2e5;
+  vertical-align: middle;
+}
+.editor table tr {
+  background-color: #fff;
+  border-top: 1px solid #c6cbd1;
+}
+.editor table tr:nth-child(2n) {
+  background-color: #f6f8fa;
+}
