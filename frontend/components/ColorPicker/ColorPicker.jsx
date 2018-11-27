@@ -41,15 +41,6 @@ export default class ColorPicker extends Component {
   constructor(props) {
     super(props)
 
-    const initialHsv = Color.hex2hsv(props.value)
-
-    this.state.hsv = initialHsv
-    this.state.huePosition = (initialHsv.h % 360) * 200 / 360
-    this.state.paletteCoordinates = {
-      x: initialHsv.s * 200,
-      y: 200 - initialHsv.v * 200
-    }
-
     this.isSettingHue = false
     this.isSettingPalette = false
 
@@ -108,45 +99,33 @@ export default class ColorPicker extends Component {
   }
 
   handleHueChange(event) {
-    const {onChange} = this.props
-    const {hsv} = this.state
-    const newHuePosition = this.normalisePosition(event).y
-    const newHsv = {
-      ...hsv,
-      h: newHuePosition / this.elementHue.offsetHeight * 360
+    const {onChange, value} = this.props
+    const huePosition = this.normalisePosition(event).y
+    const hsv = {
+      ...Color.hex2hsv(value),
+      h: huePosition / this.elementHue.offsetHeight * 360
     }
 
-    this.setState({
-      huePosition: newHuePosition,
-      hsv: newHsv
-    })
-
     if (typeof onChange === 'function') {
-      onChange.call(this, Color.hsv2hex(newHsv))
+      onChange.call(this, Color.hsv2hex(hsv))
     }
   }
 
   handlePaletteChange(event) {
-    const {onChange} = this.props
-    const {hsv} = this.state
+    const {onChange, value} = this.props
     const {
       offsetHeight: height,
       offsetWidth: width
     } = this.elementPalette
-    const newPaletteCoordinates = this.normalisePosition(event)
-    const newHsv = {
-      ...hsv,
-      s: newPaletteCoordinates.x / width,
-      v: (height - newPaletteCoordinates.y) / height
+    const paletteCoordinates = this.normalisePosition(event)
+    const hsv = {
+      ...Color.hex2hsv(value),
+      s: paletteCoordinates.x / width,
+      v: (height - paletteCoordinates.y) / height
     }
 
-    this.setState({
-      hsv: newHsv,
-      paletteCoordinates: newPaletteCoordinates
-    })
-
     if (typeof onChange === 'function') {
-      onChange.call(this, Color.hsv2hex(newHsv))
+      onChange.call(this, Color.hsv2hex(hsv))
     }
   }
 
@@ -189,18 +168,19 @@ export default class ColorPicker extends Component {
 
   render() {
     const {className, value} = this.props
-    const {
-      hsv,
-      huePosition,
-      paletteCoordinates
-    } = this.state
     const containerStyle = new Style(styles, 'container')
       .addResolved(className)
+    const valueHsv = Color.hex2hsv(value)
+    const huePosition = (valueHsv.h % 360) * 200 / 360
     const paletteBackgroundColor = Color.hsv2rgb({
-      h: hsv.h,
+      h: valueHsv.h,
       s: 1,
       v: 1
     }).hex
+    const paletteCoordinates = {
+      x: valueHsv.s * 200,
+      y: 200 - valueHsv.v * 200
+    }
 
     return (
       <div class={containerStyle.getClasses()}>

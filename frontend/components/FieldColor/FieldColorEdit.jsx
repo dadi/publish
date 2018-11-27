@@ -217,7 +217,7 @@ export default class FieldColorEdit extends Component {
         <TextInput
           name={name}
           onBlur={this.handleFocus.bind(this, false)}
-          onChange={this.handleChange.bind(this)}
+          onInput={this.handleChange.bind(this)}
           onFocus={this.handleFocus.bind(this, true)}
           readonly={publishBlock.readonly === true}
           type="text"
