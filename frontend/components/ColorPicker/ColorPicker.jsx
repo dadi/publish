@@ -54,6 +54,12 @@ export default class ColorPicker extends Component {
     this.paletteIndicator = false
   }
 
+  componentWillUnmount() {
+    // Removes all event listeners
+    this.paletteElement.outerHTML = this.paletteElement.outerHTML
+    this.hueElement.outerHTML = this.hueElement.outerHTML
+  }
+
   render() {
     const {className, value} = this.props
     const containerStyle = new Style(styles, 'container').addResolved(className)
@@ -109,20 +115,20 @@ export default class ColorPicker extends Component {
     if (this.paletteElement) return
     this.paletteElement = element
 
-    element.addEventListener('click', this.paletteListener.bind(this))
-    this.enableDragging(element, this.paletteListener.bind(this))
+    this.addPickerEvents(element, this.paletteListener.bind(this))
   }
 
   handleHueRef(element) {
     if (this.hueElement) return
     this.hueElement = element
 
-    element.addEventListener('click', this.hueListener.bind(this))
-    this.enableDragging(element, this.hueListener.bind(this))
+    this.addPickerEvents(element, this.hueListener.bind(this))
   }
 
-  enableDragging(element, listener) {
+  addPickerEvents(element, listener) {
     let pressed = false
+
+    element.addEventListener('click', listener)
 
     element.addEventListener('mousedown', () => pressed = true)
     element.addEventListener('mouseup', () => pressed = false)
