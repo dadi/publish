@@ -119,6 +119,13 @@ export default class RichEditor extends Component {
       }
     })
 
+     this.turndownService.addRule('strike', {
+      filter: ['strike'],
+      replacement: (content, node) => {
+        return `~~${content}~~`
+      }
+    })
+
     this.markdownRenderer = new marked.Renderer()
     this.markdownRenderer.code = (code, language = '') => {
       let escapedCode = code
@@ -144,6 +151,13 @@ export default class RichEditor extends Component {
         {
           name: 'italic',
           icon: 'Italic'
+        },
+        {
+          name: 'strikethrough',
+          icon: 'Strikethrough',
+          state: () => {
+            return this.getNodeTagPathsInSelection().find(e => e.tagName === 'STRIKE')
+          }   
         },
         {
           name: 'link',

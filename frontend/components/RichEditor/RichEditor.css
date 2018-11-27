@@ -149,7 +149,7 @@
 .pell-button[Title="Text"],
 .pell-button[Title="Bold"],
 .pell-button[Title="Italic"],
-.pell-button[Title="Underline"],
+.pell-button[Title="Strike-through"],
 .pell-button[Title="Link"],
 .pell-button[Title="Quote"],
 .pell-button[Title="Heading 1"],
@@ -173,9 +173,8 @@
 .pell-button[Title="Italic"] {
   background-image: url(./icons/italic.svg);
 }
-.pell-button[Title="Underline"] {
-  background-image: url(./icons/underline.svg);
-  background-size: auto 20px;
+.pell-button[Title="Strike-through"] {
+  background-image: url(./icons/strikethrough.svg);
 }
 .pell-button[Title="Link"] {
   background-image: url(./icons/link.svg);
@@ -272,8 +271,13 @@
 }
 
 .editor-wysiwyg h1,
-.editor-wysiwyg h2 {
-  margin-bottom: 10px;  
+.editor-wysiwyg h2,
+.editor-wysiwyg h3,
+.editor-wysiwyg h4,
+.editor-wysiwyg h5,
+.editor-wysiwyg h6 {
+  margin-bottom: 10px;
+  font-family: 'Karla Bold';
 }
 
 .editor-wysiwyg h1 {
@@ -326,4 +330,26 @@
   max-width: 100%;
   height: auto;
   display: block;
+}
+
+.editor table {
+  display: block;
+  width: 100%;
+  overflow: auto;
+}
+.editor table th {
+  font-family: 'Karla Bold';
+}
+.editor table th,
+.editor table td {
+  padding: 6px 13px;
+  border: 1px solid #dfe2e5;
+  vertical-align: middle;
+}
+.editor table tr {
+  background-color: #fff;
+  border-top: 1px solid #c6cbd1;
+}
+.editor table tr:nth-child(2n) {
+  background-color: #f6f8fa;
 }
