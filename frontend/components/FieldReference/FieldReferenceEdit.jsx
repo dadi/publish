@@ -3,7 +3,7 @@
 import {h, Component} from 'preact'
 import proptypes from 'proptypes'
 import {buildUrl} from 'lib/router'
-import {filterVisibleFields} from 'lib/fields'
+import {getVisibleFields} from 'lib/fields'
 
 import Style from 'lib/Style'
 import styles from './FieldReference.css'
@@ -134,9 +134,9 @@ export default class FieldReferenceEdit extends Component {
 
     if (!referencedCollection) return null
 
-    const displayableFields = filterVisibleFields({
+    const displayableFields = getVisibleFields({
       fields: referencedCollection.fields,
-      view: 'list'
+      viewType: 'list'
     })
     const firstStringField = this.findFirstStringField(displayableFields)
     const displayField = value && firstStringField ? firstStringField.key : null

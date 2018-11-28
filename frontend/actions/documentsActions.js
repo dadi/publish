@@ -78,6 +78,7 @@ export function fetchDocuments ({
   api,
   collection,
   count,
+  fields,
   filters,
   page,
   parentDocumentId,
@@ -134,8 +135,6 @@ export function fetchDocuments ({
           api
         }).inMedia()
       } else {
-        const fields = visibleFieldList({fields: collection.fields, view: 'list'})
-
         listQuery = apiBridgeClient({
           accessToken: getState().user.accessToken,
           api,

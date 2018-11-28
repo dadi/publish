@@ -1,5 +1,3 @@
-import * as Constants from 'lib/constants'
-
 export function getFieldType (schema) {
   let fieldType = (schema.publish && schema.publish.subType) ?
     schema.publish.subType :
@@ -13,28 +11,31 @@ export function getFieldType (schema) {
   return fieldType
 }
 
-export function visibleFieldList ({
-  fields,
-  view = 'list'
+export function getVisibleFields ({
+  fields = {},
+  viewType
 }) {
-  return Object.keys(fields)
-    .filter(key => {
-      // If there's no publish block, return field by default.
-      if (!fields[key].publish || !fields[key].publish.display) return true
+  let foundDisplayProperty = false
+  let enabledFields = Object.keys(fields).reduce((enabledFields, field) => {
+    // Is there a publish block with a display property defined fro this view
+    // type?
+    if (
+      fields[field].publish &&
+      fields[field].publish.display &&
+      fields[field].publish.display[viewType] !== undefined
+    ) {
+      if (fields[field].publish.display[viewType] === true) {
+        enabledFields[field] = fields[field]
+      }
 
-      // Return the fields display property value for this view.
-      return fields[key].publish.display[view]
-    })
-    .concat(Constants.DEFAULT_FIELDS)
-}
+      foundDisplayProperty = true
+    }
 
-export function filterVisibleFields ({
-  fields,
-  view = 'list'
-}) {
-  return Object.assign({}, ...visibleFieldList(...arguments)
-    .filter(field => fields[field])
-    .map(field => {
-      return {[field]: fields[field]}
-    }))
+    return enabledFields
+  }, {})
+
+  // If we came across at least one field with a display property defined for
+  // this view type, we return the subset of the fields who have it set to
+  // `true`. Otherwise, we return all fields.
+  return foundDisplayProperty ? enabledFields : fields
 }
