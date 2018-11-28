@@ -101,10 +101,34 @@ export default class FieldReferenceEdit extends Component {
     value: proptypes.bool
   }
 
+  componentDidMount() {
+    const {forceValidation, value} = this.props
+
+    if (forceValidation) {
+      this.validate(value)
+    }
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    const {forceValidation, value} = this.props
+
+    if (!prevProps.forceValidation && forceValidation) {
+      this.validate(value)
+    }
+  }
+
   findFirstStringField(fields) {
     return Object.keys(fields)
       .map(key => Object.assign({}, fields[key], {key}))
       .find(field => field.type === 'String')
+  }
+
+  handleRemove() {
+    const {name, onChange, schema} = this.props
+
+    if (typeof onChange === 'function') {
+      onChange.call(this, name, null)
+    }
   }
 
   render() {
@@ -150,6 +174,7 @@ export default class FieldReferenceEdit extends Component {
 
     return (
       <Label
+        error={error}
         label={displayName}
         comment={isReadOnly && 'Read only'}
       >
@@ -222,11 +247,12 @@ export default class FieldReferenceEdit extends Component {
     )
   }
 
-  handleRemove() {
-    const {name, onChange, schema} = this.props
+  validate(value) {
+    const {name, onError, required} = this.props
+    const hasValidationErrors = required && !value
 
-    if (typeof onChange === 'function') {
-      onChange.call(this, name, null)
-    }
+    if (typeof onError === 'function') {
+      onError.call(this, name, hasValidationErrors, value)
+    }    
   }
 }

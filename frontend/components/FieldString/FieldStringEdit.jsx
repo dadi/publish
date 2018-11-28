@@ -148,7 +148,7 @@ export default class FieldStringEdit extends Component {
   }
 
   componentDidUpdate(prevProps, prevState) {
-    const {forceValidation, meta, value} = this.props
+    const {forceValidation, value} = this.props
 
     if (!prevProps.forceValidation && forceValidation) {
       this.validate(value)
