@@ -445,7 +445,7 @@ export default class DocumentFilters extends Component {
 
     let {
       filter: FilterComponent,
-      operators
+      operators = {}
     } = this.getFieldComponent(field) || {}
     let valueIsEmpty = value === null || value === undefined || value === ''
 
@@ -453,6 +453,9 @@ export default class DocumentFilters extends Component {
       .addIf('tooltip-right', !Boolean(isUpdate))
     const fieldSelectorStyle = new Style(styles)
       .addIf('tooltip-dropdown-left', Boolean(operators))
+    const selectedOperator = operator ||
+      Object.keys(operators)[0] ||
+      DEFAULT_OPERATOR_KEYWORD
 
     return (
       <form
@@ -483,7 +486,7 @@ export default class DocumentFilters extends Component {
                 [DEFAULT_OPERATOR_KEYWORD]: DEFAULT_OPERATOR_NAME
               }, operators)}
               textSize="small"
-              value={operator || DEFAULT_OPERATOR_KEYWORD}
+              value={selectedOperator}
             />
           }
         </div>
