@@ -118,6 +118,7 @@ export default class FieldMediaEdit extends Component {
       config = {},
       displayName,
       documentId,
+      error,
       group,
       name,
       onBuildBaseUrl,
@@ -125,7 +126,7 @@ export default class FieldMediaEdit extends Component {
       value
     } = this.props
 
-    const acceptedMimeTypes = schema.validation && schema.validation.mimeTypes || ['*/*']
+    const acceptedMimeTypes = schema.validation && schema.validation.mimeTypes
     const fieldLocalType = schema.publish && schema.publish.subType ? schema.publish.subType : schema.type
     const href = onBuildBaseUrl ?  onBuildBaseUrl({
       createNew: !Boolean(documentId),
@@ -138,7 +139,12 @@ export default class FieldMediaEdit extends Component {
     const values = (value && !Array.isArray(value)) ? [value] : value
 
     return (
-      <Label label={displayName} className={styles.label}>
+      <Label
+        className={styles.label}
+        error={error}
+        errorMessage={typeof error === 'string' ? error : null}
+        label={displayName}
+      >
         {values && (
           <div class={styles.values}>
             {values.map((value, index) => {
@@ -184,6 +190,7 @@ export default class FieldMediaEdit extends Component {
         <div class={styles.upload}>
           <div class={styles['upload-options']}>
             <DropArea
+              accept={acceptedMimeTypes}
               draggingText={`Drop file${singleFile ? '' : 's'} here`}
               onDrop={this.handleFileChange.bind(this)}
             >
@@ -240,13 +247,16 @@ export default class FieldMediaEdit extends Component {
   handleFileChange (files) {
     const {
       config,
+      error,
       name,
       onChange,
+      onError,
       schema,
       value
     } = this.props
 
     const singleFile = schema.settings && schema.settings.limit === 1
+    const acceptedMimeTypes = schema.validation && schema.validation.mimeTypes
 
     let processedFiles = []
     let values = []
@@ -255,6 +265,33 @@ export default class FieldMediaEdit extends Component {
       values = Array.isArray(value) ? value : [value]
     }
 
+    // Iterate once to check if there are any files that don't match the MIME
+    // type validation rules. We do this to avoid calling `readAsDataURL` on
+    // some files before finding out that an invalid file exists and we must
+    // abort the whole thing.
+    if (Array.isArray(acceptedMimeTypes)) {
+      for (let index = 0; index < files.length; index++) {
+        const mimeType = files[index].type
+
+        if (!acceptedMimeTypes.includes(mimeType)) {
+          let errorMessage = `must be of type ${acceptedMimeTypes.join(', ')}`
+
+          if (typeof onError === 'function') {
+            onError.call(this, name, errorMessage, value)
+          }
+
+          return
+        }
+      }
+    }
+
+    // If we get this far, it means the files are valid so we can clear any
+    // existing validation errors.
+    if (error && typeof onError === 'function') {
+      onError.call(this, name, null, value)
+    }
+
+    // Iterate a second time to actually process the files.
     for (let index = 0; index < files.length; index++) {
       const file = files[index]
       const reader = new FileReader()
