@@ -210,15 +210,16 @@ export default class RichEditor extends Component {
             // delete the `<pre>` and insert back the HTML.
             if (codeNode) {
               let {innerHTML} = codeNode
-              let nextFocus = codeNode.previousSibling ||
-                codeNode.nextSibling ||
-                codeNode.parentNode
+              let parentNode = codeNode.parentNode
+              let newNode = document.createElement('p')
 
-              codeNode.parentNode.removeChild(codeNode)
+              newNode.appendChild(
+                document.createTextNode(innerHTML)
+              )
 
-              this.setSelectionOnElement(nextFocus)
+              parentNode.replaceChild(newNode, codeNode)
 
-              pell.exec('insertHTML', '<br>' + innerHTML + '<br>')
+              this.handleChange(this.editorElement.innerHTML)
             } else {
               let selection = window.getSelection()
               let html = `<pre class="${styles.code}">${selection.toString()}</pre>`
