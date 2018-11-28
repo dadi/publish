@@ -109,7 +109,105 @@ export default class FieldMediaEdit extends Component {
   constructor(props) {
     super(props)
 
-    this.state.signedUrl = null
+    // We keep this error state in the component state rather than using the
+    // error handler in the store because it's a special case. Other fields
+    // will store the erroneous value and flag it as an error that must be
+    // corrected before proceeding, whereas dropping an image with an invalid
+    // MIME type stops it from being uploaded in the first place. There's no
+    // need to correct anything because the value of the field hasn't changed
+    // at all.
+    this.state.isInvalidMimeType = false
+  }
+
+  handleFileChange(files) {
+    const {
+      config,
+      error,
+      name,
+      onChange,
+      schema,
+      value
+    } = this.props
+    const singleFile = schema.settings && schema.settings.limit === 1
+    const acceptedMimeTypes = schema.validation && schema.validation.mimeTypes
+
+    let processedFiles = []
+    let values = []
+
+    if (value) {
+      values = Array.isArray(value) ? value : [value]
+    }
+
+    // Iterate once to check if there are any files that don't match the MIME
+    // type validation rules. We do this to avoid calling `readAsDataURL` on
+    // some files before finding out that an invalid file exists and we must
+    // abort the whole thing.
+    if (Array.isArray(acceptedMimeTypes)) {
+      for (let index = 0; index < files.length; index++) {
+        const mimeType = files[index].type
+
+        if (!acceptedMimeTypes.includes(mimeType)) {
+          return this.setState({
+            isInvalidMimeType: true
+          })
+        }
+      }
+    }
+
+    this.setState({
+      isInvalidMimeType: false
+    })
+
+    // Iterate a second time to actually process the files.
+    for (let index = 0; index < files.length; index++) {
+      const file = files[index]
+      const reader = new FileReader()
+
+      reader.onload = event => {
+        processedFiles[index] = {
+          _file: file,
+          _previewData: reader.result,
+          contentLength: file.size,
+          fileName: file.name,
+          mimetype: file.type
+        }
+
+        if (
+          processedFiles.length === files.length &&
+          typeof onChange === 'function'
+        ) {
+
+          if (singleFile) {
+            return onChange.call(this, name, processedFiles[0])
+          }
+
+          // Filter for uniqueness by file name and concat.
+          const fileNames = values.map(value => value.fileName)
+
+          processedFiles = processedFiles.filter(value => !fileNames.includes(value.fileName))
+          onChange.call(this, name, values.concat(processedFiles))
+        }
+      }
+
+      reader.readAsDataURL(file)
+    }
+  }
+
+  handleRemoveFile(id) {
+    const {name, onChange, schema, value} = this.props
+    const values = (value && !Array.isArray(value)) ? [value] : value
+
+    let newValues = values.filter(value => {
+      return value !== id && value._id !== id
+    })
+
+    if (newValues.length === 0) {
+      newValues = null
+    }
+
+    if (typeof onChange === 'function') {
+      onChange.call(this, name, newValues)
+    }
   }
 
   render() {
@@ -118,14 +216,13 @@ export default class FieldMediaEdit extends Component {
       config = {},
       displayName,
       documentId,
-      error,
       group,
       name,
       onBuildBaseUrl,
       schema,
       value
     } = this.props
-
+    const {isInvalidMimeType} = this.state
     const acceptedMimeTypes = schema.validation && schema.validation.mimeTypes
     const fieldLocalType = schema.publish && schema.publish.subType ? schema.publish.subType : schema.type
     const href = onBuildBaseUrl ?  onBuildBaseUrl({
@@ -133,16 +230,17 @@ export default class FieldMediaEdit extends Component {
       documentId,
       referenceFieldSelect: name
     }) : ''
-
     const isReference = schema.type === 'Reference'
     const singleFile = schema.settings && schema.settings.limit === 1
     const values = (value && !Array.isArray(value)) ? [value] : value
+    const errorMessage = isInvalidMimeType &&
+      `Files must be of type ${acceptedMimeTypes.join(', ')}`
 
     return (
       <Label
         className={styles.label}
-        error={error}
-        errorMessage={typeof error === 'string' ? error : null}
+        error={isInvalidMimeType}
+        errorMessage={errorMessage}
         label={displayName}
       >
         {values && (
@@ -225,104 +323,5 @@ export default class FieldMediaEdit extends Component {
         </div>
       </Label>
     )
-  }
-  
-  handleRemoveFile(id) {
-    const {name, onChange, schema, value} = this.props
-    const values = (value && !Array.isArray(value)) ? [value] : value
-
-    let newValues = values.filter(value => {
-      return value !== id && value._id !== id
-    })
-
-    if (newValues.length === 0) {
-      newValues = null
-    }
-
-    if (typeof onChange === 'function') {
-      onChange.call(this, name, newValues)
-    }
-  }
-
-  handleFileChange (files) {
-    const {
-      config,
-      error,
-      name,
-      onChange,
-      onError,
-      schema,
-      value
-    } = this.props
-
-    const singleFile = schema.settings && schema.settings.limit === 1
-    const acceptedMimeTypes = schema.validation && schema.validation.mimeTypes
-
-    let processedFiles = []
-    let values = []
-
-    if (value) {
-      values = Array.isArray(value) ? value : [value]
-    }
-
-    // Iterate once to check if there are any files that don't match the MIME
-    // type validation rules. We do this to avoid calling `readAsDataURL` on
-    // some files before finding out that an invalid file exists and we must
-    // abort the whole thing.
-    if (Array.isArray(acceptedMimeTypes)) {
-      for (let index = 0; index < files.length; index++) {
-        const mimeType = files[index].type
-
-        if (!acceptedMimeTypes.includes(mimeType)) {
-          let errorMessage = `must be of type ${acceptedMimeTypes.join(', ')}`
-
-          if (typeof onError === 'function') {
-            onError.call(this, name, errorMessage, value)
-          }
-
-          return
-        }
-      }
-    }
-
-    // If we get this far, it means the files are valid so we can clear any
-    // existing validation errors.
-    if (error && typeof onError === 'function') {
-      onError.call(this, name, null, value)
-    }
-
-    // Iterate a second time to actually process the files.
-    for (let index = 0; index < files.length; index++) {
-      const file = files[index]
-      const reader = new FileReader()
-
-      reader.onload = event => {
-        processedFiles[index] = {
-          _file: file,
-          _previewData: reader.result,
-          contentLength: file.size,
-          fileName: file.name,
-          mimetype: file.type
-        }
-
-        if (
-          processedFiles.length === files.length &&
-          typeof onChange === 'function'
-        ) {
-
-          if (singleFile) {
-            return onChange.call(this, name, processedFiles[0])
-          }
-
-          // Filter for uniqueness by file name and concat.
-          const fileNames = values.map(value => value.fileName)
-
-          processedFiles = processedFiles.filter(value => !fileNames.includes(value.fileName))
-          onChange.call(this, name, values.concat(processedFiles))
-        }
-      }
-
-      reader.readAsDataURL(file)
-    }
   }
 }
