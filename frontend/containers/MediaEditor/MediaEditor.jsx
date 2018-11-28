@@ -124,10 +124,15 @@ class MediaEditor extends Component {
   }
 
   renderPreview(document) {
-    const {
-      mimeType = '',
-      url
-    } = document
+    const {state} = this.props
+    const {config} = state.app
+    const {mimeType = ''} = document
+    const canonicalPath = document.path && (
+      document.path.indexOf('/') === 0 ? document.path : `/${document.path}`
+    )
+    const url = (config.cdn && config.cdn.publicUrl) ?
+      `${config.cdn.publicUrl}${canonicalPath}` :
+      (document.url || canonicalPath)    
 
     if (mimeType.includes('image/')) {
       return (
