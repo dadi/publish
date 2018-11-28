@@ -53,44 +53,6 @@ export default class ButtonWithPrompt extends Component {
     window.addEventListener('click', this.promptOutsideClickHandler)
   }
 
-  render() {
-    const {
-      position,
-      promptCallToAction,
-      promptMessage
-    } = this.props
-    const {visible} = this.state
-    const hijackedOnClick = this.props.onClick
-
-    let buttonProps = Object.assign({}, this.props, {
-      onClick: this.handleClickHijack.bind(this)
-    })
-
-    delete buttonProps.promptCallToAction
-    delete buttonProps.promptMessage
-
-    const promptStyle = new Style(styles, 'prompt')
-      .add(`prompt-${position}`)
-    
-    return (
-      <div
-        class={styles.container}
-        ref={this.handlePromptRef.bind(this)}
-      >
-        <Button {...buttonProps}>{this.props.children}</Button>
-        
-        {visible &&
-          <Prompt
-            action={promptCallToAction}
-            className={promptStyle.getClasses()}
-            onClick={hijackedOnClick}
-            position={position}
-          >{promptMessage}</Prompt>
-        }
-      </div>
-    )
-  }
-
   componentWillUnmount() {
     window.removeEventListener('click', this.promptOutsideClickHandler)
 
@@ -119,13 +81,56 @@ export default class ButtonWithPrompt extends Component {
     }
   }
 
-  handlePromptRef(element) {
-    if (!element) return
+  render() {
+    const {
+      children,
+      onClick,
+      position,
+      promptCallToAction,
+      promptMessage
+    } = this.props
+    const {visible} = this.state
 
-    if (!this.promptRef) {
-      this.promptRef = element
+    // This method augments the original `onClick` callback with a `setState`
+    // call that closes the prompt after the action has been triggered.
+    const modifiedOnClick = () => {
+      this.setState({
+        visible: false
+      })
 
-      element.addEventListener('click', this.promptInsideClickHandler)
+      onClick.apply(onClick)
     }
+
+    // We pass all the props down to the main <Button>, but we replace
+    // the `onClick` prop with our hijacking function and remove the
+    // props that are specific to the prompt.
+    const buttonProps = {
+      ...this.props,
+      onClick: this.handleClickHijack.bind(this)
+    }
+
+    delete buttonProps.promptCallToAction
+    delete buttonProps.promptMessage
+
+    const promptStyle = new Style(styles, 'prompt')
+      .add(`prompt-${position}`)
+    
+    return (
+      <div
+        class={styles.container}
+        onClick={this.promptInsideClickHandler.bind(this)}
+      >
+        <Button {...buttonProps}>{children}</Button>
+        
+        {visible &&
+          <Prompt
+            action={promptCallToAction}
+            className={promptStyle.getClasses()}
+            onClick={modifiedOnClick}
+            position={position}
+          >{promptMessage}</Prompt>
+        }
+      </div>
+    )
   }
 }
