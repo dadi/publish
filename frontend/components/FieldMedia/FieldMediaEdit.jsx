@@ -119,6 +119,25 @@ export default class FieldMediaEdit extends Component {
     this.state.isInvalidMimeType = false
   }
 
+  componentDidMount() {
+    const {forceValidation, value} = this.props
+
+    if (forceValidation) {
+      this.validate(value)
+    }
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    const {forceValidation, value} = this.props
+
+    if (
+      !prevProps.forceValidation && forceValidation ||
+      !prevProps.value && value
+    ) {
+      this.validate(value)
+    }
+  }
+
   handleFileChange(files) {
     const {
       config,
@@ -216,9 +235,11 @@ export default class FieldMediaEdit extends Component {
       config = {},
       displayName,
       documentId,
+      error,
       group,
       name,
       onBuildBaseUrl,
+      required,
       schema,
       value
     } = this.props
@@ -235,11 +256,15 @@ export default class FieldMediaEdit extends Component {
     const values = (value && !Array.isArray(value)) ? [value] : value
     const errorMessage = isInvalidMimeType &&
       `Files must be of type ${acceptedMimeTypes.join(', ')}`
+    const comment = schema.comment ||
+      required && 'Required' ||
+      isReadOnly && 'Read only'
 
     return (
       <Label
         className={styles.label}
-        error={isInvalidMimeType}
+        comment={comment}
+        error={error || isInvalidMimeType}
         errorMessage={errorMessage}
         label={displayName}
       >
@@ -323,5 +348,14 @@ export default class FieldMediaEdit extends Component {
         </div>
       </Label>
     )
+  }
+
+  validate(value) {
+    const {name, onError, required} = this.props
+    const hasValidationErrors = required && !value
+
+    if (typeof onError === 'function') {
+      onError.call(this, name, hasValidationErrors, value)
+    }    
   }
 }
