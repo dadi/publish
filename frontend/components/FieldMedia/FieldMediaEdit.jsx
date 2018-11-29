@@ -254,6 +254,8 @@ export default class FieldMediaEdit extends Component {
     const isReference = schema.type === 'Reference'
     const singleFile = schema.settings && schema.settings.limit === 1
     const values = (value && !Array.isArray(value)) ? [value] : value
+    const isReadOnly = schema.publish &&
+      schema.publish.readonly === true
     const errorMessage = isInvalidMimeType &&
       `Files must be of type ${acceptedMimeTypes.join(', ')}`
     const comment = schema.comment ||
@@ -310,42 +312,44 @@ export default class FieldMediaEdit extends Component {
           </div>
         )}
 
-        <div class={styles.upload}>
-          <div class={styles['upload-options']}>
-            <DropArea
-              accept={acceptedMimeTypes}
-              draggingText={`Drop file${singleFile ? '' : 's'} here`}
-              onDrop={this.handleFileChange.bind(this)}
-            >
-              <div class={styles['upload-drop']}>
-                Drop file{singleFile ? '' : 's'} to upload
-              </div>
-            </DropArea>
-          </div>
+        {!isReadOnly &&
+          <div class={styles.upload}>
+            <div class={styles['upload-options']}>
+              <DropArea
+                accept={acceptedMimeTypes}
+                draggingText={`Drop file${singleFile ? '' : 's'} here`}
+                onDrop={this.handleFileChange.bind(this)}
+              >
+                <div class={styles['upload-drop']}>
+                  Drop file{singleFile ? '' : 's'} to upload
+                </div>
+              </DropArea>
+            </div>
 
-          <div class={styles.placeholder}>
-            <Button
-              accent="neutral"
-              size="small"
-              href={href}
-            >Select existing {fieldLocalType.toLowerCase()}</Button>
-          </div>
-
-          <div class={styles.placeholder}>
-            <FileUpload
-              accept={acceptedMimeTypes}
-              multiple={!singleFile}
-              onChange={this.handleFileChange.bind(this)}
-            >
+            <div class={styles.placeholder}>
               <Button
                 accent="neutral"
-                className={styles['upload-select']}
                 size="small"
-                type="mock-stateful"
-              >Select from device</Button>            
-            </FileUpload>
+                href={href}
+              >Select existing {fieldLocalType.toLowerCase()}</Button>
+            </div>
+
+            <div class={styles.placeholder}>
+              <FileUpload
+                accept={acceptedMimeTypes}
+                multiple={!singleFile}
+                onChange={this.handleFileChange.bind(this)}
+              >
+                <Button
+                  accent="neutral"
+                  className={styles['upload-select']}
+                  size="small"
+                  type="mock-stateful"
+                >Select from device</Button>
+              </FileUpload>
+            </div>
           </div>
-        </div>
+        }
       </Label>
     )
   }
