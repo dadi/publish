@@ -3,7 +3,6 @@
 import {h, Component} from 'preact'
 import {bindActionCreators} from 'redux'
 import {connectHelper, setPageTitle} from 'lib/util'
-import {filterVisibleFields} from 'lib/fields'
 import {Format} from 'lib/util/string'
 import {route} from '@dadi/preact-router'
 import {URLParams} from 'lib/util/urlParams'

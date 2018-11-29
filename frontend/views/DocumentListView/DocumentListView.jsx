@@ -3,10 +3,12 @@
 import {Component, h} from 'preact'
 import {bindActionCreators} from 'redux'
 import {connectHelper, setPageTitle} from 'lib/util'
+import {getVisibleFields} from 'lib/fields'
 import {route} from '@dadi/preact-router'
 import {URLParams} from 'lib/util/urlParams'
 
 import * as appActions from 'actions/appActions'
+import * as Constants from 'lib/constants'
 import * as documentsActions from 'actions/documentsActions'
 
 import Button from 'components/Button/Button'
@@ -162,6 +164,12 @@ class DocumentListView extends Component {
     const {
       search = {}
     } = state.router
+    const visibleFields = Object.keys(
+      getVisibleFields({
+        fields: currentCollection && currentCollection.fields,
+        viewType: 'list'
+      })
+    ).concat(Constants.DEFAULT_FIELDS)
 
     return (
       <Page>
@@ -184,11 +192,15 @@ class DocumentListView extends Component {
             collection={currentCollection}
             collectionParent={currentParentCollection}
             documentId={documentId}
+            fields={visibleFields}
             filters={search.filter}
             onBuildBaseUrl={onBuildBaseUrl.bind(this)}
             onPageTitle={setPageTitle}
             onRenderDocuments={props => (
-              <DocumentTableList {...props} />
+              <DocumentTableList
+                {...props}
+                fields={visibleFields}
+              />
             )}
             onRenderEmptyDocumentList={this.handleEmptyDocumentList.bind(this)}
             order={order}

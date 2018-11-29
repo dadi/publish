@@ -13,7 +13,6 @@ import * as routerActions from 'actions/routerActions'
 import * as fieldComponents from 'lib/field-components'
 
 import APIBridge from 'lib/api-bridge-client'
-import {visibleFieldList, filterVisibleFields} from 'lib/fields'
 import {buildUrl} from 'lib/router'
 import {connectHelper} from 'lib/util'
 import {Format} from 'lib/util/string'

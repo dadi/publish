@@ -39,6 +39,7 @@ export default class FileUpload extends Component {
   }
 
   static defaultProps = {
+    accept: ['*/*'],
     multiple: false
   }
 

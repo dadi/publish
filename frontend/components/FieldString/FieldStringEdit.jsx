@@ -148,7 +148,7 @@ export default class FieldStringEdit extends Component {
   }
 
   componentDidUpdate(prevProps, prevState) {
-    const {forceValidation, meta, value} = this.props
+    const {forceValidation, value} = this.props
 
     if (!prevProps.forceValidation && forceValidation) {
       this.validate(value)
@@ -173,7 +173,7 @@ export default class FieldStringEdit extends Component {
       Object.keys(validation).forEach(validationRule => {
         switch (validationRule) {
           case 'minLength':
-            if (valueLength < validation.minLength) {
+            if (valueLength > 0 && valueLength < validation.minLength) {
               hasValidationErrors = validationMessage || true
             }
 
@@ -239,10 +239,13 @@ export default class FieldStringEdit extends Component {
   handleOnChange(value) {
     const {name, onChange, schema} = this.props
 
-    this.validate(value)
+    // We prefer sending a `null` over an empty string.
+    let sanitisedValue = value === '' ? null : value
+
+    this.validate(sanitisedValue)
 
     if (typeof onChange === 'function') {
-      onChange.call(this, name, value)
+      onChange.call(this, name, sanitisedValue)
     }
   }
 

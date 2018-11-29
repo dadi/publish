@@ -3,7 +3,7 @@
 import {h, Component} from 'preact'
 import proptypes from 'proptypes'
 import {buildUrl} from 'lib/router'
-import {filterVisibleFields} from 'lib/fields'
+import {getVisibleFields} from 'lib/fields'
 
 import Style from 'lib/Style'
 import styles from './FieldReference.css'
@@ -101,10 +101,37 @@ export default class FieldReferenceEdit extends Component {
     value: proptypes.bool
   }
 
+  componentDidMount() {
+    const {forceValidation, value} = this.props
+
+    if (forceValidation) {
+      this.validate(value)
+    }
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    const {forceValidation, value} = this.props
+
+    if (
+      !prevProps.forceValidation && forceValidation ||
+      !prevProps.value && value
+    ) {
+      this.validate(value)
+    }
+  }
+
   findFirstStringField(fields) {
     return Object.keys(fields)
       .map(key => Object.assign({}, fields[key], {key}))
       .find(field => field.type === 'String')
+  }
+
+  handleRemove() {
+    const {name, onChange, schema} = this.props
+
+    if (typeof onChange === 'function') {
+      onChange.call(this, name, null)
+    }
   }
 
   render() {
@@ -121,6 +148,7 @@ export default class FieldReferenceEdit extends Component {
       onBuildBaseUrl,
       onChange,
       onError,
+      required,
       schema,
       value
     } = this.props
@@ -134,9 +162,9 @@ export default class FieldReferenceEdit extends Component {
 
     if (!referencedCollection) return null
 
-    const displayableFields = filterVisibleFields({
+    const displayableFields = getVisibleFields({
       fields: referencedCollection.fields,
-      view: 'list'
+      viewType: 'list'
     })
     const firstStringField = this.findFirstStringField(displayableFields)
     const displayField = value && firstStringField ? firstStringField.key : null
@@ -147,11 +175,15 @@ export default class FieldReferenceEdit extends Component {
     const values = value && !(value instanceof Array) ? [value] : value
     const publishBlock = schema.publish || {}
     const isReadOnly = publishBlock.readonly === true
+    const comment = schema.comment ||
+      required && 'Required' ||
+      isReadOnly && 'Read only'
 
     return (
       <Label
+        comment={comment}
+        error={error}
         label={displayName}
-        comment={isReadOnly && 'Read only'}
       >
         {value && (
           <div class={styles['value-container']}>
@@ -222,11 +254,12 @@ export default class FieldReferenceEdit extends Component {
     )
   }
 
-  handleRemove() {
-    const {name, onChange, schema} = this.props
+  validate(value) {
+    const {name, onError, required} = this.props
+    const hasValidationErrors = required && !value
 
-    if (typeof onChange === 'function') {
-      onChange.call(this, name, null)
-    }
+    if (typeof onError === 'function') {
+      onError.call(this, name, hasValidationErrors, value)
+    }    
   }
 }

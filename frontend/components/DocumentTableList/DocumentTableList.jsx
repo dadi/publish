@@ -5,7 +5,7 @@ import {debounce} from 'lib/util'
 import proptypes from 'proptypes'
 
 import * as fieldComponents from 'lib/field-components'
-import {filterVisibleFields, getFieldType} from 'lib/fields'
+import {getFieldType} from 'lib/fields'
 
 import SyncTable from 'components/SyncTable/SyncTable'
 
@@ -25,11 +25,6 @@ export default class DocumentTableList extends Component {
     collection: proptypes.object,
 
     /**
-     * The parent collection to operate on, when dealing with a reference field.
-     */
-    collectionParent: proptypes.object,
-
-    /**
      * The application configuration object.
      */
     config: proptypes.object,
@@ -43,6 +38,11 @@ export default class DocumentTableList extends Component {
      * The list of documents to display.
      */
     documents: proptypes.array,
+
+    /**
+     * The list of fields to display.
+     */
+    fields: proptypes.array,
 
     /**
     * A callback to be used to obtain the base URL for the given page, as
@@ -93,7 +93,7 @@ export default class DocumentTableList extends Component {
     }, {})
   }
 
-  handleRowRender(value, data, column, index) {
+  handleRowRender(listableFields, value, data, column, index) {
     const {
       collection,
       documentId,
@@ -113,12 +113,6 @@ export default class DocumentTableList extends Component {
     })
     let fieldSchema = collection.fields[column.id]
     let renderedValue = this.renderField(column.id, fieldSchema, value)
-
-    const listableFields = filterVisibleFields({
-      fields: (collection && collection.fields) || {},
-      view: 'list'
-    })
-
     let firstStringField = Object.keys(listableFields).filter(field => {
       return listableFields[field].type === 'String'
     })[0]
@@ -155,9 +149,9 @@ export default class DocumentTableList extends Component {
   render() {
     const {
       collection,
-      collectionParent,
       config,
       documents,
+      fields: fieldsToDisplay = [],
       onBuildBaseUrl,
       onSelect,
       order,
@@ -165,10 +159,14 @@ export default class DocumentTableList extends Component {
       sort
     } = this.props
     const selectedRows = this.getSelectedRows()
-    const listableFields = filterVisibleFields({
-      fields: collection.fields,
-      view: 'list'
-    })
+    const collectionFields = (collection && collection.fields) || {}
+    const listableFields = Object.keys(collectionFields).reduce((fields, fieldName) => {
+      if (fieldsToDisplay.includes(fieldName)) {
+        fields[fieldName] = collectionFields[fieldName]
+      }
+
+      return fields
+    }, {})
     const tableColumns = Object.keys(listableFields).map(field => {
       if (!collection.fields[field]) return
 
@@ -183,7 +181,7 @@ export default class DocumentTableList extends Component {
       <SyncTable
         columns={tableColumns}
         data={documents}
-        onRender={this.handleRowRender.bind(this)}
+        onRender={this.handleRowRender.bind(this, listableFields)}
         onSelect={onSelect}
         onSort={this.handleTableSort.bind(this)}
         selectedRows={selectedRows}

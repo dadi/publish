@@ -76,12 +76,20 @@ export default class ColorPicker extends Component {
     this.elementHue.addEventListener('mouseup', this.handleStopSettingHue)
     this.elementHue.addEventListener('mouseout', this.handleStopSettingHue)
     this.elementHue.addEventListener('mousemove', this.handleProcessHue)
+    this.elementHue.addEventListener('touchstart', this.handleStartSettingHue)
+    this.elementHue.addEventListener('touchend', this.handleStopSettingHue)
+    this.elementHue.addEventListener('touchcancel', this.handleStopSettingHue)
+    this.elementHue.addEventListener('touchmove', this.handleProcessHue)
 
     // Attach palette events.
     this.elementPalette.addEventListener('mousedown', this.handleStartSettingPalette)
     this.elementPalette.addEventListener('mouseup', this.handleStopSettingPalette)
     this.elementPalette.addEventListener('mouseout', this.handleStopSettingPalette)
     this.elementPalette.addEventListener('mousemove', this.handleProcessPalette)
+    this.elementPalette.addEventListener('touchstart', this.handleStartSettingPalette)
+    this.elementPalette.addEventListener('touchend', this.handleStopSettingPalette)
+    this.elementPalette.addEventListener('touchcancel', this.handleStopSettingPalette)
+    this.elementPalette.addEventListener('touchmove', this.handleProcessPalette)
   }
 
   componentWillUnmount() {
@@ -90,12 +98,20 @@ export default class ColorPicker extends Component {
     this.elementHue.removeEventListener('mouseup', this.handleStopSettingHue)
     this.elementHue.removeEventListener('mouseout', this.handleStopSettingHue)
     this.elementHue.removeEventListener('mousemove', this.handleProcessHue)
+    this.elementHue.removeEventListener('touchstart', this.handleStartSettingHue)
+    this.elementHue.removeEventListener('touchend', this.handleStopSettingHue)
+    this.elementHue.removeEventListener('touchcancel', this.handleStopSettingHue)
+    this.elementHue.removeEventListener('touchmove', this.handleProcessHue)
 
     // Remove palette events.
     this.elementPalette.removeEventListener('mousedown', this.handleStartSettingPalette)
     this.elementPalette.removeEventListener('mouseup', this.handleStopSettingPalette)
     this.elementPalette.removeEventListener('mouseout', this.handleStopSettingPalette)
     this.elementPalette.removeEventListener('mousemove', this.handleProcessPalette)
+    this.elementPalette.removeEventListener('touchstart', this.handleStartSettingPalette)
+    this.elementPalette.removeEventListener('touchend', this.handleStopSettingPalette)
+    this.elementPalette.removeEventListener('touchcancel', this.handleStopSettingPalette)
+    this.elementPalette.removeEventListener('touchmove', this.handleProcessPalette)
   }
 
   handleHueChange(event) {

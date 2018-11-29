@@ -15,7 +15,6 @@ import * as fieldComponents from 'lib/field-components'
 
 import APIBridge from 'lib/api-bridge-client'
 import {createRoute} from 'lib/router'
-import {filterVisibleFields, getFieldType} from 'lib/fields'
 import {connectHelper} from 'lib/util'
 
 import ErrorMessage from 'components/ErrorMessage/ErrorMessage'
@@ -51,6 +50,11 @@ class DocumentList extends Component {
      * When on a reference field, contains the ID of the parent document.
      */
     documentId: proptypes.string,
+
+    /**
+     * The list of fields to retrieve.
+     */
+    fields: proptypes.array,
 
     /**
      * The hash map of active filters.
@@ -247,6 +251,7 @@ class DocumentList extends Component {
       api,
       collection,
       collectionParent,
+      fields,
       filters = {},
       order,
       page,
@@ -271,6 +276,7 @@ class DocumentList extends Component {
       api,
       collection,
       count,
+      fields,
       filters,
       page,
       parentCollection: collectionParent,
@@ -334,7 +340,7 @@ class DocumentList extends Component {
       onPageTitle(
         (collection.settings && collection.settings.description) || collection.name
       )      
-    }    
+    }
 
     const items = documents.list.results
 

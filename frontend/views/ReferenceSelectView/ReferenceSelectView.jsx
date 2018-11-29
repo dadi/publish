@@ -4,10 +4,11 @@ import {Component, h} from 'preact'
 import {bindActionCreators} from 'redux'
 import {connectHelper, setPageTitle} from 'lib/util'
 import {Format} from 'lib/util/string'
-import {filterVisibleFields, getFieldType} from 'lib/fields'
+import {getFieldType, getVisibleFields} from 'lib/fields'
 import {route} from '@dadi/preact-router'
 import {URLParams} from 'lib/util/urlParams'
 
+import * as Constants from 'lib/constants'
 import * as documentActions from 'actions/documentActions'
 import * as documentsActions from 'actions/documentsActions'
 import * as fieldComponents from 'lib/field-components'
@@ -118,7 +119,7 @@ class ReferenceSelectView extends Component {
     )    
   }
 
-  handleRenderDocuments(reference, documentProps) {
+  handleRenderDocuments(reference, fields, documentProps) {
     let selectLimit = reference.limit || Infinity
 
     if (reference.collection.IS_MEDIA_BUCKET) {
@@ -139,7 +140,10 @@ class ReferenceSelectView extends Component {
     }
 
     return (
-      <DocumentTableList {...documentProps} />
+      <DocumentTableList
+        {...documentProps}
+        fields={fields}
+      />
     )
   }
 
@@ -214,6 +218,12 @@ class ReferenceSelectView extends Component {
       `Add selected ${selectedDocuments.length > 1 ? 'documents' : 'document'}`
 
     let filters = Object.assign({}, reference.filter, search.filter)
+    let fields = Object.keys(
+      getVisibleFields({
+        fields: reference.collection && reference.collection.fields,
+        viewType: 'list'
+      })
+    ).concat(Constants.DEFAULT_FIELDS)
 
     return (
       <Page>
@@ -239,10 +249,15 @@ class ReferenceSelectView extends Component {
             collection={reference.collection}
             collectionParent={currentCollection}
             documentId={documentId}
+            fields={fields}
             filters={filters}
             onBuildBaseUrl={onBuildBaseUrl.bind(this)}
             onPageTitle={setPageTitle}
-            onRenderDocuments={this.handleRenderDocuments.bind(this, reference)}
+            onRenderDocuments={this.handleRenderDocuments.bind(
+              this,
+              reference,
+              fields
+            )}
             onRenderEmptyDocumentList={this.handleEmptyDocumentList.bind(this)}
             order={order}
             page={page}

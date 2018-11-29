@@ -4,6 +4,7 @@ import * as LocalStorage from 'lib/local-storage'
 import * as Types from 'actions/actionTypes'
 import * as userActions from 'actions/userActions'
 import {batchActions} from 'lib/redux'
+import {uploadMedia} from 'actions/documentsActions'
 import apiBridgeClient from 'lib/api-bridge-client'
 
 export function clearRemoteDocument () {
@@ -190,157 +191,90 @@ export function saveDocument ({
       })
     }
 
-    // Handling reference fields.
-    let referenceQueue = []
-    let referenceQueueMap = []
+    // Handling Reference and Media fields.
+    let referenceQueue = Object.keys(payload).map(field => {
+      let schema = collection.fields[field]
 
-    // We iterate through the payload and find reference fields.
-    Object.keys(payload).forEach(field => {
-      const fieldSchema = collection.fields[field]
+      // We're only interested in fields that have an entry in the collection
+      // schema, have a truthy value in the document and are of type Reference
+      // or Media.
+      if (
+        !schema ||
+        !payload[field] ||
+        !['Media', 'Reference'].includes(schema.type)
+      ) {
+        return
+      }
 
-      if (!fieldSchema) return
+      let schemaSettings = schema.settings || {}
+      let referencedDocuments = Array.isArray(payload[field]) ?
+          payload[field] :
+          [payload[field]]
+      let referenceLimit = (
+        schemaSettings.limit !== undefined &&
+        schemaSettings.limit > 0
+      ) ? schemaSettings.limit : Infinity
+      let isMediaReference = schema.type === 'Reference' &&
+        schemaSettings.collection === Constants.MEDIA_COLLECTION
+      let isMedia = schema.type === 'Media'
 
-      const referencedCollection = fieldSchema.settings && fieldSchema.settings.collection
+      if (isMediaReference || isMedia) {
+        return uploadMedia({
+          api,
+          bearerToken: getState().user.accessToken,
+          files: referencedDocuments.map(document => document._file)
+        }).then(({results}) => {
+          if (isMediaReference) {
+            return results.map(result => result._id)
+          }
 
-      // We're only interested in the field if its value is truthy. If it's
-      // null, it's good as it is.
-      if (payload[field] && fieldSchema.type === 'Reference') {
-        const referencedDocument = payload[field]
-        const referencedDocuments = Array.isArray(referencedDocument) ?
-            referencedDocument : [referencedDocument]
-        const referenceLimit = (
-          fieldSchema.settings &&
-          fieldSchema.settings.limit !== undefined &&
-          fieldSchema.settings.limit > 0
-        ) ? fieldSchema.settings.limit : Infinity
+          return results.map(result => ({
+            _id: result._id
+          }))
+        }).then(reference => {
+          payload[field] = referenceLimit > 1 ? reference : reference[0]
+        })
+      } else {
+        let reference = referencedDocuments
+          .map(document => document._id)
+          .filter(Boolean)
 
-        // Is this a reference to a media collection?
-        if (referencedCollection === Constants.MEDIA_COLLECTION) {
-          payload[field] = referencedDocuments.map((document, index) => {
-            // If this is an existing media item, we simply grab its ID.
-            if (document._id) {
-              return document._id
-            }
-
-            // Otherwise, we need to upload the file.
-            referenceQueue.push(
-              apiBridgeClient({
-                accessToken: getState().user.accessToken,
-                api
-              }).inMedia().getSignedUrl({
-                contentLength: document.contentLength,
-                fileName: document.fileName,
-                mimetype: document.mimetype
-              })
-            )
-
-            referenceQueueMap.push({
-              field,
-              index,
-              mediaUpload: true
-            })
-
-            return document
-          })
-        } else {
-          const referencedCollectionSchema = referencedCollection &&
-            api.collections.find(collection => {
-              return collection.slug === referencedCollection
-            })
-
-          // If the referenced collection doesn't exist, there's nothing we can do.
-          if (!referencedCollectionSchema) return
-
-          let referenceDocumentIds = []
-
-          referencedDocuments.forEach(document => {
-            // The document already exists, we need to update it.
-            if (document._id) {
-              referenceDocumentIds.push(document._id)
-            } else {
-
-              // The document does not exist, we need to create it.
-            }
-          })
-
-          payload[field] = referenceLimit > 1 ? referenceDocumentIds : referenceDocumentIds[0]
-        }
+        payload[field] = referenceLimit > 1 ? reference : reference[0]
       }
     })
 
-    Promise.all(referenceQueue).then(responses => {
-      let uploadQueue = []
+    Promise.all(referenceQueue).then(() => {
+      apiBridge = isUpdate ?
+        apiBridge.update(payload) :
+        apiBridge.create(payload)
 
-      // `responses` contains an array of API responses resulting from updating
-      // or creationg referenced documents. The names of the fields they relate
-      // to are defined in `referenceQueueMap`.
-      responses.forEach((response, index) => {
-        const queueMapEntry = referenceQueueMap[index]
-        const referenceField = queueMapEntry.field
-        const referenceLimit = queueMapEntry.limit
+      return apiBridge.then(response => {
+        if (response.results && response.results.length) {
+          dispatch(setRemoteDocument(response.results[0], {
+            clearLocal: true,
+            forceUpdate: true
+          }))
 
-        // If this bundle entry is a media upload, we're not done yet. The
-        // bundle response gave us a signed URL, but we still need to upload
-        // the file and add the resulting ID to the final payload.
-        if (queueMapEntry.mediaUpload) {
-          dispatch(
-            setRemoteDocumentStatus(Constants.STATUS_SAVING)
-          )
+          // We've successfully saved the document, so we now need to clear
+          // the local storage key corresponding to the unsaved document for
+          // the given collection path.
+          const localStorageKey = isUpdate ?
+            documentId :
+            collection.path
 
-          const mediaUpload = uploadMediaToSignedURL(
-            api,
-            response.url,
-            payload[referenceField][queueMapEntry.index]
-          ).then(uploadResponse => {
-            if (uploadResponse.results && uploadResponse.results.length) {
-              payload[referenceField][queueMapEntry.index] = uploadResponse.results[0]._id
-            }
-          })
-
-          uploadQueue.push(mediaUpload)
-        } else if (response.results) {
-          payload[referenceField] = referenceLimit === 1 ?
-            response.results[0]._id :
-            payload[referenceField].concat(response.results.map(document => {
-              return document._id
-            }))
-        }
-      })
-
-      // Wait for any media uploads to be finished.
-      return Promise.all(uploadQueue).then(() => {
-        // The payload is ready, we can attach it to API Bridge.
-        if (isUpdate) {
-          apiBridge = apiBridge.update(payload)
+          LocalStorage.clearDocument(localStorageKey)
         } else {
-          apiBridge = apiBridge.create(payload)
+          dispatch(
+            setRemoteDocumentStatus(Constants.STATUS_FAILED)
+          )
         }
-
-        return apiBridge.then(response => {
-          if (response.results && response.results.length) {
-            dispatch(setRemoteDocument(response.results[0], {
-              clearLocal: true,
-              forceUpdate: true
-            }))
-
-            // We've successfully saved the document, so we now need to clear
-            // the local storage key corresponding to the unsaved document for
-            // the given collection path.
-            const localStorageKey = isUpdate ?
-              documentId :
-              collection.path
-
-            LocalStorage.clearDocument(localStorageKey)
-          } else {
-            dispatch(
-              setRemoteDocumentStatus(Constants.STATUS_FAILED)
-            )
-          }
-        })
       }).catch(response => {
         if (response.errors && response.errors.length) {
           dispatch(
-            setErrorsFromRemoteAPI(response.errors)
+            batchActions([
+              setErrorsFromRemoteAPI(response.errors),
+              setRemoteDocumentStatus(Constants.STATUS_IDLE)
+            ])
           )
         } else {
           dispatch(

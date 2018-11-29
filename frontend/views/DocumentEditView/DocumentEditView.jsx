@@ -3,7 +3,7 @@
 import {h, Component} from 'preact'
 import {bindActionCreators} from 'redux'
 import {connectHelper, setPageTitle} from 'lib/util'
-import {filterVisibleFields} from 'lib/fields'
+import {getVisibleFields} from 'lib/fields'
 import {Format} from 'lib/util/string'
 import {route} from '@dadi/preact-router'
 import {URLParams} from 'lib/util/urlParams'
@@ -139,9 +139,9 @@ class DocumentEditView extends Component {
     const {currentApi, currentCollection} = state.api
 
     if (currentCollection) {
-      let collectionFields = filterVisibleFields({
+      let collectionFields = getVisibleFields({
         fields: currentCollection.fields,
-        view: 'edit'
+        viewType: 'edit'
       })
 
       this.sections = this.groupFieldsIntoSections(collectionFields)

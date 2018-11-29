@@ -36,7 +36,7 @@ class DocumentListController extends Component {
   handleUpload(files) {
     const {actions, api} = this.props
 
-    actions.uploadMedia({
+    actions.saveMediaDocuments({
       api,
       files: Array.from(files)
     })
