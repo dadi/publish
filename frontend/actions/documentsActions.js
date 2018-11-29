@@ -194,7 +194,7 @@ export function setDocumentListStatus (status, data) {
   }
 }
 
-export function uploadMedia ({
+export function saveMediaDocuments ({
   api,
   files
 }) {
@@ -203,21 +203,12 @@ export function uploadMedia ({
       setDocumentListStatus(Constants.STATUS_SAVING)
     )
 
-    let bearerToken = getState().user.accessToken
-    let url = `${api.host}:${api.port}/media/upload`
-    let body = new FormData()
-
-    files.forEach((file, index) => {
-      body.append(`file${index}`, file)
+    uploadMedia({
+      api,
+      bearerToken: getState().user.accessToken,
+      files
     })
-
-    fetch(url, {
-      body,
-      headers: {
-        Authorization: `Bearer ${bearerToken}`
-      },
-      method: 'POST'
-    }).then(response => response.json()).then(response => {
+    .then(response => {
       dispatch(
         setDocumentListStatus(Constants.STATUS_IDLE)
       )
@@ -228,4 +219,25 @@ export function uploadMedia ({
       )
     })
   }
+}
+
+export function uploadMedia ({
+  api,
+  bearerToken,
+  files
+}) {
+  let url = `${api.host}:${api.port}/media/upload`
+  let body = new FormData()
+
+  files.forEach((file, index) => {
+    body.append(`file${index}`, file)
+  })
+
+  return fetch(url, {
+    body,
+    headers: {
+      Authorization: `Bearer ${bearerToken}`
+    },
+    method: 'POST'
+  }).then(response => response.json())
 }
