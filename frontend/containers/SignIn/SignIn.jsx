@@ -51,12 +51,15 @@ class SignIn extends Component {
   }
 
   getErrorBanner({
+    noAPIConfigured,
     remoteError,
     sessionHasExpired
   }) {
     let message
 
-    if (sessionHasExpired) {
+    if (noAPIConfigured) {
+      message = 'This installation of Publish has not been configured. Please contact your administrator.'
+    } else if (sessionHasExpired) {
       message = 'Your session has expired. Please sign in again.'
     } else if (remoteError) {
       switch (remoteError) {
@@ -92,11 +95,13 @@ class SignIn extends Component {
   }
 
   render() {
-    const {state, actions, setPageTitle} = this.props
+    const {actions, setPageTitle, state} = this.props
     const {email, password, userHasInteracted} = this.state
-    const hasConnectionIssues = state.app.networkStatus !== Constants.NETWORK_OK
-    const {whitelabel} = state.app.config
+    const {config, networkStatus} = state.app
+    const {apis, whitelabel} = config
     const {logo, poweredBy, backgroundImage} = whitelabel
+    const hasApi = apis.length > 0
+    const hasConnectionIssues = networkStatus !== Constants.NETWORK_OK
 
     setPageTitle('Sign In')
 
@@ -111,8 +116,8 @@ class SignIn extends Component {
               onSubmit={this.handleSignIn.bind(this)}
             >
             <img class={styles.logo} src={`/public/${logo}`} />
-
               {this.getErrorBanner({
+                noAPIConfigured: !hasApi,
                 remoteError: state.user.remoteError,
                 sessionHasExpired: state.user.sessionHasExpired
               })}
@@ -146,12 +151,14 @@ class SignIn extends Component {
 
               <Button
                 accent="system"
-                disabled={hasConnectionIssues || (userHasInteracted && !formDataIsValid)}
+                disabled={
+                  hasConnectionIssues ||
+                  (userHasInteracted && !formDataIsValid) ||
+                  !hasApi
+                }
                 isLoading={state.user.isAuthenticating}
                 type="submit"
               >Sign In</Button>
-
-              {/*<a class={styles.link} href="/reset">Reset password</a>*/}
 
               {poweredBy && (
                 <p class={styles['powered-by']}>
@@ -200,8 +207,8 @@ class SignIn extends Component {
 
 export default connectHelper(
   state => ({
-    user: state.user,
-    app: state.app
+    app: state.app,
+    user: state.user
   }),
   dispatch => bindActionCreators({
     ...userActions
