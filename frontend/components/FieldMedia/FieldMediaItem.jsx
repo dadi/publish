@@ -23,7 +23,7 @@ export default class FieldMediaItem extends Component {
     value: proptypes.object
   }
 
-  getSource() {
+  render() {
     const {config, isList, value} = this.props
     const cdn = config ? config.cdn : null
 
@@ -80,9 +80,5 @@ export default class FieldMediaItem extends Component {
         </a>
       </div>
     )
-  }
-
-  render() {
-    return this.getSource()
   }
 }
