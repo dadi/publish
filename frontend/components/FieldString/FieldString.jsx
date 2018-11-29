@@ -5,8 +5,8 @@ import filter from './FieldStringFilter'
 import list from './FieldStringList'
 
 const operators = {
-  $ne: 'does not equal',
-  $regex: 'contains'
+  $regex: 'contains',
+  $ne: 'does not equal'
 }
 
 const beforeReferenceSelect = ({collection, field}) => {
