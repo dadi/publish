@@ -112,7 +112,10 @@ export default class FieldReferenceEdit extends Component {
   componentDidUpdate(prevProps, prevState) {
     const {forceValidation, value} = this.props
 
-    if (!prevProps.forceValidation && forceValidation) {
+    if (
+      !prevProps.forceValidation && forceValidation ||
+      !prevProps.value && value
+    ) {
       this.validate(value)
     }
   }
@@ -145,6 +148,7 @@ export default class FieldReferenceEdit extends Component {
       onBuildBaseUrl,
       onChange,
       onError,
+      required,
       schema,
       value
     } = this.props
@@ -171,12 +175,15 @@ export default class FieldReferenceEdit extends Component {
     const values = value && !(value instanceof Array) ? [value] : value
     const publishBlock = schema.publish || {}
     const isReadOnly = publishBlock.readonly === true
+    const comment = schema.comment ||
+      required && 'Required' ||
+      isReadOnly && 'Read only'
 
     return (
       <Label
+        comment={comment}
         error={error}
         label={displayName}
-        comment={isReadOnly && 'Read only'}
       >
         {value && (
           <div class={styles['value-container']}>
