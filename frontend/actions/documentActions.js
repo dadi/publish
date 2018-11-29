@@ -271,7 +271,10 @@ export function saveDocument ({
       }).catch(response => {
         if (response.errors && response.errors.length) {
           dispatch(
-            setErrorsFromRemoteAPI(response.errors)
+            batchActions([
+              setErrorsFromRemoteAPI(response.errors),
+              setRemoteDocumentStatus(Constants.STATUS_IDLE)
+            ])
           )
         } else {
           dispatch(

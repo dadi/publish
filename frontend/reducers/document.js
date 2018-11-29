@@ -142,6 +142,14 @@ export default function document (state = initialState, action = {}) {
     case Types.SET_REMOTE_DOCUMENT_STATUS:
       switch (action.status) {
 
+        // Document is idle.
+        case Constants.STATUS_IDLE:
+          return {
+            ...state,
+            isLoading: false,
+            isSaving: false
+          }
+
         // Document is fetching.
         case Constants.STATUS_LOADING:
           return {
