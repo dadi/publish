@@ -5,6 +5,7 @@ import {connectHelper, setPageTitle} from 'lib/util'
 import * as Constants from 'lib/constants'
 import * as userActions from 'actions/userActions'
 
+import * as appActions from 'actions/appActions'
 import * as documentsActions from 'actions/documentsActions'
 
 import ButtonWithPrompt from 'components/ButtonWithPrompt/ButtonWithPrompt'
@@ -31,6 +32,23 @@ class MediaListView extends Component {
     super(props)
 
     this.state.bulkActionSelected = BULK_ACTIONS.PLACEHOLDER
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    const {actions, state} = this.props
+    const {isDeleting, list} = state.documents
+    const wasDeleting = prevProps.state.documents.isDeleting
+
+    // Have we just deleted some documents?
+    if (wasDeleting && !isDeleting) {
+      let message = wasDeleting > 1 ?
+        `${wasDeleting} media items have been deleted` :
+        'The media item has been deleted'
+
+      actions.setNotification({
+        message
+      })
+    }
   }
 
   handleBuildBaseUrl({
@@ -196,6 +214,7 @@ export default connectHelper(
     user: state.user
   }),
   dispatch => bindActionCreators({
+    ...appActions,
     ...documentsActions
   }, dispatch)
 )(MediaListView)
