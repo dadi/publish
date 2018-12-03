@@ -1,6 +1,7 @@
 'use strict'
 
 const convict = require('convict')
+const globals = require('./globals') // eslint-disable-line
 const path = require('path')
 const fs = require('fs')
 // Define a schema

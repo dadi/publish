@@ -10,7 +10,7 @@ const frontend = path.join(__dirname, '/../frontend')
  */
 
 const Globals = function () {
-  global.paths = {
+  global.paths = global.paths || {
     base,
     config: path.resolve(`${__dirname}/config`),
     configDir: path.resolve(`${process.env.PWD}/config`),
