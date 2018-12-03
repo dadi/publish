@@ -128,12 +128,7 @@ export default class RichEditor extends Component {
 
     this.markdownRenderer = new marked.Renderer()
     this.markdownRenderer.code = (code, language = '') => {
-      let escapedCode = code
-         .replace(/&/g, '&amp;')
-         .replace(/</g, '&lt;')
-         .replace(/>/g, '&gt;')
-         .replace(/"/g, '&quot;')
-         .replace(/'/g, '&#039;')
+      let escapedCode = this.escapeHTML(code)
 
       return `<pre class="${styles.code}" data-language="${language.trim()}">${escapedCode}</pre>`
     }
@@ -222,7 +217,8 @@ export default class RichEditor extends Component {
               this.handleChange(this.editorElement.innerHTML)
             } else {
               let selection = window.getSelection()
-              let html = `<pre class="${styles.code}">${selection.toString()}</pre>`
+              let escapedCode = this.escapeHTML(selection.toString())
+              let html = `<pre class="${styles.code}">${escapedCode}</pre>`
 
               pell.exec('insertHTML', html)
             }
@@ -323,6 +319,15 @@ export default class RichEditor extends Component {
     range.setEnd(baseNode, startOffset)
 
     return range
+  }
+
+  escapeHTML(html) {
+    return html
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#039;')
   }
 
   getNodeTagPathsInSelection() {
