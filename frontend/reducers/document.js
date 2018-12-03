@@ -30,6 +30,10 @@ export default function document (state = initialState, action = {}) {
         saveAttempts: state.saveAttempts + 1
       }
 
+    // Resetting state when user authenticates.
+    case Types.AUTHENTICATE:
+      return initialState
+
     // Document action: clear remote document
     case Types.CLEAR_REMOTE_DOCUMENT:
       return initialState

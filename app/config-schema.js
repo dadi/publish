@@ -1,35 +1,4 @@
 module.exports = {
-  auth: {
-    doc: 'Auth API Collection',
-    format: Object,
-    default: {
-      enabled: false
-    },
-    collection: {
-      format: String,
-      default: ''
-    },
-    database: {
-      format: String,
-      default: ''
-    },
-    enabled: {
-      format: Boolean,
-      default: true
-    },
-    host: {
-      format: 'ipaddress',
-      default: '0.0.0.0'
-    },
-    port: {
-      format: 'port',
-      default: 3000
-    },
-    version: {
-      format: String,
-      default: '1.0'
-    }
-  },
   apis: {
     requireAuthentication: false,
     doc: 'Connected APIs',
@@ -39,29 +8,17 @@ module.exports = {
       type: String,
       default: ''
     },
-    enabled: {
-      type: Boolean,
-      default: true
-    },
     name: {
       format: String,
       default: 'No Name'
     },
     host: {
-      format: 'ipaddress',
+      format: String,
       default: '0.0.0.0'
     },
     port: {
       format: 'port',
-      default: 3000
-    },
-    database: {
-      format: String,
-      default: ''
-    },
-    version: {
-      format: String,
-      default: '1.0'
+      default: 80
     },
     menu: {
       doc: 'Collection menu ordering and grouping',
