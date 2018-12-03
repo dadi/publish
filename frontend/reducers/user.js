@@ -54,6 +54,7 @@ function mergeUpdate (current, fieldName, value) {
 
 export default function user (state = initialState, action = {}) {
   switch (action.type) {
+
     case Types.ATTEMPT_SAVE_USER:
       return {
         ...state,
@@ -172,6 +173,21 @@ export default function user (state = initialState, action = {}) {
       }
 
       return state
+
+    // Action: processing error from the network
+    case Types.REGISTER_NETWORK_ERROR:
+      // We're interested in processing errors with the code API-0005 only, as
+      // those signal an authentication error (i.e. the access token stored is
+      // no longer valid). If that's not the error we're seeing here, there's
+      // nothing for us to do. If it is, we let the switch go to the next case,
+      // where the sign out routine is processed.
+      if (
+        !action.error ||
+        !action.error.code ||
+        action.error.code !== Constants.API_UNAUTHORISED_ERROR
+      ) {
+        break
+      }
 
     // Action: clear user
     case Types.SIGN_OUT:

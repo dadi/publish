@@ -18,6 +18,13 @@ export function registerNetworkCall (status, onComplete) {
   }
 }
 
+export function registerNetworkError (error) {
+  return {
+    error,
+    type: Types.REGISTER_NETWORK_ERROR
+  }
+}
+
 export function setNetworkStatus (networkStatus) {
   return {
     networkStatus,

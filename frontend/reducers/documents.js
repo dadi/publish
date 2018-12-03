@@ -16,6 +16,10 @@ const initialState = {
 export default function document (state = initialState, action = {}) {
   switch (action.type) {
 
+    // Resetting state when user authenticates.
+    case Types.AUTHENTICATE:
+      return initialState
+
     // Action: delete documents.
     case Types.DELETE_DOCUMENTS:
       return initialState

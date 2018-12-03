@@ -36,6 +36,7 @@ class App extends Component {
   componentWillMount() {
     const {actions, state} = this.props
 
+    apiBridgeClient.registerErrorCallback(actions.registerNetworkError)
     apiBridgeClient.registerProgressCallback(actions.registerNetworkCall)
 
     // We only load the APIs at this point if the user is already signed in
