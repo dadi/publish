@@ -4,6 +4,23 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [1.0.17-beta] (2018-12-03)
+
+### Added
+
+* [#543](https://github.com/dadi/publish/issues/543): ensure DropArea respects MIME type validation
+
+### Changed
+
+* [#629](https://github.com/dadi/publish/pull/629): escape HTML when creating code block
+* [#630](https://github.com/dadi/publish/pull/630): make `contains` the default operator when creating new filter
+
+### Fixed
+
+* [#419](https://github.com/dadi/publish/issues/419): recover from remote API validation errors
+* [#527](https://github.com/dadi/publish/issues/527): gracefully handle API authentication errors
+* [#623](https://github.com/dadi/publish/issues/623): show notification after deleting items on media list view
+
 ## [1.0.16-beta] (2018-11-23)
 
 ### Fixed
