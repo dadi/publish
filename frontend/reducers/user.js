@@ -186,7 +186,7 @@ export default function user (state = initialState, action = {}) {
         !action.error.code ||
         action.error.code !== Constants.API_UNAUTHORISED_ERROR
       ) {
-        break
+        return state
       }
 
     // Action: clear user
