@@ -18,7 +18,9 @@ Publish.prototype.getStartupMessage = function () {
   let port = config.get('server.protocol') === 'https' ? 443 : config.get('server.port')
 
   // Where can the user access Publish?
-  let server = config.get('publicUrl') ? `${config.get('publicUrl.protocol')}://${config.get('publicUrl.host')}:${port}` : `http://${config.get('server.host')}:${port}`
+  let server = config.get('publicUrl.host')
+    ? `${config.get('publicUrl.protocol')}://${config.get('publicUrl.host')}:${port}`
+    : `http://${config.get('server.host')}:${port}`
 
   // Print out API.
   let apis = config.get('apis')
