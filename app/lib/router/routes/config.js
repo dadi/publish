@@ -7,6 +7,8 @@ module.exports = function (app) {
   if (!app) return
 
   app.get('/config', (req, res, next) => {
+    let apis = config.get('apis')
+    let mainApi = apis.length && apis[0]
     let emptyResponse = {
       config: null,
       routes: null
@@ -14,19 +16,18 @@ module.exports = function (app) {
     let accessToken = (req.cookies && req.cookies.accessToken) ||
       req.query.accessToken
 
-    if (!accessToken) {
+    if (!accessToken || !mainApi) {
       return res.end(
         JSON.stringify(emptyResponse)
       )
     }
 
-    let api = config.get('apis.0')
     let requestOptions = {
       headers: {
         Authorization: `Bearer ${accessToken}`
       },
       json: true,
-      uri: `${api.host}:${api.port}/api/client`
+      uri: `${mainApi.host}:${mainApi.port}/api/client`
     }
 
     return request(requestOptions).then(({results}) => {

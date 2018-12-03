@@ -95,16 +95,16 @@ Router.prototype.webRoutes = function () {
     )
     let accessToken = req.cookies && req.cookies.accessToken
     let authenticate = Promise.resolve()
+    let apis = config.get('apis')
+    let mainApi = apis.length && apis[0]
 
-    if (accessToken) {
-      let api = config.get('apis.0')
-
+    if (accessToken && mainApi) {
       authenticate = request({
         headers: {
           Authorization: `Bearer ${accessToken}`
         },
         json: true,
-        uri: `${api.host}:${api.port}/api/client`
+        uri: `${mainApi.host}:${mainApi.port}/api/client`
       }).then(({results}) => {
         entryPointPage = entryPointPage
           .replace(

@@ -52,8 +52,28 @@ function mergeUpdate (current, fieldName, value) {
   }
 }
 
+function signOut () {
+  Cookies.remove('accessToken')
+  Cookies.remove('accessTokenExpiry')
+
+  return {
+    ...initialState,
+    accessToken: undefined,
+    isSaving: false,
+    isSignedIn: false,
+    sessionHasExpired: Boolean(action.sessionHasExpired)
+  }
+}
+
 export default function user (state = initialState, action = {}) {
   switch (action.type) {
+
+    case Types.SET_API_LIST:
+      if (action.apis.length === 0) {
+        return signOut()
+      }
+
+      return state
 
     case Types.ATTEMPT_SAVE_USER:
       return {
@@ -61,7 +81,6 @@ export default function user (state = initialState, action = {}) {
         hasBeenSubmitted: true
       }
 
-    // Action: authenticate
     case Types.AUTHENTICATE:
       let {
         accessToken,
@@ -89,6 +108,21 @@ export default function user (state = initialState, action = {}) {
         sessionHasExpired: false
       }
 
+    case Types.REGISTER_NETWORK_ERROR:
+      // We're interested in processing errors with the code API-0005 only, as
+      // those signal an authentication error (i.e. the access token stored is
+      // no longer valid). If that's not the error we're seeing here, there's
+      // nothing for us to do. If it is, we return the result of `signOut()`.
+      if (
+        !action.error ||
+        !action.error.code ||
+        action.error.code !== Constants.API_UNAUTHORISED_ERROR
+      ) {
+        return state
+      }
+
+      return signOut()
+
     case Types.SET_API_STATUS:
       if (action.error === Constants.API_UNAUTHORISED_ERROR) {
         Cookies.remove('accessToken')
@@ -114,7 +148,6 @@ export default function user (state = initialState, action = {}) {
         remoteError: null
       }
 
-    // Document action: set field error status
     case Types.SET_USER_FIELD_ERROR_STATUS:
       const {
         error = null,
@@ -141,7 +174,6 @@ export default function user (state = initialState, action = {}) {
         }
       }
 
-    // Action: set user status
     case Types.SET_USER_STATUS:
       switch (action.status) {
 
@@ -174,35 +206,9 @@ export default function user (state = initialState, action = {}) {
 
       return state
 
-    // Action: processing error from the network
-    case Types.REGISTER_NETWORK_ERROR:
-      // We're interested in processing errors with the code API-0005 only, as
-      // those signal an authentication error (i.e. the access token stored is
-      // no longer valid). If that's not the error we're seeing here, there's
-      // nothing for us to do. If it is, we let the switch go to the next case,
-      // where the sign out routine is processed.
-      if (
-        !action.error ||
-        !action.error.code ||
-        action.error.code !== Constants.API_UNAUTHORISED_ERROR
-      ) {
-        return state
-      }
-
-    // Action: clear user
     case Types.SIGN_OUT:
-      Cookies.remove('accessToken')
-      Cookies.remove('accessTokenExpiry')
+      return signOut()
 
-      return {
-        ...initialState,
-        accessToken: undefined,
-        isSaving: false,
-        isSignedIn: false,
-        sessionHasExpired: Boolean(action.sessionHasExpired)
-      }
-
-    // Action: update local user
     case Types.UPDATE_LOCAL_USER:
       return mergeUpdate(
         {...state, hasBeenValidated: true},
