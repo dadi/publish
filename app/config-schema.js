@@ -30,12 +30,7 @@ module.exports = {
     name: {
       doc: 'The applicaton name',
       format: String,
-      default: 'DADI Publish (Repo Default)'
-    },
-    publisher: {
-      doc: 'The organisation name',
-      format: String,
-      default: 'DADI'
+      default: 'DADI Publish'
     }
   },
   cdn: {

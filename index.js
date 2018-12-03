@@ -20,19 +20,18 @@ Publish.prototype.getStartupMessage = function () {
   // Where can the user access Publish?
   let server = config.get('publicUrl') ? `${config.get('publicUrl.protocol')}://${config.get('publicUrl.host')}:${port}` : `http://${config.get('server.host')}:${port}`
 
-  // Print out APIs
-  let footer = {}
-
-  for (let api in config.get('apis')) {
-    let key = config.get('apis')[api].name
-    footer[key] = config.get('apis')[api].host
+  // Print out API.
+  let apis = config.get('apis')
+  let apiUrl = (apis.length > 0) && `${apis[0].host}:${apis[0].port}`
+  let footer = {
+    'API': apiUrl || colors.red('Not connected')
   }
 
   if (env !== 'test') {
     dadiBoot.started({
       server,
       header: {
-        app: `${config.get('app.name')}${config.get('app.publisher') && config.get('app.publisher') !== '' ? ' - ' + config.get('app.publisher') : ''}`
+        app: config.get('app.name')
       },
       body: {
         'Version': pkg.version,
