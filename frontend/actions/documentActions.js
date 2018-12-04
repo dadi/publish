@@ -208,8 +208,8 @@ export function saveDocument ({
 
       let schemaSettings = schema.settings || {}
       let referencedDocuments = Array.isArray(payload[field]) ?
-          payload[field] :
-          [payload[field]]
+        payload[field] :
+        [payload[field]]
       let referenceLimit = (
         schemaSettings.limit !== undefined &&
         schemaSettings.limit > 0
@@ -219,11 +219,38 @@ export function saveDocument ({
       let isMedia = schema.type === 'Media'
 
       if (isMediaReference || isMedia) {
-        return uploadMedia({
-          api,
-          bearerToken: getState().user.accessToken,
-          files: referencedDocuments.map(document => document._file)
-        }).then(({results}) => {
+        // This array will work as a stack that stores the indexes of documents
+        // that must be uploaded first. When the upload is complete, this array
+        // can be used to reconstruct `referencedDocuments` with the result of
+        // the uploads.
+        let uploadIndexes = []
+        let documentsToUpload = referencedDocuments.filter((document, index) => {
+          if (document._id === undefined) {
+            uploadIndexes.push(index)
+
+            return true
+          }
+        })
+        let uploadJob = Promise.resolve(referencedDocuments)
+
+        // Are there any documents that need to be uploaded first?
+        if (documentsToUpload.length > 0) {
+          uploadJob = uploadMedia({
+            api,
+            bearerToken: getState().user.accessToken,
+            files: documentsToUpload.map(document => document._file)
+          }).then(({results}) => {
+            results.forEach(uploadedDocument => {
+              let index = uploadIndexes.shift()
+
+              referencedDocuments[index] = uploadedDocument
+            })
+
+            return referencedDocuments
+          })
+        }
+
+        return uploadJob.then(results => {
           if (isMediaReference) {
             return results.map(result => result._id)
           }
