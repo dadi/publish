@@ -52,7 +52,7 @@ function mergeUpdate (current, fieldName, value) {
   }
 }
 
-function signOut ({sessionHasExpired = false} = {}) {
+function signOut (action) {
   Cookies.remove('accessToken')
   Cookies.remove('accessTokenExpiry')
 
@@ -61,7 +61,7 @@ function signOut ({sessionHasExpired = false} = {}) {
     accessToken: undefined,
     isSaving: false,
     isSignedIn: false,
-    sessionHasExpired
+    sessionHasExpired: Boolean(action.sessionHasExpired)
   }
 }
 
@@ -70,7 +70,7 @@ export default function user (state = initialState, action = {}) {
 
     case Types.SET_API_LIST:
       if (action.apis.length === 0) {
-        return signOut()
+        return signOut(action)
       }
 
       return state
@@ -121,9 +121,7 @@ export default function user (state = initialState, action = {}) {
         return state
       }
 
-      return signOut({
-        sessionHasExpired: true
-      })
+      return signOut(action)
 
     case Types.SET_API_STATUS:
       if (action.error === Constants.API_UNAUTHORISED_ERROR) {
@@ -209,7 +207,7 @@ export default function user (state = initialState, action = {}) {
       return state
 
     case Types.SIGN_OUT:
-      return signOut()
+      return signOut(action)
 
     case Types.UPDATE_LOCAL_USER:
       return mergeUpdate(
