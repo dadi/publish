@@ -373,6 +373,7 @@ export default class FieldStringEdit extends Component {
             size="small"
             href={linkFormatted || value} 
             className={styles['link-preview']}
+            openInNewWindow={true}
           >Open in new window</Button>
         )}
       </Label>
