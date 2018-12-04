@@ -4,6 +4,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [1.0.21-beta] (2018-12-04)
+
+### Changed
+
+* [#535](https://github.com/dadi/publish/issues/635): open linkable fields in new window
+
+### Fixed
+
+* [#638](https://github.com/dadi/publish/pull/638): fix issues when saving existing Reference fields
+
 ## [1.0.20-beta] (2018-12-03)
 
 ### Changed
