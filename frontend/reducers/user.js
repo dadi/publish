@@ -52,7 +52,7 @@ function mergeUpdate (current, fieldName, value) {
   }
 }
 
-function signOut () {
+function signOut ({sessionHasExpired = false} = {}) {
   Cookies.remove('accessToken')
   Cookies.remove('accessTokenExpiry')
 
@@ -61,7 +61,7 @@ function signOut () {
     accessToken: undefined,
     isSaving: false,
     isSignedIn: false,
-    sessionHasExpired: Boolean(action.sessionHasExpired)
+    sessionHasExpired
   }
 }
 
@@ -121,7 +121,9 @@ export default function user (state = initialState, action = {}) {
         return state
       }
 
-      return signOut()
+      return signOut({
+        sessionHasExpired: true
+      })
 
     case Types.SET_API_STATUS:
       if (action.error === Constants.API_UNAUTHORISED_ERROR) {
