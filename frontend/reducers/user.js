@@ -7,6 +7,7 @@ import {isValidJSON} from 'lib/util'
 
 const initialState = {
   accessToken: Cookies.get('accessToken'),
+  accessTokenExpiry: parseInt(Cookies.get('accessTokenExpiry')),
   hasBeenSubmitted: false,
   hasBeenValidated: false,
   isAuthenticating: false,
@@ -15,6 +16,7 @@ const initialState = {
   local: {},
   remote: window.__client__ || {},
   remoteError: null,
+  sessionHasExpired: false,
   validationErrors: null
 }
 
@@ -50,40 +52,81 @@ function mergeUpdate (current, fieldName, value) {
   }
 }
 
+function signOut (action) {
+  Cookies.remove('accessToken')
+  Cookies.remove('accessTokenExpiry')
+
+  return {
+    ...initialState,
+    accessToken: undefined,
+    isSaving: false,
+    isSignedIn: false,
+    sessionHasExpired: Boolean(action.sessionHasExpired)
+  }
+}
+
 export default function user (state = initialState, action = {}) {
   switch (action.type) {
+
+    case Types.SET_API_LIST:
+      if (action.apis.length === 0) {
+        return signOut(action)
+      }
+
+      return state
+
     case Types.ATTEMPT_SAVE_USER:
       return {
         ...state,
         hasBeenSubmitted: true
       }
 
-    // Action: authenticate
     case Types.AUTHENTICATE:
       let {
         accessToken,
         accessTokenTTL,
         client
       } = action
-      let expiryDate = new Date(
-        Date.now() + (accessTokenTTL * 1000)
-      )
+      let expiryTimestamp = Date.now() + (accessTokenTTL * 1000)
+      let expiryDate = new Date(expiryTimestamp)
 
       Cookies.set('accessToken', accessToken, {
+        expires: expiryDate
+      })
+
+      Cookies.set('accessTokenExpiry', expiryTimestamp, {
         expires: expiryDate
       })
 
       return {
         ...state,
         accessToken,
+        accessTokenExpiry: expiryTimestamp,
         failedSignInAttempts: 0,
         isSignedIn: true,
-        remote: client
+        remote: client,
+        sessionHasExpired: false
       }
+
+    case Types.REGISTER_NETWORK_ERROR:
+      // We're interested in processing errors with the code API-0005 only, as
+      // those signal an authentication error (i.e. the access token stored is
+      // no longer valid). If that's not the error we're seeing here, there's
+      // nothing for us to do. If it is, we return the result of `signOut()`.
+      if (
+        !action.error ||
+        !action.error.code ||
+        action.error.code !== Constants.API_UNAUTHORISED_ERROR
+      ) {
+        return state
+      }
+
+      return signOut(action)
 
     case Types.SET_API_STATUS:
       if (action.error === Constants.API_UNAUTHORISED_ERROR) {
         Cookies.remove('accessToken')
+        Cookies.remove('accessTokenExpiry')
 
         return {
           ...initialState,
@@ -105,7 +148,6 @@ export default function user (state = initialState, action = {}) {
         remoteError: null
       }
 
-    // Document action: set field error status
     case Types.SET_USER_FIELD_ERROR_STATUS:
       const {
         error = null,
@@ -132,7 +174,6 @@ export default function user (state = initialState, action = {}) {
         }
       }
 
-    // Action: set user status
     case Types.SET_USER_STATUS:
       switch (action.status) {
 
@@ -140,14 +181,16 @@ export default function user (state = initialState, action = {}) {
         case Constants.STATUS_LOADING:
           return {
             ...state,
-            isAuthenticating: true
+            isAuthenticating: true,
+            sessionHasExpired: false
           }
 
         // User is signing in.
         case Constants.STATUS_SAVING:
           return {
             ...state,
-            isSaving: true
+            isSaving: true,
+            sessionHasExpired: false
           }
 
         // Sign in or save have failed.
@@ -157,23 +200,15 @@ export default function user (state = initialState, action = {}) {
             isAuthenticating: false,
             isSaving: false,
             remoteError: action.data,
+            sessionHasExpired: false
           }
       }
 
       return state
 
-    // Action: clear user
     case Types.SIGN_OUT:
-      Cookies.remove('accessToken')
+      return signOut(action)
 
-      return {
-        ...initialState,
-        accessToken: undefined,
-        isSaving: false,
-        isSignedIn: false
-      }
-
-    // Action: update local user
     case Types.UPDATE_LOCAL_USER:
       return mergeUpdate(
         {...state, hasBeenValidated: true},

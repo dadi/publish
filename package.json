@@ -1,6 +1,6 @@
 {
   "name": "@dadi/publish",
-  "version": "1.0.14-beta",
+  "version": "1.0.21-beta",
   "description": "DADI Publish",
   "main": "index.js",
   "scripts": {
@@ -12,7 +12,6 @@
     "api-install": "node scripts/api-install/api-install.js",
     "lint": "eslint frontend && standard --fix",
     "prepublishOnly": "npm run snyk-protect && npm run build",
-    "prepush": "npm run build-docs",
     "precommit": "npm run lint && node scripts/precommit.js",
     "snyk-protect": "snyk protect",
     "start": "NODE_ENV=development node index.js",
@@ -40,12 +39,12 @@
     "url": "https://github.com/dadi/publish/issues"
   },
   "engines": {
-    "node": ">=4.7",
-    "npm": ">=3.0"
+    "node": ">=8.0",
+    "npm": ">=5.0"
   },
   "homepage": "https://github.com/dadi/publish",
   "dependencies": {
-    "@dadi/api-wrapper": "^3.2.0",
+    "@dadi/api-wrapper": "^3.2.2",
     "@dadi/boot": "^1.1.4",
     "@dadi/logger": "^1.4.1",
     "connect-flash": "^0.1.1",
@@ -55,9 +54,9 @@
     "restify": "^7.0.0",
     "restify-cookies": "latest",
     "restify-errors": "^6.0.0",
-    "socketcluster-client": "^5.3.0",
-    "socketcluster-server": "^5.3.0",
-    "ws": "2.0.0"
+    "socketcluster-client": "~14.0.0",
+    "socketcluster-server": "~14.0.0",
+    "ws": "^6.1.2"
   },
   "devDependencies": {
     "@dadi/api-wrapper-core": "^3.1.0",
@@ -97,7 +96,7 @@
     "js-cookie": "^2.2.0",
     "marked": "^0.5.1",
     "mkdirp": "^0.5.1",
-    "mocha": "^3.2.0",
+    "mocha": "^5.2.0",
     "nock": "^9.6.1",
     "node-mocks-http": "^1.6.3",
     "normalize.css": "^5.0.0",
@@ -129,7 +128,7 @@
     "style-loader": "^0.13.1",
     "turndown": "^5.0.1",
     "unfetch": "^2.1.1",
-    "url-loader": "^0.5.7",
+    "url-loader": "^1.1.2",
     "validator": "^7.0.0",
     "webpack": "^3.6.0"
   },

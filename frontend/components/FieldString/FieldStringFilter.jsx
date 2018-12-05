@@ -2,7 +2,8 @@
 
 import {h, Component} from 'preact'
 import proptypes from 'proptypes'
-
+import Style from 'lib/Style'
+import styles from './FieldString.css'
 import TextInput from 'components/TextInput/TextInput'
 
 /**
@@ -11,94 +12,42 @@ import TextInput from 'components/TextInput/TextInput'
 export default class FieldStringFilter extends Component {
   static propTypes = {
     /**
-     * Classes for the analyser selection.
-     */
-    analyserStyles: proptypes.string,
-
-    /**
-     * Classes for the container.
-     */
-    containerStyles: proptypes.string,
-
-    /**
-     * Filter array position.
-     */
-    index: proptypes.number,
-
-    /**
-     * Input update callback.
+     * Callback to fire every time the value changes. The function is called
+     * with the new value as the only parameter.
      */
     onUpdate: proptypes.func,
 
     /**
-     * Field type.
+     * The filter value.
      */
-    type: proptypes.string,
-
-    /**
-     * Field value.
-     */
-    value: proptypes.string,
-
-    /**
-     * Classes for the value input.
-     */
-    valueStyles: proptypes.string
+    value: proptypes.string
   }
 
-  constructor(props) {
-    super(props)
+  componentDidMount() {
+    const {onUpdate, value} = this.props
 
-    this.filterTypes = {
-      '$eq': 'Equals',
-      '$ne': 'Is not',
-      '$regex': 'Contains'
+    // If the initial value isn't accepted for this field type,
+    // we update it with one that is and propagate it to the
+    // parent.
+    if (typeof value !== 'string') {
+      onUpdate(null)
     }
   }
 
   render() {
     const {
-      analyserStyles,
-      containerStyles,
-      type,
-      value,
-      valueStyles
+      onUpdate,
+      stylesTextInput,
+      value
     } = this.props
 
     return (
-        <div class={containerStyles}>
-          <select
-            class={analyserStyles}
-            onChange={this.handleChange.bind(this, 'type')}
-            value={type}
-          >
-            <option disabled selected value>Select a type</option>
-
-            {Object.keys(this.filterTypes).map(key => (
-              <option
-                key={key}
-                value={key}
-              >
-                {this.filterTypes[key]}
-              </option>
-            ))}
-          </select>
-          <TextInput
-            className={valueStyles}
-            onChange={this.handleChange.bind(this, 'value')}
-            onKeyUp={this.handleChange.bind(this, 'value')}
-            placeholder="Search value"
-            value={value}
-          />
-        </div>
+      <TextInput
+        className={styles['filter-input']}
+        onInput={event => onUpdate(event.target.value)}
+        placeholder="Search value"
+        value={value}
+      />
     )
-  }
-
-  handleChange(elementId, event) {
-    const {onUpdate, index} = this.props
-
-    onUpdate({
-      [elementId]: event.target.value
-    }, index)
   }
 }

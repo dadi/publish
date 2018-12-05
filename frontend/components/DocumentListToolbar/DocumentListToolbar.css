@@ -1,0 +1,25 @@
+.information {
+  display: none;
+  align-items: center;
+}
+
+@media (--breakpoint-large) {
+  .information {
+    display: flex;
+  }
+}
+
+.count-label {
+  margin-left: 0;
+}
+
+.section {
+  display: flex;
+  align-items: center;
+  text-align: center;
+}
+
+.page-input {
+  width: 6em;
+  text-align: center;
+}

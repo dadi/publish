@@ -1,6 +1,7 @@
 'use strict'
 
 import {h, Component} from 'preact'
+import {route} from '@dadi/preact-router'
 import proptypes from 'proptypes'
 
 import Style from 'lib/Style'
@@ -74,6 +75,12 @@ export default class FieldStringEdit extends Component {
     name: proptypes.string,
 
     /**
+    * A callback to be used to obtain the base URL for the given page, as
+    * determined by the view.
+    */
+    onBuildBaseUrl: proptypes.func,
+
+    /**
      * A callback to be fired whenever the field wants to update its value to
      * a successful state. The function receives the name of the field and the
      * new value as arguments.
@@ -122,7 +129,18 @@ export default class FieldStringEdit extends Component {
   }
 
   componentDidMount() {
-    const {forceValidation, value} = this.props
+    const {
+      forceValidation,
+      meta = {},
+      value
+    } = this.props
+
+    if (meta.image && typeof this.insertImageCallback === 'function') {
+      this.insertImageCallback(
+        meta.image.selection[0].url,
+        meta.image.position
+      )
+    }
 
     if (forceValidation) {
       this.validate(value)
@@ -155,7 +173,7 @@ export default class FieldStringEdit extends Component {
       Object.keys(validation).forEach(validationRule => {
         switch (validationRule) {
           case 'minLength':
-            if (valueLength < validation.minLength) {
+            if (valueLength > 0 && valueLength < validation.minLength) {
               hasValidationErrors = validationMessage || true
             }
 
@@ -202,18 +220,33 @@ export default class FieldStringEdit extends Component {
     })
   }
 
+  handleImageSelect(position) {
+    const {
+      name,
+      onBuildBaseUrl
+    } = this.props
+
+    let selectImageUrl = onBuildBaseUrl({
+      referenceFieldSelect: name,
+      search: {
+        position
+      }
+    })
+
+    route(selectImageUrl)
+  }  
+
   handleOnChange(value) {
     const {name, onChange, schema} = this.props
 
-    this.validate(value)
+    // We prefer sending a `null` over an empty string.
+    let sanitisedValue = value === '' ? null : value
+
+    this.validate(sanitisedValue)
 
     if (typeof onChange === 'function') {
-      onChange.call(this, name, value)
+      onChange.call(this, name, sanitisedValue)
     }
-  }
-
-  handleOnKeyUp(value) {
-    this.validate(value)
   }
 
   render() {
@@ -325,9 +358,8 @@ export default class FieldStringEdit extends Component {
           heightType={heightType}
           name={name}
           onBlur={this.handleFocusChange.bind(this, false)}
-          onChange={el => this.handleOnChange(el.target.value)}
+          onInput={el => this.handleOnChange(el.target.value)}
           onFocus={this.handleFocusChange.bind(this, true)}
-          onKeyUp={el => this.handleOnKeyUp.bind(el.target.value)}
           placeholder={placeholder}
           readonly={readOnly}
           resizable={resizable}
@@ -341,6 +373,7 @@ export default class FieldStringEdit extends Component {
             size="small"
             href={linkFormatted || value} 
             className={styles['link-preview']}
+            openInNewWindow={true}
           >Open in new window</Button>
         )}
       </Label>
@@ -351,6 +384,8 @@ export default class FieldStringEdit extends Component {
     const {
       displayName,
       error,
+      meta,
+      name,
       placeholder,
       required,
       schema,
@@ -368,7 +403,9 @@ export default class FieldStringEdit extends Component {
       >
         <RichEditor
           format={format}
+          insertImageCallback={callback => this.insertImageCallback = callback}
           onBlur={this.handleFocusChange.bind(this, false)}
+          onImageInsert={this.handleImageSelect.bind(this)}
           onChange={this.handleOnChange.bind(this)}
           onFocus={this.handleFocusChange.bind(this, true)}
           value={value}

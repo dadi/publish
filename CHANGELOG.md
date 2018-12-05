@@ -4,6 +4,83 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [1.0.21-beta] (2018-12-04)
+
+### Changed
+
+* [#535](https://github.com/dadi/publish/issues/635): open linkable fields in new window
+
+### Fixed
+
+* [#638](https://github.com/dadi/publish/pull/638): fix issues when saving existing Reference fields
+
+## [1.0.20-beta] (2018-12-03)
+
+### Changed
+
+* minor fixes in preparation for 2.0.0 release.
+
+## [1.0.19-beta] (2018-12-03)
+
+### Added
+
+* add `globals` object to configuration file.
+
+## [1.0.18-beta] (2018-12-03)
+
+### Fixed
+
+* gracefully handle empty `apis` configuration block
+
+## [1.0.17-beta] (2018-12-03)
+
+### Added
+
+* [#543](https://github.com/dadi/publish/issues/543): ensure DropArea respects MIME type validation
+
+### Changed
+
+* [#629](https://github.com/dadi/publish/pull/629): escape HTML when creating code block
+* [#630](https://github.com/dadi/publish/pull/630): make `contains` the default operator when creating new filter
+
+### Fixed
+
+* [#419](https://github.com/dadi/publish/issues/419): recover from remote API validation errors
+* [#527](https://github.com/dadi/publish/issues/527): gracefully handle API authentication errors
+* [#623](https://github.com/dadi/publish/issues/623): show notification after deleting items on media list view
+
+## [1.0.16-beta] (2018-11-23)
+
+### Fixed
+
+* ensure images are loaded from CDN when a `cdn` block exists in the configuration
+
+## [1.0.15-beta] (2018-11-23)
+
+### Added
+
+* [#573](https://github.com/dadi/publish/pull/573): add media list view
+* [#577](https://github.com/dadi/publish/pull/577): add media edit view
+* [#592](https://github.com/dadi/publish/pull/592): add support for inline images in rich editor
+* [#601](https://github.com/dadi/publish/pull/601): add Color field
+* [#605](https://github.com/dadi/publish/pull/605): add workspace directory
+* [#614](https://github.com/dadi/publish/issues/614): display version number in menu
+
+### Changed
+
+* [#571](https://github.com/dadi/publish/pull/571): improved functionality of Link control in rich editor
+* [#600](https://github.com/dadi/publish/pull/600): rebuild filters
+* [#615](https://github.com/dadi/publish/pull/615): display "Document not found" message for uncomposed references
+
+### Fixed
+
+* [#412](https://github.com/dadi/publish/pull/412): stop unsaved changes from leaking to different documents
+* [#564](https://github.com/dadi/publish/issues/564): fix issue with rich editor and multi-language documents
+* [#593](https://github.com/dadi/publish/issues/593): fix issue with changes to fields not being persisted
+* [#595](https://github.com/dadi/publish/issues/595): fix issue with language dropdown causing an error in document edit view
+* [#596](https://github.com/dadi/publish/issues/596): fix issue with save options causing an error in document edit view
+* [#603](https://github.com/dadi/publish/pull/603): stop notifications from obstructing full width of the viewport
+
 ## [1.0.14-beta] (2018-11-05)
 
 ### Added

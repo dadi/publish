@@ -21,3 +21,8 @@ component-map.json
 stats.json
 jest*
 workspace/
+
+test/
+stories/
+scripts/
+docs/

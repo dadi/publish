@@ -1,0 +1,8 @@
+.columns {
+  margin: 15px;
+}
+.column {
+  display: inline-block;
+  vertical-align: top;
+  padding: 10px;
+}

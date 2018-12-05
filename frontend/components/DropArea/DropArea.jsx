@@ -14,6 +14,11 @@ export default class FileUpload extends Component {
     children: proptypes.node,
 
     /**
+     * Classes to append to the button element.
+     */
+    className: proptypes.string,
+
+    /**
      * The text to be displayed when a file is being dragged.
      */
     draggingText: proptypes.string,
@@ -25,32 +30,34 @@ export default class FileUpload extends Component {
   }
 
   static defaultProps = {
+    className: '',
     draggingText: 'Drop files here'
   }
 
   constructor(props) {
     super(props)
 
-    this.state.dragging = false
+    this.state.isDragging = false
   }
 
   render() {
     const {
       children,
+      className,
       draggingText
     } = this.props
-    const {dragging} = this.state
+    const {isDragging} = this.state
     const dropStyles = new Style(styles, 'droparea')
-      .addIf('droparea-active', dragging)
+      .addIf('droparea-active', isDragging)
+      .addResolved(className)
 
     return (
       <div
         class={dropStyles.getClasses()}
         data-dragtext={draggingText}
         onDrop={this.handleDrop.bind(this)} 
-        onDragEnter={this.handleDrag.bind(this)}
-        onDragLeave={this.handleDrag.bind(this)}
-        onDragOver={this.handleDrag.bind(this)}
+        onDragEnter={this.handleDrag.bind(this, true)}
+        onDragLeave={this.handleDrag.bind(this, false)}
       >
         <div class={styles.contents}>
           {children}
@@ -63,8 +70,9 @@ export default class FileUpload extends Component {
     const {onDrop} = this.props
 
     this.setState({
-      dragging: false
+      isDragging: false
     })
+
     if (typeof onDrop === 'function') {
       onDrop(event.dataTransfer.files)
     }
@@ -72,9 +80,9 @@ export default class FileUpload extends Component {
     event.preventDefault()
   }
 
-  handleDrag(event) {
+  handleDrag(isDragging, event) {
     this.setState({
-      dragging: event.type !== 'dragleave'
+      isDragging
     })
 
     event.preventDefault()

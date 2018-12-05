@@ -1,3 +1,4 @@
+import 'fetch'
 import * as Constants from 'lib/constants'
 import * as Types from 'actions/actionTypes'
 import apiBridgeClient from 'lib/api-bridge-client'
@@ -33,10 +34,51 @@ export function deleteDocuments ({api, collection, ids}) {
   }
 }
 
+export function deleteMedia ({api, ids}) {
+  return (dispatch, getState) => {
+    dispatch(
+      setDocumentListStatus(Constants.STATUS_DELETING, ids.length)
+    )
+
+    let bearerToken = getState().user.accessToken
+    let url = `${api.host}:${api.port}/media`
+    let body = JSON.stringify({
+      query: {
+        _id: {
+          $in: ids
+        }
+      }
+    })
+
+    fetch(url, {
+      body,
+      headers: {
+        Authorization: `Bearer ${bearerToken}`,
+        'Content-Type': 'application/json',
+      },
+      method: 'DELETE'
+    }).then(response => {
+      if (response.ok) {
+        return dispatch(
+          setDocumentListStatus(Constants.STATUS_IDLE)
+        )
+      }
+
+      return Promise.reject(response)
+    })
+    .catch(error => {
+      dispatch(
+        setDocumentListStatus(Constants.STATUS_FAILED, error)
+      )
+    })
+  }
+}
+
 export function fetchDocuments ({
   api,
   collection,
   count,
+  fields,
   filters,
   page,
   parentDocumentId,
@@ -87,14 +129,12 @@ export function fetchDocuments ({
       ]
       let listQuery
 
-      if (collection === Constants.MEDIA_COLLECTION) {
+      if (collection.IS_MEDIA_BUCKET || collection === Constants.MEDIA_COLLECTION) {
         listQuery = apiBridgeClient({
           accessToken: getState().user.accessToken,
           api
         }).inMedia()
       } else {
-        const fields = visibleFieldList({fields: collection.fields, view: 'list'})
-
         listQuery = apiBridgeClient({
           accessToken: getState().user.accessToken,
           api,
@@ -152,4 +192,52 @@ export function setDocumentListStatus (status, data) {
     status,
     type: Types.SET_DOCUMENT_LIST_STATUS
   }
+}
+
+export function saveMediaDocuments ({
+  api,
+  files
+}) {
+  return (dispatch, getState) => {
+    dispatch(
+      setDocumentListStatus(Constants.STATUS_SAVING)
+    )
+
+    uploadMedia({
+      api,
+      bearerToken: getState().user.accessToken,
+      files
+    })
+    .then(response => {
+      dispatch(
+        setDocumentListStatus(Constants.STATUS_IDLE)
+      )
+    })
+    .catch(error => {
+      dispatch(
+        setDocumentListStatus(Constants.STATUS_FAILED, error)
+      )
+    })
+  }
+}
+
+export function uploadMedia ({
+  api,
+  bearerToken,
+  files
+}) {
+  let url = `${api.host}:${api.port}/media/upload`
+  let body = new FormData()
+
+  files.forEach((file, index) => {
+    body.append(`file${index}`, file)
+  })
+
+  return fetch(url, {
+    body,
+    headers: {
+      Authorization: `Bearer ${bearerToken}`
+    },
+    method: 'POST'
+  }).then(response => response.json())
 }

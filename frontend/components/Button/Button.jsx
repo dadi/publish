@@ -66,6 +66,12 @@ export default class Button extends Component {
     onClick: proptypes.func,
 
     /**
+     * Whether to open a link in a new window (i.e. target="_blank"). Only
+     * applicable when the prop `href` is supplied.
+     */
+    openInNewWindow: proptypes.bool,
+
+    /**
      * The size variation of the button.
      */
     size: proptypes.oneOf(['normal', 'small']),
@@ -74,7 +80,7 @@ export default class Button extends Component {
      * Type/function of the button. When set to `mock`, a static element will be
      * rendered (as a `span`).
      */
-    type: proptypes.oneOf(['button', 'mock', 'submit'])
+    type: proptypes.oneOf(['button', 'mock', 'mock-stateful', 'submit'])
   }
 
   static defaultProps = {
@@ -97,6 +103,7 @@ export default class Button extends Component {
       inGroup,
       isLoading,
       onClick,
+      openInNewWindow,
       size,
       type
     } = this.props
@@ -119,9 +126,9 @@ export default class Button extends Component {
       )
     }
 
-    if (type === 'mock') {
+    if (type === 'mock' || type === 'mock-stateful') {
       return (
-        <a href="#" class={buttonStyle.getClasses()}>{children}</a>
+        <span class={buttonStyle.getClasses()}>{children}</span>
       )
     }
 
@@ -130,6 +137,7 @@ export default class Button extends Component {
         <a
           class={buttonStyle.getClasses()}
           href={href}
+          target={openInNewWindow && '_blank'}
         >{children}</a>
       )
     }

@@ -2,7 +2,7 @@
 
 import {h, Component} from 'preact'
 import proptypes from 'proptypes'
-import {filterVisibleFields} from 'lib/fields'
+import {getVisibleFields} from 'lib/fields'
 
 import Style from 'lib/Style'
 import styles from './FieldReference.css'
@@ -57,13 +57,11 @@ export default class FieldReferenceList extends Component {
     if (!referencedCollection) return null
 
     const optionsBlock = schema.publish && schema.publish.options
-    const displayableFields = filterVisibleFields({
+    const displayableFields = getVisibleFields({
       fields: referencedCollection.fields,
-      view: 'list'
+      viewType: 'list'
     })
-
     const firstStringField = this.findFirstStringField(displayableFields)
-
     const values = value && !(value instanceof Array) ? [value] : value
 
     if (values) {

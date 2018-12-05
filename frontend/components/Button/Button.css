@@ -23,7 +23,6 @@
   text-decoration: none;
   border-radius: 2px;
   transition: background-color 0.1s, padding 0.3s, background-position 0.3s;
-  box-shadow: 0 -2px 0 0 rgba(0,0,0,0.05) inset;
   position: relative;
 }
 

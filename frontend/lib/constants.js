@@ -9,6 +9,11 @@ export const ERROR_ROUTE_NOT_FOUND = 'ERROR_ROUTE_NOT_FOUND'
 export const ERROR_WRONG_PASSWORD = 'ERROR_WRONG_PASSWORD'
 export const FIELD_SAVE_OPTIONS = 'publishSaveOptionsLastUsed'
 export const MEDIA_COLLECTION = 'mediaStore'
+export const MEDIA_COLLECTION_SCHEMA = {
+  IS_MEDIA_BUCKET: true,
+  _publishLink: '/media',
+  fields: {}
+}
 export const NETWORK_OK = 'NETWORK_OK'
 export const NETWORK_NO_INTERNET_CONNECTION = 'NETWORK_NO_INTERNET_CONNECTION'
 export const NETWORK_SERVER_UNRESPONSIVE = 'NETWORK_SERVER_UNRESPONSIVE'

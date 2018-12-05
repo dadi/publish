@@ -23,6 +23,16 @@ class Header extends Component {
     actions: proptypes.object,
 
     /**
+     * The text/elements to be rendered inside the header.
+     */
+    children: proptypes.node,
+
+    /**
+     * The schema of the collection being edited.
+     */
+    currentCollection: proptypes.object,
+
+    /**
      * The global state object.
      */
     state: proptypes.object
@@ -35,15 +45,15 @@ class Header extends Component {
   }
 
   render() {
-    const {state} = this.props
-    const compact = state.app.breakpoint === null
-    const {currentCollection} = state.api
-
     const {
-      whitelabel: {logo, poweredBy, backgroundImage}
-    } = state.app.config || {
-      whitelabel: {logo: '', poweredBy: false, backgroundImage: ''}
-    }
+      children,
+      currentCollection,
+      state
+    } = this.props
+    const compact = state.app.breakpoint === null
+
+    const {whitelabel} = state.app.config
+    const {displayVersionNumber, logo} = whitelabel
 
     if (!state.user.isSignedIn) {
       return null
@@ -65,11 +75,9 @@ class Header extends Component {
       <header class={styles.header}>
         <div class={contentStyle.getClasses()}>
           <div class={styles.account}>
-            {logo !== '' && (
-              <div class={styles.logo}>
-                <img src={logo} />
-              </div>
-            )}
+            <div class={styles.logo}>
+              <img src={`/public/${logo}`} />
+            </div>
 
             <div class={styles['toggle-icon']} onClick={this.toggleCollapsed.bind(this, undefined)}>
               {this.state.expanded ?
@@ -81,13 +89,21 @@ class Header extends Component {
 
             {state.user.accessToken && this.state.expanded && (
               <div class={styles.controls}>
-                <a href="/profile" class={styles.user}>{displayName}</a>
+                <a
+                  class={`${styles.control} ${styles['control-action']}`}
+                  href="/profile"
+                >{displayName}</a>
+
                 <button
-                  class={styles.signout}
+                  class={`${styles.control} ${styles['control-action']}`}
                   onClick={this.handleSignOut.bind(this)}
-                >
-                  Sign out
-                </button>
+                >Sign out</button>
+
+                {displayVersionNumber &&
+                  <span class={styles.control}>
+                    v{state.app.version}
+                  </span>
+                }
               </div>
             )}
           </div>
@@ -98,6 +114,8 @@ class Header extends Component {
             />
           </div>
         </div>
+
+        {children}
       </header>
     )
   }

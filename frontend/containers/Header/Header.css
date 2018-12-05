@@ -35,23 +35,6 @@
   }
 }
 
-.signout,
-.user {
-  text-decoration: none;
-  color: #4A596F;
-  cursor: pointer;
-  display: block;
-  padding: 6px 10px;
-}
-
-.user {
-  color: #fff;
-}
-
-.user:hover {
-  color: var(--theme-colour-system-shade-1, #d9a000);
-}
-
 .toggle {
   position: relative;
   display: block;
@@ -70,15 +53,16 @@
   max-height: 45px;
   position: relative;
   overflow: hidden;
-  transition: max-height 0.2s;
+  z-index: 10;
 }
 
 .content-expanded {
-  max-height: 100vh;
+  max-height: none;
 }
 
 @media (--breakpoint-medium) {
   .content {
+    max-height: none;
     overflow: visible;
   }
 }
@@ -98,6 +82,22 @@
     width: 170px;
     border-radius: 3px;
   }
+}
+
+.control {
+  color: #4A596F;
+  display: block;
+  padding: 6px 10px;
+}
+
+.control-action {
+  color: #fff;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.control-action:hover {
+  color: var(--theme-colour-system-shade-1, #d9a000);
 }
 
 .toggle-icon {

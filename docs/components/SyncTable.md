@@ -1,7 +1,8 @@
 `SyncTable`
 ===========
 
-An advanced table that controls which properties of an object are displayed and ensures that table headings and row cells stay in sync.
+An advanced table that controls which properties of an object are displayed
+and ensures that table headings and row cells stay in sync.
 
 Props
 -----

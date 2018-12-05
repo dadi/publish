@@ -1,10 +1,12 @@
-const Collection = require(`${paths.lib.models}/collection`)
 const config = require(paths.config)
 const cookieParser = require('restify-cookies')
 const flash = require('connect-flash')
 const fs = require('fs')
 const log = require('@dadi/logger')
 const path = require('path')
+const packageJson = require(
+  path.join(paths.base, 'package.json')
+)
 const request = require('request-promise')
 const restify = require('restify')
 const session = require('cookie-session')
@@ -64,9 +66,18 @@ Router.prototype.webRoutes = function () {
     return
   }
 
-  this.server.get('/public/*', restify.plugins.serveStatic({
-    directory: path.resolve(__dirname, '../../..')
-  }))
+  // The user's /workspace/public folder can override the system one
+  this.server.get('/public/*', (req, res, next) => {
+    restify.plugins.serveStatic({
+      directory: path.join(process.cwd(), 'workspace')
+    })(req, res, (err) => {
+      if (err) {
+        restify.plugins.serveStatic({
+          directory: path.resolve(__dirname, '../../..')
+        })(req, res, next)
+      }
+    })
+  })
 
   // Respond to HEAD requests - this is used by ConnectionMonitor in App.jsx.
   this.server.head('*', (req, res, next) => {
@@ -78,56 +89,45 @@ Router.prototype.webRoutes = function () {
   this.server.get('*', (req, res, next) => {
     res.header('Content-Type', 'text/html; charset=utf-8')
 
-    let entryPointPage = this.entryPointTemplate
+    let entryPointPage = this.entryPointTemplate.replace(
+      '/*@@publishVersion@@*/',
+      `window.__version__ = ${JSON.stringify(packageJson.version)};`
+    )
     let accessToken = req.cookies && req.cookies.accessToken
     let authenticate = Promise.resolve()
+    let apis = config.get('apis')
+    let mainApi = apis.length && apis[0]
 
-    if (accessToken) {
-      authenticate = new Collection({accessToken})
-        .buildCollectionRoutes()
-        .then(documentRoutes => {
-          if (documentRoutes) {
-            entryPointPage = entryPointPage
-              .replace(
-                '/*@@documentRoutes@@*/',
-                `window.__documentRoutes__ = ${JSON.stringify(documentRoutes)};`
-              )
-              .replace(
-                '/*@@config@@*/',
-                `window.__config__ = ${config.toString()};`
-              )
-          }
+    if (accessToken && mainApi) {
+      authenticate = request({
+        headers: {
+          Authorization: `Bearer ${accessToken}`
+        },
+        json: true,
+        uri: `${mainApi.host}:${mainApi.port}/api/client`
+      }).then(({results}) => {
+        entryPointPage = entryPointPage
+          .replace(
+            '/*@@config@@*/',
+            `window.__config__ = ${config.toString()};`
+          )
+          .replace(
+            '/*@@client@@*/',
+            `window.__client__ = ${JSON.stringify(results[0])};`
+          )
+      }).catch(error => {
+        log.error({module: 'router'}, error)
 
-          let api = config.get('apis.0')
-
-          return request({
-            headers: {
-              Authorization: `Bearer ${accessToken}`
-            },
-            json: true,
-            uri: `${api.host}:${api.port}/api/client`
-          })
-        })
-        .then(({results}) => {
-          entryPointPage = entryPointPage
-            .replace(
-              '/*@@client@@*/',
-              `window.__client__ = ${JSON.stringify(results[0])};`
-            )
-        })
-        .catch(e => {
-          log.error({module: 'router'}, `buildCollectionRoutes failed: ${JSON.stringify(e)}`)
-
-          entryPointPage = entryPointPage
-            .replace(
-              '/*@@apiError@@*/',
-              `window.__apiError__ = ${JSON.stringify(e)};`
-            )
-            .replace(
-              '/*@@config@@*/',
-              `window.__config__ = ${JSON.stringify(config.getUnauthenticatedConfig())};`
-            )
-        })
+        entryPointPage = entryPointPage
+          .replace(
+            '/*@@apiError@@*/',
+            `window.__apiError__ = ${JSON.stringify(error)};`
+          )
+          .replace(
+            '/*@@config@@*/',
+            `window.__config__ = ${JSON.stringify(config.getUnauthenticatedConfig())};`
+          )
+      })
     } else {
       entryPointPage = entryPointPage
         .replace(

@@ -1,6 +1,7 @@
 'use strict'
 
 const convict = require('convict')
+const globals = require('./globals') // eslint-disable-line
 const path = require('path')
 const fs = require('fs')
 // Define a schema
@@ -69,8 +70,6 @@ const initialiseConfig = () => {
   // Check that environmental config file exists.
   if (fs.existsSync(envConfigPath)) {
     config.loadFile(`${paths.configDir}/config.${env}.json`)
-  } else {
-    console.log(`Failed to load ${envConfigPath}, dropping to defaults`)
   }
 
   // Perform validation

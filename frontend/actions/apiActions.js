@@ -113,7 +113,6 @@ const applyDefaultPublishParams = fields => {
       field.publish = field.publish || defaultPublishBlock
       field.publish.section = field.publish.section || defaultPublishBlock.section
       field.publish.placement = field.publish.placement || defaultPublishBlock.placement
-      field.publish.display = field.publish.display || defaultPublishBlock.display
 
       return {
         [key]: field

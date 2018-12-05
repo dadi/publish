@@ -21,7 +21,8 @@ const initialState = {
   isLoading: false,
   networkStatus: Constants.NETWORK_OK,
   notification: null,
-  status: Constants.STATUS_IDLE
+  status: Constants.STATUS_IDLE,
+  version: window.__version__
 }
 
 let debouncedNetworkCall = null

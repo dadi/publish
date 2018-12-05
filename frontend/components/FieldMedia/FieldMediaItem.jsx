@@ -23,33 +23,38 @@ export default class FieldMediaItem extends Component {
     value: proptypes.object
   }
 
-  constructor(props) {
-    super(props)
-  }
-
-  getSource () {
+  render() {
     const {config, isList, value} = this.props
     const cdn = config ? config.cdn : null
 
-    if (!value) return null
+    if (!value) {
+      return null
+    }
 
     // File location url
     let src = value._previewData ? value._previewData : value.url || value.path
 
-    // Filename without extension
-    const fileName = value.fileName.split('.').slice(0, -1).join('.')
+    const fileName = value.fileName &&
+      value.fileName.split('.').slice(0, -1).join('.')
+    const extension = value.fileName &&
+      value.fileName.slice(-1)[0]
 
     let icon = (
       <div class={styles.file}>
         <img src="/public/images/icon-file.svg" width="25" />
-        <span class={styles.ext}>{value.fileName.split('.').pop()}</span>
+        {extension &&
+          <span class={styles.ext}>{extension}</span>
+        }
       </div>
     )
+
+    // For backwards compatibility.
+    let mimeType = value.mimeType || value.mimetype
 
     // Render an image document.
     let cdnThumb = false
 
-    if (value.mimetype && value.mimetype.indexOf('image') > -1) {
+    if (mimeType && mimeType.indexOf('image/') === 0) {
       if (value.path && cdn && cdn.publicUrl) {
         src = `${cdn.publicUrl}/${value.path}`
         cdnThumb = src + '?width=80'
@@ -75,9 +80,5 @@ export default class FieldMediaItem extends Component {
         </a>
       </div>
     )
-  }
-
-  render() {
-    return this.getSource()
   }
 }

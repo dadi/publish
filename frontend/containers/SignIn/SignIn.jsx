@@ -50,11 +50,19 @@ class SignIn extends Component {
     userHasInteracted: false
   }
 
-  getErrorBanner(signInError) {
+  getErrorBanner({
+    noAPIConfigured,
+    remoteError,
+    sessionHasExpired
+  }) {
     let message
 
-    if (signInError) {
-      switch (signInError) {
+    if (noAPIConfigured) {
+      message = 'This installation of Publish has not been configured. Please contact your administrator.'
+    } else if (sessionHasExpired) {
+      message = 'Your session has expired. Please sign in again.'
+    } else if (remoteError) {
+      switch (remoteError) {
         case 401:
           message = 'Username not found or password incorrect'
 
@@ -87,30 +95,32 @@ class SignIn extends Component {
   }
 
   render() {
-    const {state, actions, setPageTitle} = this.props
+    const {actions, setPageTitle, state} = this.props
     const {email, password, userHasInteracted} = this.state
-    const hasConnectionIssues = state.app.networkStatus !== Constants.NETWORK_OK
-    const {
-      whitelabel: {logo, poweredBy, backgroundImage}
-    } = state.app.config || {
-      whitelabel: {logo: '', poweredBy: false, backgroundImage: ''}
-    }
+    const {config, networkStatus} = state.app
+    const {apis, whitelabel} = config
+    const {logo, poweredBy, backgroundImage} = whitelabel
+    const hasApi = apis.length > 0
+    const hasConnectionIssues = networkStatus !== Constants.NETWORK_OK
 
     setPageTitle('Sign In')
 
     let formDataIsValid = this.validate()
 
     return (
-      <div class={styles.wrapper} style={backgroundImage.length ? `background-image: url(${backgroundImage}` : ''}>
+      <div class={styles.wrapper} style={`background-image: url(/public/${backgroundImage})`}>
         <div class={styles.overlay}>
           <div class={styles.container}>
             <form
               method="POST"
               onSubmit={this.handleSignIn.bind(this)}
             >
-              <img class={styles.logo} src={logo} />
-
-              {this.getErrorBanner(state.user.remoteError)}
+            <img class={styles.logo} src={`/public/${logo}`} />
+              {this.getErrorBanner({
+                noAPIConfigured: !hasApi,
+                remoteError: state.user.remoteError,
+                sessionHasExpired: state.user.sessionHasExpired
+              })}
 
               <div class={styles.inputs}>
                 <div class={styles.input}>
@@ -118,7 +128,7 @@ class SignIn extends Component {
                     <TextInput
                       name="username"
                       onChange={this.handleInputChange.bind(this, 'email')}
-                      onKeyUp={this.handleInputChange.bind(this, 'email')}
+                      onInput={this.handleInputChange.bind(this, 'email')}
                       placeholder="Your username"
                       value={email}
                     />
@@ -130,7 +140,7 @@ class SignIn extends Component {
                     <TextInput
                       name="password"
                       onChange={this.handleInputChange.bind(this, 'password')}
-                      onKeyUp={this.handleInputChange.bind(this, 'password')}
+                      onInput={this.handleInputChange.bind(this, 'password')}
                       placeholder={"Your password"}
                       type="password"
                       value={password}
@@ -141,16 +151,21 @@ class SignIn extends Component {
 
               <Button
                 accent="system"
-                disabled={hasConnectionIssues || (userHasInteracted && !formDataIsValid)}
+                disabled={
+                  hasConnectionIssues ||
+                  (userHasInteracted && !formDataIsValid) ||
+                  !hasApi
+                }
                 isLoading={state.user.isAuthenticating}
                 type="submit"
               >Sign In</Button>
 
-              {/*<a class={styles.link} href="/reset">Reset password</a>*/}
-
               {poweredBy && (
                 <p class={styles['powered-by']}>
-                  Powered by <a href="https://dadi.cloud/en/publish/" target="_blank">DADI Publish</a>
+                  <span>Powered by</span>
+                  <a href="https://dadi.cloud/publish/" target="_blank">
+                    <img src="/public/images/publish.png" height="25" />
+                  </a>
                 </p>
               )}
             </form>
@@ -192,8 +207,8 @@ class SignIn extends Component {
 
 export default connectHelper(
   state => ({
-    user: state.user,
-    app: state.app
+    app: state.app,
+    user: state.user
   }),
   dispatch => bindActionCreators({
     ...userActions

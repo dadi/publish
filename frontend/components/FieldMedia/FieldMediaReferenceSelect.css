@@ -61,23 +61,7 @@
   margin-right: 20px;
 }
 
-.item-info {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  font-size: 13px;
-  padding: 11px 15px;
-}
-
 .item-selected .item-info {
   background-color: #475160;
   color: var(--theme-colour-secondary, #FFFFFF);
-}
-
-.item-size {
-  font-weight: bold;
-}
-
-.item-mimetype {
-  color: var(--theme-colour-background-shade-2, #AAAAAA);
 }

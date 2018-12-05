@@ -7,7 +7,7 @@ function clear (key) {
     window.localStorage.removeItem(key)
 
     if (process.env.NODE_ENV === 'development') {
-      console.log(`Removing from local storage key ${key}`)
+      console.log('Removing key from local storage:', key)
     }
 
     return true

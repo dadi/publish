@@ -3,145 +3,254 @@
 import {Component, h} from 'preact'
 import {bindActionCreators} from 'redux'
 import {connectHelper, setPageTitle} from 'lib/util'
+import {getVisibleFields} from 'lib/fields'
+import {route} from '@dadi/preact-router'
 import {URLParams} from 'lib/util/urlParams'
 
+import * as appActions from 'actions/appActions'
+import * as Constants from 'lib/constants'
+import * as documentsActions from 'actions/documentsActions'
+
+import Button from 'components/Button/Button'
+import ButtonWithPrompt from 'components/ButtonWithPrompt/ButtonWithPrompt'
+import DocumentList from 'containers/DocumentList/DocumentList'
+import DocumentListController from 'components/DocumentListController/DocumentListController'
+import DocumentListToolbar from 'components/DocumentListToolbar/DocumentListToolbar'
+import DocumentTableList from 'components/DocumentTableList/DocumentTableList'
+import DropdownNative from 'components/DropdownNative/DropdownNative'
+import Header from 'containers/Header/Header'
+import HeroMessage from 'components/HeroMessage/HeroMessage'
+import Main from 'components/Main/Main'
+import Page from 'components/Page/Page'
 import Style from 'lib/Style'
 import styles from './DocumentListView.css'
 
-import DocumentList from 'containers/DocumentList/DocumentList'
-import DocumentListController from 'containers/DocumentListController/DocumentListController'
-import DocumentListToolbar from 'containers/DocumentListToolbar/DocumentListToolbar'
-import Header from 'containers/Header/Header'
-import Main from 'components/Main/Main'
-import Page from 'components/Page/Page'
-import ReferencedDocumentHeader from 'containers/ReferencedDocumentHeader/ReferencedDocumentHeader'
+const BULK_ACTIONS = {
+  DELETE: 'BULK_ACTIONS_DELETE',
+  PLACEHOLDER: 'BULK_ACTIONS_PLACEHOLDER'
+}
 
 class DocumentListView extends Component {
+  constructor(props) {
+    super(props)
+
+    this.state.bulkActionSelected = BULK_ACTIONS.PLACEHOLDER
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    const {actions, state} = this.props
+    const {isDeleting, list} = state.documents
+    const wasDeleting = prevProps.state.documents.isDeleting
+
+    // Have we just deleted some documents?
+    if (wasDeleting && !isDeleting) {
+      let message = wasDeleting > 1 ?
+        `${wasDeleting} documents have been deleted` :
+        'The document has been deleted'
+
+      actions.setNotification({
+        message
+      })
+    }
+  }
+
+  componentWillUpdate(nextProps) {
+    const {onBuildBaseUrl} = this.props
+    const {metadata} = nextProps.state.documents.list || {}
+    const {page, totalPages} = metadata || {}
+
+    if (page && totalPages && page > totalPages && !this.isRedirecting) {
+      this.isRedirecting = true
+
+      let redirectUrl = onBuildBaseUrl.call(this, {
+        page: totalPages
+      })
+
+      route(redirectUrl)
+    }
+  }
+
+  handleBulkActionApply(actionType) {
+    const {state} = this.props    
+    const {bulkActionSelected} = this.state
+    const validBulkActionSelected = bulkActionSelected &&
+      (bulkActionSelected !== BULK_ACTIONS.PLACEHOLDER)
+
+    if (!validBulkActionSelected) return
+
+    if (bulkActionSelected === BULK_ACTIONS.DELETE) {
+      this.handleDocumentDelete(state.documents.selected)
+    }
+  }
+
+  handleBulkActionSelect(value) {
+    this.setState({
+      bulkActionSelected: value
+    })
+  }
+
+  handleDocumentDelete(ids) {
+    const {actions, state} = this.props
+    const {
+      currentApi: api,
+      currentCollection: collection
+    } = state.api
+
+    actions.deleteDocuments({
+      api,
+      collection,
+      ids
+    })
+  }
+
+  handleEmptyDocumentList() {
+    const {
+      filter,
+      onBuildBaseUrl
+    } = this.props
+
+    if (filter) {
+      return (
+        <HeroMessage
+          title="No documents found."
+          subtitle="We can't find anything matching those filters."
+        >
+          <Button
+            accent="system"
+            href={onBuildBaseUrl.call(this, {
+              search: {}
+            })}
+          >Clear filters</Button>
+        </HeroMessage>
+      )
+    }
+
+    return (
+      <HeroMessage
+        title="No documents yet."
+        subtitle="Once created, they will appear here."
+      >
+        <Button
+          accent="save"
+          href={onBuildBaseUrl.call(this, {
+            createNew: true
+          })}
+        >Create new document</Button>
+      </HeroMessage>
+    )    
+  }
+
   render() {
     const {
       collection,
       documentId,
-      filter,
       group,
+      onBuildBaseUrl,
       order,
       page,
-      referencedField,
       sort,
       state
     } = this.props
-    const {newFilter} = this.state
+    const {bulkActionSelected} = this.state
     const {
       currentApi,
       currentCollection,
       currentParentCollection
     } = state.api
+    const {
+      list: documents,
+      selected: selectedDocuments
+    } = state.documents
+    const {
+      search = {}
+    } = state.router
+    const visibleFields = Object.keys(
+      getVisibleFields({
+        fields: currentCollection && currentCollection.fields,
+        viewType: 'list'
+      })
+    ).concat(Constants.DEFAULT_FIELDS)
 
     return (
       <Page>
-        {referencedField ?
-          <ReferencedDocumentHeader
-            collectionParent={currentParentCollection}
-            onBuildBaseUrl={this.handleBuildBaseUrl.bind(this)}
-            documentId={documentId}
-            referencedField={referencedField}
-          /> : 
-          <Header/>
-        }
+        <Header currentCollection={currentCollection}>
+          <DocumentListController
+            collection={currentCollection}
+            createNewHref={onBuildBaseUrl.call(this, {
+              createNew: true,
+              search: null
+            })}
+            enableFilters={true}
+            onBuildBaseUrl={onBuildBaseUrl.bind(this)}
+            search={search}
+          />
+        </Header>
 
         <Main>
-          <div class={styles.container}>
-            <DocumentListController
-              api={currentApi}
-              collection={currentCollection}
-              documentId={documentId}
-              filter={filter}
-              newFilter={newFilter}
-              onBuildBaseUrl={this.handleBuildBaseUrl.bind(this)}
-              referencedField={referencedField}
-            />
-
-            <DocumentList
-              api={currentApi}
-              collection={currentCollection}
-              collectionParent={currentParentCollection}
-              documentId={documentId}
-              filter={filter}
-              onBuildBaseUrl={this.handleBuildBaseUrl.bind(this)}
-              onPageTitle={this.handlePageTitle}
-              order={order}
-              page={page}
-              referencedField={referencedField}
-              sort={sort}
-            />
-          </div>        
+          <DocumentList
+            api={currentApi}
+            collection={currentCollection}
+            collectionParent={currentParentCollection}
+            documentId={documentId}
+            fields={visibleFields}
+            filters={search.filter}
+            onBuildBaseUrl={onBuildBaseUrl.bind(this)}
+            onPageTitle={setPageTitle}
+            onRenderDocuments={props => (
+              <DocumentTableList
+                {...props}
+                fields={visibleFields}
+              />
+            )}
+            onRenderEmptyDocumentList={this.handleEmptyDocumentList.bind(this)}
+            order={order}
+            page={page}
+            sort={sort}
+          />
         </Main>
 
         <DocumentListToolbar
-          api={currentApi}
-          collection={currentCollection}
-          onBuildBaseUrl={this.handleBuildBaseUrl.bind(this)}
-          referencedField={referencedField}
-        />
+          documentsMetadata={documents && documents.metadata}
+          onBuildPageUrl={page => onBuildBaseUrl.call(this, {
+            page
+          })}
+        >
+          <div>
+            <DropdownNative
+              className={styles['bulk-action-select']}
+              onChange={this.handleBulkActionSelect.bind(this)}
+              options={{
+                [BULK_ACTIONS.DELETE]: 'Delete'
+              }}
+              placeholderLabel="With selected..."
+              placeholderValue={BULK_ACTIONS.PLACEHOLDER}
+              textSize="small"
+              value={bulkActionSelected}
+            />
+
+            <ButtonWithPrompt
+              accent="data"
+              disabled={(bulkActionSelected === BULK_ACTIONS.PLACEHOLDER) || !selectedDocuments.length}
+              onClick={this.handleBulkActionApply.bind(this)}
+              promptCallToAction={`Yes, delete ${selectedDocuments.length > 1 ? 'them' : 'it'}.`}
+              promptMessage={`Are you sure you want to delete the selected ${selectedDocuments.length > 1 ? 'documents' : 'document'}?`}
+              size="small"
+            >Apply</ButtonWithPrompt>
+          </div>        
+        </DocumentListToolbar>
       </Page>
     )
-  }
-
-  handleBuildBaseUrl ({
-    collection = this.props.collection,
-    createNew,
-    documentId = this.props.documentId,
-    group = this.props.group,
-    referenceFieldSelect,
-    page,
-    search = new URLParams(window.location.search).toObject() || {},
-    section = this.props.section
-  } = {}) {
-    let urlNodes = [
-      group,
-      collection
-    ]
-
-    if (createNew) {
-      urlNodes.push('new')
-    } else {
-      urlNodes.push(documentId)
-    }
-
-    if (referenceFieldSelect) {
-      urlNodes = urlNodes.concat(['select', referenceFieldSelect])
-    } else {
-      urlNodes.push(section)
-    }
-
-    if (page) {
-      urlNodes.push(page)
-    }
-
-    let url = urlNodes.filter(Boolean).join('/')
-
-    if (!documentId) {
-      if (Object.keys(search).length > 0) {
-        url += `?${new URLParams(search).toString()}`
-      }
-    }
-
-    return `/${url}`
-  }
-
-  handlePageTitle (title) {
-    // We could have containers calling `setPageTitle()` directly, but it should
-    // be up to the views to control the page title, otherwise we'd risk having
-    // multiple containers wanting to set their own titles. Instead, containers
-    // have a `onPageTitle` callback that they fire whenever they want to set
-    // the title of the page. It's then up to the parent view to decide which
-    // of those callbacks will set the title.
-
-    setPageTitle(title)
   }
 }
 
 export default connectHelper(
   state => ({
-    api: state.api
-  })
+    api: state.api,
+    documents: state.documents,
+    router: state.router
+  }),
+  dispatch => bindActionCreators({
+    ...appActions,
+    ...documentsActions
+  }, dispatch)
 )(DocumentListView)

@@ -11,6 +11,7 @@ const initialState = {
   isLoading: false,
   isSaving: false,
   local: null,
+  localMeta: null,
   peers: null,
   remote: null,
   remoteError: null,
@@ -29,6 +30,10 @@ export default function document (state = initialState, action = {}) {
         saveAttempts: state.saveAttempts + 1
       }
 
+    // Resetting state when user authenticates.
+    case Types.AUTHENTICATE:
+      return initialState
+
     // Document action: clear remote document
     case Types.CLEAR_REMOTE_DOCUMENT:
       return initialState
@@ -39,6 +44,7 @@ export default function document (state = initialState, action = {}) {
         ...state,
         hasLoadedFromLocalStorage: false,
         local: {},
+        localMeta: {},
         validationErrors: null
       }
 
@@ -111,8 +117,18 @@ export default function document (state = initialState, action = {}) {
         return state
       }
 
-      let local = action.clearLocal ?
-        {} : state.local || action.fromLocalStorage || {}
+      let local = {}
+
+      if (!action.clearLocal) {
+        // We can reuse the contents of state.local if the document being edited
+        // is the same.
+        let shouldReuseExistingLocal =
+          (state.remote && state.remote._id) === (action.remote && action.remote._id)
+
+        local = (shouldReuseExistingLocal && state.local) ||
+          action.fromLocalStorage ||
+          {}
+      }
 
       return {
         ...state,
@@ -121,6 +137,7 @@ export default function document (state = initialState, action = {}) {
         isLoading: false,
         isSaving: false,
         local,
+        localMeta: {},
         remote: action.remote,
         saveAttempts: 0
       }
@@ -128,6 +145,14 @@ export default function document (state = initialState, action = {}) {
     // Document action: set remote document status
     case Types.SET_REMOTE_DOCUMENT_STATUS:
       switch (action.status) {
+
+        // Document is idle.
+        case Constants.STATUS_IDLE:
+          return {
+            ...state,
+            isLoading: false,
+            isSaving: false
+          }
 
         // Document is fetching.
         case Constants.STATUS_LOADING:
@@ -170,6 +195,7 @@ export default function document (state = initialState, action = {}) {
         hasLoadedFromLocalStorage,
         isLoading: false,
         local: action.document,
+        localMeta: {},
         remote: null
       }
 
@@ -178,7 +204,7 @@ export default function document (state = initialState, action = {}) {
       let newFieldsNotPersistedInLocalStorage = state.fieldsNotPersistedInLocalStorage
 
       if (!action.persistInLocalStorage) {
-        Object.keys(action.change).forEach(fieldName => {
+        Object.keys(action.update).forEach(fieldName => {
           if (!newFieldsNotPersistedInLocalStorage.includes(fieldName)) {
             newFieldsNotPersistedInLocalStorage.push(fieldName)
           }
@@ -191,8 +217,9 @@ export default function document (state = initialState, action = {}) {
         hasBeenValidated: true,
         local: {
           ...state.local,
-          ...action.change
-        }
+          ...action.update
+        },
+        localMeta: Object.assign({}, action.meta)
       }
 
       return newState

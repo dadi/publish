@@ -10,6 +10,7 @@ const APIWrapper = require('@dadi/api-wrapper-core')
 const MAX_CALLS_PER_SECOND = 50
 
 let callCount = 0
+let onError = null
 let onUpdate = null
 let throttle = null
 
@@ -36,12 +37,16 @@ const apiBridgeFetch = function (requestObject) {
       return null
     }
 
-    if (response.status === 200) {
+    if (response.ok) {
       return response.json()
     }
 
     return response.json().then(error => {
       console.error(error)
+
+      if (typeof onError === 'function') {
+        onError.call(this, error)
+      }
 
       return Promise.reject(error)
     })
@@ -120,6 +125,10 @@ const apiBridgeFactory = function ({
 }
 
 module.exports = apiBridgeFactory
+
+module.exports.registerErrorCallback = callback => {
+  onError = callback
+}
 
 module.exports.registerProgressCallback = callback => {
   onUpdate = callback

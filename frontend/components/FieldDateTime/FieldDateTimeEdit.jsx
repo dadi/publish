@@ -117,6 +117,119 @@ export default class FieldDateTimeEdit extends Component {
     this.state.hasFocus = false
   }
 
+  broadcastChange(value) {
+    const {
+      error,
+      name,
+      onChange,
+      onError
+    } = this.props
+
+    if (error && typeof onError === 'function') {
+      onError.call(this, name, false, value)
+    } else if (typeof onChange === 'function') {
+      onChange.call(this, name, value)
+    }    
+  }
+
+  componentDidMount() {
+    window.addEventListener('click', this.pickerOutsideEventHandler)
+  }
+
+  componentWillUnmount() {
+    if (this.picker) {
+      this.picker.removeEventListener('click', this.pickerOutsideEventHandler)
+    }
+
+    clearTimeout(this.losingFocusTimeout)
+  }
+
+  handleChange(event) {
+    const {
+      config,
+      error,
+      name,
+      onChange,
+      schema,
+      value
+    } = this.props
+    const newDate = new DateTime(event.target.value, config.formats.date.long)
+
+    let newValue = null
+
+    if (event.target.value.length > 0) {
+      if (newDate.isValid()) {
+        newValue = newDate.getDate().toISOString()
+      } else {
+        newValue = value
+      }
+    }
+
+    this.broadcastChange(newValue)
+  }
+
+  handleFocus(hasFocus) {
+    const {pickerVisible} = this.state
+    const {schema} = this.props
+
+    const publishBlock = schema.publish || {}
+
+    // Return from focus event so picker doesn't display
+    if (publishBlock.readonly === true) {
+      return
+    }
+
+    this.hasFocus = hasFocus
+
+    this.setState({
+      hasFocus
+    })
+
+    if (!pickerVisible) {
+      this.setState({
+        pickerVisible: true
+      })
+    }
+
+    if (!hasFocus && pickerVisible) {
+      clearTimeout(this.losingFocusTimeout)
+
+      this.losingFocusTimeout = setTimeout(() => {
+        this.setState({
+          pickerVisible: false
+        })
+      }, 200)
+    }
+  }
+
+  handlePickerChange(newDate) {
+    this.broadcastChange(newDate.toISOString())
+  }
+
+  handlePickerClick(insidePicker, event) {
+    const {pickerVisible} = this.state
+
+    if (insidePicker) {
+      event.stopPropagation()
+
+      clearTimeout(this.losingFocusTimeout)
+    } else {
+      if (pickerVisible && !this.hasFocus) {
+        this.setState({
+          pickerVisible: false
+        })
+      }
+    }
+  }
+
+  handlePickerRef(element) {
+    if (this.picker) return
+
+    element.addEventListener('click', this.pickerEventHandler)
+
+    this.picker = element
+  }
+
   render() {
     let {
       comment,
@@ -171,108 +284,5 @@ export default class FieldDateTimeEdit extends Component {
         }
       </Label>
     )
-  }
-
-  componentDidMount() {
-    window.addEventListener('click', this.pickerOutsideEventHandler)
-  }
-
-  componentWillUnmount() {
-    if (this.picker) {
-      this.picker.removeEventListener('click', this.pickerOutsideEventHandler)
-    }
-
-    clearTimeout(this.losingFocusTimeout)
-  }
-
-  handleChange(event) {
-    const {
-      config,
-      name,
-      onChange,
-      schema,
-      value
-    } = this.props
-    const newDate = new DateTime(event.target.value, config.formats.date.long)
-
-    let newValue = null
-
-    if (event.target.value.length > 0) {
-      if (newDate.isValid()) {
-        newValue = newDate.getDate().toISOString()
-      } else {
-        newValue = value
-      }
-    }
-
-    if (typeof onChange === 'function') {
-      onChange.call(this, name, newValue)
-    }
-  }
-
-  handleFocus(hasFocus) {
-    const {pickerVisible} = this.state
-    const {schema} = this.props
-
-    const publishBlock = schema.publish || {}
-
-    // Return from focus event so picker doesn't display
-    if (publishBlock.readonly === true) {
-      return
-    }
-
-    this.hasFocus = hasFocus
-
-    this.setState({
-      hasFocus
-    })
-
-    if (!pickerVisible) {
-      this.setState({
-        pickerVisible: true
-      })
-    }
-
-    if (!hasFocus && pickerVisible) {
-      clearTimeout(this.losingFocusTimeout)
-
-      this.losingFocusTimeout = setTimeout(() => {
-        this.setState({
-          pickerVisible: false
-        })
-      }, 200)
-    }
-  }
-
-  handlePickerChange(newDate) {
-    const {name, onChange, schema} = this.props
-
-    if (typeof onChange === 'function') {
-      onChange.call(this, name, newDate.toISOString())
-    }
-  }
-
-  handlePickerClick(insidePicker, event) {
-    const {pickerVisible} = this.state
-
-    if (insidePicker) {
-      event.stopPropagation()
-
-      clearTimeout(this.losingFocusTimeout)
-    } else {
-      if (pickerVisible && !this.hasFocus) {
-        this.setState({
-          pickerVisible: false
-        })
-      }
-    }
-  }
-
-  handlePickerRef(element) {
-    if (this.picker) return
-
-    element.addEventListener('click', this.pickerEventHandler)
-
-    this.picker = element
   }
 }

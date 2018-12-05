@@ -26,10 +26,8 @@ export default class ListController extends Component {
 
   render() {
     const {
-      children
+      children = []
     } = this.props
-
-    if (!children.length) return null
 
     let breadcrumbs = (this.props.breadcrumbs || []).filter(Boolean)
 
