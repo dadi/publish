@@ -4,6 +4,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [2.0.1] (2018-12-06)
+
+### Fixed
+
+* fix issue with pagination when selecting referenced document
+* show 404 message when accessing collection that doesn't exist
+
 ## [2.0.0] (2018-12-05)
 
 First public release.
