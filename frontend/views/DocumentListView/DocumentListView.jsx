@@ -164,9 +164,9 @@ class DocumentListView extends Component {
     const {
       search = {}
     } = state.router
-    const visibleFields = Object.keys(
+    const visibleFields = currentCollection && Object.keys(
       getVisibleFields({
-        fields: currentCollection && currentCollection.fields,
+        fields: currentCollection.fields,
         viewType: 'list'
       })
     ).concat(Constants.DEFAULT_FIELDS)
