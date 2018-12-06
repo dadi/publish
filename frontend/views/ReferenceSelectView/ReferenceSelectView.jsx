@@ -269,6 +269,7 @@ class ReferenceSelectView extends Component {
         <DocumentListToolbar
           documentsMetadata={documents && documents.metadata}
           onBuildPageUrl={page => onBuildBaseUrl.call(this, {
+            createNew: !Boolean(documentId),
             page,
             referenceFieldSelect: referencedField
           })}
