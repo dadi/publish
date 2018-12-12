@@ -101,7 +101,6 @@ export default class FieldNumberEdit extends Component {
 
   static defaultProps = {
     error: false,
-    forceValidation: false,
     value: null
   }
 
@@ -111,19 +110,17 @@ export default class FieldNumberEdit extends Component {
     this.state.hasFocus = false
   }
 
-  componentDidMount() {
-    const {forceValidation, value} = this.props
-
-    if (forceValidation) {
-      this.validate(value)
-    }
+  handleFocusChange(hasFocus) {
+    this.setState({
+      hasFocus
+    })
   }
 
-  componentDidUpdate(prevProps, prevState) {
-    const {forceValidation, value} = this.props
+  handleOnChange(event) {
+    const {name, onChange, schema} = this.props
 
-    if (!prevProps.forceValidation && forceValidation) {
-      this.validate(value)
+    if (typeof onChange === 'function') {
+      onChange.call(this, name, parseFloat(event.target.value))
     }
   }
 
@@ -160,38 +157,5 @@ export default class FieldNumberEdit extends Component {
         />
       </Label>
     )
-  }
-
-  getValueOfInput(input) {
-    return parseFloat(input.value)
-  }
-
-  handleFocusChange(hasFocus) {
-    this.setState({
-      hasFocus
-    })
-  }
-
-  handleOnChange(event) {
-    const {name, onChange, schema} = this.props
-    const value = this.getValueOfInput(event.target)
-
-    this.validate(value)
-
-    if (typeof onChange === 'function') {
-      onChange.call(this, name, parseFloat(event.target.value))
-    }
-  }
-
-  validate(value) {
-    const {name, onError, required, schema} = this.props
-
-    const hasValidationErrors = required && (isNaN(value)
-      || typeof value !== 'number') 
-    //{To-Do}: add findValidationErrorsInValue method for further validation checks 
-
-    if (typeof onError === 'function') {
-        onError.call(this, name, hasValidationErrors, value)
-    }
   }
 }

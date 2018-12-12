@@ -259,7 +259,7 @@ export default class FieldReferenceEdit extends Component {
     const hasValidationErrors = required && !value
 
     if (typeof onError === 'function') {
-      onError.call(this, name, hasValidationErrors, value)
+      //onError.call(this, name, hasValidationErrors, value)
     }    
   }
 }

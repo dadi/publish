@@ -1,8 +1,10 @@
 import {h, Component} from 'preact'
 import proptypes from 'proptypes'
+import {batchActions} from 'lib/redux'
 import {bindActionCreators} from 'redux'
 import {connectHelper} from 'lib/util'
 import {getFieldType} from 'lib/fields'
+import Validator from '@dadi/api-validator'
 
 import * as documentActions from 'actions/documentActions'
 import * as fieldComponents from 'lib/field-components'
@@ -36,7 +38,7 @@ class DocumentField extends Component {
     documentId: proptypes.string,
 
     /**
-     * The field being edited.
+     * The schema of the field being edited.
      */
     field: proptypes.object,
 
@@ -52,21 +54,58 @@ class DocumentField extends Component {
     state: proptypes.object
   }
 
+  constructor(props) {
+    super(props)
+
+    this.validator = new Validator()
+  }
+
+  componentDidUpdate(oldProps, oldState) {
+    const {state} = this.props
+    const {document} = state
+    const {document: oldDocument} = oldProps.state
+
+    if (oldDocument.saveAttempts === 0 && document.saveAttempts > 0) {
+      this.validate(this.value).catch(error => {})
+    }
+  }
+
   // Handles the callback that fires whenever a field changes and the new value
   // is ready to be sent to the store.
   handleFieldChange(fieldName, value, persistInLocalStorage = true) {
     const {
       actions,
-      collection
+      collection,
+      field,
+      state
     } = this.props
+    const {app, document} = state
+    const hasError = document.validationErrors
+      && document.validationErrors[this.name]
 
-    actions.updateLocalDocument({
-      path: collection.path,
-      persistInLocalStorage,
-      update: {
-        [fieldName]: value
+    // Validating the field.
+    this.validate(value).then(() => {
+      // Validation passed. We'll update the local document with the
+      // new value.
+      let actionQueue = [
+        actions.updateLocalDocument.call(this, {
+          path: collection.path,
+          persistInLocalStorage,
+          update: {
+            [fieldName]: value
+          }
+        })
+      ]
+
+      // Do we have validation errors to clear?
+      if (hasError) {
+        actionQueue.push(
+          actions.setFieldErrorStatus.call(this, fieldName, value, null)
+        )
       }
-    })
+
+      batchActions(actionQueue)
+    }).catch(error => {})
   }
 
   // Handles the callback that fires whenever there's a new validation error
@@ -145,6 +184,10 @@ class DocumentField extends Component {
       return null
     }
 
+    // Caching these value so that other lifecycle methods can use them.
+    this.name = fieldName
+    this.value = documentData[fieldName]
+
     return (
       <Field
         isDisabled={isTranslation && !isTranslatable}
@@ -172,6 +215,29 @@ class DocumentField extends Component {
         />      
       </Field>
     )
+  }
+
+  validate(value) {
+    const {
+      actions,
+      field,
+      state
+    } = this.props
+    const {app, document} = state
+    const hasError = document.validationErrors
+      && document.validationErrors[this.name]
+
+    console.log('Validating:', {field: this.name, value})
+
+    return this.validator.validateValue({
+      schema: field,
+      value
+    }).catch(error => {
+      // Validation failed. We'll flag the error in the store.
+      actions.setFieldErrorStatus(this.name, value, error.message)
+
+      return Promise.reject(error)
+    })
   }
 }
 
