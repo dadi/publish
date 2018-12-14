@@ -78,6 +78,29 @@ const initialiseConfig = () => {
   return config
 }
 
+convict.addFormat({
+  name: 'apis-block',
+  validate: value => {
+    if (!Array.isArray(value)) {
+      throw new Error('must be an array')
+    }
+
+    if (value.length > 1) {
+      throw new Error('only one API is currently supported')
+    }
+
+    value.forEach(api => {
+      if (typeof api.host !== 'string' || typeof api.port !== 'number') {
+        throw new Error('must contain elements with `host` and `port` properties')
+      }
+
+      if (api.credentials !== undefined) {
+        throw new Error('contains a legacy `credentials` block, exposing critical information to the public')
+      }
+    })
+  }
+})
+
 let config = initialiseConfig()
 
 module.exports = config
