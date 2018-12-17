@@ -209,7 +209,7 @@ export default class DocumentFilters extends Component {
     })
   }
 
-  handleSelectedFilterUpdate(field, event) {
+  handleSelectedFilterUpdate(field, defaultOperator, event) {
     const {
       selectedFilterIndex: index,
       selectedFilterOperator: operator,
@@ -226,7 +226,7 @@ export default class DocumentFilters extends Component {
     if (index === -1) {
       this.filtersArray.push({
         field,
-        operator,
+        operator: operator || defaultOperator,
         value
       })
     } else {
@@ -461,7 +461,7 @@ export default class DocumentFilters extends Component {
       <form
         class={tooltipStyle.getClasses()}
         onClick={this.handleClick.bind(this, true)}
-        onSubmit={this.handleSelectedFilterUpdate.bind(this, field)}
+        onSubmit={this.handleSelectedFilterUpdate.bind(this, field, selectedOperator)}
       >
         <div class={styles['tooltip-section']}>
           <h3
