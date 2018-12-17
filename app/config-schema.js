@@ -2,7 +2,7 @@ module.exports = {
   apis: {
     requireAuthentication: false,
     doc: 'Connected APIs',
-    format: Array,
+    format: 'apis-block',
     default: [],
     publishId: {
       type: String,
@@ -94,7 +94,6 @@ module.exports = {
     }
   },
   server: {
-    requireAuthentication: false,
     host: {
       doc: 'The IP address or interface to bind to',
       format: 'ipaddress',
@@ -147,6 +146,7 @@ module.exports = {
       env: 'SSL_INTERMEDIATE_CERTIFICATE_PATHS'
     },
     healthcheck: {
+      requireAuthentication: false,
       enabled: {
         doc: 'Healthcheck is enabled',
         format: Boolean,
