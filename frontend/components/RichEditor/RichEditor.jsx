@@ -283,12 +283,17 @@ export default class RichEditor extends Component {
       this.linkInputElement.focus()
     }
 
-    if (value !== text) {
+    if (this.getNormalisedValue(value) !== text) {
       this.handleChange(value, {
         needsConversion: true,
         shouldPropagate: false
       })
     }
+  }
+
+  componentWillUnmount() {
+    this.editorElement.removeEventListener('keypress', this.keyPressHandler)
+    document.removeEventListener('selectionchange', this.selectionHandler)
   }
 
   deserialiseSelection(serialisedSelection) {
@@ -378,6 +383,14 @@ export default class RichEditor extends Component {
     return this.turndownService.turndown(html)
   }
 
+  getNormalisedValue(value) {
+    if (typeof value !== 'string' || value.length === 0) {
+      return null
+    }
+
+    return value
+  }
+
   getTextFromHTML(html) {
     const {format} = this.props
 
@@ -409,15 +422,9 @@ export default class RichEditor extends Component {
       text = this.getTextFromHTML(value)
     }
 
-    // An empty string is not the best representation of an empty field.
-    // We look for that case and broadcast a `null` instead.
-    let sanitisedText = text.length > 0 ?
-      text :
-      null
-
     this.setState({
       html,
-      text: sanitisedText
+      text: this.getNormalisedValue(text)
     })
 
     if (shouldPropagate && typeof onChange === 'function') {
