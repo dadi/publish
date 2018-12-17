@@ -422,13 +422,15 @@ export default class RichEditor extends Component {
       text = this.getTextFromHTML(value)
     }
 
+    let normalisedValue = this.getNormalisedValue(text)
+
     this.setState({
       html,
-      text: this.getNormalisedValue(text)
+      text: normalisedValue
     })
 
     if (shouldPropagate && typeof onChange === 'function') {
-      onChange(sanitisedText)
+      onChange(normalisedValue)
     }
   }
 
