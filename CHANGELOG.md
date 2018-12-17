@@ -4,6 +4,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [2.0.2] (2018-12-17)
+
+### Changed
+
+* [#650](https://github.com/dadi/publish/pull/650): enforce stricter validation on configuration files
+
+### Fixed
+
+* [#644](https://github.com/dadi/publish/issues/644): make Add filter popup respect default operator
+* [#651](https://github.com/dadi/publish/pull/651): fix issue with the RichEditor component that would crash the app when unmounting
+
 ## [2.0.1] (2018-12-06)
 
 ### Fixed
