@@ -297,7 +297,7 @@ export default class FieldStringEdit extends Component {
           onChange={el => this.handleOnChange(this.getValueOfDropdown(el.target))}
           multiple={multiple}
           name={name}
-          ref={multiple && this.selectDropdownOptions.bind(this)}
+          ref={this.selectDropdownOptions.bind(this, multiple)}
           value={selectedValue}
         >
           {!multiple &&
@@ -395,29 +395,29 @@ export default class FieldStringEdit extends Component {
     
     return (
       <Label
+        comment={required && 'Required'}
         error={error}
         errorMessage={typeof error === 'string' ? error : null}
         hasFocus={hasFocus}
         label={displayName}
-        comment={required && 'Required'}
       >
         <RichEditor
           format={format}
           insertImageCallback={callback => this.insertImageCallback = callback}
           onBlur={this.handleFocusChange.bind(this, false)}
-          onImageInsert={this.handleImageSelect.bind(this)}
           onChange={this.handleOnChange.bind(this)}
           onFocus={this.handleFocusChange.bind(this, true)}
+          onImageInsert={this.handleImageSelect.bind(this)}
           value={value}
         />        
       </Label>
     )
   }
 
-  selectDropdownOptions(input) {
+  selectDropdownOptions(isMultiple, input) {
     const {value} = this.props
 
-    if (!input || !input.options) return
+    if (!input || !input.options || !isMultiple) return
 
     for (let i = 0; i < input.options.length; i++) {
       if (value.includes(input.options[i].value)) {
