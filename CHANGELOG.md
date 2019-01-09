@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [2.0.3] (2019-01-09)
+
+### Fixed
+
+* [#652](https://github.com/dadi/publish/pull/652): fix error when loading String fields with an `options` block
+
 ## [2.0.2] (2018-12-17)
 
 ### Changed
