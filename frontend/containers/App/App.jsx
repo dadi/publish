@@ -96,6 +96,9 @@ class App extends Component {
         decodeURIComponent(state.router.search.redirect) :
         '/'
 
+      // Scrolling to top (needed on mobile devices).
+      window.scrollTo(0, 0)
+
       return route(redirectUri)
     }
 
