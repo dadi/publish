@@ -49,13 +49,13 @@ export default class Paginator extends Component {
   renderPageNumber(pageNumber) {
     const {currentPage, linkCallback} = this.props
     const href = linkCallback.call(this, pageNumber)
-    const activePageStyle = new Style(styles, 'page', 'page-active')
+    const pageStyle = new Style(styles, 'page', 'page-primary')
 
     if (pageNumber === currentPage) {
       return (
         <Button
           accent="data"
-          className={styles.page}
+          className={pageStyle.getClasses()}
           type="mock"
         >{pageNumber}</Button>
       )
@@ -67,7 +67,7 @@ export default class Paginator extends Component {
           path: href,
           update: true
         })}
-        className={styles.page}
+        className={pageStyle.getClasses()}
       >{pageNumber}</Button>
     )    
   }

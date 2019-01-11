@@ -13,6 +13,16 @@
   margin-right: 10px;
 }
 
-.page-secondary {
-  color: var(--theme-colour-background-shade-2, #AAAAAA);
+.page-primary {
+  display: none;
 }
+
+@media (--breakpoint-medium) {
+  .page-primary {
+    display: inline-block;
+  }
+
+  .page-secondary {
+    color: var(--theme-colour-background-shade-2, #AAAAAA);
+  }
+}  

@@ -1,5 +1,4 @@
 .information {
-  display: none;
   align-items: center;
 }
 
@@ -10,7 +9,14 @@
 }
 
 .count-label {
+  display: none;
   margin-left: 0;
+}
+
+@media (--breakpoint-large) {
+  .count-label {
+    display: inline;
+  }
 }
 
 .section {
@@ -19,7 +25,25 @@
   text-align: center;
 }
 
+.section-pagination {
+  justify-content: space-between;
+}
+
 .page-input {
   width: 6em;
   text-align: center;
+}
+
+.page-input-simple {
+  display: none;
+}
+
+@media (--breakpoint-large) {
+  .page-input-simple {
+    display: block;
+  }
+
+  .page-input-extended {
+    display: none;
+  }
 }
