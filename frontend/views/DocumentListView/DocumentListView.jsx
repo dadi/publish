@@ -12,12 +12,11 @@ import * as Constants from 'lib/constants'
 import * as documentsActions from 'actions/documentsActions'
 
 import Button from 'components/Button/Button'
-import ButtonWithPrompt from 'components/ButtonWithPrompt/ButtonWithPrompt'
+import BulkActionSelector from 'components/BulkActionSelector/BulkActionSelector'
 import DocumentList from 'containers/DocumentList/DocumentList'
 import DocumentListController from 'components/DocumentListController/DocumentListController'
 import DocumentListToolbar from 'components/DocumentListToolbar/DocumentListToolbar'
 import DocumentTableList from 'components/DocumentTableList/DocumentTableList'
-import DropdownNative from 'components/DropdownNative/DropdownNative'
 import Header from 'containers/Header/Header'
 import HeroMessage from 'components/HeroMessage/HeroMessage'
 import Main from 'components/Main/Main'
@@ -26,17 +25,10 @@ import Style from 'lib/Style'
 import styles from './DocumentListView.css'
 
 const BULK_ACTIONS = {
-  DELETE: 'BULK_ACTIONS_DELETE',
-  PLACEHOLDER: 'BULK_ACTIONS_PLACEHOLDER'
+  DELETE: 'BULK_ACTIONS_DELETE'
 }
 
 class DocumentListView extends Component {
-  constructor(props) {
-    super(props)
-
-    this.state.bulkActionSelected = BULK_ACTIONS.PLACEHOLDER
-  }
-
   componentDidUpdate(prevProps, prevState) {
     const {actions, state} = this.props
     const {isDeleting, list} = state.documents
@@ -71,22 +63,11 @@ class DocumentListView extends Component {
   }
 
   handleBulkActionApply(actionType) {
-    const {state} = this.props    
-    const {bulkActionSelected} = this.state
-    const validBulkActionSelected = bulkActionSelected &&
-      (bulkActionSelected !== BULK_ACTIONS.PLACEHOLDER)
+    const {state} = this.props  
 
-    if (!validBulkActionSelected) return
-
-    if (bulkActionSelected === BULK_ACTIONS.DELETE) {
+    if (actionType === BULK_ACTIONS.DELETE) {
       this.handleDocumentDelete(state.documents.selected)
     }
-  }
-
-  handleBulkActionSelect(value) {
-    this.setState({
-      bulkActionSelected: value
-    })
   }
 
   handleDocumentDelete(ids) {
@@ -215,28 +196,13 @@ class DocumentListView extends Component {
             page
           })}
         >
-          <div>
-            <DropdownNative
-              className={styles['bulk-action-select']}
-              onChange={this.handleBulkActionSelect.bind(this)}
-              options={{
-                [BULK_ACTIONS.DELETE]: 'Delete'
-              }}
-              placeholderLabel="With selected..."
-              placeholderValue={BULK_ACTIONS.PLACEHOLDER}
-              textSize="small"
-              value={bulkActionSelected}
-            />
-
-            <ButtonWithPrompt
-              accent="data"
-              disabled={(bulkActionSelected === BULK_ACTIONS.PLACEHOLDER) || !selectedDocuments.length}
-              onClick={this.handleBulkActionApply.bind(this)}
-              promptCallToAction={`Yes, delete ${selectedDocuments.length > 1 ? 'them' : 'it'}.`}
-              promptMessage={`Are you sure you want to delete the selected ${selectedDocuments.length > 1 ? 'documents' : 'document'}?`}
-              size="small"
-            >Apply</ButtonWithPrompt>
-          </div>        
+          <BulkActionSelector
+            actions={{
+              [BULK_ACTIONS.DELETE]: 'Delete'
+            }}
+            onChange={this.handleBulkActionApply.bind(this)}
+            selection={selectedDocuments}
+          />
         </DocumentListToolbar>
       </Page>
     )

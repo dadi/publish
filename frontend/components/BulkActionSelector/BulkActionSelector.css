@@ -1,0 +1,23 @@
+.container {
+  display: flex;
+  width: 100%;
+}
+
+.container-empty {
+  display: none;
+}
+
+.dropdown {
+  flex-grow: 1;
+  margin-right: 10px;
+}
+
+@media (--breakpoint-medium) {
+  .container {
+    width: auto;
+  }
+
+  .container-empty {
+    display: block;
+  }
+}
