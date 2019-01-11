@@ -8,6 +8,9 @@
   font-family: var(--theme-font-family, sans-serif);
   color: var(--theme-colour-primary, #000000);
   z-index: 1000;
+  position: fixed;
+  bottom: 0;
+  left: 0;
 }
 
 @media (--breakpoint-medium) {
@@ -15,9 +18,6 @@
     display: flex;
     justify-content: space-between;
     align-items: stretch;
-    position: fixed;
-    bottom: 0;
-    left: 0;
     border-top: 1px solid #e4e4e4;
   }
 }
