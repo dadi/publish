@@ -87,23 +87,23 @@ export default class DocumentListToolbar extends Component {
             </span>
           </div>
         )}
-        <div class={`${styles.section} ${styles['section-pagination']}`}>
-          <Paginator
-            currentPage={metadata.page}
-            linkCallback={page => onBuildPageUrl(page)}
-            maxPages={8}
-            totalPages={metadata.totalPages}
-          />
 
-          <div class={styles.information}>
-            {metadata.totalCount > metadata.limit && (
+        {metadata.totalCount > metadata.limit && (
+          <div class={`${styles.section} ${styles['section-pagination']}`}>
+            <Paginator
+              currentPage={metadata.page}
+              linkCallback={page => onBuildPageUrl(page)}
+              maxPages={8}
+              totalPages={metadata.totalPages}
+            />
+
+            <div class={styles.information}>
               <div>
                 <span class={`${styles['page-input']} ${styles['page-input-simple']}`}>
                   <ToolbarTextInput
                     onChange={event => goToPage.bind(event.target.value)}
                     size="small"
                     placeholder="Go to page"
-                    type="number"
                   />
                 </span>
 
@@ -115,9 +115,9 @@ export default class DocumentListToolbar extends Component {
                   />
                 </span>
               </div>
-            )} 
+            </div>
           </div>
-        </div>
+        )}
 
         <div class={styles.section}>
           {children}

@@ -144,7 +144,8 @@
 }
 
 /* Disabled */
-.button[disabled]:not(.button-inherit) {
+.button[disabled]:not(.button-inherit),
+.button-disabled:not(.button-inherit) {
   background-color: var(--theme-colour-background-shade-2, #AAAAAA) !important;
   color: var(--theme-colour-secondary, #FFFFFF) !important;
   cursor: not-allowed !important;

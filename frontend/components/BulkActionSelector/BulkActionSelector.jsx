@@ -72,6 +72,11 @@ export default class BulkActionSelector extends Component {
     const containerStyle = new Style(styles, 'container')
       .addIf('container-empty', selection.length === 0)
       .addResolved(className)
+    let placeholder = 'With selected'
+
+    if (selection.length > 0) {
+      placeholder += ` (${selection.length})`
+    }
 
     return (
       <div class={containerStyle.getClasses()}>
@@ -79,7 +84,7 @@ export default class BulkActionSelector extends Component {
           className={styles.dropdown}
           onChange={this.onChange.bind(this)}
           options={actions}
-          placeholderLabel="With selected..."
+          placeholderLabel={placeholder}
           placeholderValue={ACTION_PLACEHOLDER}
           textSize="small"
           value={selected}
