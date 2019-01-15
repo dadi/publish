@@ -10,6 +10,7 @@ import styles from './DocumentListToolbar.css'
 import * as Constants from 'lib/constants'
 
 import Checkbox from 'components/Checkbox/Checkbox'
+import DropdownNative from 'components/DropdownNative/DropdownNative'
 import Paginator from 'components/Paginator/Paginator'
 import Toolbar from 'components/Toolbar/Toolbar'
 import ToolbarTextInput from 'components/Toolbar/ToolbarTextInput'
@@ -35,18 +36,17 @@ export default class DocumentListToolbar extends Component {
     onBuildPageUrl: proptypes.func
   }
 
-  handleGoToPage(event) {
+  goToPage(value) {
     const {
       documentsMetadata,
       onBuildPageUrl
     } = this.props
-    const inputValue = event.target.value
-    const parsedValue = parseInt(inputValue)
+    const parsedValue = parseInt(value)
 
     if (!documentsMetadata) return null
 
     // If the input is not a valid positive integer number, we return.
-    if ((parsedValue.toString() !== inputValue) || (parsedValue <= 0)) return
+    if ((parsedValue.toString() !== value) || (parsedValue <= 0)) return
 
     // If the number inserted is outside the range of the pages available,
     // we return.
@@ -66,6 +66,16 @@ export default class DocumentListToolbar extends Component {
 
     if (!metadata) return null
 
+    const pagesObject = Array.apply(null, {
+      length: metadata.totalPages
+    }).reduce((result, content, index) => {
+      const page = index + 1
+
+      result[page] = `Page ${page}`
+      
+      return result
+    }, {})
+
     return (
       <Toolbar>      
         {metadata.totalCount > 1 && (
@@ -77,26 +87,37 @@ export default class DocumentListToolbar extends Component {
             </span>
           </div>
         )}
-        <div class={styles.section}>
-          <Paginator
-            currentPage={metadata.page}
-            linkCallback={page => onBuildPageUrl(page)}
-            maxPages={8}
-            totalPages={metadata.totalPages}
-          />
 
-          <div class={styles.information}>
-            {metadata.totalCount > metadata.limit && (
-              <span class={styles['page-input']}>
-                <ToolbarTextInput
-                  onChange={this.handleGoToPage.bind(this)}
-                  size="small"
-                  placeholder="Go to page"
-                />
-              </span>
-            )} 
+        {metadata.totalCount > metadata.limit && (
+          <div class={`${styles.section} ${styles['section-pagination']}`}>
+            <Paginator
+              currentPage={metadata.page}
+              linkCallback={page => onBuildPageUrl(page)}
+              maxPages={8}
+              totalPages={metadata.totalPages}
+            />
+
+            <div class={styles.information}>
+              <div>
+                <span class={`${styles['page-input']} ${styles['page-input-simple']}`}>
+                  <ToolbarTextInput
+                    onChange={event => goToPage.bind(event.target.value)}
+                    size="small"
+                    placeholder="Go to page"
+                  />
+                </span>
+
+                <span class={`${styles['page-input']} ${styles['page-input-extended']}`}>
+                  <DropdownNative
+                    onChange={this.goToPage.bind(this)}
+                    options={pagesObject}
+                    value={metadata.page}
+                  />
+                </span>
+              </div>
+            </div>
           </div>
-        </div>
+        )}
 
         <div class={styles.section}>
           {children}

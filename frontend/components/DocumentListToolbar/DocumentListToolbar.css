@@ -1,5 +1,4 @@
 .information {
-  display: none;
   align-items: center;
 }
 
@@ -10,7 +9,21 @@
 }
 
 .count-label {
-  margin-left: 0;
+  width: 100%;
+}
+
+.count-label-prefix {
+  display: none;
+}
+
+@media (--breakpoint-large) {
+  .count-label {
+    width: auto;
+  }
+
+  .count-label-prefix {
+    display: inline;
+  }
 }
 
 .section {
@@ -19,7 +32,32 @@
   text-align: center;
 }
 
+.section-pagination {
+  justify-content: space-between;
+  margin-top: 10px;
+}
+
+@media (--breakpoint-large) {
+  .section-pagination {
+    margin-top: 0;
+  }
+}
+
 .page-input {
   width: 6em;
   text-align: center;
+}
+
+.page-input-simple {
+  display: none;
+}
+
+@media (--breakpoint-large) {
+  .page-input-simple {
+    display: block;
+  }
+
+  .page-input-extended {
+    display: none;
+  }
 }

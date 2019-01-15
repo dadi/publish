@@ -63,16 +63,6 @@ export default class DocumentListController extends Component {
 
     return (
       <div class={styles.wrapper}>
-        <div class={styles.actions}>
-          {createNewHref &&
-            <Button
-              accent="save"
-              href={createNewHref}
-              type="fill"
-            >Create new</Button>
-          }
-        </div>
-
         <div class={styles.filters}>
           {enableFilters &&
             <DocumentFilters
@@ -80,6 +70,28 @@ export default class DocumentListController extends Component {
               filters={search.filter}
               onUpdateFilters={this.handleFiltersUpdate.bind(this)}
             />
+          }
+        </div>
+
+        <div class={styles.actions}>
+          {createNewHref &&
+            <div class={styles['new-button-large']}>
+              <Button
+                accent="save"
+                href={createNewHref}
+                type="fill"
+              >Create new</Button>
+            </div>
+          }
+
+          {createNewHref &&
+            <div class={styles['new-button-small']}>
+              <Button
+                accent="save"
+                href={createNewHref}
+                type="fill"
+              >New</Button>
+            </div>
           }
         </div>
       </div>

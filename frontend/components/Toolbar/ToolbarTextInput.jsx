@@ -28,11 +28,16 @@ export default class ToolbarTextInput extends Component {
     /**
      * The placeholder to be rendered on the text input.
      */
-    placeholder: proptypes.string
+    placeholder: proptypes.string,
+
+    /**
+     * The type of input.
+     */
+    type: proptypes.string
   }
 
   render() {
-    const {className, onChange, placeholder} = this.props
+    const {className, onChange, placeholder, type} = this.props
     const inputStyle = new Style(styles, 'input')
       .addResolved(className)
 
@@ -41,6 +46,7 @@ export default class ToolbarTextInput extends Component {
         className={inputStyle.getClasses()}
         onChange={onChange}
         placeholder={placeholder}
+        type={type}
       />
     )
   }
