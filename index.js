@@ -48,7 +48,7 @@ Publish.prototype.getStartupMessage = function () {
 Publish.prototype.run = function () {
   dadiBoot.start(require('./package.json'))
 
-  app
+  return app
     .start()
     .then(this.getStartupMessage)
     .catch(err => {

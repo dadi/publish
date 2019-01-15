@@ -1,0 +1,7 @@
+{
+  "database": {
+    "path": "workspace/db",
+    "autosaveInterval": 10000,
+    "serializationMethod": "normal"
+  }
+}
