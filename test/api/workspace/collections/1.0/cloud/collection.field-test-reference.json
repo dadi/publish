@@ -1,0 +1,65 @@
+{
+  "fields": {
+    "referenceRequired": {
+      "type": "Reference",
+      "label": "Reference",
+      "required": true,
+      "publish": {
+        "section": "Reference",
+        "placement": "main"
+      },
+      "settings": {
+        "collection": "team"
+      }
+    },
+    "referenceReadOnly": {
+      "type": "Reference",
+      "label": "Reference (read-only)",
+      "publish": {
+        "section": "Reference",
+        "placement": "sidebar",
+        "readonly": true
+      },
+      "settings": {
+        "collection": "team"
+      }
+    },
+    "referenceMedia": {
+      "type": "Reference",
+      "label": "Reference (Media)",
+      "comment": "Using the legacy mediaStore collection",
+      "publish": {
+        "section": "Reference",
+        "placement": "main"
+      },
+      "settings": {
+        "collection": "mediaStore"
+      }
+    }
+  },
+  "settings": {
+    "displayName": "Reference Field Testing",
+    "cache": false,
+    "count": 10,
+    "storeRevisions": false,
+    "description": "",
+    "compose": true,
+    "sort": "publishedAt",
+    "sortOrder": -1,
+    "index": [
+      {
+        "keys": {
+          "publishedAt": 1
+        }
+      },
+      {
+        "keys": {
+          "publishedAt": -1
+        }
+      }
+    ],
+    "hooks": {
+
+    }
+  }
+}

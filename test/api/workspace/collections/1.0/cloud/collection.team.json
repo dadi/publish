@@ -1,0 +1,223 @@
+{
+  "fields": {
+    "image": {
+      "type": "Reference",
+      "label": "Image",
+      "message": "jpg or png",
+      "required": false,
+      "settings": {
+        "collection": "mediaStore"
+      },
+      "publish": {
+        "section": "Details",
+        "subType": "Image",
+        "placement": "sidebar",
+        "display": {
+          "list": true,
+          "edit": true
+        }
+      }
+    },
+    "name": {
+      "type": "String",
+      "required": true,
+      "label": "Name",
+      "publish": {
+        "section": "Details",
+        "placement": "main",
+        "display": {
+          "edit": true,
+          "list": true
+        }
+      }
+    },
+    "slug": {
+      "type": "String",
+      "required": false,
+      "label": "Slug",
+      "publish": {
+        "section": "Details",
+        "placement": "sidebar",
+        "display": {
+          "edit": false,
+          "list": false
+        }
+      }
+    },
+    "jobDescription": {
+      "type": "Reference",
+      "label": "Job description",
+      "message": "",
+      "required": false,
+      "settings": {
+        "collection": "mediaStore"
+      },
+      "validation": {
+        "mimeTypes": ["application/pdf"]
+      },
+      "publish": {
+        "section": "Details",
+        "subType": "Media",
+        "placement": "sidebar",
+        "display": {
+          "list": true,
+          "edit": true
+        }
+      }
+    },
+    "body": {
+      "type": "String",
+      "required": true,
+      "label": "Body",
+      "publish": {
+        "section": "Details",
+        "placement": "main",
+        "multiline": true,
+        "display": {
+          "edit": true,
+          "list": false
+        }
+      }
+    },
+    "role": {
+      "type": "String",
+      "required": false,
+      "label": "Role",
+      "publish": {
+        "section": "Details",
+        "placement": "sidebar",
+        "display": {
+          "edit": true,
+          "list": true
+        }
+      }
+    },
+    "twitter": {
+      "type": "String",
+      "required": false,
+      "label": "Twitter",
+      "publish": {
+        "section": "Details",
+        "placement": "sidebar",
+        "display": {
+          "edit": true,
+          "list": true,
+          "link": "https://twitter.com/{value}"
+        }
+      }
+    },
+    "linkedIn": {
+      "type": "String",
+      "required": false,
+      "label": "LinkedIn",
+      "publish": {
+        "section": "Details",
+        "placement": "sidebar",
+        "display": {
+          "edit": true,
+          "list": true,
+          "link": "https://linkedin.com/in/{value}"
+        }
+      }
+    },
+    "personalSite": {
+      "type": "String",
+      "required": false,
+      "label": "Personal site",
+      "publish": {
+        "section": "Details",
+        "placement": "sidebar",
+        "display": {
+          "edit": true,
+          "list": true,
+          "link": true
+        }
+      }
+    },
+    "advisor": {
+      "type": "Boolean",
+      "required": false,
+      "default": false,
+      "label": "Is advisor?",
+      "publish": {
+        "section": "Details",
+        "placement": "sidebar",
+        "display": {
+          "edit": true,
+          "list": true
+        }
+      }
+    },
+    "image": {
+      "type": "Reference",
+      "label": "Image",
+      "message": "jpg or png",
+      "validation": {
+        "mimeTypes": ["image/jpeg","image/jpg","image/png"]
+      },
+      "required": false,
+      "settings": {
+        "collection": "mediaStore"
+      },
+      "publish": {
+        "section": "Details",
+        "subType": "Image",
+        "placement": "sidebar",
+        "display": {
+          "list": false,
+          "edit": true
+        }
+      }
+    },
+    "order": {
+      "type": "Number",
+      "required": false,
+      "label": "Order",
+      "publish": {
+        "section": "Details",
+        "placement": "sidebar",
+        "display": {
+          "edit": true,
+          "list": false
+        }
+      }
+    }
+  },
+  "settings": {
+    "displayName": "Team",
+    "cache": false,
+    "count": 5,
+    "compose": true,
+    "sort": "order",
+    "sortOrder": 1,
+    "index": [
+      {
+        "keys": {
+          "order": 1
+        }
+      }
+    ],
+    "storeRevisions": false,
+    "description": "",
+    "hooks": {
+      "beforeCreate": [
+        {
+          "hook": "slugify",
+          "options": {
+            "from": "name",
+            "to": "slug"
+          }
+        }
+      ],
+      "beforeUpdate": [
+        {
+          "hook": "slugify",
+          "options": {
+            "from": "name",
+            "to": "slug"
+          }
+        }
+      ]
+    }
+  }
+}
