@@ -59,6 +59,7 @@
     "ws": "^6.1.2"
   },
   "devDependencies": {
+    "@dadi/api-validator": "^1.2.0",
     "@dadi/api-wrapper-core": "^3.1.0",
     "@dadi/preact-router": "^2.6.3",
     "@storybook/react": "^3.4.10",
