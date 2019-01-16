@@ -1,11 +1,11 @@
 {
   "cluster": false,
   "app": {
-    "name": "NEW API"
+    "name": "Publish Test API"
   },
   "publicUrl": {
-    "host": "publish-dev-api.eb.dev.dadi.technology",
-    "port": 80,
+    "host": "localhost",
+    "port": 3004,
     "protocol": "http"
   },
   "server": {
@@ -39,7 +39,7 @@
   "paths": {
     "collections": "workspace/collections",
     "endpoints": "workspace/endpoints",
-    "hooks": "workspace/hooks"
+    "hooks": "test/api/workspace/hooks"
   },
   "logging": {
     "enabled": false,
