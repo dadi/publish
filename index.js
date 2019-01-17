@@ -46,7 +46,9 @@ Publish.prototype.getStartupMessage = function () {
 }
 
 Publish.prototype.run = function () {
-  dadiBoot.start(require('./package.json'))
+  if (config.get('env') !== 'test') {
+    dadiBoot.start(require('./package.json'))  
+  }
 
   return app
     .start()
@@ -54,6 +56,12 @@ Publish.prototype.run = function () {
     .catch(err => {
       console.log('App failed to start', err)
     })
+}
+
+Publish.prototype.stop = function () {
+  return app.stop().catch(err => {
+    console.log('App failed to stop', err)
+  })
 }
 
 // Run-type switch

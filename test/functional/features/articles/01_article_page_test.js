@@ -17,6 +17,7 @@ AfterSuite(async (I, loginPage) => {
   await I.clearCookie('accessToken')
   await loginPage.deleteUser('syst_two')
   await api.stop()
+  //await publish.stop()
 })
 
 Before(async (loginPage) => {
