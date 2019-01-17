@@ -68,7 +68,7 @@ Server.prototype.start = function () {
 
 Server.prototype.stop = function () {
   return new Promise((resolve, reject) => {
-    console.log('----> CLOSING', this.primaryServer)
+    console.log('----> CLOSING')
     try {
       this.primaryServer.close(() => {
         console.log('----> CLOSING (1)')

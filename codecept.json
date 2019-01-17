@@ -53,8 +53,8 @@
       }
     }
   },
-  "bootstrap": false,
-  "teardown": null,
+  "bootstrap": "./test/functional/setup.js",
+  "teardown": "./test/functional/setup.js",
   "hooks": [],
   "multiple": {
     "basic": {

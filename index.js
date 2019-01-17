@@ -47,7 +47,7 @@ Publish.prototype.getStartupMessage = function () {
 
 Publish.prototype.run = function () {
   if (config.get('env') !== 'test') {
-    dadiBoot.start(require('./package.json'))  
+    dadiBoot.start(require('./package.json'))
   }
 
   return app

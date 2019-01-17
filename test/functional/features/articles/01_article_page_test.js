@@ -1,11 +1,6 @@
-const api = require('./../../../api')
-const publish = require('./../../../../index')
-
 Feature('Articles Page - @smoke')
 
 BeforeSuite(async (articlePage, loginPage) => {
-  await api.start()
-  await publish.run()
   await articlePage.deleteDocument('This Is A New Article')
   await articlePage.deleteDocument('This Article Is Updated')
   await loginPage.deleteUser('syst_two')
@@ -16,8 +11,6 @@ BeforeSuite(async (articlePage, loginPage) => {
 AfterSuite(async (I, loginPage) => {
   await I.clearCookie('accessToken')
   await loginPage.deleteUser('syst_two')
-  await api.stop()
-  //await publish.stop()
 })
 
 Before(async (loginPage) => {
