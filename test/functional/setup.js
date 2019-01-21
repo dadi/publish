@@ -10,7 +10,7 @@ module.exports = {
 
   teardown: done => {
     api.stop().then(() => {
-      //return publish.stop()
-    }).then(done)
+      return done()
+    })
   }
 }

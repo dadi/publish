@@ -77,6 +77,10 @@
     },
     "screenshotOnFail": {
       "enabled": true
+    },
+    "customEvents": {
+      "require": "./test/functional/events/index",
+      "enabled": true
     }
   },
   "tests": "./test/functional/features/articles/01_article_page_test.js",
