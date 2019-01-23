@@ -101,7 +101,6 @@ export default class FieldNumberEdit extends Component {
 
   static defaultProps = {
     error: false,
-    forceValidation: false,
     value: null
   }
 
@@ -109,22 +108,6 @@ export default class FieldNumberEdit extends Component {
     super(props)
 
     this.state.hasFocus = false
-  }
-
-  componentDidMount() {
-    const {forceValidation, value} = this.props
-
-    if (forceValidation) {
-      this.validate(value)
-    }
-  }
-
-  componentDidUpdate(prevProps, prevState) {
-    const {forceValidation, value} = this.props
-
-    if (!prevProps.forceValidation && forceValidation) {
-      this.validate(value)
-    }
   }
 
   render() {
@@ -139,6 +122,7 @@ export default class FieldNumberEdit extends Component {
     } = this.props
     const {hasFocus} = this.state
     const publishBlock = schema.publish || {}
+
     comment = comment || (required && 'Required')
     
     return (
@@ -190,22 +174,8 @@ export default class FieldNumberEdit extends Component {
       return
     }
 
-    this.validate(value)
-
     if (typeof onChange === 'function') {
       onChange.call(this, name, newValue)
-    }
-  }
-
-  validate(value) {
-    const {name, onError, required, schema} = this.props
-
-    const hasValidationErrors = required && (isNaN(value)
-      || typeof value !== 'number') 
-    //{To-Do}: add findValidationErrorsInValue method for further validation checks 
-
-    if (typeof onError === 'function') {
-        onError.call(this, name, hasValidationErrors, value)
     }
   }
 }
