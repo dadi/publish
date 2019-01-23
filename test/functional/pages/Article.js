@@ -33,7 +33,7 @@ module.exports = {
       'data-field-name': 'title'
     }).find('input').as('Title Field')),
     selectAuthor: (locate('a').withText('Select existing author').as('Select Author Button')),
-    checkAuthor: (locate('td').withText('Dave Macpherson').as('Select The Author')),
+    checkAuthor: (locate('td').withText('Joe Bloggs').as('Select The Author')),
     addAuthor: (locate('button').withText('Add selected document').as('Add The Author')),
     excerptField: (locate('div').withAttr({
       'data-field-name': 'excerpt'
@@ -146,14 +146,14 @@ module.exports = {
     I.seeInCurrentUrl('/select/author')
     I.waitForText('Author')
     // I.wait(1)
-    I.click(this.locators.authorPage)
-    I.waitForFunction(() => document.readyState === 'complete')
-    I.seeInCurrentUrl('/select/author/4')
-    I.waitForText('Dave Macpherson')
+    // I.click(this.locators.authorPage)
+    // I.waitForFunction(() => document.readyState === 'complete')
+    // I.seeInCurrentUrl('/select/author/4')
+    // I.waitForText('Dave Macpherson')
     I.click(this.locators.checkAuthor)
     I.click(this.locators.addAuthor)
     I.waitForFunction(() => document.readyState === 'complete')
-    I.see('Dave Macpherson')
+    I.see('Joe Bloggs')
     I.click(this.locators.selectCategory)
     I.waitForFunction(() => document.readyState === 'complete')
     I.seeInCurrentUrl('/select/category')
@@ -284,8 +284,32 @@ module.exports = {
     I.seeInCurrentUrl(id)
   },
 
+  async insertDocument(body, excerpt, title) {
+    await I.createArticle(body, excerpt, title)
+  },
+  
   async deleteDocument(title) {
     await I.deleteArticleByTitle(title)
+  },
+
+  async insertAuthor(name, body) {
+    await I.createTeam(name, body)
+  },
+
+  async insertCategory(name, desc) {
+    await I.createCategory(name, desc)
+  },
+
+  async insertSubCategory(name) {
+    await I.createSubCategory(name)
+  },
+
+  async insertNetworkService(name, overview) {
+    await I.createNetworkService(name, overview)
+  },
+
+  async insertWebService(name, overview) {
+    await I.createWebService(name, overview)
   },
 
   async richTextInput() {

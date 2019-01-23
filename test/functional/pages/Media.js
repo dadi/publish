@@ -20,7 +20,7 @@ module.exports = {
     dropArea: (locate('[class *= "DropArea__droparea"]').as('Drop File Area')),
     fileUpload: (locate('input[class *= "FileUpload__file"]').as('File Upload')),
     firstImage: (locate('a[class *= "MediaGridCard__image-holder___"]').first().as('First Image')), 
-    stoneImage: (locate('img[src*="Stone.jpeg"]')),
+    stoneImage: (locate('img[src*="Stone"]')),
     editImage: (locate('img[class *= "MediaEditor__image-preview___"]').as('Image Preview')),
     openNewWindow: (locate('a').withText('Open in new window').as('Open In New Window Link')),
     captionField: (locate('input').withAttr({ 'name': 'caption' }).as('Caption Field')),
@@ -44,6 +44,7 @@ module.exports = {
     await I.waitForFunction(() => document.readyState === 'complete')
     await I.waitForText('Media Library')
     await I.waitForElement(this.locators.footer)
+    pause()
     await I.seeElement(this.locators.dropArea)
     I.wait(3)
     let images = await I.grabNumberOfVisibleElements(this.locators.images)
@@ -118,6 +119,10 @@ module.exports = {
     let newTotal = await I.grabTextFrom(this.locators.totalImages)
     // console.log(newTotal)
     I.seeTotalHasDecreased(newTotal, total)
+  },
+
+  async insertMedia(file) {
+    await I.createMedia(file)
   }
 
 }

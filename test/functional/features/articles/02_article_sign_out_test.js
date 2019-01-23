@@ -1,6 +1,8 @@
 Feature('Sign Out From Article - @smoke')
 
 BeforeSuite(async (articlePage, loginPage) => {
+  await articlePage.insertDocument('Test body one', 'Test excerpt one', 'Test Title One')
+  await articlePage.insertDocument('Test body two', 'Test excerpt two', 'Test Title Two')
   await loginPage.deleteUser('syst_five')
   await loginPage.addUser('syst_five', '123456')
 })
@@ -13,8 +15,6 @@ AfterSuite(async (I, loginPage) => {
 Before(async (loginPage) => {
   await loginPage.createSession('syst_five', '123456', '/articles')
 })
-
-After(async (loginPage) => {})
 
 Scenario('New Article Sign Out', async (articlePage, loginPage) => {
   await articlePage.validateArticlePage()

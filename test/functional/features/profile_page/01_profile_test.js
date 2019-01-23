@@ -11,12 +11,6 @@ AfterSuite(async (I, loginPage) => {
   await loginPage.deleteUser('syst_three')
 })
 
-Before(async (loginPage) => {
-})
-
-After(async (loginPage) => {
-})
-
-Scenario('Change Personal Details', async (I, loginPage, profilePage) => {
+Scenario('Change Personal Details', async (profilePage) => {
   await profilePage.changePersonalDetails('First', 'Last')
 })

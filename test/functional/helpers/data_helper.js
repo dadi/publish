@@ -67,6 +67,24 @@ class Data extends Helper {
       })
   }
 
+  // Create Article for setup
+  async createArticle(body, excerpt, title) {
+    let api = getApi()
+
+    await api
+      .in('articles')
+      .create({
+        body: body,
+        excerpt: excerpt,
+        title: title
+      })
+      .then(doc => {
+        // console.log('New document:', doc)
+      }).catch(err => {
+        console.log('! Error:', err)
+      })
+  }
+
   async deleteArticleByTitle (title) {
     let api = getApi()
 
@@ -80,6 +98,104 @@ class Data extends Helper {
         console.log('! Error:', err)
       })
   }
+
+  // Create Author for setup
+  async createTeam(name, body) {
+    let api = getApi()
+
+    await api
+      .in('team')
+      .create({
+        name: name,
+        body: body
+      })
+      .then(doc => {
+        // console.log('New document:', doc)
+      }).catch(err => {
+        console.log('! Error:', err)
+      })
+  }
+
+  // Create Category for setup
+  async createCategory(name, desc) {
+    let api = getApi()
+
+    await api
+      .in('categories')
+      .create({
+        name: name,
+        desc: desc
+      })
+      .then(doc => {
+        // console.log('New document:', doc)
+      }).catch(err => {
+        console.log('! Error:', err)
+      })
+  }
+
+  // Create SubCategory for setup
+  async createSubCategory(name) {
+    let api = getApi()
+
+    await api
+      .in('sub-categories')
+      .create({
+        name: name
+      })
+      .then(doc => {
+        // console.log('New document:', doc)
+      }).catch(err => {
+        console.log('! Error:', err)
+      })
+  }
+
+  // Create Network Service for setup
+  async createNetworkService(name, overview) {
+    let api = getApi()
+
+    await api
+      .in('network-services')
+      .create({
+        name: name,
+        overview, overview
+      })
+      .then(doc => {
+        // console.log('New document:', doc)
+      }).catch(err => {
+        console.log('! Error:', err)
+      })
+  }
+
+  // Create Web Service for setup
+  async createWebService(name, overview) {
+    let api = getApi()
+
+    await api
+      .in('web-services')
+      .create({
+        name: name,
+        overview, overview
+      })
+      .then(doc => {
+        // console.log('New document:', doc)
+      }).catch(err => {
+        console.log('! Error:', err)
+      })
+  }
+
+  // Create Media for setup
+  // async createMedia(file) {
+  //   let api = getApi()
+
+  //   await api
+  //     .inMedia()
+  //     .create(file)
+  //     .then(doc => {
+  //         // console.log('New document:', doc)
+  //       }).catch(err => {
+  //         console.log('! Error:', err)
+  //       })
+  //     }
 
   getToken () {
     let postData = JSON.stringify(config.api.credentials)

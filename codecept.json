@@ -3,7 +3,7 @@
   "helpers": {
     "Puppeteer": {
       "url": "http://localhost:3003",
-      "show": true,
+      "show": false,
       "restart": false,
       "waitForAction": 1000,
       "keepBrowserState": true,
@@ -83,7 +83,7 @@
       "enabled": true
     }
   },
-  "tests": "./test/functional/features/articles/01_article_page_test.js",
+  "tests": "./test/functional/features/*/*_test.js",
   "_tests": "./test/functional/features/*/*_test.js",
   "timeout": 10000,
   "name": "publish-test"
