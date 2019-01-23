@@ -20,7 +20,7 @@ module.exports = {
     dropArea: (locate('[class *= "DropArea__droparea"]').as('Drop File Area')),
     fileUpload: (locate('input[class *= "FileUpload__file"]').as('File Upload')),
     firstImage: (locate('a[class *= "MediaGridCard__image-holder___"]').first().as('First Image')), 
-    stoneImage: (locate('img[src*="Stone"]')),
+    stoneImage: (locate('img[src*="Stone"]').as('Stone Image')),
     editImage: (locate('img[class *= "MediaEditor__image-preview___"]').as('Image Preview')),
     openNewWindow: (locate('a').withText('Open in new window').as('Open In New Window Link')),
     captionField: (locate('input').withAttr({ 'name': 'caption' }).as('Caption Field')),

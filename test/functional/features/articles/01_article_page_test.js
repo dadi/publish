@@ -12,7 +12,13 @@ BeforeSuite(async (articlePage, loginPage) => {
   await articlePage.insertWebService('API', 'A high-performance RESTful API layer designed in support of API-first development and COPE.')
   await articlePage.insertWebService('CDN', 'A just-in-time asset manipulation and delivery layer designed for faster content distribution.')
   await loginPage.deleteUser('syst_two')
-  await loginPage.addUser('syst_two', '123456')
+  await loginPage.addUser('syst_two', '123456', ['collection:cloud_articles',
+    'collection:cloud_team',
+    'collection:cloud_categories',
+    'collection:cloud_sub-categories',
+    'collection:cloud_web-services',
+    'collection:cloud_network-services'
+  ])
   await loginPage.createSession('syst_two', '123456', '/articles')
 })
 

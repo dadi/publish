@@ -4,7 +4,13 @@ BeforeSuite(async (articlePage, loginPage) => {
   await articlePage.insertDocument('Test body one', 'Test excerpt one', 'Test Title One')
   await articlePage.insertDocument('Test body two', 'Test excerpt two', 'Test Title Two')
   await loginPage.deleteUser('syst_five')
-  await loginPage.addUser('syst_five', '123456')
+  await loginPage.addUser('syst_five', '123456', ['collection:cloud_articles',
+    'collection:cloud_team',
+    'collection:cloud_categories',
+    'collection:cloud_sub-categories',
+    'collection:cloud_web-services',
+    'collection:cloud_network-services'
+  ])
 })
 
 AfterSuite(async (I, loginPage) => {

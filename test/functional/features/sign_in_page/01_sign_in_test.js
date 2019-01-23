@@ -2,7 +2,7 @@ Feature('Sign In Page - @smoke')
 
 BeforeSuite(async (loginPage) => {
   await loginPage.deleteUser('syst_one')
-  await loginPage.addUser('syst_one', '123456')
+  await loginPage.addUser('syst_one', '123456', ['collection:cloud_articles'])
 })
 
 AfterSuite(async (loginPage) => {

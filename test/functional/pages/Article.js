@@ -54,7 +54,7 @@ module.exports = {
     }).find('input').as('Slugified Field')),
     checkArticle: (locate('td').withText('This is the excerpt').as('Select Article')),
     applyButton: (locate('button').withText('Apply').as('Apply Button')),
-    selectDelete: (locate('.//select').as('Select Delete')),
+    selectDelete: (locate('select[class*="BulkActionSelector"]').as('Select Delete')),
     deleteButton: (locate('button').withText('Yes, delete it.').as('Delete Button')),
     selectCategory: (locate('a').withText('Select existing category').as('Select Existing Category Button')),
     selectSubCategory: (locate('a').withText('Select existing sub category').as('Select Existing Sub Category Button')),

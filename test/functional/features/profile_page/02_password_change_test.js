@@ -2,7 +2,7 @@ Feature('Profile Page Password Change - @smoke')
 
 BeforeSuite(async (loginPage) => {
   await loginPage.deleteUser('syst_four')
-  await loginPage.addUser('syst_four', '123456')
+  await loginPage.addUser('syst_four', '123456', ['collection:cloud_articles'])
   await loginPage.createSession('syst_four', '123456', '/profile/credentials')
 })
 

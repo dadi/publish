@@ -18,7 +18,7 @@ const config = {
   }
 }
 
-function getApi() {
+function getApi () {
   return new DADIAPI({
     uri: config.api.protocol + '://' + config.api.host,
     port: config.api.port,
@@ -32,7 +32,7 @@ function getApi() {
 }
 
 class Data extends Helper {
-  async createClient(id, secret) {
+  async createClient(id, secret, selectedResources) {
     let client = {
       clientId: id,
       secret: secret
@@ -46,7 +46,7 @@ class Data extends Helper {
       .then(doc => {
         return this.getToken()
           .then(result => {
-            this.addResources(JSON.parse(result).accessToken, client).then(result => {
+            this.addResources(JSON.parse(result).accessToken, client, selectedResources).then(result => {
               // console.log('result :', result)
             })
           })
@@ -55,7 +55,7 @@ class Data extends Helper {
       })
   }
 
-  async deleteClient(id) {
+  async deleteClient (id) {
     let api = getApi()
 
     await api
@@ -247,7 +247,7 @@ class Data extends Helper {
     })
   }
 
-  async getSessionToken(id, secret) {
+  async getSessionToken (id, secret) {
     let postData = JSON.stringify({
       clientId: id,
       secret: secret
@@ -269,7 +269,7 @@ class Data extends Helper {
     })
   }
 
-  addResources(accessToken, client) {
+  addResources(accessToken, client, selectedResources) {
     let options = {
       hostname: config.api.host,
       port: config.api.port,
@@ -281,14 +281,21 @@ class Data extends Helper {
       }
     }
 
-    let resourceList = [
+    let resourceList = selectedResources || [
       'collection:cloud_articles',
       'media:mediaStore',
       'collection:cloud_team',
       'collection:cloud_categories',
       'collection:cloud_sub-categories',
       'collection:cloud_web-services',
-      'collection:cloud_network-services'
+      'collection:cloud_network-services',
+      'collection:cloud_field-test-boolean',
+      'collection:cloud_field-test-date',
+      'collection:cloud_field-test-media',
+      'collection:cloud_field-test-number',
+      'collection:cloud_field-test-other',
+      'collection:cloud_field-test-reference',
+      'collection:cloud_field-test-string'
     ]
     let resources = []
 
@@ -312,7 +319,7 @@ class Data extends Helper {
     })
   }
 
-  makeRequest(obj) {
+  makeRequest (obj) {
     return new Promise((resolve, reject) => {
       let req = http.request(obj.options, (res) => {
         // console.log(`STATUS: ${res.statusCode}`)

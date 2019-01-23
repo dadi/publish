@@ -4,7 +4,7 @@ BeforeSuite(async (loginPage, mediaPage) => {
   await mediaPage.insertMedia('test/functional/images/girl.jpeg')
   await mediaPage.insertMedia('test/functional/images/funny-dog-face-1.jpg')
   await loginPage.deleteUser('media')
-  await loginPage.addUser('media', '123456')
+  await loginPage.addUser('media', '123456', ['media:mediaStore'])
   await loginPage.createSession('media', '123456', '/media')
 })
 
