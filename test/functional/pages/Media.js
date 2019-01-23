@@ -44,7 +44,6 @@ module.exports = {
     await I.waitForFunction(() => document.readyState === 'complete')
     await I.waitForText('Media Library')
     await I.waitForElement(this.locators.footer)
-    pause()
     await I.seeElement(this.locators.dropArea)
     I.wait(3)
     let images = await I.grabNumberOfVisibleElements(this.locators.images)

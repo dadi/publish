@@ -2,6 +2,8 @@
 
 const DADIAPI = require('@dadi/api-wrapper')
 const http = require('http')
+const FormData = require('form-data')
+const fs = require('fs')
 const promiseQueue = require('js-promise-queue')
 
 const config = {
@@ -16,7 +18,7 @@ const config = {
   }
 }
 
-function getApi () {
+function getApi() {
   return new DADIAPI({
     uri: config.api.protocol + '://' + config.api.host,
     port: config.api.port,
@@ -30,7 +32,7 @@ function getApi () {
 }
 
 class Data extends Helper {
-  async createClient (id, secret) {
+  async createClient(id, secret) {
     let client = {
       clientId: id,
       secret: secret
@@ -53,7 +55,7 @@ class Data extends Helper {
       })
   }
 
-  async deleteClient (id) {
+  async deleteClient(id) {
     let api = getApi()
 
     await api
@@ -85,7 +87,7 @@ class Data extends Helper {
       })
   }
 
-  async deleteArticleByTitle (title) {
+  async deleteArticleByTitle(title) {
     let api = getApi()
 
     await api
@@ -157,7 +159,8 @@ class Data extends Helper {
       .in('network-services')
       .create({
         name: name,
-        overview, overview
+        overview,
+        overview
       })
       .then(doc => {
         // console.log('New document:', doc)
@@ -174,7 +177,8 @@ class Data extends Helper {
       .in('web-services')
       .create({
         name: name,
-        overview, overview
+        overview,
+        overview
       })
       .then(doc => {
         // console.log('New document:', doc)
@@ -183,21 +187,47 @@ class Data extends Helper {
       })
   }
 
-  // Create Media for setup
-  // async createMedia(file) {
-  //   let api = getApi()
+  async createMedia(file) {
+    return this.getToken()
+      .then(result => {
+        let token = JSON.parse(result).accessToken
 
-  //   await api
-  //     .inMedia()
-  //     .create(file)
-  //     .then(doc => {
-  //         // console.log('New document:', doc)
-  //       }).catch(err => {
-  //         console.log('! Error:', err)
-  //       })
-  //     }
+        let options = {
+          host: process.env.API_HOST,
+          port: process.env.API_PORT,
+          credentials: {
+            clientId: process.env.API_CLIENT_ID,
+            secret: process.env.API_CLIENT_SECRET
+          },
+          path: '/media/upload',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Accept': 'application/json'
+          }
+        }
 
-  getToken () {
+        let uploadResult = ''
+        let form = new FormData()
+
+        form.append('file', fs.createReadStream(file))
+
+        form.submit(options, (err, response, body) => {
+          if (err) throw err
+
+          response.on('data', chunk => {
+            if (chunk) {
+              uploadResult += chunk
+            }
+          })
+
+          response.on('end', () => {
+            // console.log(uploadResult)
+          })
+        })
+      })
+  }
+
+  getToken() {
     let postData = JSON.stringify(config.api.credentials)
     // console.log("THIS" + postData)
 
@@ -211,10 +241,13 @@ class Data extends Helper {
       }
     }
 
-    return this.makeRequest({ options, data: postData })
+    return this.makeRequest({
+      options,
+      data: postData
+    })
   }
 
-  async getSessionToken (id, secret) {
+  async getSessionToken(id, secret) {
     let postData = JSON.stringify({
       clientId: id,
       secret: secret
@@ -230,10 +263,13 @@ class Data extends Helper {
       }
     }
 
-    return this.makeRequest({ options, data: postData })
+    return this.makeRequest({
+      options,
+      data: postData
+    })
   }
 
-  addResources (accessToken, client) {
+  addResources(accessToken, client) {
     let options = {
       hostname: config.api.host,
       port: config.api.port,
@@ -276,7 +312,7 @@ class Data extends Helper {
     })
   }
 
-  makeRequest (obj) {
+  makeRequest(obj) {
     return new Promise((resolve, reject) => {
       let req = http.request(obj.options, (res) => {
         // console.log(`STATUS: ${res.statusCode}`)
