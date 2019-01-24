@@ -119,25 +119,6 @@ export default class FieldMediaEdit extends Component {
     this.state.isInvalidMimeType = false
   }
 
-  componentDidMount() {
-    const {forceValidation, value} = this.props
-
-    if (forceValidation) {
-      this.validate(value)
-    }
-  }
-
-  componentDidUpdate(prevProps, prevState) {
-    const {forceValidation, value} = this.props
-
-    if (
-      !prevProps.forceValidation && forceValidation ||
-      !prevProps.value && value
-    ) {
-      this.validate(value)
-    }
-  }
-
   handleFileChange(files) {
     const {
       config,
@@ -352,14 +333,5 @@ export default class FieldMediaEdit extends Component {
         }
       </Label>
     )
-  }
-
-  validate(value) {
-    const {name, onError, required} = this.props
-    const hasValidationErrors = required && !value
-
-    if (typeof onError === 'function') {
-      onError.call(this, name, hasValidationErrors, value)
-    }    
   }
 }

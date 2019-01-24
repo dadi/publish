@@ -1,13 +1,12 @@
-import {h, Component} from 'preact'
 import proptypes from 'proptypes'
+import Field from 'components/Field/Field'
+import Validator from '@dadi/api-validator'
 import {bindActionCreators} from 'redux'
 import {connectHelper} from 'lib/util'
 import {getFieldType} from 'lib/fields'
-
+import {h, Component} from 'preact'
 import * as documentActions from 'actions/documentActions'
 import * as fieldComponents from 'lib/field-components'
-
-import Field from 'components/Field/Field'
 
 /**
  * Renders the appropriate input element(s) for editing a document field
@@ -52,13 +51,34 @@ class DocumentField extends Component {
     state: proptypes.object
   }
 
+  constructor(props) {
+    super(props)
+
+    this.validator = new Validator()
+  }
+
+  componentDidUpdate(oldProps, oldState) {
+    const {state} = this.props
+    const {document} = state
+    const {document: oldDocument} = oldProps.state
+
+    if (oldDocument.saveAttempts === 0 && document.saveAttempts > 0) {
+      this.validate(this.value)
+    }
+  }
+
   // Handles the callback that fires whenever a field changes and the new value
   // is ready to be sent to the store.
   handleFieldChange(fieldName, value, persistInLocalStorage = true) {
     const {
       actions,
-      collection
+      collection,
+      field,
+      state
     } = this.props
+    const {app, document} = state
+    const hasError = document.validationErrors
+      && document.validationErrors[this.name]
 
     actions.updateLocalDocument({
       path: collection.path,
@@ -67,6 +87,9 @@ class DocumentField extends Component {
         [fieldName]: value
       }
     })
+
+    // Validating the field.
+    this.validate(value)
   }
 
   // Handles the callback that fires whenever there's a new validation error
@@ -125,6 +148,10 @@ class DocumentField extends Component {
       placeholder = documentData[field._id] || placeholder
     }
 
+    // Caching these value so that other lifecycle methods can use them.
+    this.name = fieldName
+    this.value = documentData[fieldName]
+
     // As per API docs, validation messages are in the format "must be xxx", which
     // assumes that something (probably the name of the field) will be prepended to
     // the string to form a final error message. For this reason, we're prepending
@@ -172,6 +199,30 @@ class DocumentField extends Component {
         />      
       </Field>
     )
+  }
+
+  validate(value) {
+    const {
+      actions,
+      field,
+      state
+    } = this.props
+    const {app, document} = state
+    const hasError = document.validationErrors
+      && document.validationErrors[this.name]
+
+    return this.validator.validateValue({
+      schema: field,
+      value
+    }).then(() => {
+      // Validation passed. Do we have validation errors to clear?
+      if (hasError) {
+        actions.setFieldErrorStatus(this.name, value, null)
+      }      
+    }).catch(error => {
+      // Validation failed. We'll flag the error in the store.
+      actions.setFieldErrorStatus(this.name, value, error.message)
+    })
   }
 }
 
