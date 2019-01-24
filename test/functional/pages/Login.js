@@ -64,11 +64,11 @@ module.exports = {
     I.resizeWindow(1200, 650)
     I.waitForText('Welcome,')
     I.waitForVisible(this.locators.navigationMenu, 4)
-    I.see('Content')
-    I.see('Taxonomy')
+    // I.see('Content')
+    // I.see('Taxonomy')
     I.see('Articles')
-    I.see('Network services')
-    I.see('Web services')
+    // I.see('Network services')
+    // I.see('Web services')
   },
 
   async validateSignOut() {
@@ -81,8 +81,8 @@ module.exports = {
     I.seeElement(this.locators.signInButton)
   },
 
-  async addUser(id, secret) {
-    await I.createClient(id, secret)
+  async addUser(id, secret, selectedResources) {
+    await I.createClient(id, secret, selectedResources)
   },
 
   async createSession(id, secret, url) {

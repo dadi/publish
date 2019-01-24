@@ -106,6 +106,7 @@
     "mkdirp": "^0.5.1",
     "mocha": "^5.2.0",
     "mochawesome": "^3.0.3",
+    "moment": "^2.23.0",
     "nock": "^9.6.1",
     "node-mocks-http": "^1.6.3",
     "normalize.css": "^5.0.0",

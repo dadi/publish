@@ -101,6 +101,48 @@ class Data extends Helper {
       })
   }
 
+  async deleteFieldTestBooleans() {
+    let api = getApi()
+
+    await api
+      .in('field-test-boolean')
+      .whereFieldExists('boolRequired')
+      .delete()
+      .then(() => {
+        // console.log('Deleted ' + title)
+      }).catch(err => {
+        console.log('! Error:', err)
+      })
+  }
+
+  async deleteFieldTestDates() {
+    let api = getApi()
+
+    await api
+      .in('field-test-date')
+      .whereFieldExists('dateRequired')
+      .delete()
+      .then(() => {
+        // console.log('Deleted ' + title)
+      }).catch(err => {
+        console.log('! Error:', err)
+      })
+  }
+
+  async deleteFieldTestNumbers() {
+    let api = getApi()
+
+    await api
+      .in('field-test-number')
+      .whereFieldExists('numberRequired')
+      .delete()
+      .then(() => {
+        // console.log('Deleted ' + title)
+      }).catch(err => {
+        console.log('! Error:', err)
+      })
+  }
+
   // Create Author for setup
   async createTeam(name, body) {
     let api = getApi()

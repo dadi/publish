@@ -30,6 +30,7 @@
   "include": {
     "I": "./test/functional/stepDefinitions/steps_file.js",
     "articlePage": "./test/functional/pages/Article.js",
+    "fieldPage": "./test/functional/pages/Field.js",
     "homePage": "./test/functional/pages/Home.js",
     "loginPage": "./test/functional/pages/Login.js",
     "mediaPage": "./test/functional/pages/Media.js",
