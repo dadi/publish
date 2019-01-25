@@ -72,6 +72,17 @@ Router.prototype.webRoutes = function () {
       directory: path.join(process.cwd(), 'workspace')
     })(req, res, (err) => {
       if (err) {
+        // We treat this route as a special case, because index.html
+        // will always try to load it. If the user has created the
+        // file in their workspace directory, we'll serve it. If not,
+        // we don't want to return a 404 for it. We simply return a
+        // blank CSS file.
+        if (req.url === '/public/custom.css') {
+          res.header('Content-Type', 'text/css')
+
+          return res.end()
+        }
+
         restify.plugins.serveStatic({
           directory: path.resolve(__dirname, '../../..')
         })(req, res, next)
