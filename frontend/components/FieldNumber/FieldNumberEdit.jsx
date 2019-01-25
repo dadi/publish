@@ -101,7 +101,6 @@ export default class FieldNumberEdit extends Component {
 
   static defaultProps = {
     error: false,
-    forceValidation: false,
     value: null
   }
 
@@ -109,22 +108,6 @@ export default class FieldNumberEdit extends Component {
     super(props)
 
     this.state.hasFocus = false
-  }
-
-  componentDidMount() {
-    const {forceValidation, value} = this.props
-
-    if (forceValidation) {
-      this.validate(value)
-    }
-  }
-
-  componentDidUpdate(prevProps, prevState) {
-    const {forceValidation, value} = this.props
-
-    if (!prevProps.forceValidation && forceValidation) {
-      this.validate(value)
-    }
   }
 
   render() {
@@ -139,6 +122,7 @@ export default class FieldNumberEdit extends Component {
     } = this.props
     const {hasFocus} = this.state
     const publishBlock = schema.publish || {}
+
     comment = comment || (required && 'Required')
     
     return (
@@ -162,10 +146,6 @@ export default class FieldNumberEdit extends Component {
     )
   }
 
-  getValueOfInput(input) {
-    return parseFloat(input.value)
-  }
-
   handleFocusChange(hasFocus) {
     this.setState({
       hasFocus
@@ -173,25 +153,29 @@ export default class FieldNumberEdit extends Component {
   }
 
   handleOnChange(event) {
-    const {name, onChange, schema} = this.props
-    const value = this.getValueOfInput(event.target)
+    const {name, onChange, schema, value} = this.props
+    const newValue = parseFloat(event.target.value)
 
-    this.validate(value)
+    // We must check for two specific situations in which we don't want to
+    // propagate the new value to the store:
+    //
+    // 1) The user inserted a negative sign (-) at position 0, in order to
+    //    insert a negative number. When this happens, the `value` property
+    //    will be an empty string, as the browser sanitisation routine kicks
+    //    in.
+    //
+    // 2) The value after parsing is equal to the previous value. This can
+    //    happen when composing decimal values – e.g. to insert the value
+    //    1.05, the user will, at some point, try to change `1.` to `1.0`,
+    //    which are casted to the same number. If all these intermediate
+    //    steps are taken into account, it becomes impossible to insert that
+    //    number.
+    if (event.target.value === '' || newValue === value) {
+      return
+    }
 
     if (typeof onChange === 'function') {
-      onChange.call(this, name, parseFloat(event.target.value))
-    }
-  }
-
-  validate(value) {
-    const {name, onError, required, schema} = this.props
-
-    const hasValidationErrors = required && (isNaN(value)
-      || typeof value !== 'number') 
-    //{To-Do}: add findValidationErrorsInValue method for further validation checks 
-
-    if (typeof onError === 'function') {
-        onError.call(this, name, hasValidationErrors, value)
+      onChange.call(this, name, newValue)
     }
   }
 }
