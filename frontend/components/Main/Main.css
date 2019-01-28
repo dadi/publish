@@ -84,10 +84,11 @@ body {
   --theme-colour-save-shade-2: #58822d;
   --theme-colour-secondary: #FFFFFF;
   --theme-colour-system: #ffbf0d;
+  --theme-colour-system-invert: #040609;
   --theme-colour-system-shade-1: #d9a000;
   --theme-colour-system-shade-2: #c08d00;
   --theme-colour-system-shade-3: #a67a00;
-  --theme-colour-highlight-1: #e6f3ff;
+  --theme-colour-highlight-1: #f3f8ff;
   --theme-font-family: 'Karla', 'Helvetica Neue', Arial, Helvetica, Geneva, sans-serif;
   --theme-font-size-small: 13px;
   --theme-font-size-normal: 16px;

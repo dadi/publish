@@ -38,8 +38,8 @@
   background: none;
 }
 .nav-item-active span {
-  background: #ffbf0e;
-  color: #040609;
+  background: var(--theme-colour-system);
+  color: var(--theme-colour-system-invert);
 }
 
 
@@ -73,7 +73,7 @@
   }
 
   .nav-item-active span {
-    color: #ffbf0e;
+    color: var(--theme-colour-system);
     background: none;
   }
 
