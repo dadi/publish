@@ -68,23 +68,18 @@ Server.prototype.start = function () {
 
 Server.prototype.stop = function () {
   return new Promise((resolve, reject) => {
-    // Console.log('----> CLOSING')
     try {
       this.primaryServer.close(() => {
-        // Console.log('----> CLOSING (1)')
         if (this.redirectServer) {
-          // Console.log('----> CLOSING (2)')
           this.redirectServer.close(() => {
-            // Console.log('----> CLOSED')
             resolve()
           })
         } else {
-          // Console.log('----> CLOSED')
           resolve()
         }
       })
-    } catch (e) {
-      console.log('!!!!', e)
+    } catch (error) {
+      console.log(error)
     }
   })
 }
