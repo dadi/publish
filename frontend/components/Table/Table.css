@@ -59,7 +59,7 @@
 }
 
 .head-cell-selected {
-  background: #F3F8FF;
+  background: var(--theme-colour-highlight-1);
   color: var(--theme-colour-data, #000000);
   padding-right: 5px;
   border-bottom: 2px solid var(--theme-colour-data, #000000);
@@ -93,7 +93,7 @@
 }
 
 .row:hover {
-  background-color: #f3f8ff;
+  background-color: var(--theme-colour-highlight-1);
   box-shadow: 0 0 4px rgba(155,170,189,0.6);
   position: relative;
   z-index: 1;

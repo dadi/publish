@@ -100,6 +100,7 @@
     "mocha": "^5.2.0",
     "nock": "^9.6.1",
     "node-mocks-http": "^1.6.3",
+    "nodemon": "^1.18.9",
     "normalize.css": "^5.0.0",
     "npm-run-all": "^3.1.2",
     "on-build-webpack": "^0.1.0",
