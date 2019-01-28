@@ -22,12 +22,17 @@
   font-size: 15px;
   text-decoration: none;
   border-radius: 2px;
-  transition: background-color 0.1s, padding 0.3s, background-position 0.3s;
+  transition: background-color 0.1s,
+              box-shadow 0.1s,
+              padding 0.3s,
+              background-position 0.3s;
   position: relative;
 }
 
 .button:hover {
-  box-shadow: 0 -3px 0 0 rgba(0,0,0,0.05) inset, 0 0 5px 0px rgba(0,0,0,0.15);
+  box-shadow: 10000px 0 0 rgba(0,0,0,0.1) inset,
+              0 -3px 0 0 rgba(0,0,0,0.05) inset,
+              0 0 5px 0px rgba(0,0,0,0.15);
 }
 .button:active {
   top: 1px;
@@ -76,27 +81,13 @@
 /* Accent: system */
 .button-system {
   background-color: var(--theme-colour-system, #ffbf0d);
-  color: var(--theme-colour-primary, #000000);
-}
-
-.button-system:active,
-.button-system:focus,
-.button-system:hover {
-  background-color: var(--theme-colour-system-shade-1, #d9a000);
-  color: var(--theme-colour-system, #ffbf0d);
+  color: var(--theme-colour-system-invert, #000000);
 }
 
 /* Accent: destruct */
 .button-destruct {
   background-color: var(--theme-colour-error, #ffbf0d);
   background-image: url(./loading-small-white.svg);
-  color: var(--theme-colour-secondary, #FFFFFF);
-}
-
-.button-destruct:active,
-.button-destruct:focus,
-.button-destruct:hover {
-  background-color: var(--theme-colour-error-shade-1, #d9a000);
   color: var(--theme-colour-secondary, #FFFFFF);
 }
 
@@ -107,24 +98,10 @@
   color: var(--theme-colour-secondary, #FFFFFF);
 }
 
-.button-save:active,
-.button-save:focus,
-.button-save:hover {
-  background-color: var(--theme-colour-save-shade-1, #6ea338);
-  color: var(--theme-colour-secondary, #FFFFFF);
-}
-
 /* Accent: data */
 .button-data {
   background-color: var(--theme-colour-data, #4A91FF);
   background-image: url(./loading-small-white.svg);
-  color: var(--theme-colour-secondary, #FFFFFF);
-}
-
-.button-data:active,
-.button-data:focus,
-.button-data:hover {
-  background-color: var(--theme-colour-data-shade-1, #1772ff);
   color: var(--theme-colour-secondary, #FFFFFF);
 }
 
@@ -133,14 +110,6 @@
   box-shadow: 0 0 0 1px #EAEAEA inset;
   background-color: var(--theme-colour-background, #FFFFFF);
   color: var(--theme-colour-primary, #000000);
-}
-
-.button-neutral:active,
-.button-neutral:focus,
-.button-neutral:hover {
-  box-shadow: 0 0 0 1px rgba(0,0,0,0.1) inset;
-  background-color: var(--theme-colour-data-shade-1, #1772ff);
-  color: var(--theme-colour-secondary, #FFFFFF);
 }
 
 /* Disabled */
