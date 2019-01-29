@@ -117,21 +117,6 @@ export default class FieldDateTimeEdit extends Component {
     this.state.hasFocus = false
   }
 
-  broadcastChange(value) {
-    const {
-      error,
-      name,
-      onChange,
-      onError
-    } = this.props
-
-    if (error && typeof onError === 'function') {
-      onError.call(this, name, false, value)
-    } else if (typeof onChange === 'function') {
-      onChange.call(this, name, value)
-    }    
-  }
-
   componentDidMount() {
     window.addEventListener('click', this.pickerOutsideEventHandler)
   }
@@ -165,7 +150,7 @@ export default class FieldDateTimeEdit extends Component {
       }
     }
 
-    this.broadcastChange(newValue)
+    onChange.call(this, name, newValue)
   }
 
   handleFocus(hasFocus) {
@@ -203,7 +188,9 @@ export default class FieldDateTimeEdit extends Component {
   }
 
   handlePickerChange(newDate) {
-    this.broadcastChange(newDate.toISOString())
+    const {name, onChange} = this.props
+
+    onChange.call(this, name, newDate.toISOString())
   }
 
   handlePickerClick(insidePicker, event) {

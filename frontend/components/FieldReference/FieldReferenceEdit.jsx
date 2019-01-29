@@ -101,25 +101,6 @@ export default class FieldReferenceEdit extends Component {
     value: proptypes.bool
   }
 
-  componentDidMount() {
-    const {forceValidation, value} = this.props
-
-    if (forceValidation) {
-      this.validate(value)
-    }
-  }
-
-  componentDidUpdate(prevProps, prevState) {
-    const {forceValidation, value} = this.props
-
-    if (
-      !prevProps.forceValidation && forceValidation ||
-      !prevProps.value && value
-    ) {
-      this.validate(value)
-    }
-  }
-
   findFirstStringField(fields) {
     return Object.keys(fields)
       .map(key => Object.assign({}, fields[key], {key}))
@@ -143,7 +124,6 @@ export default class FieldReferenceEdit extends Component {
       documentId,
       error,
       group,
-      forceValidation,
       name,
       onBuildBaseUrl,
       onChange,
@@ -252,14 +232,5 @@ export default class FieldReferenceEdit extends Component {
         )}
       </Label>
     )
-  }
-
-  validate(value) {
-    const {name, onError, required} = this.props
-    const hasValidationErrors = required && !value
-
-    if (typeof onError === 'function') {
-      onError.call(this, name, hasValidationErrors, value)
-    }    
   }
 }

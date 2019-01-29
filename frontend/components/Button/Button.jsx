@@ -110,6 +110,7 @@ export default class Button extends Component {
     const buttonStyle = new Style(styles, 'button')
 
     buttonStyle.add(`button-${accent}`)
+      .addIf('button-disabled', disabled)
       .addIf('button-loading', isLoading)
       .addIf(`button-in-group-${inGroup}`, inGroup)
       .addIf('button-mock', type === 'mock')

@@ -4,15 +4,31 @@
   border-radius: 0;
 }
 
-.page:first-child {
+.page:first-child,
+.page-first {
   border-radius: 4px 0 0 4px;
 }
 
-.page:last-child {
+.page:last-child,
+.page-last {
   border-radius: 0 4px 4px 0;
   margin-right: 10px;
 }
 
-.page-secondary {
-  color: var(--theme-colour-background-shade-2, #AAAAAA);
+.page-primary {
+  display: none;
 }
+
+@media (--breakpoint-medium) {
+  .page-disabled {
+    visibility: hidden;
+  }
+
+  .page-primary {
+    display: inline-block;
+  }
+
+  .page-secondary {
+    color: var(--theme-colour-background-shade-2, #AAAAAA);
+  }
+}  

@@ -309,7 +309,7 @@
 }
 
 .editor-wysiwyg [data-publish-link-edit] {
-  background-color: #f3f8ff;
+  background-color: var(--theme-colour-highlight-1);
 }
 
 .editor .code,

@@ -46,16 +46,18 @@ export default class Paginator extends Component {
     prevNext: true
   }
 
-  renderPageNumber(pageNumber) {
+  renderPageNumber(pageNumber, firstPage, lastPage) {
     const {currentPage, linkCallback} = this.props
     const href = linkCallback.call(this, pageNumber)
-    const activePageStyle = new Style(styles, 'page', 'page-active')
+    const pageStyle = new Style(styles, 'page', 'page-primary')
+      .addIf('page-first', pageNumber === currentPage && pageNumber === firstPage)
+      .addIf('page-last', pageNumber === currentPage && pageNumber === lastPage)
 
     if (pageNumber === currentPage) {
       return (
         <Button
           accent="data"
-          className={styles.page}
+          className={pageStyle.getClasses()}
           type="mock"
         >{pageNumber}</Button>
       )
@@ -67,7 +69,7 @@ export default class Paginator extends Component {
           path: href,
           update: true
         })}
-        className={styles.page}
+        className={pageStyle.getClasses()}
       >{pageNumber}</Button>
     )    
   }
@@ -121,37 +123,46 @@ export default class Paginator extends Component {
     let lastPage = (currentPage + nextPages)
 
     for (let i = firstPage; i <= lastPage; i++) {
-      items.push(this.renderPageNumber(i))
+      items.push(this.renderPageNumber(i, firstPage, lastPage, currentPage))
     }
 
     const nextUrl = linkCallback(currentPage + 1)
     const prevUrl = linkCallback(currentPage - 1)
-    const prevNextStyle = new Style(styles, 'page', 'page-secondary')
+    const isFirstPage = currentPage <= 1
+    const isLastPage = currentPage >= totalPages
+    const nextStyle = new Style(styles, 'page', 'page-secondary')
+      .addIf('page-disabled', isLastPage)
+    const prevStyle = new Style(styles, 'page', 'page-secondary')
+      .addIf('page-disabled', isFirstPage)
 
     // If there's less than two pages to show, don't show page numbers.
     if (items.length < 2) return null
 
     return (
       <div>
-        {prevNext && (currentPage > 1) &&
+        {prevNext &&
           <Button
-            className={prevNextStyle.getClasses()}
+            className={prevStyle.getClasses()}
+            disabled={isFirstPage}
             href={createRoute({
               path: prevUrl,
               update: true
             })}
-          >Prev</Button>
+            type={isFirstPage && 'mock'}
+          >Prev</Button> 
         }
 
         {items}
 
-        {prevNext && (currentPage < totalPages) &&
+        {prevNext &&
           <Button
-            className={prevNextStyle.getClasses()}
+            className={nextStyle.getClasses()}
+            disabled={isLastPage}
             href={createRoute({
               path: nextUrl,
               update: true
             })}
+            type={isLastPage && 'mock'}
           >Next</Button>
         }
       </div>
