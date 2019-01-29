@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [2.1.0] (2019-01-29)
+
+### Added
+
+* [#659](https://github.com/dadi/publish/pull/659): add support for custom CSS in workspace directory
+
 ## [2.0.3] (2019-01-09)
 
 ### Fixed
