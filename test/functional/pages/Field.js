@@ -188,16 +188,25 @@ module.exports = {
     }).find('input').withAttr({
       'name': 'stringMinLength'
     }).as('Must have at least 5 characters')),
+    stringMinLengthError: (locate('div').withAttr({
+      'data-field-name': 'stringMinLength'
+    }).find('p').withText('This field must be at least 5 characters long').as('Minimum Length Error Message')),
     stringMaxLength: (locate('div').withAttr({
       'data-field-name': 'stringMaxLength'
     }).find('input').withAttr({
       'name': 'stringMaxLength'
     }).as('Must have at most 5 characters')),
+    stringMaxLengthError: (locate('div').withAttr({
+      'data-field-name': 'stringMaxLength'
+    }).find('p').withText('This field must be at most 5 characters long').as('Maximum Length Error Message')),
     stringRegex: (locate('div').withAttr({
       'data-field-name': 'stringRegex'
     }).find('input').withAttr({
       'name': 'stringRegex'
     }).as('Must contain only p and q')),
+    stringRegexError: (locate('div').withAttr({
+      'data-field-name': 'stringRegex'
+    }).find('p').withText('This field is not in the right format').as('Regex Error Message')),
     stringOptions: (locate('div').withAttr({
       'data-field-name': 'stringOptions'
     }).find('select').withAttr({
@@ -410,6 +419,47 @@ module.exports = {
     await I.seeElement(this.locators.stringOptionsMulti)
     await I.click(this.locators.saveContinue)
     await I.waitForVisible(this.locators.stringReqError)
+    await I.fillField(this.locators.stringReq, 'This is a required string')
+    await I.seeAttributesOnElements(this.locators.stringMulti, {'rows': 10})
+    await I.fillField(this.locators.stringMulti, 'This is a')
+    await I.pressKey('Enter')
+    await I.appendField(this.locators.stringMulti, 'multi line string')
+    // let attr1 = await I.grabCssPropertyFrom(this.locators.stringHeightContent, 'style')
+    // console.log(attr1)
+    await I.seeAttributesOnElements(this.locators.stringHeightContent, {'rows': 1})
+    // let attr = await I.grabAttributeFrom(this.locators.stringHeightContent, 'style')
+    // console.log(attr)
+    // await I.seeAttributesOnElements(this.locators.stringHeightContent, {'style': 'height: 23px;'})
+    await I.seeAttributesOnElements(this.locators.stringHeightFull, {'rows': 10})
+    await I.fillField(this.locators.stringMinLength, 'minl')
+    await I.waitForVisible(this.locators.stringMinLengthError)
+    await I.fillField(this.locators.stringMaxLength, 'maxlen')
+    await I.waitForVisible(this.locators.stringMaxLengthError)
+    await I.fillField(this.locators.stringRegex, 'pwq')
+    await I.waitForVisible(this.locators.stringRegexError)
+    await I.appendField(this.locators.stringMinLength, 'e')
+    await I.waitForInvisible(this.locators.stringMinLengthError)
+    await I.appendField(this.locators.stringMaxLength, '')
+    await I.pressKey('Backspace')
+    await I.waitForInvisible(this.locators.stringMaxLengthError)
+    await I.clearField(this.locators.stringRegex)
+    await I.fillField(this.locators.stringRegex, 'pqpq')
+    await I.waitForInvisible(this.locators.stringRegexError)
+    await I.selectOption(this.locators.stringOptions, 'Option three')
+    await I.click(this.locators.saveContinue)
+    await I.waitForText('The document has been created', 2)
+    await I.dontSeeInCurrentUrl('/new')
+    let updatedSlug = await I.grabValueFrom(this.locators.stringAutoGen)
+    // console.log(updatedSlug)
+    await I.seeStringsAreEqual(updatedSlug, 'this-is-a-required-string')
+    await I.see('Option three', this.locators.stringOptions)
+    await I.click(this.locators.saveMenu)
+    await I.click(this.locators.saveGoBack)
+    await I.waitForText('This is a required string')
+  },
+
+  async deleteAllStrings() {
+    await I.deleteFieldTestString()
   }
 
 }

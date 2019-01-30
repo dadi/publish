@@ -143,6 +143,20 @@ class Data extends Helper {
       })
   }
 
+  async deleteFieldTestString() {
+    let api = getApi()
+
+    await api
+      .in('field-test-string')
+      .whereFieldExists('stringRequired')
+      .delete()
+      .then(() => {
+        // console.log('Deleted ' + title)
+      }).catch(err => {
+        console.log('! Error:', err)
+      })
+  }
+
   // Create Author for setup
   async createTeam(name, body) {
     let api = getApi()
