@@ -2,6 +2,10 @@ language: node_js
 cache:
   directories:
   - node_modules
+after_failure:
+  - ./test/functional/scripts/upload-artifacts.sh /home/travis/build/dadi/publish/test/functional/output
+after_success:
+  - ./test/functional/scripts/upload-artifacts.sh /home/travis/build/dadi/publish/test/functional/output
 notifications:
   email: false
   slack:
