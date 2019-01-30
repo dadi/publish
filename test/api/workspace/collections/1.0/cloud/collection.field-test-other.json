@@ -1,0 +1,37 @@
+{
+  "fields": {
+    "color": {
+      "type": "String",
+      "label": "Colour",
+      "publish": {
+        "subType": "Color",
+        "section": "Publish fields",
+        "placement": "main"
+      }
+    }
+  },
+  "settings": {
+    "displayName": "Misc Field Testing",
+    "cache": false,
+    "count": 10,
+    "storeRevisions": false,
+    "description": "",
+    "compose": true,
+    "sort": "publishedAt",
+    "sortOrder": -1,
+    "index": [
+      {
+        "keys": {
+          "publishedAt": 1
+        }
+      },
+      {
+        "keys": {
+          "publishedAt": -1
+        }
+      }
+    ],
+    "hooks": {
+    }
+  }
+}

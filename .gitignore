@@ -38,3 +38,6 @@ stats.json
 jest*
 workspace/
 .DS_Store
+
+test/api/workspace/db
+test/functional/output

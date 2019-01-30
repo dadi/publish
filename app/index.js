@@ -19,5 +19,9 @@ App.prototype.start = function () {
   return this.server.start()
 }
 
+App.prototype.stop = function () {
+  return this.server.stop()
+}
+
 module.exports = new App()
 module.exports.app = App

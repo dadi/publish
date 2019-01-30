@@ -1,0 +1,125 @@
+{
+  "fields": {
+    "numberRequired": {
+      "type": "Number",
+      "label": "A number",
+      "required": true,
+      "publish": {
+        "section": "Numbers",
+        "placement": "main"
+      }
+    },
+    "numberNoLabel": {
+      "type": "Number",
+      "publish": {
+        "section": "Numbers",
+        "placement": "main"
+      }
+    },
+    "numberReadOnly": {
+      "type": "Number",
+      "label": "A read-only number",
+      "publish": {
+        "section": "Numbers",
+        "placement": "sidebar",
+        "readonly": true
+      }
+    },
+    "numberGreaterThan": {
+      "type": "Number",
+      "label": "Number greaterThan",
+      "comment": "Must be greater than 10",
+      "publish": {
+        "section": "Numbers",
+        "placement": "main"
+      },
+      "validation": {
+        "greaterThan": 10
+      }
+    },
+    "numberLessThan": {
+      "type": "Number",
+      "label": "Number lessThan",
+      "comment": "Must be less than 10",
+      "publish": {
+        "section": "Numbers",
+        "placement": "main"
+      },
+      "validation": {
+        "lessThan": 10
+      }
+    },
+    "numberOdd": {
+      "type": "Number",
+      "label": "Number odd",
+      "comment": "Must be odd",
+      "publish": {
+        "section": "Numbers",
+        "placement": "sidebar"
+      },
+      "validation": {
+        "even": false
+      }
+    },
+    "numberEven": {
+      "type": "Number",
+      "label": "Number even",
+      "comment": "Must be even",
+      "publish": {
+        "section": "Numbers",
+        "placement": "sidebar"
+      },
+      "validation": {
+        "even": true
+      }
+    },
+    "numberInteger": {
+      "type": "Number",
+      "label": "Number integer",
+      "comment": "Must be integer",
+      "publish": {
+        "section": "Numbers",
+        "placement": "sidebar"
+      },
+      "validation": {
+        "integer": true
+      }
+    },
+    "numberNotInteger": {
+      "type": "Number",
+      "label": "Number float",
+      "comment": "Must not be integer",
+      "publish": {
+        "section": "Numbers",
+        "placement": "sidebar"
+      },
+      "validation": {
+        "integer": false
+      }
+    }
+  },
+  "settings": {
+    "displayName": "Number Field Testing",
+    "cache": false,
+    "count": 10,
+    "storeRevisions": false,
+    "description": "",
+    "compose": true,
+    "sort": "publishedAt",
+    "sortOrder": -1,
+    "index": [
+      {
+        "keys": {
+          "publishedAt": 1
+        }
+      },
+      {
+        "keys": {
+          "publishedAt": -1
+        }
+      }
+    ],
+    "hooks": {
+    }
+  }
+}
