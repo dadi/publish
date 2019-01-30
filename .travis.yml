@@ -3,15 +3,10 @@ cache:
   directories:
   - node_modules
 after_failure:
-  - ./test/functional/scripts/upload-artifacts.sh /home/travis/build/dadi/publish/test/functional/output
-after_success:
-  - ./test/functional/scripts/upload-artifacts.sh /home/travis/build/dadi/publish/test/functional/output
+- "./test/functional/scripts/upload-artifacts.sh /home/travis/build/dadi/publish/test/functional/output"
 notifications:
   email: false
   slack:
-    on_failure: always
-    on_success: never
-    rooms:
-      secure: MCz3nE/G7lBVfd6GFCzC9rsbx5UwviAyq1S2cz485YOrn1l44GyHXhzpZywSYVtMNwUUBa5nIatZf/VETxLfbneQ3rm/DmaPxUhxNyDfICg8cytWNbF+yOXpcc+Y14HunUJ1K2DNRUech86Zqc/ndV0uuz+hmMZye3jAwMzFw58TPI0LjRB9uwyY1Yq2w3MIGm2Ns5neZM/PyEyJURMApSvOU7yeMcEIhXskezmuua4qKorFQsZx6+m9Ylgicf3k7X2VHcsArwLjGxDzx8AoGrQ1DTL4Mv+ogjn1+/oapZ6wtxH3TiiUGlkBZKa+owhnDNmLlY8hah6XH0S8K8oY0uNDQlQ19xsdBmYSqu9PBTye8cT7dTJABPtMOs/ByYyIVnI4q2V+B5a9kfT1FcRD7VnVnbdg0chxwiZG+DmjJ5U2efMqeDO9JT7G6834dqBiG7njurJAStEVfjvYLVxhWmuYWpAytEoadRn2S4Er8GboJoiA1LaDJCKXaTxtYeMYeGdL0rzWFyFBnXgX5IOR6rkeG4gT77xQPycz0clZEZOeQy7S3tB/RmkaIg3VkxSEET5xAKBhJYEdsK7SpTEEm60AE4CRWlmrmbkWOA8qTXGd5p3/DKJ+rKj0+V9cmEssnUC49/uLU6/SO/u1QHZcH2vduJTAHIEFFmgpljrIRlk=
+    secure: jnmTBfHGzU4rR9RAVsRmwMI3Rdul5PEKioh2oIsWv245DQrqr5DIwEONPRMsCbs1Duk69jiQFAzfLgzjtOjHleac79p0076pSxaG2zXNyzgya5YBMgYv6wrFh9eNZJoXyMvDw8jcipbRbx/Xp05aayClY39BJ7UUFlklvIeFb5wFqRfIlVXbLu5MFFatwCzB1IOeSeD90ZTX9VsWw97SJoJdta5gn7dx0P06SStPSJNOrLmV1/aXrSorBYmeTNJgUWPg4zHanocll8b7TR1a8Iyc5JBip0tEUpf1vJOMb/7bMdmNJ1XL8rzWw/87JujuzdOKikrsi52fzHE70TgsEBf0+BkwtFK2SzRvrwIKVesjj+ek/E2P1gal2qeqDVLVGZYuKAqbigv/0r6MHDcqJLoWb9MGHTLgcobZOfX3+UZetIc8dDA9/yme1auC8efrD4LOdo4Glhf6EZP4xCFUJpZive3VCKQfg/sMBaWAMWY508cxV+ey+fucV8fEqIsZHNPv7mCWoeMc5PnMd5TlR49UDgNrq0xcS8q2n9EKdZZARdsnqwdpmwJ3Ygd3gPsQTdYKsIBUxEoQKhMycO1XaqkbcUSHi8nSw85775cdEUscEob01WRN7D9IX7sGGp3LksFeR1CtjigBtMM9gHwmODUcPmcD+YRPYnnquoGzV9I=
 node_js:
 - '8'
