@@ -42,8 +42,8 @@
     "hooks": "test/api/workspace/hooks"
   },
   "logging": {
-    "enabled": false,
-    "level": "info",
+    "enabled": true,
+    "level": "debug",
     "path": "./log",
     "filename": "api",
     "extension": "log"
