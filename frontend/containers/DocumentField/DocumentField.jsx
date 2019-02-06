@@ -57,6 +57,22 @@ class DocumentField extends Component {
     this.validator = new Validator()
   }
 
+  componentDidMount() {
+    const {state} = this.props
+    const {app, document} = state
+    const hasError = document.validationErrors
+      && document.validationErrors[this.name]
+
+    // If we have just mounted the component and there's already an error
+    // registered for it in the store, we should validate the field again
+    // to ensure it isn't an error that carried on from a previous life of
+    // the component (e.g. when the component is mounted/unmounted) as part
+    // of the flow for selecting a reference document.
+    if (hasError) {
+      this.validate(this.value)
+    }
+  }
+
   componentDidUpdate(oldProps, oldState) {
     const {state} = this.props
     const {document} = state
