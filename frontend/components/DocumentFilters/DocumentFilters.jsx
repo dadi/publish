@@ -23,23 +23,53 @@ const OPERATORS = {
  * A list of document filters.
  */
 export default class DocumentFilters extends Component {
-  static propTypes = {}
+  static propTypes = {
+    /**
+     * The collection to operate on.
+     */
+    collection: proptypes.object,
+
+    /**
+     * The set of filters currently being applied.
+     */
+    filters: proptypes.object,
+
+    /**
+     * The callback to execute when the filters are updated.
+     */
+    onFiltersUpdate: proptypes.func
+  }
 
   constructor(props) {
     super(props)
 
-    this.state.search = null
-    this.state.selectedFilterField = null
-    this.state.selectedFilterIndex = null
-    this.state.selectedFilterOperator = null
-    this.state.selectedFilterValue = null
-    this.state.searchableFieldsPointer = 0
+    this.defaultState = {
+      search: null,
+      selectedFilterField: null,
+      selectedFilterIndex: null,
+      selectedFilterOperator: null,
+      selectedFilterValue: null,
+      searchableFieldsPointer: 0
+    }
+
+    this.state = {...this.defaultState}
 
     this.outsideTooltipHandler = this.handleClick.bind(this, false)    
   }
 
   componentDidMount() {
     window.addEventListener('click', this.outsideTooltipHandler)
+  }
+
+  componentDidUpdate(oldProps) {
+    const {collection = {}} = this.props
+    const {collection: oldCollection = {}} = oldProps
+
+    // If we have navigated to a different collection, we should reset the
+    // state o the search bar.
+    if (collection.path !== oldCollection.path) {
+      this.setState({...this.defaultState})
+    }
   }
 
   componentWillUnmount() {
@@ -73,17 +103,6 @@ export default class DocumentFilters extends Component {
     })
 
     return filtersArray
-  }
-
-  clearSearch() {
-    this.setState({
-      search: null,
-      selectedFilterField: null,
-      selectedFilterIndex: null,
-      selectedFilterOperator: null,
-      selectedFilterValue: null,
-      searchableFieldsPointer: 0
-    })
   }
 
   getFieldComponent(fieldName) {
@@ -150,7 +169,6 @@ export default class DocumentFilters extends Component {
   }
 
   handleFilterSubmit(field, event) {
-    const {collection, filters} = this.props
     const {search: searchValue} = this.state
 
     event.preventDefault()
@@ -163,7 +181,7 @@ export default class DocumentFilters extends Component {
       })
 
       this.propagateFilters()
-      this.clearSearch()     
+      this.setState({...this.defaultState})
     }
   }
 
@@ -185,7 +203,7 @@ export default class DocumentFilters extends Component {
       this.removeFilter(this.filtersArray.length - 1, event)
     } else if (event.keyCode === 27) {
       // Just ESC.
-      this.clearSearch()
+      this.setState({...this.defaultState})
     }
   }
 
