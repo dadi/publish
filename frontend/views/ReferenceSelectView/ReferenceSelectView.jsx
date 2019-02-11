@@ -27,6 +27,24 @@ import Page from 'components/Page/Page'
 import ReferenceSelectHeader from 'components/ReferenceSelectHeader/ReferenceSelectHeader'
 
 class ReferenceSelectView extends Component {
+  getRedirectUrl() {
+    const {
+      onBuildBaseUrl,
+      referencedField,
+      state
+    } = this.props
+    const {currentCollection: collection} = state.api
+    const referenceFieldSchema = collection.fields[referencedField]
+
+    return onBuildBaseUrl.call(this, {
+      createNew: !Boolean(state.router.parameters.documentId),
+      search: null,
+      section: referenceFieldSchema &&
+        referenceFieldSchema.publish &&
+        Format.slugify(referenceFieldSchema.publish.section)
+    })
+  }
+
   handleDocumentDelete(ids) {
     const {actions, state} = this.props
     const {
@@ -75,16 +93,7 @@ class ReferenceSelectView extends Component {
       update
     })
 
-    let referenceFieldSchema = collection.fields[referencedField]
-    let redirectUrl = onBuildBaseUrl.call(this, {
-      createNew: !Boolean(state.router.parameters.documentId),
-      search: null,
-      section: referenceFieldSchema &&
-        referenceFieldSchema.publish &&
-        Format.slugify(referenceFieldSchema.publish.section)
-    })
-
-    route(redirectUrl)
+    route(this.getRedirectUrl())
   }
 
   handleEmptyDocumentList() {
@@ -234,6 +243,7 @@ class ReferenceSelectView extends Component {
           instructionText={instructionText}
           referencedField={referencedField}
           returnCtaText={returnCtaText}
+          returnCtaUrl={this.getRedirectUrl()}
         />
           
         <DocumentListController
