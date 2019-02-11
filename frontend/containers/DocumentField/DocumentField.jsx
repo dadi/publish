@@ -210,6 +210,22 @@ class DocumentField extends Component {
     const {app, document} = state
     const hasError = document.validationErrors
       && document.validationErrors[this.name]
+    const arrayValue = Array.isArray(value)
+      ? value
+      : [value]
+    const allValuesAreUploads = (['media', 'reference']).includes(
+      field.schema.toLowerCase()
+    ) && arrayValue.every(value => {
+      return value._previewData && value._file
+    })
+
+    // If we're looking at a media file that the user is trying to upload,
+    // there's no point in sending it to the validator module because it
+    // is in a format that the module will not understand, causing the
+    // validation to fail.
+    if (allValuesAreUploads) {
+      return Promise.resolve()
+    }
 
     return this.validator.validateValue({
       schema: field,
