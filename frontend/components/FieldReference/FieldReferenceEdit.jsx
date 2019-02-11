@@ -11,6 +11,7 @@ import styles from './FieldReference.css'
 import Button from 'components/Button/Button'
 import Label from 'components/Label/Label'
 import TextInput from 'components/TextInput/TextInput'
+import TextInputWithCollectionSearch from 'containers/TextInputWithCollectionSearch/TextInputWithCollectionSearch'
 
 /**
  * Component for API fields of type Reference.
@@ -158,6 +159,18 @@ export default class FieldReferenceEdit extends Component {
     const comment = schema.comment ||
       required && 'Required' ||
       isReadOnly && 'Read only'
+
+    return (
+      <Label
+        comment={comment}
+        error={error}
+        label={displayName}
+      >
+        <TextInputWithCollectionSearch
+          context={name}
+        />
+      </Label>
+    )
 
     return (
       <Label

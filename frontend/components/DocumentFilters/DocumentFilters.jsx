@@ -365,7 +365,7 @@ export default class DocumentFilters extends Component {
                 )
               })}
             </div>
-          }          
+          }
         </form>
 
         <div class={styles.filters}>
