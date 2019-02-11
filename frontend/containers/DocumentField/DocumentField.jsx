@@ -214,9 +214,9 @@ class DocumentField extends Component {
       ? value
       : [value]
     const allValuesAreUploads = (['media', 'reference']).includes(
-      field.schema.toLowerCase()
+      field.type.toLowerCase()
     ) && arrayValue.every(value => {
-      return value._previewData && value._file
+      return value && value._previewData && value._file
     })
 
     // If we're looking at a media file that the user is trying to upload,
