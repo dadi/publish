@@ -243,7 +243,22 @@ module.exports = {
     deleteButton: (locate('button').withText('Yes, delete it.').as('Delete Button')),
     nevermindButton: (locate('a').withText('Nevermind, back to document').as('Back to document')),
     boolYes: (locate('span[class*="FieldBoolean__enabled"]').withText('Yes').as('Yes')),
-    boolNo: (locate('span[class*="FieldBoolean__disabled"]').withText('No').as('No'))
+    boolNo: (locate('span[class*="FieldBoolean__disabled"]').withText('No').as('No')),
+    referenceReq: (locate('div').withAttr({
+      'data-field-name': 'referenceRequired'
+    }).find('a').withText('Select existing reference').as('Required reference')),
+    referenceReadOnly: (locate('div').withAttr({
+      'data-field-name': 'referenceReadOnly'
+    }).find('span').withText('None').as('Reference read only')),
+    referenceReqError: (locate('div').withAttr({
+      'data-field-name': 'referenceRequired'
+    }).find('label[class*="container-error"]').as('Reference required error box')),
+    checkAuthor: (locate('td').withText('Joe Bloggs').as('Select The Author')),
+    addAuthor: (locate('button').withText('Add selected document').as('Add The Author')),
+    authorAdded: (locate('div').withAttr({
+      'data-field-name': 'referenceRequired'
+    }).find('a').withText('Joe Bloggs').as('Author Name')),
+    referenceLink: (locate('a[class*="FieldReference__value-link"]').as('Added reference'))
   },
 
   async validateBoolean() {
@@ -420,17 +435,23 @@ module.exports = {
     await I.click(this.locators.saveContinue)
     await I.waitForVisible(this.locators.stringReqError)
     await I.fillField(this.locators.stringReq, 'This is a required string')
-    await I.seeAttributesOnElements(this.locators.stringMulti, {'rows': 10})
+    await I.seeAttributesOnElements(this.locators.stringMulti, {
+      'rows': 10
+    })
     await I.fillField(this.locators.stringMulti, 'This is a')
     await I.pressKey('Enter')
     await I.appendField(this.locators.stringMulti, 'multi line string')
     // let attr1 = await I.grabCssPropertyFrom(this.locators.stringHeightContent, 'style')
     // console.log(attr1)
-    await I.seeAttributesOnElements(this.locators.stringHeightContent, {'rows': 1})
+    await I.seeAttributesOnElements(this.locators.stringHeightContent, {
+      'rows': 1
+    })
     // let attr = await I.grabAttributeFrom(this.locators.stringHeightContent, 'style')
     // console.log(attr)
     // await I.seeAttributesOnElements(this.locators.stringHeightContent, {'style': 'height: 23px;'})
-    await I.seeAttributesOnElements(this.locators.stringHeightFull, {'rows': 10})
+    await I.seeAttributesOnElements(this.locators.stringHeightFull, {
+      'rows': 10
+    })
     await I.fillField(this.locators.stringMinLength, 'minl')
     await I.waitForVisible(this.locators.stringMinLengthError)
     await I.fillField(this.locators.stringMaxLength, 'maxlen')
@@ -460,6 +481,42 @@ module.exports = {
 
   async deleteAllStrings() {
     await I.deleteFieldTestString()
-  }
+  },
 
+  async validateReference() {
+    await I.amOnPage('/field-testing/field-test-reference')
+    I.wait(2)
+    await I.waitForFunction(() => document.readyState === 'complete')
+    await I.waitForElement(this.locators.footer)
+    await I.seeElement(this.locators.createNewButton)
+    await I.click(this.locators.createNewButton)
+    await I.waitForFunction(() => document.readyState === 'complete')
+    await I.seeInCurrentUrl('/field-test-reference/new')
+    await I.seeElement(this.locators.referenceReq)
+    await I.seeElement(this.locators.referenceReadOnly)
+    await I.click(this.locators.referenceReq)
+    I.waitForFunction(() => document.readyState === 'complete')
+    await I.seeInCurrentUrl('/select/referenceRequired')
+    I.waitForText('Reference')
+    await I.click(this.locators.nevermindButton)
+    await I.seeInCurrentUrl('/field-test-reference/new/reference')
+    await I.click(this.locators.saveContinue)
+    await I.seeElement(this.locators.referenceReqError)
+    await I.click(this.locators.referenceReq)
+    I.waitForFunction(() => document.readyState === 'complete')
+    await I.seeInCurrentUrl('/select/referenceRequired')
+    I.waitForText('Reference')
+    await I.click(this.locators.checkAuthor)
+    await I.click(this.locators.addAuthor)
+    I.waitForFunction(() => document.readyState === 'complete')
+    await I.see('Joe Bloggs')
+    let link = await I.grabAttributeFrom(this.locators.authorAdded, 'href')
+    // console.log(link)
+    await I.click(this.locators.saveMenu)
+    await I.click(this.locators.saveGoBack)
+    await I.waitForText('Joe Bloggs')
+    let newLink = await I.grabAttributeFrom(this.locators.referenceLink, 'href')
+    // console.log(newLink)
+    await I.seeStringsAreEqual(link, newLink)
+  }
 }
