@@ -1,5 +1,13 @@
 {
   "fields": {
+    "title": {
+      "type": "String",
+      "label": "Document Title",
+      "publish": {
+        "section": "Reference and Media",
+        "placement": "main"
+      }
+    },    
     "referenceMedia": {
       "type": "Reference",
       "label": "Reference (Media)",
