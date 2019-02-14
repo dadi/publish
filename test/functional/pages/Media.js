@@ -117,6 +117,10 @@ module.exports = {
 
   async insertMedia(file) {
     await I.createMedia(file)
+  },
+
+  async deleteAllMedia(fileName) {
+    await I.deleteAllMedia(fileName)
   }
 
 }

@@ -219,7 +219,25 @@ module.exports = {
     }).as('String options multiple')),
     images: (locate('[class *= "MediaGridCard__wrapper___"]').as('Number of Images')),
     dropArea: (locate('[class *= "DropArea__droparea"]').as('Drop File Area')),
-    fileUpload: (locate('input[class *= "FileUpload__file"]').as('File Upload')),
+    mediafieldUpload: (locate('div').withAttr({
+      'data-field-name': 'media'
+    }).find('input[class*="FileUpload__file"]').as('Media File Drop')),
+    mediaJpegUpload: (locate('div').withAttr({
+      'data-field-name': 'mediaJpeg'
+    }).find('input[class*="FileUpload__file"]').as('JPEG File Drop')),
+    mediaPngUpload: (locate('div').withAttr({
+      'data-field-name': 'mediaPng'
+    }).find('input[class*="FileUpload__file"]').as('PNG File Upload')),
+    mediaJnPUpload: (locate('div').withAttr({
+      'data-field-name': 'mediaJpegAndPng'
+    }).find('input[class*="FileUpload__file"]').as('JPEG or PNG Drop')),
+    mediaPdfUpload: (locate('div').withAttr({
+      'data-field-name': 'mediaPdf'
+    }).find('input[class*="FileUpload__file"]').as('PDF File Drop')),
+    mediaJpegUploadErr: (locate('p[class*="Label__error"]').withText('Files must be of type image/jpeg').as('JPEG Upload Error')),
+    mediaPngUploadErr: (locate('p[class*="Label__error"]').withText('Files must be of type image/png').as('PNG Upload Error')),
+    mediaJnPUploadErr: (locate('p[class*="Label__error"]').withText('Files must be of type image/jpeg, image/png').as('JPEG or PNG Upload Error')),
+    mediaPdfUploadErr: (locate('p[class*="Label__error"]').withText('Files must be of type application/pdf').as('PDF Upload Error')),
     firstImage: (locate('a[class *= "MediaGridCard__image-holder___"]').first().as('First Image')),
     stoneImage: (locate('img[src*="Stone.jpeg"]').as('Stone Image')),
     editImage: (locate('img[class *= "MediaEditor__image-preview___"]').as('Image Preview')),
@@ -237,7 +255,11 @@ module.exports = {
     saveGoBack: (locate('button').withText('Save and go back').as('Save And Go Back Button')),
     saveContinue: (locate('button').withText('Save and continue').as('Save And Continue Button')),
     totalImages: (locate('.//strong[2]').as('Total Number of Images')),
-    checkImage: (locate('input[class *= "MediaGridCard__select___"]').first().as('Select Image')),
+    stoneJpeg: (locate('img[src*="Stone"]').as('JPEG Image 1')),
+    watsonJpeg: (locate('img[src*="Watson"]').as('JPEG Image 2')),
+    dogJpg: (locate('img[src*="dog"]').as('JPG Image')),
+    girlPng: (locate('img[src*="girl"]').as('PNG Image')),
+    pdf: (locate('p[class*="MediaGridCard__filename"]').withText('DADI_Publish.pdf').as('PDF Document')),
     applyButton: (locate('button').withText('Apply').as('Apply Button')),
     selectDelete: (locate('.//select').as('Select Delete')),
     deleteButton: (locate('button').withText('Yes, delete it.').as('Delete Button')),
@@ -258,7 +280,97 @@ module.exports = {
     authorAdded: (locate('div').withAttr({
       'data-field-name': 'referenceRequired'
     }).find('a').withText('Joe Bloggs').as('Author Name')),
-    referenceLink: (locate('a[class*="FieldReference__value-link"]').as('Added reference'))
+    referenceLink: (locate('a[class*="FieldReference__value-link"]').as('Added reference')),
+    mediaTitle: (locate('div').withAttr({
+      'data-field-name': 'title'
+    }).find('input[class*="TextInput"]').as('Media Title')),
+    mediaReqExisting: (locate('div').withAttr({
+      'data-field-name': 'mediaRequired'
+    }).find('a').withText('Select existing media').as('Select existing media Required')),
+    mediaReqDevice: (locate('div').withAttr({
+      'data-field-name': 'mediaRequired'
+    }).find('span').withText('Select from device').as('Select from device Required')),
+    mediaReqDrop: (locate('div').withAttr({
+      'data-field-name': 'mediaRequired'
+    }).find('div[class*="FieldMedia__upload-drop"]').as('Drop files to upload Required')),
+    mediaReqError: (locate('div').withAttr({
+      'data-field-name': 'mediaRequired'
+    }).find('label[class*="container-error"]').as('Media Required Error')),
+    mediaReqPdf: (locate('div').withAttr({
+      'data-field-name': 'mediaRequired'
+    }).find('a[title*="DADI_Publish.pdf"]').as('Media Required PDF Attachment')),
+    mediaReqJpeg: (locate('div').withAttr({
+      'data-field-name': 'mediaRequired'
+    }).find('a[title*="Stone.jpeg"]').as('Media Required JPEG Attachment')),
+    mediaReqPng: (locate('div').withAttr({
+      'data-field-name': 'mediaRequired'
+    }).find('a[title*="girl.png"]').as('Media Required PNG Attachment')),
+    mediaExisting: (locate('div').withAttr({
+      'data-field-name': 'media'
+    }).find('a').withText('Select existing media').as('Select existing media Media Field')),
+    mediaDevice: (locate('div').withAttr({
+      'data-field-name': 'media'
+    }).find('span').withText('Select from device').as('Select from device Media Field')),
+    mediaDrop: (locate('div').withAttr({
+      'data-field-name': 'media'
+    }).find('div[class*="FieldMedia__upload-drop"]').as('Drop files to upload Media Field')),
+    mediaJpegAttach: (locate('div').withAttr({
+      'data-field-name': 'media'
+    }).find('a[title*="Watson.jpeg"]').as('Media Field JPEG Attachment')),
+    mediaJpegExisting: (locate('div').withAttr({
+      'data-field-name': 'mediaJpeg'
+    }).find('a').withText('Select existing media').as('Select from existing JPEG Only')),
+    mediaJpegDevice: (locate('div').withAttr({
+      'data-field-name': 'mediaJpeg'
+    }).find('span').withText('Select from device').as('Select from device JPEG Only')),
+    mediaJpegDrop: (locate('div').withAttr({
+      'data-field-name': 'mediaJpeg'
+    }).find('div[class*="FieldMedia__upload-drop"]').as('Drop files to upload JPEG Only')),
+    mediaPngExisting: (locate('div').withAttr({
+      'data-field-name': 'mediaPng'
+    }).find('a').withText('Select existing media').as('Select existing media PNG Only')),
+    mediaPngDevice: (locate('div').withAttr({
+      'data-field-name': 'mediaPng'
+    }).find('span').withText('Select from device').as('Select from device PNG Only')),
+    mediaPngDrop: (locate('div').withAttr({
+      'data-field-name': 'mediaPng'
+    }).find('div[class*="FieldMedia__upload-drop"]').as('Drop files to upload PNG Only')),
+    mediaJnPExisting: (locate('div').withAttr({
+      'data-field-name': 'mediaJpegAndPng'
+    }).find('a').withText('Select existing media').as('Select existing media JPEG or PNG')),
+    mediaJnPDevice: (locate('div').withAttr({
+      'data-field-name': 'mediaJpegAndPng'
+    }).find('span').withText('Select from device').as('Select from device JPEG or PNG')),
+    mediaJnPDrop: (locate('div').withAttr({
+      'data-field-name': 'mediaJpegAndPng'
+    }).find('div[class*="FieldMedia__upload-drop"]').as('Drop files to upload JPEG or PNG')),
+    mediaPdfExisting: (locate('div').withAttr({
+      'data-field-name': 'mediaPdf'
+    }).find('a').withText('Select existing media').as('Select existing media PDF Only')),
+    mediaPdfDevice: (locate('div').withAttr({
+      'data-field-name': 'mediaPdf'
+    }).find('span').withText('Select from device').as('Select from device PDF Only')),
+    mediaPdfDrop: (locate('div').withAttr({
+      'data-field-name': 'mediaPdf'
+    }).find('div[class*="FieldMedia__upload-drop"]').as('Drop files to upload PDF Only')),
+    addSelected: (locate('button').withText('Add selected document').as('Add Selected Document Button')),
+    mediaJpegAdded: (locate('div').withAttr({
+      'data-field-name': 'mediaJpeg'
+    }).find('a[title*="dog.jpg"]').as('JPEG Only Attachment')),
+    mediaPngAdded: (locate('div').withAttr({
+      'data-field-name': 'mediaPng'
+    }).find('a[title*="girl.png"]').as('PNG Only Attachment')),
+    mediaJnPJpegAdded: (locate('div').withAttr({
+      'data-field-name': 'mediaJpegAndPng'
+    }).find('a[title*="dog.jpg"]').as('JPEG Attachment')),
+    mediaJnPPngAdded: (locate('div').withAttr({
+      'data-field-name': 'mediaJpegAndPng'
+    }).find('a[title*="girl.png"]').as('PNG Attachment')),
+    mediaPdfAdded: (locate('div').withAttr({
+      'data-field-name': 'mediaPdf'
+    }).find('a[title*="DADI_Publish.pdf"]').as('PDF Only Attachment')),
+    scrollDown: (locate('div[class*="Label__label"]').withText('Media (JPEG and PNG)').as('Down Page')),
+    mediaRowInserted: (locate('tr[class*="Table__row"]').as('Media Document Row'))
   },
 
   async validateBoolean() {
@@ -518,5 +630,138 @@ module.exports = {
     let newLink = await I.grabAttributeFrom(this.locators.referenceLink, 'href')
     // console.log(newLink)
     await I.seeStringsAreEqual(link, newLink)
+  },
+
+  async deleteAllReferences() {
+    await I.deleteFieldTestReferences()
+  },
+
+  async validateMedia() {
+    await I.amOnPage('/field-testing/field-test-media')
+    await I.waitForFunction(() => document.readyState === 'complete')
+    await I.waitForElement(this.locators.footer)
+    await I.seeElement(this.locators.createNewButton)
+    await I.dontSeeElement(this.locators.mediaRowInserted)
+    await I.click(this.locators.createNewButton)
+    await I.waitForFunction(() => document.readyState === 'complete')
+    await I.seeInCurrentUrl('/field-test-media/new')
+    await I.seeElement(this.locators.mediaReqExisting)
+    await I.seeElement(this.locators.mediaReqDevice)
+    await I.seeElement(this.locators.mediaReqDrop)
+    await I.seeElement(this.locators.mediaExisting)
+    await I.seeElement(this.locators.mediaDevice)
+    await I.seeElement(this.locators.mediaDrop)
+    await I.seeElement(this.locators.mediaJpegExisting)
+    await I.seeElement(this.locators.mediaJpegDevice)
+    await I.seeElement(this.locators.mediaJpegDrop)
+    await I.seeElement(this.locators.mediaPngExisting)
+    await I.seeElement(this.locators.mediaPngDevice)
+    await I.seeElement(this.locators.mediaPngDrop)
+    await I.seeElement(this.locators.mediaJnPExisting)
+    await I.seeElement(this.locators.mediaJnPDevice)
+    await I.seeElement(this.locators.mediaJnPDrop)
+    await I.seeElement(this.locators.mediaPdfExisting)
+    await I.seeElement(this.locators.mediaPdfDevice)
+    await I.seeElement(this.locators.mediaPdfDrop)
+    await I.fillField(this.locators.mediaTitle, 'Media Document')
+    await I.click(this.locators.mediaReqExisting)
+    I.waitForFunction(() => document.readyState === 'complete')
+    await I.seeInCurrentUrl('/select/mediaRequired')
+    I.waitForText('Media')
+    await I.click(this.locators.nevermindButton)
+    await I.seeInCurrentUrl('/field-test-media/new/reference-and-media')
+    await I.click(this.locators.saveContinue)
+    await I.seeElement(this.locators.mediaReqError)
+    await I.click(this.locators.mediaReqExisting)
+    I.waitForFunction(() => document.readyState === 'complete')
+    await I.seeInCurrentUrl('/select/mediaRequired')
+    I.waitForText('Media')
+    await I.click(this.locators.pdf)
+    await I.click(this.locators.stoneJpeg)
+    await I.click(this.locators.girlPng)
+    await I.click(this.locators.addSelected)
+    I.waitForFunction(() => document.readyState === 'complete')
+    await I.seeElement(this.locators.mediaReqPdf)
+    await I.seeElement(this.locators.mediaReqJpeg)
+    await I.seeElement(this.locators.mediaReqPng)
+    await I.click(this.locators.saveContinue)
+    await I.waitForText('The document has been created', 2)
+    await I.dontSeeInCurrentUrl('/new')
+    await I.attachFile(this.locators.mediafieldUpload, 'test/functional/images/Watson.jpeg')
+    await I.waitForFunction(() => document.readyState === 'complete')
+    await I.seeElement(this.locators.mediaJpegAttach)
+    await I.scrollTo(this.locators.mediaPdfDrop)
+    await I.attachFile(this.locators.mediaJpegUpload, 'test/functional/images/girl.png')
+    await I.waitForFunction(() => document.readyState === 'complete')
+    await I.seeElement(this.locators.mediaJpegUploadErr)
+    await I.click(this.locators.mediaJpegExisting)
+    I.waitForFunction(() => document.readyState === 'complete')
+    await I.seeInCurrentUrl('/select/mediaJpeg')
+    I.waitForText('Media (JPEG)')
+    await I.see('.jpeg')
+    await I.dontSee('.png')
+    await I.dontSee('.pdf')
+    await I.click(this.locators.dogJpg)
+    await I.click(this.locators.addSelected)
+    I.waitForFunction(() => document.readyState === 'complete')
+    await I.seeElement(this.locators.mediaJpegAdded)
+    await I.scrollTo(this.locators.mediaPngDrop)
+    await I.attachFile(this.locators.mediaPngUpload, 'test/functional/images/dog.jpg')
+    await I.waitForFunction(() => document.readyState === 'complete')
+    await I.seeElement(this.locators.mediaPngUploadErr)
+    await I.click(this.locators.mediaPngExisting)
+    I.waitForFunction(() => document.readyState === 'complete')
+    await I.seeInCurrentUrl('/select/mediaPng')
+    I.waitForText('Media (PNG)')
+    await I.see('.png')
+    await I.dontSee('.jpeg')
+    await I.dontSee('.jpg')
+    await I.dontSee('.pdf')
+    await I.click(this.locators.girlPng)
+    await I.click(this.locators.addSelected)
+    I.waitForFunction(() => document.readyState === 'complete')
+    await I.scrollTo(this.locators.mediaJnPDrop)
+    await I.seeElement(this.locators.mediaPngAdded)
+    await I.scrollTo(this.locators.scrollDown)
+    await I.attachFile(this.locators.mediaJnPUpload, 'test/functional/images/DADI_Publish.pdf')
+    await I.waitForFunction(() => document.readyState === 'complete')
+    await I.seeElement(this.locators.mediaJnPUploadErr)
+    await I.click(this.locators.mediaJnPExisting)
+    I.waitForFunction(() => document.readyState === 'complete')
+    await I.seeInCurrentUrl('/select/mediaJpegAndPng')
+    I.waitForText('Media (JPEG and PNG)')
+    await I.see('.png')
+    await I.see('.jpeg')
+    await I.see('.jpg')
+    await I.dontSee('.pdf')
+    await I.click(this.locators.dogJpg)
+    await I.click(this.locators.girlPng)
+    await I.click(this.locators.addSelected)
+    I.waitForFunction(() => document.readyState === 'complete')
+    await I.scrollTo(this.locators.mediaJnPDevice)
+    await I.seeElement(this.locators.mediaJnPJpegAdded)
+    await I.seeElement(this.locators.mediaJnPPngAdded)
+    await I.scrollTo(this.locators.scrollDown)
+    await I.attachFile(this.locators.mediaPdfUpload, 'test/functional/images/girl.png')
+    await I.waitForFunction(() => document.readyState === 'complete')
+    await I.seeElement(this.locators.mediaPdfUploadErr)
+    await I.click(this.locators.mediaPdfExisting)
+    I.waitForFunction(() => document.readyState === 'complete')
+    await I.seeInCurrentUrl('/select/mediaPdf')
+    I.waitForText('Media (PDF)')
+    await I.see('.pdf')
+    await I.dontSee('.jpeg')
+    await I.dontSee('.jpg')
+    await I.dontSee('.png')
+    await I.click(this.locators.pdf)
+    await I.click(this.locators.addSelected)
+    I.waitForFunction(() => document.readyState === 'complete')
+    await I.scrollTo(this.locators.mediaJnPDrop)
+    await I.seeElement(this.locators.mediaPdfAdded)
+    await I.click(this.locators.saveMenu)
+    await I.click(this.locators.saveGoBack)
+    I.waitForText('The document has been updated')
+    await I.seeElement(this.locators.mediaRowInserted)
+    await I.see('Media Document')
   }
 }

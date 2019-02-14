@@ -296,6 +296,10 @@ module.exports = {
     await I.createTeam(name, body)
   },
 
+  async deleteAuthor(name) {
+    await I.deleteTeam(name)
+  },
+
   async insertCategory(name, desc) {
     await I.createCategory(name, desc)
   },

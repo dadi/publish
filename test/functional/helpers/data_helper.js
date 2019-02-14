@@ -18,7 +18,7 @@ const config = {
   }
 }
 
-function getApi () {
+function getApi() {
   return new DADIAPI({
     uri: config.api.protocol + '://' + config.api.host,
     port: config.api.port,
@@ -55,7 +55,7 @@ class Data extends Helper {
       })
   }
 
-  async deleteClient (id) {
+  async deleteClient(id) {
     let api = getApi()
 
     await api
@@ -157,6 +157,20 @@ class Data extends Helper {
       })
   }
 
+  async deleteFieldTestReferences() {
+    let api = getApi()
+
+    await api
+      .in('field-test-reference')
+      .whereFieldExists('referenceRequired')
+      .delete()
+      .then(() => {
+        // console.log('Deleted ' + title)
+      }).catch(err => {
+        console.log('! Error:', err)
+      })
+  }
+
   // Create Author for setup
   async createTeam(name, body) {
     let api = getApi()
@@ -167,6 +181,21 @@ class Data extends Helper {
         name: name,
         body: body
       })
+      .then(doc => {
+        // console.log('New document:', doc)
+      }).catch(err => {
+        console.log('! Error:', err)
+      })
+  }
+
+  // Delete author
+  async deleteTeam(name) {
+    let api = getApi()
+
+    await api
+      .in('team')
+      .whereFieldContains('name', name)
+      .delete()
       .then(doc => {
         // console.log('New document:', doc)
       }).catch(err => {
@@ -283,6 +312,20 @@ class Data extends Helper {
       })
   }
 
+  async deleteAllMedia(fileName) {
+    let api = getApi()
+
+    await api
+      .inMedia('mediaStore')
+      .whereFieldContains('fileName', fileName)
+      .delete()
+      .then(()=> {
+        // console.log('New document:', doc)
+      }).catch(err => {
+        console.log('! Error:', err)
+      })
+  }
+
   getToken() {
     let postData = JSON.stringify(config.api.credentials)
     // console.log("THIS" + postData)
@@ -303,7 +346,7 @@ class Data extends Helper {
     })
   }
 
-  async getSessionToken (id, secret) {
+  async getSessionToken(id, secret) {
     let postData = JSON.stringify({
       clientId: id,
       secret: secret
@@ -375,7 +418,7 @@ class Data extends Helper {
     })
   }
 
-  makeRequest (obj) {
+  makeRequest(obj) {
     return new Promise((resolve, reject) => {
       let req = http.request(obj.options, (res) => {
         // console.log(`STATUS: ${res.statusCode}`)
