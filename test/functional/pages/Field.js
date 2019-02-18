@@ -370,7 +370,18 @@ module.exports = {
       'data-field-name': 'mediaPdf'
     }).find('a[title*="DADI_Publish.pdf"]').as('PDF Only Attachment')),
     scrollDown: (locate('div[class*="Label__label"]').withText('Media (JPEG and PNG)').as('Down Page')),
-    mediaRowInserted: (locate('tr[class*="Table__row"]').as('Media Document Row'))
+    mediaRowInserted: (locate('tr[class*="Table__row"]').as('Media Document Row')),
+    colourField: (locate('div').withAttr({
+      'data-field-name': 'color'
+    }).find('input[class*="TextInput__input"]').as('Insert Colour Field')),
+    colourSwatch: (locate('div').withAttr({
+      'data-field-name': 'color'
+    }).find('div[class*="FieldColor__swatch"]').as('Colour Swatch')),
+    colourContainer: (locate('div[class*="ColorPicker__container"]').as('Colour Container')),
+    colourPalette: (locate('div[class*="ColorPicker__palette"]').as('Colour Palette')),
+    colourPicker: (locate('div[class*="ColorPicker__picker"]').as('Colour Picker')),
+    colourHue: (locate('div[class*="ColorPicker__hue"]').as('Colour Hue')),
+    colourSlider: (locate('div[class*="ColorPicker__slider"]').as('Colour Slider'))
   },
 
   async validateBoolean() {
@@ -763,5 +774,33 @@ module.exports = {
     I.waitForText('The document has been updated')
     await I.seeElement(this.locators.mediaRowInserted)
     await I.see('Media Document')
+  },
+
+  async validateMiscField() {
+    await I.amOnPage('/field-testing/field-test-other')
+    I.wait(2)
+    await I.waitForFunction(() => document.readyState === 'complete')
+    await I.waitForElement(this.locators.footer)
+    await I.seeElement(this.locators.createNewButton)
+    await I.click(this.locators.createNewButton)
+    await I.waitForFunction(() => document.readyState === 'complete')
+    await I.seeInCurrentUrl('/field-test-other/new')
+    await I.seeElement(this.locators.colourField)
+    await I.seeElement(this.locators.colourSwatch)
+    await I.click(this.locators.colourField)
+    await I.seeElement(this.locators.colourContainer)
+    await I.seeElement(this.locators.colourPalette)
+    await I.seeElement(this.locators.colourPicker)
+    await I.seeElement(this.locators.colourHue)
+    await I.seeElement(this.locators.colourSlider)
+    await I.fillField(this.locators.colourField, '4073b1')
+    let before = await I.grabValueFrom(this.locators.colourField)
+    await I.dragAndDrop(this.locators.colourPicker, this.locators.colourSlider)
+    let after = await I.grabValueFrom(this.locators.colourField)
+    await I.seeStringsAreNotEqual(after, before)
+    await I.click(this.locators.saveMenu)
+    await I.click(this.locators.saveGoBack)
+    I.waitForText('The document has been created')
+    await I.see('094285')
   }
 }

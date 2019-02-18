@@ -1,40 +1,45 @@
 'use strict'
 
 const {
-  expect
+  expect,
+  assert
 } = require('chai')
 
 class Assertions extends Helper {
-  seeNumberOfElementsBetween(elementCount, minimum, maximum) {
+  seeNumberOfElementsBetween (elementCount, minimum, maximum) {
     expect(elementCount >= minimum).to.be.true
     expect(elementCount <= maximum).to.be.true
   }
 
-  seeNumberOfElementsAtLeastOne(elementCount, minimum) {
+  seeNumberOfElementsAtLeastOne (elementCount, minimum) {
     expect(elementCount >= minimum).to.be.true
   }
 
-  seeNumbersAreEqual(actual, expected) {
+  seeNumbersAreEqual (actual, expected) {
     expect(actual).to.equal(expected)
   }
 
-  seeStringsAreEqual(actual, expected) {
+  seeStringsAreEqual (actual, expected) {
     expect(actual).to.equal(expected)
   }
 
-  seeTotalHasIncreased(actual, expected) {
+  seeStringsAreNotEqual (actual, expected) {
+    assert.notEqual(actual, expected)
+  }
+
+  seeTotalHasIncreased (actual, expected) {
     expect(actual > expected).to.be.true
   }
 
-  seeTotalHasDecreased(actual, expected) {
+  seeTotalHasDecreased (actual, expected) {
     expect(actual < expected).to.be.true
   }
 
-  seeTotalGreaterThanZero(actual) {
+  seeTotalGreaterThanZero (actual) {
     expect(actual > 0).to.be.true
   }
 
-  seeStringContains(actual, expected) {
+  seeStringContains (actual, expected) {
     expect(actual).to.include(expected)
   }
 }
