@@ -11,7 +11,7 @@ module.exports = {
     )
 
     api = require('@dadi/api')
-    api.start(port => {
+    api.start(() => {
       process.chdir(cwd)
 
       setTimeout(resolve, 2000)
