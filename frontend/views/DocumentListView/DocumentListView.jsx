@@ -180,6 +180,18 @@ class DocumentListView extends Component {
       })
     ).concat(Constants.DEFAULT_FIELDS)
 
+    const actions = {
+      [BULK_ACTIONS.DELETE]: {
+        confirmationMessage: `Are you sure you want to delete the selected ${selectedDocuments.length > 1 ? 'documents' : 'document'}?`,
+        ctaMessage: `Yes, delete ${selectedDocuments.length > 1 ? 'them' : 'it'}.`,
+        disabled: !selectedDocuments.length,
+        label: `Delete ${selectedDocuments.length ? ' (' + selectedDocuments.length + ')' : ''}`
+      },
+      [BULK_ACTIONS.EXPORT]: {
+        label: 'Export CSV'
+      }
+    }
+
     return (
       <Page>
         <Header currentCollection={currentCollection}>
@@ -225,15 +237,7 @@ class DocumentListView extends Component {
           })}
         >
           <BulkActionSelector
-            actions={{
-              [BULK_ACTIONS.DELETE]: {
-                label: 'Delete',
-                requireSelection: true
-              },
-              [BULK_ACTIONS.EXPORT]: {
-                label: 'Export CSV'
-              }
-            }}
+            actions={actions}
             onChange={this.handleBulkActionApply.bind(this)}
             selection={selectedDocuments}
           />
