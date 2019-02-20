@@ -184,6 +184,7 @@ export function fetchDocumentsForListView ({
         setDocumentList(response, filters)
       ]
 
+      // TODO: reinstate
       // if (parentDocument) {
       //   actions.push(
       //     setRemoteDocument(parentDocument, {
@@ -211,7 +212,6 @@ export function fetchDocumentsForExport ({
   sortOrder
 }) {
   return (dispatch, getState) => {
-    console.log(collection)
     return fetchDocuments({
       api,
       collection,

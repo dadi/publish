@@ -72,10 +72,24 @@ export default class BulkActionSelector extends Component {
     const containerStyle = new Style(styles, 'container')
       .addIf('container-empty', selection.length === 0)
       .addResolved(className)
-    let placeholder = 'With selected'
+    const placeholder = 'Bulk actions'
+    let modifiedActions = {}
+    let disableApplyButton = false
 
-    if (selection.length > 0) {
-      placeholder += ` (${selection.length})`
+    // Generate new actions object for the dropdown options
+    Object.keys(actions).forEach(key => {
+      let label = actions[key].label
+      
+      label += actions[key].requireSelection && selection.length > 0 ?
+        ` (${selection.length})` :
+        ''
+      
+      modifiedActions[key] = label
+    })
+
+    // Determine enabled state of the Apply button
+    if (actions[this.state.selected]) {
+      disableApplyButton = actions[this.state.selected].requireSelection && selection.length === 0
     }
 
     return (
@@ -83,7 +97,7 @@ export default class BulkActionSelector extends Component {
         <DropdownNative
           className={styles.dropdown}
           onChange={this.onChange.bind(this)}
-          options={actions}
+          options={modifiedActions}
           placeholderLabel={placeholder}
           placeholderValue={ACTION_PLACEHOLDER}
           textSize="small"
@@ -92,7 +106,7 @@ export default class BulkActionSelector extends Component {
 
         <ButtonWithPrompt
           accent="data"
-          disabled={(selected === ACTION_PLACEHOLDER) || !selection.length}
+          disabled={(selected === ACTION_PLACEHOLDER) || disableApplyButton}
           onClick={this.onApply.bind(this)}
           promptCallToAction={`Yes, delete ${selection.length > 1 ? 'them' : 'it'}.`}
           promptMessage={`Are you sure you want to delete the selected ${selection.length > 1 ? 'documents' : 'document'}?`}

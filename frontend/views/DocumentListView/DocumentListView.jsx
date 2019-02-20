@@ -25,7 +25,8 @@ import Style from 'lib/Style'
 import styles from './DocumentListView.css'
 
 const BULK_ACTIONS = {
-  DELETE: 'BULK_ACTIONS_DELETE'
+  DELETE: 'BULK_ACTIONS_DELETE',
+  EXPORT: 'BULK_ACTIONS_EXPORT'
 }
 
 class DocumentListView extends Component {
@@ -65,8 +66,15 @@ class DocumentListView extends Component {
   handleBulkActionApply(actionType) {
     const {state} = this.props  
 
-    if (actionType === BULK_ACTIONS.DELETE) {
-      this.handleDocumentDelete(state.documents.selected)
+    switch (actionType) {
+      case BULK_ACTIONS.DELETE:
+        this.handleDocumentDelete(state.documents.selected)
+        break
+      case BULK_ACTIONS.EXPORT:
+        this.handleDocumentExport()
+        break
+      default:
+        return
     }
   }
 
@@ -81,6 +89,26 @@ class DocumentListView extends Component {
       api,
       collection,
       ids
+    })
+  }
+
+  handleDocumentExport() {
+    const {
+      actions,
+      state
+    } = this.props
+
+    const {
+      currentApi,
+      currentCollection
+    } = state.api
+
+    actions.fetchDocumentsForExport({
+      api: currentApi,
+      collection: currentCollection,
+      count: 0,
+      filters: state.documents.query,
+      page: 0
     })
   }
 
@@ -198,7 +226,13 @@ class DocumentListView extends Component {
         >
           <BulkActionSelector
             actions={{
-              [BULK_ACTIONS.DELETE]: 'Delete'
+              [BULK_ACTIONS.DELETE]: {
+                label: 'Delete',
+                requireSelection: true
+              },
+              [BULK_ACTIONS.EXPORT]: {
+                label: 'Export CSV'
+              }
             }}
             onChange={this.handleBulkActionApply.bind(this)}
             selection={selectedDocuments}
