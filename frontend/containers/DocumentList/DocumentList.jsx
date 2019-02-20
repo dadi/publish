@@ -286,7 +286,7 @@ class DocumentList extends Component {
       sortOrder: order
     }
 
-    actions.fetchDocuments(fetchObject)
+    actions.fetchDocumentsForListView(fetchObject)
   }
 
   render() {
