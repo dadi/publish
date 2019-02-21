@@ -275,11 +275,8 @@ module.exports = {
     referenceReqError: (locate('div').withAttr({
       'data-field-name': 'referenceRequired'
     }).find('label[class*="container-error"]').as('Reference required error box')),
-    checkAuthor: (locate('td').withText('Joe Bloggs').as('Select The Author')),
+    numOfAuthors: (locate('//table/tbody/tr/td[2]').as('Number of Authors')),
     addAuthor: (locate('button').withText('Add selected document').as('Add The Author')),
-    authorAdded: (locate('div').withAttr({
-      'data-field-name': 'referenceRequired'
-    }).find('a').withText('Joe Bloggs').as('Author Name')),
     referenceLink: (locate('a[class*="FieldReference__value-link"]').as('Added reference')),
     mediaTitle: (locate('div').withAttr({
       'data-field-name': 'title'
@@ -629,15 +626,20 @@ module.exports = {
     I.waitForFunction(() => document.readyState === 'complete')
     await I.seeInCurrentUrl('/select/referenceRequired')
     I.waitForText('Reference')
-    await I.click(this.locators.checkAuthor)
-    await I.click(this.locators.addAuthor)
+    let numberAuthors = await I.grabNumberOfVisibleElements(this.locators.numOfAuthors)
+    // console.log(numberAuthors)
+    I.seeNumbersAreEqual(numberAuthors, 5)
+    let authorsNames = await I.grabTextFrom(this.locators.numOfAuthors)
+    // console.log('Author:' + authorsNames[2])
+    I.click(locate('td').withText(authorsNames[2].trim()).as('Selected Author'))
+    I.click(this.locators.addAuthor)
     I.waitForFunction(() => document.readyState === 'complete')
-    await I.see('Joe Bloggs')
-    let link = await I.grabAttributeFrom(this.locators.authorAdded, 'href')
+    I.see(authorsNames[2].trim())
+    let link = await I.grabAttributeFrom(locate('a').withText(authorsNames[2].trim()), 'href')
     // console.log(link)
     await I.click(this.locators.saveMenu)
     await I.click(this.locators.saveGoBack)
-    await I.waitForText('Joe Bloggs')
+    await I.waitForText(authorsNames[2].trim())
     let newLink = await I.grabAttributeFrom(this.locators.referenceLink, 'href')
     // console.log(newLink)
     await I.seeStringsAreEqual(link, newLink)

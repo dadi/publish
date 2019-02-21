@@ -33,7 +33,11 @@ module.exports = {
       'data-field-name': 'title'
     }).find('input').as('Title Field')),
     selectAuthor: (locate('a').withText('Select existing author').as('Select Author Button')),
-    checkAuthor: (locate('td').withText('Joe Bloggs').as('Select The Author')),
+    numOfAuthors: (locate('//table/tbody/tr/td[2]').as('Number of Authors')),
+    numOfCategories: (locate('//table/tbody/tr/td[2]').as('Number of Categories')),
+    numOfSubCategories: (locate('//table/tbody/tr/td[2]').as('Number of Sub Categories')),
+    numOfWebServices: (locate('//table/tbody/tr/td[2]').as('Number of Web Services')),
+    numOfNetworkServices: (locate('//table/tbody/tr/td[2]').as('Number of Network Services')),
     addAuthor: (locate('button').withText('Add selected document').as('Add The Author')),
     excerptField: (locate('div').withAttr({
       'data-field-name': 'excerpt'
@@ -60,7 +64,7 @@ module.exports = {
     selectSubCategory: (locate('a').withText('Select existing sub category').as('Select Existing Sub Category Button')),
     selectWebService: (locate('a').withText('Select existing web service').as('Select Existing Web Service Button')),
     selectNetworkService: (locate('a').withText('Select existing network service').as('Select Existing Newtork Service Button')),
-    checkCategory: (locate('td').withText('Knowledge').as('Knowledge Row')),
+    // checkCategory: (locate('td').withText('Knowledge').as('Knowledge Row')),
     addSelected: (locate('button').withText('Add selected document').as('Add Selected Document Button')),
     checkSubCategory: (locate('td').withText('Network').as('Network Row')),
     apiWebService: (locate('td').withText('RESTful API').as('API Row')),
@@ -131,71 +135,98 @@ module.exports = {
     I.fillField(this.locators.bodyField, 'This is the body of the new article')
     I.click(this.locators.saveArticle)
     I.waitForText('The document has been created', 2)
-    // I.wait(3)
     I.click(this.locators.selectAuthor)
     I.waitForFunction(() => document.readyState === 'complete')
     I.seeInCurrentUrl('/select/author')
     I.waitForText('Author')
-    // I.wait(1)
     I.click(this.locators.nevermindButton)
     I.waitForFunction(() => document.readyState === 'complete')
     I.dontSeeInCurrentUrl('/select/author')
     I.seeInField(this.locators.titleField, 'This Is A New Article')
+
+    // Select Author
     I.click(this.locators.selectAuthor)
     I.waitForFunction(() => document.readyState === 'complete')
     I.seeInCurrentUrl('/select/author')
     I.waitForText('Author')
-    // I.wait(1)
-    // I.click(this.locators.authorPage)
-    // I.waitForFunction(() => document.readyState === 'complete')
-    // I.seeInCurrentUrl('/select/author/4')
-    // I.waitForText('Dave Macpherson')
-    I.click(this.locators.checkAuthor)
+    let numberAuthors = await I.grabNumberOfVisibleElements(this.locators.numOfAuthors)
+    // console.log(numberAuthors)
+    I.seeNumbersAreEqual(numberAuthors, 5)
+    let authorsNames = await I.grabTextFrom(this.locators.numOfAuthors)
+    // console.log('Author:' + authorsNames[2])
+    I.click(locate('td').withText(authorsNames[2].trim()).as('Selected Author'))
     I.click(this.locators.addAuthor)
     I.waitForFunction(() => document.readyState === 'complete')
-    I.see('Joe Bloggs')
+    I.see(authorsNames[2].trim())
+
+    // Select Category
     I.click(this.locators.selectCategory)
     I.waitForFunction(() => document.readyState === 'complete')
     I.seeInCurrentUrl('/select/category')
     I.waitForText('Category')
-    I.waitForText('Knowledge')
-    I.click(this.locators.checkCategory)
+    let numberCategories = await I.grabNumberOfVisibleElements(this.locators.numOfCategories)
+    // console.log(numberCategories)
+    I.seeNumbersAreEqual(numberCategories, 5)
+    let categoryNames = await I.grabTextFrom(this.locators.numOfCategories)
+    // console.log('Cat:' + categoryNames[3])
+    I.click(locate('td').withText(categoryNames[3].trim()).as('Selected Category'))
     I.click(this.locators.addSelected)
     I.waitForFunction(() => document.readyState === 'complete')
-    I.see('Knowledge')
+    I.see(categoryNames[3].trim())
+
+    // Select Sub Category
     I.scrollTo(this.locators.selectSubCategory)
     I.click(this.locators.selectSubCategory)
     I.waitForFunction(() => document.readyState === 'complete')
     I.seeInCurrentUrl('/select/sub-category')
     I.waitForText('Sub category')
-    I.waitForText('Network')
-    I.click(this.locators.checkSubCategory)
+    let numberSubCategories = await I.grabNumberOfVisibleElements(this.locators.numOfSubCategories)
+    // console.log(numberSubCategories)
+    I.seeNumbersAreEqual(numberSubCategories, 5)
+    let subCategoryNames = await I.grabTextFrom(this.locators.numOfSubCategories)
+    // console.log('Sub Cat:' + subCategoryNames[1])
+    I.click(locate('td').withText(subCategoryNames[1].trim()).as('Selected Sub Category'))
     I.click(this.locators.addSelected)
     I.waitForFunction(() => document.readyState === 'complete')
-    I.see('Network')
+    I.see(subCategoryNames[1].trim())
+
+    // Select Web Services
     I.scrollTo(this.locators.selectWebService)
     I.click(this.locators.selectWebService)
     I.waitForFunction(() => document.readyState === 'complete')
     I.seeInCurrentUrl('/select/web-service')
-    I.waitForText('Web service')
-    I.waitForText('API')
-    I.click(this.locators.apiWebService)
-    I.click(this.locators.cdnWebService)
+    let numberWebServices = await I.grabNumberOfVisibleElements(this.locators.numOfWebServices)
+    // console.log(numberWebServices)
+    I.seeNumbersAreEqual(numberWebServices, 5)
+    let webServicesNames = await I.grabTextFrom(this.locators.numOfWebServices)
+    // console.log('Web Service 1:' + webServicesNames[0])
+    // console.log('Web Service 2:' + webServicesNames[4])
+    I.click(locate('td').withText(webServicesNames[0].trim()).as('First Selected Web Service'))
+    I.click(locate('td').withText(webServicesNames[4].trim()).as('Second Selected Web Service'))
     I.click(this.locators.addSelected)
     I.waitForFunction(() => document.readyState === 'complete')
-    I.see('API')
-    I.see('CDN')
+    I.scrollTo(this.locators.webService)
+    I.see(webServicesNames[0].trim())
+    I.see(webServicesNames[4].trim())
+
+    //Select Network Service
     I.scrollTo(this.locators.selectNetworkService)
     I.click(this.locators.selectNetworkService)
     I.waitForFunction(() => document.readyState === 'complete')
     I.seeInCurrentUrl('/select/network-service')
     I.waitForText('Network service')
-    I.waitForText('Host')
-    I.click(this.locators.checkNetworkService)
+    let numberNetworkServices = await I.grabNumberOfVisibleElements(this.locators.numOfNetworkServices)
+    // console.log(numberNetworkServices)
+    I.seeNumbersAreEqual(numberNetworkServices, 5)
+    let networkServicesNames = await I.grabTextFrom(this.locators.numOfNetworkServices)
+    // console.log('Net Service:' + networkServicesNames[3])
+    I.click(locate('td').withText(networkServicesNames[3].trim()).as('Selected Network Service'))
     I.click(this.locators.addSelected)
     I.waitForFunction(() => document.readyState === 'complete')
     I.scrollTo(this.locators.networkService)
-    I.see('Host')
+    I.see(networkServicesNames[3].trim())
+
+    // Remove Network Service
     I.click(this.locators.removeNetworkButton)
     I.seeElement(this.locators.selectNetworkService)
     I.click(this.locators.metaTab)
@@ -205,9 +236,10 @@ module.exports = {
     I.click(this.locators.saveMenu)
     I.click(this.locators.saveGoBack)
     I.waitForText('The document has been updated')
-    I.wait(3)
     I.seeInCurrentUrl('/articles')
     I.see('This Is A New Article')
+
+    // Ensure total number of articles has increased
     let newTotal = await I.grabTextFrom(this.locators.totalArticles)
     // console.log(newTotal)
     I.seeTotalHasIncreased(newTotal, total)
@@ -232,16 +264,16 @@ module.exports = {
     I.waitForFunction(() => document.readyState === 'complete')
     I.seeInCurrentUrl('/select/web-service')
     I.waitForText('Web service')
-    I.waitForText('API')
-    I.click(this.locators.cdnWebService)
+    // I.waitForText('API')
+    let webServicesNames = await I.grabTextFrom(this.locators.numOfWebServices)
+    I.click(locate('td').withText(webServicesNames[4].trim()).as('Second Selected Web Service'))
     I.click(this.locators.addSelected)
     I.waitForFunction(() => document.readyState === 'complete')
     I.scrollTo(this.locators.webService)
-    I.see('API')
-    I.dontSee('CDN')
+    I.see(webServicesNames[0].trim())
+    I.dontSee(webServicesNames[4].trim())
     I.click(this.locators.saveGoBack)
     I.waitForText('The document has been updated', 2)
-    I.wait(3)
     I.seeInCurrentUrl('/articles')
     I.see('This Article Is Updated')
     I.click(this.locators.updatedArticle)
@@ -260,7 +292,6 @@ module.exports = {
     I.waitForText('Are you sure you want to delete the selected document?')
     I.click(this.locators.deleteButton)
     I.waitForText('The document has been deleted', 2)
-    I.wait(3)
     I.dontSee('This Article Is Updated')
     let newTotal = await I.grabTextFrom(this.locators.totalArticles)
     // console.log(newTotal)
@@ -327,26 +358,22 @@ module.exports = {
     await I.typeAndSelect(this.locators.bodyField, 'Bold')
     await I.click(this.locators.boldButton)
     await I.appendField(this.locators.bodyField, '  ')
-    // await I.wait(1)
     await I.click(this.locators.boldButton)
     // Italic
     await I.typeAndSelect(this.locators.bodyField, 'Italic')
     await I.click(this.locators.italicButton)
     await I.appendField(this.locators.bodyField, '  ')
-    // await I.wait(1)
     await I.click(this.locators.italicButton)
     // Strike-through
     await I.typeAndSelect(this.locators.bodyField, 'Strike-through')
     await I.click(this.locators.strikeThruButton)
     await I.appendField(this.locators.bodyField, '')
-    // await I.wait(1)
     await I.click(this.locators.strikeThruButton)
     await I.pressKey('Enter')
     // H1
     await I.typeAndSelect(this.locators.bodyField, 'Header 1')
     await I.click(this.locators.h1Button)
     await I.appendField(this.locators.bodyField, '')
-    // await I.wait(1)
     await I.pressKey('Enter')
     await I.pressKey('Enter')
     // H2
@@ -354,7 +381,6 @@ module.exports = {
     await I.typeAndSelect(this.locators.bodyField, 'Header 2')
     await I.click(this.locators.h2Button)
     await I.appendField(this.locators.bodyField, '  ')
-    // await I.wait(1)
     await I.pressKey('Enter')
     await I.pressKey('Enter')
     // Blockquote
@@ -362,7 +388,6 @@ module.exports = {
     await I.typeAndSelect(this.locators.bodyField, 'Blockquote')
     await I.click(this.locators.quoteButton)
     await I.appendField(this.locators.bodyField, '  ')
-    // await I.wait(1)
     await I.pressKey('Enter')
     await I.pressKey('Enter')
     // Link
@@ -372,7 +397,6 @@ module.exports = {
     await I.fillField(this.locators.linkField, 'www.link.com')
     await I.click(this.locators.linkSave)
     await I.appendField(this.locators.bodyField, '  ')
-    // await I.wait(1)
     await I.pressKey('Enter')
     // Ordered List
     await I.click(this.locators.orderedListButton)
@@ -381,7 +405,6 @@ module.exports = {
     await I.fillField(this.locators.bodyField, 'Point 2')
     await I.pressKey('Enter')
     await I.click(this.locators.orderedListButton)
-    // await I.wait(1)
     // Unordered List
     await I.click(this.locators.unOrderedListButton)
     await I.fillField(this.locators.bodyField, 'Bullet 1')
@@ -389,7 +412,6 @@ module.exports = {
     await I.fillField(this.locators.bodyField, 'Bullet 2')
     await I.pressKey('Enter')
     await I.click(this.locators.unOrderedListButton)
-    // await I.wait(1)
 
     await I.click(this.locators.saveArticle)
     await I.waitForText('The document has been created', 2)
