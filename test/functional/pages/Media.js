@@ -103,7 +103,7 @@ module.exports = {
     // console.log(total)
     await I.see('Stone.jpeg')
     I.click(this.locators.checkImage)
-    I.selectOption(this.locators.selectDelete, 'Delete')
+    I.selectOption(this.locators.selectDelete, 'Delete (1)')
     I.click(this.locators.applyButton)
     I.waitForText('Are you sure you want to delete the selected document?')
     I.click(this.locators.deleteButton)
