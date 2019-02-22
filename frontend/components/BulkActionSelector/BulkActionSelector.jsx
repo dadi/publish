@@ -81,27 +81,10 @@ export default class BulkActionSelector extends Component {
       modifiedActions[key] = actions[key].label
     })
 
-    let button
-
     // If the option comes with a confirmation message, display
     // ButtonWithPrompt, otherwise a standard Button is used.
-    if (selected !== ACTION_PLACEHOLDER && actions[selected].ctaMessage) {
-      button = <ButtonWithPrompt
-        accent="data"
-        disabled={(selected === ACTION_PLACEHOLDER) || actions[selected].disabled}
-        onClick={this.onApply.bind(this)}
-        promptCallToAction={actions[selected].ctaMessage}
-        promptMessage={actions[selected].confirmationMessage}
-        size="small"
-      >Apply</ButtonWithPrompt>
-    } else if (selected === ACTION_PLACEHOLDER || (actions[selected] && !actions[selected].ctaMessage)) {
-      button = <Button
-        accent="data"
-        disabled={selected === ACTION_PLACEHOLDER}
-        onClick={this.onApply.bind(this)}
-        size="small"
-      >Apply</Button>
-    }
+    const needsButtonWithPrompt = selected !== ACTION_PLACEHOLDER &&
+      actions[selected].ctaMessage
 
     return (
       <div class={containerStyle.getClasses()}>
@@ -115,7 +98,25 @@ export default class BulkActionSelector extends Component {
           value={selected}
         />
 
-        {button}
+        {needsButtonWithPrompt && (
+          <ButtonWithPrompt
+            accent="data"
+            disabled={(selected === ACTION_PLACEHOLDER) || actions[selected].disabled}
+            onClick={this.onApply.bind(this)}
+            promptCallToAction={actions[selected].ctaMessage}
+            promptMessage={actions[selected].confirmationMessage}
+            size="small"
+          >Apply</ButtonWithPrompt>          
+        )}
+
+        {!needsButtonWithPrompt && (
+          <Button
+            accent="data"
+            disabled={selected === ACTION_PLACEHOLDER}
+            onClick={this.onApply.bind(this)}
+            size="small"
+          >Apply</Button>
+        )}
       </div>
     )
   }
