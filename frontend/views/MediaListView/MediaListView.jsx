@@ -127,7 +127,19 @@ class MediaListView extends Component {
     const {
       list: documents,
       selected: selectedDocuments
-    } = state.documents    
+    } = state.documents
+
+    const actions = {
+      [BULK_ACTIONS.DELETE]: {
+        confirmationMessage:
+          `Are you sure you want to delete the selected ${selectedDocuments.length > 1 ?
+            'documents' :
+            'document'}?`,
+        ctaMessage: `Yes, delete ${selectedDocuments.length > 1 ? 'them' : 'it'}.`,
+        disabled: !selectedDocuments.length,
+        label: `Delete ${selectedDocuments.length ? ' (' + selectedDocuments.length + ')' : ''}`
+      }
+    }
 
     return (
       <Page>
@@ -160,9 +172,7 @@ class MediaListView extends Component {
           })}
         >
           <BulkActionSelector
-            actions={{
-              [BULK_ACTIONS.DELETE]: 'Delete'
-            }}
+            actions={actions}
             className={styles['bulk-action-select']}
             onChange={this.handleBulkActionApply.bind(this)}
             selection={selectedDocuments}
