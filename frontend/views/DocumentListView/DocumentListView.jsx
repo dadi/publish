@@ -69,6 +69,7 @@ class DocumentListView extends Component {
       case BULK_ACTIONS.DELETE:
         this.handleDocumentDelete(state.documents.selected)
         break
+
       default:
         return
     }
