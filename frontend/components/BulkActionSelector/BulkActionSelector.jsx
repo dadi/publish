@@ -83,6 +83,8 @@ export default class BulkActionSelector extends Component {
 
     let button
 
+    // If the option comes with a confirmation message, display
+    // ButtonWithPrompt, otherwise a standard Button is used.
     if (selected !== ACTION_PLACEHOLDER && actions[selected].ctaMessage) {
       button = <ButtonWithPrompt
         accent="data"

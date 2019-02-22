@@ -74,7 +74,7 @@ export function deleteMedia ({api, ids}) {
   }
 }
 
-function fetchDocuments ({
+export function fetchDocuments ({
   api,
   collection,
   count,
@@ -88,6 +88,10 @@ function fetchDocuments ({
   sortOrder
 }) {
   return (dispatch, getState) => {
+    dispatch(
+      setDocumentListStatus(Constants.STATUS_LOADING)
+    )
+
     let currentDocument = getState().document
     let currentDocumentId = currentDocument &&
       currentDocument.remote &&
@@ -144,155 +148,26 @@ function fetchDocuments ({
         .where(filters)
         .find()
 
-      return listQuery
-    })
-  }
-}
+      return listQuery.then(response => {
+        let actions = [
+          setDocumentList(response, filters)
+        ]
 
-export function fetchDocumentsForListView ({
-  api,
-  collection,
-  count,
-  fields,
-  filters,
-  page,
-  parentDocumentId,
-  parentCollection,
-  referencedField,
-  sortBy,
-  sortOrder
-}) {
-  return (dispatch, getState) => {
-    dispatch(
-      setDocumentListStatus(Constants.STATUS_LOADING)
-    )
+        if (parentDocument) {
+          actions.push(
+            setRemoteDocument(parentDocument, {
+              forceUpdate: false
+            })
+          )
+        }
 
-    return fetchDocuments({
-      api,
-      collection,
-      count,
-      fields,
-      filters,
-      page,
-      parentCollection,
-      parentDocumentId,
-      referencedField,
-      sortBy,
-      sortOrder
-    })(dispatch, getState).then(response => {
-      let actions = [
-        setDocumentList(response, filters)
-      ]
-
-      // TODO: reinstate
-      // if (parentDocument) {
-      //   actions.push(
-      //     setRemoteDocument(parentDocument, {
-      //       forceUpdate: false
-      //     })
-      //   )
-      // }
-
-      dispatch(batchActions(actions))
+        dispatch(batchActions(actions))
+      })
     }).catch(error => {
       dispatch(
         setDocumentListStatus(Constants.STATUS_FAILED, error)
       )
     })
-  }
-}
-
-export function fetchDocumentsForExport ({
-  api,
-  collection,
-  count,
-  filters,
-  page,
-  sortBy,
-  sortOrder
-}) {
-  return (dispatch, getState) => {
-    return fetchDocuments({
-      api,
-      collection,
-      count,
-      fields: Object.keys(collection.fields),
-      filters,
-      page,
-      sortBy,
-      sortOrder
-    })(dispatch, getState).then(response => {
-      let headers = {}
-      let itemsFormatted = []
-
-      Object.keys(response.results[0]).forEach(key => {
-        headers[key] = `"${key}"`
-      })
-
-      response.results.forEach(item => {
-        let formattedItem = {}
-
-        Object.keys(item).forEach(key => {
-          formattedItem[key] = `"${item[key]}"`
-        })
-
-        itemsFormatted.push(formattedItem)
-      })
-
-      exportCSVFile(headers, itemsFormatted, collection.name)
-    }).catch(error => {
-      console.log('error :', error)
-    })
-  }
-}
-
-function convertToCSV (objArray) {
-  let array = typeof objArray !== 'object' ? JSON.parse(objArray) : objArray
-  let str = ''
-
-  for (let i = 0; i < array.length; i++) {
-    let line = ''
-
-    for (let index in array[i]) {
-      if (line !== '') {
-        line += ','
-      }
-
-      line += array[i][index]
-    }
-
-    str += line + '\r\n'
-  }
-
-  return str
-}
-
-function exportCSVFile (headers, items, fileTitle) {
-  if (headers) {
-    items.unshift(headers)
-  }
-
-  let jsonObject = JSON.stringify(items)
-  let csv = convertToCSV(jsonObject)
-  let exportedFilename = fileTitle + '.csv' || 'export.csv'
-  let blob = new Blob([csv], {type: 'text/csv;charset=utf-8;'})
-
-  if (navigator.msSaveBlob) { // IE 10+
-    navigator.msSaveBlob(blob, exportedFilenmae)
-  } else {
-    let link = document.createElement('a')
-
-    if (link.download !== undefined) {
-      // Browsers that support HTML5 download attribute
-      let url = URL.createObjectURL(blob)
-
-      link.setAttribute('href', url)
-      link.setAttribute('download', exportedFilename)
-      link.style.visibility = 'hidden'
-      document.body.appendChild(link)
-      link.click()
-      document.body.removeChild(link)
-    }
   }
 }
 

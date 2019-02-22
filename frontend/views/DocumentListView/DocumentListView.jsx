@@ -25,8 +25,7 @@ import Style from 'lib/Style'
 import styles from './DocumentListView.css'
 
 const BULK_ACTIONS = {
-  DELETE: 'BULK_ACTIONS_DELETE',
-  EXPORT: 'BULK_ACTIONS_EXPORT'
+  DELETE: 'BULK_ACTIONS_DELETE'
 }
 
 class DocumentListView extends Component {
@@ -64,14 +63,11 @@ class DocumentListView extends Component {
   }
 
   handleBulkActionApply(actionType) {
-    const {state} = this.props  
+    const {state} = this.props
 
     switch (actionType) {
       case BULK_ACTIONS.DELETE:
         this.handleDocumentDelete(state.documents.selected)
-        break
-      case BULK_ACTIONS.EXPORT:
-        this.handleDocumentExport()
         break
       default:
         return
@@ -89,26 +85,6 @@ class DocumentListView extends Component {
       api,
       collection,
       ids
-    })
-  }
-
-  handleDocumentExport() {
-    const {
-      actions,
-      state
-    } = this.props
-
-    const {
-      currentApi,
-      currentCollection
-    } = state.api
-
-    actions.fetchDocumentsForExport({
-      api: currentApi,
-      collection: currentCollection,
-      count: 0,
-      filters: state.documents.query,
-      page: 0
     })
   }
 
@@ -182,13 +158,13 @@ class DocumentListView extends Component {
 
     const actions = {
       [BULK_ACTIONS.DELETE]: {
-        confirmationMessage: `Are you sure you want to delete the selected ${selectedDocuments.length > 1 ? 'documents' : 'document'}?`,
+        confirmationMessage: 
+          `Are you sure you want to delete the selected ${selectedDocuments.length > 1 ?
+            'documents' :
+            'document'}?`,
         ctaMessage: `Yes, delete ${selectedDocuments.length > 1 ? 'them' : 'it'}.`,
         disabled: !selectedDocuments.length,
         label: `Delete ${selectedDocuments.length ? ' (' + selectedDocuments.length + ')' : ''}`
-      },
-      [BULK_ACTIONS.EXPORT]: {
-        label: 'Export CSV'
       }
     }
 
