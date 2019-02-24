@@ -96,14 +96,6 @@ class Bootstrap {
         version: '1.0'
       })
 
-      // Add media
-      // await myTest.addMedia({
-      //   bucket: 'mediaStore',
-      //   count: 5,
-      //   height: 300,
-      //   width: 450
-      // })
-
       // Create articles
       await myTest.addData({
         collection: 'articles',

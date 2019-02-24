@@ -64,12 +64,7 @@ module.exports = {
     selectSubCategory: (locate('a').withText('Select existing sub category').as('Select Existing Sub Category Button')),
     selectWebService: (locate('a').withText('Select existing web service').as('Select Existing Web Service Button')),
     selectNetworkService: (locate('a').withText('Select existing network service').as('Select Existing Newtork Service Button')),
-    // checkCategory: (locate('td').withText('Knowledge').as('Knowledge Row')),
     addSelected: (locate('button').withText('Add selected document').as('Add Selected Document Button')),
-    checkSubCategory: (locate('td').withText('Network').as('Network Row')),
-    apiWebService: (locate('td').withText('RESTful API').as('API Row')),
-    cdnWebService: (locate('td').withText('faster content').as('CDN Row')),
-    checkNetworkService: (locate('td').withText('processing power').as('Host Row')),
     removeNetworkButton: (locate('div').withAttr({
       'data-field-name': 'network-service'
     }).find('button').as('Remove Network Service Button')),
@@ -116,17 +111,14 @@ module.exports = {
     await I.waitForElement(this.locators.footer)
     await I.seeElement(this.locators.createNewButton)
     let articles = await I.grabNumberOfVisibleElements(this.locators.articleRows)
-    // console.log(articles)
     await I.seeNumberOfVisibleElements(this.locators.articleRows, articles)
     let range = await I.grabTextFrom(this.locators.numberOfArticles)
     let number = range.substring(2, 4).trim()
-    // console.log(number)
     await I.seeNumbersAreEqual(articles.toString(), number)
   },
 
   async addArticle() {
     let total = await I.grabTextFrom(this.locators.totalArticles)
-    // console.log(total)
     I.click(this.locators.createNewButton)
     I.waitForFunction(() => document.readyState === 'complete')
     I.seeInCurrentUrl('/articles/new')
@@ -150,10 +142,8 @@ module.exports = {
     I.seeInCurrentUrl('/select/author')
     I.waitForText('Author')
     let numberAuthors = await I.grabNumberOfVisibleElements(this.locators.numOfAuthors)
-    // console.log(numberAuthors)
     I.seeNumbersAreEqual(numberAuthors, 5)
     let authorsNames = await I.grabTextFrom(this.locators.numOfAuthors)
-    // console.log('Author:' + authorsNames[2])
     I.click(locate('td').withText(authorsNames[2].trim()).as('Selected Author'))
     I.click(this.locators.addAuthor)
     I.waitForFunction(() => document.readyState === 'complete')
@@ -165,10 +155,8 @@ module.exports = {
     I.seeInCurrentUrl('/select/category')
     I.waitForText('Category')
     let numberCategories = await I.grabNumberOfVisibleElements(this.locators.numOfCategories)
-    // console.log(numberCategories)
     I.seeNumbersAreEqual(numberCategories, 5)
     let categoryNames = await I.grabTextFrom(this.locators.numOfCategories)
-    // console.log('Cat:' + categoryNames[3])
     I.click(locate('td').withText(categoryNames[3].trim()).as('Selected Category'))
     I.click(this.locators.addSelected)
     I.waitForFunction(() => document.readyState === 'complete')
@@ -181,10 +169,8 @@ module.exports = {
     I.seeInCurrentUrl('/select/sub-category')
     I.waitForText('Sub category')
     let numberSubCategories = await I.grabNumberOfVisibleElements(this.locators.numOfSubCategories)
-    // console.log(numberSubCategories)
     I.seeNumbersAreEqual(numberSubCategories, 5)
     let subCategoryNames = await I.grabTextFrom(this.locators.numOfSubCategories)
-    // console.log('Sub Cat:' + subCategoryNames[1])
     I.click(locate('td').withText(subCategoryNames[1].trim()).as('Selected Sub Category'))
     I.click(this.locators.addSelected)
     I.waitForFunction(() => document.readyState === 'complete')
@@ -196,11 +182,8 @@ module.exports = {
     I.waitForFunction(() => document.readyState === 'complete')
     I.seeInCurrentUrl('/select/web-service')
     let numberWebServices = await I.grabNumberOfVisibleElements(this.locators.numOfWebServices)
-    // console.log(numberWebServices)
     I.seeNumbersAreEqual(numberWebServices, 5)
     let webServicesNames = await I.grabTextFrom(this.locators.numOfWebServices)
-    // console.log('Web Service 1:' + webServicesNames[0])
-    // console.log('Web Service 2:' + webServicesNames[4])
     I.click(locate('td').withText(webServicesNames[0].trim()).as('First Selected Web Service'))
     I.click(locate('td').withText(webServicesNames[4].trim()).as('Second Selected Web Service'))
     I.click(this.locators.addSelected)
@@ -216,10 +199,8 @@ module.exports = {
     I.seeInCurrentUrl('/select/network-service')
     I.waitForText('Network service')
     let numberNetworkServices = await I.grabNumberOfVisibleElements(this.locators.numOfNetworkServices)
-    // console.log(numberNetworkServices)
     I.seeNumbersAreEqual(numberNetworkServices, 5)
     let networkServicesNames = await I.grabTextFrom(this.locators.numOfNetworkServices)
-    // console.log('Net Service:' + networkServicesNames[3])
     I.click(locate('td').withText(networkServicesNames[3].trim()).as('Selected Network Service'))
     I.click(this.locators.addSelected)
     I.waitForFunction(() => document.readyState === 'complete')
@@ -241,21 +222,16 @@ module.exports = {
 
     // Ensure total number of articles has increased
     let newTotal = await I.grabTextFrom(this.locators.totalArticles)
-    // console.log(newTotal)
     I.seeTotalHasIncreased(newTotal, total)
   },
 
   async editArticle() {
     let link = await I.grabAttributeFrom(this.locators.createdArticle, 'href')
-    // console.log(link)
     let start = link.indexOf('/articles/')
-    // console.log(start)
     let id = link.slice(start)
-    // console.log(id)
     I.click(this.locators.createdArticle)
     I.seeInCurrentUrl(id)
     let slug = await I.grabValueFrom(this.locators.slugField)
-    // console.log(slug)
     I.seeStringsAreEqual(slug, 'this-is-a-new-article')
     I.fillField(this.locators.titleField, '')
     I.fillField(this.locators.titleField, 'This Article Is Updated')
@@ -264,7 +240,6 @@ module.exports = {
     I.waitForFunction(() => document.readyState === 'complete')
     I.seeInCurrentUrl('/select/web-service')
     I.waitForText('Web service')
-    // I.waitForText('API')
     let webServicesNames = await I.grabTextFrom(this.locators.numOfWebServices)
     I.click(locate('td').withText(webServicesNames[4].trim()).as('Second Selected Web Service'))
     I.click(this.locators.addSelected)
@@ -285,7 +260,6 @@ module.exports = {
 
   async deleteArticle() {
     let total = await I.grabTextFrom(this.locators.totalArticles)
-    // console.log(total)
     I.click(this.locators.checkArticle)
     I.selectOption(this.locators.selectDelete, 'Delete')
     I.click(this.locators.applyButton)
@@ -294,7 +268,6 @@ module.exports = {
     I.waitForText('The document has been deleted', 2)
     I.dontSee('This Article Is Updated')
     let newTotal = await I.grabTextFrom(this.locators.totalArticles)
-    // console.log(newTotal)
     I.seeTotalHasDecreased(newTotal, total)
   },
 
@@ -306,11 +279,8 @@ module.exports = {
 
   async editSignOut() {
     let link = await I.grabAttributeFrom(this.locators.signOutArticle, 'href')
-    // console.log(link)
     let start = link.indexOf('/articles/')
-    // console.log(start)
     let id = link.slice(start)
-    // console.log(id)
     I.click(this.locators.signOutArticle)
     I.seeInCurrentUrl(id)
   },
@@ -417,21 +387,19 @@ module.exports = {
     await I.waitForText('The document has been created', 2)
 
     let bold = await I.grabHTMLFrom(this.locators.boldText)
-    // console.log(bold)
+    
     let italic = await I.grabHTMLFrom(this.locators.italicText)
-    // console.log(italic)
+    
     let strike = await I.grabHTMLFrom(this.locators.strikeText)
-    // console.log(strike)
+    
     let quote = await I.grabHTMLFrom(this.locators.quoteText)
-    // console.log(quote)
+    
     let link = await I.grabHTMLFrom(this.locators.linkText)
-    // console.log(link)
+    
     let olist = await I.grabHTMLFrom(this.locators.orderedList)
-    // console.log(olist)
+    
     let ulist = await I.grabHTMLFrom(this.locators.unorderedList)
-    // console.log(ulist)
-    // let text = await I.grabHTMLFrom(this.locators.textArea)
-    // console.log(text)
+
     await I.seeStringContains(bold, 'Bold')
     await I.seeStringContains(italic, 'Italic')
     await I.seeStringContains(strike, 'Strike-through')

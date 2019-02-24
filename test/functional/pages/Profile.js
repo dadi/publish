@@ -55,7 +55,6 @@ module.exports = {
     I.click(this.locators.personalDetailsLink)
     I.seeInCurrentUrl('/profile/personal-details')
     I.see('First name')
-    // I.wait(2)
     await I.fillField(this.locators.firstNameField, first)
     I.see('Last name')
     await I.fillField(this.locators.lastNameField, '')
@@ -63,7 +62,6 @@ module.exports = {
     I.click(this.locators.saveSettings)
     I.waitForText('Your profile has been updated')
     I.waitForFunction(() => document.readyState === 'complete')
-    // I.wait(4)
     I.click(this.locators.accountMenuOpen)
     I.see(`${first} ${last}`)
     I.click(this.locators.accountMenuClose)
@@ -103,7 +101,6 @@ module.exports = {
     await I.fillField(this.locators.confirmNewPasswordField, confirmNewPassword)
     I.click(this.locators.saveSettings)
     I.waitForText('Your profile has been updated')
-    // I.wait(4)
     I.click(this.locators.accountMenuOpen)
     I.retry(3).click(this.locators.signOutButton)
   },
