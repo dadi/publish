@@ -8,7 +8,7 @@ module.exports = {
       .start()
       .then(() => {
         // Bootstrap the database
-        new Bootstrap()
+        return new Bootstrap()
           .run()
           .then(() => {
             return publish.run()
