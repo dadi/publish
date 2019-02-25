@@ -1,9 +1,7 @@
 Feature('Reference Field Test Page - @smoke')
 
 BeforeSuite(async (articlePage, fieldPage, loginPage) => {
-  await articlePage.deleteAuthor('Joe Bloggs')
   await fieldPage.deleteAllReferences()
-  await articlePage.insertAuthor('Joe Bloggs', 'Author')
   await loginPage.deleteUser('reference')
   await loginPage.addUser('reference', '123456', ['collection:cloud_team', 'collection:cloud_field-test-reference'])
   await loginPage.createSession('reference', '123456', '/field-testing/field-test-reference')

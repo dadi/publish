@@ -275,11 +275,8 @@ module.exports = {
     referenceReqError: (locate('div').withAttr({
       'data-field-name': 'referenceRequired'
     }).find('label[class*="container-error"]').as('Reference required error box')),
-    checkAuthor: (locate('td').withText('Joe Bloggs').as('Select The Author')),
+    numOfAuthors: (locate('//table/tbody/tr/td[2]').as('Number of Authors')),
     addAuthor: (locate('button').withText('Add selected document').as('Add The Author')),
-    authorAdded: (locate('div').withAttr({
-      'data-field-name': 'referenceRequired'
-    }).find('a').withText('Joe Bloggs').as('Author Name')),
     referenceLink: (locate('a[class*="FieldReference__value-link"]').as('Added reference')),
     mediaTitle: (locate('div').withAttr({
       'data-field-name': 'title'
@@ -426,18 +423,15 @@ module.exports = {
     await I.click(this.locators.saveContinue)
     await I.waitForVisible(this.locators.dateReqError)
     var formattedDate = moment(new Date()).format('YYYY/MM/DD 09:00')
-    // console.log(formattedDate)
     await I.click(this.locators.datePast)
     await I.fillField(this.locators.dateReq, formattedDate)
     var futureDateErr = moment(new Date(), 'YYYY/MM/DD').subtract(_.random(1, 7), 'days')
     futureDateErr = futureDateErr.format('YYYY/MM/DD 09:00')
-    // console.log(futureDateErr)
     await I.fillField(this.locators.dateFuture, futureDateErr)
     await I.click(this.locators.datePast)
     await I.waitForVisible(this.locators.dateFutureError)
     var pastDateErr = moment(new Date(), 'YYYY/MM/DD').add(_.random(1, 7), 'days')
     pastDateErr = pastDateErr.format('YYYY/MM/DD 09:00')
-    // console.log(pastDateErr)
     await I.fillField(this.locators.datePast, pastDateErr)
     await I.click(this.locators.dateAfter)
     await I.waitForVisible(this.locators.datePastError)
@@ -452,12 +446,10 @@ module.exports = {
     await I.clearField(this.locators.dateFuture)
     var futureDate = moment(new Date(), 'YYYY/MM/DD').add(_.random(1, 60), 'days')
     futureDate = futureDate.format('YYYY/MM/DD 09:00')
-    // console.log(futureDate)
     await I.fillField(this.locators.dateFuture, futureDate)
     await I.clearField(this.locators.datePast)
     var pastDate = moment(new Date(), 'YYYY/MM/DD').subtract(_.random(1, 180), 'days')
     pastDate = pastDate.format('YYYY/MM/DD 09:00')
-    // console.log(pastDate)
     await I.fillField(this.locators.datePast, pastDate)
     await I.clearField(this.locators.dateAfter)
     await I.fillField(this.locators.dateAfter, '2018/01/02 23:00')
@@ -564,14 +556,9 @@ module.exports = {
     await I.fillField(this.locators.stringMulti, 'This is a')
     await I.pressKey('Enter')
     await I.appendField(this.locators.stringMulti, 'multi line string')
-    // let attr1 = await I.grabCssPropertyFrom(this.locators.stringHeightContent, 'style')
-    // console.log(attr1)
     await I.seeAttributesOnElements(this.locators.stringHeightContent, {
       'rows': 1
     })
-    // let attr = await I.grabAttributeFrom(this.locators.stringHeightContent, 'style')
-    // console.log(attr)
-    // await I.seeAttributesOnElements(this.locators.stringHeightContent, {'style': 'height: 23px;'})
     await I.seeAttributesOnElements(this.locators.stringHeightFull, {
       'rows': 10
     })
@@ -594,7 +581,6 @@ module.exports = {
     await I.waitForText('The document has been created', 2)
     await I.dontSeeInCurrentUrl('/new')
     let updatedSlug = await I.grabValueFrom(this.locators.stringAutoGen)
-    // console.log(updatedSlug)
     await I.seeStringsAreEqual(updatedSlug, 'this-is-a-required-string')
     await I.see('Option three', this.locators.stringOptions)
     await I.click(this.locators.saveMenu)
@@ -629,17 +615,18 @@ module.exports = {
     I.waitForFunction(() => document.readyState === 'complete')
     await I.seeInCurrentUrl('/select/referenceRequired')
     I.waitForText('Reference')
-    await I.click(this.locators.checkAuthor)
-    await I.click(this.locators.addAuthor)
+    let numberAuthors = await I.grabNumberOfVisibleElements(this.locators.numOfAuthors)
+    I.seeNumbersAreEqual(numberAuthors, 5)
+    let authorsNames = await I.grabTextFrom(this.locators.numOfAuthors)
+    I.click(locate('td').withText(authorsNames[2].trim()).as('Selected Author'))
+    I.click(this.locators.addAuthor)
     I.waitForFunction(() => document.readyState === 'complete')
-    await I.see('Joe Bloggs')
-    let link = await I.grabAttributeFrom(this.locators.authorAdded, 'href')
-    // console.log(link)
+    I.see(authorsNames[2].trim())
+    let link = await I.grabAttributeFrom(locate('a').withText(authorsNames[2].trim()), 'href')
     await I.click(this.locators.saveMenu)
     await I.click(this.locators.saveGoBack)
-    await I.waitForText('Joe Bloggs')
+    await I.waitForText(authorsNames[2].trim())
     let newLink = await I.grabAttributeFrom(this.locators.referenceLink, 'href')
-    // console.log(newLink)
     await I.seeStringsAreEqual(link, newLink)
   },
 

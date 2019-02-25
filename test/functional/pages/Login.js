@@ -64,11 +64,7 @@ module.exports = {
     I.resizeWindow(1200, 650)
     I.waitForText('Welcome,')
     I.waitForVisible(this.locators.navigationMenu, 4)
-    // I.see('Content')
-    // I.see('Taxonomy')
     I.see('Articles')
-    // I.see('Network services')
-    // I.see('Web services')
   },
 
   async validateSignOut() {
@@ -90,7 +86,6 @@ module.exports = {
     let x = JSON.parse(data)
     let token = x.accessToken
     let value = Date.now() + 1800 * 1000
-    // console.log(token)
     await I.amOnPage(url)
     await I.setCookie({
       name: 'accessToken',

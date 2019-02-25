@@ -1,10 +1,6 @@
 Feature('Sign Out From Article - @smoke')
 
 BeforeSuite(async (articlePage, loginPage) => {
-  await articlePage.deleteDocument('Test body one')
-  await articlePage.deleteDocument('Test body two')
-  await articlePage.insertDocument('Test body one', 'Test excerpt one', 'Test Title One')
-  await articlePage.insertDocument('Test body two', 'Test excerpt two', 'Test Title Two')
   await loginPage.deleteUser('syst_five')
   await loginPage.addUser('syst_five', '123456', ['collection:cloud_articles',
     'collection:cloud_team',

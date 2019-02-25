@@ -47,14 +47,12 @@ module.exports = {
     await I.seeElement(this.locators.dropArea)
     I.wait(3)
     let images = await I.grabNumberOfVisibleElements(this.locators.images)
-    // console.log(images)
     await I.seeNumberOfVisibleElements(this.locators.images, images)
     await I.seeTotalGreaterThanZero(images)
     await I.attachFile(this.locators.fileUpload, 'test/functional/images/Stone.jpeg')
     await I.waitForFunction(() => document.readyState === 'complete')
     I.wait(2)
     let newImages = await I.grabNumberOfVisibleElements(this.locators.images)
-    // console.log(newImages)
     I.seeTotalHasIncreased(newImages, images)
     await I.see('Stone.jpeg')
   },
@@ -68,7 +66,6 @@ module.exports = {
     I.wait(2)
     await I.see('Stone.jpeg')
     let link = await I.grabAttributeFrom(this.locators.firstImage, 'href')
-    // console.log("Link 1" + link[0])
     await I.click(this.locators.stoneImage)
     await I.waitForFunction(() => document.readyState === 'complete')
     await I.seeInCurrentUrl(link[0])
@@ -100,7 +97,6 @@ module.exports = {
     await I.seeElement(this.locators.dropArea)
     I.wait(2)
     let total = await I.grabTextFrom(this.locators.totalImages)
-    // console.log(total)
     await I.see('Stone.jpeg')
     I.click(this.locators.checkImage)
     I.selectOption(this.locators.selectDelete, 'Delete (1)')
@@ -111,7 +107,6 @@ module.exports = {
     I.wait(2)
     await I.dontSee('Stone.jpeg')
     let newTotal = await I.grabTextFrom(this.locators.totalImages)
-    // console.log(newTotal)
     I.seeTotalHasDecreased(newTotal, total)
   },
 
