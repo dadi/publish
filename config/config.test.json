@@ -1,7 +1,6 @@
 {
   "app": {
-    "name": "DADI Publish",
-    "publisher": "Publisher Name"
+    "name": "DADI Publish"
   },
   "server": {
     "host": "0.0.0.0",

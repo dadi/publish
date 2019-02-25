@@ -261,7 +261,7 @@ module.exports = {
   async deleteArticle() {
     let total = await I.grabTextFrom(this.locators.totalArticles)
     I.click(this.locators.checkArticle)
-    I.selectOption(this.locators.selectDelete, 'Delete')
+    I.selectOption(this.locators.selectDelete, 'Delete (1)')
     I.click(this.locators.applyButton)
     I.waitForText('Are you sure you want to delete the selected document?')
     I.click(this.locators.deleteButton)
