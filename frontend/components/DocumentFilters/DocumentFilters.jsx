@@ -6,6 +6,7 @@ import {getFieldType} from 'lib/fields'
 import {Keyboard} from 'lib/keyboard'
 import Button from 'components/Button/Button'
 import DropdownNative from 'components/DropdownNative/DropdownNative'
+import FieldFilter from 'containers/FieldFilter/FieldFilter'
 import proptypes from 'proptypes'
 import Style from 'lib/Style'
 import styles from './DocumentFilters.css'
@@ -54,7 +55,7 @@ export default class DocumentFilters extends Component {
 
     this.state = {...this.defaultState}
 
-    this.outsideTooltipHandler = this.handleClick.bind(this, false)    
+    this.outsideTooltipHandler = this.handleClick.bind(this)
   }
 
   componentDidMount() {
@@ -123,10 +124,8 @@ export default class DocumentFilters extends Component {
     return fieldSchema.label || fieldName
   }
 
-  handleClick(isInsideTooltip, event) {
-    event.stopPropagation()
-
-    if (!isInsideTooltip) {
+  handleClick(event) {
+    if (!this.rootEl.contains(event.target)) {
       this.setState({
         selectedFilterField: null,
         selectedFilterIndex: null,
@@ -462,7 +461,7 @@ export default class DocumentFilters extends Component {
     field = field || Object.keys(filterableFields)[0]
 
     let {
-      filter: FilterComponent,
+      filter: filterComponent,
       operators = {}
     } = this.getFieldComponent(field) || {}
     let valueIsEmpty = value === null || value === undefined || value === ''
@@ -478,8 +477,8 @@ export default class DocumentFilters extends Component {
     return (
       <form
         class={tooltipStyle.getClasses()}
-        onClick={this.handleClick.bind(this, true)}
         onSubmit={this.handleSelectedFilterUpdate.bind(this, field, selectedOperator)}
+        ref={el => this.rootEl = el}
       >
         <div class={styles['tooltip-section']}>
           <h3
@@ -514,15 +513,13 @@ export default class DocumentFilters extends Component {
             class={styles['tooltip-heading']}
           >Value</h3>
 
-          {FilterComponent &&
-            <FilterComponent
-              onUpdate={value => this.setState({
-                selectedFilterValue: value
-              })}
-              stylesTextInput={styles['tooltip-input']}
-              value={value}
-            />
-          }
+          <FieldFilter
+            component={filterComponent}
+            onUpdate={value => this.setState({
+              selectedFilterValue: value
+            })}
+            value={value}
+          />
         </div>
 
         <Button

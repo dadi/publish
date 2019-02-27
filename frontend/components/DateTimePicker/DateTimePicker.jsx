@@ -76,6 +76,49 @@ export default class DateTimePicker extends Component {
     }
   }
 
+  getInternalDate(overrides = {}, monthOffset = this.state.monthOffset) {
+    const date = this.props.date || new Date()
+    const dateTime = new DateTime(date)
+
+    if (!dateTime.isValid()) {
+      return null
+    }
+
+    const {year, month, day, hours, minutes} = overrides
+
+    return new Date(
+      year !== undefined ? year : date.getFullYear(),
+      month !== undefined ? month : date.getMonth() + monthOffset,
+      day !== undefined ? day : date.getDate(),
+      hours !== undefined ? hours : date.getHours(),
+      minutes !== undefined ? minutes : date.getMinutes()
+    )
+  }
+
+  handleDatePick(date) {
+    const {onChange} = this.props
+
+    if (typeof onChange === 'function') {
+      onChange.call(this, date)
+    }
+  }
+
+  handleMonthChange(change) {
+    const {monthOffset} = this.state
+
+    this.setState({
+      monthOffset: monthOffset + change
+    })
+  }
+
+  handleTimeToggle() {
+    const {pickingTime} = this.state
+
+    this.setState({
+      pickingTime: !pickingTime
+    })
+  }
+
   render() {
     const {className} = this.props
     const value = this.props.date
@@ -85,30 +128,23 @@ export default class DateTimePicker extends Component {
     } = this.state
     const containerStyle = new Style(styles, 'container').addResolved(className)
 
-    const initialDate = value || new Date()
     const date = this.getInternalDate()
     const dateTime = new DateTime(date)
     
     const firstDayOfMonth = new Date(date.getFullYear(), date.getMonth(), 1)
     const lastDayOfMonth = new Date(date.getFullYear(), date.getMonth() + 1, 0)
     const daysFromPreviousMonth = firstDayOfMonth.getDay()
-    const lastDayFromPreviousMonth = new Date(date.getFullYear(), date.getMonth(), 0)
     const numWeeks = Math.ceil((lastDayOfMonth.getDate() - firstDayOfMonth.getDate() + 1 + daysFromPreviousMonth) / 7)
 
-    let day = 1
     let rows = []
 
     for (let week = 0; week < numWeeks; week++) {
       let days = []
 
       for (let weekDay = 1; weekDay <= 7; weekDay++) {
-        if (week == 0 && weekDay <= daysFromPreviousMonth) {
-          days.push(this.renderDay(lastDayFromPreviousMonth.getDate() - daysFromPreviousMonth + weekDay, -1))
-        } else if (day > lastDayOfMonth.getDate()) {
-          days.push(this.renderDay(day++ - lastDayFromPreviousMonth.getDate() + 1, 1))
-        } else {
-          days.push(this.renderDay(day++))
-        }
+        days.push(
+          this.renderDay(date, (week * 7) + weekDay - daysFromPreviousMonth)
+        )
       }
 
       rows.push(
@@ -162,57 +198,18 @@ export default class DateTimePicker extends Component {
     )
   }
 
-  getInternalDate(overrides = {}, monthOffset = this.state.monthOffset) {
-    const date = this.props.date || new Date()
-    const dateTime = new DateTime(date)
+  renderDay(date, dayOffset) {
+    const {date: valueDate} = this.props
+    const currentMonth = date.getMonth()
+    const newDate = new Date(date.getTime())
 
-    if (!dateTime.isValid()) {
-      return null
-    }
+    newDate.setDate(dayOffset)
 
-    const {year, month, day, hours, minutes} = overrides
-
-    return new Date(
-      year !== undefined ? year : date.getFullYear(),
-      month !== undefined ? month : date.getMonth() + monthOffset,
-      day !== undefined ? day : date.getDate(),
-      hours !== undefined ? hours : date.getHours(),
-      minutes !== undefined ? minutes : date.getMinutes()
-    )
-  }
-
-  handleDatePick(date) {
-    const {onChange} = this.props
-
-    if (typeof onChange === 'function') {
-      onChange.call(this, date)
-    }
-  }
-
-  handleMonthChange(change) {
-    const {monthOffset} = this.state
-
-    this.setState({
-      monthOffset: monthOffset + change
-    })
-  }
-
-  handleTimeToggle() {
-    const {pickingTime} = this.state
-
-    this.setState({
-      pickingTime: !pickingTime
-    })
-  }
-
-  renderDay(day, monthOffset) {
-    const valueDate = this.props.date
-    const date = this.getInternalDate({day}, monthOffset)
-    const dateTime = new DateTime(date)
+    const dateTime = new DateTime(newDate)
+    const day = newDate.getDate()
     const padedDay = day >= 10 ? day : `0${day}`
-
-    const fadedDayStyle = new Style(styles, 'calendar-day')
-      .addIf('calendar-day-faded', monthOffset !== undefined)
+    const dayStyle = new Style(styles, 'calendar-day')
+      .addIf('calendar-day-faded', newDate.getMonth() !== currentMonth)
       .addIf('calendar-day-current', dateTime.isSameDayAs(new Date()))
       .addIf('calendar-day-active', dateTime.isSameDayAs(valueDate))
 
@@ -221,7 +218,7 @@ export default class DateTimePicker extends Component {
         <button
           type="button"
           onClick={this.handleDatePick.bind(this, date)}
-          class={fadedDayStyle.getClasses()}
+          class={dayStyle.getClasses()}
         >{padedDay}</button>
       </td>
     )
