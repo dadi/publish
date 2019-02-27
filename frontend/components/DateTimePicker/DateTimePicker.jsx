@@ -217,7 +217,7 @@ export default class DateTimePicker extends Component {
       <td>
         <button
           type="button"
-          onClick={this.handleDatePick.bind(this, date)}
+          onClick={this.handleDatePick.bind(this, newDate)}
           class={dayStyle.getClasses()}
         >{padedDay}</button>
       </td>
