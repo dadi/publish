@@ -682,7 +682,7 @@ export default class RichEditor extends Component {
           {inTextMode && (
             <TextInput
               className={editorText.getClasses()}
-              heightType="content"
+              heightType={inFullscreenMode && "content"}
               onBlur={this.handleEvent.bind(this, 'onBlur')}
               onFocus={this.handleEvent.bind(this, 'onFocus')}
               onChange={event => this.handleChange(event.target.value)}

@@ -135,6 +135,15 @@ export default class TextInput extends Component {
     this.adjustHeightIfNeeded()
   }
 
+  componentDidUpdate(oldProps) {
+    const {oldHeightType} = oldProps
+    const {heightType} = this.props
+
+    if (oldHeightType !== heightType && heightType === 'content') {
+      this.adjustHeightIfNeeded()
+    }
+  }
+
   componentWillUnmount() {
     // This is a *temporary* measure to stop Preact from recycling the DOM
     // nodes of this component, which has caused issues with username/passwords
