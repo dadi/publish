@@ -4,8 +4,8 @@ import filterEdit from './FieldDateTimeFilterEdit'
 import filterList from './FieldDateTimeFilterList'
 
 const filterOperators = {
-  $lt: 'before',
-  $gt: 'after'
+  $lt: 'is before',
+  $gt: 'is after'
 }
 
 export {edit, list, filterEdit, filterList, filterOperators}
