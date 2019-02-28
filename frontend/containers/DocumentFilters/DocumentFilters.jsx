@@ -1,12 +1,13 @@
 'use strict'
 
+import * as appActions from 'actions/appActions'
 import * as fieldComponents from 'lib/field-components'
+import {connectHelper} from 'lib/util'
 import {h, Component} from 'preact'
 import {getFieldType} from 'lib/fields'
-import {Keyboard} from 'lib/keyboard'
+import {bindActionCreators} from 'redux'
 import Button from 'components/Button/Button'
 import DropdownNative from 'components/DropdownNative/DropdownNative'
-import FieldFilter from 'containers/FieldFilter/FieldFilter'
 import proptypes from 'proptypes'
 import Style from 'lib/Style'
 import styles from './DocumentFilters.css'
@@ -15,15 +16,10 @@ import TextInput from 'components/TextInput/TextInput'
 const DEFAULT_OPERATOR_KEYWORD = '$eq'
 const DEFAULT_OPERATOR_NAME = 'is'
 
-const OPERATORS = {
-  '$eq': 'is',
-  '$regex': 'contains'
-}
-
 /**
  * A list of document filters.
  */
-export default class DocumentFilters extends Component {
+class DocumentFilters extends Component {
   static propTypes = {
     /**
      * The collection to operate on.
@@ -83,7 +79,8 @@ export default class DocumentFilters extends Component {
     let filtersArray = Object.keys(filtersObject).map(field => {
       const fieldComponent = this.getFieldComponent(field) || {}
       const {
-        operators: fieldOperators = {}
+        filterList: FilterList,
+        filterOperators: fieldOperators = {}
       } = fieldComponent
       let operator = null
       let value = filtersObject[field]
@@ -97,6 +94,7 @@ export default class DocumentFilters extends Component {
 
       return {
         field,
+        FilterList,
         operator,
         operatorFriendly: fieldOperators[operator] || DEFAULT_OPERATOR_NAME,
         value
@@ -125,7 +123,7 @@ export default class DocumentFilters extends Component {
   }
 
   handleClick(event) {
-    if (!this.rootEl.contains(event.target)) {
+    if (this.rootEl && !this.rootEl.contains(event.target)) {
       this.setState({
         selectedFilterField: null,
         selectedFilterIndex: null,
@@ -394,17 +392,37 @@ export default class DocumentFilters extends Component {
   renderFilter(filter, index) {
     const {
       field,
+      FilterList,
       operator,
       operatorFriendly,
       value
     } = filter
-    const {collection} = this.props
+    const {state} = this.props
     const {
       selectedFilterField,
       selectedFilterIndex,
       selectedFilterOperator,
       selectedFilterValue
     } = this.state
+    const fieldTypeHasFilterListComponent = typeof FilterList === 'function'
+    const nodeField = (
+      <span class={styles['filter-field']}>
+        {this.getFieldName(field)}
+      </span>
+    )
+    const nodeOperator = (
+      <span class={styles['filter-operator']}>
+        {operatorFriendly || operator || DEFAULT_OPERATOR_NAME}
+      </span>
+    )
+    const nodeValue = fieldTypeHasFilterListComponent
+      ? <FilterList
+          config={state.app.config}
+          nodeField={nodeField}
+          nodeOperator={nodeOperator}
+          value={value}
+        />
+      : null
 
     return (
       <div class={styles['filter-wrapper']}>
@@ -412,9 +430,10 @@ export default class DocumentFilters extends Component {
           class={styles.filter}
           onClick={this.handleFilterSelect.bind(this, index)}
         >
-          <span class={styles['filter-field']}>{this.getFieldName(field)}</span>
-          <span class={styles['filter-operator']}>{operatorFriendly || operator || DEFAULT_OPERATOR_NAME}</span>
-          <span class={styles['filter-value']}>‘{value.toString()}’</span>
+          {!fieldTypeHasFilterListComponent && nodeField}
+          {!fieldTypeHasFilterListComponent && nodeOperator}
+          {!fieldTypeHasFilterListComponent && `'${value.toString()}'`}
+          {fieldTypeHasFilterListComponent && nodeValue}
 
           <button
             class={styles['filter-close']}
@@ -438,7 +457,7 @@ export default class DocumentFilters extends Component {
     operator,
     value
   } = {}) {
-    const {collection, filters} = this.props
+    const {collection, filters, state} = this.props
 
     // Finding fields that are filterable (i.e. their component exports a
     // `filter` component) and don't already have a filter applied. The
@@ -448,7 +467,7 @@ export default class DocumentFilters extends Component {
       let fieldComponent = this.getFieldComponent(slug)
 
       if (
-        fieldComponent.filter &&
+        fieldComponent.filterEdit &&
         (field === slug || !filters || filters[slug] === undefined)
       ) {
         result[slug] = this.getFieldName(slug)  
@@ -460,11 +479,11 @@ export default class DocumentFilters extends Component {
     // Applying defaults.
     field = field || Object.keys(filterableFields)[0]
 
-    let {
-      filter: filterComponent,
-      operators = {}
+    const {
+      filterEdit: FilterEditComponent,
+      filterOperators: operators = {}
     } = this.getFieldComponent(field) || {}
-    let valueIsEmpty = value === null || value === undefined || value === ''
+    const valueIsEmpty = value === null || value === undefined || value === ''
 
     const tooltipStyle = new Style(styles, 'tooltip')
       .addIf('tooltip-right', !Boolean(isUpdate))
@@ -513,8 +532,8 @@ export default class DocumentFilters extends Component {
             class={styles['tooltip-heading']}
           >Value</h3>
 
-          <FieldFilter
-            component={filterComponent}
+          <FilterEditComponent
+            config={state.app.config}
             onUpdate={value => this.setState({
               selectedFilterValue: value
             })}
@@ -532,3 +551,9 @@ export default class DocumentFilters extends Component {
     ) 
   }
 }
+
+export default connectHelper(
+  state => ({
+    app: state.app
+  })
+)(DocumentFilters)
