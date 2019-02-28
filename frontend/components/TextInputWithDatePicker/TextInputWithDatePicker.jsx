@@ -115,11 +115,13 @@ export default class TextInputWithDatePicker extends Component {
 
     if (event.target.value.length > 0) {
       if (newDate.isValid()) {
-        newValue = newDate.getDate().toISOString()
+        newValue = newDate.getDate().getTime()
       } else {
         newValue = value
       }
     }
+
+    this.propagateChange(newValue)
 
     if (typeof onChange === 'function') {
       onChange.call(this, newValue)
@@ -145,11 +147,7 @@ export default class TextInputWithDatePicker extends Component {
   }
 
   handlePickerChange(newDate) {
-    const {onChange, schema} = this.props
-
-    if (typeof onChange === 'function') {
-      onChange.call(this, newDate.toISOString())
-    }
+    this.propagateChange(newDate)
 
     setTimeout(() => {
       this.setState({
@@ -168,6 +166,18 @@ export default class TextInputWithDatePicker extends Component {
       this.setState({
         pickerVisible: false
       })
+    }
+  }
+
+  propagateChange(value) {
+    const {format, onChange} = this.props
+    const newDate = new DateTime(value, format)
+    const sanitisedValue = newDate.isValid()
+      ? newDate.getDate().getTime()
+      : null
+
+    if (typeof onChange === 'function') {
+      onChange.call(this, sanitisedValue)
     }
   }
 

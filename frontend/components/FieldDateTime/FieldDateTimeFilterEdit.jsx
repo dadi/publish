@@ -27,21 +27,10 @@ export default class FieldDateTimeFilter extends Component {
     value: proptypes.object
   }
 
-  handleChange(elementId, data) {
-    const {config = {}, onUpdate, index} = this.props
-
-    let newValue = new DateTime(data, config.formats.date.short)
-
-    if (data.length > 0 && newValue.isValid()) {
-      newValue = newValue.getDate().toISOString()
-    }
-
-    onUpdate(newValue)
-  }
-
   render() {
     const {
       config = {},
+      onUpdate,
       value
     } = this.props
     const formats = config.formats || {}
@@ -53,8 +42,8 @@ export default class FieldDateTimeFilter extends Component {
         containerClassName={styles['filter-container']}
         format={format}
         inputClassName={styles['filter-input']}
-        onChange={this.handleChange.bind(this, 'value')}
-        onKeyUp={this.handleChange.bind(this, 'value')}
+        onChange={onUpdate}
+        onKeyUp={onUpdate}
         placeholder="Search value"
         type="date"
         value={value}
