@@ -4,6 +4,21 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [2.2.0] (2019-02-28)
+
+### Changed
+
+* [#666](https://github.com/dadi/publish/pull/666): rename label of bulk actions dropdown to "Bulk actions"
+* [#667](https://github.com/dadi/publish/pull/667): make sidebar scroll alongside the main column in the document edit view
+
+### Fixed
+
+* [#663](https://github.com/dadi/publish/issues/663): fix issues with validation of Reference fields
+* [#664](https://github.com/dadi/publish/issues/664): fix validation of newly-uploaded Media objects
+* [#668](https://github.com/dadi/publish/issues/668): fix rendering of DateTime fields when adding filters
+* [#669](https://github.com/dadi/publish/pull/669): fix issue with the wrong date being selected in DateTime picker
+* [#670](https://github.com/dadi/publish/pull/670): fix issue with the scroll position of the RichEdit component jumping around when in text mode
+
 ## [2.1.0] (2019-01-29)
 
 ### Added

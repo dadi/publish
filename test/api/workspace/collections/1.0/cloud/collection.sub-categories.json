@@ -1,0 +1,93 @@
+{
+  "fields": {
+    "name": {
+      "type": "String",
+      "required": true,
+      "label": "Name",
+      "publish": {
+        "section": "Details",
+        "placement": "main",
+        "display": {
+          "edit": true,
+          "list": true
+        }
+      }
+    },
+    "desc": {
+      "type": "String",
+      "required": false,
+      "label": "Description",
+      "publish": {
+        "section": "Details",
+        "placement": "main",
+        "multiline": true,
+        "display": {
+          "edit": true,
+          "list": false
+        }
+      }
+    },
+    "slug": {
+      "type": "String",
+      "required": false,
+      "label": "Slug",
+      "publish": {
+        "section": "Details",
+        "placement": "sidebar",
+        "display": {
+          "edit": false,
+          "list": false
+        }
+      }
+    },
+    "order": {
+      "type": "Number",
+      "required": false,
+      "label": "Order",
+      "publish": {
+        "section": "Details",
+        "placement": "sidebar",
+        "display": {
+          "edit": true,
+          "list": false
+        }
+      }
+    }
+  },
+  "settings": {
+    "displayName": "Sub categories",
+    "cache": false,
+    "count": 40,
+    "sort": "order",
+    "compose": true,
+    "index": [
+      {
+        "keys": {
+          "order": 1
+        }
+      }
+    ],
+    "storeRevisions": false,
+    "description": "",
+    "hooks": {
+      "beforeCreate": [
+        {
+          "hook": "slugify",
+          "options": {
+            "from": "name",
+            "to": "slug"
+          }
+        }
+      ],
+      "beforeUpdate": [
+        {
+          "hook": "slugify",
+          "options": {
+            "from": "name",
+            "to": "slug"
+          }
+        }
+      ]
+    }
+  }
+}

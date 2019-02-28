@@ -1,0 +1,88 @@
+{
+  "fields": {
+    "priceBTC": {
+      "type": "Number",
+      "required": true
+    },
+    "priceETH": {
+      "type": "Number",
+      "required": true
+    },
+    "priceUSD": {
+      "type": "Number",
+      "required": true
+    },
+    "marketCapBTC": {
+      "type": "Number",
+      "required": true
+    },
+    "marketCapETH": {
+      "type": "Number",
+      "required": true
+    },
+    "marketCapUSD": {
+      "type": "Number",
+      "required": true
+    },
+    "volume24HourBTC": {
+      "type": "Number",
+      "required": true
+    },
+    "volume24HourETH": {
+      "type": "Number",
+      "required": true
+    },
+    "volume24HourUSD": {
+      "type": "Number",
+      "required": true
+    },
+    "supplyAvailable": {
+      "type": "Number",
+      "required": true
+    },
+    "supplyTotal": {
+      "type": "Number",
+      "required": true
+    },
+    "updatedAt": {
+      "type": "Number",
+      "required": true
+    }
+  },
+  "settings": {
+    "publish": {
+      "hidden": true
+    },
+    "cache": false,
+    "fieldLimiters": {
+      "_apiVersion": 0,
+      "_createdAt": 0,
+      "_history": 0,
+      "_version": 0
+    },
+    "hooks": {
+      "beforeCreate": [
+        {
+          "hook": "rejectDuplicateTokenData"
+        }
+      ],
+      "afterCreate": [
+        {
+          "hook": "removeOldTokenData"
+        }
+      ]
+    },
+    "index": [
+      {
+        "keys": {
+          "updatedAt": 1
+        }
+      },
+      {
+        "keys": {
+          "updatedAt": -1
+        }
+      }
+    ]
+  }
+}

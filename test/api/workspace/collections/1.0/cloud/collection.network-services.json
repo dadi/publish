@@ -1,0 +1,248 @@
+{
+  "fields": {
+    "name": {
+      "type": "String",
+      "required": true,
+      "label": "Name",
+      "publish": {
+        "section": "Details",
+        "placement": "main",
+        "display": {
+          "edit": true,
+          "list": true
+        }
+      }
+    },
+    "slug": {
+      "type": "String",
+      "required": false,
+      "label": "Slug",
+      "publish": {
+        "display": {
+          "edit": false,
+          "list": false
+        }
+      }
+    },
+    "overview": {
+      "type": "String",
+      "required": true,
+      "label": "Overview",
+      "publish": {
+        "section": "Details",
+        "placement": "main",
+        "multiline": true,
+        "display": {
+          "edit": true,
+          "list": true
+        }
+      }
+    },
+    "description": {
+      "type": "String",
+      "required": false,
+      "label": "Description",
+      "publish": {
+        "section": "Details",
+        "placement": "main",
+        "multiline": true,
+        "display": {
+          "edit": true,
+          "list": false
+        }
+      }
+    },
+    "headlineFeatures": {
+      "type": "String",
+      "required": false,
+      "label": "headlineFeatures",
+      "publish": {
+        "section": "Details",
+        "placement": "main",
+        "multiline": true,
+        "display": {
+          "edit": true,
+          "list": false
+        }
+      }
+    },
+    "features": {
+      "type": "String",
+      "required": false,
+      "label": "Features",
+      "publish": {
+        "section": "Details",
+        "placement": "main",
+        "multiline": true,
+        "display": {
+          "edit": true,
+          "list": false
+        }
+      }
+    },
+    "icon": {
+      "type": "Reference",
+      "label": "Icon",
+      "required": false,
+      "settings": {
+        "collection": "mediaStore"
+      },
+      "publish": {
+        "section": "Details",
+        "subType": "Image",
+        "placement": "sidebar",
+        "display": {
+          "list": false,
+          "edit": true
+        }
+      }
+    },
+    "color": {
+      "type": "String",
+      "required": false,
+      "label": "Colour",
+      "publish": {
+        "section": "Details",
+        "placement": "sidebar",
+        "display": {
+          "edit": true,
+          "list": false
+        }
+      }
+    },
+    "npm": {
+      "type": "String",
+      "required": false,
+      "label": "NPM",
+      "publish": {
+        "section": "Details",
+        "placement": "sidebar",
+        "display": {
+          "edit": true,
+          "list": false
+        }
+      }
+    },
+    "github": {
+      "type": "String",
+      "required": false,
+      "label": "Github",
+      "publish": {
+        "section": "Details",
+        "placement": "sidebar",
+        "display": {
+          "edit": true,
+          "list": false
+        }
+      }
+    },
+    "install": {
+      "type": "String",
+      "required": false,
+      "label": "Install guide",
+      "publish": {
+        "section": "Details",
+        "placement": "sidebar",
+        "display": {
+          "edit": true,
+          "list": false
+        }
+      }
+    },
+    "demo": {
+      "type": "String",
+      "required": false,
+      "label": "Demo URL",
+      "publish": {
+        "section": "Details",
+        "placement": "sidebar",
+        "display": {
+          "edit": true,
+          "list": false
+        }
+      }
+    },
+    "image": {
+      "type": "Reference",
+      "label": "Image",
+      "message": "jpg or png",
+      "required": false,
+      "settings": {
+        "collection": "mediaStore"
+      },
+      "publish": {
+        "section": "Details",
+        "subType": "Image",
+        "placement": "sidebar",
+        "display": {
+          "list": false,
+          "edit": true
+        }
+      }
+    },
+    "image-caption": {
+      "type": "String",
+      "required": false,
+      "label": "Image caption",
+      "publish": {
+        "section": "Details",
+        "placement": "sidebar",
+        "display": {
+          "edit": true,
+          "list": false
+        }
+      }
+    },
+    "published": {
+      "type": "Boolean",
+      "required": false,
+      "default": false,
+      "label": "Published?",
+      "publish": {
+        "section": "Details",
+        "placement": "sidebar",
+        "display": {
+          "edit": true,
+          "list": true
+        }
+      }
+    }
+  },
+  "settings": {
+    "displayName": "Network services",
+    "cache": false,
+    "count": 40,
+    "sort": "order",
+    "sortOrder": 1,
+    "storeRevisions": false,
+    "description": "",
+    "compose": true,
+    "index": [
+      {
+        "keys": {
+          "order": -1
+        }
+      }
+    ],
+    "hooks": {
+      "beforeCreate": [
+        {
+          "hook": "slugify",
+          "options": {
+            "from": "name",
+            "to": "slug"
+          }
+        }
+      ],
+      "beforeUpdate": [
+        {
+          "hook": "slugify",
+          "options": {
+            "from": "name",
+            "to": "slug"
+          }
+        }
+      ]
+    }
+  }
+}

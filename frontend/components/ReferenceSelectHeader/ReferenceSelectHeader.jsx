@@ -30,12 +30,6 @@ export default class ReferenceSelectHeader extends Component {
     instructionText: proptypes.string,
 
     /**
-    * A callback to be used to obtain the base URL for the given page, as
-    * determined by the view.
-    */
-    onBuildBaseUrl: proptypes.func,
-
-    /**
      * The name of a reference field currently being edited.
      */
     referencedField: proptypes.string,
@@ -44,6 +38,11 @@ export default class ReferenceSelectHeader extends Component {
      * The CTA text to display on the "return to document" button.
      */
     returnCtaText: proptypes.string,
+
+    /**
+     * The URL of the "return to document" CTA button.
+     */
+    returnCtaUrl: proptypes.string,
   }
 
   static defaultProps = {
@@ -56,10 +55,10 @@ export default class ReferenceSelectHeader extends Component {
       children,
       collectionParent,
       instructionText,
-      onBuildBaseUrl,
       parentDocumentId,
       referencedField,
-      returnCtaText
+      returnCtaText,
+      returnCtaUrl
     } = this.props
     // Render nothing if we don't have the collection schema available.
     if (!collectionParent) return null
@@ -70,15 +69,6 @@ export default class ReferenceSelectHeader extends Component {
     if (!fieldSchema) return null
 
     const displayName = fieldSchema.label || referencedField
-    const section = fieldSchema.publish &&
-      fieldSchema.publish.section &&
-      Format.slugify(fieldSchema.publish.section)
-    const returnUrl = onBuildBaseUrl({
-      createNew: false,//!Boolean(state.router.parameters.documentId),
-      referencedField: null,
-      search: null,
-      section
-    })
 
     return (
       <div class={styles.container}>
@@ -89,7 +79,7 @@ export default class ReferenceSelectHeader extends Component {
 
         <Button
           accent="destruct"
-          href={returnUrl}
+          href={returnCtaUrl}
           size="small"
         >{returnCtaText}</Button>
 

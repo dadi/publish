@@ -1,0 +1,115 @@
+{
+  "fields": {
+    "title": {
+      "type": "String",
+      "label": "Document Title",
+      "publish": {
+        "section": "Reference and Media",
+        "placement": "main"
+      }
+    },    
+    "referenceMedia": {
+      "type": "Reference",
+      "label": "Reference (Media)",
+      "comment": "Using the legacy mediaStore collection",
+      "publish": {
+        "section": "Reference and Media",
+        "placement": "main"
+      },
+      "settings": {
+        "collection": "mediaStore"
+      }
+    },
+    "mediaRequired": {
+      "type": "Media",
+      "label": "Media",
+      "required": true,
+      "publish": {
+        "section": "Reference and Media",
+        "placement": "main"
+      }
+    },
+    "media": {
+      "type": "Media",
+      "label": "Media",
+      "comment": "Using the Media field type",
+      "publish": {
+        "section": "Reference and Media",
+        "placement": "main"
+      }
+    },
+    "mediaJpeg": {
+      "type": "Media",
+      "label": "Media (JPEG)",
+      "comment": "Accepts only image/jpeg",
+      "publish": {
+        "section": "Reference and Media",
+        "placement": "main"
+      },
+      "validation": {
+        "mimeTypes": ["image/jpeg"]
+      }
+    },
+    "mediaPng": {
+      "type": "Media",
+      "label": "Media (PNG)",
+      "comment": "Accepts only image/png",
+      "publish": {
+        "section": "Reference and Media",
+        "placement": "main"
+      },
+      "validation": {
+        "mimeTypes": ["image/png"]
+      }
+    },
+    "mediaJpegAndPng": {
+      "type": "Media",
+      "label": "Media (JPEG and PNG)",
+      "comment": "Accepts image/jpeg and image/png",
+      "publish": {
+        "section": "Reference and Media",
+        "placement": "main"
+      },
+      "validation": {
+        "mimeTypes": ["image/jpeg", "image/png"]
+      }
+    },
+    "mediaPdf": {
+      "type": "Media",
+      "label": "Media (PDF)",
+      "comment": "Accepts only application/pdf",
+      "publish": {
+        "section": "Reference and Media",
+        "placement": "main"
+      },
+      "validation": {
+        "mimeTypes": ["application/pdf"]
+      }
+    }
+  },
+  "settings": {
+    "displayName": "Media Field Testing",
+    "cache": false,
+    "count": 10,
+    "storeRevisions": false,
+    "description": "",
+    "compose": true,
+    "sort": "publishedAt",
+    "sortOrder": -1,
+    "index": [
+      {
+        "keys": {
+          "publishedAt": 1
+        }
+      },
+      {
+        "keys": {
+          "publishedAt": -1
+        }
+      }
+    ],
+    "hooks": {
+
+    }
+  }
+}

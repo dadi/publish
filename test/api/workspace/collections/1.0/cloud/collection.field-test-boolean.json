@@ -1,0 +1,47 @@
+{
+  "fields": {
+    "boolRequired": {
+      "type": "Boolean",
+      "label": "A boolean",
+      "required": true,
+      "publish": {
+        "section": "Booleans",
+        "placement": "main"
+      }
+    },
+    "boolReadOnly": {
+      "type": "Boolean",
+      "label": "A read-only boolean",
+      "publish": {
+        "section": "Booleans",
+        "placement": "main",
+        "readonly": true
+      }
+    }
+  },
+  "settings": {
+    "displayName": "Boolean Field Testing",
+    "cache": false,
+    "count": 10,
+    "storeRevisions": false,
+    "description": "",
+    "compose": true,
+    "sort": "publishedAt",
+    "sortOrder": -1,
+    "index": [
+      {
+        "keys": {
+          "publishedAt": 1
+        }
+      },
+      {
+        "keys": {
+          "publishedAt": -1
+        }
+      }
+    ],
+    "hooks": {
+
+    }
+  }
+}

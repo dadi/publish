@@ -1,0 +1,121 @@
+{
+  "fields": {
+    "title": {
+      "type": "String",
+      "required": true,
+      "label": "Title",
+      "publish": {
+        "section": "Details",
+        "placement": "main",
+        "display": {
+          "edit": true,
+          "list": true
+        }
+      }
+    },
+    "desc": {
+      "type": "String",
+      "required": true,
+      "label": "Description",
+      "publish": {
+        "section": "Details",
+        "placement": "main",
+        "multiline": true,
+        "display": {
+          "edit": true,
+          "list": false
+        }
+      }
+    },
+    "date": {
+      "type": "DateTime",
+      "format": "unix",
+      "required": true,
+      "label": "Date & Time",
+      "publish": {
+        "section": "Details",
+        "placement": "sidebar",
+        "display": {
+          "edit": true,
+          "list": true
+        }
+      }
+    },
+    "complete": {
+      "type": "Boolean",
+      "required": false,
+      "default": false,
+      "label": "Complete?",
+      "publish": {
+        "section": "Details",
+        "placement": "sidebar",
+        "display": {
+          "edit": true,
+          "list": true
+        }
+      }
+    },
+    "articles": {
+      "label": "Articles",
+      "type": "Reference",
+      "settings": {
+        "collection": "articles"
+      },
+      "publish": {
+        "section": "Details",
+        "placement": "sidebar",
+        "display": {
+          "edit": true,
+          "list": false
+        }
+      }
+    },
+    "web-service": {
+      "label": "Web service",
+      "type": "Reference",
+      "settings": {
+        "collection": "web-services"
+      },
+      "publish": {
+        "section": "Details",
+        "placement": "sidebar",
+        "display": {
+          "edit": true,
+          "list": false
+        }
+      }
+    },
+    "network-service": {
+      "label": "Network service",
+      "type": "Reference",
+      "settings": {
+        "collection": "network-services"
+      },
+      "publish": {
+        "section": "Details",
+        "placement": "sidebar",
+        "display": {
+          "edit": true,
+          "list": false
+        }
+      }
+    }
+  },
+  "settings": {
+    "displayName": "Milestones",
+    "cache": false,
+    "count": 40,
+    "sort": "date",
+    "sortOrder": 1,
+    "storeRevisions": false,
+    "description": "",
+    "compose": true,
+    "index": [
+      {
+        "keys": {
+          "date": -1
+        }
+      }
+    ]
+  }
+}

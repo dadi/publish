@@ -6,6 +6,7 @@ import proptypes from 'proptypes'
 import Style from 'lib/Style'
 import styles from './BulkActionSelector.css'
 
+import Button from 'components/Button/Button'
 import ButtonWithPrompt from 'components/ButtonWithPrompt/ButtonWithPrompt'
 import DropdownNative from 'components/DropdownNative/DropdownNative'
 
@@ -72,32 +73,50 @@ export default class BulkActionSelector extends Component {
     const containerStyle = new Style(styles, 'container')
       .addIf('container-empty', selection.length === 0)
       .addResolved(className)
-    let placeholder = 'With selected'
+    const placeholder = 'Bulk actions'
 
-    if (selection.length > 0) {
-      placeholder += ` (${selection.length})`
-    }
+    // Generate new actions object for the dropdown options
+    let modifiedActions = {}
+    Object.keys(actions).forEach(key => {
+      modifiedActions[key] = actions[key].label
+    })
+
+    // If the option comes with a confirmation message, display
+    // ButtonWithPrompt, otherwise a standard Button is used.
+    const needsButtonWithPrompt = selected !== ACTION_PLACEHOLDER &&
+      actions[selected].ctaMessage
 
     return (
       <div class={containerStyle.getClasses()}>
         <DropdownNative
           className={styles.dropdown}
           onChange={this.onChange.bind(this)}
-          options={actions}
+          options={modifiedActions}
           placeholderLabel={placeholder}
           placeholderValue={ACTION_PLACEHOLDER}
           textSize="small"
           value={selected}
         />
 
-        <ButtonWithPrompt
-          accent="data"
-          disabled={(selected === ACTION_PLACEHOLDER) || !selection.length}
-          onClick={this.onApply.bind(this)}
-          promptCallToAction={`Yes, delete ${selection.length > 1 ? 'them' : 'it'}.`}
-          promptMessage={`Are you sure you want to delete the selected ${selection.length > 1 ? 'documents' : 'document'}?`}
-          size="small"
-        >Apply</ButtonWithPrompt>
+        {needsButtonWithPrompt && (
+          <ButtonWithPrompt
+            accent="data"
+            disabled={(selected === ACTION_PLACEHOLDER) || actions[selected].disabled}
+            onClick={this.onApply.bind(this)}
+            promptCallToAction={actions[selected].ctaMessage}
+            promptMessage={actions[selected].confirmationMessage}
+            size="small"
+          >Apply</ButtonWithPrompt>          
+        )}
+
+        {!needsButtonWithPrompt && (
+          <Button
+            accent="data"
+            disabled={selected === ACTION_PLACEHOLDER}
+            onClick={this.onApply.bind(this)}
+            size="small"
+          >Apply</Button>
+        )}
       </div>
     )
   }

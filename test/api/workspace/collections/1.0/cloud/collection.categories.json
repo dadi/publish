@@ -1,0 +1,87 @@
+{
+  "fields": {
+    "name": {
+      "type": "String",
+      "required": true,
+      "label": "Name",
+      "publish": {
+        "section": "Details",
+        "placement": "main",
+        "display": {
+          "edit": true,
+          "list": true
+        }
+      }
+    },
+    "desc": {
+      "type": "String",
+      "required": true,
+      "label": "Description",
+      "publish": {
+        "section": "Details",
+        "placement": "main",
+        "multiline": true,
+        "display": {
+          "edit": true,
+          "list": false
+        }
+      }
+    },
+    "slug": {
+      "type": "String",
+      "required": false,
+      "label": "Slug",
+      "publish": {
+        "section": "Details",
+        "placement": "sidebar",
+        "display": {
+          "edit": false,
+          "list": true
+        }
+      }
+    },
+    "icon": {
+      "type": "String",
+      "required": false,
+      "label": "Icon",
+      "publish": {
+        "section": "Details",
+        "placement": "sidebar",
+        "display": {
+          "edit": true,
+          "list": true
+        }
+      }
+    }
+  },
+  "settings": {
+    "displayName": "Categories",
+    "cache": false,
+    "count": 40,
+    "sort": "name",
+    "sortOrder": 1,
+    "storeRevisions": false,
+    "description": "",
+    "compose": true,
+    "hooks": {
+      "beforeCreate": [
+        {
+          "hook": "slugify",
+          "options": {
+            "from": "name",
+            "to": "slug"
+          }
+        }
+      ],
+      "beforeUpdate": [
+        {
+          "hook": "slugify",
+          "options": {
+            "from": "name",
+            "to": "slug"
+          }
+        }
+      ]
+    }
+  }
+}

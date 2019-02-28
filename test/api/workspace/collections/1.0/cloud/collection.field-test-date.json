@@ -1,0 +1,95 @@
+{
+  "fields": {
+    "dateRequired": {
+      "type": "DateTime",
+      "label": "A date",
+      "required": true,
+      "publish": {
+        "section": "Dates",
+        "placement": "main"
+      }
+    },
+    "dateReadOnly": {
+      "type": "DateTime",
+      "label": "A read-only date",
+      "publish": {
+        "section": "Dates",
+        "placement": "main",
+        "readonly": true
+      }
+    },
+    "dateFuture": {
+      "type": "DateTime",
+      "label": "A future date",
+      "comment": "Must be in the future",
+      "publish": {
+        "section": "Dates",
+        "placement": "sidebar"
+      },
+      "validation": {
+        "after": "$now"
+      }
+    },
+    "datePast": {
+      "type": "DateTime",
+      "label": "A past date",
+      "comment": "Must be in the past",
+      "publish": {
+        "section": "Dates",
+        "placement": "sidebar"
+      },
+      "validation": {
+        "before": "$now"
+      }
+    },
+    "dateAfter": {
+      "type": "DateTime",
+      "label": "A date after x",
+      "comment": "Must be after 2018/01/01",
+      "format": "YYYY-MM-DD",
+      "publish": {
+        "section": "Dates",
+        "placement": "sidebar"
+      },
+      "validation": {
+        "after": 1514764800000
+      }
+    },
+    "dateBefore": {
+      "type": "DateTime",
+      "label": "A date before x",
+      "comment": "Must be before 2018/01/01",
+      "publish": {
+        "section": "Dates",
+        "placement": "sidebar"
+      },
+      "validation": {
+        "before": 1514764800000
+      }
+    }
+  },
+  "settings": {
+    "displayName": "Date Field Testing",
+    "cache": false,
+    "count": 10,
+    "storeRevisions": false,
+    "description": "",
+    "compose": true,
+    "sort": "publishedAt",
+    "sortOrder": -1,
+    "index": [
+      {
+        "keys": {
+          "publishedAt": 1
+        }
+      },
+      {
+        "keys": {
+          "publishedAt": -1
+        }
+      }
+    ],
+    "hooks": {
+    }
+  }
+}

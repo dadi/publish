@@ -1,27 +1,42 @@
 {
   "app": {
-    "name": "DADI Publish Test",
-    "publisher": "DADI"
-  },
-  "publicUrl": {
-      "host": "127.0.0.1",
-      "port": 443,
-      "protocol": "https"
+    "name": "DADI Publish"
   },
   "server": {
     "host": "0.0.0.0",
-    "port": 3000
+    "port": 3003
   },
-  "apis": [
-    {
-      "name": "Demo API",
-      "host": "http://0.0.0.0",
-      "port": 3001,
-      "database": "publish",
-      "version": "1.0"
-    }
-  ],
-  "auth": {
-    "enabled": false
-  }
+  "apis": [{
+    "name": "Publish Test API",
+    "host": "http://localhost",
+    "port": 3004,
+    "menu": [{
+        "collections": [
+          "pages",
+          "team"
+        ],
+        "title": "Content"
+      },
+      {
+        "collections": [
+          "categories",
+          "sub-categories",
+          "milestones"
+        ],
+        "title": "Taxonomy"
+      },
+      {
+        "collections": [
+          "field-test-boolean",
+          "field-test-date",
+          "field-test-media",
+          "field-test-other",
+          "field-test-number",
+          "field-test-reference",
+          "field-test-string"
+        ],
+        "title": "Field Testing"
+      }
+    ]
+  }]
 }

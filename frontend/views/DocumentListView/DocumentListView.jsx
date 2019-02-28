@@ -63,10 +63,15 @@ class DocumentListView extends Component {
   }
 
   handleBulkActionApply(actionType) {
-    const {state} = this.props  
+    const {state} = this.props
 
-    if (actionType === BULK_ACTIONS.DELETE) {
-      this.handleDocumentDelete(state.documents.selected)
+    switch (actionType) {
+      case BULK_ACTIONS.DELETE:
+        this.handleDocumentDelete(state.documents.selected)
+        break
+
+      default:
+        return
     }
   }
 
@@ -152,6 +157,18 @@ class DocumentListView extends Component {
       })
     ).concat(Constants.DEFAULT_FIELDS)
 
+    const actions = {
+      [BULK_ACTIONS.DELETE]: {
+        confirmationMessage: 
+          `Are you sure you want to delete the selected ${selectedDocuments.length > 1 ?
+            'documents' :
+            'document'}?`,
+        ctaMessage: `Yes, delete ${selectedDocuments.length > 1 ? 'them' : 'it'}.`,
+        disabled: !selectedDocuments.length,
+        label: `Delete ${selectedDocuments.length ? ' (' + selectedDocuments.length + ')' : ''}`
+      }
+    }
+
     return (
       <Page>
         <Header currentCollection={currentCollection}>
@@ -197,9 +214,7 @@ class DocumentListView extends Component {
           })}
         >
           <BulkActionSelector
-            actions={{
-              [BULK_ACTIONS.DELETE]: 'Delete'
-            }}
+            actions={actions}
             onChange={this.handleBulkActionApply.bind(this)}
             selection={selectedDocuments}
           />
