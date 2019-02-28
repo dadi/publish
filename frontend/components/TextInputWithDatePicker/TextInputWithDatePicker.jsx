@@ -17,11 +17,6 @@ import DateTime from 'lib/datetime'
 export default class TextInputWithDatePicker extends Component {
   static propTypes = {
     /**
-     * Classes to append to the button element.
-     */
-    className: proptypes.string,
-
-    /**
      * Format to be used by the DateTime object.
      */
     format: proptypes.string,
@@ -37,6 +32,11 @@ export default class TextInputWithDatePicker extends Component {
      * **NOTE:** This prop is automatically passed down by `<Label/>`.      
      */
     inLabel: proptypes.bool,
+
+    /**
+     * Classes to append to the input element.
+     */
+    inputClassName: proptypes.string,
 
     /**
      * Callback to be executed when the text loses focus (onBlur event).
@@ -89,67 +89,16 @@ export default class TextInputWithDatePicker extends Component {
 
     this.state.pickerVisible = false
 
-    this.picker = false
-    this.pickerEventHandler = this.handlePickerClick.bind(this, true)
-    this.pickerOutsideEventHandler = this.handlePickerClick.bind(this, false)
+    this.pickerClickHandler = this.handlePickerClick.bind(this)
     this.losingFocusTimeout = null
   }
 
-  render() {
-    const {
-      className,
-      format,
-      readonly,
-      value
-    } = this.props
-    const {pickerVisible} = this.state
-
-    let dateObj = null
-
-    if (value) {
-      const dateTimeObj = new DateTime(value)
-
-      if (dateTimeObj.isValid()) {
-        dateObj = dateTimeObj
-      }
-    }
-
-    const containerStyle = new Style(styles, 'container')
-
-    containerStyle.addResolved(className)
-
-    return (
-      <div class={containerStyle.getClasses()}>
-        <TextInput
-          onBlur={this.handleFocus.bind(this, false)}
-          onChange={this.handleChange.bind(this)}
-          onFocus={this.handleFocus.bind(this, true)}
-          readonly={readonly}
-          type="text"
-          value={dateObj && dateObj.format(format)}
-        />
-
-        {pickerVisible &&
-          <div ref={this.handlePickerRef.bind(this)}>
-            <DateTimePicker
-              className={styles.picker}
-              date={dateObj && dateObj.getDate()}
-              onChange={this.handlePickerChange.bind(this)}
-            />
-          </div>
-        }
-      </div>
-    )
-  }
-
   componentDidMount() {
-    window.addEventListener('click', this.pickerOutsideEventHandler)
+    window.addEventListener('click', this.pickerClickHandler)
   }
 
   componentWillUnmount() {
-    if (this.picker) {
-      this.picker.removeEventListener('click', this.pickerOutsideEventHandler)
-    }
+    window.removeEventListener('click', this.pickerClickHandler)
 
     clearTimeout(this.losingFocusTimeout)
   }
@@ -166,11 +115,13 @@ export default class TextInputWithDatePicker extends Component {
 
     if (event.target.value.length > 0) {
       if (newDate.isValid()) {
-        newValue = newDate.getDate().toISOString()
+        newValue = newDate.getDate().getTime()
       } else {
         newValue = value
       }
     }
+
+    this.propagateChange(newValue)
 
     if (typeof onChange === 'function') {
       onChange.call(this, newValue)
@@ -180,15 +131,11 @@ export default class TextInputWithDatePicker extends Component {
   handleFocus(hasFocus) {
     const {pickerVisible} = this.state
 
-    this.hasFocus = hasFocus
-
     if (!pickerVisible) {
       this.setState({
         pickerVisible: true
       })
-    }
-
-    if (!hasFocus && pickerVisible) {
+    } else if (!hasFocus) {
       clearTimeout(this.losingFocusTimeout)
 
       this.losingFocusTimeout = setTimeout(() => {
@@ -200,34 +147,88 @@ export default class TextInputWithDatePicker extends Component {
   }
 
   handlePickerChange(newDate) {
-    const {onChange, schema} = this.props
+    this.propagateChange(newDate)
+
+    setTimeout(() => {
+      this.setState({
+        pickerVisible: false
+      })
+    }, 200)
+  }
+
+  handlePickerClick(event) {
+    const {pickerVisible} = this.state
+    const isInsidePicker = this.rootEl.contains(event.target)
+
+    if (isInsidePicker) {
+      clearTimeout(this.losingFocusTimeout)
+    } else if (pickerVisible) {
+      this.setState({
+        pickerVisible: false
+      })
+    }
+  }
+
+  propagateChange(value) {
+    const {format, onChange} = this.props
+    const newDate = new DateTime(value, format)
+    const sanitisedValue = newDate.isValid()
+      ? newDate.getDate().getTime()
+      : null
 
     if (typeof onChange === 'function') {
-      onChange.call(this, newDate.toISOString())
+      onChange.call(this, sanitisedValue)
     }
   }
 
-  handlePickerClick(insidePicker, event) {
+  render() {
+    const {
+      containerClassName,
+      format,
+      inputClassName,
+      placeholder,
+      readonly,
+      value
+    } = this.props
     const {pickerVisible} = this.state
 
-    if (insidePicker) {
-      event.stopPropagation()
+    let dateObj = null
 
-      clearTimeout(this.losingFocusTimeout)
-    } else {
-      if (pickerVisible && !this.hasFocus) {
-        this.setState({
-          pickerVisible: false
-        })
+    if (value) {
+      const dateTimeObj = new DateTime(value)
+
+      if (dateTimeObj.isValid()) {
+        dateObj = dateTimeObj
       }
     }
-  }
 
-  handlePickerRef(element) {
-    if (this.picker) return
+    const containerStyles = new Style(styles, 'container')
+      .addResolved(containerClassName)
 
-    element.addEventListener('click', this.pickerEventHandler)
-
-    this.picker = element
+    return (
+      <div
+        class={containerStyles.getClasses()}
+        ref={el => this.rootEl = el}
+      >
+        <TextInput
+          className={inputClassName}
+          onBlur={null && this.handleFocus.bind(this, false)}
+          onChange={this.handleChange.bind(this)}
+          onFocus={this.handleFocus.bind(this, true)}
+          placeholder={placeholder}
+          readonly={readonly}
+          type="text"
+          value={dateObj && dateObj.format(format)}
+        />
+        
+        {pickerVisible &&
+          <DateTimePicker
+            className={styles.picker}
+            date={dateObj && dateObj.getDate()}
+            onChange={this.handlePickerChange.bind(this)}
+          />
+        }
+      </div>
+    )
   }
 }

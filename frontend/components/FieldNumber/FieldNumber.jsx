@@ -1,4 +1,4 @@
 import edit from './FieldNumberEdit'
-import filter from './FieldNumberFilter'
+import filterEdit from './FieldNumberFilterEdit'
 
-export {edit, filter}
+export {edit, filterEdit}

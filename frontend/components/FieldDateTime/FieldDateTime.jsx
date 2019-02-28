@@ -1,5 +1,11 @@
 import edit from './FieldDateTimeEdit'
 import list from './FieldDateTimeList'
-import filter from './FieldDateTimeFilter'
+import filterEdit from './FieldDateTimeFilterEdit'
+import filterList from './FieldDateTimeFilterList'
 
-export {edit, list, filter}
+const filterOperators = {
+  $lt: 'is before',
+  $gt: 'is after'
+}
+
+export {edit, list, filterEdit, filterList, filterOperators}

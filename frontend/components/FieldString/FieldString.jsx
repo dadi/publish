@@ -1,10 +1,10 @@
 import * as Constants from 'lib/constants'
 import {URLParams} from 'lib/util/urlParams'
 import edit from './FieldStringEdit'
-import filter from './FieldStringFilter'
+import filterEdit from './FieldStringFilterEdit'
 import list from './FieldStringList'
 
-const operators = {
+const filterOperators = {
   $regex: 'contains',
   $ne: 'does not equal'
 }
@@ -48,9 +48,9 @@ export {
   afterReferenceSelect,
   beforeReferenceSelect,
   edit,
-  filter,
+  filterEdit,
+  filterOperators,
   getCtaText,
   getInstructionText,
-  list,
-  operators
+  list
 }
