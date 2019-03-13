@@ -50,7 +50,6 @@
       "publish": {
         "section": "Details",
         "placement": "sidebar",
-        "readonly": true,
         "display": {
           "edit": true,
           "list": true
