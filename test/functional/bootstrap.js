@@ -8,7 +8,7 @@ const myTest = new Testbed({
 })
 
 class Bootstrap {
-  run () {
+  run() {
     return new Promise(async (resolve, reject) => {
       // Create authors
       await myTest.addData({
@@ -99,7 +99,7 @@ class Bootstrap {
       // Create articles
       await myTest.addData({
         collection: 'articles',
-        count: 5,
+        count: 4,
         database: 'cloud',
         fields: {
           author: {
@@ -120,6 +120,10 @@ class Bootstrap {
               collection: 'network-services'
             }
           },
+          published: {
+            format: '{{random.boolean}}',
+            transform: (value) => value === "true" ? true : false
+          },
           'sub-category': {
             reference: {
               collection: 'sub-categories'
@@ -127,6 +131,53 @@ class Bootstrap {
           },
           title: {
             format: '{{random.words(4)}}'
+          },
+          'web-service': {
+            reference: {
+              collection: 'web-services'
+            }
+          },
+        },
+        version: '1.0'
+      })
+
+      // Create filter articles
+      await myTest.addData({
+        cleanup: false,
+        collection: 'articles',
+        count: 3,
+        database: 'cloud',
+        fields: {
+          author: {
+            reference: {
+              collection: 'team'
+            }
+          },
+          body: {
+            format: '{{lorem.paragraph}}'
+          },
+          category: {
+            reference: {
+              collection: 'categories'
+            }
+          },
+          'network-service': {
+            reference: {
+              collection: 'network-services'
+            }
+          },
+          published: {
+            format: '{{random.boolean}}',
+            transform: (value) => value === "true" ? true : false
+          },
+          'sub-category': {
+            reference: {
+              collection: 'sub-categories'
+            }
+          },
+          title: {
+            format: '{{random.word(2)}}',
+            transform: (value) => 'DADI ' + value
           },
           'web-service': {
             reference: {

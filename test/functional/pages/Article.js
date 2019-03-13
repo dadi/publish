@@ -102,7 +102,18 @@ module.exports = {
         'data-field-name': 'body'
       }).find('ul').as('Bullet Point Text')),
     linkField: (locate('input[class*="RichEditor__link-input"]').as('Link Field')),
-    linkSave: (locate('button[class*="RichEditor__link-control"]').withText('Save').as('Save Link Button'))
+    linkSave: (locate('button[class*="RichEditor__link-control"]').withText('Save').as('Save Link Button')),
+    filterButton: (locate('button[class*="DocumentFilters__button"]').as('Filter Button')),
+    filterForm: (locate('form[class*="DocumentFilters__tooltip"]').as('Add Filter Form')),
+    filterField: (locate('select[class*="DocumentFilters__tooltip-dropdown-left"]').as('Filter Field')),
+    filterOperator: (locate('select[class*="DocumentFilters__tooltip-dropdown-right"]').as('Filter Operator')),
+    filterValue: (locate('input[class*="FieldString__filter-input"]').as('Search Value')),
+    addFilter: (locate('button[class*="DocumentFilters__tooltip"]').withText('Add filter').as('Add Filter Button')),
+    updateFilter: (locate('button[class*="DocumentFilters__tooltip"]').withText('Update filter').as('Update Filter Button')),
+    filterWrapper: (locate('div[class*="DocumentFilters__filter-wrapper"]').as('Filtered Detail')),
+    titles: (locate('//table/tbody/tr/td[2]').as('Article Titles')),
+    published: (locate('//table/tbody/tr/td[4]').as('Published?')),
+    filterClose: (locate('button[class*="DocumentFilters__filter-close"]').as('Filter Close Button'))
   },
 
   async validateArticlePage() {
@@ -256,6 +267,42 @@ module.exports = {
     let updatedSlug = await I.grabValueFrom(this.locators.slugField)
     I.seeStringsAreEqual(updatedSlug, 'this-article-is-updated')
     I.click(this.locators.articleLink)
+  },
+
+  async filterArticle() {
+    let originalArticles = await I.grabNumberOfVisibleElements(this.locators.articleRows)
+    let articlePublished = await I.grabTextFrom(this.locators.published)
+    let yesPublish = await articlePublished.filter((article) => article === 'Yes')
+    let noPublish = await articlePublished.filter((article) => article === 'No')
+    let numberYes = yesPublish.length
+    let numberNo = noPublish.length
+    I.click(this.locators.filterButton)
+    I.seeElement(this.locators.filterForm)
+    I.seeElement(this.locators.filterField)
+    I.seeElement(this.locators.filterOperator)
+    I.fillField(this.locators.filterValue, 'DADI')
+    I.click(this.locators.addFilter)
+    I.seeElement(this.locators.filterWrapper)
+    let articles = await I.grabNumberOfVisibleElements(this.locators.articleRows)
+    I.seeNumbersAreEqual(articles, 3)
+    let articleTitles = await I.grabTextFrom(this.locators.titles)
+    I.click(this.locators.filterWrapper)
+    I.selectOption(this.locators.filterOperator, 'is')
+    I.fillField(this.locators.filterValue, articleTitles[1])
+    I.click(this.locators.updateFilter)
+    let updatedArticles = await I.grabNumberOfVisibleElements(this.locators.articleRows)
+    I.seeNumbersAreEqual(updatedArticles, 1)
+    I.click(this.locators.filterClose)
+    let newTotal = await I.grabNumberOfVisibleElements(this.locators.articleRows)
+    I.seeNumbersAreEqual(originalArticles, newTotal)
+    I.click(this.locators.filterButton)
+    I.seeElement(this.locators.filterForm)
+    I.selectOption(this.locators.filterField, 'Published')
+    I.seeElement(this.locators.filterOperator)
+    I.click(this.locators.addFilter)
+    I.seeElement(this.locators.filterWrapper)
+    let publishedNo = await I.grabNumberOfVisibleElements(this.locators.articleRows)
+    I.seeNumbersAreEqual(publishedNo, numberNo)
   },
 
   async deleteArticle() {
