@@ -4,6 +4,8 @@ const {
   assert,
   expect
 } = require('chai')
+const moment = require('moment')
+const _ = require('lodash')
 
 let I
 
@@ -112,8 +114,11 @@ module.exports = {
     updateFilter: (locate('button[class*="DocumentFilters__tooltip"]').withText('Update filter').as('Update Filter Button')),
     filterWrapper: (locate('div[class*="DocumentFilters__filter-wrapper"]').as('Filtered Detail')),
     titles: (locate('//table/tbody/tr/td[2]').as('Article Titles')),
+    dateTime: (locate('//table/tbody/tr/td[3]').as('Date & Time')),
     published: (locate('//table/tbody/tr/td[4]').as('Published?')),
-    filterClose: (locate('button[class*="DocumentFilters__filter-close"]').as('Filter Close Button'))
+    filterClose: (locate('button[class*="DocumentFilters__filter-close"]').as('Filter Close Button')),
+    filterValueSelect: (locate('select[class*="DropdownNative__dropdown-text-small"]').withText('No').as('Filter Value Select')),
+    dateTimeValue: (locate('input[class*="FieldDateTime__filter-input"]').as('Date Time Filter Field'))
   },
 
   async validateArticlePage() {
@@ -271,6 +276,12 @@ module.exports = {
 
   async filterArticle() {
     let originalArticles = await I.grabNumberOfVisibleElements(this.locators.articleRows)
+    let articleDateTimes = await I.grabTextFrom(this.locators.dateTime)
+    let randomNum = _.random(0,10)
+    let pastDateFilter = moment(new Date(), 'YYYY/MM/DD').subtract(randomNum, 'months')
+    pastDateFilter = pastDateFilter.format('YYYY/MM/DD 09:00')
+    let datesToFilter = await articleDateTimes.filter((datetime) => datetime < pastDateFilter)
+    let dateFilter = datesToFilter.length
     let articlePublished = await I.grabTextFrom(this.locators.published)
     let yesPublish = await articlePublished.filter((article) => article === 'Yes')
     let noPublish = await articlePublished.filter((article) => article === 'No')
@@ -303,6 +314,24 @@ module.exports = {
     I.seeElement(this.locators.filterWrapper)
     let publishedNo = await I.grabNumberOfVisibleElements(this.locators.articleRows)
     I.seeNumbersAreEqual(publishedNo, numberNo)
+    I.click(this.locators.filterWrapper)
+    I.selectOption(this.locators.filterValueSelect, 'Yes')
+    I.click(this.locators.updateFilter)
+    let publishedYes = await I.grabNumberOfVisibleElements(this.locators.articleRows)
+    I.seeNumbersAreEqual(publishedYes, numberYes)
+    I.click(this.locators.filterClose)
+    newTotal = await I.grabNumberOfVisibleElements(this.locators.articleRows)
+    I.seeNumbersAreEqual(originalArticles, newTotal)
+    I.click(this.locators.filterButton)
+    I.seeElement(this.locators.filterForm)
+    I.selectOption(this.locators.filterField, 'Date & Time')
+    I.seeElement(this.locators.filterOperator)
+    I.fillField(this.locators.dateTimeValue, pastDateFilter)
+    I.click(this.locators.filterOperator)
+    I.click(this.locators.addFilter)
+    I.seeElement(this.locators.filterWrapper)
+    let datesBefore = await I.grabNumberOfVisibleElements(this.locators.articleRows)
+    I.seeNumbersAreEqual(datesBefore, dateFilter)
   },
 
   async deleteArticle() {

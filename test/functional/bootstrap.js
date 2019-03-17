@@ -124,6 +124,13 @@ class Bootstrap {
             format: '{{random.boolean}}',
             transform: (value) => value === "true" ? true : false
           },
+          publishedAt: {
+            format: '{{date.past}}',
+            transform: (value) => {
+              let date = new Date(value)
+              return date
+            }
+          },
           'sub-category': {
             reference: {
               collection: 'sub-categories'
@@ -169,6 +176,13 @@ class Bootstrap {
           published: {
             format: '{{random.boolean}}',
             transform: (value) => value === "true" ? true : false
+          },
+          publishedAt: {
+            format: '{{date.past}}',
+            transform: (value) => {
+              let date = new Date(value)
+              return date
+            }
           },
           'sub-category': {
             reference: {
