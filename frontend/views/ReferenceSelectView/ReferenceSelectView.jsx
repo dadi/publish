@@ -62,15 +62,12 @@ class ReferenceSelectView extends Component {
   handleDocumentSelect(fieldComponent) {
     const {
       actions,
-      onBuildBaseUrl,
       referencedField,
       state
     } = this.props
     const {currentCollection: collection} = state.api
-    const {list, selected} = state.documents
-    const selectedDocuments = selected.map(documentId => {
-      return list.results.find(document => document._id === documentId)
-    }).filter(Boolean)
+    const {selected} = state.documents
+    const selectedDocuments = selected.filter(Boolean)
 
     let update = {
       [referencedField]: selectedDocuments
@@ -158,10 +155,7 @@ class ReferenceSelectView extends Component {
 
   render() {
     const {
-      collection,
       documentId,
-      filter,
-      group,
       onBuildBaseUrl,
       order,
       page,

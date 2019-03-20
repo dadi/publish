@@ -62,20 +62,7 @@ class DocumentListView extends Component {
     }
   }
 
-  handleBulkActionApply(actionType) {
-    const {state} = this.props
-
-    switch (actionType) {
-      case BULK_ACTIONS.DELETE:
-        this.handleDocumentDelete(state.documents.selected)
-        break
-
-      default:
-        return
-    }
-  }
-
-  handleDocumentDelete(ids) {
+  delete(ids) {
     const {actions, state} = this.props
     const {
       currentApi: api,
@@ -87,6 +74,22 @@ class DocumentListView extends Component {
       collection,
       ids
     })
+  }
+
+  handleBulkActionApply(actionType) {
+    const {state} = this.props
+
+    switch (actionType) {
+      case BULK_ACTIONS.DELETE:
+        const ids = state.documents.selected.map(document => document._id)
+
+        this.delete(ids)
+
+        break
+
+      default:
+        return
+    }
   }
 
   handleEmptyDocumentList() {

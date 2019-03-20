@@ -163,7 +163,6 @@ export default class Table extends Component {
       selectedRows
     } = this.props
     const selectedRowsIndices = Object.keys(selectedRows).filter(index => selectedRows[index])
-
     let head = []
     let body = []
 
@@ -192,8 +191,7 @@ export default class Table extends Component {
         head.push(child)
       } else {
         const rowIndex = tableHasHead ? index - 1 : index
-        const rowIsSelected = selectedRows[rowIndex] === true
-        const numberOfRows = tableHasHead ? children.length - 1 : children.length
+        const rowIsSelected = Boolean(selectedRows[rowIndex])
         const selectionExhausted = selectedRowsIndices.length >= selectLimit
 
         childAttributes.onSelect = this.handleRowSelect.bind(this)

@@ -68,7 +68,7 @@ export default class DocumentTableList extends Component {
     /**
      * A hash map of the indices of the currently selected documents.
      */
-    selectedDocuments: proptypes.array,
+    selectedDocuments: proptypes.object,
 
     /**
      * The maximum number of documents that can be selected.
@@ -83,14 +83,15 @@ export default class DocumentTableList extends Component {
 
   getSelectedRows() {
     const {documents, selectedDocuments} = this.props
-
-    return documents.reduce((selectedRows, item, index) => {
+    const selectedRows = documents.reduce((selectedRows, item, index) => {
       if (selectedDocuments[item._id]) {
         selectedRows[index] = true
       }
 
-      return selectedDocuments
+      return selectedRows
     }, {})
+
+    return selectedRows
   }
 
   handleRowRender(listableFields, value, data, column, index) {
@@ -149,16 +150,13 @@ export default class DocumentTableList extends Component {
   render() {
     const {
       collection,
-      config,
       documents,
       fields: fieldsToDisplay = [],
-      onBuildBaseUrl,
       onSelect,
       order,
-      referencedField,
+      selectedDocuments,
       sort
     } = this.props
-    const selectedRows = this.getSelectedRows()
     const collectionFields = (collection && collection.fields) || {}
     const listableFields = Object.keys(collectionFields).reduce((fields, fieldName) => {
       if (fieldsToDisplay.includes(fieldName)) {
@@ -184,7 +182,7 @@ export default class DocumentTableList extends Component {
         onRender={this.handleRowRender.bind(this, listableFields)}
         onSelect={onSelect}
         onSort={this.handleTableSort.bind(this)}
-        selectedRows={selectedRows}
+        selectedRows={selectedDocuments}
         selectLimit={Infinity}
         sortable={true}
         sortBy={sort}

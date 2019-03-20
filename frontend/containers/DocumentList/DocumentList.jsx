@@ -156,25 +156,35 @@ class DocumentList extends Component {
       state
     } = this.props
     const {app, api, documents} = state
-    const previousDocuments = prevProps.state.documents
+    const {
+      isDeleting,
+      isLoading,
+      isSaving,
+      selected: selection
+    } = documents
+    const {
+      isDeleting: wasDeleting,
+      isLoading: wasLoading,
+      isSaving: wasSaving
+    } = prevProps.state.documents
 
-    // If we are have just loaded a list of documents for a nested document,
-    // let's update the selection with the value of the reference field, if
-    // it is in view.
-    if (referencedField && previousDocuments.isLoading && !documents.isLoading) {
-      let document = Object.assign(
+    // If we have just loaded a list of documents for a nested document, let's
+    // see if the list of selected documents needs to be updated.
+    if (referencedField && wasLoading && !isLoading) {
+      const document = Object.assign(
         {},
         state.document.remote,
         state.document.local
       )
-      let referencedValues = document[referencedField]
-      let referencedIds = (Array.isArray(referencedValues)
-        ? referencedValues.map(value => value._id)
-        : [referencedValues && referencedValues._id]
+      const referenceValue = (Array.isArray(document[referencedField])
+        ? document[referencedField]
+        : [document[referencedField]]
       ).filter(Boolean)
 
-      if (referencedIds.length > 0) {
-        actions.setDocumentSelection(referencedIds)
+      // If the referenced value has a set value and the current selection does
+      // not reflect it, we must update the selection.
+      if (referenceValue.length > 0 && selection.length === 0) {
+        actions.setDocumentSelection(referenceValue)
       }
     }
 
@@ -182,8 +192,8 @@ class DocumentList extends Component {
     const {path: previousCollectionPath} = prevProps.collection || {}
     const {search} = state.router.locationBeforeTransitions
     const {search: previousSearch} = prevProps.state.router.locationBeforeTransitions
-    const hasJustDeleted = previousDocuments.isDeleting && !documents.isDeleting
-    const hasJustSaved = previousDocuments.isSaving && !documents.isSaving
+    const hasJustDeleted = wasDeleting && !isDeleting
+    const hasJustSaved = wasSaving && !isSaving
     const resourceIsTheSame = collectionPath === previousCollectionPath &&
       referencedField === prevProps.referencedField &&
       page === prevProps.page &&
@@ -193,7 +203,7 @@ class DocumentList extends Component {
       !app.config ||
       api.apis.length === 0 ||
       !collection ||
-      documents.isLoading ||
+      isLoading ||
       (!hasJustDeleted && !hasJustSaved && documents.list && resourceIsTheSame)
     ) {
       return
@@ -342,9 +352,9 @@ class DocumentList extends Component {
       )      
     }
 
-    const items = documents.list.results
+    const {results: listItems} = documents.list
 
-    if (items.length === 0) {
+    if (listItems.length === 0) {
       if (typeof onRenderEmptyDocumentList !== 'function') {
         return null
       }
@@ -365,34 +375,40 @@ class DocumentList extends Component {
     // The first one contains all selected documents, mapping their IDs to a
     // `true` Boolean. The second one contains all selected documents that are
     // currently into view, mapping their index to a `true` Boolean.
-    let selectedDocuments = {}
-    let selectedDocumentsInView = documents.selected.reduce((result, id, index) => {
-      let matchingDocumentIndex = items.findIndex(item => item._id === id)
+    const selectedDocuments = {}
+    const selectedDocumentsInView = documents.selected
+      .reduce((result, selectedDocument) => {
+        const {_id: id} = selectedDocument
+        const matchingDocumentIndex = listItems.findIndex(item => {
+          return item._id === id
+        })
 
-      if (matchingDocumentIndex !== -1) {
-        result[matchingDocumentIndex] = true  
-      }
+        if (matchingDocumentIndex !== -1) {
+          result[matchingDocumentIndex] = selectedDocument  
+        }
 
-      selectedDocuments[id] = true
+        selectedDocuments[id] = selectedDocument
 
-      return result
-    }, {})
+        return result
+      }, {})
 
     // The new selection is formed by merging the new selection hash with any
     // previously selected documents that are not in view (i.e. are on a
     // different page).
-    let onSelectFn = selectedIndexes => {
-      let newSelection = Object.assign({}, selectedDocuments)
+    const onSelectFn = newSelection => {
+      Object.keys(newSelection).forEach(index => {
+        const document = listItems[index]
 
-      items.forEach((item, index) => {
-        newSelection[item._id] = Boolean(selectedIndexes[index])
+        selectedDocuments[document._id] = newSelection[index]
+          ? document
+          : undefined
       })
 
       // Converting a new selection hash to the array format that the store
       // is expecting.
-      let newSelectionArray = Object.keys(newSelection).filter(id => {
-        return Boolean(newSelection[id])
-      })
+      const newSelectionArray = Object.keys(selectedDocuments)
+        .filter(id => Boolean(selectedDocuments[id]))
+        .map(id => selectedDocuments[id])
 
       actions.setDocumentSelection(newSelectionArray)
     }
@@ -403,7 +419,7 @@ class DocumentList extends Component {
       collectionParent,
       config,
       documentId,
-      documents: items,
+      documents: listItems,
       onBuildBaseUrl,
       onSelect: onSelectFn,
       order,
