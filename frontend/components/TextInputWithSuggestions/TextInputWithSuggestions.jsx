@@ -17,6 +17,11 @@ const KEY_DOWN = 40
 export default class TextInputWithSuggestions extends Component {
   static propTypes = {
     /**
+     * Whether the list of suggestions is still being populated.
+     */
+    isLoading: proptypes.bool,
+
+    /**
      * Callback function to fire whenever the value of the text input changes.
      */
     onChange: proptypes.func,
@@ -90,6 +95,7 @@ export default class TextInputWithSuggestions extends Component {
 
   render() {
     const {
+      isLoading,
       suggestions,
       value
     } = this.props
@@ -97,10 +103,14 @@ export default class TextInputWithSuggestions extends Component {
       focusedSuggestion,
       hasFocus
     } = this.state
+    const hasSuggestions = suggestions && Object.keys(suggestions).length > 0
+    const inputStyle = new Style(styles, 'input')
+      .addIf('input-loading', isLoading === true)
 
     return (
       <form>
         <TextInput
+          className={inputStyle.getClasses()}
           onBlur={this.handleInputFocus.bind(this, false)}
           onFocus={this.handleInputFocus.bind(this, true)}
           onInput={this.handleInputChange.bind(this)}
@@ -110,7 +120,7 @@ export default class TextInputWithSuggestions extends Component {
           tabindex="1"
         />
 
-        {value && hasFocus &&
+        {value && hasFocus && hasSuggestions &&
           <div class={styles.suggestions}>
             {Object.keys(suggestions).map((key, index) => {
               const suggestionStyle = new Style(styles, 'suggestion')

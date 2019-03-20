@@ -12,7 +12,7 @@ export default function search (state = {}, action = {}) {
         [action.context]: {
           ...state[action.context],
           [action.term]: {
-            isReady: false,
+            isLoading: true,
             results: [],
             timestamp: action.timestamp,
           }
@@ -26,7 +26,7 @@ export default function search (state = {}, action = {}) {
           ...state[action.context],
           [action.term]: {
             ...state[action.context][action.term],
-            isReady: true,
+            isLoading: false,
             results: action.results
           }
         }

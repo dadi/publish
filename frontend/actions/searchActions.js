@@ -19,6 +19,10 @@ export function searchCollections ({
       return
     }
 
+    if (typeof term !== 'string' || term.length === 0) {
+      return
+    }
+
     const {accessToken} = getState().user
     const [api] = getState().api.apis
     const {collections} = api

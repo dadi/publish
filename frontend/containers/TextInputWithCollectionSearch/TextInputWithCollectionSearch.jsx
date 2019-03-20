@@ -1,6 +1,6 @@
 import {h, Component} from 'preact'
 import {bindActionCreators} from 'redux'
-import {connectHelper} from 'lib/util'
+import {connectHelper, debounce} from 'lib/util'
 import {route} from '@dadi/preact-router'
 import * as Constants from 'lib/constants'
 import * as searchActions from 'actions/searchActions'
@@ -25,9 +25,20 @@ class TextInputWithCollectionSearch extends Component {
     context: proptypes.string,
 
     /**
+     * The debounce time (in ms) before a new set of results is requested.
+     * Higher values will render a more responsive input at the cost of more
+     * network traffic and more stress placed on the API.
+     */
+    debounceRate: proptypes.number,
+
+    /**
      * The global state object.
      */
     state: proptypes.object
+  }
+
+  static defaultProps = {
+    debounceRate: 500
   }
 
   constructor(props) {
@@ -54,13 +65,14 @@ class TextInputWithCollectionSearch extends Component {
       children,
       context,
       currentCollection,
+      debounceRate,
       state
     } = this.props
     const {value} = this.state
     const query = state.search[context] &&
       state.search[context][value]
-    const {results} = query || {}
-    
+    const {isLoading, results} = query || {}
+
     let suggestions = {}
 
     Object.keys(results || {}).forEach(collection => {
@@ -71,7 +83,8 @@ class TextInputWithCollectionSearch extends Component {
 
     return (
       <TextInputWithSuggestions
-        onChange={this.handleInputChange.bind(this)}
+        isLoading={isLoading}
+        onChange={debounce(this.handleInputChange, debounceRate).bind(this)}
         suggestions={suggestions}
         value={value}
       />

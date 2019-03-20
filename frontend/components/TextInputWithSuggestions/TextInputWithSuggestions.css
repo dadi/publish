@@ -1,3 +1,11 @@
+.input-loading {
+  background-color: #fff;
+  background-image: url(./loading.svg);
+  background-position: right;
+  background-repeat: no-repeat;
+  background-size: auto 16px;    
+}
+
 .suggestions {
   font-size: 13px;
   position: absolute;
