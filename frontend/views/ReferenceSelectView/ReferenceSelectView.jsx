@@ -163,7 +163,6 @@ class ReferenceSelectView extends Component {
       sort,
       state
     } = this.props
-    const {newFilter} = this.state
     const {
       currentApi,
       currentCollection
@@ -228,6 +227,19 @@ class ReferenceSelectView extends Component {
       })
     ).concat(Constants.DEFAULT_FIELDS)
 
+    const showSelectedDocumentsUrl = onBuildBaseUrl.call(this, {
+      createNew: !Boolean(documentId),
+      page,
+      referenceFieldSelect: referencedField,      
+      search: {
+        ...search,
+        filter: {
+          ...search.filter,
+          $selected: true
+        }
+      }
+    })
+
     return (
       <Page>
         <ReferenceSelectHeader
@@ -278,6 +290,8 @@ class ReferenceSelectView extends Component {
             page,
             referenceFieldSelect: referencedField
           })}
+          selectedDocuments={selectedDocuments}
+          showSelectedDocumentsUrl={showSelectedDocumentsUrl}
         >
           <Button
             accent="save"

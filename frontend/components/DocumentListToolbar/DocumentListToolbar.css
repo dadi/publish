@@ -61,3 +61,23 @@
     display: none;
   }
 }
+
+.selection-counter {
+  padding-left: 8px;
+  visibility: hidden;
+}
+
+.selection-counter-visible {
+  visibility: visible;
+}
+
+.selection-counter-button {
+  border-bottom: 1px solid #eee;
+  cursor: pointer;
+  outline: 0;
+  padding: 0 1px;
+}
+
+.selection-counter:hover .selection-counter-button {
+  border-bottom-color: var(--theme-colour-data, #4A91FF);
+}

@@ -4,6 +4,7 @@ import {h, Component} from 'preact'
 import proptypes from 'proptypes'
 import {connect} from 'preact-redux'
 import {bindActionCreators} from 'redux'
+import {batchActions} from 'lib/redux'
 import {route} from '@dadi/preact-router'
 import {Keyboard} from 'lib/keyboard'
 
@@ -218,19 +219,19 @@ class DocumentList extends Component {
       collection,
       state
     } = this.props
+    const currentCollection = collection || {}
+    const nextCollection = nextProps.collection || {}
 
-    let currentCollection = collection || {}
-    let nextCollection = nextProps.collection || {}
+    if (currentCollection.path !== nextCollection.path) {
+      actions.setDocumentSelection([])
 
-    // This is required to recover from an error. If the document list has
-    // errored and we're about to navigate to a different collection, we
-    // clear the error state by setting the status to IDLE and let the
-    // container fetch again.
-    if (
-      state.documents.remoteError &&
-      currentCollection.path !== nextCollection.path
-    ) {
-      actions.setDocumentListStatus(Constants.STATUS_IDLE)
+      // This is required to recover from an error. If the document list has
+      // errored and we're about to navigate to a different collection, we
+      // clear the error state by setting the status to IDLE and let the
+      // container fetch again.
+      if (state.documents.remoteError) {
+        actions.setDocumentListStatus(Constants.STATUS_IDLE)
+      }
     }
   }
 
@@ -275,14 +276,30 @@ class DocumentList extends Component {
       return
     }
 
-    let count = (collection.settings && collection.settings.count)
+    if (filters.$selected === true) {
+      const {selected: selectedDocuments} = state.documents
+      const newDocumentList = {
+        results: selectedDocuments,
+        metadata: {
+          limit: selectedDocuments.length,
+          offset: 0,
+          page: 1,
+          totalCount: selectedDocuments.length,
+          totalPages: 1
+        }
+      }
+
+      return actions.setDocumentList(newDocumentList)
+    }
+
+    const count = (collection.settings && collection.settings.count)
       || 20
 
     // This is the object we'll send to the `fetchDocuments` action. If we're
     // dealing with a reference field select, we'll pass this object to any
     // existing `beforeReferenceSelect` hook so that field components have the
     // chance to modify the criteria used to retrieve documents from the API.
-    let fetchObject = {
+    const fetchObject = {
       api,
       collection,
       count,
@@ -296,7 +313,7 @@ class DocumentList extends Component {
       sortOrder: order
     }
 
-    actions.fetchDocuments(fetchObject)
+    return actions.fetchDocuments(fetchObject)
   }
 
   render() {
