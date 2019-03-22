@@ -73,7 +73,7 @@ export default class DocumentGridList extends Component {
     /**
      * A hash map of the indices of the currently selected documents.
      */
-    selectedDocuments: proptypes.obj,
+    selectedDocuments: proptypes.object,
 
     /**
      * The maximum number of documents that can be selected.
