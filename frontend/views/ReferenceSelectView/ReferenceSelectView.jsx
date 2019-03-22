@@ -227,18 +227,19 @@ class ReferenceSelectView extends Component {
       })
     ).concat(Constants.DEFAULT_FIELDS)
 
-    const showSelectedDocumentsUrl = onBuildBaseUrl.call(this, {
-      createNew: !Boolean(documentId),
-      page,
-      referenceFieldSelect: referencedField,      
-      search: {
-        ...search,
-        filter: {
-          ...search.filter,
-          $selected: true
+    const showSelectedDocumentsUrl = !reference.collection.IS_MEDIA_BUCKET &&
+      onBuildBaseUrl.call(this, {
+        createNew: !Boolean(documentId),
+        page,
+        referenceFieldSelect: referencedField,      
+        search: {
+          ...search,
+          filter: {
+            ...search.filter,
+            $selected: true
+          }
         }
-      }
-    })
+      })
 
     return (
       <Page>

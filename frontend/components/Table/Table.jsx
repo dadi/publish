@@ -71,10 +71,15 @@ export default class Table extends Component {
   }
 
   deselectAll() {
-    const {onSelect} = this.props
+    const {onSelect, selectedRows} = this.props
+    const selection = Object.keys(selectedRows).reduce((selection, index) => {
+      selection[index] = false
+
+      return selection
+    }, {})
 
     if (typeof onSelect === 'function') {
-      onSelect.call(this, {})
+      onSelect.call(this, selection)
     }
   }
 

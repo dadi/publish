@@ -63,12 +63,20 @@
 }
 
 .selection-counter {
+  display: none;
   padding-left: 8px;
   visibility: hidden;
 }
 
 .selection-counter-visible {
+  display: inline-block;
   visibility: visible;
+}
+
+@media (--breakpoint-large) {
+  .selection-counter {
+    display: inline-block;
+  }
 }
 
 .selection-counter-button {

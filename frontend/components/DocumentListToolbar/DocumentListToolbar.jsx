@@ -98,16 +98,18 @@ export default class DocumentListToolbar extends Component {
               <strong>{`${metadata.offset + 1}-${Math.min(metadata.offset + metadata.limit, metadata.totalCount)} `}</strong>
               of <strong>{metadata.totalCount}</strong>
 
-              <span class={selectionCounter.getClasses()}>
-                (
-                  <a
-                    class={styles['selection-counter-button']}
-                    href={showSelectedDocumentsUrl}
-                  >
-                    {selectedDocuments.length} selected
-                  </a>
-                )
-              </span>
+              {showSelectedDocumentsUrl && (
+                <span class={selectionCounter.getClasses()}>
+                  (
+                    <a
+                      class={styles['selection-counter-button']}
+                      href={showSelectedDocumentsUrl}
+                    >
+                      {selectedDocuments.length} selected
+                    </a>
+                  )
+                </span>
+              )}
             </span>
           </div>
         )}
