@@ -91,10 +91,34 @@ export default function document (state = initialState, action = {}) {
 
     // Action: set document list selection.
     case Types.SET_DOCUMENT_SELECTION:
-      return {
+      const {selectedDocuments, isFilteringSelection} = action
+
+      let newState = {
         ...state,
-        selected: action.selectedDocuments
+        selected: selectedDocuments
       }
+
+      // If we're showing only selected documents, it means that we must remove
+      // from the document list any documents that have been deselected.
+      if (isFilteringSelection) {
+        const newList = state.list.results.filter(document => {
+          return selectedDocuments.find(({_id}) => document._id === _id)
+        })
+        const numberOfDocuments = newList.length
+
+        newState.list = {
+          metadata: {
+            limit: numberOfDocuments,
+            offset: 0,
+            page: 1,
+            totalCount: numberOfDocuments,
+            totalPages: 1
+          },
+          results: newList,
+        }
+      }
+
+      return newState
 
     // Action: user signed out
     case Types.SIGN_OUT:

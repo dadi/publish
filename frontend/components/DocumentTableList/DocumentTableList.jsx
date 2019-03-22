@@ -108,13 +108,13 @@ export default class DocumentTableList extends Component {
       return value
     }
 
-    let editLink = onBuildBaseUrl({
+    const editLink = onBuildBaseUrl({
       documentId: documentId || data._id,
       search: null
     })
-    let fieldSchema = collection.fields[column.id]
-    let renderedValue = this.renderField(column.id, fieldSchema, value)
-    let firstStringField = Object.keys(listableFields).filter(field => {
+    const fieldSchema = collection.fields[column.id]
+    const renderedValue = this.renderField(fieldSchema, value)
+    const firstStringField = Object.keys(listableFields).filter(field => {
       return listableFields[field].type === 'String'
     })[0]
 
@@ -134,8 +134,7 @@ export default class DocumentTableList extends Component {
     const {
       onBuildBaseUrl
     } = this.props
-
-    let link = onBuildBaseUrl({
+    const link = onBuildBaseUrl({
       search: {
         order: sortOrder,
         sort: sortBy
@@ -193,7 +192,6 @@ export default class DocumentTableList extends Component {
 
   renderAnnotation(schema) {
     const fieldType = getFieldType(schema)
-
     const fieldComponentName = `Field${fieldType}`
     const FieldComponentListHeadAnnotation = fieldComponents[fieldComponentName] &&
       fieldComponents[fieldComponentName].listHeadAnnotation
@@ -205,7 +203,7 @@ export default class DocumentTableList extends Component {
     }
   }
 
-  renderField(fieldName, schema, value) {
+  renderField(schema, value) {
     if (!schema) return
 
     const {
@@ -213,7 +211,6 @@ export default class DocumentTableList extends Component {
       collection,
       config
     } = this.props
-
     const fieldType = getFieldType(schema)
     const fieldComponentName = `Field${fieldType}`
     const FieldComponentList = fieldComponents[fieldComponentName] &&

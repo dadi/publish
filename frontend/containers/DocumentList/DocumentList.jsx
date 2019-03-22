@@ -360,7 +360,7 @@ class DocumentList extends Component {
     // Setting page title depending on whether we are listing documents on the
     // top-level of a collection or from a reference field.
     if (referencedField && collectionParent) {
-      let fieldSchema = collectionParent.fields[referencedField]
+      const fieldSchema = collectionParent.fields[referencedField]
 
       onPageTitle(`Select ${(fieldSchema.label || referencedField).toLowerCase()}`)
     } else {
