@@ -61,3 +61,31 @@
     display: none;
   }
 }
+
+.selection-counter {
+  display: none;
+  padding-left: 8px;
+  visibility: hidden;
+}
+
+.selection-counter-visible {
+  display: inline-block;
+  visibility: visible;
+}
+
+@media (--breakpoint-large) {
+  .selection-counter {
+    display: inline-block;
+  }
+}
+
+.selection-counter-button {
+  border-bottom: 1px solid #eee;
+  cursor: pointer;
+  outline: 0;
+  padding: 0 1px;
+}
+
+.selection-counter:hover .selection-counter-button {
+  border-bottom-color: var(--theme-colour-data, #4A91FF);
+}

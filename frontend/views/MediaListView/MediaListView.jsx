@@ -28,7 +28,7 @@ const BULK_ACTIONS = {
 class MediaListView extends Component {
   componentDidUpdate(prevProps, prevState) {
     const {actions, state} = this.props
-    const {isDeleting, list} = state.documents
+    const {isDeleting} = state.documents
     const wasDeleting = prevProps.state.documents.isDeleting
 
     // Have we just deleted some documents?
@@ -41,6 +41,16 @@ class MediaListView extends Component {
         message
       })
     }
+  }
+
+  delete(ids) {
+    const {actions, state} = this.props
+    const api = state.api.apis[0]
+
+    actions.deleteMedia({
+      api,
+      ids
+    })
   }
 
   handleBuildBaseUrl({
@@ -59,25 +69,13 @@ class MediaListView extends Component {
     const {state} = this.props
 
     if (actionType === BULK_ACTIONS.DELETE) {
-      this.handleDelete(state.documents.selected)
+      const ids = state.documents.selected.map(document => document._id)
+
+      this.delete(ids)
     }
   }
 
-  handleDelete(ids) {
-    const {actions, state} = this.props
-    const api = state.api.apis[0]
-
-    actions.deleteMedia({
-      api,
-      ids
-    })
-  }
-
   handleEmptyDocumentList() {
-    const {
-      referencedField
-    } = this.props
-
     return (
       <HeroMessage
         title="No media yet."
@@ -87,7 +85,7 @@ class MediaListView extends Component {
   }
 
   handleRenderDocument(documentProps) {
-    const {page, state} = this.props
+    const {state} = this.props
     const {config} = state.app
 
     return (
@@ -122,7 +120,6 @@ class MediaListView extends Component {
       sort,
       state
     } = this.props
-    const {bulkActionSelected} = this.state
     const currentApi = state.api.apis[0]
     const {
       list: documents,

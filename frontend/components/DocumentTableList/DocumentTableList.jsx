@@ -68,7 +68,7 @@ export default class DocumentTableList extends Component {
     /**
      * A hash map of the indices of the currently selected documents.
      */
-    selectedDocuments: proptypes.array,
+    selectedDocuments: proptypes.object,
 
     /**
      * The maximum number of documents that can be selected.
@@ -83,14 +83,15 @@ export default class DocumentTableList extends Component {
 
   getSelectedRows() {
     const {documents, selectedDocuments} = this.props
-
-    return documents.reduce((selectedRows, item, index) => {
+    const selectedRows = documents.reduce((selectedRows, item, index) => {
       if (selectedDocuments[item._id]) {
         selectedRows[index] = true
       }
 
-      return selectedDocuments
+      return selectedRows
     }, {})
+
+    return selectedRows
   }
 
   handleRowRender(listableFields, value, data, column, index) {
@@ -107,13 +108,13 @@ export default class DocumentTableList extends Component {
       return value
     }
 
-    let editLink = onBuildBaseUrl({
+    const editLink = onBuildBaseUrl({
       documentId: documentId || data._id,
       search: null
     })
-    let fieldSchema = collection.fields[column.id]
-    let renderedValue = this.renderField(column.id, fieldSchema, value)
-    let firstStringField = Object.keys(listableFields).filter(field => {
+    const fieldSchema = collection.fields[column.id]
+    const renderedValue = this.renderField(fieldSchema, value)
+    const firstStringField = Object.keys(listableFields).filter(field => {
       return listableFields[field].type === 'String'
     })[0]
 
@@ -133,8 +134,7 @@ export default class DocumentTableList extends Component {
     const {
       onBuildBaseUrl
     } = this.props
-
-    let link = onBuildBaseUrl({
+    const link = onBuildBaseUrl({
       search: {
         order: sortOrder,
         sort: sortBy
@@ -149,16 +149,13 @@ export default class DocumentTableList extends Component {
   render() {
     const {
       collection,
-      config,
       documents,
       fields: fieldsToDisplay = [],
-      onBuildBaseUrl,
       onSelect,
       order,
-      referencedField,
+      selectedDocuments,
       sort
     } = this.props
-    const selectedRows = this.getSelectedRows()
     const collectionFields = (collection && collection.fields) || {}
     const listableFields = Object.keys(collectionFields).reduce((fields, fieldName) => {
       if (fieldsToDisplay.includes(fieldName)) {
@@ -184,7 +181,7 @@ export default class DocumentTableList extends Component {
         onRender={this.handleRowRender.bind(this, listableFields)}
         onSelect={onSelect}
         onSort={this.handleTableSort.bind(this)}
-        selectedRows={selectedRows}
+        selectedRows={selectedDocuments}
         selectLimit={Infinity}
         sortable={true}
         sortBy={sort}
@@ -195,7 +192,6 @@ export default class DocumentTableList extends Component {
 
   renderAnnotation(schema) {
     const fieldType = getFieldType(schema)
-
     const fieldComponentName = `Field${fieldType}`
     const FieldComponentListHeadAnnotation = fieldComponents[fieldComponentName] &&
       fieldComponents[fieldComponentName].listHeadAnnotation
@@ -207,7 +203,7 @@ export default class DocumentTableList extends Component {
     }
   }
 
-  renderField(fieldName, schema, value) {
+  renderField(schema, value) {
     if (!schema) return
 
     const {
@@ -215,7 +211,6 @@ export default class DocumentTableList extends Component {
       collection,
       config
     } = this.props
-
     const fieldType = getFieldType(schema)
     const fieldComponentName = `Field${fieldType}`
     const FieldComponentList = fieldComponents[fieldComponentName] &&

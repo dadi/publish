@@ -54,29 +54,14 @@ class DocumentFilters extends Component {
     this.outsideTooltipHandler = this.handleClick.bind(this)
   }
 
-  componentDidMount() {
-    window.addEventListener('click', this.outsideTooltipHandler)
-  }
+  buildFiltersArray(filtersObject = {}) {
+    const filtersArray = Object.keys(filtersObject).map(field => {
+      if (field === '$selected') {
+        return {
+          FilterList: () => this.renderSelectedFilter(filtersObject[field])
+        }
+      }
 
-  componentDidUpdate(oldProps) {
-    const {collection = {}} = this.props
-    const {collection: oldCollection = {}} = oldProps
-
-    // If we have navigated to a different collection, we should reset the
-    // state o the search bar.
-    if (collection.path !== oldCollection.path) {
-      this.setState({...this.defaultState})
-    }
-  }
-
-  componentWillUnmount() {
-    window.removeEventListener('click', this.outsideTooltipHandler) 
-  }
-
-  buildFiltersArray(filtersObject) {
-    if (!filtersObject) return []
-
-    let filtersArray = Object.keys(filtersObject).map(field => {
       const fieldComponent = this.getFieldComponent(field) || {}
       const {
         filterList: FilterList,
@@ -104,6 +89,25 @@ class DocumentFilters extends Component {
     return filtersArray
   }
 
+  componentDidMount() {
+    window.addEventListener('click', this.outsideTooltipHandler)
+  }
+
+  componentDidUpdate(oldProps) {
+    const {collection = {}} = this.props
+    const {collection: oldCollection = {}} = oldProps
+
+    // If we have navigated to a different collection, we should reset the
+    // state o the search bar.
+    if (collection.path !== oldCollection.path) {
+      this.setState({...this.defaultState})
+    }
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener('click', this.outsideTooltipHandler) 
+  }
+
   getFieldComponent(fieldName) {
     const {collection} = this.props
     const fieldSchema = fieldName && collection.fields[fieldName]
@@ -118,6 +122,8 @@ class DocumentFilters extends Component {
   getFieldName(fieldName) {
     const {collection} = this.props
     const fieldSchema = collection.fields[fieldName]
+
+    if (!fieldSchema) return null
 
     return fieldSchema.label || fieldName
   }
@@ -404,10 +410,11 @@ class DocumentFilters extends Component {
       selectedFilterOperator,
       selectedFilterValue
     } = this.state
+    const fieldName = this.getFieldName(field)
     const fieldTypeHasFilterListComponent = typeof FilterList === 'function'
-    const nodeField = (
+    const nodeField = fieldName && (
       <span class={styles['filter-field']}>
-        {this.getFieldName(field)}
+        {fieldName}
       </span>
     )
     const nodeOperator = (
@@ -549,6 +556,14 @@ class DocumentFilters extends Component {
         >{isUpdate ? 'Update' : 'Add'} filter</Button>
       </form>
     ) 
+  }
+
+  renderSelectedFilter(value) {
+    const message = `is ${value === false ? 'not ' : ''} selected`
+
+    return (
+      <span>{message}</span>
+    )
   }
 }
 

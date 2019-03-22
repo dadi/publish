@@ -62,15 +62,12 @@ class ReferenceSelectView extends Component {
   handleDocumentSelect(fieldComponent) {
     const {
       actions,
-      onBuildBaseUrl,
       referencedField,
       state
     } = this.props
     const {currentCollection: collection} = state.api
-    const {list, selected} = state.documents
-    const selectedDocuments = selected.map(documentId => {
-      return list.results.find(document => document._id === documentId)
-    }).filter(Boolean)
+    const {selected} = state.documents
+    const selectedDocuments = selected.filter(Boolean)
 
     let update = {
       [referencedField]: selectedDocuments
@@ -158,10 +155,7 @@ class ReferenceSelectView extends Component {
 
   render() {
     const {
-      collection,
       documentId,
-      filter,
-      group,
       onBuildBaseUrl,
       order,
       page,
@@ -169,7 +163,6 @@ class ReferenceSelectView extends Component {
       sort,
       state
     } = this.props
-    const {newFilter} = this.state
     const {
       currentApi,
       currentCollection
@@ -234,6 +227,20 @@ class ReferenceSelectView extends Component {
       })
     ).concat(Constants.DEFAULT_FIELDS)
 
+    const showSelectedDocumentsUrl = !reference.collection.IS_MEDIA_BUCKET &&
+      onBuildBaseUrl.call(this, {
+        createNew: !Boolean(documentId),
+        page,
+        referenceFieldSelect: referencedField,      
+        search: {
+          ...search,
+          filter: {
+            ...search.filter,
+            $selected: true
+          }
+        }
+      })
+
     return (
       <Page>
         <ReferenceSelectHeader
@@ -248,6 +255,7 @@ class ReferenceSelectView extends Component {
           
         <DocumentListController
           collection={reference.collection}
+          enableFilters={!reference.collection.IS_MEDIA_BUCKET}
           onBuildBaseUrl={onBuildBaseUrl.bind(this)}
           referencedField={referencedField}
           search={search}
@@ -283,6 +291,8 @@ class ReferenceSelectView extends Component {
             page,
             referenceFieldSelect: referencedField
           })}
+          selectedDocuments={selectedDocuments}
+          showSelectedDocumentsUrl={showSelectedDocumentsUrl}
         >
           <Button
             accent="save"

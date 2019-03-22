@@ -1,13 +1,14 @@
 .wrapper {
+  align-items: center;
   color: var(--theme-colour-primary, #000000);
-  position: relative;
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  position: relative;
 }
 
 @media (--breakpoint-small) {
   .wrapper {
+    align-items: start;
     flex-wrap: wrap;
   }
 }
@@ -21,6 +22,7 @@
 
 @media (--breakpoint-small) {
   .filters {
+    margin-top: 10px;
     order: 3;
     width: 100%;
   }

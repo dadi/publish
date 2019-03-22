@@ -5,7 +5,6 @@ import {bindActionCreators} from 'redux'
 import {connectHelper, setPageTitle} from 'lib/util'
 import {getVisibleFields} from 'lib/fields'
 import {route} from '@dadi/preact-router'
-import {URLParams} from 'lib/util/urlParams'
 
 import * as appActions from 'actions/appActions'
 import * as Constants from 'lib/constants'
@@ -21,8 +20,6 @@ import Header from 'containers/Header/Header'
 import HeroMessage from 'components/HeroMessage/HeroMessage'
 import Main from 'components/Main/Main'
 import Page from 'components/Page/Page'
-import Style from 'lib/Style'
-import styles from './DocumentListView.css'
 
 const BULK_ACTIONS = {
   DELETE: 'BULK_ACTIONS_DELETE'
@@ -62,20 +59,7 @@ class DocumentListView extends Component {
     }
   }
 
-  handleBulkActionApply(actionType) {
-    const {state} = this.props
-
-    switch (actionType) {
-      case BULK_ACTIONS.DELETE:
-        this.handleDocumentDelete(state.documents.selected)
-        break
-
-      default:
-        return
-    }
-  }
-
-  handleDocumentDelete(ids) {
+  delete(ids) {
     const {actions, state} = this.props
     const {
       currentApi: api,
@@ -87,6 +71,22 @@ class DocumentListView extends Component {
       collection,
       ids
     })
+  }
+
+  handleBulkActionApply(actionType) {
+    const {state} = this.props
+
+    switch (actionType) {
+      case BULK_ACTIONS.DELETE:
+        const ids = state.documents.selected.map(document => document._id)
+
+        this.delete(ids)
+
+        break
+
+      default:
+        return
+    }
   }
 
   handleEmptyDocumentList() {
@@ -128,16 +128,13 @@ class DocumentListView extends Component {
 
   render() {
     const {
-      collection,
       documentId,
-      group,
       onBuildBaseUrl,
       order,
       page,
       sort,
       state
     } = this.props
-    const {bulkActionSelected} = this.state
     const {
       currentApi,
       currentCollection,
@@ -156,7 +153,6 @@ class DocumentListView extends Component {
         viewType: 'list'
       })
     ).concat(Constants.DEFAULT_FIELDS)
-
     const actions = {
       [BULK_ACTIONS.DELETE]: {
         confirmationMessage: 
@@ -168,6 +164,15 @@ class DocumentListView extends Component {
         label: `Delete ${selectedDocuments.length ? ' (' + selectedDocuments.length + ')' : ''}`
       }
     }
+    const showSelectedDocumentsUrl = onBuildBaseUrl.call(this, {
+      search: {
+        ...search,
+        filter: {
+          ...search.filter,
+          $selected: true
+        }
+      }
+    })
 
     return (
       <Page>
@@ -212,6 +217,8 @@ class DocumentListView extends Component {
           onBuildPageUrl={page => onBuildBaseUrl.call(this, {
             page
           })}
+          selectedDocuments={selectedDocuments}
+          showSelectedDocumentsUrl={showSelectedDocumentsUrl}
         >
           <BulkActionSelector
             actions={actions}
