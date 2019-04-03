@@ -1,11 +1,10 @@
 'use strict'
 
-import * as appActions from 'actions/appActions'
+import * as Constants from 'lib/constants'
 import * as fieldComponents from 'lib/field-components'
 import {connectHelper} from 'lib/util'
 import {h, Component} from 'preact'
 import {getFieldType} from 'lib/fields'
-import {bindActionCreators} from 'redux'
 import Button from 'components/Button/Button'
 import DropdownNative from 'components/DropdownNative/DropdownNative'
 import proptypes from 'proptypes'
@@ -269,8 +268,7 @@ class DocumentFilters extends Component {
 
   propagateFilters() {
     const {onUpdateFilters} = this.props
-
-    let newFiltersObject = this.filtersArray.reduce((result, filter) => {
+    const newFiltersObject = this.filtersArray.reduce((result, filter) => {
       const {field, operator, value} = filter
 
       result[field] = (!operator || operator === DEFAULT_OPERATOR_KEYWORD) ?
@@ -287,8 +285,7 @@ class DocumentFilters extends Component {
     const {
       onUpdateFilters
     } = this.props
-
-    let newFilters = this.filtersArray.reduce((result, filter, arrayIndex) => {
+    const newFilters = this.filtersArray.reduce((result, filter, arrayIndex) => {
       if (index !== arrayIndex) {
         const {field, operator, value} = filter
 
@@ -323,7 +320,7 @@ class DocumentFilters extends Component {
     this.filtersArray = this.buildFiltersArray(filters)
 
     // Finding String fields that don't already have filters applied.
-    let searchableFields = Object.keys(collection.fields).filter(field => {
+    const searchableFields = Object.keys(collection.fields).filter(field => {
       if (collection.fields[field].type.toLowerCase() !== 'string') {
         return false
       }

@@ -45,8 +45,6 @@ class DocumentListController extends Component {
   render() {
     return (
       <div>
-        <ListController breadcrumbs={['Media Library']} />
-
         <DropArea
           className={styles.droparea}
           onDrop={this.handleUpload.bind(this)}

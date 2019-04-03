@@ -140,6 +140,7 @@
 }
 
 .tooltip-heading {
+  font-family: var(--theme-font-family, sans-serif);
   font-size: var(--theme-font-size-small, 13px);
   margin-bottom: 6px;
   width: 100%;
@@ -191,7 +192,7 @@
 
 @media (--breakpoint-medium) {
   .form {
-    max-width: 350px;
+    max-width: 550px;
   }
 }
 
@@ -219,22 +220,19 @@
 }
 
 .suggestions {
-  font-size: 13px;
-  position: absolute;
-  top: 100%; left: 0;
-  z-index: 1;
-  width: 100%;
-  background-color: white;
-  padding: 10px;
   background-color: var(--theme-colour-background, #FFFFFF);
-  box-shadow: 7px 6px 25px rgba(0, 0, 0, 0.3);
   border-radius: 0 0 4px 4px;
-  z-index: 2000;
-  margin-top: -4px;
+  box-shadow: 7px 6px 25px rgba(0, 0, 0, 0.3);
   color: var(--theme-colour-primary, #000000);
   font-family: var(--theme-font-family, sans-serif);
   font-size: var(--theme-font-size-normal, 16px);
-  z-index: 1;
+  left: 0;
+  margin-top: -4px;
+  padding: 10px;
+  position: absolute;
+  top: 100%;
+  width: 100%;
+  z-index: 2000;
 }
 
 .suggestion {
