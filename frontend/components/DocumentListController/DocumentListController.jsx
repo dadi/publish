@@ -4,9 +4,7 @@ import {h, Component} from 'preact'
 import {route} from '@dadi/preact-router'
 import Button from 'components/Button/Button'
 import DocumentFilters from 'containers/DocumentFilters/DocumentFilters'
-import ListController from 'components/ListController/ListController'
 import proptypes from 'proptypes'
-import Style from 'lib/Style'
 import styles from './DocumentListController.css'
 
 /**
@@ -53,7 +51,6 @@ export default class DocumentListController extends Component {
       collection,
       createNewHref,
       enableFilters,
-      onBuildBaseUrl,
       search = {}
     } = this.props
 

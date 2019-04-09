@@ -29,7 +29,7 @@ export default class FieldStringFilter extends Component {
     // If the initial value isn't accepted for this field type,
     // we update it with one that is and propagate it to the
     // parent.
-    if (typeof value !== 'string') {
+    if (typeof value !== 'number') {
       onUpdate(null)
     }
   }

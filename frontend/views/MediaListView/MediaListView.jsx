@@ -11,6 +11,7 @@ import * as documentsActions from 'actions/documentsActions'
 import BulkActionSelector from 'components/BulkActionSelector/BulkActionSelector'
 import DocumentList from 'containers/DocumentList/DocumentList'
 import DocumentGridList from 'components/DocumentGridList/DocumentGridList'
+import DocumentListController from 'components/DocumentListController/DocumentListController'
 import DocumentListToolbar from 'components/DocumentListToolbar/DocumentListToolbar'
 import Header from 'containers/Header/Header'
 import HeroMessage from 'components/HeroMessage/HeroMessage'
@@ -53,16 +54,13 @@ class MediaListView extends Component {
     })
   }
 
-  handleBuildBaseUrl({
-    page
-  }) {
-    let url = ['/media']
+  handleBuildBaseUrl(parameters) {
+    const {onBuildBaseUrl} = this.props
+    const newParameters = Object.assign({}, parameters, {
+      collection: 'media'
+    })
 
-    if (page) {
-      url.push(page)
-    }
-
-    return url.join('/')
+    return onBuildBaseUrl.call(this, newParameters)
   }
 
   handleBulkActionApply(actionType) {
@@ -125,6 +123,9 @@ class MediaListView extends Component {
       list: documents,
       selected: selectedDocuments
     } = state.documents
+    const {
+      search = {}
+    } = state.router    
 
     const actions = {
       [BULK_ACTIONS.DELETE]: {
@@ -142,7 +143,14 @@ class MediaListView extends Component {
       <Page>
         <Header
           currentCollection={Constants.MEDIA_COLLECTION_SCHEMA}
-        />
+        >
+          <DocumentListController
+            collection={Constants.MEDIA_COLLECTION_SCHEMA}
+            enableFilters={true}
+            onBuildBaseUrl={this.handleBuildBaseUrl.bind(this)}
+            search={search}
+          />
+        </Header>        
 
         <Main>
           <MediaListController
@@ -152,6 +160,7 @@ class MediaListView extends Component {
           <DocumentList
             api={currentApi}
             collection={Constants.MEDIA_COLLECTION_SCHEMA}
+            filters={search.filter}
             onBuildBaseUrl={this.handleBuildBaseUrl.bind(this)}
             onPageTitle={this.handlePageTitle}
             onRenderDocuments={this.handleRenderDocument.bind(this)}
@@ -185,6 +194,7 @@ export default connectHelper(
     api: state.api,
     app: state.app,
     documents: state.documents,
+    router: state.router,
     user: state.user
   }),
   dispatch => bindActionCreators({

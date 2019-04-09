@@ -255,7 +255,7 @@ class ReferenceSelectView extends Component {
           
         <DocumentListController
           collection={reference.collection}
-          enableFilters={!reference.collection.IS_MEDIA_BUCKET}
+          enableFilters={true}
           onBuildBaseUrl={onBuildBaseUrl.bind(this)}
           referencedField={referencedField}
           search={search}
