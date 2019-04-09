@@ -102,7 +102,6 @@ Router.prototype.webRoutes = function () {
     })
   })
 
-  // The user's /workspace/public folder can override the system one
   this.server.get('/components/*', restify.plugins.serveStatic({
     appendRequestPath: false,
     directory: componentsPath
