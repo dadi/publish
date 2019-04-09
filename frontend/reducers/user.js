@@ -3,7 +3,6 @@
 import * as Constants from 'lib/constants'
 import * as Cookies from 'js-cookie'
 import * as Types from 'actions/actionTypes'
-import {isValidJSON} from 'lib/util'
 
 const initialState = {
   accessToken: Cookies.get('accessToken'),

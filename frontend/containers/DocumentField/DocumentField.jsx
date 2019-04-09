@@ -188,31 +188,47 @@ class DocumentField extends Component {
       return null
     }
 
+    const fieldProps = {
+      collection: collection.slug,
+      comment: fieldComment,
+      config: app.config,
+      currentApi: api,
+      currentCollection: collection,
+      displayName,
+      documentId,
+      error,
+      forceValidation: hasAttemptedSaving,
+      meta: documentMetadata[fieldName],
+      name: fieldName,
+      onBuildBaseUrl: onBuildBaseUrl,
+      onChange: this.handleFieldChange.bind(this),
+      onError: this.handleFieldError.bind(this),
+      placeholder: placeholder,
+      required: field.required && !isTranslation,
+      schema: field,
+      value: documentData[fieldName]
+    }
+    const wrapperProps = {
+      isDisabled: isTranslation && !isTranslatable,
+      name: fieldName
+    }    
+    const UserComponent = window.Publish.getFieldHandler(fieldType)
+
+    if (UserComponent) {
+      return (
+        <UserComponent
+          document={documentData}
+          FieldComponent={FieldComponent}
+          fieldProps={fieldProps}
+          WrapperComponent={Field}
+          wrapperProps={wrapperProps}
+        />
+      )
+    }
+
     return (
-      <Field
-        isDisabled={isTranslation && !isTranslatable}
-        name={fieldName}
-      >
-        <FieldComponent
-          collection={collection.slug}
-          comment={fieldComment}
-          config={app.config}
-          currentApi={api}
-          currentCollection={collection}
-          displayName={displayName}
-          documentId={documentId}
-          error={error}
-          forceValidation={hasAttemptedSaving}
-          meta={documentMetadata[fieldName]}
-          name={fieldName}
-          onBuildBaseUrl={onBuildBaseUrl}
-          onChange={this.handleFieldChange.bind(this)}
-          onError={this.handleFieldError.bind(this)}
-          placeholder={placeholder}
-          required={field.required && !isTranslation}
-          schema={field}
-          value={documentData[fieldName]}
-        />      
+      <Field {...wrapperProps}>
+        <FieldComponent {...fieldProps}/>
       </Field>
     )
   }

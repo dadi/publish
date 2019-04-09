@@ -83,8 +83,6 @@ class App extends Component {
     const {actions, state} = this.props
     const previousState = previousProps.state
     const room = previousState.router.room
-    const conf = state.app.config
-    const prevConf = previousState.app.config
 
     // State change: user has signed in.
     if (!previousState.user.accessToken && state.user.accessToken) {

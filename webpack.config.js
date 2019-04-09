@@ -180,7 +180,5 @@ module.exports = {
 
   stats: { colors: true },
 
-  externals: {
-    jsdom: 'jsdom'
-  }
+  externals: {}
 }

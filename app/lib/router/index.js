@@ -66,10 +66,33 @@ Router.prototype.webRoutes = function () {
     return
   }
 
+  const workspacePath = path.join(process.cwd(), 'workspace')
+  const componentsDirectory = 'components'
+  const componentsPath = path.join(
+    workspacePath,
+    componentsDirectory
+  )
+
+  let components = []
+
+  try {
+    fs.readdirSync(componentsPath).forEach(file => {
+      components.push(file)
+    })
+  } catch (error) {
+    log.info({module: 'router'}, 'Components directory not defined')
+  }
+
+  const componentImports = components.reduce((imports, file) => {
+    imports += `<script src="/${componentsDirectory}/${file}"></script>`
+
+    return imports
+  }, '')
+
   // The user's /workspace/public folder can override the system one
   this.server.get('/public/*', (req, res, next) => {
     restify.plugins.serveStatic({
-      directory: path.join(process.cwd(), 'workspace')
+      directory: workspacePath
     })(req, res, (err) => {
       if (err) {
         restify.plugins.serveStatic({
@@ -78,6 +101,12 @@ Router.prototype.webRoutes = function () {
       }
     })
   })
+
+  // The user's /workspace/public folder can override the system one
+  this.server.get('/components/*', restify.plugins.serveStatic({
+    appendRequestPath: false,
+    directory: componentsPath
+  }))
 
   // Respond to HEAD requests - this is used by ConnectionMonitor in App.jsx.
   this.server.head('*', (req, res, next) => {
@@ -138,6 +167,12 @@ Router.prototype.webRoutes = function () {
           `window.__config__ = ${JSON.stringify(config.getUnauthenticatedConfig())};`
         )
     }
+
+    entryPointPage = entryPointPage
+      .replace(
+        '<!--@@customComponents@@-->',
+        componentImports
+      )
 
     return authenticate.then(() => {
       res.end(entryPointPage)
