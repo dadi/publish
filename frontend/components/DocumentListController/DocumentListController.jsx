@@ -133,7 +133,7 @@ export default class DocumentListController extends Component {
       filter: newFilterValue
     })
     const newUrl = onBuildBaseUrl({
-      createNew: !Boolean(documentId),
+      createNew: Boolean(referencedField && !documentId),
       referenceFieldSelect: referencedField,
       search: newSearch
     })
