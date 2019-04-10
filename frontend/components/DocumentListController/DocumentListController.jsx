@@ -24,6 +24,11 @@ export default class DocumentListController extends Component {
     createNewHref: proptypes.string,
 
     /**
+     * The ID of the document being operated on.
+     */
+    documentId: proptypes.string,    
+
+    /**
      * Whether to enable filters.
      */
     enableFilters: proptypes.bool,
@@ -116,6 +121,7 @@ export default class DocumentListController extends Component {
 
   handleFiltersUpdate(newFilters) {
     const {
+      documentId,
       onBuildBaseUrl,
       referencedField,
       search
@@ -127,6 +133,7 @@ export default class DocumentListController extends Component {
       filter: newFilterValue
     })
     const newUrl = onBuildBaseUrl({
+      createNew: Boolean(referencedField && !documentId),
       referenceFieldSelect: referencedField,
       search: newSearch
     })
