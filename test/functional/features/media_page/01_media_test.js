@@ -23,6 +23,10 @@ Scenario('Select Media', async (mediaPage) => {
   await mediaPage.selectMedia()
 })
 
+Scenario('Filter Media', async (mediaPage) => {
+  await mediaPage.filterMedia()
+})
+
 Scenario('Delete Media', async (mediaPage) => {
   await mediaPage.deleteMedia()
 })

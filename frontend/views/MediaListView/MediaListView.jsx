@@ -11,6 +11,7 @@ import * as documentsActions from 'actions/documentsActions'
 import BulkActionSelector from 'components/BulkActionSelector/BulkActionSelector'
 import DocumentList from 'containers/DocumentList/DocumentList'
 import DocumentGridList from 'components/DocumentGridList/DocumentGridList'
+import DocumentListController from 'components/DocumentListController/DocumentListController'
 import DocumentListToolbar from 'components/DocumentListToolbar/DocumentListToolbar'
 import Header from 'containers/Header/Header'
 import HeroMessage from 'components/HeroMessage/HeroMessage'
@@ -28,7 +29,7 @@ const BULK_ACTIONS = {
 class MediaListView extends Component {
   componentDidUpdate(prevProps, prevState) {
     const {actions, state} = this.props
-    const {isDeleting, list} = state.documents
+    const {isDeleting} = state.documents
     const wasDeleting = prevProps.state.documents.isDeleting
 
     // Have we just deleted some documents?
@@ -43,27 +44,7 @@ class MediaListView extends Component {
     }
   }
 
-  handleBuildBaseUrl({
-    page
-  }) {
-    let url = ['/media']
-
-    if (page) {
-      url.push(page)
-    }
-
-    return url.join('/')
-  }
-
-  handleBulkActionApply(actionType) {
-    const {state} = this.props
-
-    if (actionType === BULK_ACTIONS.DELETE) {
-      this.handleDelete(state.documents.selected)
-    }
-  }
-
-  handleDelete(ids) {
+  delete(ids) {
     const {actions, state} = this.props
     const api = state.api.apis[0]
 
@@ -73,11 +54,26 @@ class MediaListView extends Component {
     })
   }
 
-  handleEmptyDocumentList() {
-    const {
-      referencedField
-    } = this.props
+  handleBuildBaseUrl(parameters) {
+    const {onBuildBaseUrl} = this.props
+    const newParameters = Object.assign({}, parameters, {
+      collection: 'media'
+    })
 
+    return onBuildBaseUrl.call(this, newParameters)
+  }
+
+  handleBulkActionApply(actionType) {
+    const {state} = this.props
+
+    if (actionType === BULK_ACTIONS.DELETE) {
+      const ids = state.documents.selected.map(document => document._id)
+
+      this.delete(ids)
+    }
+  }
+
+  handleEmptyDocumentList() {
     return (
       <HeroMessage
         title="No media yet."
@@ -87,7 +83,7 @@ class MediaListView extends Component {
   }
 
   handleRenderDocument(documentProps) {
-    const {page, state} = this.props
+    const {state} = this.props
     const {config} = state.app
 
     return (
@@ -122,12 +118,14 @@ class MediaListView extends Component {
       sort,
       state
     } = this.props
-    const {bulkActionSelected} = this.state
     const currentApi = state.api.apis[0]
     const {
       list: documents,
       selected: selectedDocuments
     } = state.documents
+    const {
+      search = {}
+    } = state.router    
 
     const actions = {
       [BULK_ACTIONS.DELETE]: {
@@ -145,7 +143,14 @@ class MediaListView extends Component {
       <Page>
         <Header
           currentCollection={Constants.MEDIA_COLLECTION_SCHEMA}
-        />
+        >
+          <DocumentListController
+            collection={Constants.MEDIA_COLLECTION_SCHEMA}
+            enableFilters={true}
+            onBuildBaseUrl={this.handleBuildBaseUrl.bind(this)}
+            search={search}
+          />
+        </Header>        
 
         <Main>
           <MediaListController
@@ -155,6 +160,7 @@ class MediaListView extends Component {
           <DocumentList
             api={currentApi}
             collection={Constants.MEDIA_COLLECTION_SCHEMA}
+            filters={search.filter}
             onBuildBaseUrl={this.handleBuildBaseUrl.bind(this)}
             onPageTitle={this.handlePageTitle}
             onRenderDocuments={this.handleRenderDocument.bind(this)}
@@ -188,6 +194,7 @@ export default connectHelper(
     api: state.api,
     app: state.app,
     documents: state.documents,
+    router: state.router,
     user: state.user
   }),
   dispatch => bindActionCreators({

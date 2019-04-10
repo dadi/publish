@@ -50,7 +50,6 @@
       "publish": {
         "section": "Details",
         "placement": "sidebar",
-        "readonly": true,
         "display": {
           "edit": true,
           "list": true
@@ -258,7 +257,7 @@
     "metaTitle": {
       "type": "String",
       "required": false,
-      "label": "Title",
+      "label": "metaTitle",
       "publish": {
         "section": "Meta",
         "placement": "main",
@@ -271,7 +270,7 @@
     "metaDescription": {
       "type": "String",
       "required": false,
-      "label": "Description",
+      "label": "metaDescription",
       "publish": {
         "section": "Meta",
         "placement": "main",

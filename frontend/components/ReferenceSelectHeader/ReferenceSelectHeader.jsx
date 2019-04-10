@@ -25,6 +25,11 @@ export default class ReferenceSelectHeader extends Component {
     collectionParent: proptypes.object,
 
     /**
+     * The ID of the document being operated on.
+     */
+    documentId: proptypes.string,
+
+    /**
      * The instructional text to display on the top-left corner of the header.
      */
     instructionText: proptypes.string,

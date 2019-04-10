@@ -31,9 +31,19 @@ export default class DocumentListToolbar extends Component {
     documentsMetada: proptypes.object,
 
     /**
-    * A callback to be used to obtain the URL for a given page.
+    * A callback used to obtain the URL for a given page.
     */
-    onBuildPageUrl: proptypes.func
+    onBuildPageUrl: proptypes.func,
+
+    /**
+    * The list of selected documents.
+    */
+   selectedDocuments: proptypes.array,
+
+    /**
+    * The URL for limiting the document list to only selected documents.
+    */
+   showSelectedDocumentsUrl: proptypes.string
   }
 
   goToPage(value) {
@@ -61,7 +71,9 @@ export default class DocumentListToolbar extends Component {
     const {
       children,
       documentsMetadata: metadata,
-      onBuildPageUrl
+      onBuildPageUrl,
+      selectedDocuments = [],
+      showSelectedDocumentsUrl
     } = this.props
 
     if (!metadata) return null
@@ -75,15 +87,29 @@ export default class DocumentListToolbar extends Component {
       
       return result
     }, {})
+    const selectionCounter = new Style(styles, 'selection-counter')
+      .addIf('selection-counter-visible', selectedDocuments.length > 0)
 
     return (
       <Toolbar>      
         {metadata.totalCount > 1 && (
           <div class={styles.section}>
             <span class={styles['count-label']}>
-              <span>Showing </span>
               <strong>{`${metadata.offset + 1}-${Math.min(metadata.offset + metadata.limit, metadata.totalCount)} `}</strong>
               of <strong>{metadata.totalCount}</strong>
+
+              {showSelectedDocumentsUrl && (
+                <span class={selectionCounter.getClasses()}>
+                  (
+                    <a
+                      class={styles['selection-counter-button']}
+                      href={showSelectedDocumentsUrl}
+                    >
+                      {selectedDocuments.length} selected
+                    </a>
+                  )
+                </span>
+              )}
             </span>
           </div>
         )}

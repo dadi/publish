@@ -90,7 +90,7 @@ export default class SyncTable extends Component {
     /**
      * A hash map of the indices of the currently selected rows.
      */
-    selectedRows: proptypes.obj,
+    selectedRows: proptypes.object,
 
     /**
      * The maximum number of documents that can be selected at the same time.

@@ -1,21 +1,14 @@
 'use strict'
 
+import * as documentsActions from 'actions/documentsActions'
+import {bindActionCreators} from 'redux'
+import {connectHelper} from 'lib/util'
 import {h, Component} from 'preact'
 import proptypes from 'proptypes'
-import {connect} from 'preact-redux'
-import {bindActionCreators} from 'redux'
-
-import styles from './MediaListController.css'
-
-import * as Constants from 'lib/constants'
-import * as documentsActions from 'actions/documentsActions'
-
-import {connectHelper} from 'lib/util'
-
 import Button from 'components/Button/Button'
 import DropArea from 'components/DropArea/DropArea'
 import FileUpload from 'components/FileUpload/FileUpload'
-import ListController from 'components/ListController/ListController'
+import styles from './MediaListController.css'
 
 /**
  * A controller bar for a list of media documents.
@@ -45,8 +38,6 @@ class DocumentListController extends Component {
   render() {
     return (
       <div>
-        <ListController breadcrumbs={['Media Library']} />
-
         <DropArea
           className={styles.droparea}
           onDrop={this.handleUpload.bind(this)}

@@ -118,6 +118,9 @@ Router.prototype.webRoutes = function () {
       }).catch(error => {
         log.error({module: 'router'}, error)
 
+        res.clearCookie('accessToken', {path: '/'})
+        res.clearCookie('accessTokenExpiry', {path: '/'})
+
         entryPointPage = entryPointPage
           .replace(
             '/*@@apiError@@*/',

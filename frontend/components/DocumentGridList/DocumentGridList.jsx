@@ -73,7 +73,7 @@ export default class DocumentGridList extends Component {
     /**
      * A hash map of the indices of the currently selected documents.
      */
-    selectedDocuments: proptypes.array,
+    selectedDocuments: proptypes.object,
 
     /**
      * The maximum number of documents that can be selected.
@@ -94,7 +94,9 @@ export default class DocumentGridList extends Component {
   constructor(props) {
     super(props)
 
-    this.debouncedResizeHandler = debounce(this.forceUpdate.bind(this), 500)
+    this.debouncedResizeHandler = debounce(() => {
+      this.forceUpdate()
+    }, 500)
   }
 
   componentDidMount() {
@@ -174,10 +176,9 @@ export default class DocumentGridList extends Component {
             style={`width: ${100 / numberOfColumns}%`}
           >
             {column.map((item, index) => {
-              let isSelected = selectedDocuments[index] === true
-              let onSelect = this.handleItemSelect.bind(this, index)
+              const onSelect = this.handleItemSelect.bind(this, index)
 
-              return onRenderCard(item, onSelect, isSelected)
+              return onRenderCard(item, onSelect, Boolean(selectedDocuments[index]))
             })}
           </div>
         ))}

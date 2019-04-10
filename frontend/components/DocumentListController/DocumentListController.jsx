@@ -4,9 +4,7 @@ import {h, Component} from 'preact'
 import {route} from '@dadi/preact-router'
 import Button from 'components/Button/Button'
 import DocumentFilters from 'containers/DocumentFilters/DocumentFilters'
-import ListController from 'components/ListController/ListController'
 import proptypes from 'proptypes'
-import Style from 'lib/Style'
 import styles from './DocumentListController.css'
 
 /**
@@ -24,6 +22,11 @@ export default class DocumentListController extends Component {
      * be rendered.
      */
     createNewHref: proptypes.string,
+
+    /**
+     * The ID of the document being operated on.
+     */
+    documentId: proptypes.string,    
 
     /**
      * Whether to enable filters.
@@ -53,7 +56,6 @@ export default class DocumentListController extends Component {
       collection,
       createNewHref,
       enableFilters,
-      onBuildBaseUrl,
       search = {}
     } = this.props
 
@@ -119,6 +121,7 @@ export default class DocumentListController extends Component {
 
   handleFiltersUpdate(newFilters) {
     const {
+      documentId,
       onBuildBaseUrl,
       referencedField,
       search
@@ -130,6 +133,7 @@ export default class DocumentListController extends Component {
       filter: newFilterValue
     })
     const newUrl = onBuildBaseUrl({
+      createNew: Boolean(referencedField && !documentId),
       referenceFieldSelect: referencedField,
       search: newSearch
     })

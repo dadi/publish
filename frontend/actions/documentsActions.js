@@ -180,9 +180,14 @@ export function setDocumentList (documents, query) {
 }
 
 export function setDocumentSelection (selectedDocuments) {
-  return {
-    selectedDocuments,
-    type: Types.SET_DOCUMENT_SELECTION
+  return (dispatch, getState) => {
+    const {filter = {}} = getState().router.search
+
+    dispatch({
+      isFilteringSelection: filter.$selected === true,
+      selectedDocuments,
+      type: Types.SET_DOCUMENT_SELECTION
+    })
   }
 }
 
