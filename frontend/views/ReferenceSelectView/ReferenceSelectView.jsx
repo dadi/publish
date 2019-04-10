@@ -255,6 +255,7 @@ class ReferenceSelectView extends Component {
           
         <DocumentListController
           collection={reference.collection}
+          documentId={documentId}
           enableFilters={true}
           onBuildBaseUrl={onBuildBaseUrl.bind(this)}
           referencedField={referencedField}

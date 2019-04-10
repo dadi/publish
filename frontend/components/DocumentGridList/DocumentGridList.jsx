@@ -94,7 +94,9 @@ export default class DocumentGridList extends Component {
   constructor(props) {
     super(props)
 
-    this.debouncedResizeHandler = debounce(this.forceUpdate.bind(this), 500)
+    this.debouncedResizeHandler = debounce(() => {
+      this.forceUpdate()
+    }, 500)
   }
 
   componentDidMount() {

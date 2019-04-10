@@ -214,7 +214,7 @@ class DocumentFilters extends Component {
       selectedFilterOperator
     } = this.state    
     const fieldComponent = this.getFieldComponent(newField) || {}
-    const fieldOperators = fieldComponent.operators || {}
+    const fieldOperators = fieldComponent.filterOperators || {}
     
     // If the new selected field supports the currently selected operator, we
     // keep it. Otherwise, we use the first operator defined by the new field
