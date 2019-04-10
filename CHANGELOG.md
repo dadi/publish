@@ -4,6 +4,20 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [2.3.0] (2019-04-10)
+
+### Added
+
+* [#672](https://github.com/dadi/publish/pull/672): add filters to Reference select view
+* [#674](https://github.com/dadi/publish/pull/674): add filters to Media Library and Reference select view for Media fields
+* [660b15b](https://github.com/dadi/publish/commit/660b15be7dbe09f0d53b7d172a7eebae6ec68f8b): add button for filtering document list view by selected state
+
+### Fixed
+
+* [806a215](https://github.com/dadi/publish/commit/806a2159bfad4b6fdf5bd28dac74b7181226272f): fix issue where invalid cookies would cause a blank page
+* [ba1020c](https://github.com/dadi/publish/commit/ba1020c28b4ec8f216b14dece16bde04d45c7917): fix issue where changing the field which a filter operated on would reset the filter value if the field was of type `Number`
+
+
 ## [2.2.0] (2019-02-28)
 
 ### Changed
