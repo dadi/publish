@@ -183,9 +183,14 @@ export function setDocumentSelection (selectedDocuments) {
   return (dispatch, getState) => {
     const {filter = {}} = getState().router.search
 
+    // We need to ensure only actual documents are added to the selection.
+    const documents = selectedDocuments.filter(document => {
+      return document && typeof document._id === 'string'
+    })
+
     dispatch({
       isFilteringSelection: filter.$selected === true,
-      selectedDocuments,
+      selectedDocuments: documents,
       type: Types.SET_DOCUMENT_SELECTION
     })
   }
