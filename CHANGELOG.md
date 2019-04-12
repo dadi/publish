@@ -4,6 +4,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [2.3.1] (2019-04-12)
+
+### Fixed
+
+* [#681](https://github.com/dadi/publish/issues/681): fix issue where images inserted in the rich editor would have a broken link
+
+
 ## [2.3.0] (2019-04-10)
 
 ### Added

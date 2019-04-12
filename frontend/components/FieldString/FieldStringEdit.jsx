@@ -129,8 +129,7 @@ export default class FieldStringEdit extends Component {
 
   componentDidMount() {
     const {
-      meta = {},
-      value
+      meta = {}
     } = this.props
 
     if (meta.image && typeof this.insertImageCallback === 'function') {
