@@ -1,4 +1,4 @@
-<img src="https://dadi.tech/assets/products/dadi-publish-full.png" alt="DADI Publish" height="65"/>
+<img src="https://dadi.cloud/assets/products/dadi-publish-full.png" alt="DADI Publish" height="65"/>
 
 [![Coverage Status](https://coveralls.io/repos/github/dadi/publish/badge.svg?branch=develop)](https://coveralls.io/github/dadi/publish?branch=develop)
 [![Build Status](https://travis-ci.org/dadi/publish.svg?branch=master)](https://travis-ci.org/dadi/publish)
