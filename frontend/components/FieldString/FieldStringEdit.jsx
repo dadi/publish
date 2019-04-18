@@ -161,11 +161,13 @@ export default class FieldStringEdit extends Component {
 
   handleImageSelect(position) {
     const {
+      documentId,
       name,
       onBuildBaseUrl
     } = this.props
 
-    let selectImageUrl = onBuildBaseUrl({
+    const selectImageUrl = onBuildBaseUrl({
+      createNew: !Boolean(documentId),
       referenceFieldSelect: name,
       search: {
         position
@@ -176,7 +178,7 @@ export default class FieldStringEdit extends Component {
   }  
 
   handleOnChange(value) {
-    const {name, onChange, schema} = this.props
+    const {name, onChange} = this.props
 
     // We prefer sending a `null` over an empty string.
     let sanitisedValue = value === '' ? null : value
