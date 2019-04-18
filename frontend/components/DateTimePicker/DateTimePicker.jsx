@@ -26,7 +26,12 @@ export default class DateTimePicker extends Component {
     /**
      * A callback to be fired when a new date is selected.
      */
-    onChange: proptypes.func
+    onChange: proptypes.func,
+
+    /**
+     * Whether to display controls for picking hours and minutes.
+     */
+    pickTime: proptypes.bool
   }
 
   constructor(props) {
@@ -133,10 +138,9 @@ export default class DateTimePicker extends Component {
   }
 
   render() {
-    const {className, date: value} = this.props
+    const {className, pickTime} = this.props
     const {
       displayDate,
-      monthOffset,
       pickingTime
     } = this.state
     const containerStyle = new Style(styles, 'container').addResolved(className)
@@ -197,13 +201,17 @@ export default class DateTimePicker extends Component {
           </tbody>
         </table>
 
-        <button
-          class={styles['hours-launcher']}
-          onClick={this.handleTimeToggle.bind(this)}
-          type="button">{displayDateTime.format('HH:mm')}
-        </button>
+        {pickTime && (
+          <div>
+            <button
+              class={styles['hours-launcher']}
+              onClick={this.handleTimeToggle.bind(this)}
+              type="button">{displayDateTime.format('HH:mm')}
+            </button>
 
-        {pickingTime && this.renderHours()}
+            {pickingTime && this.renderHours()}            
+          </div>
+        )}
       </div>
     )
   }

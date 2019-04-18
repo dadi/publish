@@ -129,16 +129,19 @@ export default class FieldDateTimeEdit extends Component {
     clearTimeout(this.losingFocusTimeout)
   }
 
+  getDateFormat() {
+    const {config, schema} = this.props
+
+    return schema.format || config.formats.date.long
+  }
+
   handleChange(event) {
     const {
-      config,
-      error,
       name,
       onChange,
-      schema,
       value
     } = this.props
-    const newDate = new DateTime(event.target.value, config.formats.date.long)
+    const newDate = new DateTime(event.target.value, this.getDateFormat())
 
     let newValue = null
 
@@ -156,7 +159,6 @@ export default class FieldDateTimeEdit extends Component {
   handleFocus(hasFocus) {
     const {pickerVisible} = this.state
     const {schema} = this.props
-
     const publishBlock = schema.publish || {}
 
     // Return from focus event so picker doesn't display
@@ -220,7 +222,6 @@ export default class FieldDateTimeEdit extends Component {
   render() {
     let {
       comment,
-      config,
       displayName,
       error, 
       name,
@@ -242,6 +243,9 @@ export default class FieldDateTimeEdit extends Component {
       }
     }
 
+    const dateFormat = this.getDateFormat()
+    const showTimeSelector = dateFormat.includes('h') || dateFormat.includes('H')
+
     return (
       <Label
         error={Boolean(error)}
@@ -257,7 +261,7 @@ export default class FieldDateTimeEdit extends Component {
           onFocus={this.handleFocus.bind(this, true)}
           readonly={publishBlock.readonly === true}
           type="text"
-          value={dateObj && dateObj.format(config.formats.date.long)}
+          value={dateObj && dateObj.format(dateFormat)}
         />
 
         {pickerVisible &&
@@ -266,6 +270,7 @@ export default class FieldDateTimeEdit extends Component {
               className={styles.picker}
               date={dateObj && dateObj.getDate()}
               onChange={this.handlePickerChange.bind(this)}
+              pickTime={showTimeSelector}
             />
           </div>
         }
