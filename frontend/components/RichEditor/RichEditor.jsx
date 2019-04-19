@@ -623,7 +623,6 @@ export default class RichEditor extends Component {
   }
 
   render() {
-    const {children} = this.props
     const {
       editLinkText,
       html,
@@ -747,6 +746,12 @@ export default class RichEditor extends Component {
   }
 
   setSelectionOnElement(element) {
+    if (element.children.length === 0) {
+      const emptyNode = document.createElement('p')
+
+      element.appendChild(emptyNode)
+    }
+
     let range = document.createRange()
 
     range.setStart(element, 0)
