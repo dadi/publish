@@ -1,16 +1,11 @@
 'use strict'
 
 import {h, Component} from 'preact'
-import proptypes from 'proptypes'
-import {buildUrl} from 'lib/router'
 import {getVisibleFields} from 'lib/fields'
-
-import Style from 'lib/Style'
-import styles from './FieldReference.css'
-
 import Button from 'components/Button/Button'
 import Label from 'components/Label/Label'
-import TextInput from 'components/TextInput/TextInput'
+import proptypes from 'proptypes'
+import styles from './FieldReference.css'
 
 /**
  * Component for API fields of type Reference.

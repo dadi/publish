@@ -1,25 +1,13 @@
 'use strict'
 
-import {h, Component} from 'preact'
-import proptypes from 'proptypes'
-
-import Style from 'lib/Style'
-import styles from './ProfileEditToolbar.css'
-
-import * as Constants from 'lib/constants'
-import {Keyboard} from 'lib/keyboard'
 import * as appActions from 'actions/appActions'
 import * as userActions from 'actions/userActions'
-
-import {bindActionCreators} from 'redux'
-import {buildUrl} from 'lib/router'
+import {h, Component} from 'preact'
 import {connectHelper} from 'lib/util'
-import {route} from '@dadi/preact-router'
-
+import {Keyboard} from 'lib/keyboard'
 import Button from 'components/Button/Button'
-import ButtonWithPrompt from 'components/ButtonWithPrompt/ButtonWithPrompt'
-import DateTime from 'components/DateTime/DateTime'
-import Peer from 'components/Peer/Peer'
+import proptypes from 'proptypes'
+import styles from './ProfileEditToolbar.css'
 import Toolbar from 'components/Toolbar/Toolbar'
 
 const actions = {

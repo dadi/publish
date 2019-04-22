@@ -1,26 +1,16 @@
 'use strict'
 
-import {h, Component} from 'preact'
-import proptypes from 'proptypes'
-import {connect} from 'preact-redux'
-import {bindActionCreators} from 'redux'
-
 import * as Constants from 'lib/constants'
 import * as appActions from 'actions/appActions'
 import * as documentActions from 'actions/documentActions'
 import * as documentsActions from 'actions/documentsActions'
 import * as routerActions from 'actions/routerActions'
-import * as fieldComponents from 'lib/field-components'
-
-import APIBridge from 'lib/api-bridge-client'
-import {buildUrl} from 'lib/router'
+import {h, Component} from 'preact'
+import {bindActionCreators} from 'redux'
 import {connectHelper} from 'lib/util'
-import {Format} from 'lib/util/string'
-
-import DocumentField from 'containers/DocumentField/DocumentField'
 import ErrorMessage from 'components/ErrorMessage/ErrorMessage'
 import SpinningWheel from 'components/SpinningWheel/SpinningWheel'
-import TabbedFieldSections from 'components/TabbedFieldSections/TabbedFieldSections'
+import proptypes from 'proptypes'
 
 /**
  * The interface for editing a document.
