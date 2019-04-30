@@ -26,6 +26,12 @@ export default class FieldDateTimeList extends Component {
     value: proptypes.string
   }
 
+  getDateFormat() {
+    const {config, schema} = this.props
+
+    return schema.format || config.formats.date.long
+  }
+
   render() {
     const {config, schema, value} = this.props
 
@@ -33,7 +39,8 @@ export default class FieldDateTimeList extends Component {
     if (!value) return null
 
     const dateTimeObj = new DateTime(value)
-    
-    return (dateTimeObj.isValid() && dateTimeObj.format(config.formats.date.long)) || value
+    const dateFormat = this.getDateFormat()
+
+    return (dateTimeObj.isValid() && dateTimeObj.format(dateFormat)) || value
   }
 }

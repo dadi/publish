@@ -226,7 +226,7 @@ export default class DateTimePicker extends Component {
 
     const dateTime = new DateTime(newDate)
     const day = newDate.getDate()
-    const padedDay = day >= 10 ? day : `0${day}`
+    const paddedDay = day >= 10 ? day : `0${day}`
     const dayStyle = new Style(styles, 'calendar-day')
       .addIf('calendar-day-faded', newDate.getMonth() !== currentMonth)
       .addIf('calendar-day-current', dateTime.isSameDayAs(new Date()))
@@ -238,7 +238,7 @@ export default class DateTimePicker extends Component {
           type="button"
           onClick={this.handleDatePick.bind(this, newDate)}
           class={dayStyle.getClasses()}
-        >{padedDay}</button>
+        >{paddedDay}</button>
       </td>
     )
   }

@@ -192,7 +192,7 @@ export default class FieldDateTimeEdit extends Component {
   handlePickerChange(newDate) {
     const {name, onChange} = this.props
 
-    onChange.call(this, name, newDate.toISOString())
+    onChange.call(this, name, newDate.getTime())
   }
 
   handlePickerClick(insidePicker, event) {
