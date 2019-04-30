@@ -14,6 +14,8 @@ import marked from 'marked'
 import pell from 'pell'
 import TurndownService from 'turndown'
 
+const EMPTY_NODE = '<br>'
+
 const MODE = {
   HTML: 'html',
   MARKDOWN: 'markdown',
@@ -712,7 +714,11 @@ export default class RichEditor extends Component {
 
       while (node.previousSibling) {
         node = node.previousSibling
-        siblingIndex++
+
+        // Only count a node as part of the content if it isn't empty
+        if (node.innerHTML !== EMPTY_NODE) {
+          siblingIndex++
+        }
       }
 
       indices.unshift(siblingIndex)
