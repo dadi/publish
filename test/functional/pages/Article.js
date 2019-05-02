@@ -527,6 +527,8 @@ module.exports = {
     let expectedImageLink = "http://localhost:3004/media/" + year + "/" + month + "/" + day + "/dog"
     await I.seeStringContains(imageLink, expectedImageLink)
     // markdown view
+    await I.scrollTo(this.locators.excerptField)
+    await I.fillField(this.locators.excerptField, 'Inline Image Excerpt')
     await I.click(this.locators.textButton)
     I.wait(2)
 
