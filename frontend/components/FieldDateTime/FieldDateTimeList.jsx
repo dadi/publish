@@ -38,8 +38,8 @@ export default class FieldDateTimeList extends Component {
     // If there's no value, we return `null`.
     if (!value) return null
 
-    const dateTimeObj = new DateTime(value)
     const dateFormat = this.getDateFormat()
+    const dateTimeObj = new DateTime(value, dateFormat)
 
     return (dateTimeObj.isValid() && dateTimeObj.format(dateFormat)) || value
   }

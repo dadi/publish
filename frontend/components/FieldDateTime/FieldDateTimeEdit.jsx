@@ -147,7 +147,7 @@ export default class FieldDateTimeEdit extends Component {
 
     if (event.target.value.length > 0) {
       if (newDate.isValid()) {
-        newValue = newDate.getDate().toISOString()
+        newValue = newDate.dateObj.getTime()
       } else {
         newValue = value
       }
@@ -232,18 +232,18 @@ export default class FieldDateTimeEdit extends Component {
     const {hasFocus} = this.state
     const {pickerVisible} = this.state
     const publishBlock = schema.publish || {}
+    const dateFormat = this.getDateFormat()
 
     let dateObj = null
 
     if (value) {
-      const dateTimeObj = new DateTime(value)
+      const dateTimeObj = new DateTime(value, dateFormat)
 
       if (dateTimeObj.isValid()) {
         dateObj = dateTimeObj
       }
     }
 
-    const dateFormat = this.getDateFormat()
     const showTimeSelector = dateFormat.includes('h') || dateFormat.includes('H')
 
     return (
