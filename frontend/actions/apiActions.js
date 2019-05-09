@@ -101,7 +101,7 @@ const applyDefaultPublishParams = fields => {
       edit: true,
       list: false
     },
-    placement: 'sidebar',
+    placement: 'main',
     section: 'General'
   }
 
