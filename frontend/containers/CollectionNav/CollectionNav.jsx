@@ -47,7 +47,7 @@ class CollectionNav extends Component {
         if (match) {
           navItems.push({
             id: match.slug,
-            label: match.displayName || match.slug,
+            label: match.settings.displayName || match.slug,
             href: match._publishLink
           })
 
