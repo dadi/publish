@@ -99,9 +99,9 @@ const applyDefaultPublishParams = fields => {
   let defaultPublishBlock = {
     display: {
       edit: true,
-      list: false
+      list: true
     },
-    placement: 'sidebar',
+    placement: 'main',
     section: 'General'
   }
 
@@ -110,7 +110,7 @@ const applyDefaultPublishParams = fields => {
     .map(key => {
       let field = fields[key]
 
-      field.publish = field.publish || defaultPublishBlock
+      field.publish = Object.assign({}, defaultPublishBlock, field.publish)
       field.publish.section = field.publish.section || defaultPublishBlock.section
       field.publish.placement = field.publish.placement || defaultPublishBlock.placement
 
