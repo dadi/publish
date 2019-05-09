@@ -2,7 +2,6 @@
 
 import {h, Component} from 'preact'
 import proptypes from 'proptypes'
-
 import Style from 'lib/Style'
 import styles from './TextInput.css'
 
@@ -11,6 +10,12 @@ import styles from './TextInput.css'
  */
 export default class TextInput extends Component {
   static propTypes = {
+    /**
+     * Whether to add focus to the input element automatically when mounting
+     * the component.
+     */
+    autoFocus: proptypes.bool,
+
     /**
      * Classes to append to the input element.
      */
@@ -22,7 +27,8 @@ export default class TextInput extends Component {
     id: proptypes.string,
 
     /**
-     * Whether the field is part of a `<Label/>` component. This makes it inherit certain CSS properties from the parent.
+     * Whether the field is part of a `<Label/>` component. This makes it
+     * inherit certain CSS properties from the parent.
      *
      * **NOTE:** This prop is automatically passed down by `<Label/>`.      
      */
@@ -132,6 +138,12 @@ export default class TextInput extends Component {
   }
 
   componentDidMount() {
+    const {autoFocus} = this.props
+
+    if (autoFocus) {
+      this.inputElement.focus()
+    }
+
     this.adjustHeightIfNeeded()
   }
 
@@ -198,6 +210,7 @@ export default class TextInput extends Component {
           onKeyDown={this.handleEvent.bind(this, 'onKeyDown')}
           placeholder={placeholder}
           readonly={readonly}
+          ref={el => this.inputElement = el}
           required={required}
           rows={heightType === 'content' ? '1' : rows}
           value={value}
@@ -218,6 +231,7 @@ export default class TextInput extends Component {
         onKeyDown={this.handleEvent.bind(this, 'onKeyDown')}
         placeholder={placeholder}
         readonly={readonly}
+        ref={el => this.inputElement = el}
         required={required}
         type={type}
         value={value}
