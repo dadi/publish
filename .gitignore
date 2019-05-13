@@ -39,5 +39,6 @@ jest*
 workspace/
 .DS_Store
 
+!test/api/workspace/
 test/api/workspace/db
 test/functional/output

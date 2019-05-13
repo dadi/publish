@@ -1,0 +1,19 @@
+{
+  "fields": {
+    "object": {
+      "type": "Object",
+      "publish": {
+        "section": "Unsupported fields",
+        "placement": "main"
+      }
+    }
+  },
+  "settings": {
+    "displayName": "No filterable fields",
+    "cache": false,
+    "count": 10,
+    "storeRevisions": false,
+    "description": "",
+    "compose": true
+  }
+}
