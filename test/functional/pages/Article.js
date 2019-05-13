@@ -118,7 +118,9 @@ module.exports = {
     published: (locate('//table/tbody/tr/td[4]').as('Published?')),
     filterClose: (locate('button[class*="DocumentFilters__filter-close"]').as('Filter Close Button')),
     filterValueSelect: (locate('select[class*="DropdownNative__dropdown-text-small"]').withText('No').as('Filter Value Select')),
-    dateTimeValue: (locate('input[class*="FieldDateTime__filter-input"]').as('Date Time Filter Field'))
+    dateTimeValue: (locate('input[class*="FieldDateTime__filter-input"]').as('Date Time Filter Field')),
+    dogImage: (locate('img[src*="dog"]').as('Dog Image')),
+    insertButton: (locate('button').withText('Insert image').as('Insert Image Button'))
   },
 
   async validateArticlePage() {
@@ -463,17 +465,17 @@ module.exports = {
     await I.waitForText('The document has been created', 2)
 
     let bold = await I.grabHTMLFrom(this.locators.boldText)
-    
+
     let italic = await I.grabHTMLFrom(this.locators.italicText)
-    
+
     let strike = await I.grabHTMLFrom(this.locators.strikeText)
-    
+
     let quote = await I.grabHTMLFrom(this.locators.quoteText)
-    
+
     let link = await I.grabHTMLFrom(this.locators.linkText)
-    
+
     let olist = await I.grabHTMLFrom(this.locators.orderedList)
-    
+
     let ulist = await I.grabHTMLFrom(this.locators.unorderedList)
 
     await I.seeStringContains(bold, 'Bold')
@@ -481,7 +483,7 @@ module.exports = {
     await I.seeStringContains(strike, 'Strike-through')
     await I.seeStringContains(quote, 'Blockquote')
     await I.seeStringContains(link, 'Link')
-    await I.seeStringContains(olist, '<li><span>Point 1</span></li><li><span>Point 2</span></li>')
+    await I.seeStringContains(olist, '<li>Point 1</li><li>Point 2</li>')
     await I.seeStringContains(ulist, '<li>Bullet 1</li><li>Bullet 2</li>')
     // markdown view
     await I.click(this.locators.textButton)
@@ -495,6 +497,42 @@ module.exports = {
     await I.seeInField(this.locators.markdownText, '1. Point 2')
     await I.seeInField(this.locators.markdownText, '* Bullet 1')
     await I.seeInField(this.locators.markdownText, '* Bullet 2')
+  },
+
+  async inlineImage() {
+    await I.amOnPage('/articles/new')
+    await I.waitForFunction(() => document.readyState === 'complete')
+    await I.seeInCurrentUrl('/articles/new')
+    await I.waitForVisible(this.locators.titleField)
+    await I.fillField(this.locators.titleField, 'Inline Image')
+
+    // Inline Image
+    await I.appendField(this.locators.bodyField, '')
+    await I.click(this.locators.imageButton)
+    await I.seeInCurrentUrl('/articles/new/select/body')
+    await I.see('Choose a media object to insert')
+    await I.click(this.locators.dogImage)
+    await I.click(this.locators.insertButton)
+
+    await I.pressKey('Enter')
+    await I.fillField(this.locators.bodyField, 'Above is an inline image')
+
+    await I.click(this.locators.saveArticle)
+    await I.waitForText('The document has been created', 2)
+    // Get today's date for URL
+    let year = await moment(new Date()).format('YYYY')
+    let month = await moment(new Date()).format('MM')
+    let day = await moment(new Date()).format('DD')
+    let imageLink = await I.grabAttributeFrom(this.locators.dogImage, 'src')
+    let expectedImageLink = "http://localhost:3004/media/" + year + "/" + month + "/" + day + "/dog"
+    await I.seeStringContains(imageLink, expectedImageLink)
+    // markdown view
+    await I.scrollTo(this.locators.excerptField)
+    await I.fillField(this.locators.excerptField, 'Inline Image Excerpt')
+    await I.click(this.locators.textButton)
+    I.wait(2)
+
+    await I.seeInField(this.locators.markdownText, '![](' + expectedImageLink)
   }
 
 }
