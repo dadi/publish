@@ -1,22 +1,17 @@
 'use strict'
 
-import {h, Component} from 'preact'
-import proptypes from 'proptypes'
-import {bindActionCreators} from 'redux'
-import {connect} from 'preact-redux'
-import {connectHelper} from 'lib/util'
-import {route} from '@dadi/preact-router'
-import {redirectIf} from 'lib/router'
-
 import * as userActions from 'actions/userActions'
 import * as Constants from 'lib/constants'
-
+import {h, Component} from 'preact'
+import {bindActionCreators} from 'redux'
+import {connectHelper} from 'lib/util'
+import {route} from '@dadi/preact-router'
 import Banner from 'components/Banner/Banner'
 import Button from 'components/Button/Button'
 import Label from 'components/Label/Label'
 import TextInput from 'components/TextInput/TextInput'
-
 import styles from './SignIn.css'
+import proptypes from 'proptypes'
 
 class SignIn extends Component {
   static propTypes = {
@@ -31,23 +26,25 @@ class SignIn extends Component {
      token: proptypes.string
   }
 
+  constructor(props) {
+    super(props)
+
+    this.state = {
+      email: '',
+      error: false,
+      password: '',
+      userHasInteracted: false
+    }
+  }
+
   componentDidMount() {
-    const {
-      state
-    } = this.props
+    const {state} = this.props
 
     // If the user is already signed in, let's take them to
     // the root page.
     if (state.user.accessToken) {
       return route('/')
     }
-  }
-
-  state = {
-    email: '',
-    error: false,
-    password: '',
-    userHasInteracted: false
   }
 
   getErrorBanner({
@@ -95,7 +92,7 @@ class SignIn extends Component {
   }
 
   render() {
-    const {actions, setPageTitle, state} = this.props
+    const {setPageTitle, state} = this.props
     const {email, password, userHasInteracted} = this.state
     const {config, networkStatus} = state.app
     const {apis, whitelabel} = config
@@ -126,6 +123,7 @@ class SignIn extends Component {
                 <div class={styles.input}>
                   <Label label="Username">
                     <TextInput
+                      autoFocus={true}
                       name="username"
                       onChange={this.handleInputChange.bind(this, 'email')}
                       onInput={this.handleInputChange.bind(this, 'email')}

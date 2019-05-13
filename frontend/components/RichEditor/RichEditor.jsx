@@ -14,6 +14,8 @@ import marked from 'marked'
 import pell from 'pell'
 import TurndownService from 'turndown'
 
+const EMPTY_NODE = '<br>'
+
 const MODE = {
   HTML: 'html',
   MARKDOWN: 'markdown',
@@ -97,8 +99,7 @@ export default class RichEditor extends Component {
     this.turndownService.addRule('li', {
       filter: ['li'],
       replacement: (content, node) => {
-        let parent = node.parentNode
-        let listCharacter = node.parentNode.tagName === 'OL' ?
+        const listCharacter = node.parentNode.tagName === 'OL' ?
           '1.' :
           '*'
 
@@ -107,11 +108,11 @@ export default class RichEditor extends Component {
     })
 
     this.turndownService.addRule('pre', {
-      filter: (node, options) => {
+      filter: node => {
         return node.classList.contains(styles.code)
       },
       replacement: (content, node) => {
-        let language = typeof node.dataset.language === 'string' ?
+        const language = typeof node.dataset.language === 'string' ?
           node.dataset.language :
           ''
 
@@ -121,14 +122,14 @@ export default class RichEditor extends Component {
 
      this.turndownService.addRule('strike', {
       filter: ['strike'],
-      replacement: (content, node) => {
+      replacement: content => {
         return `~~${content}~~`
       }
     })
 
     this.markdownRenderer = new marked.Renderer()
     this.markdownRenderer.code = (code, language = '') => {
-      let escapedCode = this.escapeHTML(code)
+      const escapedCode = this.escapeHTML(code)
 
       return `<pre class="${styles.code}" data-language="${language.trim()}">${escapedCode}</pre>`
     }
@@ -624,7 +625,6 @@ export default class RichEditor extends Component {
   }
 
   render() {
-    const {children} = this.props
     const {
       editLinkText,
       html,
@@ -714,7 +714,11 @@ export default class RichEditor extends Component {
 
       while (node.previousSibling) {
         node = node.previousSibling
-        siblingIndex++
+
+        // Only count a node as part of the content if it isn't empty
+        if (node.innerHTML !== EMPTY_NODE) {
+          siblingIndex++
+        }
       }
 
       indices.unshift(siblingIndex)
@@ -748,6 +752,12 @@ export default class RichEditor extends Component {
   }
 
   setSelectionOnElement(element) {
+    if (element.children.length === 0) {
+      const emptyNode = document.createElement('p')
+
+      element.appendChild(emptyNode)
+    }
+
     let range = document.createRange()
 
     range.setStart(element, 0)
