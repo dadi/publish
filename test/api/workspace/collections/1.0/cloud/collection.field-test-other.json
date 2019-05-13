@@ -8,6 +8,18 @@
         "section": "Publish fields",
         "placement": "main"
       }
+    },
+    "object": {
+      "type": "Object",
+      "publish": {
+        "section": "Unsupported fields",
+        "placement": "main"
+      }
+    },
+    "string": {
+      "type": "String",
+      "label": "Normal String field",
+      "comment": "I am here just to allow filters to work"
     }
   },
   "settings": {
@@ -19,8 +31,7 @@
     "compose": true,
     "sort": "publishedAt",
     "sortOrder": -1,
-    "index": [
-      {
+    "index": [{
         "keys": {
           "publishedAt": 1
         }
@@ -31,7 +42,6 @@
         }
       }
     ],
-    "hooks": {
-    }
+    "hooks": {}
   }
 }
