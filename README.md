@@ -14,7 +14,7 @@ It is part of DADI, a suite of components covering the full development stack, b
 DADI is a data centric development and delivery stack, built specifically in support of the principles of API first and COPE.
 
 Copyright notice
-(C) 2018 DADI+ Limited <support@dadi.co>
+(C) 2019 DADI+ Limited <support@dadi.co>
 All rights reserved
 
 This product is part of DADI.
