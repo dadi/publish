@@ -10,7 +10,9 @@
     "name": "Publish Test API",
     "host": "http://localhost",
     "port": 3004,
-    "menu": [{
+    "menu": [
+      "articles",
+      {
         "collections": [
           "pages",
           "team"
@@ -25,6 +27,7 @@
         ],
         "title": "Taxonomy"
       },
+      "web-services",
       {
         "collections": [
           "field-test-boolean",

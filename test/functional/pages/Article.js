@@ -120,7 +120,8 @@ module.exports = {
     filterValueSelect: (locate('select[class*="DropdownNative__dropdown-text-small"]').withText('No').as('Filter Value Select')),
     dateTimeValue: (locate('input[class*="FieldDateTime__filter-input"]').as('Date Time Filter Field')),
     dogImage: (locate('img[src*="dog"]').as('Dog Image')),
-    insertButton: (locate('button').withText('Insert image').as('Insert Image Button'))
+    insertButton: (locate('button').withText('Insert image').as('Insert Image Button')),
+    navMenu: (locate('nav[class*="Nav"]').as('Navigation Menu'))
   },
 
   async validateArticlePage() {
@@ -128,6 +129,8 @@ module.exports = {
     await I.waitForVisible(this.locators.articleTitleHeading)
     await I.waitForElement(this.locators.footer)
     await I.seeElement(this.locators.createNewButton)
+    let navItems = await I.grabTextFrom(this.locators.navMenu)
+    await I.seeStringsAreEqual(navItems, 'ArticlesContentTaxonomyWeb servicesNetwork servicesMedia Library')
     let articles = await I.grabNumberOfVisibleElements(this.locators.articleRows)
     await I.seeNumberOfVisibleElements(this.locators.articleRows, articles)
     let range = await I.grabTextFrom(this.locators.numberOfArticles)
