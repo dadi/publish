@@ -46,7 +46,6 @@
       "type": "DateTime",
       "label": "A date after x",
       "comment": "Must be after 2018/01/01",
-      "format": "YYYY-MM-DD",
       "publish": {
         "section": "Dates",
         "placement": "sidebar"
@@ -66,6 +65,26 @@
       "validation": {
         "before": 1514764800000
       }
+    },
+    "dateYYYYMMDD": {
+      "type": "DateTime",
+      "label": "A date with no time",
+      "comment": "Should be in format YYYY-MM-DD",
+      "format": "YYYY-MM-DD",
+      "publish": {
+        "section": "Dates",
+        "placement": "main"
+      }
+    },
+    "dateDDMMYYYY": {
+      "type": "DateTime",
+      "label": "A date with no time",
+      "comment": "Should be in format DD-MM-YYYY",
+      "format": "DD-MM-YYYY",
+      "publish": {
+        "section": "Dates",
+        "placement": "main"
+      }
     }
   },
   "settings": {
@@ -77,8 +96,7 @@
     "compose": true,
     "sort": "publishedAt",
     "sortOrder": -1,
-    "index": [
-      {
+    "index": [{
         "keys": {
           "publishedAt": 1
         }
@@ -89,7 +107,6 @@
         }
       }
     ],
-    "hooks": {
-    }
+    "hooks": {}
   }
 }

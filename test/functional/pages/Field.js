@@ -74,6 +74,16 @@ module.exports = {
     dateBeforeError: (locate('div').withAttr({
       'data-field-name': 'dateBefore'
     }).find('p').withText('This field must be before Mon Jan 01 2018').as('A Date Before Error Message')),
+    dateYYYYMMDD: (locate('div').withAttr({
+      'data-field-name': 'dateYYYYMMDD'
+    }).find('input').withAttr({
+      'name': 'dateYYYYMMDD'
+    }).as('A date with no time YYYYMMDD')),
+    dateDDMMYYYY: (locate('div').withAttr({
+      'data-field-name': 'dateDDMMYYYY'
+    }).find('input').withAttr({
+      'name': 'dateDDMMYYYY'
+    }).as('A date with no time DDMMYYYY')),
     numberReq: (locate('div').withAttr({
       'data-field-name': 'numberRequired'
     }).find('input').withAttr({
@@ -378,12 +388,26 @@ module.exports = {
     colourPalette: (locate('div[class*="ColorPicker__palette"]').as('Colour Palette')),
     colourPicker: (locate('div[class*="ColorPicker__picker"]').as('Colour Picker')),
     colourHue: (locate('div[class*="ColorPicker__hue"]').as('Colour Hue')),
-    colourSlider: (locate('div[class*="ColorPicker__slider"]').as('Colour Slider'))
+    colourSlider: (locate('div[class*="ColorPicker__slider"]').as('Colour Slider')),
+    datePickerContainer: (locate('div[class*="DateTimePicker__container"]').as('Date Picker')),
+    currentDay: (locate('button[class*="DateTimePicker__calendar-day-current"]').as('Current Day')),
+    newCurrentDay: (locate('button[class*="DateTimePicker__calendar-day"]').withText('05').as('05')),
+    hoursLauncher: (locate('button[class*= "DateTimePicker__hours-launcher"]').as('Hours Launcher')),
+    hourSelector: (locate('button[class*="DateTimePicker__hour"]').withText('09:00').as('09:00')),
+    calBackArrow: (locate('button[class*="DateTimePicker__arrow"]:first-of-type').as('Back Arrow')),
+    calForwardArrow: (locate('button[class*="DateTimePicker__arrow"]:last-of-type').as('Forward Arrow')),
+    currentDate: (locate('p[class*="DateTimePicker__current-date"]').as('Today\'s Date')),
+    sundayCal: (locate('th[class*="DateTimePicker__calendar-head"]').withText('Su').as('Sunday')),
+    mondayCal: (locate('th[class*="DateTimePicker__calendar-head"]').withText('Mo').as('Monday')),
+    tuesdayCal: (locate('th[class*="DateTimePicker__calendar-head"]').withText('Tu').as('Tuesday')),
+    wednesdayCal: (locate('th[class*="DateTimePicker__calendar-head"]').withText('We').as('Wednesday')),
+    thursdayCal: (locate('th[class*="DateTimePicker__calendar-head"]').withText('Th').as('Thursday')),
+    fridayCal: (locate('th[class*="DateTimePicker__calendar-head"]').withText('Fr').as('Friday')),
+    saturdayCal: (locate('th[class*="DateTimePicker__calendar-head"]').withText('Sa').as('Saturday'))
   },
 
   async validateBoolean() {
     await I.amOnPage('/field-testing/field-test-boolean')
-    I.wait(2)
     await I.waitForFunction(() => document.readyState === 'complete')
     await I.waitForElement(this.locators.footer)
     await I.seeElement(this.locators.createNewButton)
@@ -407,7 +431,6 @@ module.exports = {
 
   async validateDate() {
     await I.amOnPage('/field-testing/field-test-date')
-    I.wait(2)
     await I.waitForFunction(() => document.readyState === 'complete')
     await I.waitForElement(this.locators.footer)
     await I.seeElement(this.locators.createNewButton)
@@ -420,17 +443,54 @@ module.exports = {
     await I.seeElement(this.locators.datePast)
     await I.seeElement(this.locators.dateAfter)
     await I.seeElement(this.locators.dateBefore)
+    await I.seeElement(this.locators.dateYYYYMMDD)
+    await I.seeElement(this.locators.dateDDMMYYYY)
     await I.click(this.locators.saveContinue)
     await I.waitForVisible(this.locators.dateReqError)
-    var formattedDate = moment(new Date()).format('YYYY/MM/DD 09:00')
+    let formattedDate = moment(new Date()).format('YYYY/MM/DD 09:00')
     await I.click(this.locators.datePast)
-    await I.fillField(this.locators.dateReq, formattedDate)
-    var futureDateErr = moment(new Date(), 'YYYY/MM/DD').subtract(_.random(1, 7), 'days')
+    await I.click(this.locators.dateReq)
+    await I.seeElement(this.locators.datePickerContainer)
+    await I.seeElement(this.locators.calBackArrow)
+    await I.seeElement(this.locators.calForwardArrow)
+    await I.seeElement(this.locators.sundayCal)
+    await I.seeElement(this.locators.mondayCal)
+    await I.seeElement(this.locators.tuesdayCal)
+    await I.seeElement(this.locators.wednesdayCal)
+    await I.seeElement(this.locators.thursdayCal)
+    await I.seeElement(this.locators.fridayCal)
+    await I.seeElement(this.locators.saturdayCal)
+    let momentMonth = moment(new Date()).format('MMMM YYYY')
+    let currentMonth = await I.grabTextFrom(this.locators.currentDate)
+    await I.seeStringsAreEqual(currentMonth, momentMonth)
+    await I.click(this.locators.currentDay)
+    await I.click(this.locators.hoursLauncher)
+    await I.click(this.locators.hourSelector)
+    await I.click(this.locators.dateYYYYMMDD)
+    await I.seeElement(this.locators.datePickerContainer)
+    await I.seeElement(this.locators.calBackArrow)
+    await I.seeElement(this.locators.calForwardArrow)
+    await I.seeElement(this.locators.sundayCal)
+    await I.seeElement(this.locators.mondayCal)
+    await I.seeElement(this.locators.tuesdayCal)
+    await I.seeElement(this.locators.wednesdayCal)
+    await I.seeElement(this.locators.thursdayCal)
+    await I.seeElement(this.locators.fridayCal)
+    await I.seeElement(this.locators.saturdayCal)
+    await I.dontSeeElement(this.locators.hoursLauncher)
+    await I.click(this.locators.currentDay)
+    let noTimeDate = moment(new Date()).format('DD/MM/YYYY')
+    await I.click(this.locators.dateDDMMYYYY)
+    await I.seeElement(this.locators.datePickerContainer)
+    await I.dontSeeElement(this.locators.hoursLauncher)
+    await I.fillField(this.locators.dateDDMMYYYY, noTimeDate)
+    let futureDateErr = moment(new Date(), 'YYYY/MM/DD').subtract(_.random(1, 7), 'days')
     futureDateErr = futureDateErr.format('YYYY/MM/DD 09:00')
+    await I.click(this.locators.dateFuture)
     await I.fillField(this.locators.dateFuture, futureDateErr)
     await I.click(this.locators.datePast)
     await I.waitForVisible(this.locators.dateFutureError)
-    var pastDateErr = moment(new Date(), 'YYYY/MM/DD').add(_.random(1, 7), 'days')
+    let pastDateErr = moment(new Date(), 'YYYY/MM/DD').add(_.random(1, 7), 'days')
     pastDateErr = pastDateErr.format('YYYY/MM/DD 09:00')
     await I.fillField(this.locators.datePast, pastDateErr)
     await I.click(this.locators.dateAfter)
@@ -438,28 +498,61 @@ module.exports = {
     await I.fillField(this.locators.dateAfter, '2017/12/31 09:00')
     await I.click(this.locators.dateBefore)
     await I.waitForVisible(this.locators.dateAfterError)
-    var dateBefore = moment(new Date()).format('YYYY/MM/DD 09:00')
+    let dateBefore = moment(new Date()).format('YYYY/MM/DD 09:00')
     await I.fillField(this.locators.dateBefore, dateBefore)
     await I.click(this.locators.dateReq)
     await I.waitForVisible(this.locators.dateBeforeError)
     await I.click(this.locators.saveContinue)
     await I.clearField(this.locators.dateFuture)
-    var futureDate = moment(new Date(), 'YYYY/MM/DD').add(_.random(1, 60), 'days')
-    futureDate = futureDate.format('YYYY/MM/DD 09:00')
-    await I.fillField(this.locators.dateFuture, futureDate)
+    await I.seeElement(this.locators.datePickerContainer)
+    await I.seeElement(this.locators.sundayCal)
+    await I.seeElement(this.locators.mondayCal)
+    await I.seeElement(this.locators.tuesdayCal)
+    await I.seeElement(this.locators.wednesdayCal)
+    await I.seeElement(this.locators.thursdayCal)
+    await I.seeElement(this.locators.fridayCal)
+    await I.seeElement(this.locators.saturdayCal)
+    await I.click(this.locators.calForwardArrow)
+    let newMomentMonth = moment(new Date()).add(1, 'months')
+    newMomentMonth = newMomentMonth.format('MMMM YYYY')
+    let newCurrentMonth = await I.grabTextFrom(this.locators.currentDate)
+    await I.seeStringsAreEqual(newCurrentMonth, newMomentMonth)
+    await I.click(this.locators.newCurrentDay)
+    await I.click(this.locators.hoursLauncher)
+    await I.click(this.locators.hourSelector)
+    await I.click(this.locators.datePast)
     await I.clearField(this.locators.datePast)
-    var pastDate = moment(new Date(), 'YYYY/MM/DD').subtract(_.random(1, 180), 'days')
+    let pastDate = moment(new Date(), 'YYYY/MM/DD').subtract(_.random(1, 180), 'days')
     pastDate = pastDate.format('YYYY/MM/DD 09:00')
     await I.fillField(this.locators.datePast, pastDate)
     await I.clearField(this.locators.dateAfter)
+    let monthPast = await I.grabTextFrom(this.locators.currentDate)
+    await I.seeStringsAreEqual(monthPast, 'December 2017')
     await I.fillField(this.locators.dateAfter, '2018/01/02 23:00')
     await I.clearField(this.locators.dateBefore)
     await I.fillField(this.locators.dateBefore, '2017/12/31 09:00')
+    await I.click(this.locators.dateReadOnly)
+    let correctYYYYMMDD = moment(new Date()).format('YYYY-MM-DD')
+    let correctDDMMYYYY = moment(new Date()).format('DD-MM-YYYY')
+    let correctedYYYYMMDD = await I.grabValueFrom(this.locators.dateYYYYMMDD)
+    let correctedDDMMYYYY = await I.grabValueFrom(this.locators.dateDDMMYYYY)
+    let futureDateEntered = await I.grabValueFrom(this.locators.dateFuture)
+    let pastDateEntered = await I.grabValueFrom(this.locators.datePast)
+    let dateAfterEntered = await I.grabValueFrom(this.locators.dateAfter)
+    let dateBeforeEntered = await I.grabValueFrom(this.locators.dateBefore)
+    await I.seeStringsAreEqual(correctedYYYYMMDD, correctYYYYMMDD)
+    await I.seeStringsAreEqual(correctedDDMMYYYY, correctDDMMYYYY)
     await I.click(this.locators.saveMenu)
     await I.click(this.locators.saveGoBack)
     await I.waitForText('The document has been created', 3)
     await I.dontSeeInCurrentUrl('/new')
     await I.waitForText(formattedDate)
+    await I.waitForText(futureDateEntered)
+    await I.waitForText(pastDateEntered)
+    await I.waitForText(dateAfterEntered)
+    await I.waitForText(dateBeforeEntered)
+    await I.waitForText(correctedYYYYMMDD)
+    await I.waitForText(correctedDDMMYYYY)
   },
 
   async deleteAllDates() {
@@ -468,7 +561,6 @@ module.exports = {
 
   async validateNumber() {
     await I.amOnPage('/field-testing/field-test-number')
-    I.wait(2)
     await I.waitForFunction(() => document.readyState === 'complete')
     await I.waitForElement(this.locators.footer)
     await I.seeElement(this.locators.createNewButton)
@@ -527,7 +619,6 @@ module.exports = {
 
   async validateString() {
     await I.amOnPage('/field-testing/field-test-string')
-    I.wait(2)
     await I.waitForFunction(() => document.readyState === 'complete')
     await I.waitForElement(this.locators.footer)
     await I.seeElement(this.locators.createNewButton)
@@ -594,7 +685,6 @@ module.exports = {
 
   async validateReference() {
     await I.amOnPage('/field-testing/field-test-reference')
-    I.wait(2)
     await I.waitForFunction(() => document.readyState === 'complete')
     await I.waitForElement(this.locators.footer)
     await I.seeElement(this.locators.createNewButton)
@@ -765,7 +855,6 @@ module.exports = {
 
   async validateMiscField() {
     await I.amOnPage('/field-testing/field-test-other')
-    I.wait(2)
     await I.waitForFunction(() => document.readyState === 'complete')
     await I.waitForElement(this.locators.footer)
     await I.seeElement(this.locators.createNewButton)
