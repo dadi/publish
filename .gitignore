@@ -4,3 +4,4 @@ log/
 node_modules/
 test/api/workspace/db
 test/functional/output
+webpack-report.json

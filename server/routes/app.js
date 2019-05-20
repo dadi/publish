@@ -11,7 +11,7 @@ const template = ({client, config, version}) => `
       <meta name="mobile-web-app-capable" content="yes">
       <meta name="apple-mobile-web-app-capable" content="yes">
       <meta name="format-detection" content="telephone=no">
-      <link rel="stylesheet" type="text/css" href="/_dist/main.css">
+      <link rel="stylesheet" type="text/css" href="/_dist/main.css?v=${version}">
       <link rel="stylesheet" type="text/css" href="/_public/custom.css">
       <link rel="icon" type="image/png" href="/_public/images/favicon.png">
     </head>
@@ -21,7 +21,7 @@ const template = ({client, config, version}) => `
       <script>window.__config__ = ${JSON.stringify(config)}</script>
       <script>/*@@apiError@@*/</script>
       <script>window.__version__ = ${JSON.stringify(version)}</script>
-      <script src="/_dist/bundle.js"></script>
+      <script src="/_dist/bundle.js?v=${version}"></script>
     </body>
   </html>
 `

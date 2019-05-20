@@ -3,7 +3,6 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const path = require('path')
 const WebpackPreBuildPlugin = require('pre-build-webpack')
 
-const IS_DEVELOPMENT = process.env.NODE_ENV !== 'production'
 const PATHS = {
   COMPONENTS: './app/components',
   FIELD_COMPONENT_LIST: './app/lib/field-components.js'
@@ -56,8 +55,8 @@ module.exports = {
   },
   plugins: [
     new MiniCssExtractPlugin({
-      chunkFilename: IS_DEVELOPMENT ? '[id].css' : '[id].[hash].css',
-      filename: IS_DEVELOPMENT ? '[name].css' : '[name].[hash].css'
+      chunkFilename: '[id].css',
+      filename: '[name].css'
     }),
 
     // Build JS file with field components.
@@ -95,9 +94,5 @@ module.exports = {
       views: path.resolve(__dirname, 'app/views')
     },    
     extensions: ['*', '.js', '.jsx']
-  },
-  watch: true,
-  watchOptions: {
-    ignored: /node_modules/
   }
 }
