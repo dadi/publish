@@ -1,4 +1,5 @@
 const convict = require('convict')
+const log = require('@dadi/logger')
 const path = require('path')
 const schema = require('./schema')
 
@@ -48,10 +49,40 @@ class Config {
       configPath, `config.${environment}.json`
     )
 
-    console.log('---> loading:', filePath)
-  
-    this.instance.loadFile(filePath)
-    this.instance.validate({})
+    try {
+      const data = require(filePath)
+      const sanitisedData = this.sanitiseConfigData(data)
+
+      this.instance.load(sanitisedData)
+      this.instance.validate({})
+    } catch (error) {
+      log.error({module: 'config'}, error)
+    }
+  }
+
+  sanitiseConfigData (inputData) {
+    let data = {...inputData}
+
+    if (data.apis && !data.api) {
+      data.api = data.apis[0]
+      data.apis = undefined
+
+      const newSyntax = JSON.stringify({api: data.api}, null, 2)
+
+      console.log(
+        `The configuration file is using a legacy syntax for configuring the API. Please replace the "apis" property with:\n\n${newSyntax}`
+      )
+    }
+
+    if (data.api.credentials) {
+      data.api.credentials = undefined
+
+      console.log(
+        `The configuration file is using a legacy "credentials" block in the API configuration, which is deprecated. Please remove it from your configuration files.`
+      )
+    }
+
+    return data
   }
 }
 
