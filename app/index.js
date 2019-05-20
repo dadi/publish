@@ -1,27 +1,23 @@
-'use strict'
+import {
+  applyMiddleware,
+  compose,
+  createStore
+} from 'redux'
+import {enableBatching} from './lib/redux'
+import {Provider} from 'react-redux'
+import App from './containers/App/App'
+import React from 'react'
+import ReactDOM from 'react-dom'
+import reducers from './reducers'
+import thunk from 'redux-thunk'
 
-const globals = require('./globals') // eslint-disable-line
-const Server = require(paths.lib.server)
+const storeComposer = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose
+const store = storeComposer(applyMiddleware(thunk))(createStore)(
+  enableBatching(reducers)
+)
 
-/**
- * @constructor
- * App server index
- */
-const App = function () {}
-
-/**
- * Start Publish App
- * @return {Server} Server Instance
- */
-App.prototype.start = function () {
-  this.server = new Server()
-
-  return this.server.start()
-}
-
-App.prototype.stop = function () {
-  return this.server.stop()
-}
-
-module.exports = new App()
-module.exports.app = App
+ReactDOM.render((
+  <Provider store={store}>
+    <App />
+  </Provider>
+), document.getElementById('app'))

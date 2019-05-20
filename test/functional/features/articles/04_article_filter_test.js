@@ -4,7 +4,6 @@ BeforeSuite(async (articlePage, loginPage) => {
   await articlePage.deleteDocument('This Is A New Article')
   await articlePage.deleteDocument('This Article Is Updated')
   await articlePage.deleteDocument('Rich Text')
-  await articlePage.deleteDocument('Inline Image')
   await loginPage.deleteUser('filter')
   await loginPage.addUser('filter', '123456', ['collection:cloud_articles',
     'collection:cloud_team',

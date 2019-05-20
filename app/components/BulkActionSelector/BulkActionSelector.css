@@ -1,0 +1,29 @@
+.container {
+  display: flex;
+  margin-top: 10px;
+  width: 100%;
+}
+
+.container-empty {
+  display: none;
+}
+
+.dropdown {
+  flex-grow: 1;
+  margin-right: 10px;
+}
+
+@media (min-width: 600px) {
+  .container {
+    margin-top: 0;
+    width: auto;
+  }
+
+  .container-empty {
+    display: block;
+  }
+
+  .dropdown {
+    min-width: 130px;
+  }
+}
