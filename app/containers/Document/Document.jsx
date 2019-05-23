@@ -1,5 +1,4 @@
 import * as appActions from 'actions/appActions'
-import * as Constants from 'lib/constants'
 import * as documentActions from 'actions/documentActions'
 import * as routerActions from 'actions/routerActions'
 import {connectRedux} from 'lib/redux'
@@ -94,22 +93,25 @@ class Document extends React.Component {
   render() {
     const {
       contentKey,
+      documentId,
       onDocumentNotFound,
       onRender,
       state
     } = this.props
-    const document = state.document[contentKey] || {}
+    const document = state.document[contentKey]
 
-    if (document.isLoading) {
+    if ((!document && documentId) || (document && document.isLoading)) {
       return (
         <SpinningWheel />
       )
     }
 
-    if (document.remoteError === 404) {
+    const {local, remote, remoteError} = document || {}
+
+    if (remoteError === 404) {
       if (typeof onDocumentNotFound === 'function') {
         return onDocumentNotFound({
-          error: document.remoteError
+          error: remoteError
         })
       }
       
@@ -124,8 +126,8 @@ class Document extends React.Component {
       document: {
         ...document,
         _merged: {
-          ...document.remote,
-          ...document.local
+          ...remote,
+          ...local
         }
       }
     })

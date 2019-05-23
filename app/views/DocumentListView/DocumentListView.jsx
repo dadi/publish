@@ -8,16 +8,13 @@ import {Redirect} from 'react-router-dom'
 import {setPageTitle} from 'lib/util'
 import Button from 'components/Button/Button'
 import BulkActionSelector from 'components/BulkActionSelector/BulkActionSelector'
-import DocumentGridList from 'components/DocumentGridList/DocumentGridList'
 import DocumentList from 'containers/DocumentList/DocumentList'
 import DocumentListController from 'components/DocumentListController/DocumentListController'
 import DocumentListToolbar from 'components/DocumentListToolbar/DocumentListToolbar'
-import DocumentTableList from 'containers/DocumentTableList/DocumentTableList'
 import ErrorMessage from 'components/ErrorMessage/ErrorMessage'
 import Header from 'containers/Header/Header'
 import HeroMessage from 'components/HeroMessage/HeroMessage'
 import Main from 'components/Main/Main'
-import MediaGridCard from 'containers/MediaGridCard/MediaGridCard'
 import MediaListController from 'components/MediaListController/MediaListController'
 import Page from 'components/Page/Page'
 import React from 'react'
@@ -148,6 +145,21 @@ class DocumentListView extends React.Component {
         >Create new document</Button>
       </HeroMessage>
     )    
+  }
+
+  handleFiltersUpdate(newFilters) {
+    const {history, onBuildBaseUrl, route} = this.props
+    const newFilterValue = Object.keys(newFilters).length > 0
+      ? newFilters
+      : null
+    const newUrl = onBuildBaseUrl.call(this, {
+      search: {
+        ...route.search,
+        filter: newFilterValue
+      }
+    })
+
+    history.push(newUrl)
   }
 
   handleMediaUpload(files) {
@@ -300,15 +312,14 @@ class DocumentListView extends React.Component {
         collection={collection}
         createNewHref={createNewHref}
         enableFilters={true}
-        onBuildBaseUrl={onBuildBaseUrl.bind(this)}
-        search={search}
-      />    
+        filters={search.filter}
+        onUpdateFilters={this.handleFiltersUpdate.bind(this)}
+      />
     )
   }
 
   renderMain({collection, contentKey, isFilteringSelection, selection}) {
-    const {onBuildBaseUrl, route, state} = this.props
-    const {cdn} = state.app.config
+    const {onBuildBaseUrl, route} = this.props
     const {page} = route.params
     const {search} = route
     const parsedPage = Number.parseInt(page)
@@ -329,37 +340,9 @@ class DocumentListView extends React.Component {
             collection={Constants.MEDIA_COLLECTION_SCHEMA}
             contentKey={contentKey}
             filters={search.filter}
+            listType="grid"
             onBuildBaseUrl={onBuildBaseUrl}
-            onRender={({documents, onSelect, selectedDocuments}) => {
-              if (documents.length === 0) {
-                return this.handleEmptyDocumentList({selection})
-              }
-  
-              return (
-                <DocumentGridList
-                  documents={documents}
-                  onRenderCard={({item, isSelected, onSelect}) => {
-                    // If there is a CDN instance configured, we'll replace the
-                    // image base URL with the CDN URL.                    
-                    if (cdn && cdn.publicUrl) {
-                      item.url = `${cdn.publicUrl}${item.path}?width=500`
-                    }
-          
-                    return (
-                      <MediaGridCard
-                        href={`/media/${item._id}`}
-                        key={item._id}
-                        isSelected={isSelected}
-                        item={item}
-                        onSelect={onSelect}
-                      />
-                    )
-                  }}
-                  onSelect={onSelect}
-                  selectedDocuments={selectedDocuments}
-                />
-              )
-            }}
+            onEmptyList={this.handleEmptyDocumentList.bind(this)}
             onSelect={this.handleSelect.bind(this)}
             order={search.order}
             page={pageNumber}
@@ -385,24 +368,7 @@ class DocumentListView extends React.Component {
         fields={visibleFields}
         filters={search.filter}
         onBuildBaseUrl={onBuildBaseUrl.bind(this)}
-        onRender={({documents, onSelect, selectedDocuments}) => {
-          if (documents.length === 0) {
-            return this.handleEmptyDocumentList({selection})
-          }
-
-          return (
-            <DocumentTableList
-              collection={collection}
-              documents={documents}
-              fields={visibleFields}
-              onBuildBaseUrl={onBuildBaseUrl.bind(this)}
-              onSelect={onSelect}
-              order={search.order}
-              selectedDocuments={selectedDocuments}
-              sort={search.sort}
-            />
-          )
-        }}
+        onEmptyList={this.handleEmptyDocumentList.bind(this)}
         onSelect={this.handleSelect.bind(this)}
         order={search.order}
         page={pageNumber}

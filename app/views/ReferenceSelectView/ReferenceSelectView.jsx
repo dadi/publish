@@ -149,6 +149,23 @@ class ReferenceSelectView extends React.Component {
     )    
   }
 
+  handleFiltersUpdate(newFilters) {
+    const {history, onBuildBaseUrl, route} = this.props
+    const {documentId} = route.params
+    const newFilterValue = Object.keys(newFilters).length > 0
+      ? newFilters
+      : null
+    const newUrl = onBuildBaseUrl.call(this, {
+      createNew: Boolean(!documentId),
+      search: {
+        ...route.search,
+        filter: newFilterValue
+      }
+    })
+
+    history.push(newUrl)
+  }
+
   handleSelectionChange(selection) {
     const {actions} = this.props
 
@@ -289,12 +306,11 @@ class ReferenceSelectView extends React.Component {
               />
                 
               <DocumentListController
-                documentId={documentId}
                 collection={referencedCollection}
                 enableFilters={true}
-                onBuildBaseUrl={onBuildBaseUrl.bind(this)}
+                filters={search.filter}
+                onUpdateFilters={this.handleFiltersUpdate.bind(this)}
                 referenceFieldName={referenceFieldName}
-                search={search}
               />
 
               <Main>

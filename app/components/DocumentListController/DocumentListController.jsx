@@ -22,54 +22,23 @@ class DocumentListController extends React.Component {
     createNewHref: proptypes.string,
 
     /**
-     * The ID of the document being operated on.
-     */
-    documentId: proptypes.string,    
-
-    /**
      * Whether to enable filters.
      */
     enableFilters: proptypes.bool,
 
     /**
-    * A callback to be used to obtain the base URL for the given page, as
-    * determined by the view.
+     * The set of filters applied.
+     */
+    filters: proptypes.object,
+
+    /**
+    * A callback to be fired whenever the filters are changed.
     */
-    onBuildBaseUrl: proptypes.func,
-
-    /**
-     * When selecting a value for a referenced field, this should contain its
-     * name.
-     */
-    referenceFieldName: proptypes.string,
-
-    /**
-     * The hash map of search parameters.
-     */
-    search: proptypes.object
+    onUpdateFilters: proptypes.func
   }
 
-  handleFiltersUpdate(newFilters) {
-    const {
-      documentId,
-      onBuildBaseUrl,
-      referenceFieldName,
-      router
-    } = this.props
-    const {history, search} = router
-    const newFilterValue = Object.keys(newFilters).length > 0 ?
-      newFilters :
-      null
-    const newSearch = Object.assign({}, search, {
-      filter: newFilterValue
-    })
-    const newUrl = onBuildBaseUrl({
-      createNew: Boolean(referenceFieldName && !documentId),
-      referenceFieldSelect: referenceFieldName,
-      search: newSearch
-    })
-
-    history.push(newUrl)
+  static defaultProps = {
+    filters: {}
   }
 
   render() {
@@ -77,7 +46,8 @@ class DocumentListController extends React.Component {
       collection,
       createNewHref,
       enableFilters,
-      search = {}
+      filters,
+      onUpdateFilters
     } = this.props
 
     if (!collection) {
@@ -90,8 +60,8 @@ class DocumentListController extends React.Component {
           {enableFilters &&
             <DocumentFilters
               collection={collection}
-              filters={search.filter}
-              onUpdateFilters={this.handleFiltersUpdate.bind(this)}
+              filters={filters}
+              onUpdateFilters={onUpdateFilters}
             />
           }
         </div>
