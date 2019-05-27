@@ -44,6 +44,11 @@ export default class FieldStringEdit extends React.Component {
     forceValidation: proptypes.bool,
 
     /**
+     * A metadata object associated with the value.
+     */
+    meta: proptypes.object,
+
+    /**
      * The name of the field within the collection. May be a path using
      * dot-notation.
      */
@@ -148,14 +153,14 @@ export default class FieldStringEdit extends React.Component {
     route(selectImageUrl)
   }  
 
-  handleOnChange(value) {
+  handleOnChange(value, meta) {
     const {onChange} = this.props
 
     // We prefer sending a `null` over an empty string.
     const sanitisedValue = value === '' ? null : value
 
     if (typeof onChange === 'function') {
-      onChange.call(this, sanitisedValue)
+      onChange.call(this, sanitisedValue, meta)
     }
   }
 

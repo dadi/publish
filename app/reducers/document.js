@@ -13,7 +13,7 @@ const blankDataBucket = {
   isSaving: false,
   lastSaveMode: null,
   local: null,
-  //localMeta: null,
+  localMeta: null,
   remote: null,
   remoteError: null,
   saveAttempts: 0,
@@ -78,6 +78,7 @@ export default function document (state = initialState, action = {}) {
         [action.key]: {
           ...state[action.key] || blankDataBucket,
           local: {},
+          localMeta: {},
           validationErrors: null,
           wasLoadedFromLocalStorage: false  
         }
@@ -143,6 +144,7 @@ export default function document (state = initialState, action = {}) {
           ...state[action.key] || blankDataBucket,
           isSaving: false,
           local: {},
+          localMeta: {},
           remote: action.data,
           remoteError: null,
           validationErrors: null
@@ -156,8 +158,6 @@ export default function document (state = initialState, action = {}) {
         return errors
       }, {})
 
-      console.log('---------->', action)
-
       return {
         ...state,
         [action.key]: {
@@ -167,6 +167,10 @@ export default function document (state = initialState, action = {}) {
             ...(state[action.key] && state[action.key].local),
             ...action.update
           },
+          localMeta: {
+            ...(state[action.key] && state[action.key].localMeta),
+            ...action.meta
+          },          
           validationErrors: {
             ...(state[action.key] && state[action.key].validationErrors),
             ...errorUpdate

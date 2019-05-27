@@ -84,7 +84,7 @@ class DocumentField extends React.Component {
 
   // Handles the callback that fires whenever a field changes and the new value
   // is ready to be sent to the store.
-  handleFieldChange(name, value) {
+  handleFieldChange(name, value, meta) {
     const {
       actions,
       contentKey
@@ -93,20 +93,23 @@ class DocumentField extends React.Component {
     // Validating the field. If validation fails, `error` will be set. If it
     // passes, `error` will be `undefined`.
     this.validate(value).catch(error => error).then(error => {
-      let update = {
+      let data = {
         contentKey,
+        meta: {
+          [name]: meta
+        },
         update: {
           [name]: value
         }
       }
 
       if (error) {
-        update.error = {
+        data.error = {
           [name]: error.message || error
         }
       }
 
-      actions.updateLocalDocument(update)
+      actions.updateLocalDocument(data)
     })
   }
 
