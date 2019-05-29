@@ -86,7 +86,10 @@ export default class FieldStringList extends React.Component {
     maxLength = Math.floor(maxLength) || this.props.maxLength
 
     if (value.length > maxLength) {
-      return value.slice(0, maxLength - 1).trim() + '…'
+      // https://stackoverflow.com/a/25575009/8583207
+      const punctuation = /[\u2000-\u206F\u2E00-\u2E7F\\'!"#$%&()*+,\-.\/:;<=>?@\[\]^_`{|}~]+$/
+      
+      return value.slice(0, maxLength - 1).trim().replace(punctuation, '').trim() + '…'
     }
 
     return value
