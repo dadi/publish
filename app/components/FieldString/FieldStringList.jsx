@@ -79,9 +79,12 @@ export default class FieldStringList extends React.Component {
 
   renderTrimmedValue(value, maxLength) {
     maxLength = Math.floor(maxLength) || this.props.maxLength
+    const nonWordLastCharRegex = /[^\w]*$/;
 
     if (value.length > maxLength) {
-      return value.slice(0, maxLength - 1).trim() + '…'
+      return value
+        .slice(0, maxLength - 1)
+        .replace(nonWordLastCharRegex, '') + '…'
     }
 
     return value
