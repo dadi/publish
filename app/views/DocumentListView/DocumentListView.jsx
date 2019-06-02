@@ -210,8 +210,19 @@ class DocumentListView extends React.Component {
     // Getting documents from store.
     const contentKey = this.getContentKey()
     const data = state.documents[contentKey] || {}
-    const {metadata} = data
+    const {metadata, results, dirty} = data
     const {page, totalPages} = metadata || {}
+    const isSingleton = Boolean(collection.settings.publish && collection.settings.publish.singleton)
+
+    if (isSingleton && !dirty && results && results.length > 0) {
+      const redirectUrl = onBuildBaseUrl.call(this, {
+        documentId: results[0]._id
+      })
+
+      return (
+        <Redirect to={redirectUrl}/>
+      )
+    }
 
     // If the page parameter is higher than the number of pages available for
     // the current document set, we redirect to the last valid page.
