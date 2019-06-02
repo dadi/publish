@@ -213,7 +213,6 @@ class DocumentListView extends React.Component {
     const {metadata, results, dirty} = data
     const {page, totalPages} = metadata || {}
     const isSingleton = Boolean(collection.settings.publish && collection.settings.publish.singleton)
-
     if (isSingleton && !dirty && results && results.length > 0) {
       const redirectUrl = onBuildBaseUrl.call(this, {
         documentId: results[0]._id
@@ -275,7 +274,7 @@ class DocumentListView extends React.Component {
     return (
       <Page>
         <Header currentCllection={collection}>
-          {this.renderController({collection})}
+          {this.renderController({collection}, !isSingleton)}
         </Header>
 
         <Main>
@@ -287,25 +286,27 @@ class DocumentListView extends React.Component {
           })}
         </Main>
 
-        <DocumentListToolbar
-          documentsMetadata={data.metadata}
-          onBuildPageUrl={page => onBuildBaseUrl.call(this, {
-            page
-          })}
-          selectedDocuments={selection}
-          showSelectedDocumentsUrl={showSelectedDocumentsUrl}
-        >
-          <BulkActionSelector
-            actions={actions}
-            onChange={this.handleBulkActionApply.bind(this, collection)}
-            selection={selection}
-          />
-        </DocumentListToolbar>
+        { !isSingleton && (
+          <DocumentListToolbar
+            documentsMetadata={data.metadata}
+            onBuildPageUrl={page => onBuildBaseUrl.call(this, {
+              page
+            })}
+            selectedDocuments={selection}
+            showSelectedDocumentsUrl={showSelectedDocumentsUrl}
+          >
+            <BulkActionSelector
+              actions={actions}
+              onChange={this.handleBulkActionApply.bind(this, collection)}
+              selection={selection}
+            />
+          </DocumentListToolbar>
+        ) }
       </Page>
     )
   }
 
-  renderController({collection}) {
+  renderController({collection}, showFilters) {
     const {onBuildBaseUrl, route} = this.props
     const {search} = route
 
@@ -322,7 +323,7 @@ class DocumentListView extends React.Component {
       <DocumentListController
         collection={collection}
         createNewHref={createNewHref}
-        enableFilters={true}
+        enableFilters={showFilters}
         filters={search.filter}
         onUpdateFilters={this.handleFiltersUpdate.bind(this)}
       />
