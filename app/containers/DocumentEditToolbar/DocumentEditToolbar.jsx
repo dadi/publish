@@ -4,6 +4,7 @@ import * as documentActions from 'actions/documentActions'
 import * as userActions from 'actions/userActions'
 import {connectRedux} from 'lib/redux'
 import {connectRouter} from 'lib/router'
+import Button from 'components/Button/Button'
 import ButtonWithOptions from 'components/ButtonWithOptions/ButtonWithOptions'
 import ButtonWithPrompt from 'components/ButtonWithPrompt/ButtonWithPrompt'
 import DateTime from 'components/DateTime/DateTime'
@@ -37,6 +38,11 @@ class DocumentEditToolbar extends React.Component {
      * The ID of the document being edited.
      */
     documentId: proptypes.string,
+
+    /**
+     * Whether the collection is a single-document collection.
+     */
+    isSingleDoc: proptypes.bool,
 
     /**
      * Whether to render a control for selecting different languages.
@@ -141,6 +147,7 @@ class DocumentEditToolbar extends React.Component {
     const {
       contentKey,
       documentId,
+      isSingleDoc,
       multiLanguage,
       router,
       state
@@ -237,15 +244,26 @@ class DocumentEditToolbar extends React.Component {
           )}
 
           <div className={styles.button}>
-            <ButtonWithOptions
-              accent="save"
-              disabled={Boolean(
-                hasConnectionIssues || hasValidationErrors || isSaving
-              )}
-              isLoading={isSaving}
-              onClick={saveOptions.primary.action}
-              options={saveOptions.secondary}
-            >{saveOptions.primary.label}</ButtonWithOptions>
+            {isSingleDoc ? (
+              <Button
+                accent="save"
+                disabled={Boolean(
+                  hasConnectionIssues || hasValidationErrors || isSaving
+                )}
+                isLoading={isSaving}
+                onClick={saveOptions.primary.action}
+              >{saveOptions.primary.label}</Button>
+            ) : (
+              <ButtonWithOptions
+                accent="save"
+                disabled={Boolean(
+                  hasConnectionIssues || hasValidationErrors || isSaving
+                )}
+                isLoading={isSaving}
+                onClick={saveOptions.primary.action}
+                options={saveOptions.secondary}
+              >{saveOptions.primary.label}</ButtonWithOptions>
+            )}
           </div>
         </div>
       </Toolbar>

@@ -15,6 +15,7 @@ import ErrorMessage from 'components/ErrorMessage/ErrorMessage'
 import Header from 'containers/Header/Header'
 import Main from 'components/Main/Main'
 import MediaViewer from 'components/MediaViewer/MediaViewer'
+import SpinningWheel from 'components/SpinningWheel/SpinningWheel'
 import Page from 'components/Page/Page'
 import React from 'react'
 
@@ -27,9 +28,8 @@ class DocumentEditView extends React.Component {
   }
 
   componentDidUpdate(oldProps) {
-    const {actions, route, state} = this.props
+    const {actions, state} = this.props
     const {state: oldState} = oldProps
-    const {documentId} = route.params    
     const document = state.document[this.contentKey] || {}
     const oldDocument = oldState.document[this.contentKey] || {}
     const hasAttemptedSaving = (oldDocument.saveAttempts || 0) < document.saveAttempts
@@ -63,21 +63,52 @@ class DocumentEditView extends React.Component {
       return actions.saveDocument({
         collection: this.collection,
         contentKey: this.contentKey,
-        documentId: asDuplicate ? null : documentId
+        documentId: asDuplicate ? null : this.documentId
       })
     }
   }
 
   componentWillMount() {
-    window.addEventListener('beforeunload', this.userLeavingDocumentHandler)    
+    window.addEventListener('beforeunload', this.userLeavingDocumentHandler)
+    this.deriveInstanceProps()
+    if (this.props.isSingleDoc) {
+      this.fetchDocList()
+    }
   }
 
   componentWillReceiveProps(newProps) {
-    const {actions, onBuildBaseUrl, state} = this.props
+    this.deriveInstanceProps(newProps)
+
+    const {
+      actions,
+      onBuildBaseUrl,
+      state,
+      isSingleDoc,
+      route
+    } = this.props
     const document = state.document[this.contentKey] || {}
-    const {route, state: newState} = newProps
-    const newDocument = newState.document[this.contentKey] || {}
-    const {documentId} = route.params
+    const {route: newRoute, state: newState} = newProps
+    const newDocument = newState.document[this.contentKey] || {}    
+
+    if (
+      isSingleDoc &&
+      (
+        route.params.collection !== newRoute.params.collection ||
+        document.isSaving && !newDocument.isSaving && !document.remote ||
+        !document.isDeleted && newDocument.isDeleted
+      )
+    ) {      
+      this.fetchDocList()
+    }
+
+    if (!document.isDeleted && newDocument.isDeleted) {
+      actions.setNotification({
+        message: 'The document has been deleted'
+      })
+      this.hasBeenDeleted = true
+    } else {
+      this.hasBeenDeleted = false
+    }
 
     if (document.isSaving && !newDocument.isSaving) {
       const {lastSaveMode: mode} = newDocument
@@ -107,7 +138,7 @@ class DocumentEditView extends React.Component {
           break
       }
 
-      const isUpdate = documentId &&
+      const isUpdate = this.documentId &&
         (mode !== Constants.SAVE_ACTION_SAVE_AS_DUPLICATE)
       const operation = isUpdate ? 'updated' : 'created'
       const message = newDocument.remoteError
@@ -122,6 +153,54 @@ class DocumentEditView extends React.Component {
 
   componentWillUnmount() {
     window.removeEventListener('beforeunload', this.userLeavingDocumentHandler)    
+  }
+
+  deriveInstanceProps(props = this.props) {
+    const {state, route, isSingleDoc} = props
+    const {api} = state.app.config
+    const {
+      collection: collectionName,
+      documentId
+    } = route.params
+
+    this.collection = collectionName === Constants.MEDIA_COLLECTION_SCHEMA.slug
+      ? Constants.MEDIA_COLLECTION_SCHEMA
+      : api.collections.find(collection => collection.slug === collectionName)
+
+    if (isSingleDoc) {
+      const collectionKey = JSON.stringify({collection: this.collection.slug})
+      const documentList = state.documents[collectionKey]
+
+      if (documentList && !documentList.isLoading) {
+        this.isLoading = false
+        this.documentId = documentList.results[0] && documentList.results[0]._id
+      } else {
+        this.documentId = undefined
+      }
+    } else {
+      this.documentId = documentId
+    }
+
+    this.contentKey = JSON.stringify({
+      collection: this.collection.slug,
+      documentId: this.documentId,
+    })
+  }
+
+  fetchDocList() {
+    const {state, actions} = this.props
+    const collectionKey = JSON.stringify({collection: this.collection.slug})
+    const documentList = state.documents[collectionKey]
+    
+    if (!documentList || !documentList.isLoading) {
+      this.isLoading = true
+      
+      actions.fetchDocumentList({
+        contentKey: collectionKey,
+        collection: this.collection,
+        bypassCache: true
+      })
+    }
   }
 
   groupFieldsIntoPlacements(fields) {
@@ -158,7 +237,6 @@ class DocumentEditView extends React.Component {
       route
     } = this.props
     const {
-      documentId,
       section: activeSectionSlug
     } = route.params
 
@@ -196,7 +274,7 @@ class DocumentEditView extends React.Component {
       return {
         fields: fieldsInPlacements,
         href: onBuildBaseUrl.call(this, {
-          createNew: !Boolean(documentId),
+          createNew: !Boolean(this.documentId),
           section: slug
         }),
         isActive,
@@ -242,24 +320,13 @@ class DocumentEditView extends React.Component {
     }
 
     const {
-      actions,
+      isSingleDoc,
       onBuildBaseUrl,
-      route,
       section,
       state
     } = this.props
-    const {api} = state.app.config
-    const {
-      collection: collectionName,
-      documentId
-    } = route.params
-    const collection = collectionName === Constants.MEDIA_COLLECTION_SCHEMA.slug
-      ? Constants.MEDIA_COLLECTION_SCHEMA
-      : api.collections.find(collection => {
-          return collection.slug === route.params.collection
-        })
 
-    if (!collection) {
+    if (!this.collection) {
       return (
         <Page>
           <Header />
@@ -271,28 +338,15 @@ class DocumentEditView extends React.Component {
       )
     }
 
-    // Storing the collection in an instance variable so that other lifecycle
-    // methods can use it.
-    this.collection = collection
+    if (isSingleDoc && this.isLoading) {
+      return <SpinningWheel />
+    }
 
-    // Computing the content key and storing it in an instance variable so that
-    // other lifecycle methods can use it.
-    this.contentKey = JSON.stringify({
-      collection: collection.slug,
-      documentId
-    })
-
-    const document = state.document[this.contentKey] || {}
-
-    if (document.isDeleted) {
-      actions.setNotification({
-        message: 'The document has been deleted'
-      })
-
+    if (this.hasBeenDeleted) {
       const redirectUrl = onBuildBaseUrl.call(this, {
         documentId: null
       })
-
+      
       return (
         <Redirect to={redirectUrl}/>
       )
@@ -300,7 +354,7 @@ class DocumentEditView extends React.Component {
 
     // Getting the fields that are visible in the edit view.
     const collectionFields = getVisibleFields({
-      fields: collection.fields,
+      fields: this.collection.fields,
       viewType: 'edit'
     })
 
@@ -323,29 +377,30 @@ class DocumentEditView extends React.Component {
       )
     }
 
-    setPageTitle(`${documentId ? 'Edit' : 'New'} document`)
+    setPageTitle(`${this.documentId ? 'Edit' : 'New'} document`)
 
     return (
       <Page>
         <Header/>
 
         <DocumentEditToolbar
-          collection={collection}
+          collection={this.collection}
           contentKey={this.contentKey}
-          documentId={documentId}
-          multiLanguage={!collection.IS_MEDIA_BUCKET}
+          documentId={this.documentId}
+          isSingleDoc={isSingleDoc}
+          multiLanguage={!this.collection.IS_MEDIA_BUCKET}
           onBuildBaseUrl={onBuildBaseUrl.bind(this)}
           section={section}
         />
 
         <Main>
           <Document
-            collection={collection}
+            collection={this.collection}
             contentKey={this.contentKey}
-            documentId={documentId}
+            documentId={this.documentId}
             onDocumentNotFound={this.handleDocumentNotFound.bind(this)}
             onRender={({document}) => this.renderDocument({
-              collection,
+              collection: this.collection,
               contentKey: this.contentKey,
               document,
               sections

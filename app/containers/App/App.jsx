@@ -118,10 +118,6 @@ class Route extends React.Component {
             )
           }
 
-          if (typeof render === 'function') {
-            return render(props)
-          }          
-
           const route = {
             params: routeProps.computedMatch.params,
             path: routeProps.location.pathname,
@@ -129,17 +125,19 @@ class Route extends React.Component {
             searchString: routeProps.location.search
           }
 
+          const augmentedProps = { ...props, route, onBuildBaseUrl: this.buildBaseUrl }
+
           return (
             <>
               <NotificationCentre
                 route={route}
               />
 
-              <Component
-                {...props}
-                onBuildBaseUrl={this.buildBaseUrl}
-                route={route}
-              />
+              {typeof render === 'function' ? (
+                render(augmentedProps)
+              ) : (
+                <Component {...augmentedProps} />
+              )}
             </>
           )
         }}
@@ -212,6 +210,25 @@ class App extends React.Component {
         })
       }, timeout)
     }
+  }
+
+  renderEditListSwitch(props) {
+    const {collection: collectionName} = props.match.params
+    const {api} = this.props.state.app.config
+
+    const collection = collectionName === Constants.MEDIA_COLLECTION_SCHEMA.slug
+      ? Constants.MEDIA_COLLECTION_SCHEMA
+      : api.collections.find(collection => collection.slug === collectionName)
+
+    const isSingleDoc = Boolean(
+      collection
+        && collection.settings.publish
+        && collection.settings.publish.isSingleDocument
+    )
+
+    return isSingleDoc
+      ? <DocumentEditView isSingleDoc {...props} />
+      : <DocumentListView {...props} />
   }
 
   render() {
@@ -326,7 +343,7 @@ class App extends React.Component {
           <Route
             isSignedIn={isSignedIn}
             exact
-            component={DocumentListView}
+            render={this.renderEditListSwitch.bind(this)}
             config={state.app.config}
             mustBeSignedIn
             path={`/:collection${REGEX_SLUG}/:page${REGEX_NUMBER}?`}
@@ -353,7 +370,7 @@ class App extends React.Component {
           <Route
             isSignedIn={isSignedIn}
             exact
-            component={DocumentListView}
+            render={this.renderEditListSwitch.bind(this)}
             config={state.app.config}
             mustBeSignedIn
             path={`/:group${REGEX_SLUG}/:collection${REGEX_SLUG}/:page${REGEX_NUMBER}?`}
