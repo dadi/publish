@@ -1,6 +1,7 @@
 import * as appActions from 'actions/appActions'
 import * as documentActions from 'actions/documentActions'
 import {connectRedux} from 'lib/redux'
+import HotKeys from 'lib/hot-keys'
 import proptypes from 'prop-types'
 import React from 'react'
 import SpinningWheel from 'components/SpinningWheel/SpinningWheel'
@@ -67,6 +68,11 @@ class DocumentList extends React.Component {
     page: proptypes.number,
 
     /**
+     * If defined, listens to a hotkey combination to select all documents.
+     */
+    selectAllHotKey: proptypes.string,
+
+    /**
      * An array containing the IDs of the selected documents.
      */
     selection: proptypes.array,
@@ -83,12 +89,27 @@ class DocumentList extends React.Component {
   }
 
   static defaultProps = {
-    listType: 'table',
     selection: []
+  }
+
+  constructor(props) {
+    super(props)
+
+    const shortcuts = typeof props.selectAllHotKey === 'string'
+      ? {[props.selectAllHotKey]: this.selectAll.bind(this)}
+      : null
+
+    this.hotKeys = new HotKeys(shortcuts)
   }
 
   componentWillMount() {
     this.fetch()
+
+    this.hotKeys.addListener()
+  }
+
+  componentWillUnmount() {
+    this.hotKeys.removeListener()
   }
 
   componentDidUpdate(oldProps) {
@@ -160,7 +181,6 @@ class DocumentList extends React.Component {
   render() {
     const {
       contentKey,
-      listType,
       onEmptyList,
       onLoading,
       onRender,
@@ -254,6 +274,20 @@ class DocumentList extends React.Component {
     }
 
     return null
+  }
+
+  selectAll() {
+    const {
+      contentKey,
+      onSelect,
+      selection,
+      state
+    } = this.props
+    const data = state.documents[contentKey]
+
+    if (typeof onSelect === 'function') {
+      onSelect(data.results)
+    }
   }
 }
 

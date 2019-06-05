@@ -1,11 +1,11 @@
 import isHotkey from 'is-hotkey'
 
 class HotKeys {
-  constructor(handlers = {}) {
+  constructor(handlers) {
     this.eventHandler = this._capture.bind(this)
     this.handlers = {}
 
-    Object.keys(handlers).forEach(key => {
+    Object.keys(handlers || {}).forEach(key => {
       this.on(key, handlers[key])
     })
   }

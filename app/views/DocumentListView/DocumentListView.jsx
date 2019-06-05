@@ -136,6 +136,17 @@ class DocumentListView extends React.Component {
       )
     }
 
+    // We display a slightly different message for the media library, since
+    // there's no route for creating a new document.
+    if (route.params.collection === Constants.MEDIA_COLLECTION_SCHEMA.slug) {
+      return (
+        <HeroMessage
+          title="No media yet."
+          subtitle="Once you upload media files, they will appear here."
+        />        
+      )
+    }
+
     return (
       <HeroMessage
         title="No documents yet."
@@ -326,8 +337,7 @@ class DocumentListView extends React.Component {
   }
 
   renderMain({collection, contentKey, isFilteringSelection, selection}) {
-    const {onBuildBaseUrl, route, state} = this.props
-    const {cdn} = state.app.config
+    const {onBuildBaseUrl, route} = this.props
     const {page} = route.params
     const {search} = route
     const parsedPage = Number.parseInt(page)
@@ -368,6 +378,7 @@ class DocumentListView extends React.Component {
             onSelect={this.handleSelect.bind(this)}
             order={search.order}
             page={pageNumber}
+            selectAllHotKey="mod+a"
             selection={selection}
             sort={search.sort}
           />
