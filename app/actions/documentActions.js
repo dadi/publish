@@ -2,7 +2,6 @@ import 'unfetch/polyfill'
 import * as Constants from 'lib/constants'
 import * as LocalStorage from 'lib/local-storage'
 import * as Types from 'actions/actionTypes'
-import {batchActions} from 'lib/redux'
 import apiBridgeClient from 'lib/api-bridge-client'
 
 const CACHE_TTL = 5000
@@ -176,10 +175,6 @@ export function fetchDocument ({
     // Add ID filter.
     apiBridge = apiBridge.whereFieldIsEqualTo('_id', id)
 
-    // if (fields) {
-    //   apiBridge.useFields(fields)
-    // }
-
     dispatch({
       key: contentKey,
       type: Types.LOAD_DOCUMENT_START
@@ -319,23 +314,40 @@ export function registerSaveAttempt ({contentKey, mode}) {
 }
 
 /**
- * Signals that the user is closing the interface whilst editing a docuiment
- * with a given content key.
+ * Registers a callback function to be fired for a given field before the
+ * document is saved. The callback may choose to modify the value of the field
+ * before it's sent to API.
  *
- * @param  {String} contentKey  Content key
+ * @param  {Function} contentKey  Callback function
+ * @param  {String}   contentKey  Content key
+ * @param  {String}   fieldName   The name of the field
  */
-export function registerUserLeavingDocument ({contentKey}) {
-  return (dispatch, getState) => {
-    const document = getState().document[contentKey]
-    const {local} = document || {}
+export function registerSaveCallback ({callback, contentKey, fieldName}) {
+  return {
+    callback,
+    fieldName,
+    key: contentKey,
+    type: Types.REGISTER_SAVE_CALLBACK
+  }
+}
 
-    if (local) {
-      LocalStorage.writeDocument(contentKey, local)
-    }
-
-    dispatch({
-      type: Types.USER_LEAVING_DOCUMENT
-    })
+/**
+ * Registers a callback function to be fired for a given field every time it
+ * needs to be validated, overriding the default validation method introduced
+ * by the API validator module.
+ * The callback should return a resolved Promise if validation passes, or a
+ * rejected Promise with an error message if validation fails.
+ *
+ * @param  {Function} contentKey  Callback function
+ * @param  {String}   contentKey  Content key
+ * @param  {String}   fieldName   The name of the field
+ */
+export function registerValidationCallback ({callback, contentKey, fieldName}) {
+  return {
+    callback,
+    fieldName,
+    key: contentKey,
+    type: Types.REGISTER_VALIDATION_CALLBACK
   }
 }
 
@@ -373,7 +385,7 @@ export function saveDocument ({
   return (dispatch, getState) => {
     const {api} = getState().app.config
     const currentDocument = getState().document[contentKey] || {}
-    const {local, remote} = currentDocument
+    const {local, remote, saveCallbacks} = currentDocument
     const isUpdate = Boolean(documentId)
 
     let payload = {}
@@ -411,6 +423,18 @@ export function saveDocument ({
         }
       })
     }
+
+    // Firing any registered `onSave` callbacks.
+    Object.keys(payload).forEach(field => {
+      // (!) TO DO: adapt to `i18n.languageField`
+      const [name] = field.split(':')
+
+      if (typeof saveCallbacks[name] === 'function') {
+        payload[field] = saveCallbacks[name]({
+          value: payload[field]
+        })
+      }
+    })
 
     // Handling Reference and Media fields.
     const referenceQueue = Object.keys(payload).map(field => {
@@ -550,6 +574,44 @@ export function saveDocument ({
 }
 
 /**
+ * Saves changes to a document locally, using LocalStorage. Before saving, it
+ * diffs each field (using JSON.stringify) against the remote document, and
+ * only saves if at least one of the fields actually changed.
+ *
+ * @param  {String}  contentKey   Content key
+ */
+export function saveDocumentLocally ({contentKey}) {
+  return (_, getState) => {
+    const document = getState().document[contentKey] || {}
+    const {local, remote, saveCallbacks} = document
+
+    let needsSaving = false
+
+    const payload = local && Object.keys(local).reduce((payload, field) => {
+      // (!) TO DO: adapt to `i18n.languageField`
+      const [name] = field.split(':')
+      const value = typeof saveCallbacks[name] === 'function'
+        ? saveCallbacks[name]({value: local[field]})
+        : local[field]
+
+      payload[field] = value
+
+      const hasChanged = remote 
+        ? JSON.stringify(value) !== JSON.stringify(remote[field])
+        : true
+
+      needsSaving = needsSaving || hasChanged
+
+      return payload
+    }, {})
+
+    if (needsSaving) {
+      LocalStorage.writeDocument(contentKey, payload)
+    }
+  }
+}
+
+/**
  * Saves a media document to the remote API.
  *
  * @param  {String}  contentKey   Content key
@@ -669,6 +731,21 @@ export function setDocumentListStatus ({contentKey, data, status}) {
 }
 
 /**
+ * Starts editing a new document.
+ *
+ * @param  {String}  contentKey   Content key
+ */
+export function startDocument({contentKey: key}) {
+  const fromLocalStorage = LocalStorage.readDocument(key)
+
+  return {
+    key,
+    fromLocalStorage,
+    type: Types.START_NEW_DOCUMENT
+  }
+}
+
+/**
  * Registers local changes to a document.
  *
  * @param  {String}  contentKey   Content key
@@ -682,21 +759,14 @@ export function updateLocalDocument ({
   contentKey: key,
   error = {},
   meta = {},
-  update = {}
+  update = {},
 } = {}) {
-  return (dispatch, getState) => {
-    const {local: currentLocal} = getState().document[key] || {}
-    const newLocal = {...currentLocal, ...update}
-
-    LocalStorage.writeDocument(key, newLocal)
-
-    dispatch({
-      error,
-      key,
-      meta,
-      type: Types.UPDATE_LOCAL_DOCUMENT,
-      update
-    })
+  return {
+    error,
+    key,
+    meta,
+    type: Types.UPDATE_LOCAL_DOCUMENT,
+    update
   }
 }
 

@@ -15,15 +15,19 @@ export default class Paginator extends React.Component {
     currentPage: proptypes.number.isRequired,
 
     /**
-     * A callback function to be executed in order to generate the page links.
-     * This function will receive the page number as an argument.
-     */
-    linkCallback: proptypes.func.isRequired,
-
-    /**
      * Maximum number of page links to display.
      */
     maxPages: proptypes.number.isRequired,
+
+    /**
+    * A callback used to determine what should happen when the user attempts
+    * to select a specific page. This function will be called with a single
+    * argument, which is the number of the page to navigate to. It can return
+    * either a string, which is infered as an `href` property for a `<a>` tag,
+    * or it can return a function, which will be attached to the `onClick`
+    * event of a `<button>` tag.
+    */
+    pageChangeHandler: proptypes.func, 
 
     /**
      * Whether to render `Prev` and `Next` links.
@@ -41,51 +45,35 @@ export default class Paginator extends React.Component {
     prevNext: true
   }
 
-  renderPageNumber(pageNumber, firstPage, lastPage) {
-    const {currentPage, linkCallback} = this.props
-    const href = linkCallback.call(this, pageNumber)
-    const pageStyle = new Style(styles, 'page', 'page-primary')
-      .addIf('page-first', pageNumber === currentPage && pageNumber === firstPage)
-      .addIf('page-last', pageNumber === currentPage && pageNumber === lastPage)
+  getPropValuePair(pageNumber) {
+    const {pageChangeHandler} = this.props
 
-    if (pageNumber === currentPage) {
-      return (
-        <Button
-          accent="data"
-          className={pageStyle.getClasses()}
-          key={pageNumber}
-          type="mock"
-        >{pageNumber}</Button>
-      )
+    if (typeof pageChangeHandler === 'function') {
+      const value = pageChangeHandler(pageNumber)
+
+      if (typeof value === 'string') {
+        return {
+          href: value
+        }
+      }
+  
+      if (typeof value === 'function') {
+        return {
+          onClick: value.bind(this, pageNumber)
+        }
+      }
     }
 
-    return (
-      <Button
-        className={pageStyle.getClasses()}
-        href={href}
-        key={pageNumber}
-      >{pageNumber}</Button>
-    )    
+    return null
   }
 
   render() {
     const {
       currentPage,
-      linkCallback,
       maxPages,
       prevNext,
       totalPages
     } = this.props
-
-    // Return null if required props are invalid.
-    if (
-      !Number.isInteger(currentPage) ||
-      !Number.isInteger(totalPages) ||
-      !Number.isInteger(maxPages) ||
-      typeof linkCallback !== 'function'
-    ) {
-      return null
-    }
 
     // The paginator always tries to render an equal number of pages
     // before and after the current page. If the current page is too
@@ -120,8 +108,6 @@ export default class Paginator extends React.Component {
       items.push(this.renderPageNumber(i, firstPage, lastPage, currentPage))
     }
 
-    const nextUrl = linkCallback(currentPage + 1)
-    const prevUrl = linkCallback(currentPage - 1)
     const isFirstPage = currentPage <= 1
     const isLastPage = currentPage >= totalPages
     const nextStyle = new Style(styles, 'page', 'page-secondary')
@@ -136,9 +122,9 @@ export default class Paginator extends React.Component {
       <div>
         {prevNext &&
           <Button
+            {...this.getPropValuePair(currentPage - 1)}
             className={prevStyle.getClasses()}
             disabled={isFirstPage}
-            href={prevUrl}
             type={isFirstPage ? 'mock' : undefined}
           >Prev</Button> 
         }
@@ -147,13 +133,39 @@ export default class Paginator extends React.Component {
 
         {prevNext &&
           <Button
+            {...this.getPropValuePair(currentPage + 1)}
             className={nextStyle.getClasses()}
             disabled={isLastPage}
-            href={nextUrl}
             type={isLastPage ? 'mock' : undefined}
           >Next</Button>
         }
       </div>
     )
   }
+
+  renderPageNumber(pageNumber, firstPage, lastPage) {
+    const {currentPage} = this.props
+    const pageStyle = new Style(styles, 'page', 'page-primary')
+      .addIf('page-first', pageNumber === currentPage && pageNumber === firstPage)
+      .addIf('page-last', pageNumber === currentPage && pageNumber === lastPage)
+
+    if (pageNumber === currentPage) {
+      return (
+        <Button
+          accent="data"
+          className={pageStyle.getClasses()}
+          key={pageNumber}
+          type="mock"
+        >{pageNumber}</Button>
+      )
+    }
+
+    return (
+      <Button
+        {...this.getPropValuePair(pageNumber)}
+        className={pageStyle.getClasses()}
+        key={pageNumber}
+      >{pageNumber}</Button>
+    )    
+  }  
 }

@@ -61,8 +61,6 @@ class MediaGridCard extends React.Component {
 
     if (typeof href !== 'string' && typeof onSelect === 'function') {
       onSelect(event)
-
-      event.stopPropagation()
     }
   }
 
@@ -72,17 +70,16 @@ class MediaGridCard extends React.Component {
     } = this.props
 
     if (typeof onSelect === 'function') {
+      console.log('firing 1')
       onSelect(event)
     }
-
-    event.stopPropagation()
   }
 
   render() {
     const {
+      href,
       item,
       isSelected,
-      onSelect,
       selectLimit
     } = this.props
     const itemStyle = new Style(styles, 'wrapper')
@@ -101,8 +98,16 @@ class MediaGridCard extends React.Component {
 
     // Human-friendly file size.
     const humanFileSize = fileSize(item.contentLength, {
-      fixed: item.contentLength > 1000000 ? 2 : 0
+      fixed: item.contentLength > 1e6 ? 2 : 0
     }).human('si')
+
+    // If the `href` prop is present, we make the select element responsible
+    // for changing the selected state. If not, it becomes a purely decorative
+    // element with a read-only value, as the card as a whole will be used to
+    // change the selected state.
+    const selectProps = typeof href === 'string'
+      ? {onChange: this.handleSelectClick.bind(this)}
+      : {readOnly: true}
 
     return (
       <div
@@ -110,11 +115,11 @@ class MediaGridCard extends React.Component {
         onClick={this.handleCardClick.bind(this)}
       >
         <input
-          className={styles.select}
           checked={isSelected}
-          onChange={this.handleSelectClick.bind(this)}
+          className={styles.select}
           type={selectLimit === 1 ? 'radio' : 'checkbox'}
-        />
+          {...selectProps}
+        />        
 
         {this.renderHead({isImage})}
 
@@ -141,7 +146,6 @@ class MediaGridCard extends React.Component {
     const {
       href,
       item,
-      onSelect,
       state
     } = this.props
     const {config} = state.app
@@ -154,10 +158,9 @@ class MediaGridCard extends React.Component {
     const url = (config.cdn && config.cdn.publicUrl) ?
       `${config.cdn.publicUrl}${canonicalPath}?width=350` :
       (item.url || canonicalPath)
-
-    let headElement = isImage ?
-      <img className={styles.image} src={url}/> :
-      <div className={styles['generic-thumbnail']}/>
+    const headElement = isImage
+      ? <img className={styles.image} src={url}/>
+      : <div className={styles['generic-thumbnail']}/>
 
     if (typeof href === 'string') {
       return (
@@ -172,7 +175,6 @@ class MediaGridCard extends React.Component {
     return (
       <div
         className={styles['image-holder']}
-        onClick={this.handleCardClick.bind(this)}
         style={{paddingBottom: `${aspectRatio}%`}}
       >{headElement}</div>
     )

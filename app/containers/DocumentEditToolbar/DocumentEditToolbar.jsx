@@ -8,6 +8,7 @@ import ButtonWithOptions from 'components/ButtonWithOptions/ButtonWithOptions'
 import ButtonWithPrompt from 'components/ButtonWithPrompt/ButtonWithPrompt'
 import DateTime from 'components/DateTime/DateTime'
 import DropdownNative from 'components/DropdownNative/DropdownNative'
+import HotKeys from 'lib/hot-keys'
 import proptypes from 'prop-types'
 import React from 'react'
 import styles from './DocumentEditToolbar.css'
@@ -63,7 +64,18 @@ class DocumentEditToolbar extends React.Component {
   constructor(props) {
     super(props)
     
+    this.hotkeys = new HotKeys({
+      'mod+s': this.handleSave.bind(this, null)
+    })
     this.onSave = null
+  }
+
+  componentDidMount() {
+    this.hotkeys.addListener()
+  }
+
+  componentWillUnmount() {
+    this.hotkeys.removeListener()
   }
 
   getSaveOptions(documentId) {

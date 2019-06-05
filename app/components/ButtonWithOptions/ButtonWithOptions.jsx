@@ -85,7 +85,11 @@ export default class ButtonWithOptions extends React.Component {
       open: false
     }
     this.closeOptionsHandler = event => {
-      if (this.wrapperElement && !this.wrapperElement.contains(event.target)) {
+      if (
+        this.wrapperElement &&
+        !this.wrapperElement.contains(event.target) &&
+        this.state.open
+      ) {
         this.toggleOptions(false)
       }
     }

@@ -1,6 +1,5 @@
-import React from 'react'
 import proptypes from 'prop-types'
-
+import React from 'react'
 import Style from 'lib/Style'
 import styles from './Banner.css'
 

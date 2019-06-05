@@ -1,6 +1,5 @@
 import React from 'react'
 import proptypes from 'prop-types'
-import Style from 'lib/Style'
 import styles from './FieldString.css'
 import TextInput from 'components/TextInput/TextInput'
 
@@ -18,7 +17,10 @@ export default class FieldStringFilter extends React.Component {
     /**
      * The filter value.
      */
-    value: proptypes.string
+    value: proptypes.oneOfType([
+      proptypes.number,
+      proptypes.string
+    ])
   }
 
   componentDidMount() {
@@ -33,11 +35,7 @@ export default class FieldStringFilter extends React.Component {
   }
 
   render() {
-    const {
-      onUpdate,
-      stylesTextInput,
-      value
-    } = this.props
+    const {onUpdate, value} = this.props
 
     return (
       <TextInput

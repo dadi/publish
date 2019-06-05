@@ -17,13 +17,18 @@ import Main from 'components/Main/Main'
 import MediaViewer from 'components/MediaViewer/MediaViewer'
 import Page from 'components/Page/Page'
 import React from 'react'
+import styles from './DocumentEditView.css'
 
 class DocumentEditView extends React.Component {
   constructor(props) {
     super(props)
 
     this.sections = []
-    this.userLeavingDocumentHandler = this.handleUserLeavingDocument.bind(this)
+    this.userClosingBrowser = this.handleUserClosingBrowser.bind(this)
+  }
+
+  componentDidMount() {
+    window.addEventListener('beforeunload', this.userClosingBrowser)
   }
 
   componentDidUpdate(oldProps) {
@@ -32,13 +37,12 @@ class DocumentEditView extends React.Component {
     const {documentId} = route.params    
     const document = state.document[this.contentKey] || {}
     const oldDocument = oldState.document[this.contentKey] || {}
-    const hasAttemptedSaving = (oldDocument.saveAttempts || 0) < document.saveAttempts
+    const isSaving = (oldDocument.saveAttempts || 0) < document.saveAttempts
 
     // Are there unsaved changes?
     if (
-      !oldDocument.remote &&
-      document.remote &&
-      document.wasLoadedFromLocalStorage
+      document.wasLoadedFromLocalStorage &&
+      !this.shownUnsavedChangesNotification
     ) {
       const notification = {
         dismissAfterSeconds: false,
@@ -52,13 +56,23 @@ class DocumentEditView extends React.Component {
       }
     
       actions.setNotification(notification)
+
+      this.shownUnsavedChangesNotification = true
     }
 
     // If the user has attempted to save the document, we must fire the
     // `saveDocument` action.
-    if (hasAttemptedSaving) {
+    if (isSaving) {
+      const {validationErrors} = document
+      const hasValidationErrors = validationErrors &&
+        Object.keys(validationErrors).some(key => validationErrors[key])
       const asDuplicate = document.lastSaveMode ===
         Constants.SAVE_ACTION_SAVE_AS_DUPLICATE
+
+      // Aborting the save operation if there are any validation errors.
+      if (hasValidationErrors) {
+        return
+      }
 
       return actions.saveDocument({
         collection: this.collection,
@@ -66,10 +80,6 @@ class DocumentEditView extends React.Component {
         documentId: asDuplicate ? null : documentId
       })
     }
-  }
-
-  componentWillMount() {
-    window.addEventListener('beforeunload', this.userLeavingDocumentHandler)    
   }
 
   componentWillReceiveProps(newProps) {
@@ -105,6 +115,14 @@ class DocumentEditView extends React.Component {
           })
 
           break
+
+        default:
+          // If we've just created a new document, we redirect to its new URL.
+          if (!document.remote && newDocument.remote) {
+            this.redirectUrl = onBuildBaseUrl.call(this, {
+              documentId: newDocument.remote._id
+            })
+          }
       }
 
       const isUpdate = documentId &&
@@ -121,7 +139,9 @@ class DocumentEditView extends React.Component {
   }
 
   componentWillUnmount() {
-    window.removeEventListener('beforeunload', this.userLeavingDocumentHandler)    
+    window.removeEventListener('beforeunload', this.userClosingBrowser)
+
+    this.saveDocumentLocally()
   }
 
   groupFieldsIntoPlacements(fields) {
@@ -222,12 +242,8 @@ class DocumentEditView extends React.Component {
     )    
   }
 
-  handleUserLeavingDocument() {
-    const {actions} = this.props
-
-    actions.registerUserLeavingDocument({
-      contentKey: this.contentKey
-    })
+  handleUserClosingBrowser() {
+    this.saveDocumentLocally()
   }
 
   render() {
@@ -329,14 +345,16 @@ class DocumentEditView extends React.Component {
       <Page>
         <Header/>
 
-        <DocumentEditToolbar
-          collection={collection}
-          contentKey={this.contentKey}
-          documentId={documentId}
-          multiLanguage={!collection.IS_MEDIA_BUCKET}
-          onBuildBaseUrl={onBuildBaseUrl.bind(this)}
-          section={section}
-        />
+        <div className={styles.toolbar}>
+          <DocumentEditToolbar
+            collection={collection}
+            contentKey={this.contentKey}
+            documentId={documentId}
+            multiLanguage={!collection.IS_MEDIA_BUCKET}
+            onBuildBaseUrl={onBuildBaseUrl.bind(this)}
+            section={section}
+          />
+        </div>
 
         <Main>
           <Document
@@ -479,6 +497,14 @@ class DocumentEditView extends React.Component {
         ))}
       </EditInterface>
     )
+  }
+
+  saveDocumentLocally() {
+    const {actions} = this.props
+
+    actions.saveDocumentLocally({
+      contentKey: this.contentKey
+    })
   }
 }
 

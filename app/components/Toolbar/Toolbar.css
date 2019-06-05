@@ -6,10 +6,6 @@
   background-color: rgba(255,255,255,0.97);
   font-family: var(--theme-font-family, sans-serif);
   color: var(--theme-colour-primary, #000000);
-  z-index: 1000;
-  position: fixed;
-  bottom: 0;
-  left: 0;
 }
 
 @media (min-width: 600px) {

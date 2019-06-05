@@ -44,20 +44,26 @@ export default class ButtonWithPrompt extends React.Component {
       visible: false
     }
 
-    this.promptRef = null
-    this.promptInsideClickHandler = this.handlePromptClick.bind(this, true)
-    this.promptOutsideClickHandler = this.handlePromptClick.bind(this, false)
+    this.clickHandler = this.handleClick.bind(this)
   }
 
   componentDidMount() {
-    window.addEventListener('click', this.promptOutsideClickHandler)
+    window.addEventListener('mousedown', this.clickHandler)
   }
 
   componentWillUnmount() {
-    window.removeEventListener('click', this.promptOutsideClickHandler)
+    window.removeEventListener('mousedown', this.clickHandler)
+  }
 
-    if (this.promptRef) {
-      this.promptRef.removeEventListener('click', this.promptInsideClickHandler)
+  handleClick(event) {
+    if (
+      this.containerEl &&
+      !this.containerEl.contains(event.target) &&
+      this.state.visible
+    ) {
+      this.setState({
+        visible: false
+      })
     }
   }
 
@@ -67,18 +73,6 @@ export default class ButtonWithPrompt extends React.Component {
     this.setState({
       visible: !visible
     })
-  }
-
-  handlePromptClick(insidePrompt, event) {
-    const {visible} = this.state
-
-    if (insidePrompt) {
-      event.stopPropagation()
-    } else if (visible) {
-      this.setState({
-        visible: false
-      })
-    }
   }
 
   render() {
@@ -118,7 +112,7 @@ export default class ButtonWithPrompt extends React.Component {
     return (
       <div
         className={styles.container}
-        onClick={this.promptInsideClickHandler.bind(this)}
+        ref={el => this.containerEl = el}
       >
         <Button {...buttonProps}>{children}</Button>
         

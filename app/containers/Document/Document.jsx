@@ -1,6 +1,5 @@
 import * as appActions from 'actions/appActions'
 import * as documentActions from 'actions/documentActions'
-import * as routerActions from 'actions/routerActions'
 import {connectRedux} from 'lib/redux'
 import SpinningWheel from 'components/SpinningWheel/SpinningWheel'
 import proptypes from 'prop-types'
@@ -87,6 +86,10 @@ class Document extends React.Component {
         collection,
         id
       })
+    } else {
+      actions.startDocument({
+        contentKey
+      })
     }
   }
 
@@ -136,6 +139,5 @@ class Document extends React.Component {
 
 export default connectRedux(
   appActions,
-  documentActions,
-  routerActions
+  documentActions
 )(Document)

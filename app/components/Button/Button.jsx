@@ -140,10 +140,19 @@ export default class Button extends React.Component {
     }
 
     if (href) {
+      if (href.indexOf('/') !== 0) {
+        return (
+          <a
+            className={buttonStyle.getClasses()}
+            href={href}
+            target={openInNewWindow && '_blank'}
+          >{children}</a>
+        )
+      }
+
       return (
         <Link
           className={buttonStyle.getClasses()}
-          target={openInNewWindow && '_blank'}
           to={href}
         >{children}</Link>
       )

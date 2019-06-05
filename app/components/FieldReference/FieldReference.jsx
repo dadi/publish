@@ -2,30 +2,28 @@ import edit from './FieldReferenceEdit'
 import list from './FieldReferenceList'
 import listHeadAnnotation from './FieldReferenceListHeadAnnotation'
 
-const beforeReferenceSelect = ({api, collection, field}) => {
-  let schema = collection.fields[field]
-  let referencedCollectionName = schema &&
-    schema.settings &&
-    schema.settings.collection
-
-  // If there isn't a `settings.collection` property, the field is referencing 
-  // its own collection.
-  if (!referencedCollectionName) {
-    return {collection}
-  }
-
-  let referencedCollectionSchema = api.collections.find(apiCollection => {
-    return apiCollection.slug === referencedCollectionName
+function onValidate({validateFn, value}) {
+  const arrayValue = Array.isArray(value)
+    ? value
+    : [value]
+  const allValuesAreUploads = arrayValue.every(value => {
+    return value && value._previewData && value._file
   })
 
-  return {
-    collection: referencedCollectionSchema
+  // If we're looking at a media file that the user is trying to upload,
+  // there's no point in sending it to the validator module because it
+  // is in a format that the module will not understand, causing the
+  // validation to fail.
+  if (allValuesAreUploads) {
+    return Promise.resolve()
   }
+
+  return validateFn(value)
 }
 
 export {
-  beforeReferenceSelect,
   edit,
   list,
-  listHeadAnnotation
+  listHeadAnnotation,
+  onValidate
 }

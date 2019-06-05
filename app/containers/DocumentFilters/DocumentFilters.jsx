@@ -36,6 +36,7 @@ class DocumentFilters extends React.Component {
   constructor(props) {
     super(props)
 
+    this.clickHandler = this.handleClick.bind(this)
     this.defaultState = {
       search: null,
       selectedFilterField: null,
@@ -44,10 +45,7 @@ class DocumentFilters extends React.Component {
       selectedFilterValue: null,
       searchableFieldsPointer: 0
     }
-
     this.state = {...this.defaultState}
-
-    this.outsideTooltipHandler = this.handleClick.bind(this)
   }
 
   buildFiltersArray(filtersObject = {}) {
@@ -86,7 +84,7 @@ class DocumentFilters extends React.Component {
   }
 
   componentDidMount() {
-    window.addEventListener('click', this.outsideTooltipHandler)
+    window.addEventListener('mousedown', this.clickHandler)
   }
 
   componentDidUpdate(oldProps) {
@@ -101,7 +99,7 @@ class DocumentFilters extends React.Component {
   }
 
   componentWillUnmount() {
-    window.removeEventListener('click', this.outsideTooltipHandler) 
+    window.removeEventListener('mousedown', this.clickHandler) 
   }
 
   getFieldComponent(fieldName) {
@@ -125,7 +123,13 @@ class DocumentFilters extends React.Component {
   }
 
   handleClick(event) {
-    if (this.rootEl && !this.rootEl.contains(event.target)) {
+    const {selectedFilterField} = this.state
+
+    if (
+      this.filterWrapper &&
+      !this.filterWrapper.contains(event.target) &&
+      selectedFilterField !== null
+    ) {
       this.setState({
         selectedFilterField: null,
         selectedFilterIndex: null,
@@ -135,12 +139,8 @@ class DocumentFilters extends React.Component {
     }
   }
 
-  handleFiltersButtonClick(event) {
-    const {
-      selectedFilterIndex
-    } = this.state
-
-    event.stopPropagation()
+  handleFiltersButtonClick() {
+    const {selectedFilterIndex} = this.state
 
     // If the "Add filter" popup is already visible, clicking on the filters
     // button should hide the popup. Otherwise, it should show it.
@@ -154,10 +154,8 @@ class DocumentFilters extends React.Component {
     })
   }
 
-  handleFilterSelect(index, event) {
+  handleFilterSelect(index) {
     const {field, operator, value} = this.filtersArray[index]
-
-    event.stopPropagation()
 
     this.setState({
       selectedFilterField: field,
@@ -278,10 +276,8 @@ class DocumentFilters extends React.Component {
     onUpdateFilters(newFiltersObject)
   }
 
-  removeFilter(index, event) {
-    const {
-      onUpdateFilters
-    } = this.props
+  removeFilter(index) {
+    const {onUpdateFilters} = this.props
     const newFilters = this.filtersArray.reduce((result, filter, arrayIndex) => {
       if (index !== arrayIndex) {
         const {field, operator, value} = filter
@@ -295,8 +291,6 @@ class DocumentFilters extends React.Component {
     }, {})
 
     onUpdateFilters(newFilters)
-
-    event.stopPropagation()
   }
 
   render() {
@@ -439,6 +433,7 @@ class DocumentFilters extends React.Component {
       <div
         className={styles['filter-wrapper']}
         key={field + operator + value}
+        ref={el => this.filterWrapper = el}
       >
         <div
           className={styles.filter}
@@ -511,7 +506,6 @@ class DocumentFilters extends React.Component {
       <form
         className={tooltipStyle.getClasses()}
         onSubmit={this.handleSelectedFilterUpdate.bind(this, field, selectedOperator)}
-        ref={el => this.rootEl = el}
       >
         <div className={styles['tooltip-section']}>
           <h3

@@ -1,4 +1,3 @@
-import {Keyboard} from 'lib/keyboard'
 import proptypes from 'prop-types'
 import React from 'react'
 import styles from './Table.css'
@@ -53,21 +52,6 @@ export default class Table extends React.Component {
     selectable: true,
     selectLimit: Infinity,
     selectedRows: {}
-  }
-
-  constructor(props) {
-    super(props)
-
-    this.keyboard = new Keyboard()
-  }
-
-  componentDidMount() {
-    this.keyboard.on('cmd+a')
-      .do(cmd => this.selectAll())
-  }
-
-  componentWillUnmount() {
-    this.keyboard.off()
   }
 
   deselectAll() {

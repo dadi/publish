@@ -23,14 +23,14 @@ export default class FieldStringEdit extends React.Component {
     config: proptypes.object,
 
     /**
+     * The unique cache key for the document being edited.
+     */
+    contentKey: proptypes.string,
+
+    /**
      * The human-friendly name of the field, to be displayed as a label.
      */
     displayName: proptypes.string,
-
-    /**
-     * The ID of the document being edited.
-     */
-    documentId: proptypes.string,
 
     /**
      * If defined, contains an error message to be displayed by the field.
@@ -38,19 +38,12 @@ export default class FieldStringEdit extends React.Component {
     error: proptypes.string,
 
     /**
-     * Whether the field should be validated as soon as it mounts, rather than
-     * waiting for a change event.
-     */
-    forceValidation: proptypes.bool,
-
-    /**
      * A metadata object associated with the value.
      */
     meta: proptypes.object,
 
     /**
-     * The name of the field within the collection. May be a path using
-     * dot-notation.
+     * The name of the field within the collection.
      */
     name: proptypes.string,
 
@@ -72,6 +65,14 @@ export default class FieldStringEdit extends React.Component {
     onError: proptypes.func,
 
     /**
+     * A callback to be fired when the components mounts, in case it wishes to
+     * register an `onSave` callback with the store. That callback is then
+     * fired before the field is saved, allowing the function to modify its
+     * value before it is persisted.
+     */
+    onSaveRegister: proptypes.func,
+
+    /**
      * Whether the field is read-only.
      */
     readOnly: proptypes.bool,
@@ -89,7 +90,13 @@ export default class FieldStringEdit extends React.Component {
     /**
      * The field value.
      */
-    value: proptypes.string
+    value: proptypes.oneOfType([
+      proptypes.arrayOf(
+        proptypes.string
+      ),
+      proptypes.object,
+      proptypes.string
+    ])
   }
 
   static defaultProps = {
@@ -105,30 +112,19 @@ export default class FieldStringEdit extends React.Component {
     }
   }
 
-  componentDidMount() {
-    const {
-      meta = {}
-    } = this.props
-
-    if (meta.image && typeof this.insertImageCallback === 'function') {
-      this.insertImageCallback(
-        meta.image.selection[0].url,
-        meta.image.position
-      )
-    }
-  }
-
   getValueOfDropdown(element) {
-    let options = Array.prototype.slice.call(element.options)
-    let value = options.filter(option => option.selected).map(option => option.value)
+    const selectedOptions = Array.from(
+      element.selectedOptions,
+      item => item.value
+    )
 
     // If this isn't a multiple value select, we want to return the selected
     // value as a single element and not wrapped in a one-element array.
-    if (!element.attributes.multiple) {
-      return value[0]
+    if (element.attributes.multiple) {
+      return selectedOptions
     }
 
-    return value
+    return selectedOptions[0]
   }
 
   handleFocusChange(hasFocus) {
@@ -137,30 +133,14 @@ export default class FieldStringEdit extends React.Component {
     })
   }
 
-  handleImageSelect(position) {
-    const {
-      name,
-      onBuildBaseUrl
-    } = this.props
-
-    let selectImageUrl = onBuildBaseUrl({
-      referenceFieldSelect: name,
-      search: {
-        position
-      }
-    })
-
-    route(selectImageUrl)
-  }  
-
-  handleOnChange(value, meta) {
+  handleOnChange(value, options) {
     const {onChange} = this.props
 
     // We prefer sending a `null` over an empty string.
     const sanitisedValue = value === '' ? null : value
 
     if (typeof onChange === 'function') {
-      onChange.call(this, sanitisedValue, meta)
+      onChange.call(this, sanitisedValue, options)
     }
   }
 
@@ -180,7 +160,7 @@ export default class FieldStringEdit extends React.Component {
   }
 
   renderAsDropdown() {
-    let {
+    const {
       comment,
       displayName,
       error,
@@ -192,12 +172,17 @@ export default class FieldStringEdit extends React.Component {
     } = this.props
     const publishBlock = schema.publish || {}
     const options = publishBlock.options
-    const selectedValue = value || schema.default || null
     const selectLabel = `Please select${schema.label ? ` ${schema.label}` : ''}`
     const multiple = publishBlock.multiple === true
     const dropdownStyle = new Style(styles, 'dropdown')
       .addIf('dropdown-error', error)
       .addIf('dropdown-multiple', multiple)
+
+    let selectedValue = value || schema.default || ''
+
+    if (multiple && !Array.isArray(selectedValue)) {
+      selectedValue = [selectedValue]
+    }
 
     return (
       <Label
@@ -222,10 +207,9 @@ export default class FieldStringEdit extends React.Component {
         >
           {!multiple &&
             <option
-              value=""
               className={styles['dropdown-option']}
               disabled
-              selected={selectedValue === null}
+              value=""
             >{selectLabel}</option>
           }
 
@@ -233,6 +217,7 @@ export default class FieldStringEdit extends React.Component {
             return (
               <option
                 className={styles['dropdown-option']}
+                key={option.value}
                 value={option.value}
               >{option.label}</option>
             )
@@ -255,16 +240,24 @@ export default class FieldStringEdit extends React.Component {
     } = this.props
     const {hasFocus} = this.state
     const publishBlock = schema.publish || {}
-    const {heightType, rows, resizable} = publishBlock
-    const type = publishBlock.multiline ? 'multiline' : 'text'
-    const readOnly = publishBlock.readonly === true
+    const {
+      display = {},
+      heightType,
+      multiline,
+      readonly,
+      rows,
+      resizable
+    } = publishBlock
+    const type = multiline ? 'multiline' : 'text'
+    const readOnly = readonly === true
 
-    let link = publishBlock.display && publishBlock.display.link
-    let linkFormatted = false
-
-    if (link && typeof link === 'string') {
-      linkFormatted = link.replace(/{value}/, value)
-    }
+    // Is the field flagged as a link?
+    const isLink = display.link &&
+      typeof value === 'string' &&
+      (value.indexOf('http://') * value.indexOf('https://') === 0)
+    const formattedLink = typeof display.link === 'string'
+      ? display.link.replace(/{value}/, value)
+      : value
 
     return (
       <Label
@@ -292,13 +285,14 @@ export default class FieldStringEdit extends React.Component {
           type={type}
           value={value}
         />
-        {link && (
+
+        {isLink && (
           <Button
             accent="neutral"
-            size="small"
-            href={linkFormatted || value} 
             className={styles['link-preview']}
+            href={formattedLink}
             openInNewWindow={true}
+            size="small"
           >Open in new window</Button>
         )}
       </Label>
@@ -307,12 +301,19 @@ export default class FieldStringEdit extends React.Component {
 
   renderAsRichEditor(format) {
     const {
+      contentKey,
       displayName,
       error,
+      name,
       required,
+      onSaveRegister,
+      onValidateRegister,
       value
     } = this.props
     const {hasFocus} = this.state
+    const fieldContentKey = JSON.stringify({
+      fieldName: name
+    })
     
     return (
       <Label
@@ -323,12 +324,13 @@ export default class FieldStringEdit extends React.Component {
         label={displayName}
       >
         <RichEditor
+          contentKey={contentKey + fieldContentKey}
           format={format}
-          insertImageCallback={callback => this.insertImageCallback = callback}
           onBlur={this.handleFocusChange.bind(this, false)}
           onChange={this.handleOnChange.bind(this)}
           onFocus={this.handleFocusChange.bind(this, true)}
-          onImageInsert={this.handleImageSelect.bind(this)}
+          onSaveRegister={onSaveRegister}
+          onValidateRegister={onValidateRegister}
           value={value}
         />        
       </Label>

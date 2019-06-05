@@ -2,14 +2,10 @@ import * as apiActions from 'actions/apiActions'
 import * as appActions from 'actions/appActions'
 import * as Constants from 'lib/constants'
 import * as documentActions from 'actions/documentActions'
-import * as routerActions from 'actions/routerActions'
 import * as userActions from 'actions/userActions'
 import React from 'react'
 import {debounce} from 'lib/util'
-import {
-  decodeSearch,
-  encodeSearch
-} from 'lib/util/url'
+import {decodeSearch, encodeSearch} from 'lib/util/url'
 import {connectRedux} from 'lib/redux'
 import {
   BrowserRouter as Router,
@@ -30,7 +26,6 @@ import NotificationCentre from 'containers/NotificationCentre/NotificationCentre
 import ReferenceSelectView from 'views/ReferenceSelectView/ReferenceSelectView'
 import SignInView from 'views/SignInView/SignInView'
 import ProfileEditView from 'views/ProfileEditView/ProfileEditView'
-import { throws } from 'assert';
 
 const REGEX_NUMBER = '([0-9]+)'
 const REGEX_DOCUMENT_ID = '([a-f0-9]{24}|[a-f0-9]{32}|[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12})'
@@ -259,7 +254,7 @@ class App extends React.Component {
             isSignedIn={isSignedIn}
             exact
             mustBeSignedIn
-            path="/profile/select/:referenceField/:page?[^\d+$]"
+            path="/profile/select/:referenceField/:page[^\d+$]?"
             component={ProfileEditView}
             config={state.app.config}
           />
@@ -338,7 +333,7 @@ class App extends React.Component {
             component={ReferenceSelectView}
             config={state.app.config}
             mustBeSignedIn
-            path={`/:collection${REGEX_SLUG}/new/select/:referenceField/:page?${REGEX_NUMBER}`}
+            path={`/:collection${REGEX_SLUG}/new/select/:referenceField/:page${REGEX_NUMBER}?`}
           />
 
           <Route
@@ -392,6 +387,5 @@ export default connectRedux(
   apiActions,
   appActions,
   documentActions,
-  routerActions,
   userActions
 )(App)

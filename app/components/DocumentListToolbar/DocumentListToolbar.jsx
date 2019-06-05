@@ -20,14 +20,19 @@ class DocumentListToolbar extends React.Component {
     children: proptypes.node,
 
     /**
-     * The metadata block for the current document list.
+     * The metadata object for the document list.
      */
-    documentsMetada: proptypes.object,
+    metadata: proptypes.object,
 
     /**
-    * A callback used to obtain the URL for a given page.
+    * A callback used to determine what should happen when the user attempts
+    * to select a specific page. This function will be called with a single
+    * argument, which is the number of the page to navigate to. It can return
+    * either a string, which is infered as an `href` property for a `<a>` tag,
+    * or it can return a function, which will be attached to the `onClick`
+    * event of a `<button>` tag.
     */
-    onBuildPageUrl: proptypes.func,
+    pageChangeHandler: proptypes.func, 
 
     /**
     * The list of selected documents.
@@ -37,7 +42,7 @@ class DocumentListToolbar extends React.Component {
     /**
     * The URL for limiting the document list to only selected documents.
     */
-   showSelectedDocumentsUrl: proptypes.string
+    showSelectedDocumentsUrl: proptypes.string
   }
 
   constructor(props) {
@@ -50,24 +55,32 @@ class DocumentListToolbar extends React.Component {
 
   goToPage(value) {
     const {
-      documentsMetadata,
-      onBuildPageUrl,
+      metadata,
+      pageChangeHandler,
       router
     } = this.props
     const parsedValue = Number.parseInt(value)
 
-    if (!documentsMetadata) return null
+    if (!metadata || typeof pageChangeHandler !== 'function') {
+      return null
+    }
 
     // If the input is not a valid positive integer number, we return.
     if ((parsedValue.toString() !== value) || (parsedValue <= 0)) return
 
     // If the number inserted is outside the range of the pages available,
     // we return.
-    if (parsedValue > documentsMetadata.totalPages) return
+    if (parsedValue > metadata.totalPages) return
 
-    const href = onBuildPageUrl(parsedValue)
+    const action = pageChangeHandler(parsedValue)
 
-    router.history.push(href)
+    // If the result of `pageChangeHandler` is a link, we redirect to it.
+    // If it is a function, we call it.
+    if (typeof action === 'string') {
+      router.history.push(action)
+    } else if (typeof action === 'function') {
+      action(parsedValue)
+    }
   }
 
   handleGoToPage(event) {
@@ -81,8 +94,8 @@ class DocumentListToolbar extends React.Component {
   render() {
     const {
       children,
-      documentsMetadata: metadata,
-      onBuildPageUrl,
+      metadata,
+      pageChangeHandler,
       selectedDocuments = [],
       showSelectedDocumentsUrl
     } = this.props
@@ -92,7 +105,7 @@ class DocumentListToolbar extends React.Component {
 
     const pagesObject = Array.apply(null, {
       length: metadata.totalPages
-    }).reduce((result, content, index) => {
+    }).reduce((result, _, index) => {
       const page = index + 1
 
       result[page] = `Page ${page}`
@@ -130,8 +143,8 @@ class DocumentListToolbar extends React.Component {
           <div className={`${styles.section} ${styles['section-pagination']}`}>
             <Paginator
               currentPage={metadata.page}
-              linkCallback={page => onBuildPageUrl(page)}
               maxPages={8}
+              pageChangeHandler={pageChangeHandler}
               totalPages={metadata.totalPages}
             />
 

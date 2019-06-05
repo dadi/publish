@@ -56,39 +56,6 @@ export default class FieldMediaReferenceSelect extends React.Component {
     sortOrder: proptypes.oneOf(['asc', 'desc'])
   }
 
-  render() {
-    const {
-      data,
-      onSelect,
-      selectedRows,
-      selectLimit
-    } = this.props
-
-    return (
-      <DocumentGridList
-        documents={data}
-        onRenderCard={(item, onSelect, isSelected) => {
-          let itemWithSrc = Object.assign(
-            {},
-            item,
-            {url: this.getImageSrc(item)}
-          )
-
-          return (
-            <MediaGridCard
-              item={itemWithSrc}
-              isSelected={isSelected}
-              onSelect={onSelect}
-            />
-          )
-        }}
-        onSelect={onSelect}
-        selectedDocuments={selectedRows}
-        selectLimit={selectLimit}
-      />
-    )
-  }
-
   getImageSrc(value) {
     const {config} = this.props
     const cdn = config ? config.cdn : null
@@ -107,5 +74,38 @@ export default class FieldMediaReferenceSelect extends React.Component {
     }
 
     return value.url || null
+  }  
+
+  render() {
+    const {
+      data,
+      onSelect,
+      selectedRows,
+      selectLimit
+    } = this.props
+
+    return (
+      <DocumentGridList
+        documents={data}
+        onRenderCard={(item, onSelect, isSelected) => {
+          const itemWithSrc = Object.assign(
+            {},
+            item,
+            {url: this.getImageSrc(item)}
+          )
+
+          return (
+            <MediaGridCard
+              item={itemWithSrc}
+              isSelected={isSelected}
+              onSelect={onSelect}
+            />
+          )
+        }}
+        onSelect={onSelect}
+        selectedDocuments={selectedRows}
+        selectLimit={selectLimit}
+      />
+    )
   }
 }

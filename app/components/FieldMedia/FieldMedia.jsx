@@ -1,22 +1,29 @@
-import * as Constants from 'lib/constants'
 import edit from './FieldMediaEdit'
 import list from './FieldMediaList'
 import referenceSelect from './FieldMediaReferenceSelect'
 
-const beforeReferenceSelect = ({collection, field}) => {
-  let schema = collection.fields[field]
-  let filter = schema.validation &&
-    schema.validation.mimeTypes &&
-    {
-      mimeType: {
-        '$in': schema.validation.mimeTypes
-      }
-    }
+function onValidate({validateFn, value}) {
+  const arrayValue = Array.isArray(value)
+    ? value
+    : [value]
+  const allValuesAreUploads = arrayValue.every(value => {
+    return value && value._previewData && value._file
+  })
 
-  return {
-    collection: Constants.MEDIA_COLLECTION_SCHEMA,
-    filter
+  // If we're looking at a media file that the user is trying to upload,
+  // there's no point in sending it to the validator module because it
+  // is in a format that the module will not understand, causing the
+  // validation to fail.
+  if (allValuesAreUploads) {
+    return Promise.resolve()
   }
+
+  return validateFn(value)
 }
 
-export {beforeReferenceSelect, edit, list, referenceSelect}
+export {
+  edit,
+  list,
+  onValidate,
+  referenceSelect
+}
