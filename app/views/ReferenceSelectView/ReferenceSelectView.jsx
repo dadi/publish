@@ -1,9 +1,8 @@
 import * as Constants from 'lib/constants'
 import * as documentActions from 'actions/documentActions'
 import * as selectionActions from 'actions/selectionActions'
-import * as fieldComponents from 'lib/field-components'
 import {connectRedux} from 'lib/redux'
-import {getFieldType, getVisibleFields} from 'lib/fields'
+import {getVisibleFields} from 'lib/fields'
 import {Redirect} from 'react-router-dom'
 import {slugify} from 'shared/lib/string'
 import Button from 'components/Button/Button'
@@ -19,6 +18,7 @@ import MediaGridCard from 'containers/MediaGridCard/MediaGridCard'
 import Page from 'components/Page/Page'
 import React from 'react'
 import ReferenceSelectHeader from 'components/ReferenceSelectHeader/ReferenceSelectHeader'
+import styles from './ReferenceSelectView.css'
 
 class ReferenceSelectView extends React.Component {
   constructor(props) {
@@ -74,7 +74,7 @@ class ReferenceSelectView extends React.Component {
 
   handleDocumentSelect({referenceField: schema, selection}) {
     const {actions, history, onBuildBaseUrl, route} = this.props
-    const {referenceField} = route.params
+    const {documentId, referenceField} = route.params
 
     actions.updateLocalDocument({
       contentKey: this.getParentContentKey(),
@@ -91,6 +91,7 @@ class ReferenceSelectView extends React.Component {
       schema.publish.section &&
       slugify(schema.publish.section)
     const redirectUrl = onBuildBaseUrl.call(this, {
+      createNew: !Boolean(documentId),
       referenceFieldSelect: null,
       search: {
         ...route.search,
@@ -319,11 +320,8 @@ class ReferenceSelectView extends React.Component {
                   contentKey={contentKey}
                   filters={search.filter}
                   onBuildBaseUrl={onBuildBaseUrl.bind(this)}
+                  onEmptyList={this.handleEmptyDocumentList.bind(this)}
                   onRender={({documents, onSelect, selectedDocuments}) => {
-                    if (documents.length === 0) {
-                      return this.handleEmptyDocumentList({selection})
-                    }
-
                     return this.renderList({
                       documents,
                       onSelect,
@@ -340,25 +338,27 @@ class ReferenceSelectView extends React.Component {
                 />
               </Main>
 
-              <DocumentListToolbar
-                documentsMetadata={metadata}
-                onBuildPageUrl={page => onBuildBaseUrl.call(this, {
-                  createNew: !Boolean(documentId),
-                  page,
-                  referenceFieldSelect: referenceFieldName
-                })}
-                selectedDocuments={selection}
-                showSelectedDocumentsUrl={showSelectedDocumentsUrl}
-              >
-                <Button
-                  accent="save"
-                  disabled={selection.length === 0}
-                  onClick={this.handleDocumentSelect.bind(this, {
-                    referenceField,
-                    selection
+              <div className={styles.toolbar}>
+                <DocumentListToolbar
+                  metadata={metadata}
+                  pageChangeHandler={page => onBuildBaseUrl.call(this, {
+                    createNew: !Boolean(documentId),
+                    page,
+                    referenceFieldSelect: referenceFieldName
                   })}
-                >Select documents</Button>
-              </DocumentListToolbar>
+                  selectedDocuments={selection}
+                  showSelectedDocumentsUrl={showSelectedDocumentsUrl}
+                >
+                  <Button
+                    accent="save"
+                    disabled={selection.length === 0}
+                    onClick={this.handleDocumentSelect.bind(this, {
+                      referenceField,
+                      selection
+                    })}
+                  >Select documents</Button>
+                </DocumentListToolbar>
+              </div>
             </Page>
           )
         }}
@@ -380,23 +380,14 @@ class ReferenceSelectView extends React.Component {
       return (
         <DocumentGridList
           documents={documents}
-          onRenderCard={({item, isSelected, onSelect}) => {
-            // If there is a CDN instance configured, we'll replace the
-            // image base URL with the CDN URL.                    
-            if (cdn && cdn.publicUrl) {
-              item.url = `${cdn.publicUrl}${item.path}?width=500`
-            }
-  
-            return (
-              <MediaGridCard
-                href={`/media/${item._id}`}
-                key={item._id}
-                isSelected={isSelected}
-                item={item}
-                onSelect={onSelect}
-              />
-            )
-          }}
+          onRenderCard={({item, isSelected, onSelect}) => (
+            <MediaGridCard
+              key={item._id}
+              isSelected={isSelected}
+              item={item}
+              onSelect={onSelect}
+            />
+          )}
           onSelect={onSelect}
           selectedDocuments={selectedDocuments}
         />

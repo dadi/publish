@@ -8,16 +8,20 @@ import {Redirect} from 'react-router-dom'
 import {setPageTitle} from 'lib/util'
 import Button from 'components/Button/Button'
 import BulkActionSelector from 'components/BulkActionSelector/BulkActionSelector'
+import DocumentGridList from 'components/DocumentGridList/DocumentGridList'
 import DocumentList from 'containers/DocumentList/DocumentList'
 import DocumentListController from 'components/DocumentListController/DocumentListController'
 import DocumentListToolbar from 'components/DocumentListToolbar/DocumentListToolbar'
+import DocumentTableList from 'containers/DocumentTableList/DocumentTableList'
 import ErrorMessage from 'components/ErrorMessage/ErrorMessage'
 import Header from 'containers/Header/Header'
 import HeroMessage from 'components/HeroMessage/HeroMessage'
 import Main from 'components/Main/Main'
+import MediaGridCard from 'containers/MediaGridCard/MediaGridCard'
 import MediaListController from 'components/MediaListController/MediaListController'
 import Page from 'components/Page/Page'
 import React from 'react'
+import styles from './DocumentListView.css'
 
 const BULK_ACTIONS = {
   DELETE: 'BULK_ACTIONS_DELETE'
@@ -257,8 +261,9 @@ class DocumentListView extends React.Component {
             }
           }
         })
-      : undefined    
+      : undefined
 
+    // Setting the page title.
     setPageTitle(collection.name)
 
     return (
@@ -268,28 +273,30 @@ class DocumentListView extends React.Component {
         </Header>
 
         <Main>
-          {this.renderMain({
-            collection,
-            contentKey,
-            isFilteringSelection,
-            selection
-          })}
+          <div className={styles['list-container']}>
+            {this.renderMain({
+              collection,
+              contentKey,
+              isFilteringSelection,
+              selection
+            })}
+          </div>
         </Main>
 
-        <DocumentListToolbar
-          documentsMetadata={data.metadata}
-          onBuildPageUrl={page => onBuildBaseUrl.call(this, {
-            page
-          })}
-          selectedDocuments={selection}
-          showSelectedDocumentsUrl={showSelectedDocumentsUrl}
-        >
-          <BulkActionSelector
-            actions={actions}
-            onChange={this.handleBulkActionApply.bind(this, collection)}
-            selection={selection}
-          />
-        </DocumentListToolbar>
+        <div className={styles.toolbar}>
+          <DocumentListToolbar
+            metadata={metadata}
+            pageChangeHandler={page => onBuildBaseUrl.call(this, {page})}
+            selectedDocuments={selection}
+            showSelectedDocumentsUrl={showSelectedDocumentsUrl}
+          >
+            <BulkActionSelector
+              actions={actions}
+              onChange={this.handleBulkActionApply.bind(this, collection)}
+              selection={selection}
+            />
+          </DocumentListToolbar>
+        </div>
       </Page>
     )
   }
@@ -319,7 +326,8 @@ class DocumentListView extends React.Component {
   }
 
   renderMain({collection, contentKey, isFilteringSelection, selection}) {
-    const {onBuildBaseUrl, route} = this.props
+    const {onBuildBaseUrl, route, state} = this.props
+    const {cdn} = state.app.config
     const {page} = route.params
     const {search} = route
     const parsedPage = Number.parseInt(page)
@@ -340,9 +348,23 @@ class DocumentListView extends React.Component {
             collection={Constants.MEDIA_COLLECTION_SCHEMA}
             contentKey={contentKey}
             filters={search.filter}
-            listType="grid"
-            onBuildBaseUrl={onBuildBaseUrl}
             onEmptyList={this.handleEmptyDocumentList.bind(this)}
+            onRender={({documents, onSelect, selectedDocuments}) => (
+              <DocumentGridList
+                documents={documents}
+                onRenderCard={({item, isSelected, onSelect}) => (
+                  <MediaGridCard
+                    href={`/media/${item._id}`}
+                    key={item._id}
+                    isSelected={isSelected}
+                    item={item}
+                    onSelect={onSelect}
+                  />
+                )}
+                onSelect={onSelect}
+                selectedDocuments={selectedDocuments}
+              />
+            )}
             onSelect={this.handleSelect.bind(this)}
             order={search.order}
             page={pageNumber}
@@ -367,14 +389,25 @@ class DocumentListView extends React.Component {
         contentKey={this.getContentKey()}
         fields={visibleFields}
         filters={search.filter}
-        onBuildBaseUrl={onBuildBaseUrl.bind(this)}
         onEmptyList={this.handleEmptyDocumentList.bind(this)}
+        onRender={({documents, onSelect, selectedDocuments}) => (
+          <DocumentTableList
+            collection={collection}
+            documents={documents}
+            fields={visibleFields}
+            onBuildBaseUrl={onBuildBaseUrl.bind(this)}
+            onSelect={onSelect}
+            order={search.order}
+            selectedDocuments={selectedDocuments}
+            sort={search.sort}
+          />          
+        )}
         onSelect={this.handleSelect.bind(this)}
         order={search.order}
         page={pageNumber}
         selection={selection}
         sort={search.sort}
-      />      
+      />
     )
   }
 }

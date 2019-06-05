@@ -1,0 +1,11 @@
+.list-container {
+  margin-bottom: 50px;
+}
+
+.toolbar {
+  bottom: 0;
+  left: 0;
+  position: fixed;
+  width: 100%;
+  z-index: 1000;
+}

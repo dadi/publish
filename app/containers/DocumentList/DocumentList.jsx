@@ -1,11 +1,6 @@
 import * as appActions from 'actions/appActions'
-import * as Constants from 'lib/constants'
 import * as documentActions from 'actions/documentActions'
 import {connectRedux} from 'lib/redux'
-import {getVisibleFields} from 'lib/fields'
-import DocumentGridList from 'components/DocumentGridList/DocumentGridList'
-import DocumentTableList from 'containers/DocumentTableList/DocumentTableList'
-import MediaGridCard from 'containers/MediaGridCard/MediaGridCard'
 import proptypes from 'prop-types'
 import React from 'react'
 import SpinningWheel from 'components/SpinningWheel/SpinningWheel'
@@ -38,21 +33,6 @@ class DocumentList extends React.Component {
     filters: proptypes.object,
 
     /**
-     * The type of list to render documents with. If an `onRender` prop is
-     * supplied, that takes precedence.
-     */
-    listType: proptypes.oneOf([
-      'grid',
-      'table'
-    ]),
-
-    /**
-     * A callback to be used to obtain the base URL for the given page, as
-     * determined by the view.
-     */
-    onBuildBaseUrl: proptypes.func,
-
-    /**
      * A function to be called when the list has no documents to display.
      * It is called with the following named parameters:
      *
@@ -67,9 +47,8 @@ class DocumentList extends React.Component {
     onLoading: proptypes.func, 
    
     /**
-     * A function responsible for rendering the documents, overriding the
-     * default components (DocumentTableList and DocumentGridList).
-     * It is called with the following named parameters:
+     * A function responsible for rendering the documents. It is called with
+     * the following named parameters:
      *
      * - documents
      * - onSelect
@@ -180,7 +159,6 @@ class DocumentList extends React.Component {
 
   render() {
     const {
-      collection,
       contentKey,
       listType,
       onEmptyList,
@@ -203,7 +181,7 @@ class DocumentList extends React.Component {
       return <SpinningWheel/>
     }
 
-    const {results} = data
+    const {metadata, results} = data
 
     // If there are no results to display, we call the `onEmptyList` callback
     // if it is defined, or render `null` otherwise.
@@ -265,73 +243,17 @@ class DocumentList extends React.Component {
 
     const renderData = {
       documents: results,
+      metadata,
       onSelect: documentListOnSelect,
       selectedDocuments: selectedDocumentsInView
     }
 
-    // If there is a custom render function, we'll use it.
+    // If there is a render function, we'll use it.
     if (typeof onRender === 'function') {
       return onRender(renderData)
     }
 
-    return listType === 'grid'
-      ? this.renderAsGrid(renderData)
-      : this.renderAsTable(renderData)
-  }
-
-  renderAsGrid({documents, onSelect, selectedDocuments}) {
-    const {state} = this.props
-    const {cdn} = state.app.config
-
-    return (
-      <DocumentGridList
-        documents={documents}
-        onRenderCard={({item, isSelected, onSelect}) => {
-          // If there is a CDN instance configured, we'll replace the
-          // image base URL with the CDN URL.                    
-          if (cdn && cdn.publicUrl) {
-            item.url = `${cdn.publicUrl}${item.path}?width=500`
-          }
-
-          return (
-            <MediaGridCard
-              href={`/media/${item._id}`}
-              key={item._id}
-              isSelected={isSelected}
-              item={item}
-              onSelect={onSelect}
-            />
-          )
-        }}
-        onSelect={onSelect}
-        selectedDocuments={selectedDocuments}
-      />
-    )    
-  }
-
-  renderAsTable({documents, onSelect, selectedDocuments}) {
-    const {collection, onBuildBaseUrl, order, sort} = this.props
-
-    // Filtering visible fields.
-    const visibleFields = collection && Object.keys(
-      getVisibleFields({
-        fields: collection.fields,
-        viewType: 'list'
-      })
-    ).concat(Constants.DEFAULT_FIELDS)
-
-    return (
-      <DocumentTableList
-        collection={collection}
-        documents={documents}
-        fields={visibleFields}
-        onBuildBaseUrl={onBuildBaseUrl.bind(this)}
-        onSelect={onSelect}
-        order={order}
-        selectedDocuments={selectedDocuments}
-        sort={sort}
-      />
-    )  
+    return null
   }
 }
 
