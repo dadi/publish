@@ -1,7 +1,7 @@
 {
-  "name": "publish-react",
-  "version": "1.0.0",
-  "description": "",
+  "name": "@dadi/publish",
+  "version": "3.0.0",
+  "description": "DADI Publish",
   "main": "index.js",
   "scripts": {
     "build": "NODE_ENV=production webpack --progress --json > webpack-report.json",
@@ -27,6 +27,7 @@
     "@dadi/api-validator": "^1.2.0",
     "@dadi/api-wrapper": "^3.2.2",
     "@dadi/api-wrapper-core": "^3.1.1",
+    "@edithq/slate-md-serializer": "^1.0.0",
     "autoprefixer": "^9.5.1",
     "babel-loader": "^8.0.5",
     "chai": "^4.2.0",
@@ -54,7 +55,6 @@
     "redux": "^4.0.1",
     "redux-thunk": "^2.3.0",
     "slate": "^0.47.3",
-    "slate-md-serializer": "^5.3.3",
     "slate-plain-serializer": "^0.7.5",
     "slate-react": "^0.22.3",
     "slugify": "^1.3.4",
