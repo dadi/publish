@@ -67,6 +67,12 @@ export default class TableRow extends React.Component {
   }
 
   handleSelectRow(event) {
+    // If the click event happened on a link, we don't want to proceed
+    // with selecting the row.
+    if (event.target.tagName === 'A') {
+      return
+    }
+
     const {onSelect, tableIndex} = this.props
 
     if (typeof onSelect === 'function') {
