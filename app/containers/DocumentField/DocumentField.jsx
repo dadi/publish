@@ -54,6 +54,10 @@ class DocumentField extends React.Component {
   constructor(props) {
     super(props)
 
+    const fieldType = getFieldType(props.field)
+    const fieldComponentName = `Field${fieldType}`
+    
+    this.fieldComponent = fieldComponents[fieldComponentName]
     this.validator = new Validator()
   }
 
@@ -75,7 +79,7 @@ class DocumentField extends React.Component {
             [this.name]: error.message || error
           },
           update: {
-            [this.name]: this.value
+            [this.name]: undefined
           }
         })
       })
@@ -84,7 +88,7 @@ class DocumentField extends React.Component {
 
   // Handles the callback that fires whenever a field changes and the new value
   // is ready to be sent to the store.
-  handleFieldChange(name, value, meta) {
+  handleFieldChange(name, value) {
     const {
       actions,
       contentKey
@@ -95,9 +99,6 @@ class DocumentField extends React.Component {
     this.validate(value).catch(error => error).then(error => {
       let data = {
         contentKey,
-        meta: {
-          [name]: meta
-        },
         update: {
           [name]: value
         }
@@ -113,10 +114,31 @@ class DocumentField extends React.Component {
     })
   }
 
+  handleSaveCallbackRegister(callback) {
+    const {actions, contentKey} = this.props
+
+    actions.registerSaveCallback({
+      callback,
+      contentKey,
+      fieldName: this.name
+    })
+  }
+
+  handleValidationCallbackRegister(callback) {
+    const {actions, contentKey} = this.props
+
+    actions.registerValidationCallback({
+      callback,
+      contentKey,
+      fieldName: this.name
+    })
+  }
+
   // Renders a field, deciding which component to use based on the field type.
   render() {
     const {
       collection,
+      contentKey,
       document,
       field,
       onBuildBaseUrl,
@@ -172,10 +194,7 @@ class DocumentField extends React.Component {
     const error = validationErrors && validationErrors[field._id]
       ? `This field ${validationErrors[field._id]}`
       : null
-    const fieldType = getFieldType(field)
-    const fieldComponentName = `Field${fieldType}`
-    const FieldComponent = fieldComponents[fieldComponentName] &&
-      fieldComponents[fieldComponentName].edit
+    const FieldComponent = this.fieldComponent && this.fieldComponent.edit
     const fieldComment = field.comment || field.example
     
     if (!FieldComponent) {
@@ -193,6 +212,7 @@ class DocumentField extends React.Component {
           collection={collection}
           comment={fieldComment}
           config={app.config}
+          contentKey={contentKey}
           displayName={displayName}
           documentId={documentData._id}
           error={error}
@@ -200,6 +220,8 @@ class DocumentField extends React.Component {
           name={fieldName}
           onBuildBaseUrl={onBuildBaseUrl}
           onChange={this.handleFieldChange.bind(this, fieldName)}
+          onSaveRegister={this.handleSaveCallbackRegister.bind(this)}
+          onValidateRegister={this.handleValidationCallbackRegister.bind(this)}
           placeholder={placeholder}
           readOnly={isReadOnly}
           required={field.required && !isTranslation}
@@ -211,26 +233,28 @@ class DocumentField extends React.Component {
   }
 
   validate(value) {
-    const {field} = this.props
-    const arrayValue = Array.isArray(value)
-      ? value
-      : [value]
-    const allValuesAreUploads = (['media', 'reference']).includes(
-      field.type.toLowerCase()
-    ) && arrayValue.every(value => {
-      return value && value._previewData && value._file
-    })
+    const {contentKey, field: schema, state} = this.props
+    const document = state.document[contentKey] || {}
+    const {validationCallbacks = {}} = document
 
-    // If we're looking at a media file that the user is trying to upload,
-    // there's no point in sending it to the validator module because it
-    // is in a format that the module will not understand, causing the
-    // validation to fail.
-    if (allValuesAreUploads) {
-      return Promise.resolve()
+    // If the field defines its own validation function, we run it.
+    if (typeof validationCallbacks[this.name] === 'function') {
+      const validateFn = value => this.validator.validateValue({
+        schema,
+        value
+      })
+
+      return validationCallbacks[this.name].call(this, {
+        schema,
+        validateFn,
+        value
+      })
     }
 
+    // If the component does not define its own validation function, we use
+    // the api-validator module.
     return this.validator.validateValue({
-      schema: field,
+      schema,
       value
     })
   }
