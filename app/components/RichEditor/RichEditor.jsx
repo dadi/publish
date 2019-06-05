@@ -7,6 +7,7 @@ import DocumentFilters from 'containers/DocumentFilters/DocumentFilters'
 import DocumentGridList from 'components/DocumentGridList/DocumentGridList'
 import DocumentList from 'containers/DocumentList/DocumentList'
 import DocumentListToolbar from 'components/DocumentListToolbar/DocumentListToolbar'
+import HeroMessage from 'components/HeroMessage/HeroMessage'
 import HotKeys from 'lib/hot-keys'
 import IconBold from './icons/bold.svg'
 import IconBulletedList from './icons/bulleted-list.svg'
@@ -495,7 +496,6 @@ export default class RichEditor extends React.Component {
           <Editor
             className={styles.editor}
             onChange={this.handleChange.bind(this)}
-            //onKeyDown={this.hotKeys.capture()}
             renderBlock={this.renderBlock.bind(this)}
             renderInline={this.renderInline.bind(this)}
             renderMark={this.renderMark.bind(this)}
@@ -631,6 +631,17 @@ export default class RichEditor extends React.Component {
         collection={collection}
         contentKey={compoundContentKey}
         filters={mediaFilters}
+        onEmptyList={() => (
+          <HeroMessage
+            title="No media yet."
+            subtitle="There are no items in the media library."
+          >
+            <Button
+              accent="save"
+              href="/media"
+            >Upload some</Button>
+          </HeroMessage> 
+        )}
         onRender={({documents, metadata, onSelect, selectedDocuments}) => (
           <>
             <div className={styles['media-select-filters']}>
