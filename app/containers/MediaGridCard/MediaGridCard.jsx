@@ -70,7 +70,6 @@ class MediaGridCard extends React.Component {
     } = this.props
 
     if (typeof onSelect === 'function') {
-      console.log('firing 1')
       onSelect(event)
     }
   }

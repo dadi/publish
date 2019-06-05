@@ -1,6 +1,5 @@
 import React from 'react'
 import proptypes from 'prop-types'
-import Style from 'lib/Style'
 import styles from './FieldMedia.css'
 
 export default class FieldMediaItem extends React.Component { 
@@ -18,7 +17,10 @@ export default class FieldMediaItem extends React.Component {
     /**
      * The field value.
      */
-    value: proptypes.object
+    value: proptypes.oneOfType([
+      proptypes.object,
+      proptypes.string
+    ])
   }
 
   render() {
@@ -30,7 +32,9 @@ export default class FieldMediaItem extends React.Component {
     }
 
     // File location url
-    let src = value._previewData ? value._previewData : value.url || value.path
+    let src = value._previewData
+      ? value._previewData
+      : value.url || value.path
 
     const fileName = value.fileName &&
       value.fileName.split('.').slice(0, -1).join('.')
