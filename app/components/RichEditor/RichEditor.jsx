@@ -1,21 +1,70 @@
-import {debounce, getUniqueId} from 'lib/util'
-import React from 'react'
+import * as Constants from 'lib/constants'
+import {Editor} from 'slate-react'
+import {RichEditorToolbar, RichEditorToolbarButton} from './RichEditorToolbar'
+import {Value} from 'slate'
+import Button from 'components/Button/Button'
+import DocumentFilters from 'containers/DocumentFilters/DocumentFilters'
+import DocumentGridList from 'components/DocumentGridList/DocumentGridList'
+import DocumentList from 'containers/DocumentList/DocumentList'
+import DocumentListToolbar from 'components/DocumentListToolbar/DocumentListToolbar'
+import HotKeys from 'lib/hot-keys'
+import IconBold from './icons/bold.svg'
+import IconBulletedList from './icons/bulleted-list.svg'
+import IconCode from './icons/code.svg'
+import IconFullscreen from './icons/fullscreen.svg'
+import IconH1 from './icons/header1.svg'
+import IconH2 from './icons/header2.svg'
+import IconItalic from './icons/italic.svg'
+import IconLink from './icons/link.svg'
+import IconMedia from './icons/image.svg'
+import IconNumberedList from './icons/numbered-list.svg'
+import IconQuote from './icons/quote.svg'
+import IconText from './icons/text.svg'
+import MarkdownSerializer from 'slate-md-serializer'
+import MediaGridCard from 'containers/MediaGridCard/MediaGridCard'
+import Modal from 'components/Modal/Modal'
+import PlainSerializer from 'slate-plain-serializer'
 import proptypes from 'prop-types'
-
+import React from 'react'
+import RichEditorLink from './RichEditorLink'
 import Style from 'lib/Style'
 import styles from './RichEditor.css'
 
-import Button from 'components/Button/Button'
-import TextInput from 'components/TextInput/TextInput'
-
-import marked from 'marked'
-import pell from 'pell'
-import TurndownService from 'turndown'
-
-const MODE = {
-  HTML: 'html',
-  MARKDOWN: 'markdown',
-  WYSIWYG: 'wysiwyg'
+const DEFAULT_NODE = 'paragraph'
+const EMPTY_VALUE = {
+  document: {
+    nodes: [
+      {
+        object: 'block',
+        type: 'line',
+        nodes: [
+          {
+            object: 'text',
+            text: ''
+          }
+        ]
+      }
+    ]
+  }
+}
+const FORMAT_MARKDOWN = 'markdown'
+const NODE_BLOCKQUOTE = 'block-quote'
+const NODE_BOLD = 'bold'
+const NODE_CODE = 'code'
+const NODE_HEADING1 = 'heading1'
+const NODE_HEADING2 = 'heading2'
+const NODE_ITALIC = 'italic'
+const NODE_IMAGE = 'image'
+const NODE_LINK = 'link'
+const NODE_BULLETED_LIST = 'bulleted-list'
+const NODE_NUMBERED_LIST = 'ordered-list'
+const NODE_LIST_ITEM = 'list-item'
+const SCHEMA = {
+  blocks: {
+    image: {
+      isVoid: true
+    }
+  }
 }
 
 /**
@@ -29,11 +78,15 @@ export default class RichEditor extends React.Component {
     children: proptypes.node,
 
     /**
+     * The unique cache key for the document being edited.
+     */
+    contentKey: proptypes.string,    
+
+    /**
      * The format used for input and output.
      */
     format: proptypes.oneOf([
-      MODE.HTML,
-      MODE.MARKDOWN
+      'markdown'
     ]),
 
     /**
@@ -44,721 +97,613 @@ export default class RichEditor extends React.Component {
     /**
      * A callback function that is fired whenever the content changes.
      */
-    onChange: proptypes.func,    
+    onChange: proptypes.func,
 
     /**
-     * Callback to be executed when the text gains focus (onFocus event).
+     * A callback to be fired when the components mounts, in case it wishes to
+     * register an `onSave` callback with the store. That callback is then
+     * fired before the field is saved, allowing the function to modify its
+     * value before it is persisted.
      */
-    onFocus: proptypes.func,
+    onSaveRegister: proptypes.func,
 
     /**
-    * A callback to be used when the user clicks the "Add image" button.
-    */
-    onImageInsert: proptypes.func,
+     * A callback to be fired when the components mounts, in case it wishes to
+     * register an `onValidate` callback with the store. That callback is then
+     * fired when the field is validated, overriding the default validation
+     * method introduced by the API validator module.
+     */
+    onValidateRegister: proptypes.func,
 
     /**
      * The initial value of the editor.
      */
-    value: proptypes.string
+    value: proptypes.oneOfType([
+      proptypes.object,
+      proptypes.string
+    ])
   }
 
   constructor(props) {
     super(props)
 
+    this.hotKeys = new HotKeys({
+      'escape': this.handleToggleFullscreen.bind(this, false),
+      'mod+b': this.handleToggleMark.bind(this, 'bold'),
+      'mod+i': this.handleToggleMark.bind(this, 'italic')
+    })    
+
+    this.initialMediaState = {
+      isSelectingMedia: false,
+      mediaFilters: {},
+      mediaPage: 1,
+      mediaSelection: []
+    }
+
+    this.markdown = new MarkdownSerializer()
+
     this.state = {
-      html: null,
-      inEditLinkMode: false,
-      inFullscreenMode: false,
-      inTextMode: false,
-      editLinkText: null,
-      text: props.value
+      ...this.initialMediaState,
+      isFullscreen: false,
+      isRawMode: false
     }
   }
 
   componentDidMount() {
-    const {
-      format,
-      insertImageCallback,
-      onImageInsert,
-      value
-    } = this.props
+    const {onSaveRegister, onValidateRegister} = this.props
+    const {bottom, left, right, top} = this.container.getBoundingClientRect()
 
-    this.editorId = `rich-editor-${getUniqueId()}`
+    this.containerBounds = {bottom, left, right, top}
+    this.hotKeys.addListener()
 
-    if (typeof insertImageCallback === 'function') {
-      insertImageCallback(this.handleInsertImage.bind(this))
+    if (typeof onSaveRegister === 'function') {
+      onSaveRegister(this.handleSave.bind(this))
     }
 
-    this.turndownService = new TurndownService({
-      codeBlockStyle: 'fenced',
-      headingStyle: 'atx'
-    })
-
-    this.turndownService.addRule('li', {
-      filter: ['li'],
-      replacement: (content, node) => {
-        let parent = node.parentNode
-        let listCharacter = node.parentNode.tagName === 'OL' ?
-          '1.' :
-          '*'
-
-        return `${listCharacter} ${content && content.trim()}\n`
-      }
-    })
-
-    this.turndownService.addRule('pre', {
-      filter: (node, options) => {
-        return node.classList.contains(styles.code)
-      },
-      replacement: (content, node) => {
-        let language = typeof node.dataset.language === 'string' ?
-          node.dataset.language :
-          ''
-
-        return '```' + language + '\n' + content + '\n```'
-      }
-    })
-
-     this.turndownService.addRule('strike', {
-      filter: ['strike'],
-      replacement: (content, node) => {
-        return `~~${content}~~`
-      }
-    })
-
-    this.markdownRenderer = new marked.Renderer()
-    this.markdownRenderer.code = (code, language = '') => {
-      let escapedCode = this.escapeHTML(code)
-
-      return `<pre class="${styles.code}" data-language="${language.trim()}">${escapedCode}</pre>`
-    }
-
-    // Initialize pell on an HTMLElement.
-    this.editor = pell.init({
-      element: this.editorWrapper,
-      onChange: this.handleChange.bind(this),
-      styleWithCSS: false,
-      actions: [
-        {
-          name: 'bold',
-          icon: 'Bold'
-        },
-        {
-          name: 'italic',
-          icon: 'Italic'
-        },
-        {
-          name: 'strikethrough',
-          icon: 'Strikethrough',
-          state: () => {
-            return this.getNodeTagPathsInSelection().find(e => e.tagName === 'STRIKE')
-          }   
-        },
-        {
-          name: 'link',
-          icon: 'Link',
-          result: this.handleLinkModeSelect.bind(this),
-          state: () => {
-            return this.getNodeTagPathsInSelection().find(e => e.tagName === 'A')
-          }          
-        },
-        {
-          name: 'heading1',
-          icon: 'Heading 1',
-          state: () => {
-            return this.getNodeTagPathsInSelection().find(e => e.tagName === 'H1')
-          }
-        },
-        {
-          name: 'heading2',
-          icon: 'Heading 2',
-          state: () => {
-            return this.getNodeTagPathsInSelection().find(e => e.tagName === 'H2')
-          }
-        },
-        {
-          name: 'quote',
-          icon: 'Quote',
-          state: () => {
-            return this.getNodeTagPathsInSelection().find(e => e.tagName === 'BLOCKQUOTE')
-          }
-        },
-        {
-          name: 'olist',
-          icon: 'Ordered list'
-        },
-        {
-          name: 'ulist',
-          icon: 'Unordered list'
-        },
-        {
-          name: 'code',
-          icon: 'Code',
-          state: () => {
-            return this.isSelectionInsideCodeBlock()
-          },
-          result: () => {
-            let codeNode = this.isSelectionInsideCodeBlock()
-
-            // If we are inside a code block, we grab the contents of the HTML
-            // inside it, set the selection to a neighbouring or parent node,
-            // delete the `<pre>` and insert back the HTML.
-            if (codeNode) {
-              let {innerHTML} = codeNode
-              let parentNode = codeNode.parentNode
-              let newNode = document.createElement('p')
-
-              newNode.appendChild(
-                document.createTextNode(innerHTML)
-              )
-
-              parentNode.replaceChild(newNode, codeNode)
-
-              this.handleChange(this.editorElement.innerHTML)
-            } else {
-              let selection = window.getSelection()
-              let escapedCode = this.escapeHTML(selection.toString())
-              let html = `<pre class="${styles.code}">${escapedCode}</pre>`
-
-              pell.exec('insertHTML', html)
-            }
-          }
-        },
-        {
-          name: 'image',
-          icon: 'Image',
-          result: () => {
-            let selection = window.getSelection()
-            let serialisedSelection = this.serialiseSelection(selection)
-
-            if (typeof onImageInsert === 'function') {
-              onImageInsert(serialisedSelection)  
-            }
-          }
-        },
-        {
-          icon: `Fullscreen`,
-          title: 'Fullscreen',
-          result: () => this.setState({
-            inFullscreenMode: !this.state.inFullscreenMode
-          })
-        },
-        {
-          icon: `Text mode`,
-          title: 'Text',
-          result: () => this.setState({
-            inTextMode: !this.state.inTextMode
-          })
-        }
-      ],
-      classes: {
-        actionbar: styles['pell-actionbar'],
-        button: styles['pell-button'],
-        content: `${styles.editor} ${styles['editor-wysiwyg']} ${this.editorId}`,
-        selected: styles['pell-button-selected']
-      }
-    })
-
-    let initialValue = format === MODE.MARKDOWN ?
-      this.getHTMLFromMarkdown(value) :
-      value
-
-    this.setEditorContents(initialValue)
-    this.editorElement = this.editorWrapper.getElementsByClassName(styles.editor)[0]
-
-    this.selectionHandler = debounce(this.handleSelectionChange.bind(this), 200)
-
-    document.addEventListener('selectionchange', this.selectionHandler)
-    this.editorElement.addEventListener('keypress', this.handleKeyPress.bind(this))
-  }
-
-  componentDidUpdate(prevProps, prevState) {
-    const {value} = this.props
-    const {inEditLinkMode, text} = this.state
-
-    // Saving selection before the user interacts with the modal and setting
-    // the focus to the link input element.
-    if (inEditLinkMode && !prevState.inEditLinkMode) {
-      this.savedSelection = window.getSelection().getRangeAt(0)
-      this.linkInputElement.focus()
-    }
-
-    if (this.getNormalisedValue(value) !== text) {
-      this.handleChange(value, {
-        needsConversion: true,
-        shouldPropagate: false
-      })
+    if (typeof onValidateRegister === 'function') {
+      onValidateRegister(this.validate.bind(this))
     }
   }
 
-  componentWillUnmount() {
-    this.editorElement.removeEventListener('keypress', this.keyPressHandler)
-    document.removeEventListener('selectionchange', this.selectionHandler)
-  }
-
-  deserialiseSelection(serialisedSelection) {
-    let nodes = serialisedSelection.split(',')
-    let parsedNodes = []
-    let hasInvalidNode = nodes.some(node => {
-      let integerNode = parseInt(node)
-
-      if (integerNode.toString() !== node) {
-        return true
-      }
-
-      parsedNodes.push(integerNode)
-    })
-
-    if (hasInvalidNode) return null
-
-    let startOffset = parsedNodes.shift()
-    let baseNode = this.editorElement
-
-    parsedNodes.forEach(index => {
-      baseNode = baseNode.childNodes[index]
-    })
-
-    let range = document.createRange()
-
-    range.setStart(baseNode, startOffset)
-    range.setEnd(baseNode, startOffset)
-
-    return range
-  }
-
-  escapeHTML(html) {
-    return html
-      .replace(/&/g, '&amp;')
-      .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;')
-      .replace(/"/g, '&quot;')
-      .replace(/'/g, '&#039;')
-  }
-
-  getNodeTagPathsInSelection() {
-    // This is a super basic caching mechanism that prevents this function from
-    // traversing the DOM multiple times for the same selection. It keeps track
-    // of the last tag path computed and the timestamp at which it occurred. If
-    // another call comes in within the next millisecond, we reuse that value
-    // instead of computing a new one.
-    if (
-      !this.nodeTagPathsTimestamp ||
-      !this.nodeTagPaths ||
-      ((this.nodeTagPathsTimestamp + 1) < Date.now())
-    ) {
-      let node = window.getSelection().focusNode
-      let tags = []
-
-      do {
-        tags.push(node)
-        node = node.tagName === 'BODY' ? null : node.parentNode
-      } while (node && !node.classList.contains(styles['outer-wrapper']))
-
-      this.nodeTagPaths = tags
-      this.nodeTagPathsTimestamp = Date.now()
+  componentDidUpdate(_, oldState) {
+    if (!oldState.isFullscreen && this.state.isFullscreen) {
+      document.body.classList.add(styles['body-in-fullscreen'])
+    } else if (oldState.isFullscreen && !this.state.isFullscreen) {
+      document.body.classList.remove(styles['body-in-fullscreen'])
     }
-
-    return this.nodeTagPaths
   }
 
-  getHTMLFromText(text) {
+  componentWillMount() {
+    this.hotKeys.removeListener()
+  }
+
+  deserialise(value) {
     const {format} = this.props
+    const {isRawMode} = this.state
 
-    switch (format) {
-      case MODE.HTML:
-        return text
-
-      case MODE.MARKDOWN:
-        return this.getHTMLFromMarkdown(text)
+    if (Value.isValue(value)) {
+      return value
     }
-  }
-
-  getHTMLFromMarkdown(markdown) {
-    if (!markdown) return ''
-
-    return marked(markdown, {
-      renderer: this.markdownRenderer
-    })
-  }
-
-  getMarkdownFromHTML(html) {
-    if (!html) return ''
-
-    return this.turndownService.turndown(html)
-  }
-
-  getNormalisedValue(value) {
-    if (typeof value !== 'string' || value.length === 0) {
-      return null
-    }
-
-    return value
-  }
-
-  getTextFromHTML(html) {
-    const {format} = this.props
-
-    switch (format) {
-      case MODE.HTML:
-        return html
-
-      case MODE.MARKDOWN:
-        return this.getMarkdownFromHTML(html)
-    }    
-  }
-
-  handleChange(value, {
-    needsConversion = this.state.inTextMode,
-    shouldPropagate = true
-  } = {}) {
-    const {format, onChange} = this.props
-
-    let html
-    let text
-
-    if (needsConversion) {
-      html = this.getHTMLFromText(value)
-      text = value
-
-      this.setEditorContents(html)
-    } else {
-      html = value
-      text = this.getTextFromHTML(value)
-    }
-
-    let normalisedValue = this.getNormalisedValue(text)
-
-    this.setState({
-      html,
-      text: normalisedValue
-    })
-
-    if (shouldPropagate && typeof onChange === 'function') {
-      onChange(normalisedValue)
-    }
-  }
-
-  handleEvent(callback, event) {
-    if (typeof this.props[callback] === 'function') {
-      this.props[callback].call(this, event)
-    }
-  }
-
-  handleInsertImage(url, position) {
-    // If there is a specific cursor position to insert the image, we set the
-    // selection to that. If not, we set the selection to the start of the
-    // editor.
-    if (position) {
-      let newSelection = this.deserialiseSelection(position)
-
-      if (newSelection) {
-        this.setSelection(newSelection)
+    
+    if (typeof value === 'string') {
+      if (!isRawMode && format === FORMAT_MARKDOWN) {
+        return this.markdown.deserialize(value)
       }
-    } else {
-      this.setSelectionOnElement(this.editorElement)
+
+      return PlainSerializer.deserialize(value)
     }
 
-    pell.exec('insertImage', url)
+    return Value.fromJSON(value || EMPTY_VALUE)
   }
 
-  handleKeyPress(event) {
+  handleChange({value}) {
     const {onChange} = this.props
 
-    if (event.keyCode === 13) {
-      let codeNode = this.isSelectionInsideCodeBlock()
-
-      if (!codeNode) {
-        return
-      }
-
-      let {
-        anchorNode,
-        anchorOffset: position
-      } = window.getSelection()
-      let text = anchorNode.textContent
-      let leftPart = text.slice(0, position)
-      let rightPart = text.slice(position)
-      let newText = `${leftPart}\n${rightPart}${rightPart === '' ? '\n' : ''}`
-
-      anchorNode.textContent = newText
-
-      let range = document.createRange()
-
-      range.setStart(anchorNode, position + 1)
-      range.setEnd(anchorNode, position + 1)
-
-      this.setSelection(range)
-      this.handleChange(this.editorElement.innerHTML)
-
-      event.preventDefault()
-    }
+    onChange.call(this, value)
   }
 
-  handleLinkChange(event) {
-    this.setState({
-      editLinkText: event.target.value
-    })
-  }
-
-  handleLinkModeSelect() {
-    let selection = window.getSelection()
-
-    this.savedSelection = selection.getRangeAt(0)
-    
-    pell.exec('insertHTML', `<span data-publish-link-edit="true">${selection.toString()}</span>`)
-
-    this.editLinkNode = window.getSelection().anchorNode.parentNode
-
-    this.setState({
-      inEditLinkMode: true
-    })
-  }
-
-  handleLinkRemove() {
-    if (this.editLinkNode) {
-      this.setSelectionOnElement(this.editLinkNode)
+  handleLinkUpdate(node, href) {
+    if (href === '') {
+      return this.editor.unwrapInlineByKey(node.key, NODE_LINK)
     }
 
-    pell.exec('unlink')
-
-    this.setState({
-      inEditLinkMode: false,
-      editLinkText: null
+    this.editor.setNodeByKey(node.key, {
+      data: {href}
     })
   }
 
-  handleLinkSave(event) {
-    const {editLinkText} = this.state
+  handleMediaInsert() {
+    const {isRawMode, mediaSelection} = this.state
 
-    event.preventDefault()
+    this.setState({...this.initialMediaState}, () => {
+      mediaSelection.forEach(mediaObject => {
+        if (!mediaObject.url) return
 
-    if (this.editLinkNode) {
-      delete this.editLinkNode.dataset.publishLinkEdit
-
-      this.setSelectionOnElement(this.editLinkNode)
-    }
-
-    pell.exec('createLink', editLinkText)
-
-    this.setState({
-      inEditLinkMode: false,
-      editLinkText: null
+        if (isRawMode) {
+          return this.editor.insertText(`![](${mediaObject.url})`)
+        }
+  
+        this.editor.insertBlock({
+          type: 'image',
+          data: {
+            src: mediaObject.url
+          }
+        })
+      })
     })
   }
 
-  handleSelectionChange(event) {
-    if (this.isSettingSelection) {
-      this.isSettingSelection = false
+  handleSave({value}) {
+    return this.serialise(value)
+  }  
 
+  handleToggleBlock(type) {
+    if (this.state.isRawMode) {
       return
     }
 
-    const {
-      editLinkText,
-      inEditLinkMode
-    } = this.state
+    if (type !== NODE_BULLETED_LIST && type !== NODE_NUMBERED_LIST) {
+      const isActive = this.hasBlock(type)
+      const isList = this.hasBlock(NODE_LIST_ITEM)
 
-    let tagPath = this.getNodeTagPathsInSelection()
-    let linkElement
-    let inEditor = tagPath.some(node => {
-      if (node.tagName === 'A') {
-        linkElement = node
+      if (isList) {
+        this.editor
+          .setBlocks(isActive ? DEFAULT_NODE : type)
+          .unwrapBlock(NODE_BULLETED_LIST)
+          .unwrapBlock(NODE_NUMBERED_LIST)
+      } else {
+        this.editor.setBlocks(isActive ? DEFAULT_NODE : type)
       }
+    } else {
+      const {document} = this.value
+      const isList = this.hasBlock(NODE_LIST_ITEM)
+      const isType = this.value.blocks.some(block => {
+        return !!document.getClosest(block.key, parent => parent.type === type)
+      })
 
-      return node.classList &&
-        node.classList.contains(this.editorId)
-    })
+      if (isList && isType) {
+        this.editor
+          .setBlocks(DEFAULT_NODE)
+          .unwrapBlock(NODE_BULLETED_LIST)
+          .unwrapBlock(NODE_NUMBERED_LIST)
+      } else if (isList) {
+        const oldListType = type === NODE_BULLETED_LIST
+          ? NODE_NUMBERED_LIST
+          : NODE_BULLETED_LIST
 
-    // If the selection wasn't made somewhere within the editor, we don't care.
-    if (!inEditor) return
+        this.editor
+          .unwrapBlock(oldListType)
+          .wrapBlock(type)
+      } else {
+        this.editor.setBlocks(NODE_LIST_ITEM).wrapBlock(type)
+      }
+    }    
+  }
 
-    // If there was a link node previously stored, we reset its state.
-    if (this.editLinkNode) {
-      delete this.editLinkNode.dataset.publishLinkEdit
+  handleToggleCode(valueIsCodeBlock, valueIsCodeMark) {
+    if (valueIsCodeBlock) {
+      return this.editor.setBlocks(DEFAULT_NODE)
     }
 
-    if (linkElement) {
-      this.editLinkNode = linkElement
-      this.editLinkNode.dataset.publishLinkEdit = true
+    if (valueIsCodeMark) {
+      return this.editor.toggleMark(NODE_CODE)
+    }
 
-      let href = linkElement.attributes.href.value
+    const {blocks, selection} = this.value
 
-      if (inEditLinkMode) {
-        // The user is already in the "edit link" mode but they have clicked on
-        // another link. All we need to do is update the URL.
-        this.setState({
-          editLinkText: href
-        })        
-      } else {
-        // If the user is selecting a link and entering the "edit link" mode, we
-        // need to ensure that the selection encompasses the full length of the
-        // linked text.
-        this.savedSelection = this.setSelectionOnElement(linkElement)
+    // If the selection spans across more than one node, we render a code
+    // block.
+    let isBlock = blocks.size > 1
 
-        this.setState({
-          editLinkText: href,
-          inEditLinkMode: true
-        })        
-      }
-    } else if (inEditLinkMode) {
-      // User is leaving the "edit link" mode.
+    // We do an additional check to see if the selection corresponds to the
+    // entirety of a node. If it does, we also render a block.
+    if (!isBlock) {
+      const {end, start} = selection
+      const block = blocks.get(0)
+
+      isBlock = start.isAtStartOfNode(block) && end.isAtEndOfNode(block)
+    }
+
+    if (isBlock) {
+      this.editor.wrapBlock(NODE_CODE)
+    } else {
+      this.editor.toggleMark(NODE_CODE)
+    }
+  }
+
+  handleToggleFullscreen(value) {
+    const {isFullscreen} = this.state
+
+    if (isFullscreen !== value) {
       this.setState({
-        editLinkText: null,
-        inEditLinkMode: false
+        isFullscreen: typeof value === 'boolean' ? value : !isFullscreen
       })
     }
   }
 
-  isNodeOutsideEditor(node) {
-    if (node && node.tagName === 'BODY') {
-      return true
+  handleToggleLink(valueIsLink) {
+    if (valueIsLink) {
+      return this.editor.unwrapInline(NODE_LINK)
+    }
+    
+    if (this.value.selection.isExpanded) {
+      this.editor.wrapInline({
+        type: NODE_LINK,
+        data: {
+          href: ''
+        },
+      })
+    }
+  }  
+
+  handleToggleMark(type) {
+    if (this.state.isRawMode) {
+      return
     }
 
-    return node &&
-      node.classList &&
-      node.classList.contains(styles.editor)
+    this.editor.toggleMark(type)
   }
 
-  isSelectionInsideCodeBlock(node) {
-    return this.getNodeTagPathsInSelection().find(e => {
-      return e.tagName === 'PRE' &&
-        e.classList &&
-        e.classList.contains(styles.code)
+  handleToggleMediaSelect(isSelectingMedia) {
+    this.setState({
+      isSelectingMedia
     })
   }
 
+  handleToggleRawMode() {
+    const {onChange} = this.props
+    const {isRawMode} = this.state
+    const serialisedValue = this.serialise(this.value)
+
+    onChange.call(this, serialisedValue)    
+
+    this.setState({
+      isRawMode: !isRawMode
+    })
+  }
+
+  hasBlock(type) {
+    return this.value.blocks.some(block => block.type === type)
+  }
+
+  hasInline(type) {
+    return this.value.inlines.some(inline => inline.type === type)
+  }
+
+  hasMark(type) {
+    return this.value.activeMarks.some(mark => mark.type === type)
+  }
+
+  isListOfType(type) {
+    const {blocks, document} = this.value
+
+    let valueIsInList = this.hasBlock(type)
+
+    if (blocks.size > 0) {
+      const parent = document.getParent(blocks.first().key)
+
+      valueIsInList = this.hasBlock(NODE_LIST_ITEM) &&
+        parent &&
+        parent.type === type 
+    }
+
+    return valueIsInList
+  }
+
   render() {
-    const {children} = this.props
-    const {
-      editLinkText,
-      html,
-      inEditLinkMode,
-      inFullscreenMode,
-      inTextMode,
-      text
-    } = this.state
-    const wrapper = new Style(styles, 'wrapper')
-      .addIf('wrapper-mode-text', inTextMode)
+    const {isFullscreen, isRawMode, isSelectingMedia} = this.state
+    const editorWrapperStyle = new Style(styles, 'editor-wrapper')
+      .addIf('editor-wrapper-fullscreen', isFullscreen)
+      .addIf('editor-wrapper-raw', isRawMode)
 
-    const outerWrapper = new Style(styles, 'outer-wrapper')
-      .addIf('wrapper-mode-fullscreen', inFullscreenMode)
+    this.value = this.deserialise(this.props.value)
 
-    // Prevent the body scrolling behind the overlay
-    document.body.style.overflow = inFullscreenMode ? 'hidden' : 'visible' 
-
-    const editorText = new Style(styles, 'editor', 'editor-text', 'content-height')
+    const valueIsCodeBlock = this.hasBlock(NODE_CODE)
+    const valueIsCodeMark = this.hasMark(NODE_CODE)
+    const valueIsLink = this.hasInline(NODE_LINK)
 
     return (
-      <div className={outerWrapper.getClasses()}>
-        {inEditLinkMode && (
-          <form
-            className={styles['link-modal']}
-            onSubmit={this.handleLinkSave.bind(this)}
-          >
-            <input
-              className={styles['link-input']}
-              onInput={this.handleLinkChange.bind(this)}
-              placeholder="Link address"
-              ref={el => this.linkInputElement = el}
-              type="text"
-              value={editLinkText}
-            />
-
-            <Button
-              accent="save"
-              className={styles['link-control']}
-              size="small"
-              type="submit"
-            >Save</Button>
-
-            <Button
-              accent="destruct"
-              className={styles['link-control']}
-              onClick={this.handleLinkRemove.bind(this)}
-              size="small"
-            >Remove</Button>
-          </form>
+      <div ref={el => this.container = el}>
+        {isSelectingMedia && (
+          <Modal
+            onRequestClose={this.handleToggleMediaSelect.bind(this, false)}
+            scrollContent={false}
+          >{this.renderMediaSelect()}</Modal>
         )}
 
-        <div className={wrapper.getClasses()}>
-          <div ref={el => this.editorWrapper = el} />
-
-          {inTextMode && (
-            <TextInput
-              className={editorText.getClasses()}
-              heightType={inFullscreenMode && "content"}
-              onBlur={this.handleEvent.bind(this, 'onBlur')}
-              onFocus={this.handleEvent.bind(this, 'onFocus')}
-              onChange={event => this.handleChange(event.target.value)}
-              value={text}
-              type="multiline"
+        <RichEditorToolbar
+          fullscreen={isFullscreen}
+        >
+          <div>
+            <RichEditorToolbarButton
+              action={this.handleToggleMark.bind(this, NODE_BOLD)}
+              active={this.hasMark(NODE_BOLD)}
+              disabled={isRawMode}
+              icon={IconBold}
             />
-          )}
+            <RichEditorToolbarButton
+              action={this.handleToggleMark.bind(this, NODE_ITALIC)}
+              active={this.hasMark(NODE_ITALIC)}
+              disabled={isRawMode}
+              icon={IconItalic}
+            />
+            <RichEditorToolbarButton
+              action={this.handleToggleLink.bind(this, valueIsLink)}
+              active={valueIsLink}
+              disabled={isRawMode}
+              icon={IconLink}
+            />
+            <RichEditorToolbarButton
+              action={this.handleToggleBlock.bind(this, NODE_HEADING1)}
+              active={this.hasBlock(NODE_HEADING1)}
+              disabled={isRawMode}
+              icon={IconH1}
+            />
+            <RichEditorToolbarButton
+              action={this.handleToggleBlock.bind(this, NODE_HEADING2)}
+              active={this.hasBlock(NODE_HEADING2)}
+              disabled={isRawMode}
+              icon={IconH2}
+            />
+            <RichEditorToolbarButton
+              action={this.handleToggleBlock.bind(this, NODE_BLOCKQUOTE)}
+              active={this.hasBlock(NODE_BLOCKQUOTE)}
+              disabled={isRawMode}
+              icon={IconQuote}
+            />
+            <RichEditorToolbarButton
+              action={this.handleToggleBlock.bind(this, NODE_NUMBERED_LIST)}
+              active={this.isListOfType(NODE_NUMBERED_LIST)}
+              disabled={isRawMode}
+              icon={IconNumberedList}
+            />
+            <RichEditorToolbarButton
+              action={this.handleToggleBlock.bind(this, NODE_BULLETED_LIST)}
+              active={this.isListOfType(NODE_BULLETED_LIST)}
+              disabled={isRawMode}
+              icon={IconBulletedList}
+            />
+            <RichEditorToolbarButton
+              action={this.handleToggleCode.bind(this, valueIsCodeBlock, valueIsCodeMark)}
+              active={valueIsCodeBlock || valueIsCodeMark}
+              disabled={isRawMode}
+              icon={IconCode}
+            />
+            <RichEditorToolbarButton
+              action={this.handleToggleMediaSelect.bind(this, true)}
+              icon={IconMedia}
+            />
+          </div>
+
+          <div>
+            <RichEditorToolbarButton
+              action={this.handleToggleRawMode.bind(this)}
+              active={isRawMode}
+              icon={IconText}
+            />
+            <RichEditorToolbarButton
+              action={this.handleToggleFullscreen.bind(this)}
+              active={isFullscreen}
+              icon={IconFullscreen}
+            />
+          </div>  
+        </RichEditorToolbar>
+
+        <div
+          className={editorWrapperStyle.getClasses()}
+        >
+          <Editor
+            className={styles.editor}
+            onChange={this.handleChange.bind(this)}
+            //onKeyDown={this.hotKeys.capture()}
+            renderBlock={this.renderBlock.bind(this)}
+            renderInline={this.renderInline.bind(this)}
+            renderMark={this.renderMark.bind(this)}
+            ref={el => this.editor = el}
+            schema={SCHEMA}
+            value={this.value}
+          />
         </div>
       </div>
     )
   }
 
-  serialiseSelection(selection) {
-    let selectionRange = selection &&
-      selection.anchorNode &&
-      selection.getRangeAt(0)
+  renderBlock(props, _, next) {
+    const {attributes, children, isFocused, node} = props
 
-    if (!selectionRange) return
+    switch (node.type) {
+      case NODE_CODE:
+        return (
+          <code
+            {...attributes}
+            className={styles['code-block']}
+          >{children}</code>
+        )
+      
+      case NODE_BLOCKQUOTE:
+        return (
+          <blockquote {...attributes}>{children}</blockquote>
+        )
 
-    let node = selectionRange.startContainer
-    let isOutsideEditor = this.isNodeOutsideEditor(node)
+      case NODE_BULLETED_LIST:
+        return (
+          <ul {...attributes}>{children}</ul>
+        )
 
-    if (isOutsideEditor) return
+      case NODE_HEADING1:
+        return (
+          <h1
+            {...attributes}
+            className={styles.heading}
+          >{children}</h1>
+        )
 
-    let indices = []
+      case NODE_HEADING2:
+        return (
+          <h2
+            {...attributes}
+            className={styles.heading}
+          >{children}</h2>
+        )
 
-    while (node) {
-      let siblingIndex = 0
+      case NODE_IMAGE: {
+        const imageStyle = new Style(styles, 'image')
+          .addIf('image-focused', isFocused)
 
-      while (node.previousSibling) {
-        node = node.previousSibling
-        siblingIndex++
+        return (
+          <img
+            {...attributes}
+            className={imageStyle.getClasses()}
+            src={node.data.get('src')}
+          />
+        )
       }
 
-      indices.unshift(siblingIndex)
+      case NODE_LIST_ITEM:
+        return (
+          <li {...attributes}>{children}</li>
+        )
 
-      node = node.parentNode
+      case NODE_NUMBERED_LIST:
+        return (
+          <ol {...attributes}>{children}</ol>
+        )
 
-      isOutsideEditor = this.isNodeOutsideEditor(node)
-
-      if (isOutsideEditor) {
-        node = null
-      }
+      default:
+        return next()
     }
-
-    let serialisedSelection = [selectionRange.startOffset]
-      .concat(indices).join(',')
-
-    return serialisedSelection
   }
 
-  setEditorContents(html) {
-    this.editor.content.innerHTML = html
+  renderInline({children, node}, _, next) {
+    switch (node.type) {
+      case NODE_LINK: {
+        const href = node.data.get('href')
+
+        return (
+          <RichEditorLink
+            bounds={this.containerBounds}
+            href={href}
+            onChange={this.handleLinkUpdate.bind(this, node)}
+          >
+            {children}
+          </RichEditorLink>
+        )
+      }
+
+      default:
+        return next()
+    }
   }
 
-  setSelection(range) {
-    let selection = window.getSelection()
+  renderMark({children, mark, attributes}, _, next) {
+    switch (mark.type) {
+      case NODE_BOLD:
+        return (
+          <strong {...attributes}>{children}</strong>
+        )
 
-    this.isSettingSelection = true
+      case NODE_CODE:
+        return (
+          <code {...attributes}>{children}</code>
+        )
 
-    selection.removeAllRanges()
-    selection.addRange(range)
+      case NODE_ITALIC:
+        return (
+          <em {...attributes}>{children}</em>
+        )
+
+      default:
+        return next()
+    }
   }
 
-  setSelectionOnElement(element) {
-    let range = document.createRange()
+  renderMediaSelect() {
+    const {contentKey} = this.props
+    const {mediaFilters, mediaPage, mediaSelection} = this.state
+    const compoundContentKey = contentKey + JSON.stringify({
+      filters: mediaFilters,
+      page: mediaPage
+    })
+    const collection = Constants.MEDIA_COLLECTION_SCHEMA
 
-    range.setStart(element, 0)
-    range.setEnd(element, 1)
+    return (
+      <DocumentList
+        collection={collection}
+        contentKey={compoundContentKey}
+        filters={mediaFilters}
+        onRender={({documents, metadata, onSelect, selectedDocuments}) => (
+          <>
+            <div className={styles['media-select-filters']}>
+              <DocumentFilters
+                collection={collection}
+                filters={mediaFilters}
+                onUpdateFilters={newFilters => this.setState({
+                  mediaFilters: newFilters
+                })}
+              />
+            </div>
 
-    this.setSelection(range)
+            <div className={styles['media-select-documents']}>
+              <DocumentGridList
+                documents={documents}
+                onRenderCard={({item, isSelected, onSelect}) => (
+                  <MediaGridCard
+                    key={item._id}
+                    isSelected={isSelected}
+                    item={item}
+                    onSelect={onSelect}
+                  />                
+                )}
+                onSelect={onSelect}
+                selectedDocuments={selectedDocuments}
+              />
+            </div>
 
-    return range
+            <div className={styles['media-select-toolbar']}>
+              <DocumentListToolbar
+                metadata={metadata}
+                pageChangeHandler={() => page => this.setState({
+                  mediaPage: page
+                })}
+              >
+                <Button
+                  accent="save"
+                  disabled={mediaSelection.length === 0}
+                  onClick={this.handleMediaInsert.bind(this)}
+                >Insert items</Button>
+              </DocumentListToolbar>
+            </div>
+          </>
+        )}
+        onSelect={newSelection => this.setState({
+          mediaSelection: newSelection
+        })}
+        page={mediaPage}
+        selection={mediaSelection}
+      />      
+    )
+  }
+
+  serialise(value) {
+    const {format} = this.props
+    const {isRawMode} = this.state
+
+    if (Value.isValue(value)) {
+      if (!isRawMode && format === FORMAT_MARKDOWN) {
+        return this.markdown.serialize(value)
+      }
+
+      return PlainSerializer.serialize(value)
+    }
+  
+    return value
+  }
+
+  validate({validateFn, value}) {
+    if (Value.isValue(value)) {
+      return Promise.resolve()
+    }
+  
+    return validateFn(value)
   }
 }
