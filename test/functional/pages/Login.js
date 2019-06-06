@@ -26,7 +26,7 @@ module.exports = {
     articleLink: (locate('a').withAttr({
       href: '/articles'
     })),
-    signOutButton: (locate('button').withText('Sign out').as('Sign Out Button')),
+    signOutButton: (locate('a').withText('Sign out').as('Sign Out Button')),
     accountMenuOpen: (locate('span').withText('Open').as('Account Menu Open'))
   },
 

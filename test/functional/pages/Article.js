@@ -53,7 +53,7 @@ module.exports = {
     saveGoBack: (locate('button').withText('Save and go back').as('Save And Go Back Button')),
     saveArticle: (locate('button').withText('Save and continue').as('Save And Continue Button')),
     createdArticle: (locate('a').withText('This Is A New Article').as('New Article')),
-    signOutArticle: (locate('.//main/table/tbody/tr[1]/td[2]/a').as('Sign Out Article')),
+    signOutArticle: (locate('//table/tbody/tr[1]/td[2]/a').as('Sign Out Article')),
     updatedArticle: (locate('a').withText('This Article Is Updated').as('Updated Article')),
     slugField: (locate('div').withAttr({
       'data-field-name': 'slug'
