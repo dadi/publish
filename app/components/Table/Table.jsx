@@ -209,7 +209,7 @@ export default class Table extends React.Component {
 
     let newSelectedRows = {}
 
-    for (let i = 0; i < (children.length - 1); i++) {
+    for (let i = 0; i < children.length; i++) {
       newSelectedRows[i] = true
     }
 
