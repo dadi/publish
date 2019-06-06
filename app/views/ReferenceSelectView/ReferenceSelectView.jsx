@@ -289,7 +289,7 @@ class ReferenceSelectView extends React.Component {
             }
           }
         })
-      : undefined 
+      : undefined
 
     return (
       <Document
@@ -356,7 +356,7 @@ class ReferenceSelectView extends React.Component {
                       referenceField,
                       selection
                     })}
-                  >Select documents</Button>
+                  >Add selected {selection.length === 1 ? 'document' : 'documents'}</Button>
                 </DocumentListToolbar>
               </div>
             </Page>
@@ -373,8 +373,7 @@ class ReferenceSelectView extends React.Component {
     search,
     selectedDocuments
   }) {
-    const {onBuildBaseUrl, state} = this.props
-    const {cdn} = state.app.config
+    const {onBuildBaseUrl} = this.props
 
     if (referencedCollection.IS_MEDIA_BUCKET) {
       return (
@@ -402,12 +401,19 @@ class ReferenceSelectView extends React.Component {
       })
     ).concat(Constants.DEFAULT_FIELDS)
 
+    const [_, group, collection] = referencedCollection._publishLink.split('/')
+
     return (
       <DocumentTableList
         collection={referencedCollection}
         documents={documents}
         fields={visibleFields}
-        onBuildBaseUrl={onBuildBaseUrl.bind(this)}
+        onBuildBaseUrl={params => onBuildBaseUrl.call(this, {
+          ...params,
+          collection,
+          group,
+          referenceFieldSelect: null
+        })}
         onSelect={onSelect}
         order={search.order}
         selectedDocuments={selectedDocuments}
