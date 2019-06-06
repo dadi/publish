@@ -28,6 +28,15 @@ class DocumentEditView extends React.Component {
   }
 
   componentDidMount() {
+    const {actions, route} = this.props
+    const {documentId} = route.params
+
+    if (!documentId) {
+      actions.startDocument({
+        contentKey: this.contentKey
+      })
+    }
+    
     window.addEventListener('beforeunload', this.userClosingBrowser)
   }
 

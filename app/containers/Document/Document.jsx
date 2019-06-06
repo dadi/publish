@@ -86,10 +86,6 @@ class Document extends React.Component {
         collection,
         id
       })
-    } else {
-      actions.startDocument({
-        contentKey
-      })
     }
   }
 

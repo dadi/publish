@@ -108,7 +108,10 @@ export default function document (state = initialState, action = {}) {
           ...state[action.key] || blankDataBucket,
           isLoading: false,
           isSaving: false,
-          local: action.fromLocalStorage || {},
+          local: {
+            ...action.fromLocalStorage,
+            ...(state[action.key] && state[action.key].local)
+          },
           remote: action.document,
           remoteError: null,
           timestamp: action.timestamp,
@@ -177,7 +180,10 @@ export default function document (state = initialState, action = {}) {
         ...state,
         [action.key]: {
           ...state[action.key] || blankDataBucket,
-          local: action.fromLocalStorage || {},
+          local: {
+            ...action.fromLocalStorage,
+            ...(state[action.key] && state[action.key].local)
+          },
           wasLoadedFromLocalStorage: Boolean(action.fromLocalStorage)
         }
       }
