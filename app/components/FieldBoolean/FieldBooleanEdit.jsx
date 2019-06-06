@@ -102,7 +102,7 @@ export default class FieldBooleanEdit extends React.Component {
           name={name}
           onChange={this.handleOnChange.bind(this)}
           value={value}
-          readonly={readOnly}
+          readOnly={readOnly}
         />
       </Label>
     )

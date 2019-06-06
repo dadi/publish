@@ -1,7 +1,5 @@
 import React from 'react'
 import proptypes from 'prop-types'
-
-import Style from 'lib/Style'
 import styles from './Checkbox.css'
 
 /**
@@ -25,11 +23,9 @@ export default class Checkbox extends React.Component {
     onChange: proptypes.func,
 
     /**
-     * Whether the field is required.
-     *
-     * **NOTE:** This prop is automatically passed down by `<Label/>`.       
+     * Whether the field is read-only.
      */
-    readonly: proptypes.bool,
+    readOnly: proptypes.bool,
 
     /**
      * The value of the checkbox, determining whether it's checked or not.
@@ -42,7 +38,7 @@ export default class Checkbox extends React.Component {
       id,
       name,
       onChange,
-      readonly,
+      readOnly,
       value
     } = this.props
 
@@ -50,7 +46,7 @@ export default class Checkbox extends React.Component {
       <input
         checked={value}
         className={styles.checkbox}
-        disabled={readonly}
+        disabled={readOnly}
         id={id}
         name={name}
         onChange={onChange}

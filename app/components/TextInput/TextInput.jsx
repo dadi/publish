@@ -72,11 +72,9 @@ export default class TextInput extends React.Component {
     placeholder: proptypes.string,
 
     /**
-     * Whether the field is required.
-     *
-     * **NOTE:** This prop is automatically passed down by `<Label/>`.       
+     * Whether the field is read-only.
      */
-    readonly: proptypes.bool,
+    readOnly: proptypes.bool,
 
     /**
      * Whether the field is required.
@@ -118,7 +116,7 @@ export default class TextInput extends React.Component {
     heightType: 'static',
     inLabel: false,
     multiline: false,
-    readonly: false,
+    readOnly: false,
     resizable: false,
     rows: 10,
     type: 'text'
@@ -184,7 +182,7 @@ export default class TextInput extends React.Component {
       inLabel,
       name,
       placeholder,
-      readonly,
+      readOnly,
       required,
       resizable,
       rows,
@@ -217,7 +215,7 @@ export default class TextInput extends React.Component {
           onInput={this.handleChange.bind(this, 'onInput')}
           onKeyDown={this.handleEvent.bind(this, 'onKeyDown')}
           placeholder={placeholder}
-          readOnly={readonly}
+          readOnly={readOnly}
           ref={el => this.base = el}
           required={required}
           rows={heightType === 'content' ? '1' : rows}
@@ -238,7 +236,7 @@ export default class TextInput extends React.Component {
         onInput={this.handleChange.bind(this, 'onInput')}
         onKeyDown={this.handleEvent.bind(this, 'onKeyDown')}
         placeholder={placeholder}
-        readOnly={readonly}
+        readOnly={readOnly}
         ref={el => this.base = el}
         required={required}
         type={type}

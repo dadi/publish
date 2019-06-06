@@ -141,7 +141,7 @@ export default class FieldNumberEdit extends React.Component {
           onBlur={this.handleFocusChange.bind(this, false)}
           onInput={this.handleOnChange.bind(this)}
           onFocus={this.handleFocusChange.bind(this, true)}
-          readonly={publishBlock.readonly === true}
+          readOnly={publishBlock.readonly === true}
           type="number"
           value={value && value.toString()}
         />

@@ -279,7 +279,7 @@ export default class FieldStringEdit extends React.Component {
           onInput={el => this.handleOnChange(el.target.value)}
           onFocus={this.handleFocusChange.bind(this, true)}
           placeholder={placeholder}
-          readonly={readOnly}
+          readOnly={readOnly}
           resizable={resizable}
           rows={rows}
           type={type}
