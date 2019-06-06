@@ -160,10 +160,10 @@ module.exports = {
     let numberAuthors = await I.grabNumberOfVisibleElements(this.locators.numOfAuthors)
     I.seeNumbersAreEqual(numberAuthors, 5)
     let authorsNames = await I.grabTextFrom(this.locators.numOfAuthors)
-    I.click(locate('//td[2]').withText(authorsNames[2].trim()).as('Selected Author'))
+    I.click(locate('//tbody/tr[2]/td[1]').as('Selected Author'))
     I.click(this.locators.addAuthor)
     I.waitForFunction(() => document.readyState === 'complete')
-    I.see(authorsNames[2].trim())
+    I.see(authorsNames[1].trim())
 
     // Select Category
     I.click(this.locators.selectCategory)
@@ -263,6 +263,7 @@ module.exports = {
     I.scrollTo(this.locators.webService)
     I.see(webServicesNames[0].trim())
     I.dontSee(webServicesNames[4].trim())
+    I.click(this.locators.saveMenu)
     I.click(this.locators.saveGoBack)
     I.waitForText('The document has been updated', 2)
     I.seeInCurrentUrl('/articles')
