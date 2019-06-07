@@ -82,7 +82,7 @@ export class RichEditorToolbarButton extends React.Component {
         style={inlineStyle}
         type="button"
       >
-        {!icon && text}
+        {text}
       </button>
     )
   }

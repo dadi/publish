@@ -421,58 +421,68 @@ export default class RichEditor extends React.Component {
               active={this.hasMark(NODE_BOLD)}
               disabled={isRawMode}
               icon={IconBold}
+              text="Bold"
             />
             <RichEditorToolbarButton
               action={this.handleToggleMark.bind(this, NODE_ITALIC)}
               active={this.hasMark(NODE_ITALIC)}
               disabled={isRawMode}
               icon={IconItalic}
+              text="Italic"
             />
             <RichEditorToolbarButton
               action={this.handleToggleLink.bind(this, valueIsLink)}
               active={valueIsLink}
               disabled={isRawMode}
               icon={IconLink}
+              text="Link"
             />
             <RichEditorToolbarButton
               action={this.handleToggleBlock.bind(this, NODE_HEADING1)}
               active={this.hasBlock(NODE_HEADING1)}
               disabled={isRawMode}
               icon={IconH1}
+              text="Heading 1"
             />
             <RichEditorToolbarButton
               action={this.handleToggleBlock.bind(this, NODE_HEADING2)}
               active={this.hasBlock(NODE_HEADING2)}
               disabled={isRawMode}
               icon={IconH2}
+              text="Heading 2"
             />
             <RichEditorToolbarButton
               action={this.handleToggleBlock.bind(this, NODE_BLOCKQUOTE)}
               active={this.hasBlock(NODE_BLOCKQUOTE)}
               disabled={isRawMode}
               icon={IconQuote}
+              text="Quote"
             />
             <RichEditorToolbarButton
               action={this.handleToggleBlock.bind(this, NODE_NUMBERED_LIST)}
               active={this.isListOfType(NODE_NUMBERED_LIST)}
               disabled={isRawMode}
               icon={IconNumberedList}
+              text="Numbered list"
             />
             <RichEditorToolbarButton
               action={this.handleToggleBlock.bind(this, NODE_BULLETED_LIST)}
               active={this.isListOfType(NODE_BULLETED_LIST)}
               disabled={isRawMode}
               icon={IconBulletedList}
+              text="Bulleted list"
             />
             <RichEditorToolbarButton
               action={this.handleToggleCode.bind(this, valueIsCodeBlock, valueIsCodeMark)}
               active={valueIsCodeBlock || valueIsCodeMark}
               disabled={isRawMode}
               icon={IconCode}
+              text="Code block"
             />
             <RichEditorToolbarButton
               action={this.handleToggleMediaSelect.bind(this, true)}
               icon={IconMedia}
+              text="Media"
             />
           </div>
 
@@ -481,11 +491,13 @@ export default class RichEditor extends React.Component {
               action={this.handleToggleRawMode.bind(this)}
               active={isRawMode}
               icon={IconText}
+              text="Raw mode"
             />
             <RichEditorToolbarButton
               action={this.handleToggleFullscreen.bind(this)}
               active={isFullscreen}
               icon={IconFullscreen}
+              text="Full-screen"
             />
           </div>  
         </RichEditorToolbar>
