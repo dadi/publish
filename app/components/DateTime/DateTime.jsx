@@ -70,7 +70,7 @@ export default class DateTime extends React.Component {
   componentDidUpdate(oldProps) {
     const {date, relative} = this.props
 
-    if (relative && (date !== oldProps.date)) {
+    if (relative && date !== oldProps.date) {
       this.setUpdateInterval(SECOND)
     }
   }
@@ -83,13 +83,13 @@ export default class DateTime extends React.Component {
     const now = new Date().getTime()
     const diff = now - date.getTime()
 
-    if (diff < (SECOND * 50)) {
+    if (diff < SECOND * 50) {
       this.setUpdateInterval(10 * SECOND)
 
       return 'just now'
     }
 
-    if (diff < (MINUTE * 2)) {
+    if (diff < MINUTE * 2) {
       this.setUpdateInterval(30 * SECOND)
 
       return 'a minute ago'
@@ -101,7 +101,7 @@ export default class DateTime extends React.Component {
       return `${Math.floor(diff / MINUTE)} minutes ago`
     }
 
-    if (diff < (HOUR * 2)) {
+    if (diff < HOUR * 2) {
       this.setUpdateInterval(30 * MINUTE)
 
       return 'an hour ago'
@@ -113,7 +113,7 @@ export default class DateTime extends React.Component {
       return `${Math.floor(diff / HOUR)} hours ago`
     }
 
-    if (diff < (DAY * 2)) {
+    if (diff < DAY * 2) {
       this.setUpdateInterval(HOUR)
 
       return 'yesterday'
@@ -125,7 +125,7 @@ export default class DateTime extends React.Component {
       return `${Math.floor(diff / DAY)} days ago`
     }
 
-    if (diff < (WEEK * 2)) {
+    if (diff < WEEK * 2) {
       this.setUpdateInterval(DAY)
 
       return 'a week ago'
@@ -137,7 +137,7 @@ export default class DateTime extends React.Component {
       return `${Math.floor(diff / WEEK)} weeks ago`
     }
 
-    if (diff < (MONTH * 2)) {
+    if (diff < MONTH * 2) {
       this.setUpdateInterval(DAY)
 
       return 'a month ago'
@@ -155,12 +155,7 @@ export default class DateTime extends React.Component {
   }
 
   render() {
-    const {
-      date,
-      format,
-      fromFormat,
-      relative
-    } = this.props
+    const {date, format, fromFormat, relative} = this.props
 
     const dateTime = new DateTimeHelper(date, fromFormat)
 
@@ -173,17 +168,19 @@ export default class DateTime extends React.Component {
       : dateTime.format(format)
 
     return (
-      <time
-        dateTime={dateTime.format(format)}
-        title={dateTime.format(format)}
-      >{renderedDate}</time>
+      <time dateTime={dateTime.format(format)} title={dateTime.format(format)}>
+        {renderedDate}
+      </time>
     )
   }
 
   resetInterval() {
     clearInterval(this.interval)
 
-    this.interval = setInterval(this.forceUpdate.bind(this), this.updateInterval)
+    this.interval = setInterval(
+      this.forceUpdate.bind(this),
+      this.updateInterval
+    )
   }
 
   setUpdateInterval(interval) {

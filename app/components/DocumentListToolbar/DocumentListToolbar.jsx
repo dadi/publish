@@ -25,23 +25,23 @@ class DocumentListToolbar extends React.Component {
     metadata: proptypes.object,
 
     /**
-    * A callback used to determine what should happen when the user attempts
-    * to select a specific page. This function will be called with a single
-    * argument, which is the number of the page to navigate to. It can return
-    * either a string, which is infered as an `href` property for a `<a>` tag,
-    * or it can return a function, which will be attached to the `onClick`
-    * event of a `<button>` tag.
-    */
-    pageChangeHandler: proptypes.func, 
+     * A callback used to determine what should happen when the user attempts
+     * to select a specific page. This function will be called with a single
+     * argument, which is the number of the page to navigate to. It can return
+     * either a string, which is infered as an `href` property for a `<a>` tag,
+     * or it can return a function, which will be attached to the `onClick`
+     * event of a `<button>` tag.
+     */
+    pageChangeHandler: proptypes.func,
 
     /**
-    * The list of selected documents.
-    */
+     * The list of selected documents.
+     */
     selectedDocuments: proptypes.array,
 
     /**
-    * The URL for limiting the document list to only selected documents.
-    */
+     * The URL for limiting the document list to only selected documents.
+     */
     showSelectedDocumentsUrl: proptypes.string
   }
 
@@ -54,11 +54,7 @@ class DocumentListToolbar extends React.Component {
   }
 
   goToPage(value) {
-    const {
-      metadata,
-      pageChangeHandler,
-      router
-    } = this.props
+    const {metadata, pageChangeHandler, router} = this.props
     const parsedValue = Number.parseInt(value)
 
     if (!metadata || typeof pageChangeHandler !== 'function') {
@@ -66,7 +62,7 @@ class DocumentListToolbar extends React.Component {
     }
 
     // If the input is not a valid positive integer number, we return.
-    if ((parsedValue.toString() !== value) || (parsedValue <= 0)) return
+    if (parsedValue.toString() !== value || parsedValue <= 0) return
 
     // If the number inserted is outside the range of the pages available,
     // we return.
@@ -109,29 +105,33 @@ class DocumentListToolbar extends React.Component {
       const page = index + 1
 
       result[page] = `Page ${page}`
-      
+
       return result
     }, {})
-    const selectionCounter = new Style(styles, 'selection-counter')
-      .addIf('selection-counter-visible', selectedDocuments.length > 0)
+    const selectionCounter = new Style(styles, 'selection-counter').addIf(
+      'selection-counter-visible',
+      selectedDocuments.length > 0
+    )
 
     return (
-      <Toolbar>      
+      <Toolbar>
         {metadata.totalCount > 0 && (
           <div className={styles.section}>
             <span className={styles['count-label']}>
-              <strong>{`${metadata.offset + 1}-${Math.min(metadata.offset + metadata.limit, metadata.totalCount)} `}</strong>
+              <strong>{`${metadata.offset + 1}-${Math.min(
+                metadata.offset + metadata.limit,
+                metadata.totalCount
+              )} `}</strong>
               of <strong>{metadata.totalCount}</strong>
-
               {showSelectedDocumentsUrl && (
                 <span className={selectionCounter.getClasses()}>
                   (
-                    <Link
-                      className={styles['selection-counter-button']}
-                      to={showSelectedDocumentsUrl}
-                    >
-                      {selectedDocuments.length} selected
-                    </Link>
+                  <Link
+                    className={styles['selection-counter-button']}
+                    to={showSelectedDocumentsUrl}
+                  >
+                    {selectedDocuments.length} selected
+                  </Link>
                   )
                 </span>
               )}
@@ -150,7 +150,11 @@ class DocumentListToolbar extends React.Component {
 
             <div className={styles.information}>
               <div>
-                <span className={`${styles['page-input']} ${styles['page-input-simple']}`}>
+                <span
+                  className={`${styles['page-input']} ${
+                    styles['page-input-simple']
+                  }`}
+                >
                   <form onSubmit={this.handleGoToPage.bind(this)}>
                     <ToolbarTextInput
                       onChange={event => {
@@ -163,7 +167,7 @@ class DocumentListToolbar extends React.Component {
                         ) {
                           this.setState({
                             goToPageValue: value
-                          })                        
+                          })
                         }
                       }}
                       size="small"
@@ -173,7 +177,11 @@ class DocumentListToolbar extends React.Component {
                   </form>
                 </span>
 
-                <span className={`${styles['page-input']} ${styles['page-input-extended']}`}>
+                <span
+                  className={`${styles['page-input']} ${
+                    styles['page-input-extended']
+                  }`}
+                >
                   <DropdownNative
                     onChange={this.goToPage.bind(this)}
                     options={pagesObject}
@@ -185,9 +193,7 @@ class DocumentListToolbar extends React.Component {
           </div>
         )}
 
-        <div className={styles.section}>
-          {children}
-        </div>
+        <div className={styles.section}>{children}</div>
       </Toolbar>
     )
   }

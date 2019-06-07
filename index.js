@@ -6,36 +6,39 @@ const Server = require('./server')
 class App {
   printStartupMessage() {
     const env = config.get('env')
-    const port = config.get('server.protocol') === 'https'
-      ? 443
-      : config.get('server.port')
-  
+    const port =
+      config.get('server.protocol') === 'https'
+        ? 443
+        : config.get('server.port')
+
     // Where can the user access Publish?
     const server = config.get('publicUrl.host')
-      ? `${config.get('publicUrl.protocol')}://${config.get('publicUrl.host')}:${port}`
+      ? `${config.get('publicUrl.protocol')}://${config.get(
+          'publicUrl.host'
+        )}:${port}`
       : `http://${config.get('server.host')}:${port}`
-  
+
     // Print out API.
     const api = config.get('api')
     const apiUrl = api.host && `${api.host}:${api.port}`
     const footer = {
-      'API': apiUrl || colors.red('Not connected')
+      API: apiUrl || colors.red('Not connected')
     }
-  
+
     if (env !== 'test') {
       bootMessage.started({
         body: {
-          'Version': packageJSON.version,
+          Version: packageJSON.version,
           'Node.js': Number(process.version.match(/^v(\d+\.\d+)/)[1]),
-          'Environment': env
-        },        
+          Environment: env
+        },
         header: {
           app: config.get('app.name')
         },
         footer,
         server
       })
-    }    
+    }
   }
 
   run({configPath} = {}) {

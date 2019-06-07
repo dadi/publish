@@ -10,7 +10,7 @@ import styles from './FieldMedia.css'
 
 const fileSize = require('file-size')
 
-export default class FieldMediaEdit extends React.Component { 
+export default class FieldMediaEdit extends React.Component {
   static propTypes = {
     /**
      * The schema of the collection being edited.
@@ -67,16 +67,13 @@ export default class FieldMediaEdit extends React.Component {
      * The field schema.
      */
     schema: proptypes.object,
-    
+
     /**
      * The field value.
      */
     value: proptypes.oneOfType([
       proptypes.arrayOf(
-        proptypes.oneOfType([
-          proptypes.object,
-          proptypes.string
-        ])        
+        proptypes.oneOfType([proptypes.object, proptypes.string])
       ),
       proptypes.object,
       proptypes.string
@@ -99,11 +96,7 @@ export default class FieldMediaEdit extends React.Component {
   }
 
   handleFileChange(files) {
-    const {
-      onChange,
-      schema,
-      value
-    } = this.props
+    const {onChange, schema, value} = this.props
     const singleFile = schema.settings && schema.settings.limit === 1
     const acceptedMimeTypes = schema.validation && schema.validation.mimeTypes
 
@@ -152,7 +145,6 @@ export default class FieldMediaEdit extends React.Component {
           processedFiles.length === files.length &&
           typeof onChange === 'function'
         ) {
-
           if (singleFile) {
             return onChange.call(this, processedFiles[0])
           }
@@ -160,7 +152,9 @@ export default class FieldMediaEdit extends React.Component {
           // Filter for uniqueness by file name and concat.
           const fileNames = values.map(value => value.fileName)
 
-          processedFiles = processedFiles.filter(value => !fileNames.includes(value.fileName))
+          processedFiles = processedFiles.filter(
+            value => !fileNames.includes(value.fileName)
+          )
           onChange.call(this, values.concat(processedFiles))
         }
       }
@@ -171,7 +165,7 @@ export default class FieldMediaEdit extends React.Component {
 
   handleRemoveFile(id) {
     const {onChange, value} = this.props
-    const values = (value && !Array.isArray(value)) ? [value] : value
+    const values = value && !Array.isArray(value) ? [value] : value
 
     let newValues = values.filter(value => {
       return value !== id && value._id !== id
@@ -200,21 +194,25 @@ export default class FieldMediaEdit extends React.Component {
     } = this.props
     const {isInvalidMimeType} = this.state
     const acceptedMimeTypes = schema.validation && schema.validation.mimeTypes
-    const fieldLocalType = schema.publish && schema.publish.subType ? schema.publish.subType : schema.type
-    const href = onBuildBaseUrl ?  onBuildBaseUrl({
-      createNew: !Boolean(documentId),
-      documentId,
-      referenceFieldSelect: name
-    }) : ''
+    const fieldLocalType =
+      schema.publish && schema.publish.subType
+        ? schema.publish.subType
+        : schema.type
+    const href = onBuildBaseUrl
+      ? onBuildBaseUrl({
+          createNew: !Boolean(documentId),
+          documentId,
+          referenceFieldSelect: name
+        })
+      : ''
     const singleFile = schema.settings && schema.settings.limit === 1
-    const values = (value && !Array.isArray(value)) ? [value] : value
-    const isReadOnly = schema.publish &&
-      schema.publish.readonly === true
-    const errorMessage = isInvalidMimeType &&
+    const values = value && !Array.isArray(value) ? [value] : value
+    const isReadOnly = schema.publish && schema.publish.readonly === true
+    const errorMessage =
+      isInvalidMimeType &&
       `Files must be of type ${acceptedMimeTypes.join(', ')}`
-    const comment = schema.comment ||
-      required && 'Required' ||
-      isReadOnly && 'Read only'
+    const comment =
+      schema.comment || (required && 'Required') || (isReadOnly && 'Read only')
 
     return (
       <Label
@@ -227,46 +225,38 @@ export default class FieldMediaEdit extends React.Component {
         {values && (
           <div className={styles.values}>
             {values.map((value, index) => {
-                let id = value._id || value
-                let displayName = value.fileName ?
-                  value.fileName.split('.').pop() :
-                  'Document not found'
+              let id = value._id || value
+              let displayName = value.fileName
+                ? value.fileName.split('.').pop()
+                : 'Document not found'
 
-                return ( 
-                  <div
-                    className={styles.value}
-                    key={id}
-                    title={id}
-                  >
-                    <FieldMediaItem
-                      config={config}
-                      value={value}
-                    />
+              return (
+                <div className={styles.value} key={id} title={id}>
+                  <FieldMediaItem config={config} value={value} />
 
-                    {value.contentLength &&
-                      <span className={styles['file-size']}>
-                        {fileSize(value.contentLength).human('si') || ''}
-                      </span>
-                    }
-
-                    <span className={styles['file-ext']}>
-                      {displayName}
+                  {value.contentLength && (
+                    <span className={styles['file-size']}>
+                      {fileSize(value.contentLength).human('si') || ''}
                     </span>
-                    
-                    <Button
-                      accent="destruct"
-                      className={styles['remove-existing']}
-                      onClick={this.handleRemoveFile.bind(this, id)}
-                      size="small"
-                    ><span>×</span></Button>
-                  </div>
-                )
-              })
-            }
+                  )}
+
+                  <span className={styles['file-ext']}>{displayName}</span>
+
+                  <Button
+                    accent="destruct"
+                    className={styles['remove-existing']}
+                    onClick={this.handleRemoveFile.bind(this, id)}
+                    size="small"
+                  >
+                    <span>×</span>
+                  </Button>
+                </div>
+              )
+            })}
           </div>
         )}
 
-        {!isReadOnly &&
+        {!isReadOnly && (
           <div className={styles.upload}>
             <div className={styles['upload-options']}>
               <DropArea
@@ -281,11 +271,9 @@ export default class FieldMediaEdit extends React.Component {
             </div>
 
             <div className={styles.placeholder}>
-              <Button
-                accent="neutral"
-                size="small"
-                href={href}
-              >Select existing {fieldLocalType.toLowerCase()}</Button>
+              <Button accent="neutral" size="small" href={href}>
+                Select existing {fieldLocalType.toLowerCase()}
+              </Button>
             </div>
 
             <div className={styles.placeholder}>
@@ -299,11 +287,13 @@ export default class FieldMediaEdit extends React.Component {
                   className={styles['upload-select']}
                   size="small"
                   type="mock-stateful"
-                >Select from device</Button>
+                >
+                  Select from device
+                </Button>
               </FileUpload>
             </div>
           </div>
-        }
+        )}
       </Label>
     )
   }

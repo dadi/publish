@@ -32,7 +32,7 @@ export default class ReferenceSelectHeader extends React.Component {
     /**
      * The URL of the "return to document" CTA button.
      */
-    returnCtaUrl: proptypes.string,
+    returnCtaUrl: proptypes.string
   }
 
   static defaultProps = {
@@ -60,11 +60,9 @@ export default class ReferenceSelectHeader extends React.Component {
           <span> — {instructionText}</span>
         </p>
 
-        <Button
-          accent="destruct"
-          href={returnCtaUrl}
-          size="small"
-        >{returnCtaText}</Button>
+        <Button accent="destruct" href={returnCtaUrl} size="small">
+          {returnCtaText}
+        </Button>
 
         {children}
       </div>

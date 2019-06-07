@@ -70,7 +70,8 @@ export default class Table extends React.Component {
   handleHeadSelect(event) {
     const {selectLimit, selectedRows} = this.props
     const countSelectedRows = Object.keys(selectedRows).length
-    const indeterminate = countSelectedRows < selectLimit && countSelectedRows > 0
+    const indeterminate =
+      countSelectedRows < selectLimit && countSelectedRows > 0
     const selected = event.target.checked && !indeterminate
 
     if (selected) {
@@ -81,11 +82,7 @@ export default class Table extends React.Component {
   }
 
   handleRowSelect(index, selected, isRangeSelection) {
-    const {
-      onSelect,
-      selectLimit,
-      selectedRows
-    } = this.props
+    const {onSelect, selectLimit, selectedRows} = this.props
 
     const selectedRowsIndices = Object.keys(selectedRows)
 
@@ -109,7 +106,9 @@ export default class Table extends React.Component {
         let rangeBoundary = Infinity
 
         selectedRowsIndices.sort().forEach(selectedRowIndex => {
-          if (Math.abs(rangeBoundary - index) > Math.abs(selectedRowIndex - index)) {
+          if (
+            Math.abs(rangeBoundary - index) > Math.abs(selectedRowIndex - index)
+          ) {
             rangeBoundary = selectedRowIndex
           }
         })
@@ -151,12 +150,13 @@ export default class Table extends React.Component {
 
     if (!head) return null
 
-    const selectedRowsIndices = Object.keys(selectedRows)
-      .filter(index => selectedRows[index])
+    const selectedRowsIndices = Object.keys(selectedRows).filter(
+      index => selectedRows[index]
+    )
     const numRows = React.Children.count(children)
     const newProps = {
-      allowBulkSelection: selectLimit > (numRows - 1),
-      allSelected: selectedRowsIndices.length === (numRows - 1),
+      allowBulkSelection: selectLimit > numRows - 1,
+      allSelected: selectedRowsIndices.length === numRows - 1,
       fillBlanks,
       hasSelected: selectedRowsIndices.length > 0,
       onSelect: this.handleHeadSelect.bind(this),
@@ -199,7 +199,7 @@ export default class Table extends React.Component {
       } else if (selectionExhausted && !rowIsSelected) {
         newProps.selectableMode = 'multiDisabled'
       }
-      
+
       return React.cloneElement(child, newProps)
     })
   }

@@ -64,7 +64,7 @@ export default class FieldNumberEdit extends React.Component {
      * The field schema.
      */
     schema: proptypes.object,
-    
+
     /**
      * The field value.
      */
@@ -92,9 +92,8 @@ export default class FieldNumberEdit extends React.Component {
 
   handleOnChange(event) {
     const {onChange, value} = this.props
-    const newValue = event.target.value !== ''
-      ? parseFloat(event.target.value)
-      : null
+    const newValue =
+      event.target.value !== '' ? parseFloat(event.target.value) : null
 
     // The value after parsing is equal to the previous value. This can
     // happen when composing decimal values – e.g. to insert the value
@@ -123,11 +122,9 @@ export default class FieldNumberEdit extends React.Component {
     } = this.props
     const {hasFocus} = this.state
     const publishBlock = schema.publish || {}
-    const commentString = comment ||
-      required && 'Required' ||
-      readOnly && 'Read only' ||
-      null
-    
+    const commentString =
+      comment || (required && 'Required') || (readOnly && 'Read only') || null
+
     return (
       <Label
         comment={commentString}

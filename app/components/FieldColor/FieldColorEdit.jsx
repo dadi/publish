@@ -65,7 +65,7 @@ export default class FieldColorEdit extends React.Component {
      * The field schema.
      */
     schema: proptypes.object,
-    
+
     /**
      * The field value.
      */
@@ -162,10 +162,10 @@ export default class FieldColorEdit extends React.Component {
       comment,
       config,
       displayName,
-      error, 
+      error,
       name,
       required,
-      schema, 
+      schema,
       value
     } = this.props
     const {hasFocus} = this.state
@@ -179,8 +179,12 @@ export default class FieldColorEdit extends React.Component {
         errorMessage={typeof error === 'string' ? error : null}
         hasFocus={hasFocus}
         label={displayName}
-        comment={comment || (required && 'Required') || (publishBlock.readonly && 'Read only')}
-      > 
+        comment={
+          comment ||
+          (required && 'Required') ||
+          (publishBlock.readonly && 'Read only')
+        }
+      >
         <TextInput
           name={name}
           onBlur={this.handleFocus.bind(this, false)}
@@ -191,12 +195,12 @@ export default class FieldColorEdit extends React.Component {
           value={value}
         />
 
-        <div 
+        <div
           className={styles.swatch}
           style={value ? {backgroundColor: value} : null}
         />
 
-        {pickerVisible &&
+        {pickerVisible && (
           <div ref={this.handlePickerRef.bind(this)}>
             <ColorPicker
               className={styles.picker}
@@ -205,7 +209,7 @@ export default class FieldColorEdit extends React.Component {
               value={value}
             />
           </div>
-        }
+        )}
       </Label>
     )
   }

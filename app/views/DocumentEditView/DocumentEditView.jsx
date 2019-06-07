@@ -36,14 +36,14 @@ class DocumentEditView extends React.Component {
         contentKey: this.contentKey
       })
     }
-    
+
     window.addEventListener('beforeunload', this.userClosingBrowser)
   }
 
   componentDidUpdate(oldProps) {
     const {actions, route, state} = this.props
     const {state: oldState} = oldProps
-    const {documentId} = route.params    
+    const {documentId} = route.params
     const document = state.document[this.contentKey] || {}
     const oldDocument = oldState.document[this.contentKey] || {}
     const isSaving = (oldDocument.saveAttempts || 0) < document.saveAttempts
@@ -63,7 +63,7 @@ class DocumentEditView extends React.Component {
           })
         }
       }
-    
+
       actions.setNotification(notification)
 
       this.shownUnsavedChangesNotification = true
@@ -73,10 +73,11 @@ class DocumentEditView extends React.Component {
     // `saveDocument` action.
     if (isSaving) {
       const {validationErrors} = document
-      const hasValidationErrors = validationErrors &&
+      const hasValidationErrors =
+        validationErrors &&
         Object.keys(validationErrors).some(key => validationErrors[key])
-      const asDuplicate = document.lastSaveMode ===
-        Constants.SAVE_ACTION_SAVE_AS_DUPLICATE
+      const asDuplicate =
+        document.lastSaveMode === Constants.SAVE_ACTION_SAVE_AS_DUPLICATE
 
       // Aborting the save operation if there are any validation errors.
       if (hasValidationErrors) {
@@ -134,8 +135,8 @@ class DocumentEditView extends React.Component {
           }
       }
 
-      const isUpdate = documentId &&
-        (mode !== Constants.SAVE_ACTION_SAVE_AS_DUPLICATE)
+      const isUpdate =
+        documentId && mode !== Constants.SAVE_ACTION_SAVE_AS_DUPLICATE
       const operation = isUpdate ? 'updated' : 'created'
       const message = newDocument.remoteError
         ? `An error has occurred. The document could not be ${operation}`
@@ -162,9 +163,10 @@ class DocumentEditView extends React.Component {
     fields.forEach(field => {
       // Unless the Publish block specifically states that the field should be
       // placed on the sidebar, we stick it in the main placement.
-      const placement = field.publish && field.publish.placement === 'sidebar'
-        ? placements.sidebar
-        : placements.main
+      const placement =
+        field.publish && field.publish.placement === 'sidebar'
+          ? placements.sidebar
+          : placements.main
 
       placement.push(field)
     })
@@ -182,17 +184,11 @@ class DocumentEditView extends React.Component {
   // - `name`: name of the section
   // - `slug`: slug of the section
   groupFieldsIntoSections(fields) {
-    const {
-      onBuildBaseUrl,
-      route
-    } = this.props
-    const {
-      documentId,
-      section: activeSectionSlug
-    } = route.params
+    const {onBuildBaseUrl, route} = this.props
+    const {documentId, section: activeSectionSlug} = route.params
 
     let sections = {}
-    
+
     Object.keys(fields).forEach(fieldSlug => {
       const field = Object.assign({}, fields[fieldSlug], {
         _id: fieldSlug
@@ -211,13 +207,14 @@ class DocumentEditView extends React.Component {
     const sectionsArray = Object.keys(sections).map((sectionName, index) => {
       const fields = sections[sectionName]
       const slug = slugify(sectionName)
-      
+
       // We mark this as the currently active section if there is a section
       // in the URL and this is the one that matches it, or there isn't one
       // in the URL and this is the first one.
-      const isActive = activeSectionSlug && activeSectionSlug.length ?
-        activeSectionSlug === slug :
-        index === 0
+      const isActive =
+        activeSectionSlug && activeSectionSlug.length
+          ? activeSectionSlug === slug
+          : index === 0
 
       // Takes the fields and groups them into a `main` and `sidebar` arrays.
       const fieldsInPlacements = this.groupFieldsIntoPlacements(fields)
@@ -248,7 +245,7 @@ class DocumentEditView extends React.Component {
         data={{href: listRoute}}
         type={Constants.ERROR_DOCUMENT_NOT_FOUND}
       />
-    )    
+    )
   }
 
   handleUserClosingBrowser() {
@@ -261,28 +258,18 @@ class DocumentEditView extends React.Component {
 
       this.redirectUrl = undefined
 
-      return (
-        <Redirect to={redirectUrl}/>
-      )
+      return <Redirect to={redirectUrl} />
     }
 
-    const {
-      actions,
-      onBuildBaseUrl,
-      route,
-      section,
-      state
-    } = this.props
+    const {actions, onBuildBaseUrl, route, section, state} = this.props
     const {api} = state.app.config
-    const {
-      collection: collectionName,
-      documentId
-    } = route.params
-    const collection = collectionName === Constants.MEDIA_COLLECTION_SCHEMA.slug
-      ? Constants.MEDIA_COLLECTION_SCHEMA
-      : api.collections.find(collection => {
-          return collection.slug === route.params.collection
-        })
+    const {collection: collectionName, documentId} = route.params
+    const collection =
+      collectionName === Constants.MEDIA_COLLECTION_SCHEMA.slug
+        ? Constants.MEDIA_COLLECTION_SCHEMA
+        : api.collections.find(collection => {
+            return collection.slug === route.params.collection
+          })
 
     if (!collection) {
       return (
@@ -290,7 +277,7 @@ class DocumentEditView extends React.Component {
           <Header />
 
           <Main>
-            <ErrorMessage type={Constants.ERROR_ROUTE_NOT_FOUND}/>
+            <ErrorMessage type={Constants.ERROR_ROUTE_NOT_FOUND} />
           </Main>
         </Page>
       )
@@ -318,9 +305,7 @@ class DocumentEditView extends React.Component {
         documentId: null
       })
 
-      return (
-        <Redirect to={redirectUrl}/>
-      )
+      return <Redirect to={redirectUrl} />
     }
 
     // Getting the fields that are visible in the edit view.
@@ -343,16 +328,14 @@ class DocumentEditView extends React.Component {
         section: firstSection
       })
 
-      return (
-        <Redirect to={redirectUrl}/>
-      )
+      return <Redirect to={redirectUrl} />
     }
 
     setPageTitle(`${documentId ? 'Edit' : 'New'} document`)
 
     return (
       <Page>
-        <Header/>
+        <Header />
 
         <div className={styles.toolbar}>
           <DocumentEditToolbar
@@ -371,12 +354,14 @@ class DocumentEditView extends React.Component {
             contentKey={this.contentKey}
             documentId={documentId}
             onDocumentNotFound={this.handleDocumentNotFound.bind(this)}
-            onRender={({document}) => this.renderDocument({
-              collection,
-              contentKey: this.contentKey,
-              document,
-              sections
-            })}
+            onRender={({document}) =>
+              this.renderDocument({
+                collection,
+                contentKey: this.contentKey,
+                document,
+                sections
+              })
+            }
             section={section}
           />
         </Main>
@@ -399,11 +384,9 @@ class DocumentEditView extends React.Component {
     return (
       <EditInterface>
         {sections.map(item => {
-          const hasErrors = item.fields.main.some(
-            field => validationErrors[field._id]
-          ) || item.fields.sidebar.some(
-            field => validationErrors[field._id]
-          )
+          const hasErrors =
+            item.fields.main.some(field => validationErrors[field._id]) ||
+            item.fields.sidebar.some(field => validationErrors[field._id])
 
           return (
             <EditInterfaceSection
@@ -433,7 +416,7 @@ class DocumentEditView extends React.Component {
                 />
               ))}
               slug={item.slug}
-            />            
+            />
           )
         })}
       </EditInterface>
@@ -456,11 +439,7 @@ class DocumentEditView extends React.Component {
           key={mainSection.href}
           isActive={mainSection.isActive}
           label={mainSection.name}
-          main={(
-            <MediaViewer
-              document={document._merged}
-            />
-          )}
+          main={<MediaViewer document={document._merged} />}
           sidebar={mainSectionFields.map(field => (
             <DocumentField
               collection={collection}
@@ -517,7 +496,4 @@ class DocumentEditView extends React.Component {
   }
 }
 
-export default connectRedux(
-  appActions,
-  documentActions
-)(DocumentEditView)
+export default connectRedux(appActions, documentActions)(DocumentEditView)

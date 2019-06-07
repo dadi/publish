@@ -30,13 +30,11 @@ export default class Field extends React.Component {
   }
 
   render() {
-    const {
-      children,
-      isDisabled,
-      name
-    } = this.props
-    const fieldStyles = new Style(styles, 'field')
-      .addIf('field-disabled', isDisabled)
+    const {children, isDisabled, name} = this.props
+    const fieldStyles = new Style(styles, 'field').addIf(
+      'field-disabled',
+      isDisabled
+    )
 
     return (
       <div className={fieldStyles.getClasses()} data-field-name={name}>

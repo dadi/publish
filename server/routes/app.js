@@ -28,7 +28,7 @@ const template = ({client, config, version}) => `
 
 module.exports = server => {
   server.get('*', (req, res) => {
-    const accessToken = (req.cookies && req.cookies.accessToken)
+    const accessToken = req.cookies && req.cookies.accessToken
 
     res.header('Content-Type', 'text/html; charset=utf-8')
 
@@ -38,8 +38,8 @@ module.exports = server => {
         config,
         version: packageJSON.version
       })
-  
+
       return res.end(html)
-    })    
-  })  
+    })
+  })
 }

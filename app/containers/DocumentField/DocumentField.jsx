@@ -56,17 +56,13 @@ class DocumentField extends React.Component {
 
     const fieldType = getFieldType(props.field)
     const fieldComponentName = `Field${fieldType}`
-    
+
     this.fieldComponent = fieldComponents[fieldComponentName]
     this.validator = new Validator()
   }
 
   componentDidUpdate(oldProps) {
-    const {
-      actions,
-      contentKey,
-      document
-    } = this.props
+    const {actions, contentKey, document} = this.props
     const {document: oldDocument} = oldProps
 
     // If we have just tried to save the document for the first time, we must
@@ -89,29 +85,28 @@ class DocumentField extends React.Component {
   // Handles the callback that fires whenever a field changes and the new value
   // is ready to be sent to the store.
   handleFieldChange(name, value) {
-    const {
-      actions,
-      contentKey
-    } = this.props
+    const {actions, contentKey} = this.props
 
     // Validating the field. If validation fails, `error` will be set. If it
     // passes, `error` will be `undefined`.
-    this.validate(value).catch(error => error).then(error => {
-      let data = {
-        contentKey,
-        update: {
-          [name]: value
+    this.validate(value)
+      .catch(error => error)
+      .then(error => {
+        let data = {
+          contentKey,
+          update: {
+            [name]: value
+          }
         }
-      }
 
-      if (error) {
-        data.error = {
-          [name]: error.message || error
+        if (error) {
+          data.error = {
+            [name]: error.message || error
+          }
         }
-      }
 
-      actions.updateLocalDocument(data)
-    })
+        actions.updateLocalDocument(data)
+      })
   }
 
   handleSaveCallbackRegister(callback) {
@@ -150,15 +145,13 @@ class DocumentField extends React.Component {
     const {local, remote, validationErrors} = document
     const documentData = Object.assign({}, remote, local)
     const documentMetadata = document.localMeta || {}
-    const defaultApiLanguage = api.languages &&
-      api.languages.find(language => language.default)
+    const defaultApiLanguage =
+      api.languages && api.languages.find(language => language.default)
     const {lang: currentLanguage} = router.search
-    const isReadOnly = Boolean(
-      field.publish && field.publish.readonly
-    )
+    const isReadOnly = Boolean(field.publish && field.publish.readonly)
     const isTranslatable = field.type.toLowerCase() === 'string'
-    const isTranslation = currentLanguage &&
-      currentLanguage !== defaultApiLanguage.code
+    const isTranslation =
+      currentLanguage && currentLanguage !== defaultApiLanguage.code
 
     // This needs to adapt to the i18n.fieldCharacter configuration property of
     // the API, but currently Publish doesn't have a way of knowing this. For now,
@@ -191,12 +184,13 @@ class DocumentField extends React.Component {
     // the string to form a final error message. For this reason, we're prepending
     // the validation message with "This field", but this is something we should
     // probably revisit.
-    const error = validationErrors && validationErrors[field._id]
-      ? `This field ${validationErrors[field._id]}`
-      : null
+    const error =
+      validationErrors && validationErrors[field._id]
+        ? `This field ${validationErrors[field._id]}`
+        : null
     const FieldComponent = this.fieldComponent && this.fieldComponent.edit
     const fieldComment = field.comment || field.example
-    
+
     if (!FieldComponent) {
       console.warn('Unknown field type:', fieldType)
 
@@ -204,10 +198,7 @@ class DocumentField extends React.Component {
     }
 
     return (
-      <Field
-        isDisabled={isTranslation && !isTranslatable}
-        name={fieldName}
-      >
+      <Field isDisabled={isTranslation && !isTranslatable} name={fieldName}>
         <FieldComponent
           collection={collection}
           comment={fieldComment}
@@ -227,7 +218,7 @@ class DocumentField extends React.Component {
           required={field.required && !isTranslation}
           schema={field}
           value={documentData[fieldName]}
-        />      
+        />
       </Field>
     )
   }
@@ -239,10 +230,11 @@ class DocumentField extends React.Component {
 
     // If the field defines its own validation function, we run it.
     if (typeof validationCallbacks[this.name] === 'function') {
-      const validateFn = value => this.validator.validateValue({
-        schema,
-        value
-      })
+      const validateFn = value =>
+        this.validator.validateValue({
+          schema,
+          value
+        })
 
       return validationCallbacks[this.name].call(this, {
         schema,
@@ -260,6 +252,4 @@ class DocumentField extends React.Component {
   }
 }
 
-export default connectRouter(connectRedux(
-  documentActions
-)(DocumentField))
+export default connectRouter(connectRedux(documentActions)(DocumentField))

@@ -28,17 +28,15 @@ export default class Toolbar extends React.Component {
 
   render() {
     const {children, padded} = this.props
-    const toolbarStyle = new Style(styles, 'container')
-      .addIf('container-padded', padded)
+    const toolbarStyle = new Style(styles, 'container').addIf(
+      'container-padded',
+      padded
+    )
 
     if (React.Children.count(children) === 0) {
       return null
     }
 
-    return (
-      <footer className={toolbarStyle.getClasses()}>
-        {children}
-      </footer>
-    )
+    return <footer className={toolbarStyle.getClasses()}>{children}</footer>
   }
 }

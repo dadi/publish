@@ -35,26 +35,19 @@ export default class FieldBooleanFilter extends React.Component {
     // we update it with one that is and propagate it to the
     // parent.
     if (typeof value !== 'boolean' && value !== 'true' && value !== 'false') {
-      onUpdate(
-        this.coerceToBoolean(value)
-      )
+      onUpdate(this.coerceToBoolean(value))
     }
   }
 
   render() {
-    const {
-      onUpdate,
-      value
-    } = this.props
+    const {onUpdate, value} = this.props
 
     return (
       <DropdownNative
-        onChange={value => onUpdate(
-          this.coerceToBoolean(value)
-        )}
+        onChange={value => onUpdate(this.coerceToBoolean(value))}
         options={{
-          'true': 'Yes',
-          'false': 'No'
+          true: 'Yes',
+          false: 'No'
         }}
         textSize="small"
         value={this.coerceToBoolean(value)}

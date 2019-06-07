@@ -29,12 +29,7 @@ class ReferenceSelectView extends React.Component {
 
   getContentKey() {
     const {route} = this.props
-    const {
-      collection,
-      group,
-      page = '1',
-      referenceField
-    } = route.params
+    const {collection, group, page = '1', referenceField} = route.params
     const {searchString} = route
 
     return JSON.stringify({
@@ -48,23 +43,17 @@ class ReferenceSelectView extends React.Component {
 
   getParentContentKey() {
     const {route} = this.props
-    const {
-      collection,
-      documentId
-    } = route.params
-    
+    const {collection, documentId} = route.params
+
     return JSON.stringify({
       collection,
       documentId
-    })    
+    })
   }
 
   getSelectionKey() {
     const {route} = this.props
-    const {
-      collection,
-      referenceField
-    } = route.params
+    const {collection, referenceField} = route.params
 
     return JSON.stringify({
       collection,
@@ -87,7 +76,8 @@ class ReferenceSelectView extends React.Component {
     // the value of the reference field in the edit view. As such, we must
     // take them back to whatever section the reference field belongs to, if
     // any.
-    const fieldSection = schema.publish &&
+    const fieldSection =
+      schema.publish &&
       schema.publish.section &&
       slugify(schema.publish.section)
     const redirectUrl = onBuildBaseUrl.call(this, {
@@ -122,11 +112,9 @@ class ReferenceSelectView extends React.Component {
           }
         })
 
-        return (
-          <Redirect to={redirectUrl}/>
-        )
-      } 
-      
+        return <Redirect to={redirectUrl} />
+      }
+
       return (
         <HeroMessage
           title="No documents found."
@@ -137,7 +125,9 @@ class ReferenceSelectView extends React.Component {
             href={onBuildBaseUrl.call(this, {
               search: {}
             })}
-          >Clear filters</Button>
+          >
+            Clear filters
+          </Button>
         </HeroMessage>
       )
     }
@@ -147,15 +137,14 @@ class ReferenceSelectView extends React.Component {
         title="No documents yet."
         subtitle="Once created, they will appear here."
       />
-    )    
+    )
   }
 
   handleFiltersUpdate(newFilters) {
     const {history, onBuildBaseUrl, route} = this.props
     const {documentId} = route.params
-    const newFilterValue = Object.keys(newFilters).length > 0
-      ? newFilters
-      : null
+    const newFilterValue =
+      Object.keys(newFilters).length > 0 ? newFilters : null
     const newUrl = onBuildBaseUrl.call(this, {
       createNew: Boolean(!documentId),
       search: {
@@ -189,10 +178,11 @@ class ReferenceSelectView extends React.Component {
 
     this.hasPropagatedInitialSelection[selectionKey] = true
 
-    const sanitisedSelection = (
-      Array.isArray(selection) ? selection : [selection]
+    const sanitisedSelection = (Array.isArray(selection)
+      ? selection
+      : [selection]
     ).filter(item => item && item._id)
-    
+
     if (sanitisedSelection.length > 0) {
       actions.setDocumentSelection({
         key: selectionKey,
@@ -202,11 +192,7 @@ class ReferenceSelectView extends React.Component {
   }
 
   render() {
-    const {
-      onBuildBaseUrl,
-      route,
-      state
-    } = this.props
+    const {onBuildBaseUrl, route, state} = this.props
     const {api} = state.app.config
     const {
       collection: collectionName,
@@ -216,17 +202,16 @@ class ReferenceSelectView extends React.Component {
     } = route.params
     const {search} = route
     const parsedPage = Number.parseInt(page)
-    const pageNumber = parsedPage.toString() === page
-      ? parsedPage
-      : undefined
+    const pageNumber = parsedPage.toString() === page ? parsedPage : undefined
 
     // Getting the schema for the parent collection.
-    const collection = collectionName === Constants.MEDIA_COLLECTION_SCHEMA.slug
-      ? Constants.MEDIA_COLLECTION_SCHEMA
-      : api.collections.find(collection => {
-          return collection.slug === route.params.collection
-        })
-    
+    const collection =
+      collectionName === Constants.MEDIA_COLLECTION_SCHEMA.slug
+        ? Constants.MEDIA_COLLECTION_SCHEMA
+        : api.collections.find(collection => {
+            return collection.slug === route.params.collection
+          })
+
     // If the `collection` parameter doesn't match a valid collection,
     // we render nothing.
     if (!collection) {
@@ -243,15 +228,16 @@ class ReferenceSelectView extends React.Component {
     }
 
     // Getting the name of the referenced collection.
-    const referencedCollectionName = referenceField.settings &&
-      referenceField.settings.collection
+    const referencedCollectionName =
+      referenceField.settings && referenceField.settings.collection
 
     // Watching out for the legacy media collection format.
-    const referencedCollection = referencedCollectionName === Constants.MEDIA_COLLECTION
-      ? Constants.MEDIA_COLLECTION_SCHEMA
-      : api.collections.find(({slug}) => {
-          return referencedCollectionName === slug
-        })
+    const referencedCollection =
+      referencedCollectionName === Constants.MEDIA_COLLECTION
+        ? Constants.MEDIA_COLLECTION_SCHEMA
+        : api.collections.find(({slug}) => {
+            return referencedCollectionName === slug
+          })
 
     // If the `settings.collection` parameter of the reference field does not
     // match a valid collection, we render nothing.
@@ -275,8 +261,8 @@ class ReferenceSelectView extends React.Component {
     })
 
     // Are we showing only selected documents?
-    const isFilteringSelection = search.filter &&
-      search.filter.$selected === true
+    const isFilteringSelection =
+      search.filter && search.filter.$selected === true
 
     // Computing URL for the "show only selected documents" button.
     const showSelectedDocumentsUrl = !isFilteringSelection
@@ -298,14 +284,14 @@ class ReferenceSelectView extends React.Component {
         documentId={documentId}
         onRender={({document}) => {
           this.propagateInitialSelection(document._merged[referenceFieldName])
-          
+
           return (
             <Page>
               <ReferenceSelectHeader
                 referenceField={referenceField}
                 returnCtaUrl={returnCtaUrl}
               />
-                
+
               <DocumentListController
                 collection={referencedCollection}
                 enableFilters={true}
@@ -341,11 +327,13 @@ class ReferenceSelectView extends React.Component {
               <div className={styles.toolbar}>
                 <DocumentListToolbar
                   metadata={metadata}
-                  pageChangeHandler={page => onBuildBaseUrl.call(this, {
-                    createNew: !Boolean(documentId),
-                    page,
-                    referenceFieldSelect: referenceFieldName
-                  })}
+                  pageChangeHandler={page =>
+                    onBuildBaseUrl.call(this, {
+                      createNew: !Boolean(documentId),
+                      page,
+                      referenceFieldSelect: referenceFieldName
+                    })
+                  }
                   selectedDocuments={selection}
                   showSelectedDocumentsUrl={showSelectedDocumentsUrl}
                 >
@@ -356,14 +344,17 @@ class ReferenceSelectView extends React.Component {
                       referenceField,
                       selection
                     })}
-                  >Add selected {selection.length === 1 ? 'document' : 'documents'}</Button>
+                  >
+                    Add selected{' '}
+                    {selection.length === 1 ? 'document' : 'documents'}
+                  </Button>
                 </DocumentListToolbar>
               </div>
             </Page>
           )
         }}
       />
-    )    
+    )
   }
 
   renderList({
@@ -408,22 +399,23 @@ class ReferenceSelectView extends React.Component {
         collection={referencedCollection}
         documents={documents}
         fields={visibleFields}
-        onBuildBaseUrl={params => onBuildBaseUrl.call(this, {
-          ...params,
-          collection,
-          group,
-          referenceFieldSelect: null
-        })}
+        onBuildBaseUrl={params =>
+          onBuildBaseUrl.call(this, {
+            ...params,
+            collection,
+            group,
+            referenceFieldSelect: null
+          })
+        }
         onSelect={onSelect}
         order={search.order}
         selectedDocuments={selectedDocuments}
         sort={search.sort}
       />
-    )    
+    )
   }
 }
 
-export default connectRedux(
-  documentActions,
-  selectionActions
-)(ReferenceSelectView)
+export default connectRedux(documentActions, selectionActions)(
+  ReferenceSelectView
+)

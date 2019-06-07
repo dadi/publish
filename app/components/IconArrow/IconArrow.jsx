@@ -47,49 +47,45 @@ export default class IconArrow extends React.Component {
 
     switch (direction) {
       case 'up':
-        borderWidths = [
-          0, width / 2, height, width / 2
-        ]
+        borderWidths = [0, width / 2, height, width / 2]
         borderColourPosition = 2
 
         break
 
       case 'down':
-        borderWidths = [
-          height, width / 2, 0, width / 2
-        ]
+        borderWidths = [height, width / 2, 0, width / 2]
         borderColourPosition = 0
 
         break
 
       case 'left':
-        borderWidths = [
-          height / 2, width, height / 2, 0
-        ]
+        borderWidths = [height / 2, width, height / 2, 0]
         borderColourPosition = 1
 
         break
 
       case 'right':
-        borderWidths = [
-          width / 2, 0, width / 2, height
-        ]
+        borderWidths = [width / 2, 0, width / 2, height]
         borderColourPosition = 3
 
         break
     }
 
-    const borderWidthsValue = borderWidths.map(width => {
-      return width + 'px'
-    }).join(' ')
+    const borderWidthsValue = borderWidths
+      .map(width => {
+        return width + 'px'
+      })
+      .join(' ')
 
-    const borderColourValue = [0, 1, 2, 3].map(index => {
-      if (index === borderColourPosition) {
-        return 'currentColor'
-      }
+    const borderColourValue = [0, 1, 2, 3]
+      .map(index => {
+        if (index === borderColourPosition) {
+          return 'currentColor'
+        }
 
-      return 'transparent'
-    }).join(' ')
+        return 'transparent'
+      })
+      .join(' ')
 
     const inlineStyle = {
       borderColor: borderColourValue,
@@ -101,9 +97,7 @@ export default class IconArrow extends React.Component {
     if (className) {
       classes.push(className)
     }
-    
-    return (
-      <span className={classes.join(' ')} style={inlineStyle} />
-    )
+
+    return <span className={classes.join(' ')} style={inlineStyle} />
   }
 }

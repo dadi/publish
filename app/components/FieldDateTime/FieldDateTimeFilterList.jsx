@@ -20,7 +20,7 @@ export default class FieldDateTimeFilter extends React.Component {
     /**
      * Node with rendered filter operator.
      */
-    nodeOperator: proptypes.node,    
+    nodeOperator: proptypes.node,
 
     /**
      * Field value.
@@ -29,18 +29,15 @@ export default class FieldDateTimeFilter extends React.Component {
   }
 
   render() {
-    const {
-      config = {},
-      nodeField,
-      nodeOperator,
-      value
-    } = this.props
+    const {config = {}, nodeField, nodeOperator, value} = this.props
     const formats = config.formats || {}
     const date = formats.date || {}
     const dateTime = new DateTime(value)
 
     return (
-      <span>{nodeField} {nodeOperator} {dateTime.format(date.short)}</span>
+      <span>
+        {nodeField} {nodeOperator} {dateTime.format(date.short)}
+      </span>
     )
   }
 }

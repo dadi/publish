@@ -21,10 +21,7 @@ export default class FieldDateTimeList extends React.Component {
     /**
      * The field value.
      */
-    value: proptypes.oneOfType([
-      proptypes.number,
-      proptypes.string
-    ])
+    value: proptypes.oneOfType([proptypes.number, proptypes.string])
   }
 
   render() {
@@ -34,7 +31,10 @@ export default class FieldDateTimeList extends React.Component {
     if (!value) return null
 
     const dateTimeObj = new DateTime(value)
-    
-    return (dateTimeObj.isValid() && dateTimeObj.format(config.formats.date.long)) || value
+
+    return (
+      (dateTimeObj.isValid() && dateTimeObj.format(config.formats.date.long)) ||
+      value
+    )
   }
 }

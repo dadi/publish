@@ -12,7 +12,7 @@ export default class TableRowCell extends React.Component {
      * When `true`, any empty row cells will be filled with a text element
      * saying *None*.
      *
-     * **NOTE:** This prop is automatically passed down by `<Table/>`.     
+     * **NOTE:** This prop is automatically passed down by `<Table/>`.
      */
     fillBlanks: proptypes.bool,
 
@@ -28,23 +28,19 @@ export default class TableRowCell extends React.Component {
   }
 
   render() {
-    const cellStyle = new Style(styles, 'cell')
-      .addIf('select-cell', this.props.select)
-
-    return (
-      <td className={cellStyle.getClasses()}>
-        {this.renderChildren()}
-      </td>
+    const cellStyle = new Style(styles, 'cell').addIf(
+      'select-cell',
+      this.props.select
     )
+
+    return <td className={cellStyle.getClasses()}>{this.renderChildren()}</td>
   }
 
   renderChildren() {
     const {children, fillBlanks} = this.props
 
     if (!React.Children.count(children) && fillBlanks) {
-      return (
-        <span className={styles['row-cell-blank']}>None</span>
-      )
+      return <span className={styles['row-cell-blank']}>None</span>
     }
 
     return children

@@ -13,7 +13,7 @@ const blankDataBucket = {
 
 const initialState = {}
 
-export default function apiData (state = initialState, action = {}) {
+export default function apiData(state = initialState, action = {}) {
   switch (action.type) {
     case Types.DELETE_DOCUMENTS_FAILURE:
       if (!state[action.key]) return state
@@ -68,7 +68,7 @@ export default function apiData (state = initialState, action = {}) {
       return {
         ...state,
         [action.key]: {
-          ...state[action.key] || blankDataBucket,
+          ...(state[action.key] || blankDataBucket),
           dirty: false,
           isLoading: false,
           metadata: action.metadata,
@@ -93,11 +93,11 @@ export default function apiData (state = initialState, action = {}) {
 
           break
       }
-      
+
       return {
         ...state,
         [action.key]: {
-          ...state[action.key] || blankDataBucket,
+          ...(state[action.key] || blankDataBucket),
           ...setDocumentListStatusData
         }
       }
@@ -116,7 +116,7 @@ export default function apiData (state = initialState, action = {}) {
       return {
         ...state,
         [action.key]: {
-          ...state[action.key] || blankDataBucket,
+          ...(state[action.key] || blankDataBucket),
           isLoading: true
         }
       }
@@ -130,7 +130,7 @@ export default function apiData (state = initialState, action = {}) {
           isLoading: false
         }
       }
-    
+
     default:
       return state
   }

@@ -44,19 +44,18 @@ class Server {
       config.get('server.sslCertificatePath'),
       'utf8'
     )
-    const key = fs.readFileSync(
-      config.get('server.sslPrivateKeyPath'),
-      'utf8'
-    )
+    const key = fs.readFileSync(config.get('server.sslPrivateKeyPath'), 'utf8')
 
     let ca
 
     if (caPaths && caPaths.length > 0) {
-      ca = caPaths.map(path => {
-        const data = fs.readFileSync(path, 'utf8')
+      ca = caPaths
+        .map(path => {
+          const data = fs.readFileSync(path, 'utf8')
 
-        return data
-      }).filter(Boolean)
+          return data
+        })
+        .filter(Boolean)
     } else if (caPath && caPath.length > 0) {
       ca = fs.readFileSync(caPath, 'utf8')
     }
@@ -90,7 +89,7 @@ class Server {
 
         default:
           throw new Error(`${prefix}: ${error.message}`)
-      }      
+      }
     }
   }
 
@@ -104,11 +103,7 @@ class Server {
     this.attachRoutes(server)
 
     // Initialise logger.
-    log.init(
-      config.get('logging'),
-      {},
-      config.get('env')
-    )
+    log.init(config.get('logging'), {}, config.get('env'))
 
     return new Promise(resolve => {
       server.listen(port, resolve)
@@ -116,10 +111,7 @@ class Server {
   }
 
   stop() {
-    const runningServers = [
-      this.httpServer,
-      this.httpsServer
-    ].filter(Boolean)
+    const runningServers = [this.httpServer, this.httpsServer].filter(Boolean)
 
     let closedServers = 0
 
@@ -128,7 +120,7 @@ class Server {
         try {
           server.close(() => {
             closedServers++
-  
+
             if (closedServers === runningServers.length) {
               return resolve()
             }

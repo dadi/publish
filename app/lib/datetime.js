@@ -1,7 +1,7 @@
 import fecha from 'fecha'
 
 export default class DateTime {
-  constructor (date, format) {
+  constructor(date, format) {
     // If `date` is already a Date object, there's nothing we need
     // to do.
     if (date instanceof Date) {
@@ -36,11 +36,11 @@ export default class DateTime {
     }
   }
 
-  _isValidDate (date) {
-    return (date instanceof Date) && !isNaN(date.getTime())
+  _isValidDate(date) {
+    return date instanceof Date && !isNaN(date.getTime())
   }
 
-  format (format) {
+  format(format) {
     let output = null
 
     try {
@@ -52,19 +52,21 @@ export default class DateTime {
     return output
   }
 
-  getDate () {
+  getDate() {
     return this.dateObj
   }
 
-  isSameDayAs (date) {
+  isSameDayAs(date) {
     if (!this.isValid() || !this._isValidDate(date)) return false
 
-    return (this.dateObj.getFullYear() === date.getFullYear()) &&
-      (this.dateObj.getMonth() === date.getMonth()) &&
-      (this.dateObj.getDate() === date.getDate())
+    return (
+      this.dateObj.getFullYear() === date.getFullYear() &&
+      this.dateObj.getMonth() === date.getMonth() &&
+      this.dateObj.getDate() === date.getDate()
+    )
   }
 
-  isValid () {
+  isValid() {
     return this._isValidDate(this.dateObj)
   }
 }

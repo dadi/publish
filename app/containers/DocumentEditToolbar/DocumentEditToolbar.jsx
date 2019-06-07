@@ -13,7 +13,7 @@ import proptypes from 'prop-types'
 import React from 'react'
 import styles from './DocumentEditToolbar.css'
 import Toolbar from 'components/Toolbar/Toolbar'
-  
+
 /**
  * A toolbar used in a document edit view.
  */
@@ -45,9 +45,9 @@ class DocumentEditToolbar extends React.Component {
     multiLanguage: proptypes.bool,
 
     /**
-    * A callback to be used to obtain the base URL for the given page, as
-    * determined by the view.
-    */
+     * A callback to be used to obtain the base URL for the given page, as
+     * determined by the view.
+     */
     onBuildBaseUrl: proptypes.func,
 
     /**
@@ -63,7 +63,7 @@ class DocumentEditToolbar extends React.Component {
 
   constructor(props) {
     super(props)
-    
+
     this.hotkeys = new HotKeys({
       'mod+s': this.handleSave.bind(this, null)
     })
@@ -89,7 +89,7 @@ class DocumentEditToolbar extends React.Component {
     let secondary = {
       'Save and create new': this.handleSave.bind(
         this,
-        Constants.SAVE_ACTION_SAVE_AND_CREATE_NEW,
+        Constants.SAVE_ACTION_SAVE_AND_CREATE_NEW
       ),
       'Save and go back': this.handleSave.bind(
         this,
@@ -111,12 +111,7 @@ class DocumentEditToolbar extends React.Component {
   }
 
   handleDelete() {
-    const {
-      actions,
-      collection,
-      contentKey,
-      state
-    } = this.props
+    const {actions, collection, contentKey, state} = this.props
     const documentStore = state.document[contentKey]
     const {remote: document} = documentStore
 
@@ -147,36 +142,28 @@ class DocumentEditToolbar extends React.Component {
       contentKey,
       mode
     })
-  }  
+  }
 
   render() {
-    const {
-      contentKey,
-      documentId,
-      multiLanguage,
-      router,
-      state
-    } = this.props
+    const {contentKey, documentId, multiLanguage, router, state} = this.props
     const {api} = state.app.config
     const {document: documentStore} = state
     const document = documentStore[contentKey] || {}
-    const {
-      isSaving,
-      remote = null,
-      validationErrors
-    } = document
+    const {isSaving, remote = null, validationErrors} = document
     const hasConnectionIssues = state.app.networkStatus !== Constants.NETWORK_OK
-    const hasValidationErrors = validationErrors && Object.keys(validationErrors)
-      .filter(field => validationErrors[field])
-      .length
+    const hasValidationErrors =
+      validationErrors &&
+      Object.keys(validationErrors).filter(field => validationErrors[field])
+        .length
     const saveOptions = this.getSaveOptions(documentId)
-    const languages = api.languages.length <= 1
-      ? null
-      : api.languages.reduce((languagesObject, language) => {
-          languagesObject[language.code] = language.name
+    const languages =
+      api.languages.length <= 1
+        ? null
+        : api.languages.reduce((languagesObject, language) => {
+            languagesObject[language.code] = language.name
 
-          return languagesObject
-        }, {})
+            return languagesObject
+          }, {})
 
     let {lang: currentLanguage} = router.search
 
@@ -202,35 +189,33 @@ class DocumentEditToolbar extends React.Component {
         )}
 
         <div className={styles.metadata}>
-          {remote && remote._createdAt &&
+          {remote && remote._createdAt && (
             <p>
               <span>Created </span>
 
-              {remote._createdBy &&
-                <span>by <strong>{remote._createdBy}</strong> </span>
-              }
+              {remote._createdBy && (
+                <span>
+                  by <strong>{remote._createdBy}</strong>{' '}
+                </span>
+              )}
 
-              <DateTime
-                date={remote._createdAt}
-                relative={true}
-              />
+              <DateTime date={remote._createdAt} relative={true} />
             </p>
-          }
+          )}
 
-          {remote && remote._lastModifiedAt &&
+          {remote && remote._lastModifiedAt && (
             <p className={styles['metadata-emphasis']}>
               <span>Last updated </span>
 
-              {remote._lastModifiedBy &&
-                <span>by <strong>{remote._lastModifiedBy}</strong> </span>
-              }
+              {remote._lastModifiedBy && (
+                <span>
+                  by <strong>{remote._lastModifiedBy}</strong>{' '}
+                </span>
+              )}
 
-              <DateTime
-                date={remote._lastModifiedAt}
-                relative={true}
-              />
+              <DateTime date={remote._lastModifiedAt} relative={true} />
             </p>
-          }
+          )}
         </div>
 
         <div className={styles.buttons}>
@@ -244,7 +229,9 @@ class DocumentEditToolbar extends React.Component {
                 promptCallToAction="Yes, delete it."
                 position="left"
                 promptMessage="Are you sure you want to delete this document?"
-              >Delete</ButtonWithPrompt> 
+              >
+                Delete
+              </ButtonWithPrompt>
             </div>
           )}
 
@@ -257,12 +244,14 @@ class DocumentEditToolbar extends React.Component {
               isLoading={isSaving}
               onClick={saveOptions.primary.action}
               options={saveOptions.secondary}
-            >{saveOptions.primary.label}</ButtonWithOptions>
+            >
+              {saveOptions.primary.label}
+            </ButtonWithOptions>
           </div>
         </div>
       </Toolbar>
     )
-  } 
+  }
 
   shouldComponentUpdate(nextProps) {
     const {state} = this.props
@@ -277,8 +266,6 @@ class DocumentEditToolbar extends React.Component {
   }
 }
 
-export default connectRouter(connectRedux(
-  appActions,
-  documentActions,
-  userActions
-)(DocumentEditToolbar))
+export default connectRouter(
+  connectRedux(appActions, documentActions, userActions)(DocumentEditToolbar)
+)

@@ -19,18 +19,18 @@ const blankDataBucket = {
   timestamp: 0,
   validationCallbacks: {},
   validationErrors: null,
-  wasLoadedFromLocalStorage: false,
+  wasLoadedFromLocalStorage: false
 }
 
 const initialState = {}
 
-export default function document (state = initialState, action = {}) {
+export default function document(state = initialState, action = {}) {
   switch (action.type) {
     case Types.ATTEMPT_SAVE_DOCUMENT:
       return {
         ...state,
         [action.key]: {
-          ...state[action.key] || blankDataBucket,
+          ...(state[action.key] || blankDataBucket),
           lastSaveMode: action.mode || null,
           saveAttempts: state[action.key]
             ? state[action.key].saveAttempts + 1
@@ -44,7 +44,7 @@ export default function document (state = initialState, action = {}) {
       return {
         ...state,
         [action.key]: {
-          ...state[action.key] || blankDataBucket,
+          ...(state[action.key] || blankDataBucket),
           isDeleting: false,
           remoteError: action.data || DEFAULT_ERROR_MESSAGE
         }
@@ -56,7 +56,7 @@ export default function document (state = initialState, action = {}) {
       return {
         ...state,
         [action.key]: {
-          ...state[action.key] || blankDataBucket,
+          ...(state[action.key] || blankDataBucket),
           isDeleting: true
         }
       }
@@ -67,19 +67,19 @@ export default function document (state = initialState, action = {}) {
       return {
         ...state,
         [action.key]: {
-          ...state[action.key] || blankDataBucket,
+          ...(state[action.key] || blankDataBucket),
           isDeleted: true
         }
       }
-    
+
     case Types.DISCARD_UNSAVED_CHANGES:
       return {
         ...state,
         [action.key]: {
-          ...state[action.key] || blankDataBucket,
+          ...(state[action.key] || blankDataBucket),
           local: {},
           validationErrors: null,
-          wasLoadedFromLocalStorage: false  
+          wasLoadedFromLocalStorage: false
         }
       }
 
@@ -87,7 +87,7 @@ export default function document (state = initialState, action = {}) {
       return {
         ...state,
         [action.key]: {
-          ...state[action.key] || blankDataBucket,
+          ...(state[action.key] || blankDataBucket),
           remoteError: action.data || DEFAULT_ERROR_MESSAGE
         }
       }
@@ -96,16 +96,16 @@ export default function document (state = initialState, action = {}) {
       return {
         ...state,
         [action.key]: {
-          ...state[action.key] || blankDataBucket,
+          ...(state[action.key] || blankDataBucket),
           isLoading: true
         }
       }
-    
+
     case Types.LOAD_DOCUMENT_SUCCESS:
       return {
         ...state,
         [action.key]: {
-          ...state[action.key] || blankDataBucket,
+          ...(state[action.key] || blankDataBucket),
           isLoading: false,
           isSaving: false,
           local: {
@@ -123,7 +123,7 @@ export default function document (state = initialState, action = {}) {
       return {
         ...state,
         [action.key]: {
-          ...state[action.key] || blankDataBucket,
+          ...(state[action.key] || blankDataBucket),
           saveCallbacks: {
             ...(state[action.key] && state[action.key].saveCallbacks),
             [action.fieldName]: action.callback
@@ -135,7 +135,7 @@ export default function document (state = initialState, action = {}) {
       return {
         ...state,
         [action.key]: {
-          ...state[action.key] || blankDataBucket,
+          ...(state[action.key] || blankDataBucket),
           validationCallbacks: {
             ...(state[action.key] && state[action.key].validationCallbacks),
             [action.fieldName]: action.callback
@@ -147,7 +147,7 @@ export default function document (state = initialState, action = {}) {
       return {
         ...state,
         [action.key]: {
-          ...state[action.key] || blankDataBucket,
+          ...(state[action.key] || blankDataBucket),
           isSaving: false,
           remoteError: action.data || DEFAULT_ERROR_MESSAGE
         }
@@ -157,7 +157,7 @@ export default function document (state = initialState, action = {}) {
       return {
         ...state,
         [action.key]: {
-          ...state[action.key] || blankDataBucket,
+          ...(state[action.key] || blankDataBucket),
           isSaving: true
         }
       }
@@ -166,7 +166,7 @@ export default function document (state = initialState, action = {}) {
       return {
         ...state,
         [action.key]: {
-          ...state[action.key] || blankDataBucket,
+          ...(state[action.key] || blankDataBucket),
           isSaving: false,
           local: {},
           remote: action.data,
@@ -179,7 +179,7 @@ export default function document (state = initialState, action = {}) {
       return {
         ...state,
         [action.key]: {
-          ...state[action.key] || blankDataBucket,
+          ...(state[action.key] || blankDataBucket),
           local: {
             ...action.fromLocalStorage,
             ...(state[action.key] && state[action.key].local)
@@ -198,12 +198,12 @@ export default function document (state = initialState, action = {}) {
       return {
         ...state,
         [action.key]: {
-          ...state[action.key] || blankDataBucket,
+          ...(state[action.key] || blankDataBucket),
           hasBeenValidated: true,
           local: {
             ...(state[action.key] && state[action.key].local),
             ...action.update
-          },        
+          },
           validationErrors: {
             ...(state[action.key] && state[action.key].validationErrors),
             ...errorUpdate

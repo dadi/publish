@@ -80,13 +80,7 @@ export default class Button extends React.Component {
      * Type/function of the button. When set to `mock`, a static element will
      * be rendered (as a `span`).
      */
-    type: proptypes.oneOf([
-      'button',
-      'fill',
-      'mock',
-      'mock-stateful',
-      'submit'
-    ])
+    type: proptypes.oneOf(['button', 'fill', 'mock', 'mock-stateful', 'submit'])
   }
 
   static defaultProps = {
@@ -100,9 +94,9 @@ export default class Button extends React.Component {
 
   render() {
     const {
-      accent, 
-      className, 
-      children, 
+      accent,
+      className,
+      children,
       disabled,
       forId,
       href,
@@ -115,7 +109,8 @@ export default class Button extends React.Component {
     } = this.props
     const buttonStyle = new Style(styles, 'button')
 
-    buttonStyle.add(`button-${accent}`)
+    buttonStyle
+      .add(`button-${accent}`)
       .addIf('button-disabled', disabled)
       .addIf('button-loading', isLoading)
       .addIf(`button-in-group-${inGroup}`, inGroup)
@@ -126,17 +121,14 @@ export default class Button extends React.Component {
 
     if (forId) {
       return (
-        <label
-          className={buttonStyle.getClasses()}
-          htmlFor={forId}
-        >{children}</label>
+        <label className={buttonStyle.getClasses()} htmlFor={forId}>
+          {children}
+        </label>
       )
     }
 
     if (type === 'mock' || type === 'mock-stateful') {
-      return (
-        <span className={buttonStyle.getClasses()}>{children}</span>
-      )
+      return <span className={buttonStyle.getClasses()}>{children}</span>
     }
 
     if (href) {
@@ -146,15 +138,16 @@ export default class Button extends React.Component {
             className={buttonStyle.getClasses()}
             href={href}
             target={openInNewWindow && '_blank'}
-          >{children}</a>
+          >
+            {children}
+          </a>
         )
       }
 
       return (
-        <Link
-          className={buttonStyle.getClasses()}
-          to={href}
-        >{children}</Link>
+        <Link className={buttonStyle.getClasses()} to={href}>
+          {children}
+        </Link>
       )
     }
 
@@ -164,7 +157,9 @@ export default class Button extends React.Component {
         disabled={disabled || isLoading}
         onClick={onClick}
         type={type}
-      >{children}</button>
+      >
+        {children}
+      </button>
     )
   }
 }

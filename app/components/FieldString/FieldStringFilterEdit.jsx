@@ -17,10 +17,7 @@ export default class FieldStringFilter extends React.Component {
     /**
      * The filter value.
      */
-    value: proptypes.oneOfType([
-      proptypes.number,
-      proptypes.string
-    ])
+    value: proptypes.oneOfType([proptypes.number, proptypes.string])
   }
 
   componentDidMount() {

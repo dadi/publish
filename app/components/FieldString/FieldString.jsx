@@ -7,9 +7,4 @@ const filterOperators = {
   $ne: 'does not equal'
 }
 
-export {
-  edit,
-  filterEdit,
-  filterOperators,
-  list
-}
+export {edit, filterEdit, filterOperators, list}

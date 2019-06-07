@@ -7,25 +7,28 @@ let lastId = 0
 // generated on the client to avoid conflicts
 const ID_PREFIX = 'c'
 
-export function getUniqueId () {
+export function getUniqueId() {
   return `${ID_PREFIX}-${lastId++}`
 }
 
-export function objectToArray (obj, keyField) {
+export function objectToArray(obj, keyField) {
   if (
     !(obj && typeof obj === 'object') ||
     !(keyField && typeof keyField === 'string')
-  ) return []
+  )
+    return []
 
-  return Object.keys(obj)
-    .map(key => Object.assign({}, {[keyField || 'key']: key, value: obj[key]}))
+  return Object.keys(obj).map(key =>
+    Object.assign({}, {[keyField || 'key']: key, value: obj[key]})
+  )
 }
 
 // To do - move to util.array
-export function arrayToObject (arr, keyField) {
+export function arrayToObject(arr, keyField) {
   if (!arr || !Array.isArray(arr) || !arr.length) return null
 
-  return Object.assign({},
+  return Object.assign(
+    {},
     ...arr
       .map(obj => {
         if (!obj.value || !obj[keyField]) return
@@ -37,21 +40,26 @@ export function arrayToObject (arr, keyField) {
 }
 
 // Object and Field validation
-export function isValidJSON (string) {
+export function isValidJSON(string) {
   if (!string || typeof string !== 'string') return
 
-  return /^[\],:{}\s]*$/
-    .test(string.replace(/\\["\\\/bfnrtu]/g, '@')
-    .replace(/"[^"\\\n\r]*"|true|false|null|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?/g, ']')
-    .replace(/(?:^|:|,)(?:\s*\[)+/g, ''))
+  return /^[\],:{}\s]*$/.test(
+    string
+      .replace(/\\["\\\/bfnrtu]/g, '@')
+      .replace(
+        /"[^"\\\n\r]*"|true|false|null|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?/g,
+        ']'
+      )
+      .replace(/(?:^|:|,)(?:\s*\[)+/g, '')
+  )
 }
 
-export function debounce (func, wait, immediate) {
+export function debounce(func, wait, immediate) {
   let timeout
 
   // Must return standard function.
   // An arrow function here would not use arguments.
-  return function () {
+  return function() {
     let context = this
     let args = arguments
     let later = () => {
@@ -66,17 +74,17 @@ export function debounce (func, wait, immediate) {
   }
 }
 
-export function throttle (func, threshold) {
+export function throttle(func, threshold) {
   let lastCall
   let timeout
 
   // Must return standard function.
   // An arrow function here would not use arguments.
-  return function () {
+  return function() {
     const now = new Date().getTime()
     const args = arguments
 
-    if (lastCall && (now < lastCall + threshold)) {
+    if (lastCall && now < lastCall + threshold) {
       clearTimeout(timeout)
       timeout = setTimeout(() => {
         lastCall = now
@@ -89,12 +97,13 @@ export function throttle (func, threshold) {
   }
 }
 
-export function setPageTitle (title) {
+export function setPageTitle(title) {
   if (typeof document === 'undefined') {
     return
   }
 
-  const isValidTitle = title && (typeof title === 'string' || typeof title === 'number')
+  const isValidTitle =
+    title && (typeof title === 'string' || typeof title === 'number')
 
   document.title = `${isValidTitle ? title + ' / ' : ''}DADI Publish`
 }

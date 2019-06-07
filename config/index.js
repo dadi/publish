@@ -4,35 +4,33 @@ const path = require('path')
 const schema = require('./schema')
 
 class Config {
-  constructor () {
+  constructor() {
     this.instance = convict(schema)
   }
 
-  filterUnauthenticatedProperties (node, configObject) {
+  filterUnauthenticatedProperties(node, configObject) {
     if (!node.properties) {
-      return node.showToUnauthenticatedUsers
-        ? configObject
-        : null
+      return node.showToUnauthenticatedUsers ? configObject : null
     }
-  
+
     let result
-  
+
     Object.keys(node.properties).forEach(key => {
       const keyResult = this.filterUnauthenticatedProperties(
         node.properties[key],
         configObject[key]
       )
-  
+
       if (keyResult) {
         result = result || {}
         result[key] = keyResult
       }
     })
-  
+
     return result
   }
 
-  getProperties ({authenticated = false} = {}) {
+  getProperties({authenticated = false} = {}) {
     if (authenticated) {
       return this.instance.getProperties()
     }
@@ -43,11 +41,9 @@ class Config {
     )
   }
 
-  load (configPath) {
+  load(configPath) {
     const environment = this.instance.get('env')
-    const filePath = path.join(
-      configPath, `config.${environment}.json`
-    )
+    const filePath = path.join(configPath, `config.${environment}.json`)
 
     try {
       const data = require(filePath)
@@ -60,7 +56,7 @@ class Config {
     }
   }
 
-  sanitiseConfigData (inputData) {
+  sanitiseConfigData(inputData) {
     let data = {...inputData}
 
     if (data.apis && !data.api) {

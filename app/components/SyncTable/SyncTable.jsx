@@ -131,7 +131,7 @@ export default class SyncTable extends React.Component {
 
     return (
       <Table
-        head={(
+        head={
           <TableHead>
             {columns.map(column => {
               let content = column.label
@@ -148,7 +148,7 @@ export default class SyncTable extends React.Component {
                     linkSortOrder = 'desc'
                   }
 
-                  arrow = (sortOrder === 'desc') ? 'down' : 'up'
+                  arrow = sortOrder === 'desc' ? 'down' : 'up'
                 }
 
                 content = onSort(content, column.id, linkSortOrder)
@@ -159,33 +159,29 @@ export default class SyncTable extends React.Component {
                   annotation={column.annotation}
                   arrow={arrow}
                   key={column.label}
-                >{content}</TableHeadCell>
+                >
+                  {content}
+                </TableHeadCell>
               )
             })}
           </TableHead>
-        )}
+        }
         onSelect={onSelect}
         selectable={selectable}
         selectLimit={selectLimit}
         selectedRows={selectedRows}
-      >{this.renderRows()}</Table>
+      >
+        {this.renderRows()}
+      </Table>
     )
   }
 
   renderRows() {
-    const {
-      columns,
-      data,
-      onSelect,
-      onRender
-    } = this.props
+    const {columns, data, onSelect, onRender} = this.props
 
     return data.map((row, index) => {
       return (
-        <TableRow
-          key={index}
-          onSelect={onSelect}
-        >
+        <TableRow key={index} onSelect={onSelect}>
           {columns.map((column, index) => {
             let value = row[column.id]
 
@@ -194,11 +190,7 @@ export default class SyncTable extends React.Component {
               value = onRender.call(this, row[column.id], row, column, index)
             }
 
-            return (
-              <TableRowCell
-                key={index}
-              >{value}</TableRowCell>
-            )
+            return <TableRowCell key={index}>{value}</TableRowCell>
           })}
         </TableRow>
       )

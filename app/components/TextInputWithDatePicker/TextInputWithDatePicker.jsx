@@ -28,7 +28,7 @@ export default class TextInputWithDatePicker extends React.Component {
      * Whether the field is part of a `<Label/>` component. This makes it
      * inherit certain CSS properties from the parent.
      *
-     * **NOTE:** This prop is automatically passed down by `<Label/>`.      
+     * **NOTE:** This prop is automatically passed down by `<Label/>`.
      */
     inLabel: proptypes.bool,
 
@@ -58,32 +58,27 @@ export default class TextInputWithDatePicker extends React.Component {
     placeholder: proptypes.string,
 
     /**
-     * Whether the field is required.
-     *
-     * **NOTE:** This prop is automatically passed down by `<Label/>`.       
+     * Whether the field is read-only.
      */
-    readonly: proptypes.bool,
+    readOnly: proptypes.bool,
 
     /**
      * Whether the field is required.
      *
-     * **NOTE:** This prop is automatically passed down by `<Label/>`.       
+     * **NOTE:** This prop is automatically passed down by `<Label/>`.
      */
     required: proptypes.bool,
 
     /**
      * Current value of the input field.
      */
-    value: proptypes.oneOfType([
-      proptypes.number,
-      proptypes.string
-    ])
+    value: proptypes.oneOfType([proptypes.number, proptypes.string])
   }
 
   static defaultProps = {
     inLabel: false,
     multiline: false,
-    readonly: false
+    readOnly: false
   }
 
   constructor(props) {
@@ -108,11 +103,7 @@ export default class TextInputWithDatePicker extends React.Component {
   }
 
   handleChange(event) {
-    const {
-      format,
-      onChange,
-      value
-    } = this.props
+    const {format, onChange, value} = this.props
     const newDate = new DateTime(event.target.value, format)
 
     let newValue = null
@@ -133,7 +124,10 @@ export default class TextInputWithDatePicker extends React.Component {
   }
 
   handleFocus(hasFocus) {
+    const {readOnly} = this.props
     const {pickerVisible} = this.state
+
+    if (readOnly) return
 
     if (!pickerVisible) {
       this.setState({
@@ -181,6 +175,7 @@ export default class TextInputWithDatePicker extends React.Component {
       : null
 
     if (typeof onChange === 'function') {
+      console.log('---> propagating:', {id: this.props.id, sanitisedValue})
       onChange.call(this, sanitisedValue)
     }
   }
@@ -191,7 +186,7 @@ export default class TextInputWithDatePicker extends React.Component {
       format,
       inputClassName,
       placeholder,
-      readonly,
+      readOnly,
       value
     } = this.props
     const {pickerVisible} = this.state
@@ -199,6 +194,7 @@ export default class TextInputWithDatePicker extends React.Component {
     let dateObj = null
 
     if (value) {
+      console.log({id: this.props.id, value})
       const dateTimeObj = new DateTime(value)
 
       if (dateTimeObj.isValid()) {
@@ -206,13 +202,14 @@ export default class TextInputWithDatePicker extends React.Component {
       }
     }
 
-    const containerStyles = new Style(styles, 'container')
-      .addResolved(containerClassName)
+    const containerStyles = new Style(styles, 'container').addResolved(
+      containerClassName
+    )
 
     return (
       <div
         className={containerStyles.getClasses()}
-        ref={el => this.rootEl = el}
+        ref={el => (this.rootEl = el)}
       >
         <TextInput
           className={inputClassName}
@@ -220,18 +217,18 @@ export default class TextInputWithDatePicker extends React.Component {
           onChange={this.handleChange.bind(this)}
           onFocus={this.handleFocus.bind(this, true)}
           placeholder={placeholder}
-          readonly={readonly}
+          readOnly={readOnly}
           type="text"
           value={dateObj && dateObj.format(format)}
         />
-        
-        {pickerVisible &&
+
+        {pickerVisible && (
           <DateTimePicker
             className={styles.picker}
             date={dateObj && dateObj.getDate()}
             onChange={this.handlePickerChange.bind(this)}
           />
-        }
+        )}
       </div>
     )
   }

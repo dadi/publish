@@ -20,14 +20,14 @@ export default class Paginator extends React.Component {
     maxPages: proptypes.number.isRequired,
 
     /**
-    * A callback used to determine what should happen when the user attempts
-    * to select a specific page. This function will be called with a single
-    * argument, which is the number of the page to navigate to. It can return
-    * either a string, which is infered as an `href` property for a `<a>` tag,
-    * or it can return a function, which will be attached to the `onClick`
-    * event of a `<button>` tag.
-    */
-    pageChangeHandler: proptypes.func, 
+     * A callback used to determine what should happen when the user attempts
+     * to select a specific page. This function will be called with a single
+     * argument, which is the number of the page to navigate to. It can return
+     * either a string, which is infered as an `href` property for a `<a>` tag,
+     * or it can return a function, which will be attached to the `onClick`
+     * event of a `<button>` tag.
+     */
+    pageChangeHandler: proptypes.func,
 
     /**
      * Whether to render `Prev` and `Next` links.
@@ -56,7 +56,7 @@ export default class Paginator extends React.Component {
           href: value
         }
       }
-  
+
       if (typeof value === 'function') {
         return {
           onClick: value.bind(this, pageNumber)
@@ -68,12 +68,7 @@ export default class Paginator extends React.Component {
   }
 
   render() {
-    const {
-      currentPage,
-      maxPages,
-      prevNext,
-      totalPages
-    } = this.props
+    const {currentPage, maxPages, prevNext, totalPages} = this.props
 
     // The paginator always tries to render an equal number of pages
     // before and after the current page. If the current page is too
@@ -84,23 +79,23 @@ export default class Paginator extends React.Component {
 
     // Checking to see if we have enough previous pages to show.
     if (currentPage <= previousPages) {
-      const excess = (previousPages - currentPage + 1)
-      
+      const excess = previousPages - currentPage + 1
+
       previousPages -= excess
       nextPages += excess
     }
 
     // Checking to see if we have enough next pages to show.
-    if ((currentPage + nextPages) > totalPages) {
-      const excess = (currentPage + nextPages) - totalPages
+    if (currentPage + nextPages > totalPages) {
+      const excess = currentPage + nextPages - totalPages
       const previousPagesAllowance = currentPage - 1
 
       previousPages += Math.min(excess, previousPagesAllowance)
       nextPages -= excess
     }
 
-    const firstPage = Math.max(1, (currentPage - previousPages))
-    const lastPage = (currentPage + nextPages)
+    const firstPage = Math.max(1, currentPage - previousPages)
+    const lastPage = currentPage + nextPages
 
     let items = []
 
@@ -110,35 +105,43 @@ export default class Paginator extends React.Component {
 
     const isFirstPage = currentPage <= 1
     const isLastPage = currentPage >= totalPages
-    const nextStyle = new Style(styles, 'page', 'page-secondary')
-      .addIf('page-disabled', isLastPage)
-    const prevStyle = new Style(styles, 'page', 'page-secondary')
-      .addIf('page-disabled', isFirstPage)
+    const nextStyle = new Style(styles, 'page', 'page-secondary').addIf(
+      'page-disabled',
+      isLastPage
+    )
+    const prevStyle = new Style(styles, 'page', 'page-secondary').addIf(
+      'page-disabled',
+      isFirstPage
+    )
 
     // If there's less than two pages to show, don't show page numbers.
     if (items.length < 2) return null
 
     return (
       <div>
-        {prevNext &&
+        {prevNext && (
           <Button
             {...this.getPropValuePair(currentPage - 1)}
             className={prevStyle.getClasses()}
             disabled={isFirstPage}
             type={isFirstPage ? 'mock' : undefined}
-          >Prev</Button> 
-        }
+          >
+            Prev
+          </Button>
+        )}
 
         {items}
 
-        {prevNext &&
+        {prevNext && (
           <Button
             {...this.getPropValuePair(currentPage + 1)}
             className={nextStyle.getClasses()}
             disabled={isLastPage}
             type={isLastPage ? 'mock' : undefined}
-          >Next</Button>
-        }
+          >
+            Next
+          </Button>
+        )}
       </div>
     )
   }
@@ -146,7 +149,10 @@ export default class Paginator extends React.Component {
   renderPageNumber(pageNumber, firstPage, lastPage) {
     const {currentPage} = this.props
     const pageStyle = new Style(styles, 'page', 'page-primary')
-      .addIf('page-first', pageNumber === currentPage && pageNumber === firstPage)
+      .addIf(
+        'page-first',
+        pageNumber === currentPage && pageNumber === firstPage
+      )
       .addIf('page-last', pageNumber === currentPage && pageNumber === lastPage)
 
     if (pageNumber === currentPage) {
@@ -156,7 +162,9 @@ export default class Paginator extends React.Component {
           className={pageStyle.getClasses()}
           key={pageNumber}
           type="mock"
-        >{pageNumber}</Button>
+        >
+          {pageNumber}
+        </Button>
       )
     }
 
@@ -165,7 +173,9 @@ export default class Paginator extends React.Component {
         {...this.getPropValuePair(pageNumber)}
         className={pageStyle.getClasses()}
         key={pageNumber}
-      >{pageNumber}</Button>
-    )    
-  }  
+      >
+        {pageNumber}
+      </Button>
+    )
+  }
 }

@@ -44,11 +44,7 @@ export default class FieldStringFilter extends React.Component {
   }
 
   render() {
-    const {
-      onUpdate,
-      stylesTextInput,
-      value
-    } = this.props
+    const {onUpdate, stylesTextInput, value} = this.props
 
     return (
       <TextInput
@@ -60,4 +56,3 @@ export default class FieldStringFilter extends React.Component {
     )
   }
 }
-

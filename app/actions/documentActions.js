@@ -13,11 +13,7 @@ const CACHE_TTL = 5000
  * @param  {String} contentKey  Content key
  * @param  {Array}  ids         Document IDs
  */
-export function deleteDocuments ({
-  collection,
-  contentKey,
-  ids
-}) {
+export function deleteDocuments({collection, contentKey, ids}) {
   if (collection.IS_MEDIA_BUCKET) {
     return deleteMediaDocuments({contentKey, ids})
   }
@@ -37,22 +33,25 @@ export function deleteDocuments ({
       type: Types.DELETE_DOCUMENTS_START
     })
 
-    apiBridge.delete().then(() => {
-      dispatch({
-        collection,
-        ids,
-        key: contentKey,
-        type: Types.DELETE_DOCUMENTS_SUCCESS
+    apiBridge
+      .delete()
+      .then(() => {
+        dispatch({
+          collection,
+          ids,
+          key: contentKey,
+          type: Types.DELETE_DOCUMENTS_SUCCESS
+        })
       })
-    }).catch(error => {
-      dispatch({
-        collection,
-        data: error,
-        ids,
-        key: contentKey,
-        type: Types.DELETE_DOCUMENTS_FAILURE
-      })  
-    })
+      .catch(error => {
+        dispatch({
+          collection,
+          data: error,
+          ids,
+          key: contentKey,
+          type: Types.DELETE_DOCUMENTS_FAILURE
+        })
+      })
   }
 }
 
@@ -62,14 +61,14 @@ export function deleteDocuments ({
  * @param  {String} contentKey  Content key
  * @param  {Array}  ids         Document IDs
  */
-export function deleteMediaDocuments ({contentKey, ids}) {
+export function deleteMediaDocuments({contentKey, ids}) {
   return (dispatch, getState) => {
     dispatch({
       collection: Constants.MEDIA_COLLECTION_SCHEMA,
       ids,
       key: contentKey,
       type: Types.DELETE_DOCUMENTS_START
-    })    
+    })
 
     const {api} = getState().app.config
     const {accessToken} = getState().user
@@ -86,30 +85,31 @@ export function deleteMediaDocuments ({contentKey, ids}) {
       body,
       headers: {
         Authorization: `Bearer ${accessToken}`,
-        'Content-Type': 'application/json',
+        'Content-Type': 'application/json'
       },
       method: 'DELETE'
-    }).then(response => {
-      if (response.ok) {
-        return dispatch({
+    })
+      .then(response => {
+        if (response.ok) {
+          return dispatch({
+            collection: Constants.MEDIA_COLLECTION_SCHEMA,
+            ids,
+            key: contentKey,
+            type: Types.DELETE_DOCUMENTS_SUCCESS
+          })
+        }
+
+        return Promise.reject(response)
+      })
+      .catch(error => {
+        dispatch({
           collection: Constants.MEDIA_COLLECTION_SCHEMA,
+          data: error,
           ids,
           key: contentKey,
-          type: Types.DELETE_DOCUMENTS_SUCCESS
+          type: Types.DELETE_DOCUMENTS_FAILURE
         })
-      }
-
-      return Promise.reject(response)
-    })
-    .catch(error => {
-      dispatch({
-        collection: Constants.MEDIA_COLLECTION_SCHEMA,
-        data: error,
-        ids,
-        key: contentKey,
-        type: Types.DELETE_DOCUMENTS_FAILURE
-      }) 
-    })
+      })
   }
 }
 
@@ -119,7 +119,7 @@ export function deleteMediaDocuments ({contentKey, ids}) {
  *
  * @param  {String} contentKey  Content key
  */
-export function discardUnsavedChanges ({contentKey}) {
+export function discardUnsavedChanges({contentKey}) {
   return dispatch => {
     LocalStorage.clearDocument(contentKey)
 
@@ -139,7 +139,7 @@ export function discardUnsavedChanges ({contentKey}) {
  * @param  {Object}  collection   Collection schema
  * @param  {String}  id           Document ID
  */
-export function fetchDocument ({
+export function fetchDocument({
   bypassCache = false,
   contentKey,
   collection,
@@ -156,11 +156,11 @@ export function fetchDocument ({
     if (
       !bypassCache &&
       existingKey &&
-      (currentTs - existingKey.timestamp < CACHE_TTL)
+      currentTs - existingKey.timestamp < CACHE_TTL
     ) {
       return
     }
-    
+
     let apiBridge = apiBridgeClient({
       accessToken: getState().user.accessToken,
       api,
@@ -180,25 +180,28 @@ export function fetchDocument ({
       type: Types.LOAD_DOCUMENT_START
     })
 
-    apiBridge.find().then(({results}) => {
-      if (results.length === 0) {
-        return Promise.reject(404)
-      }
+    apiBridge
+      .find()
+      .then(({results}) => {
+        if (results.length === 0) {
+          return Promise.reject(404)
+        }
 
-      dispatch(
-        setDocument({
-          contentKey,
-          document: results[0],
-          timestamp: currentTs
-        })
-      )
-    }).catch(error => {
-      dispatch({
-        key: contentKey,
-        data: error,
-        type: Types.LOAD_DOCUMENT_FAILURE
+        dispatch(
+          setDocument({
+            contentKey,
+            document: results[0],
+            timestamp: currentTs
+          })
+        )
       })
-    })
+      .catch(error => {
+        dispatch({
+          key: contentKey,
+          data: error,
+          type: Types.LOAD_DOCUMENT_FAILURE
+        })
+      })
   }
 }
 
@@ -215,7 +218,7 @@ export function fetchDocument ({
  * @param  {String}  sortBy       Name of the field to sort by
  * @param  {String}  sortOrder    Sort order (i.e. "asc" or "desc")
  */
-export function fetchDocumentList ({
+export function fetchDocumentList({
   bypassCache = false,
   contentKey,
   collection,
@@ -237,7 +240,7 @@ export function fetchDocumentList ({
       !bypassCache &&
       existingKey &&
       !existingKey.dirty &&
-      (currentTs - existingKey.timestamp < CACHE_TTL)
+      currentTs - existingKey.timestamp < CACHE_TTL
     ) {
       return
     }
@@ -257,7 +260,10 @@ export function fetchDocumentList ({
 
     let query
 
-    if (collection.IS_MEDIA_BUCKET || collection === Constants.MEDIA_COLLECTION) {
+    if (
+      collection.IS_MEDIA_BUCKET ||
+      collection === Constants.MEDIA_COLLECTION
+    ) {
       query = apiBridgeClient({
         accessToken: getState().user.accessToken,
         api
@@ -271,31 +277,34 @@ export function fetchDocumentList ({
       })
     }
 
-    query = query.goToPage(page)
+    query = query
+      .goToPage(page)
       .sortBy(...sort)
       .where(filters)
       .find()
 
-    return query.then(response => {
-      const {metadata, results} = response
+    return query
+      .then(response => {
+        const {metadata, results} = response
 
-      dispatch(
-        setDocumentList({
-          contentKey,
-          metadata: metadata,
-          results: results,
-          timestamp: currentTs
-        })
-      )
-    }).catch(error => {
-      dispatch(
-        setDocumentListStatus({
-          contentKey,
-          data: error,
-          status: Constants.STATUS_FAILED
-        })
-      )
-    })
+        dispatch(
+          setDocumentList({
+            contentKey,
+            metadata: metadata,
+            results: results,
+            timestamp: currentTs
+          })
+        )
+      })
+      .catch(error => {
+        dispatch(
+          setDocumentListStatus({
+            contentKey,
+            data: error,
+            status: Constants.STATUS_FAILED
+          })
+        )
+      })
   }
 }
 
@@ -305,7 +314,7 @@ export function fetchDocumentList ({
  * @param  {String} contentKey  Content key
  * @param  {String} mode        Save mode (one of SAVE_ACTION_* constants)
  */
-export function registerSaveAttempt ({contentKey, mode}) {
+export function registerSaveAttempt({contentKey, mode}) {
   return {
     mode,
     key: contentKey,
@@ -322,7 +331,7 @@ export function registerSaveAttempt ({contentKey, mode}) {
  * @param  {String}   contentKey  Content key
  * @param  {String}   fieldName   The name of the field
  */
-export function registerSaveCallback ({callback, contentKey, fieldName}) {
+export function registerSaveCallback({callback, contentKey, fieldName}) {
   return {
     callback,
     fieldName,
@@ -342,7 +351,7 @@ export function registerSaveCallback ({callback, contentKey, fieldName}) {
  * @param  {String}   contentKey  Content key
  * @param  {String}   fieldName   The name of the field
  */
-export function registerValidationCallback ({callback, contentKey, fieldName}) {
+export function registerValidationCallback({callback, contentKey, fieldName}) {
   return {
     callback,
     fieldName,
@@ -359,11 +368,7 @@ export function registerValidationCallback ({callback, contentKey, fieldName}) {
  * @param  {Object}  collection   Collection schema
  * @param  {String}  documentId   The ID of the existing document, if updating
  */
-export function saveDocument ({
-  contentKey,
-  collection,
-  documentId
-}) {
+export function saveDocument({contentKey, collection, documentId}) {
   if (collection.IS_MEDIA_BUCKET) {
     return saveMediaDocument({
       contentKey,
@@ -455,11 +460,12 @@ export function saveDocument ({
       const referencedDocuments = Array.isArray(payload[field])
         ? payload[field]
         : [payload[field]]
-      const referenceLimit = (
-        schemaSettings.limit !== undefined &&
-        schemaSettings.limit > 0
-      ) ? schemaSettings.limit : Infinity
-      const isMediaReference = schema.type === 'Reference' &&
+      const referenceLimit =
+        schemaSettings.limit !== undefined && schemaSettings.limit > 0
+          ? schemaSettings.limit
+          : Infinity
+      const isMediaReference =
+        schema.type === 'Reference' &&
         schemaSettings.collection === Constants.MEDIA_COLLECTION
       const isMedia = schema.type === 'Media'
 
@@ -469,13 +475,15 @@ export function saveDocument ({
         // can be used to reconstruct `referencedDocuments` with the result of
         // the uploads.
         let uploadIndexes = []
-        let documentsToUpload = referencedDocuments.filter((document, index) => {
-          if (document._id === undefined) {
-            uploadIndexes.push(index)
+        let documentsToUpload = referencedDocuments.filter(
+          (document, index) => {
+            if (document._id === undefined) {
+              uploadIndexes.push(index)
 
-            return true
+              return true
+            }
           }
-        })
+        )
         let uploadJob = Promise.resolve(referencedDocuments)
 
         // Are there any documents that need to be uploaded first?
@@ -495,17 +503,19 @@ export function saveDocument ({
           })
         }
 
-        return uploadJob.then(results => {
-          if (isMediaReference) {
-            return results.map(result => result._id)
-          }
+        return uploadJob
+          .then(results => {
+            if (isMediaReference) {
+              return results.map(result => result._id)
+            }
 
-          return results.map(result => ({
-            _id: result._id
-          }))
-        }).then(reference => {
-          payload[field] = referenceLimit > 1 ? reference : reference[0]
-        })
+            return results.map(result => ({
+              _id: result._id
+            }))
+          })
+          .then(reference => {
+            payload[field] = referenceLimit > 1 ? reference : reference[0]
+          })
       } else {
         const reference = referencedDocuments
           .map(document => document._id)
@@ -515,61 +525,65 @@ export function saveDocument ({
       }
     })
 
-    Promise.all(referenceQueue).then(() => {
-      apiBridge = isUpdate
-        ? apiBridge.update(payload)
-        : apiBridge.create(payload)
+    Promise.all(referenceQueue)
+      .then(() => {
+        apiBridge = isUpdate
+          ? apiBridge.update(payload)
+          : apiBridge.create(payload)
 
-      return apiBridge.then(({results}) => {
-        if (results && (results.length > 0)) {
-          dispatch({
-            data: results[0],
-            key: contentKey,
-            type: Types.SAVE_DOCUMENT_SUCCESS
-          })
+        return apiBridge
+          .then(({results}) => {
+            if (results && results.length > 0) {
+              dispatch({
+                data: results[0],
+                key: contentKey,
+                type: Types.SAVE_DOCUMENT_SUCCESS
+              })
 
-          // We've successfully saved the document, so we now need to clear
-          // the local storage key corresponding to the unsaved document for
-          // the given collection path.
-          LocalStorage.clearDocument(contentKey)
-        } else {
-          dispatch({
-            key: contentKey,
-            type: Types.SAVE_DOCUMENT_FAILURE
+              // We've successfully saved the document, so we now need to clear
+              // the local storage key corresponding to the unsaved document for
+              // the given collection path.
+              LocalStorage.clearDocument(contentKey)
+            } else {
+              dispatch({
+                key: contentKey,
+                type: Types.SAVE_DOCUMENT_FAILURE
+              })
+            }
           })
-        }
-      }).catch(({errors}) => {
+          .catch(({errors}) => {
+            dispatch({
+              data: errors,
+              key: contentKey,
+              type: Types.SAVE_DOCUMENT_FAILURE
+            })
+
+            let dataUpdate = {}
+            let errorUpdate = {}
+
+            errors.forEach(error => {
+              if (error.field) {
+                dataUpdate[error.field] = null
+                errorUpdate[error.field] = error.message
+              }
+            })
+
+            dispatch(
+              updateLocalDocument({
+                contentKey,
+                error: errorUpdate,
+                update: dataUpdate
+              })
+            )
+          })
+      })
+      .catch(error => {
         dispatch({
-          data: errors,
+          data: error,
           key: contentKey,
           type: Types.SAVE_DOCUMENT_FAILURE
         })
-        
-        let dataUpdate = {}
-        let errorUpdate = {}
-
-        errors.forEach(error => {
-          if (error.field) {
-            dataUpdate[error.field] = null
-            errorUpdate[error.field] = error.message
-          }
-        })
-
-        dispatch(
-          updateLocalDocument({
-            contentKey,
-            error: errorUpdate,
-            update: dataUpdate
-          })
-        )
       })
-    }).catch(error => {
-      dispatch({
-        data: error,
-        key: contentKey,
-        type: Types.SAVE_DOCUMENT_FAILURE
-      })
-    })
   }
 }
 
@@ -580,30 +594,33 @@ export function saveDocument ({
  *
  * @param  {String}  contentKey   Content key
  */
-export function saveDocumentLocally ({contentKey}) {
+export function saveDocumentLocally({contentKey}) {
   return (_, getState) => {
     const document = getState().document[contentKey] || {}
     const {local, remote, saveCallbacks} = document
 
     let needsSaving = false
 
-    const payload = local && Object.keys(local).reduce((payload, field) => {
-      // (!) TO DO: adapt to `i18n.languageField`
-      const [name] = field.split(':')
-      const value = typeof saveCallbacks[name] === 'function'
-        ? saveCallbacks[name]({value: local[field]})
-        : local[field]
+    const payload =
+      local &&
+      Object.keys(local).reduce((payload, field) => {
+        // (!) TO DO: adapt to `i18n.languageField`
+        const [name] = field.split(':')
+        const value =
+          typeof saveCallbacks[name] === 'function'
+            ? saveCallbacks[name]({value: local[field]})
+            : local[field]
 
-      payload[field] = value
+        payload[field] = value
 
-      const hasChanged = remote 
-        ? JSON.stringify(value) !== JSON.stringify(remote[field])
-        : true
+        const hasChanged = remote
+          ? JSON.stringify(value) !== JSON.stringify(remote[field])
+          : true
 
-      needsSaving = needsSaving || hasChanged
+        needsSaving = needsSaving || hasChanged
 
-      return payload
-    }, {})
+        return payload
+      }, {})
 
     if (needsSaving) {
       LocalStorage.writeDocument(contentKey, payload)
@@ -618,10 +635,7 @@ export function saveDocumentLocally ({contentKey}) {
  * @param  {Object}  collection   Collection schema
  * @param  {String}  documentId   The ID of the media document
  */
-export function saveMediaDocument ({
-  contentKey,
-  documentId
-}) {
+export function saveMediaDocument({contentKey, documentId}) {
   return (dispatch, getState) => {
     dispatch({
       key: contentKey,
@@ -637,33 +651,35 @@ export function saveMediaDocument ({
       body: JSON.stringify(local),
       headers: {
         Authorization: `Bearer ${bearerToken}`,
-        'Content-Type': 'application/json',
+        'Content-Type': 'application/json'
       },
       method: 'PUT'
-    }).then(response => {
-      if (!response.ok) {
-        return Promise.reject(response)
-      }
-
-      return response.json()
-    }).then(({results}) => {
-      dispatch({
-        data: results[0],
-        key: contentKey,
-        type: Types.SAVE_DOCUMENT_SUCCESS
-      })
-
-      // We've successfully saved the document, so we now need to clear
-      // the local storage key corresponding to the document.
-      LocalStorage.clearDocument(contentKey)
     })
-    .catch(error => {
-      dispatch({
-        data: error,
-        key: contentKey,
-        type: Types.SAVE_DOCUMENT_FAILURE
+      .then(response => {
+        if (!response.ok) {
+          return Promise.reject(response)
+        }
+
+        return response.json()
       })
-    })
+      .then(({results}) => {
+        dispatch({
+          data: results[0],
+          key: contentKey,
+          type: Types.SAVE_DOCUMENT_SUCCESS
+        })
+
+        // We've successfully saved the document, so we now need to clear
+        // the local storage key corresponding to the document.
+        LocalStorage.clearDocument(contentKey)
+      })
+      .catch(error => {
+        dispatch({
+          data: error,
+          key: contentKey,
+          type: Types.SAVE_DOCUMENT_FAILURE
+        })
+      })
   }
 }
 
@@ -675,11 +691,7 @@ export function saveMediaDocument ({
  * @param  {String}  contentKey   Content key
  * @param  {Number}  timestamp    Timestamp of the operation
  */
-export function setDocument ({
-  document,
-  contentKey: key,
-  timestamp
-} = {}) {
+export function setDocument({document, contentKey: key, timestamp} = {}) {
   const fromLocalStorage = LocalStorage.readDocument(key)
 
   return {
@@ -699,12 +711,7 @@ export function setDocument ({
  * @param  {Array}   results      Documents
  * @param  {Number}  timestamp    Timestamp of the operation
  */
-export function setDocumentList ({
-  contentKey,
-  metadata,
-  results,
-  timestamp
-}) {
+export function setDocumentList({contentKey, metadata, results, timestamp}) {
   return {
     key: contentKey,
     metadata,
@@ -721,7 +728,7 @@ export function setDocumentList ({
  * @param  {Object}  data         Any associated data, such as errors
  * @param  {String}  status       Status code
  */
-export function setDocumentListStatus ({contentKey, data, status}) {
+export function setDocumentListStatus({contentKey, data, status}) {
   return {
     data,
     key: contentKey,
@@ -755,11 +762,11 @@ export function startDocument({contentKey: key}) {
  * @param  {Object}  update       Object containing the fields being updated as
  *    well as their values
  */
-export function updateLocalDocument ({
+export function updateLocalDocument({
   contentKey: key,
   error = {},
   meta = {},
-  update = {},
+  update = {}
 } = {}) {
   return {
     error,
@@ -777,11 +784,7 @@ export function updateLocalDocument ({
  * @param  {String}  bearerToken  API access token
  * @param  {Array}   files        Files to be uploaded
  */
-function uploadMedia ({
-  api,
-  bearerToken,
-  files
-}) {
+function uploadMedia({api, bearerToken, files}) {
   const url = `${api.host}:${api.port}/media/upload`
   const body = new FormData()
 
@@ -804,14 +807,11 @@ function uploadMedia ({
  * @param  {String}  contentKey   Content key
  * @param  {Array}   files        Files to upload
  */
-export function uploadMediaDocuments ({
-  contentKey,
-  files
-}) {
+export function uploadMediaDocuments({contentKey, files}) {
   return (dispatch, getState) => {
     const {app} = getState()
     const {api} = app.config
-    
+
     dispatch({
       key: contentKey,
       type: Types.UPLOAD_MEDIA_START
@@ -821,17 +821,19 @@ export function uploadMediaDocuments ({
       api,
       bearerToken: getState().user.accessToken,
       files
-    }).then(() => {
-      dispatch({
-        key: contentKey,
-        type: Types.UPLOAD_MEDIA_SUCCESS
-      })
-    }).catch(error => {
-      dispatch({
-        data: error,
-        key: contentKey,
-        type: Types.UPLOAD_MEDIA_FAILURE
-      })
     })
+      .then(() => {
+        dispatch({
+          key: contentKey,
+          type: Types.UPLOAD_MEDIA_SUCCESS
+        })
+      })
+      .catch(error => {
+        dispatch({
+          data: error,
+          key: contentKey,
+          type: Types.UPLOAD_MEDIA_FAILURE
+        })
+      })
   }
 }

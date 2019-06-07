@@ -14,7 +14,7 @@ export default class TableRow extends React.Component {
     /**
      * When `true`, any empty row cells will be filled with a text element saying *None*.
      *
-     * **NOTE:** This prop is automatically passed down by `<Table/>`.     
+     * **NOTE:** This prop is automatically passed down by `<Table/>`.
      */
     fillBlanks: proptypes.bool,
 
@@ -33,11 +33,7 @@ export default class TableRow extends React.Component {
      * exceeded the maximum number of selected rows (multiDisabled), or if the
      * the table only allows a single row to be selected (single).
      */
-    selectableMode: proptypes.oneOf([
-      'multi',
-      'multiDisabled',
-      'single'
-    ]),
+    selectableMode: proptypes.oneOf(['multi', 'multiDisabled', 'single']),
 
     /**
      * Whether the row is currently selected.
@@ -76,12 +72,7 @@ export default class TableRow extends React.Component {
     const {onSelect, tableIndex} = this.props
 
     if (typeof onSelect === 'function') {
-      onSelect.call(
-        this,
-        tableIndex,
-        !this.props.selected,
-        event.shiftKey
-      )
+      onSelect.call(this, tableIndex, !this.props.selected, event.shiftKey)
     }
   }
 
@@ -96,20 +87,15 @@ export default class TableRow extends React.Component {
   }
 
   render() {
-    const {
-      selectable,
-      selectableMode,
-      selected
-    } = this.props
-    const rowStyle = new Style(styles, 'row')
-      .addIf('row-selected', selected)
+    const {selectable, selectableMode, selected} = this.props
+    const rowStyle = new Style(styles, 'row').addIf('row-selected', selected)
 
     return (
       <tr
         className={rowStyle.getClasses()}
         onClick={this.handleSelectRow.bind(this)}
       >
-        {selectable &&
+        {selectable && (
           <TableRowCell select={true}>
             <input
               checked={selected}
@@ -119,7 +105,7 @@ export default class TableRow extends React.Component {
               type={selectableMode === 'single' ? 'radio' : 'checkbox'}
             />
           </TableRowCell>
-        }
+        )}
         {this.renderChildren()}
       </tr>
     )

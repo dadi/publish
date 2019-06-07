@@ -27,9 +27,9 @@ class DocumentTableList extends React.Component {
     fields: proptypes.array,
 
     /**
-    * A callback to be used to obtain the base URL for the given page, as
-    * determined by the view.
-    */
+     * A callback to be used to obtain the base URL for the given page, as
+     * determined by the view.
+     */
     onBuildBaseUrl: proptypes.func,
 
     /**
@@ -72,12 +72,7 @@ class DocumentTableList extends React.Component {
   }
 
   handleRowRender(listableFields, value, data, column, index) {
-    const {
-      collection,
-      documentId,
-      onBuildBaseUrl,
-      referencedField
-    } = this.props
+    const {collection, documentId, onBuildBaseUrl, referencedField} = this.props
 
     // If we're on a nested document view, we don't want to add links to
     // documents (for now).
@@ -96,21 +91,17 @@ class DocumentTableList extends React.Component {
     })[0]
 
     if (
-      (firstStringField && firstStringField === column.id) || 
+      (firstStringField && firstStringField === column.id) ||
       (!firstStringField && index === 0)
     ) {
-      return (
-        <Link to={editLink}>{renderedValue}</Link>
-      )
+      return <Link to={editLink}>{renderedValue}</Link>
     }
 
     return renderedValue
   }
 
   handleTableSort(value, sortBy, sortOrder) {
-    const {
-      onBuildBaseUrl
-    } = this.props
+    const {onBuildBaseUrl} = this.props
     const link = onBuildBaseUrl({
       search: {
         order: sortOrder,
@@ -118,9 +109,7 @@ class DocumentTableList extends React.Component {
       }
     })
 
-    return (
-      <Link to={link}>{value}</Link>
-    )
+    return <Link to={link}>{value}</Link>
   }
 
   render() {
@@ -134,13 +123,16 @@ class DocumentTableList extends React.Component {
       sort
     } = this.props
     const collectionFields = (collection && collection.fields) || {}
-    const listableFields = Object.keys(collectionFields).reduce((fields, fieldName) => {
-      if (fieldsToDisplay.includes(fieldName)) {
-        fields[fieldName] = collectionFields[fieldName]
-      }
+    const listableFields = Object.keys(collectionFields).reduce(
+      (fields, fieldName) => {
+        if (fieldsToDisplay.includes(fieldName)) {
+          fields[fieldName] = collectionFields[fieldName]
+        }
 
-      return fields
-    }, {})
+        return fields
+      },
+      {}
+    )
     const tableColumns = Object.keys(listableFields).map(field => {
       if (!collection.fields[field]) return
 
@@ -170,13 +162,12 @@ class DocumentTableList extends React.Component {
   renderAnnotation(schema) {
     const fieldType = getFieldType(schema)
     const fieldComponentName = `Field${fieldType}`
-    const FieldComponentListHeadAnnotation = fieldComponents[fieldComponentName] &&
+    const FieldComponentListHeadAnnotation =
+      fieldComponents[fieldComponentName] &&
       fieldComponents[fieldComponentName].listHeadAnnotation
 
     if (FieldComponentListHeadAnnotation) {
-      return (
-        <FieldComponentListHeadAnnotation />
-      )  
+      return <FieldComponentListHeadAnnotation />
     }
   }
 
@@ -188,7 +179,8 @@ class DocumentTableList extends React.Component {
     const {api} = config
     const fieldType = getFieldType(schema)
     const fieldComponentName = `Field${fieldType}`
-    const FieldComponentList = fieldComponents[fieldComponentName] &&
+    const FieldComponentList =
+      fieldComponents[fieldComponentName] &&
       fieldComponents[fieldComponentName].list
 
     if (FieldComponentList) {

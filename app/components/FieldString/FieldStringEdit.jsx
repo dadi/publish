@@ -86,14 +86,12 @@ export default class FieldStringEdit extends React.Component {
      * The field schema.
      */
     schema: proptypes.object,
-    
+
     /**
      * The field value.
      */
     value: proptypes.oneOfType([
-      proptypes.arrayOf(
-        proptypes.string
-      ),
+      proptypes.arrayOf(proptypes.string),
       proptypes.object,
       proptypes.string
     ])
@@ -199,19 +197,19 @@ export default class FieldStringEdit extends React.Component {
         <select
           className={dropdownStyle.getClasses()}
           disabled={readOnly}
-          onChange={el => this.handleOnChange(this.getValueOfDropdown(el.target))}
+          onChange={el =>
+            this.handleOnChange(this.getValueOfDropdown(el.target))
+          }
           multiple={multiple}
           name={name}
           ref={this.selectDropdownOptions.bind(this, multiple)}
           value={selectedValue}
         >
-          {!multiple &&
-            <option
-              className={styles['dropdown-option']}
-              disabled
-              value=""
-            >{selectLabel}</option>
-          }
+          {!multiple && (
+            <option className={styles['dropdown-option']} disabled value="">
+              {selectLabel}
+            </option>
+          )}
 
           {options.map(option => {
             return (
@@ -219,7 +217,9 @@ export default class FieldStringEdit extends React.Component {
                 className={styles['dropdown-option']}
                 key={option.value}
                 value={option.value}
-              >{option.label}</option>
+              >
+                {option.label}
+              </option>
             )
           })}
         </select>
@@ -252,12 +252,14 @@ export default class FieldStringEdit extends React.Component {
     const readOnly = readonly === true
 
     // Is the field flagged as a link?
-    const isLink = display.link &&
+    const isLink =
+      display.link &&
       typeof value === 'string' &&
-      (value.indexOf('http://') * value.indexOf('https://') === 0)
-    const formattedLink = typeof display.link === 'string'
-      ? display.link.replace(/{value}/, value)
-      : value
+      value.indexOf('http://') * value.indexOf('https://') === 0
+    const formattedLink =
+      typeof display.link === 'string'
+        ? display.link.replace(/{value}/, value)
+        : value
 
     return (
       <Label
@@ -293,7 +295,9 @@ export default class FieldStringEdit extends React.Component {
             href={formattedLink}
             openInNewWindow={true}
             size="small"
-          >Open in new window</Button>
+          >
+            Open in new window
+          </Button>
         )}
       </Label>
     )
@@ -314,7 +318,7 @@ export default class FieldStringEdit extends React.Component {
     const fieldContentKey = JSON.stringify({
       fieldName: name
     })
-    
+
     return (
       <Label
         comment={(required && 'Required') || null}
@@ -332,7 +336,7 @@ export default class FieldStringEdit extends React.Component {
           onSaveRegister={onSaveRegister}
           onValidateRegister={onValidateRegister}
           value={value}
-        />        
+        />
       </Label>
     )
   }

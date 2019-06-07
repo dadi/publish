@@ -99,7 +99,7 @@ class DocumentFilters extends React.Component {
   }
 
   componentWillUnmount() {
-    window.removeEventListener('mousedown', this.clickHandler) 
+    window.removeEventListener('mousedown', this.clickHandler)
   }
 
   getFieldComponent(fieldName) {
@@ -190,12 +190,18 @@ class DocumentFilters extends React.Component {
       this.setState(({searchableFieldsPointer}) => ({
         searchableFieldsPointer: searchableFieldsPointer - 1
       }))
-    } else if (event.keyCode === 40 && searchableFieldsPointer < fields.length - 1) {
+    } else if (
+      event.keyCode === 40 &&
+      searchableFieldsPointer < fields.length - 1
+    ) {
       // Down.
       this.setState(({searchableFieldsPointer}) => ({
         searchableFieldsPointer: searchableFieldsPointer + 1
       }))
-    } else if ((event.keyCode === 27 || event.keyCode === 8) && !this.state.search) {
+    } else if (
+      (event.keyCode === 27 || event.keyCode === 8) &&
+      !this.state.search
+    ) {
       // ESC or backspace and no search term.
       this.removeFilter(this.filtersArray.length - 1, event)
     } else if (event.keyCode === 27) {
@@ -205,18 +211,16 @@ class DocumentFilters extends React.Component {
   }
 
   handleSelectedFilterFieldChange(newField) {
-    const {
-      selectedFilterOperator
-    } = this.state    
+    const {selectedFilterOperator} = this.state
     const fieldComponent = this.getFieldComponent(newField) || {}
     const fieldOperators = fieldComponent.filterOperators || {}
-    
+
     // If the new selected field supports the currently selected operator, we
     // keep it. Otherwise, we use the first operator defined by the new field
     // component.
-    const newOperator = fieldOperators[selectedFilterOperator] ?
-      selectedFilterOperator :
-      Object.keys(fieldOperators)[0]
+    const newOperator = fieldOperators[selectedFilterOperator]
+      ? selectedFilterOperator
+      : Object.keys(fieldOperators)[0]
 
     this.setState({
       selectedFilterField: newField,
@@ -266,9 +270,10 @@ class DocumentFilters extends React.Component {
     const newFiltersObject = this.filtersArray.reduce((result, filter) => {
       const {field, operator, value} = filter
 
-      result[field] = (!operator || operator === DEFAULT_OPERATOR_KEYWORD) ?
-        value :
-        {[operator]: value}
+      result[field] =
+        !operator || operator === DEFAULT_OPERATOR_KEYWORD
+          ? value
+          : {[operator]: value}
 
       return result
     }, {})
@@ -278,26 +283,26 @@ class DocumentFilters extends React.Component {
 
   removeFilter(index) {
     const {onUpdateFilters} = this.props
-    const newFilters = this.filtersArray.reduce((result, filter, arrayIndex) => {
-      if (index !== arrayIndex) {
-        const {field, operator, value} = filter
+    const newFilters = this.filtersArray.reduce(
+      (result, filter, arrayIndex) => {
+        if (index !== arrayIndex) {
+          const {field, operator, value} = filter
 
-        result[field] = {
-          [operator]: value
+          result[field] = {
+            [operator]: value
+          }
         }
-      }
 
-      return result
-    }, {})
+        return result
+      },
+      {}
+    )
 
     onUpdateFilters(newFilters)
   }
 
   render() {
-    const {
-      collection,
-      filters,
-    } = this.props
+    const {collection, filters} = this.props
     const {
       search: searchValue,
       selectedFilterField,
@@ -330,9 +335,11 @@ class DocumentFilters extends React.Component {
         >
           <TextInput
             className={styles.input}
-            onInput={event => this.setState({
-              search: event.target.value
-            })}
+            onInput={event =>
+              this.setState({
+                search: event.target.value
+              })
+            }
             onKeyDown={this.handleSearchableFieldsPointer.bind(
               this,
               searchableFields
@@ -342,14 +349,13 @@ class DocumentFilters extends React.Component {
             tabindex="1"
           />
 
-          {searchValue &&
+          {searchValue && (
             <div className={styles.suggestions}>
               {searchableFields.map((fieldName, index) => {
-                const suggestionStyle = new Style(styles, 'suggestion')
-                  .addIf(
-                    'suggestion-selected',
-                    this.state.searchableFieldsPointer === index
-                  )
+                const suggestionStyle = new Style(styles, 'suggestion').addIf(
+                  'suggestion-selected',
+                  this.state.searchableFieldsPointer === index
+                )
 
                 return (
                   <button
@@ -366,21 +372,23 @@ class DocumentFilters extends React.Component {
                 )
               })}
             </div>
-          }          
+          )}
         </form>
 
         <div className={styles.filters}>
           {this.filtersArray.map(this.renderFilter.bind(this))}
         </div>
 
-        <Button 
+        <Button
           className={styles.button}
           accent="data"
           onClick={this.handleFiltersButtonClick.bind(this)}
           type="button"
-        >Add filter</Button>
+        >
+          Add filter
+        </Button>
 
-        {selectedFilterIndex === -1 &&
+        {selectedFilterIndex === -1 && (
           <div className={styles['new-filter-tooltip']}>
             {this.renderFilterTooltip({
               field: selectedFilterField,
@@ -388,19 +396,13 @@ class DocumentFilters extends React.Component {
               value: selectedFilterValue
             })}
           </div>
-        }
+        )}
       </div>
     )
   }
 
   renderFilter(filter, index) {
-    const {
-      field,
-      FilterList,
-      operator,
-      operatorFriendly,
-      value
-    } = filter
+    const {field, FilterList, operator, operatorFriendly, value} = filter
     const {state} = this.props
     const {
       selectedFilterField,
@@ -411,29 +413,27 @@ class DocumentFilters extends React.Component {
     const fieldName = this.getFieldName(field)
     const fieldTypeHasFilterListComponent = typeof FilterList === 'function'
     const nodeField = fieldName && (
-      <span className={styles['filter-field']}>
-        {fieldName}
-      </span>
+      <span className={styles['filter-field']}>{fieldName}</span>
     )
     const nodeOperator = (
       <span className={styles['filter-operator']}>
         {operatorFriendly || operator || DEFAULT_OPERATOR_NAME}
       </span>
     )
-    const nodeValue = fieldTypeHasFilterListComponent
-      ? <FilterList
-          config={state.app.config}
-          nodeField={nodeField}
-          nodeOperator={nodeOperator}
-          value={value}
-        />
-      : null
+    const nodeValue = fieldTypeHasFilterListComponent ? (
+      <FilterList
+        config={state.app.config}
+        nodeField={nodeField}
+        nodeOperator={nodeOperator}
+        value={value}
+      />
+    ) : null
 
     return (
       <div
         className={styles['filter-wrapper']}
         key={field + operator + value}
-        ref={el => this.filterWrapper = el}
+        ref={el => (this.filterWrapper = el)}
       >
         <div
           className={styles.filter}
@@ -447,70 +447,74 @@ class DocumentFilters extends React.Component {
           <button
             className={styles['filter-close']}
             onClick={this.removeFilter.bind(this, index)}
-          >×</button>
+          >
+            ×
+          </button>
         </div>
 
-        {selectedFilterIndex === index && this.renderFilterTooltip({
-          field: selectedFilterField,
-          isUpdate: true,
-          operator: selectedFilterOperator,
-          value: selectedFilterValue
-        })}
+        {selectedFilterIndex === index &&
+          this.renderFilterTooltip({
+            field: selectedFilterField,
+            isUpdate: true,
+            operator: selectedFilterOperator,
+            value: selectedFilterValue
+          })}
       </div>
     )
   }
 
-  renderFilterTooltip({
-    field,
-    isUpdate,
-    operator,
-    value
-  } = {}) {
+  renderFilterTooltip({field, isUpdate, operator, value} = {}) {
     const {collection, filters, state} = this.props
 
     // Finding fields that are filterable (i.e. their component exports a
     // `filter` component) and don't already have a filter applied. The
     // result is an object mapping filterable field slugs to their human-
     // friendly name.
-    let filterableFields = Object.keys(collection.fields).reduce((result, slug) => {
-      let fieldComponent = this.getFieldComponent(slug)
+    let filterableFields = Object.keys(collection.fields).reduce(
+      (result, slug) => {
+        let fieldComponent = this.getFieldComponent(slug)
 
-      if (
-        fieldComponent.filterEdit &&
-        (field === slug || !filters || filters[slug] === undefined)
-      ) {
-        result[slug] = this.getFieldName(slug)  
-      }
+        if (
+          fieldComponent.filterEdit &&
+          (field === slug || !filters || filters[slug] === undefined)
+        ) {
+          result[slug] = this.getFieldName(slug)
+        }
 
-      return result
-    }, {})
+        return result
+      },
+      {}
+    )
 
     // Applying defaults.
     field = field || Object.keys(filterableFields)[0]
 
-    const {
-      filterEdit: FilterEditComponent,
-      filterOperators: operators = {}
-    } = this.getFieldComponent(field) || {}
+    const {filterEdit: FilterEditComponent, filterOperators: operators = {}} =
+      this.getFieldComponent(field) || {}
     const valueIsEmpty = value === null || value === undefined || value === ''
 
-    const tooltipStyle = new Style(styles, 'tooltip')
-      .addIf('tooltip-right', !Boolean(isUpdate))
-    const fieldSelectorStyle = new Style(styles)
-      .addIf('tooltip-dropdown-left', Boolean(operators))
-    const selectedOperator = operator ||
-      Object.keys(operators)[0] ||
-      DEFAULT_OPERATOR_KEYWORD
+    const tooltipStyle = new Style(styles, 'tooltip').addIf(
+      'tooltip-right',
+      !Boolean(isUpdate)
+    )
+    const fieldSelectorStyle = new Style(styles).addIf(
+      'tooltip-dropdown-left',
+      Boolean(operators)
+    )
+    const selectedOperator =
+      operator || Object.keys(operators)[0] || DEFAULT_OPERATOR_KEYWORD
 
     return (
       <form
         className={tooltipStyle.getClasses()}
-        onSubmit={this.handleSelectedFilterUpdate.bind(this, field, selectedOperator)}
+        onSubmit={this.handleSelectedFilterUpdate.bind(
+          this,
+          field,
+          selectedOperator
+        )}
       >
         <div className={styles['tooltip-section']}>
-          <h3
-            className={styles['tooltip-heading']}
-          >Filtering</h3>
+          <h3 className={styles['tooltip-heading']}>Filtering</h3>
 
           <DropdownNative
             className={fieldSelectorStyle.getClasses()}
@@ -520,31 +524,36 @@ class DocumentFilters extends React.Component {
             value={field || Object.keys(filterableFields)[0]}
           />
 
-          {operators &&
+          {operators && (
             <DropdownNative
               className={styles['tooltip-dropdown-right']}
-              onChange={value => this.setState({
-                selectedFilterOperator: value
-              })}
-              options={Object.assign({
-                [DEFAULT_OPERATOR_KEYWORD]: DEFAULT_OPERATOR_NAME
-              }, operators)}
+              onChange={value =>
+                this.setState({
+                  selectedFilterOperator: value
+                })
+              }
+              options={Object.assign(
+                {
+                  [DEFAULT_OPERATOR_KEYWORD]: DEFAULT_OPERATOR_NAME
+                },
+                operators
+              )}
               textSize="small"
               value={selectedOperator}
             />
-          }
+          )}
         </div>
 
         <div className={styles['tooltip-section']}>
-          <h3
-            className={styles['tooltip-heading']}
-          >Value</h3>
+          <h3 className={styles['tooltip-heading']}>Value</h3>
 
           <FilterEditComponent
             config={state.app.config}
-            onUpdate={value => this.setState({
-              selectedFilterValue: value
-            })}
+            onUpdate={value =>
+              this.setState({
+                selectedFilterValue: value
+              })
+            }
             value={value}
           />
         </div>
@@ -554,17 +563,17 @@ class DocumentFilters extends React.Component {
           className={styles['tooltip-cta']}
           disabled={valueIsEmpty}
           type="submit"
-        >{isUpdate ? 'Update' : 'Add'} filter</Button>
+        >
+          {isUpdate ? 'Update' : 'Add'} filter
+        </Button>
       </form>
-    ) 
+    )
   }
 
   renderSelectedFilter(value) {
     const message = `is ${value === false ? 'not ' : ''} selected`
 
-    return (
-      <span>{message}</span>
-    )
+    return <span>{message}</span>
   }
 }
 

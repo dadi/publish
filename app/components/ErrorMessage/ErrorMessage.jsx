@@ -27,51 +27,45 @@ export default class ErrorMessage extends React.Component {
   }
 
   getErrorData() {
-    const {
-      data,
-      type
-    } = this.props
+    const {data, type} = this.props
 
     switch (type) {
       case Constants.ERROR_DOCUMENT_NOT_FOUND:
         return {
           body: data.href && (
-            <Button
-              accent="system"
-              href={data.href}
-            >List documents</Button>            
+            <Button accent="system" href={data.href}>
+              List documents
+            </Button>
           ),
-          message: 'You\'re looking for a document that doesn\'t seem to exist.',
+          message: "You're looking for a document that doesn't seem to exist.",
           title: 'Oops!'
         }
 
       case Constants.ERROR_ROUTE_NOT_FOUND:
         return {
-          message: 'We couldn\'t find the page you\'re looking for, sorry.',
+          message: "We couldn't find the page you're looking for, sorry.",
           title: '404'
         }
 
       case Constants.STATUS_FAILED:
         return {
           body: (
-            <Button
-              accent="system"
-              href={window.location.pathname}
-            >Try again</Button>
+            <Button accent="system" href={window.location.pathname}>
+              Try again
+            </Button>
           ),
-          message: 'The API doesn\'t seem to be responding.',
+          message: "The API doesn't seem to be responding.",
           title: 'API failure'
         }
 
       case Constants.API_CONNECTION_ERROR:
         return {
           body: (
-            <Button
-              accent="system"
-              href={window.location.pathname}
-            >Try again</Button>
+            <Button accent="system" href={window.location.pathname}>
+              Try again
+            </Button>
           ),
-          message: data.detail || 'The API doesn\'t seem to be responding.',
+          message: data.detail || "The API doesn't seem to be responding.",
           title: 'API connection failure'
         }
 
@@ -87,10 +81,7 @@ export default class ErrorMessage extends React.Component {
     const errorData = this.getErrorData()
 
     return (
-      <HeroMessage
-        title={errorData.title}
-        subtitle={errorData.message}
-      >
+      <HeroMessage title={errorData.title} subtitle={errorData.message}>
         {errorData.body || null}
       </HeroMessage>
     )

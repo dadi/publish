@@ -1,6 +1,6 @@
 import * as Types from 'actions/actionTypes'
 
-export function setDocumentSelection ({key, selection}) {
+export function setDocumentSelection({key, selection}) {
   return dispatch => {
     // We need to ensure only valid documents are added to the selection.
     const documents = selection.filter(document => {

@@ -8,7 +8,6 @@ import {getUniqueId} from 'lib/util'
 import Button from 'components/Button/Button'
 
 export default class FileUpload extends React.Component {
-
   static propTypes = {
     /**
      * File type acceptance.
@@ -36,7 +35,7 @@ export default class FileUpload extends React.Component {
     /**
      * Whether the field is required.
      */
-    required: proptypes.bool,
+    required: proptypes.bool
   }
 
   static defaultProps = {
@@ -49,15 +48,11 @@ export default class FileUpload extends React.Component {
   }
 
   render() {
-    const {
-      accept,
-      children,
-      multiple
-    } = this.props
+    const {accept, children, multiple} = this.props
 
     return (
       <div>
-        <input 
+        <input
           accept={accept}
           className={styles['file-input']}
           id={this.fileInputId}
@@ -65,10 +60,9 @@ export default class FileUpload extends React.Component {
           type="file"
           onChange={this.handleFileSelect.bind(this)}
         />
-        <label
-          className={styles['label-file']}
-          htmlFor={this.fileInputId}
-        >{children}</label>
+        <label className={styles['label-file']} htmlFor={this.fileInputId}>
+          {children}
+        </label>
       </div>
     )
   }

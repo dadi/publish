@@ -31,12 +31,7 @@ export default class EditInterfaceSection extends React.Component {
   }
 
   render() {
-    const {
-      hasErrors,
-      isActive,
-      main,
-      sidebar
-    } = this.props
+    const {hasErrors, isActive, main, sidebar} = this.props
 
     let sectionStyle = new Style(styles, 'section')
     let mainBodyStyle = new Style(styles, 'main')
@@ -49,15 +44,9 @@ export default class EditInterfaceSection extends React.Component {
 
     return (
       <section className={sectionStyle.getClasses()}>
-        <div className={mainBodyStyle.getClasses()}>
-          {main}
-        </div>
+        <div className={mainBodyStyle.getClasses()}>{main}</div>
 
-        {sidebar &&
-          <div className={styles.sidebar}>
-            {sidebar}
-          </div>
-        }
+        {sidebar && <div className={styles.sidebar}>{sidebar}</div>}
       </section>
     )
   }

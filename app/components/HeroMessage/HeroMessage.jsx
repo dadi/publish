@@ -26,25 +26,15 @@ export default class HeroMessage extends React.Component {
   }
 
   render() {
-    const {
-      children,
-      subtitle,
-      title
-    } = this.props
+    const {children, subtitle, title} = this.props
 
     return (
       <div className={styles.container}>
-        {title &&
-          <h1 className={styles.title}>{title}</h1>
-        }
+        {title && <h1 className={styles.title}>{title}</h1>}
 
-        {subtitle &&
-          <p className={styles.subtitle}>{subtitle}</p>
-        }
+        {subtitle && <p className={styles.subtitle}>{subtitle}</p>}
 
-        <div className={styles.children}>
-          {children}
-        </div>
+        <div className={styles.children}>{children}</div>
       </div>
     )
   }

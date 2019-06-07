@@ -45,8 +45,8 @@ class DocumentList extends React.Component {
      * A function responsible for rendering the loading state of the document
      * list.
      */
-    onLoading: proptypes.func, 
-   
+    onLoading: proptypes.func,
+
     /**
      * A function responsible for rendering the documents. It is called with
      * the following named parameters:
@@ -95,9 +95,10 @@ class DocumentList extends React.Component {
   constructor(props) {
     super(props)
 
-    const shortcuts = typeof props.selectAllHotKey === 'string'
-      ? {[props.selectAllHotKey]: this.selectAll.bind(this)}
-      : null
+    const shortcuts =
+      typeof props.selectAllHotKey === 'string'
+        ? {[props.selectAllHotKey]: this.selectAll.bind(this)}
+        : null
 
     this.hotKeys = new HotKeys(shortcuts)
   }
@@ -118,7 +119,7 @@ class DocumentList extends React.Component {
     const oldData = oldProps.state.documents[contentKey] || {}
     const newData = state.documents[contentKey] || {}
     const dataIsDirty = oldData.dirty === false && newData.dirty === true
-    
+
     // If the component received a new content key or the data is dirty, which
     // may happen when documents are updated/deleted, we must fetch again.
     if (contentKey !== oldContentKey || dataIsDirty) {
@@ -198,7 +199,7 @@ class DocumentList extends React.Component {
       }
 
       // If not, we render the SpinningWheel component.
-      return <SpinningWheel/>
+      return <SpinningWheel />
     }
 
     const {metadata, results} = data
@@ -277,12 +278,7 @@ class DocumentList extends React.Component {
   }
 
   selectAll() {
-    const {
-      contentKey,
-      onSelect,
-      selection,
-      state
-    } = this.props
+    const {contentKey, onSelect, selection, state} = this.props
     const data = state.documents[contentKey]
 
     if (typeof onSelect === 'function') {
@@ -291,7 +287,4 @@ class DocumentList extends React.Component {
   }
 }
 
-export default connectRedux(
-  appActions,
-  documentActions,
-)(DocumentList)
+export default connectRedux(appActions, documentActions)(DocumentList)

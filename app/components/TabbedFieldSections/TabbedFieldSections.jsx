@@ -19,7 +19,7 @@ export default class TabbedFieldSections extends React.Component {
     /**
      * Render function for fields.
      */
-    renderField: proptypes.func,    
+    renderField: proptypes.func,
 
     /**
      * Array of sections to render.
@@ -32,15 +32,11 @@ export default class TabbedFieldSections extends React.Component {
   }
 
   render() {
-    const {
-      activeSection,
-      renderField,
-      sections
-    } = this.props
+    const {activeSection, renderField, sections} = this.props
 
     return (
       <div className={styles.container}>
-        {(sections.length > 1) && (
+        {sections.length > 1 && (
           <div className={styles.navigation}>
             {sections.map(section => (
               <SubNavItem
@@ -57,14 +53,18 @@ export default class TabbedFieldSections extends React.Component {
         {sections.map(section => {
           let fields = {
             main: section.fields.filter(field => {
-              return !field.publish ||
+              return (
+                !field.publish ||
                 !field.publish.placement ||
                 field.publish.placement === 'main'
+              )
             }),
             sidebar: section.fields.filter(field => {
-              return field.publish &&
+              return (
+                field.publish &&
                 field.publish.placement &&
                 field.publish.placement === 'sidebar'
+              )
             })
           }
 
@@ -81,21 +81,17 @@ export default class TabbedFieldSections extends React.Component {
             <section className={sectionStyle.getClasses()}>
               <div className={mainBodyStyle.getClasses()}>
                 {fields.main.map(field => (
-                  <div className={styles.field}>
-                    {renderField(field)}
-                  </div>
+                  <div className={styles.field}>{renderField(field)}</div>
                 ))}
               </div>
 
-              {(fields.sidebar.length > 0) &&
+              {fields.sidebar.length > 0 && (
                 <div className={styles.sidebar}>
                   {fields.sidebar.map(field => (
-                    <div className={styles.field}>
-                      {renderField(field)}
-                    </div>
+                    <div className={styles.field}>{renderField(field)}</div>
                   ))}
                 </div>
-              }
+              )}
             </section>
           )
         })}

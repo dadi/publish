@@ -83,21 +83,13 @@ export default class FieldBooleanEdit extends React.Component {
   }
 
   render() {
-    const {
-      displayName,
-      name,
-      schema,
-      value
-    } = this.props
+    const {displayName, name, schema, value} = this.props
 
     const publishBlock = schema.publish || {}
     const readOnly = publishBlock.readonly === true
 
     return (
-      <Label
-        compact={true}
-        label={displayName}
-      >
+      <Label compact={true} label={displayName}>
         <Checkbox
           name={name}
           onChange={this.handleOnChange.bind(this)}

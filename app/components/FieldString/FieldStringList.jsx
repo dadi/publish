@@ -34,7 +34,11 @@ export default class FieldStringList extends React.Component {
     }
 
     // If it is a link field
-    if (schema.publish && schema.publish.display && schema.publish.display.link) {
+    if (
+      schema.publish &&
+      schema.publish.display &&
+      schema.publish.display.link
+    ) {
       return this.renderLinkValue(value, schema.publish.display.link)
     }
 
@@ -72,7 +76,8 @@ export default class FieldStringList extends React.Component {
       optionsArray = optionsArray.slice(0, maxOptions)
     }
 
-    const optionsString = optionsArray.join(', ') + ((excessOptions > 0) ? ` + ${excessOptions}` : '')
+    const optionsString =
+      optionsArray.join(', ') + (excessOptions > 0 ? ` + ${excessOptions}` : '')
 
     return optionsString
   }
@@ -88,17 +93,16 @@ export default class FieldStringList extends React.Component {
   }
 
   renderLinkValue(value, template) {
-    let valueFormatted = 
-      value
-        .replace(/(^\w+:|^)\/\//, '')
-        .replace(/\/$/, '')
+    let valueFormatted = value.replace(/(^\w+:|^)\/\//, '').replace(/\/$/, '')
 
     if (typeof template === 'string') {
       value = template.replace(/{value}/, value)
     }
 
     return (
-      <a href={value} target="_blank">{valueFormatted}</a>
+      <a href={value} target="_blank">
+        {valueFormatted}
+      </a>
     )
   }
 }

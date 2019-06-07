@@ -38,10 +38,7 @@ export default class DropdownNative extends React.Component {
     /**
      * The size of the text to be rendered.
      */
-    textSize: proptypes.oneOf([
-      'small',
-      'normal'
-    ]),
+    textSize: proptypes.oneOf(['small', 'normal']),
 
     /**
      * The key of the currently selected value.
@@ -74,18 +71,16 @@ export default class DropdownNative extends React.Component {
         onChange={e => onChange(e.target.value)}
         value={value}
       >
-        {placeholderValue &&
-          <option
-            disabled
-            value={placeholderValue}
-          >{placeholderLabel || placeholderValue}</option>
-        }
+        {placeholderValue && (
+          <option disabled value={placeholderValue}>
+            {placeholderLabel || placeholderValue}
+          </option>
+        )}
 
         {Object.keys(options).map(key => (
-          <option
-            key={key}
-            value={key}
-          >{options[key]}</option>
+          <option key={key} value={key}>
+            {options[key]}
+          </option>
         ))}
       </select>
     )

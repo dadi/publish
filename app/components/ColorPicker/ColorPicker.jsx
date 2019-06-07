@@ -34,7 +34,7 @@ export default class ColorPicker extends React.Component {
 
   static defaultProps = {
     value: '000000'
-  }  
+  }
 
   constructor(props) {
     super(props)
@@ -80,13 +80,31 @@ export default class ColorPicker extends React.Component {
     this.elementHue.addEventListener('touchmove', this.handleProcessHue)
 
     // Attach palette events.
-    this.elementPalette.addEventListener('mousedown', this.handleStartSettingPalette)
-    this.elementPalette.addEventListener('mouseup', this.handleStopSettingPalette)
-    this.elementPalette.addEventListener('mouseout', this.handleStopSettingPalette)
+    this.elementPalette.addEventListener(
+      'mousedown',
+      this.handleStartSettingPalette
+    )
+    this.elementPalette.addEventListener(
+      'mouseup',
+      this.handleStopSettingPalette
+    )
+    this.elementPalette.addEventListener(
+      'mouseout',
+      this.handleStopSettingPalette
+    )
     this.elementPalette.addEventListener('mousemove', this.handleProcessPalette)
-    this.elementPalette.addEventListener('touchstart', this.handleStartSettingPalette)
-    this.elementPalette.addEventListener('touchend', this.handleStopSettingPalette)
-    this.elementPalette.addEventListener('touchcancel', this.handleStopSettingPalette)
+    this.elementPalette.addEventListener(
+      'touchstart',
+      this.handleStartSettingPalette
+    )
+    this.elementPalette.addEventListener(
+      'touchend',
+      this.handleStopSettingPalette
+    )
+    this.elementPalette.addEventListener(
+      'touchcancel',
+      this.handleStopSettingPalette
+    )
     this.elementPalette.addEventListener('touchmove', this.handleProcessPalette)
   }
 
@@ -96,20 +114,50 @@ export default class ColorPicker extends React.Component {
     this.elementHue.removeEventListener('mouseup', this.handleStopSettingHue)
     this.elementHue.removeEventListener('mouseout', this.handleStopSettingHue)
     this.elementHue.removeEventListener('mousemove', this.handleProcessHue)
-    this.elementHue.removeEventListener('touchstart', this.handleStartSettingHue)
+    this.elementHue.removeEventListener(
+      'touchstart',
+      this.handleStartSettingHue
+    )
     this.elementHue.removeEventListener('touchend', this.handleStopSettingHue)
-    this.elementHue.removeEventListener('touchcancel', this.handleStopSettingHue)
+    this.elementHue.removeEventListener(
+      'touchcancel',
+      this.handleStopSettingHue
+    )
     this.elementHue.removeEventListener('touchmove', this.handleProcessHue)
 
     // Remove palette events.
-    this.elementPalette.removeEventListener('mousedown', this.handleStartSettingPalette)
-    this.elementPalette.removeEventListener('mouseup', this.handleStopSettingPalette)
-    this.elementPalette.removeEventListener('mouseout', this.handleStopSettingPalette)
-    this.elementPalette.removeEventListener('mousemove', this.handleProcessPalette)
-    this.elementPalette.removeEventListener('touchstart', this.handleStartSettingPalette)
-    this.elementPalette.removeEventListener('touchend', this.handleStopSettingPalette)
-    this.elementPalette.removeEventListener('touchcancel', this.handleStopSettingPalette)
-    this.elementPalette.removeEventListener('touchmove', this.handleProcessPalette)
+    this.elementPalette.removeEventListener(
+      'mousedown',
+      this.handleStartSettingPalette
+    )
+    this.elementPalette.removeEventListener(
+      'mouseup',
+      this.handleStopSettingPalette
+    )
+    this.elementPalette.removeEventListener(
+      'mouseout',
+      this.handleStopSettingPalette
+    )
+    this.elementPalette.removeEventListener(
+      'mousemove',
+      this.handleProcessPalette
+    )
+    this.elementPalette.removeEventListener(
+      'touchstart',
+      this.handleStartSettingPalette
+    )
+    this.elementPalette.removeEventListener(
+      'touchend',
+      this.handleStopSettingPalette
+    )
+    this.elementPalette.removeEventListener(
+      'touchcancel',
+      this.handleStopSettingPalette
+    )
+    this.elementPalette.removeEventListener(
+      'touchmove',
+      this.handleProcessPalette
+    )
   }
 
   handleHueChange(event) {
@@ -117,7 +165,7 @@ export default class ColorPicker extends React.Component {
     const huePosition = this.normalisePosition(event).y
     const hsv = {
       ...Color.hex2hsv(value),
-      h: huePosition / this.elementHue.offsetHeight * 360
+      h: (huePosition / this.elementHue.offsetHeight) * 360
     }
 
     if (typeof onChange === 'function') {
@@ -127,10 +175,7 @@ export default class ColorPicker extends React.Component {
 
   handlePaletteChange(event) {
     const {onChange, value} = this.props
-    const {
-      offsetHeight: height,
-      offsetWidth: width
-    } = this.elementPalette
+    const {offsetHeight: height, offsetWidth: width} = this.elementPalette
     const paletteCoordinates = this.normalisePosition(event)
     const hsv = {
       ...Color.hex2hsv(value),
@@ -145,7 +190,7 @@ export default class ColorPicker extends React.Component {
 
   normalisePosition(event) {
     // Handle touch events.
-    if (~event.type.indexOf('touch')) {    
+    if (~event.type.indexOf('touch')) {
       let touch = event.touches[0] || event.changedTouches[0]
       let rect = event.target.getBoundingClientRect()
 
@@ -182,10 +227,9 @@ export default class ColorPicker extends React.Component {
 
   render() {
     const {className, value} = this.props
-    const containerStyle = new Style(styles, 'container')
-      .addResolved(className)
+    const containerStyle = new Style(styles, 'container').addResolved(className)
     const valueHsv = Color.hex2hsv(value)
-    const huePosition = (valueHsv.h % 360) * 200 / 360
+    const huePosition = ((valueHsv.h % 360) * 200) / 360
     const paletteBackgroundColor = Color.hsv2rgb({
       h: valueHsv.h,
       s: 1,
@@ -200,12 +244,12 @@ export default class ColorPicker extends React.Component {
       <div className={containerStyle.getClasses()}>
         <div
           className={styles.palette}
-          ref={el => this.elementPalette = el}
+          ref={el => (this.elementPalette = el)}
           style={{backgroundColor: `#${paletteBackgroundColor}`}}
         >
           <div
             className={styles.picker}
-            ref={el => this.elementPaletteIndicator = el}
+            ref={el => (this.elementPaletteIndicator = el)}
             style={{
               backgroundColor: `#${value}`,
               top: paletteCoordinates.y,
@@ -214,13 +258,10 @@ export default class ColorPicker extends React.Component {
           />
         </div>
 
-        <div
-          className={styles.hue}
-          ref={el => this.elementHue = el}
-        >
+        <div className={styles.hue} ref={el => (this.elementHue = el)}>
           <div
             className={styles.slider}
-            ref={el => this.elementHueIndicator = el}
+            ref={el => (this.elementHueIndicator = el)}
             style={{top: huePosition}}
           />
         </div>

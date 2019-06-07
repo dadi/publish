@@ -17,7 +17,7 @@ export function decodeSearch(searchString) {
     } catch (err) {}
   })
 
-  return parameters  
+  return parameters
 }
 
 export function encodeSearch(searchObject) {

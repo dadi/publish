@@ -2,7 +2,7 @@
  * Convert HSV representation to RGB HEX string.
  * Credits to raphaeljs
  */
-function hsv2rgb (hsv) {
+function hsv2rgb(hsv) {
   let R, G, B, X, C
   let h = (hsv.h % 360) / 60
 
@@ -33,7 +33,7 @@ module.exports.hsv2rgb = hsv2rgb
  * r, g, b can be either in <0,1> range or <0,255> range.
  * Credits to raphaeljs
  */
-function rgb2hsv (rgb) {
+function rgb2hsv(rgb) {
   let r = rgb.r
   let g = rgb.g
   let b = rgb.b
@@ -52,7 +52,11 @@ function rgb2hsv (rgb) {
   H =
     C == 0
       ? null
-      : V == r ? (g - b) / C + (g < b ? 6 : 0) : V == g ? (b - r) / C + 2 : (r - g) / C + 4
+      : V == r
+      ? (g - b) / C + (g < b ? 6 : 0)
+      : V == g
+      ? (b - r) / C + 2
+      : (r - g) / C + 4
   H = (H % 6) * 60
   S = C == 0 ? 0 : C / V
   /* eslint-enable */
@@ -62,19 +66,19 @@ function rgb2hsv (rgb) {
 
 module.exports.rgb2hsv = rgb2hsv
 
-module.exports.hsv2hex = function (hsv) {
+module.exports.hsv2hex = function(hsv) {
   return hsv2rgb(hsv).hex
 }
 
-module.exports.rgb2hex = function (rgb) {
+module.exports.rgb2hex = function(rgb) {
   return hsv2rgb(rgb2hsv(rgb)).hex
 }
 
-module.exports.hex2hsv = function (hex) {
+module.exports.hex2hsv = function(hex) {
   return rgb2hsv(hex2rgb(hex))
 }
 
-function hex2rgb (hex) {
+function hex2rgb(hex) {
   /* eslint-disable */
   return {
     r: parseInt(hex.substr(0, 2), 16),

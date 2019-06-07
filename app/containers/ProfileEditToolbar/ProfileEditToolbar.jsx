@@ -62,9 +62,9 @@ class ProfileEditToolbar extends React.Component {
   render() {
     const {state} = this.props
     const validationErrors = state.validationErrors
-    const hasValidationErrors = validationErrors &&
-      Object.keys(validationErrors)
-        .filter(field => validationErrors[field])
+    const hasValidationErrors =
+      validationErrors &&
+      Object.keys(validationErrors).filter(field => validationErrors[field])
         .length
 
     return (
@@ -74,13 +74,13 @@ class ProfileEditToolbar extends React.Component {
             accent="save"
             disabled={hasValidationErrors}
             onClick={this.handleSave.bind(this)}
-          >Save settings</Button>
+          >
+            Save settings
+          </Button>
         </div>
       </Toolbar>
     )
   }
 }
 
-export default connectRedux(
-  userActions
-)(ProfileEditToolbar)
+export default connectRedux(userActions)(ProfileEditToolbar)

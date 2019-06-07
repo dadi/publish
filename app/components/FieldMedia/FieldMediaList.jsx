@@ -4,7 +4,7 @@ import proptypes from 'prop-types'
 import FieldMediaItem from './FieldMediaItem'
 import styles from './FieldMedia.css'
 
-export default class FieldMediaList extends React.Component { 
+export default class FieldMediaList extends React.Component {
   static propTypes = {
     /**
      * The schema of the API being used.
@@ -19,10 +19,7 @@ export default class FieldMediaList extends React.Component {
     /**
      * The field value.
      */
-    value: proptypes.oneOfType([
-      proptypes.array,
-      proptypes.string
-    ]),
+    value: proptypes.oneOfType([proptypes.array, proptypes.string]),
 
     /**
      * The field schema.
@@ -36,24 +33,20 @@ export default class FieldMediaList extends React.Component {
 
   render() {
     const {config, value} = this.props
-    const values = (value && !Array.isArray(value)) ? [value] : value
+    const values = value && !Array.isArray(value) ? [value] : value
     const multiple = values && values.length > 1
 
     return (
       <div>
-        {values &&
+        {values && (
           <div>
-            <FieldMediaItem
-              config={config}
-              isList={true}
-              value={values[0]}
-            />
+            <FieldMediaItem config={config} isList={true} value={values[0]} />
 
-            {multiple &&
-              (<span className={styles.more}>and {values.length - 1} more</span>)
-            }
+            {multiple && (
+              <span className={styles.more}>and {values.length - 1} more</span>
+            )}
           </div>
-        }
+        )}
       </div>
     )
   }

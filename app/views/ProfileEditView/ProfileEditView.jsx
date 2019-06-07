@@ -29,7 +29,7 @@ const PROFILE_SCHEMA = {
       publish: {
         section: 'Personal details'
       }
-    },    
+    },
     currentSecret: {
       label: 'Current password',
       publish: {
@@ -75,7 +75,7 @@ class ProfileEditView extends React.Component {
 
       return actions.setNotification({
         message
-      })      
+      })
     }
   }
 
@@ -88,9 +88,10 @@ class ProfileEditView extends React.Component {
     fields.forEach(field => {
       // Unless the Publish block specifically states that the field should be
       // placed on the sidebar, we stick it in the main placement.
-      const placement = field.publish && field.publish.placement === 'sidebar'
-        ? placements.sidebar
-        : placements.main
+      const placement =
+        field.publish && field.publish.placement === 'sidebar'
+          ? placements.sidebar
+          : placements.main
 
       placement.push(field)
     })
@@ -114,7 +115,7 @@ class ProfileEditView extends React.Component {
     const {section: activeSectionSlug} = route.params
 
     let sections = {}
-    
+
     Object.keys(fields).forEach(fieldSlug => {
       const field = Object.assign({}, fields[fieldSlug], {
         _id: fieldSlug
@@ -132,17 +133,16 @@ class ProfileEditView extends React.Component {
     // Converting sections to an array, adding a slug to each section.
     const sectionsArray = Object.keys(sections).map((sectionName, index) => {
       const fields = sections[sectionName]
-      const sectionHasErrors = fields.some(
-        field => validationErrors[field._id]
-      )
+      const sectionHasErrors = fields.some(field => validationErrors[field._id])
       const slug = slugify(sectionName)
-      
+
       // We mark this as the currently active section if there is a section
       // in the URL and this is the one that matches it, or there isn't one
       // in the URL and this is the first one.
-      const isActive = activeSectionSlug && activeSectionSlug.length ?
-        activeSectionSlug === slug :
-        index === 0
+      const isActive =
+        activeSectionSlug && activeSectionSlug.length
+          ? activeSectionSlug === slug
+          : index === 0
 
       // Takes the fields and groups them into a `main` and `sidebar` arrays.
       const fieldsInPlacements = this.groupFieldsIntoPlacements(fields)
@@ -164,12 +164,9 @@ class ProfileEditView extends React.Component {
 
   handleBuildBaseUrl({
     referenceFieldSelect = this.props.route.params.referenceField,
-    section = this.props.route.params.section    
+    section = this.props.route.params.section
   }) {
-    let urlNodes = [
-      'profile',
-      section
-    ]
+    let urlNodes = ['profile', section]
 
     if (referenceFieldSelect) {
       urlNodes = urlNodes.concat(['select', referenceFieldSelect])
@@ -197,9 +194,7 @@ class ProfileEditView extends React.Component {
         section: firstSection
       })
 
-      return (
-        <Redirect to={redirectUrl}/>
-      )
+      return <Redirect to={redirectUrl} />
     }
 
     setPageTitle('Profile')
@@ -245,11 +240,8 @@ class ProfileEditView extends React.Component {
           />
         ))}
       </EditInterface>
-    )    
+    )
   }
 }
 
-export default connectRedux(
-  appActions,
-  userActions
-)(ProfileEditView)
+export default connectRedux(appActions, userActions)(ProfileEditView)

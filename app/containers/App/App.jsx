@@ -28,7 +28,8 @@ import SignInView from 'views/SignInView/SignInView'
 import ProfileEditView from 'views/ProfileEditView/ProfileEditView'
 
 const REGEX_NUMBER = '([0-9]+)'
-const REGEX_DOCUMENT_ID = '([a-f0-9]{24}|[a-f0-9]{32}|[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12})'
+const REGEX_DOCUMENT_ID =
+  '([a-f0-9]{24}|[a-f0-9]{32}|[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12})'
 const REGEX_SLUG = '([a-z-]+)'
 
 class Route extends React.Component {
@@ -42,10 +43,7 @@ class Route extends React.Component {
     search = decodeSearch(window.location.search),
     section = this.props.route.params.section
   } = {}) {
-    let urlNodes = [
-      group,
-      collection
-    ]
+    let urlNodes = [group, collection]
 
     if (createNew) {
       urlNodes.push('new')
@@ -74,9 +72,7 @@ class Route extends React.Component {
     if (!isSignedIn && newProps.isSignedIn) {
       const {redirect} = decodeSearch(location.search)
 
-      this.redirectUrl = redirect
-        ? decodeURIComponent(redirect)
-        : '/'
+      this.redirectUrl = redirect ? decodeURIComponent(redirect) : '/'
     } else {
       this.redirectUrl = undefined
     }
@@ -84,9 +80,7 @@ class Route extends React.Component {
 
   render() {
     if (this.redirectUrl) {
-      return (
-        <Redirect to={this.redirectUrl}/>
-      )
+      return <Redirect to={this.redirectUrl} />
     }
 
     const {
@@ -107,15 +101,13 @@ class Route extends React.Component {
             const redirectParam = ['/', '/sign-out'].includes(redirectPath)
               ? ''
               : `?redirect=${encodeURIComponent(redirectPath)}`
-            
-            return (
-              <Redirect to={`/sign-in${redirectParam}`}/>
-            )
+
+            return <Redirect to={`/sign-in${redirectParam}`} />
           }
 
           if (typeof render === 'function') {
             return render(props)
-          }          
+          }
 
           const route = {
             params: routeProps.computedMatch.params,
@@ -126,9 +118,7 @@ class Route extends React.Component {
 
           return (
             <>
-              <NotificationCentre
-                route={route}
-              />
+              <NotificationCentre route={route} />
 
               <Component
                 {...props}
@@ -154,9 +144,12 @@ class App extends React.Component {
   componentDidMount() {
     const {actions} = this.props
 
-    window.addEventListener('resize', debounce(() => {
-      actions.setScreenWidth(window.innerWidth)
-    }, 500))
+    window.addEventListener(
+      'resize',
+      debounce(() => {
+        actions.setScreenWidth(window.innerWidth)
+      }, 500)
+    )
     document.addEventListener('dragstart', this.handleDragDropEvents, false)
     document.addEventListener('dragend', this.handleDragDropEvents, false)
     document.addEventListener('dragover', this.handleDragDropEvents, false)
@@ -180,7 +173,7 @@ class App extends React.Component {
   }
 
   /**
-   * Handle Drag Drop Events 
+   * Handle Drag Drop Events
    * Block and drag and drop actions to handle accidental
    * drop outside of FileUpload and other asset drop handlers.
    * @param  {Event} event Event listener object.
@@ -275,9 +268,7 @@ class App extends React.Component {
             render={() => {
               actions.signOut()
 
-              return (
-                <Redirect to='/'/>
-              )
+              return <Redirect to="/" />
             }}
             config={state.app.config}
           />

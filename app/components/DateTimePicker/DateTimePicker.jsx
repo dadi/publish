@@ -36,11 +36,7 @@ export default class DateTimePicker extends React.Component {
     this.hoursRefs = []
 
     const date = props.date || new Date()
-    const displayDate = new Date(
-      date.getFullYear(),
-      date.getMonth(),
-      1
-    )
+    const displayDate = new Date(date.getFullYear(), date.getMonth(), 1)
 
     this.state = {
       displayDate,
@@ -53,10 +49,10 @@ export default class DateTimePicker extends React.Component {
     const {date} = this.props
     const {date: nextDate} = nextProps
 
-    if (date && nextDate && (date.getTime() !== nextDate.getTime())) {
+    if (date && nextDate && date.getTime() !== nextDate.getTime()) {
       this.setState({
         monthOffset: 0
-      })      
+      })
     }
   }
 
@@ -67,7 +63,7 @@ export default class DateTimePicker extends React.Component {
     // adjust the scroll position accordingly.
     if (!prevState.pickingTime && pickingTime) {
       const date = this.getInternalDate()
-      
+
       let closestDate
 
       this.hoursRefs.some(hourRef => {
@@ -81,7 +77,8 @@ export default class DateTimePicker extends React.Component {
       const offset = closestDate && closestDate.element.offsetTop
 
       if (this.hoursContainerRef) {
-        this.hoursContainerRef.scrollTop = offset - (this.hoursContainerRef.clientHeight / 2)
+        this.hoursContainerRef.scrollTop =
+          offset - this.hoursContainerRef.clientHeight / 2
       }
     }
   }
@@ -138,10 +135,24 @@ export default class DateTimePicker extends React.Component {
     const {className} = this.props
     const {displayDate, pickingTime} = this.state
     const containerStyle = new Style(styles, 'container').addResolved(className)
-    const firstDayOfMonth = new Date(displayDate.getFullYear(), displayDate.getMonth(), 1)
-    const lastDayOfMonth = new Date(displayDate.getFullYear(), displayDate.getMonth() + 1, 0)
+    const firstDayOfMonth = new Date(
+      displayDate.getFullYear(),
+      displayDate.getMonth(),
+      1
+    )
+    const lastDayOfMonth = new Date(
+      displayDate.getFullYear(),
+      displayDate.getMonth() + 1,
+      0
+    )
     const daysFromPreviousMonth = firstDayOfMonth.getDay()
-    const numWeeks = Math.ceil((lastDayOfMonth.getDate() - firstDayOfMonth.getDate() + 1 + daysFromPreviousMonth) / 7)
+    const numWeeks = Math.ceil(
+      (lastDayOfMonth.getDate() -
+        firstDayOfMonth.getDate() +
+        1 +
+        daysFromPreviousMonth) /
+        7
+    )
     const displayDateTime = new DateTime(displayDate)
 
     let rows = []
@@ -150,14 +161,10 @@ export default class DateTimePicker extends React.Component {
       let days = []
 
       for (let weekDay = 1; weekDay <= 7; weekDay++) {
-        days.push(
-          this.renderDay((week * 7) + weekDay - daysFromPreviousMonth)
-        )
+        days.push(this.renderDay(week * 7 + weekDay - daysFromPreviousMonth))
       }
 
-      rows.push(
-        <tr key={week}>{days}</tr>
-      )
+      rows.push(<tr key={week}>{days}</tr>)
     }
 
     return (
@@ -167,15 +174,21 @@ export default class DateTimePicker extends React.Component {
             className={styles.arrow}
             onClick={this.handleMonthChange.bind(this, -1)}
             type="button"
-          >←</button>
+          >
+            ←
+          </button>
 
-          <p className={styles['current-date']}>{displayDateTime.format('MMMM YYYY')}</p>
+          <p className={styles['current-date']}>
+            {displayDateTime.format('MMMM YYYY')}
+          </p>
 
           <button
             className={styles.arrow}
             onClick={this.handleMonthChange.bind(this, 1)}
             type="button"
-          >→</button>
+          >
+            →
+          </button>
         </div>
 
         <table className={styles.calendar}>
@@ -190,15 +203,15 @@ export default class DateTimePicker extends React.Component {
               <th className={styles['calendar-head']}>Sa</th>
             </tr>
           </thead>
-          <tbody>
-            {rows}
-          </tbody>
+          <tbody>{rows}</tbody>
         </table>
 
         <button
           className={styles['hours-launcher']}
           onClick={this.handleTimeToggle.bind(this)}
-          type="button">{displayDateTime.format('HH:mm')}
+          type="button"
+        >
+          {displayDateTime.format('HH:mm')}
         </button>
 
         {pickingTime && this.renderHours()}
@@ -228,7 +241,9 @@ export default class DateTimePicker extends React.Component {
           className={dayStyle.getClasses()}
           onClick={this.handleDatePick.bind(this, newDate)}
           type="button"
-        >{paddedDay}</button>
+        >
+          {paddedDay}
+        </button>
       </td>
     )
   }

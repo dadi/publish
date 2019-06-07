@@ -2,7 +2,7 @@ import React from 'react'
 import proptypes from 'prop-types'
 import styles from './FieldMedia.css'
 
-export default class FieldMediaItem extends React.Component { 
+export default class FieldMediaItem extends React.Component {
   static propTypes = {
     /**
      * A subset of the app config containing data specific to this field type.
@@ -17,10 +17,7 @@ export default class FieldMediaItem extends React.Component {
     /**
      * The field value.
      */
-    value: proptypes.oneOfType([
-      proptypes.object,
-      proptypes.string
-    ])
+    value: proptypes.oneOfType([proptypes.object, proptypes.string])
   }
 
   render() {
@@ -32,21 +29,20 @@ export default class FieldMediaItem extends React.Component {
     }
 
     // File location url
-    let src = value._previewData
-      ? value._previewData
-      : value.url || value.path
+    let src = value._previewData ? value._previewData : value.url || value.path
 
-    const fileName = value.fileName &&
-      value.fileName.split('.').slice(0, -1).join('.')
-    const extension = value.fileName &&
-      value.fileName.slice(-1)[0]
+    const fileName =
+      value.fileName &&
+      value.fileName
+        .split('.')
+        .slice(0, -1)
+        .join('.')
+    const extension = value.fileName && value.fileName.slice(-1)[0]
 
     let icon = (
       <div className={styles.file}>
         <img src="/_public/images/icon-file.svg" width="25" />
-        {extension &&
-          <span className={styles.ext}>{extension}</span>
-        }
+        {extension && <span className={styles.ext}>{extension}</span>}
       </div>
     )
 

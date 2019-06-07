@@ -9,8 +9,6 @@ import styles from './SpinningWheel.css'
  */
 export default class SpinningWheel extends React.Component {
   render() {
-    return (
-      <div className={styles.wrapper} />
-    )
+    return <div className={styles.wrapper} />
   }
 }

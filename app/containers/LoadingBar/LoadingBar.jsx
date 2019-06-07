@@ -104,7 +104,7 @@ class LoadingBar extends React.Component {
     }
 
     if (!wasLoading && isLoading) {
-      this.start()  
+      this.start()
     }
 
     if (wasLoading && !isLoading) {
@@ -126,7 +126,7 @@ class LoadingBar extends React.Component {
         className={styles.bar}
         style={{
           opacity: visible ? '1' : '0',
-          transform: `translate3d(-${100 - (percentage * 100)}%, 0, 0)`
+          transform: `translate3d(-${100 - percentage * 100}%, 0, 0)`
         }}
       >
         <div className={styles.tip} />
@@ -135,6 +135,4 @@ class LoadingBar extends React.Component {
   }
 }
 
-export default connectRedux(
-  appActions
-)(LoadingBar)
+export default connectRedux(appActions)(LoadingBar)

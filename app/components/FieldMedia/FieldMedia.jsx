@@ -3,9 +3,7 @@ import list from './FieldMediaList'
 import referenceSelect from './FieldMediaReferenceSelect'
 
 function onValidate({validateFn, value}) {
-  const arrayValue = Array.isArray(value)
-    ? value
-    : [value]
+  const arrayValue = Array.isArray(value) ? value : [value]
   const allValuesAreUploads = arrayValue.every(value => {
     return value && value._previewData && value._file
   })
@@ -21,9 +19,4 @@ function onValidate({validateFn, value}) {
   return validateFn(value)
 }
 
-export {
-  edit,
-  list,
-  onValidate,
-  referenceSelect
-}
+export {edit, list, onValidate, referenceSelect}

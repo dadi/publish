@@ -37,9 +37,10 @@ class DocumentListView extends React.Component {
 
     // Have we just deleted some documents?
     if (wasDeleting && !isDeleting) {
-      const message = wasDeleting > 1 ?
-        `${wasDeleting} documents have been deleted` :
-        'The document has been deleted'
+      const message =
+        wasDeleting > 1
+          ? `${wasDeleting} documents have been deleted`
+          : 'The document has been deleted'
 
       actions.setNotification({
         message
@@ -49,11 +50,7 @@ class DocumentListView extends React.Component {
 
   getContentKey() {
     const {route} = this.props
-    const {
-      collection,
-      group,
-      page = '1'
-    } = route.params
+    const {collection, group, page = '1'} = route.params
     const {searchString} = route
 
     return JSON.stringify({collection, group, page, searchString})
@@ -95,10 +92,7 @@ class DocumentListView extends React.Component {
   }
 
   handleEmptyDocumentList({selection}) {
-    const {
-      onBuildBaseUrl,
-      route
-    } = this.props
+    const {onBuildBaseUrl, route} = this.props
     const {filter} = route.search
 
     if (filter && Object.keys(filter).length > 0) {
@@ -116,9 +110,7 @@ class DocumentListView extends React.Component {
           }
         })
 
-        return (
-          <Redirect to={redirectUrl}/>
-        )
+        return <Redirect to={redirectUrl} />
       }
 
       return (
@@ -131,7 +123,9 @@ class DocumentListView extends React.Component {
             href={onBuildBaseUrl.call(this, {
               search: {}
             })}
-          >Clear filters</Button>
+          >
+            Clear filters
+          </Button>
         </HeroMessage>
       )
     }
@@ -143,7 +137,7 @@ class DocumentListView extends React.Component {
         <HeroMessage
           title="No media yet."
           subtitle="Once you upload media files, they will appear here."
-        />        
+        />
       )
     }
 
@@ -157,16 +151,17 @@ class DocumentListView extends React.Component {
           href={onBuildBaseUrl.call(this, {
             createNew: true
           })}
-        >Create new document</Button>
+        >
+          Create new document
+        </Button>
       </HeroMessage>
-    )    
+    )
   }
 
   handleFiltersUpdate(newFilters) {
     const {history, onBuildBaseUrl, route} = this.props
-    const newFilterValue = Object.keys(newFilters).length > 0
-      ? newFilters
-      : null
+    const newFilterValue =
+      Object.keys(newFilters).length > 0 ? newFilters : null
     const newUrl = onBuildBaseUrl.call(this, {
       search: {
         ...route.search,
@@ -183,7 +178,7 @@ class DocumentListView extends React.Component {
     actions.uploadMediaDocuments({
       contentKey: this.getContentKey(),
       files: Array.from(files)
-    })    
+    })
   }
 
   handleSelect(selection) {
@@ -196,19 +191,16 @@ class DocumentListView extends React.Component {
   }
 
   render() {
-    const {
-      onBuildBaseUrl,
-      route,
-      state
-    } = this.props
+    const {onBuildBaseUrl, route, state} = this.props
     const {api} = state.app.config
     const {collection: collectionName} = route.params
     const {search} = route
-    const collection = collectionName === Constants.MEDIA_COLLECTION_SCHEMA.slug
-      ? Constants.MEDIA_COLLECTION_SCHEMA
-      : api.collections.find(collection => {
-          return collection.slug === route.params.collection
-        })
+    const collection =
+      collectionName === Constants.MEDIA_COLLECTION_SCHEMA.slug
+        ? Constants.MEDIA_COLLECTION_SCHEMA
+        : api.collections.find(collection => {
+            return collection.slug === route.params.collection
+          })
 
     if (!collection) {
       return (
@@ -216,7 +208,7 @@ class DocumentListView extends React.Component {
           <Header />
 
           <Main>
-            <ErrorMessage type={Constants.ERROR_ROUTE_NOT_FOUND}/>
+            <ErrorMessage type={Constants.ERROR_ROUTE_NOT_FOUND} />
           </Main>
         </Page>
       )
@@ -235,9 +227,7 @@ class DocumentListView extends React.Component {
         page: metadata.totalPages
       })
 
-      return (
-        <Redirect to={redirectUrl}/>
-      )
+      return <Redirect to={redirectUrl} />
     }
 
     // Getting the IDs of the selected documents.
@@ -247,10 +237,9 @@ class DocumentListView extends React.Component {
     // Computing bulk action options.
     const actions = {
       [BULK_ACTIONS.DELETE]: {
-        confirmationMessage: 
-          `Are you sure you want to delete the selected ${selection.length > 1 ?
-            'documents' :
-            'document'}?`,
+        confirmationMessage: `Are you sure you want to delete the selected ${
+          selection.length > 1 ? 'documents' : 'document'
+        }?`,
         ctaMessage: `Yes, delete ${selection.length > 1 ? 'them' : 'it'}.`,
         disabled: !selection.length,
         label: `Delete ${selection.length ? ' (' + selection.length + ')' : ''}`
@@ -258,8 +247,8 @@ class DocumentListView extends React.Component {
     }
 
     // Are we showing only selected documents?
-    const isFilteringSelection = search.filter &&
-      search.filter.$selected === true
+    const isFilteringSelection =
+      search.filter && search.filter.$selected === true
 
     // Computing URL for the "show only selected documents" button.
     const showSelectedDocumentsUrl = !isFilteringSelection
@@ -341,19 +330,15 @@ class DocumentListView extends React.Component {
     const {page} = route.params
     const {search} = route
     const parsedPage = Number.parseInt(page)
-    const pageNumber = parsedPage.toString() === page
-      ? parsedPage
-      : undefined
+    const pageNumber = parsedPage.toString() === page ? parsedPage : undefined
 
     if (collection.IS_MEDIA_BUCKET) {
       return (
         <>
           {!isFilteringSelection && (
-            <MediaListController
-              onUpload={this.handleMediaUpload.bind(this)}
-            />            
+            <MediaListController onUpload={this.handleMediaUpload.bind(this)} />
           )}
-  
+
           <DocumentList
             collection={Constants.MEDIA_COLLECTION_SCHEMA}
             contentKey={contentKey}
@@ -387,12 +372,14 @@ class DocumentListView extends React.Component {
     }
 
     // Filtering visible fields.
-    const visibleFields = collection && Object.keys(
-      getVisibleFields({
-        fields: collection.fields,
-        viewType: 'list'
-      })
-    ).concat(Constants.DEFAULT_FIELDS)
+    const visibleFields =
+      collection &&
+      Object.keys(
+        getVisibleFields({
+          fields: collection.fields,
+          viewType: 'list'
+        })
+      ).concat(Constants.DEFAULT_FIELDS)
 
     return (
       <DocumentList
@@ -411,7 +398,7 @@ class DocumentListView extends React.Component {
             order={search.order}
             selectedDocuments={selectedDocuments}
             sort={search.sort}
-          />          
+          />
         )}
         onSelect={this.handleSelect.bind(this)}
         order={search.order}
@@ -423,8 +410,6 @@ class DocumentListView extends React.Component {
   }
 }
 
-export default connectRedux(
-  appActions,
-  documentActions,
-  selectionActions
-)(DocumentListView)
+export default connectRedux(appActions, documentActions, selectionActions)(
+  DocumentListView
+)

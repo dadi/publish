@@ -13,8 +13,8 @@ const fileSize = require('file-size')
 class MediaGridCard extends React.Component {
   static propTypes = {
     /**
-    * The global actions object.
-    */
+     * The global actions object.
+     */
     actions: proptypes.object,
 
     /**
@@ -54,10 +54,7 @@ class MediaGridCard extends React.Component {
   }
 
   handleCardClick(event) {
-    const {
-      href,
-      onSelect
-    } = this.props
+    const {href, onSelect} = this.props
 
     if (typeof href !== 'string' && typeof onSelect === 'function') {
       onSelect(event)
@@ -65,9 +62,7 @@ class MediaGridCard extends React.Component {
   }
 
   handleSelectClick(event) {
-    const {
-      onSelect
-    } = this.props
+    const {onSelect} = this.props
 
     if (typeof onSelect === 'function') {
       onSelect(event)
@@ -75,14 +70,11 @@ class MediaGridCard extends React.Component {
   }
 
   render() {
-    const {
-      href,
-      item,
-      isSelected,
-      selectLimit
-    } = this.props
-    const itemStyle = new Style(styles, 'wrapper')
-      .addIf('wrapper-selected', isSelected)
+    const {href, item, isSelected, selectLimit} = this.props
+    const itemStyle = new Style(styles, 'wrapper').addIf(
+      'wrapper-selected',
+      isSelected
+    )
 
     // For backwards compatibility.
     const mimeType = item.mimeType || item.mimetype
@@ -90,7 +82,8 @@ class MediaGridCard extends React.Component {
     // If we're dealing with an image that has a width and a height,
     // we set the aspect ratio of the card accordingly. If not, we
     // make it a square.
-    const isImage = mimeType &&
+    const isImage =
+      mimeType &&
       mimeType.includes('image/') &&
       typeof item.width === 'number' &&
       typeof item.height === 'number'
@@ -104,9 +97,10 @@ class MediaGridCard extends React.Component {
     // for changing the selected state. If not, it becomes a purely decorative
     // element with a read-only value, as the card as a whole will be used to
     // change the selected state.
-    const selectProps = typeof href === 'string'
-      ? {onChange: this.handleSelectClick.bind(this)}
-      : {readOnly: true}
+    const selectProps =
+      typeof href === 'string'
+        ? {onChange: this.handleSelectClick.bind(this)}
+        : {readOnly: true}
 
     return (
       <div
@@ -118,7 +112,7 @@ class MediaGridCard extends React.Component {
           className={styles.select}
           type={selectLimit === 1 ? 'radio' : 'checkbox'}
           {...selectProps}
-        />        
+        />
 
         {this.renderHead({isImage})}
 
@@ -142,24 +136,20 @@ class MediaGridCard extends React.Component {
   }
 
   renderHead({isImage}) {
-    const {
-      href,
-      item,
-      state
-    } = this.props
+    const {href, item, state} = this.props
     const {config} = state.app
-    const aspectRatio = isImage ?
-      (item.height / item.width) * 100 :
-      100
-    const canonicalPath = item.path && (
-      item.path.indexOf('/') === 0 ? item.path : `/${item.path}`
+    const aspectRatio = isImage ? (item.height / item.width) * 100 : 100
+    const canonicalPath =
+      item.path && (item.path.indexOf('/') === 0 ? item.path : `/${item.path}`)
+    const url =
+      config.cdn && config.cdn.publicUrl
+        ? `${config.cdn.publicUrl}${canonicalPath}?width=350`
+        : item.url || canonicalPath
+    const headElement = isImage ? (
+      <img className={styles.image} src={url} />
+    ) : (
+      <div className={styles['generic-thumbnail']} />
     )
-    const url = (config.cdn && config.cdn.publicUrl) ?
-      `${config.cdn.publicUrl}${canonicalPath}?width=350` :
-      (item.url || canonicalPath)
-    const headElement = isImage
-      ? <img className={styles.image} src={url}/>
-      : <div className={styles['generic-thumbnail']}/>
 
     if (typeof href === 'string') {
       return (
@@ -167,7 +157,9 @@ class MediaGridCard extends React.Component {
           className={styles['image-holder']}
           href={href}
           style={{paddingBottom: `${aspectRatio}%`}}
-        >{headElement}</a>
+        >
+          {headElement}
+        </a>
       )
     }
 
@@ -175,11 +167,11 @@ class MediaGridCard extends React.Component {
       <div
         className={styles['image-holder']}
         style={{paddingBottom: `${aspectRatio}%`}}
-      >{headElement}</div>
+      >
+        {headElement}
+      </div>
     )
   }
 }
 
-export default connectRedux(
-  documentActions
-)(MediaGridCard)
+export default connectRedux(documentActions)(MediaGridCard)

@@ -47,10 +47,9 @@ export default class SubNavItem extends React.Component {
     itemStyle.addIf('sub-nav-item-error', error)
 
     return (
-      <Link
-        className={itemStyle.getClasses()}
-        to={href}
-      >{children}</Link>
+      <Link className={itemStyle.getClasses()} to={href}>
+        {children}
+      </Link>
     )
   }
 }

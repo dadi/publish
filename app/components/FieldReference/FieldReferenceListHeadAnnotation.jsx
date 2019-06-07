@@ -31,8 +31,6 @@ export default class FieldReferenceListHeadAnnotation extends React.Component {
   }
 
   render() {
-    return (
-      <span className={styles['list-head-annotation']}>Ref</span>
-    )
+    return <span className={styles['list-head-annotation']}>Ref</span>
   }
 }

@@ -63,12 +63,7 @@ export default class BulkActionSelector extends React.Component {
   }
 
   render() {
-    const {
-      actions,
-      className,
-      onChange,
-      selection = []
-    } = this.props
+    const {actions, className, onChange, selection = []} = this.props
     const {selected} = this.state
     const containerStyle = new Style(styles, 'container')
       .addIf('container-empty', selection.length === 0)
@@ -83,8 +78,8 @@ export default class BulkActionSelector extends React.Component {
 
     // If the option comes with a confirmation message, display
     // ButtonWithPrompt, otherwise a standard Button is used.
-    const needsButtonWithPrompt = selected !== ACTION_PLACEHOLDER &&
-      actions[selected].ctaMessage
+    const needsButtonWithPrompt =
+      selected !== ACTION_PLACEHOLDER && actions[selected].ctaMessage
 
     return (
       <div className={containerStyle.getClasses()}>
@@ -101,12 +96,16 @@ export default class BulkActionSelector extends React.Component {
         {needsButtonWithPrompt && (
           <ButtonWithPrompt
             accent="data"
-            disabled={(selected === ACTION_PLACEHOLDER) || actions[selected].disabled}
+            disabled={
+              selected === ACTION_PLACEHOLDER || actions[selected].disabled
+            }
             onClick={this.onApply.bind(this)}
             promptCallToAction={actions[selected].ctaMessage}
             promptMessage={actions[selected].confirmationMessage}
             size="small"
-          >Apply</ButtonWithPrompt>          
+          >
+            Apply
+          </ButtonWithPrompt>
         )}
 
         {!needsButtonWithPrompt && (
@@ -115,7 +114,9 @@ export default class BulkActionSelector extends React.Component {
             disabled={selected === ACTION_PLACEHOLDER}
             onClick={this.onApply.bind(this)}
             size="small"
-          >Apply</Button>
+          >
+            Apply
+          </Button>
         )}
       </div>
     )

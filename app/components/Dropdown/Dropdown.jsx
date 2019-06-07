@@ -29,10 +29,6 @@ export default class Dropdown extends React.Component {
       .addIf(`dropdown-tooltip`, tooltip)
       .addIf(`dropdown-tooltip-${tooltip}`, tooltip)
 
-    return (
-      <ul className={container.getClasses()}>
-        {children}
-      </ul>
-    )
+    return <ul className={container.getClasses()}>{children}</ul>
   }
 }

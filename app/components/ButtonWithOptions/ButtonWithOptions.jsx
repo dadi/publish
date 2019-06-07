@@ -43,7 +43,7 @@ export default class ButtonWithOptions extends React.Component {
     /**
      * Whether to display a loading state.
      */
-    isLoading: proptypes.bool,    
+    isLoading: proptypes.bool,
 
     /**
      * Callback to be executed when the main button is clicked.
@@ -126,10 +126,7 @@ export default class ButtonWithOptions extends React.Component {
       .addIf('launcher-disabled', disabled)
 
     return (
-      <div
-        className={styles.container}
-        ref={el => this.wrapperElement = el}
-      >
+      <div className={styles.container} ref={el => (this.wrapperElement = el)}>
         <Button
           accent={accent}
           disabled={disabled}
@@ -138,7 +135,9 @@ export default class ButtonWithOptions extends React.Component {
           isLoading={isLoading}
           onClick={onClick}
           type={type}
-        >{children}</Button>
+        >
+          {children}
+        </Button>
 
         <Button
           accent="inherit"
@@ -147,14 +146,10 @@ export default class ButtonWithOptions extends React.Component {
           inGroup="right"
           onClick={this.toggleOptions.bind(this, null)}
         >
-          <IconArrow
-            direction={open ? 'down' : 'up'}
-            height={6}
-            width={10}
-          />
+          <IconArrow direction={open ? 'down' : 'up'} height={6} width={10} />
         </Button>
 
-        {open && !disabled &&
+        {open && !disabled && (
           <div className={styles.options}>
             <Dropdown tooltip="right">
               {Object.keys(options).map(option => {
@@ -162,20 +157,20 @@ export default class ButtonWithOptions extends React.Component {
                   <DropdownItem
                     key={option}
                     onClick={this.handleOptionClick.bind(this, options[option])}
-                  >{option}</DropdownItem>
+                  >
+                    {option}
+                  </DropdownItem>
                 )
               })}
             </Dropdown>
           </div>
-        }
+        )}
       </div>
     )
   }
 
   toggleOptions(newValue) {
-    const open = newValue === null
-      ? !this.state.open
-      : newValue
+    const open = newValue === null ? !this.state.open : newValue
 
     this.setState({
       open

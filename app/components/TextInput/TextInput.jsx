@@ -23,13 +23,13 @@ export default class TextInput extends React.Component {
      * Whether the field is part of a `<Label/>` component. This makes it
      * inherit certain CSS properties from the parent.
      *
-     * **NOTE:** This prop is automatically passed down by `<Label/>`.      
+     * **NOTE:** This prop is automatically passed down by `<Label/>`.
      */
     inLabel: proptypes.bool,
 
     /**
      * full | content | static
-     * 
+     *
      * full: screen height
      * content: adapts to content
      * static: use rows prop
@@ -61,7 +61,7 @@ export default class TextInput extends React.Component {
      */
     onInput: proptypes.func,
 
-     /**
+    /**
      * Callback to be executed when any key is pressed in the input.
      */
     onKeyDown: proptypes.func,
@@ -79,7 +79,7 @@ export default class TextInput extends React.Component {
     /**
      * Whether the field is required.
      *
-     * **NOTE:** This prop is automatically passed down by `<Label/>`.       
+     * **NOTE:** This prop is automatically passed down by `<Label/>`.
      */
     required: proptypes.bool,
 
@@ -137,7 +137,7 @@ export default class TextInput extends React.Component {
       this.base.style.height = 'auto'
       this.base.style.height = this.base.scrollHeight + 'px'
     }
-  }  
+  }
 
   componentDidMount() {
     this.adjustHeightIfNeeded()
@@ -216,7 +216,7 @@ export default class TextInput extends React.Component {
           onKeyDown={this.handleEvent.bind(this, 'onKeyDown')}
           placeholder={placeholder}
           readOnly={readOnly}
-          ref={el => this.base = el}
+          ref={el => (this.base = el)}
           required={required}
           rows={heightType === 'content' ? '1' : rows}
           value={value || ''}
@@ -237,7 +237,7 @@ export default class TextInput extends React.Component {
         onKeyDown={this.handleEvent.bind(this, 'onKeyDown')}
         placeholder={placeholder}
         readOnly={readOnly}
-        ref={el => this.base = el}
+        ref={el => (this.base = el)}
         required={required}
         type={type}
         value={value || ''}

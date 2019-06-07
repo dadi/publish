@@ -31,7 +31,10 @@ export default class FieldBooleanList extends React.Component {
     const {nodeField, value} = this.props
 
     return (
-      <span>is {value ? '' : 'not '}{nodeField}</span>
+      <span>
+        is {value ? '' : 'not '}
+        {nodeField}
+      </span>
     )
   }
 }

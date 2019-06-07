@@ -43,7 +43,7 @@ export default class Label extends React.Component {
     /**
      * Whether the label, or a component inside it, has focus.
      */
-    hasFocus: proptypes.bool,    
+    hasFocus: proptypes.bool,
 
     /**
      * The text to be rendered inside the label.
@@ -70,11 +70,7 @@ export default class Label extends React.Component {
   // This will render all children and inject an `id` prop
   // with the generated unique id in the first child.
   renderChildren() {
-    const {
-      children,
-      error,
-      required
-    } = this.props
+    const {children, error, required} = this.props
 
     return React.Children.map(children, (child, index) => {
       if (!child || typeof child.type === 'string') {
@@ -133,19 +129,13 @@ export default class Label extends React.Component {
       <label htmlFor={this.id} className={labelStyle.getClasses()}>
         {this.renderChildren()}
 
-        <div
-          className={styles.label}
-        >
-          {label}
-        </div>
+        <div className={styles.label}>{label}</div>
 
-        {comment &&
-          <sub className={styles.comment}>{comment}</sub>
-        }
+        {comment && <sub className={styles.comment}>{comment}</sub>}
 
-        {errorMessage &&
+        {errorMessage && (
           <p className={styles['error-message']}>{errorMessage}</p>
-        }
+        )}
       </label>
     )
   }

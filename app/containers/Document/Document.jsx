@@ -63,7 +63,7 @@ class Document extends React.Component {
 
     // If the component received a new content key or the data is dirty, which
     // may happen when documents are updated/deleted, we must fetch again.
-    if ((contentKey !== oldContentKey) || dataIsDirty) {
+    if (contentKey !== oldContentKey || dataIsDirty) {
       this.fetch()
     }
   }
@@ -73,12 +73,7 @@ class Document extends React.Component {
   }
 
   fetch() {
-    const {
-      actions,
-      collection,
-      contentKey,
-      documentId: id
-    } = this.props
+    const {actions, collection, contentKey, documentId: id} = this.props
 
     if (typeof id === 'string') {
       actions.fetchDocument({
@@ -100,9 +95,7 @@ class Document extends React.Component {
     const document = state.document[contentKey]
 
     if ((!document && documentId) || (document && document.isLoading)) {
-      return (
-        <SpinningWheel />
-      )
+      return <SpinningWheel />
     }
 
     const {local, remote, remoteError} = document || {}
@@ -113,7 +106,7 @@ class Document extends React.Component {
           error: remoteError
         })
       }
-      
+
       return null
     }
 
@@ -133,7 +126,4 @@ class Document extends React.Component {
   }
 }
 
-export default connectRedux(
-  appActions,
-  documentActions
-)(Document)
+export default connectRedux(appActions, documentActions)(Document)

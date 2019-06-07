@@ -74,25 +74,18 @@ export default class FieldMediaReferenceSelect extends React.Component {
     }
 
     return value.url || null
-  }  
+  }
 
   render() {
-    const {
-      data,
-      onSelect,
-      selectedRows,
-      selectLimit
-    } = this.props
+    const {data, onSelect, selectedRows, selectLimit} = this.props
 
     return (
       <DocumentGridList
         documents={data}
         onRenderCard={(item, onSelect, isSelected) => {
-          const itemWithSrc = Object.assign(
-            {},
-            item,
-            {url: this.getImageSrc(item)}
-          )
+          const itemWithSrc = Object.assign({}, item, {
+            url: this.getImageSrc(item)
+          })
 
           return (
             <MediaGridCard

@@ -37,10 +37,7 @@ export default class Nav extends React.Component {
   }
 
   render() {
-    const {
-      items,
-      mobile
-    } = this.props
+    const {items, mobile} = this.props
 
     if (!items.length) return null
 
@@ -74,11 +71,11 @@ export default class Nav extends React.Component {
                 )
               })
 
-              subItems = mobile ?
+              subItems = mobile ? (
                 <ul className={styles.children}>{children}</ul>
-                :
+              ) : (
                 <Dropdown>{children}</Dropdown>
-
+              )
             }
 
             return (
@@ -88,7 +85,9 @@ export default class Nav extends React.Component {
                 key={item.label + item.href}
                 text={item.label}
                 mobile={mobile}
-              >{subItems}</NavItem>
+              >
+                {subItems}
+              </NavItem>
             )
           })}
         </ul>

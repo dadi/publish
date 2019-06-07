@@ -59,7 +59,7 @@ export default class FieldPasswordEdit extends React.Component {
      * The field schema.
      */
     schema: proptypes.object,
-    
+
     /**
      * The field value.
      */
@@ -83,33 +83,26 @@ export default class FieldPasswordEdit extends React.Component {
   handleOnChange(field, event) {
     const {onChange} = this.props
 
-    this.setState({
-      [field]: event.target.value
-    }, () => {
-      const errors = this.validate(this.state)
+    this.setState(
+      {
+        [field]: event.target.value
+      },
+      () => {
+        const errors = this.validate(this.state)
 
-      if (typeof onChange === 'function') {
-        onChange.call(this, this.state.value, errors)
+        if (typeof onChange === 'function') {
+          onChange.call(this, this.state.value, errors)
+        }
       }
-    })
+    )
   }
 
   render() {
-    const {
-      displayName,
-      error,
-      name,
-      schema
-    } = this.props
-    const {
-      value,
-      valueConfirm
-    } = this.state
+    const {displayName, error, name, schema} = this.props
+    const {value, valueConfirm} = this.state
     const {requireConfirmation} = schema.publish || {}
     const hasPasswordMismatch = error === Constants.ERROR_PASSWORD_MISMATCH
-    const hasCustomError = Boolean(
-      error && !hasPasswordMismatch
-    )
+    const hasCustomError = Boolean(error && !hasPasswordMismatch)
 
     return (
       <div>
@@ -123,7 +116,7 @@ export default class FieldPasswordEdit extends React.Component {
             name={name}
             onChange={this.handleOnChange.bind(this, 'value')}
             placeholder={schema.placeholder}
-            ref={element => this.valueRef = element}
+            ref={element => (this.valueRef = element)}
             type="password"
             value={value}
           />
@@ -133,14 +126,16 @@ export default class FieldPasswordEdit extends React.Component {
           <Label
             className={styles.label}
             error={hasPasswordMismatch}
-            errorMessage={hasPasswordMismatch ? 'The passwords must match' : null}
+            errorMessage={
+              hasPasswordMismatch ? 'The passwords must match' : null
+            }
             label={`${displayName} (confirm)`}
           >
             <TextInput
               name={`${name}-confirm`}
               onChange={this.handleOnChange.bind(this, 'valueConfirm')}
               placeholder={schema.placeholder}
-              ref={element => this.valueConfirmRef = element}
+              ref={element => (this.valueConfirmRef = element)}
               type="password"
               value={valueConfirm}
             />

@@ -14,12 +14,12 @@ class SignIn extends React.Component {
     /**
      * The method used to update the current page title.
      */
-     setPageTitle: proptypes.func,
+    setPageTitle: proptypes.func,
 
-     /**
-      * Sign in token.
-      */
-     token: proptypes.string
+    /**
+     * Sign in token.
+     */
+    token: proptypes.string
   }
 
   constructor(props) {
@@ -33,15 +33,12 @@ class SignIn extends React.Component {
     }
   }
 
-  getErrorBanner({
-    noAPIConfigured,
-    remoteError,
-    sessionHasExpired
-  }) {
+  getErrorBanner({noAPIConfigured, remoteError, sessionHasExpired}) {
     let message
 
     if (noAPIConfigured) {
-      message = 'This installation of Publish has not been configured. Please contact your administrator.'
+      message =
+        'This installation of Publish has not been configured. Please contact your administrator.'
     } else if (sessionHasExpired) {
       message = 'Your session has expired. Please sign in again.'
     } else if (remoteError) {
@@ -52,7 +49,8 @@ class SignIn extends React.Component {
           break
 
         case 501:
-          message = 'The API is running an earlier version than that required by this version of Publish'
+          message =
+            'The API is running an earlier version than that required by this version of Publish'
 
           break
 
@@ -69,9 +67,7 @@ class SignIn extends React.Component {
     }
 
     if (message) {
-      return (
-        <Banner>{message}</Banner>
-      )      
+      return <Banner>{message}</Banner>
     }
 
     return null
@@ -109,9 +105,7 @@ class SignIn extends React.Component {
     const hasConnectionIssues = networkStatus !== Constants.NETWORK_OK
 
     if (state.user.isSignedIn) {
-      return (
-        <Redirect to='/'/>
-      )
+      return <Redirect to="/" />
     }
 
     setPageTitle('Sign In')
@@ -125,11 +119,8 @@ class SignIn extends React.Component {
       >
         <div className={styles.overlay}>
           <div className={styles.container}>
-            <form
-              method="POST"
-              onSubmit={this.handleSignIn.bind(this)}
-            >
-            <img className={styles.logo} src={`/_public/${logo}`} />
+            <form method="POST" onSubmit={this.handleSignIn.bind(this)}>
+              <img className={styles.logo} src={`/_public/${logo}`} />
               {this.getErrorBanner({
                 noAPIConfigured: !Boolean(api),
                 remoteError: state.user.remoteError,
@@ -155,7 +146,7 @@ class SignIn extends React.Component {
                       name="password"
                       onChange={this.handleInputChange.bind(this, 'password')}
                       onInput={this.handleInputChange.bind(this, 'password')}
-                      placeholder={"Your password"}
+                      placeholder={'Your password'}
                       type="password"
                       value={password}
                     />
@@ -172,7 +163,9 @@ class SignIn extends React.Component {
                 }
                 isLoading={state.user.isAuthenticating}
                 type="submit"
-              >Sign In</Button>
+              >
+                Sign In
+              </Button>
 
               {poweredBy && (
                 <p className={styles['powered-by']}>
@@ -192,7 +185,7 @@ class SignIn extends React.Component {
   validate() {
     const {email, password} = this.state
 
-    return (email.length > 0) && (password.length > 0)
+    return email.length > 0 && password.length > 0
   }
 }
 

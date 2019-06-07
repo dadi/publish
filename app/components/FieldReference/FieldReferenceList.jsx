@@ -22,10 +22,7 @@ export default class FieldReferenceList extends React.Component {
     /**
      * The field value.
      */
-    value: proptypes.oneOfType([
-      proptypes.array,
-      proptypes.string
-    ]),
+    value: proptypes.oneOfType([proptypes.array, proptypes.string]),
 
     /**
      * The field schema.
@@ -40,11 +37,7 @@ export default class FieldReferenceList extends React.Component {
   }
 
   render() {
-    const {
-      api,
-      schema,
-      value
-    } = this.props
+    const {api, schema, value} = this.props
 
     const {settings = {}} = schema
 
@@ -72,7 +65,10 @@ export default class FieldReferenceList extends React.Component {
           {values.map(val => {
             let collection = schema.settings.collection
             let editLink = `${referencedCollection._publishLink}/${val._id}`
-            let displayField = optionsBlock && optionsBlock.displayField || firstStringField ? firstStringField.key : null
+            let displayField =
+              (optionsBlock && optionsBlock.displayField) || firstStringField
+                ? firstStringField.key
+                : null
 
             return (
               <Link
@@ -80,7 +76,8 @@ export default class FieldReferenceList extends React.Component {
                 key={editLink}
                 to={editLink}
               >
-                {displayField && val[displayField] || `Referenced ${collection}`}
+                {(displayField && val[displayField]) ||
+                  `Referenced ${collection}`}
               </Link>
             )
           })}
@@ -88,7 +85,9 @@ export default class FieldReferenceList extends React.Component {
       )
     } else {
       return (
-        <div className={styles.values}><div className={styles.empty}>None</div></div>
+        <div className={styles.values}>
+          <div className={styles.empty}>None</div>
+        </div>
       )
     }
   }

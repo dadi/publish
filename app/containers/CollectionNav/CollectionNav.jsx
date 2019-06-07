@@ -13,7 +13,7 @@ class CollectionNav extends React.Component {
      * The global actions object.
      */
     actions: proptypes.object,
-    
+
     /**
      * The global state object.
      */
@@ -23,7 +23,7 @@ class CollectionNav extends React.Component {
   getNavigationItems(currentCollection) {
     const {state} = this.props
     const {api} = state.app.config
-    
+
     if (!api || !Array.isArray(api.collections)) {
       return []
     }
@@ -31,15 +31,15 @@ class CollectionNav extends React.Component {
     // There are some collections that we don't want to display on the menu,
     // like legacy media collections.
     const collections = api.collections.filter(collection => {
-      const isMediaCollection = collection.settings &&
-        collection.settings.type === 'media'
+      const isMediaCollection =
+        collection.settings && collection.settings.type === 'media'
 
       return !isMediaCollection
     })
 
     let navItems = []
     let processedSlugs = {}
-    
+
     const menu = Array.isArray(api.menu) ? api.menu : []
 
     menu.forEach(item => {
@@ -65,27 +65,29 @@ class CollectionNav extends React.Component {
       if (Array.isArray(item.collections) && item.title) {
         let groupHasSelectedCollection = false
 
-        const groupCollections = item.collections.map(item => {
-          const match = collections.find(({slug}) => slug === item)
+        const groupCollections = item.collections
+          .map(item => {
+            const match = collections.find(({slug}) => slug === item)
 
-          if (match) {
-            const {_publishLink, settings = {}, slug} = match
-            const isSelected = slug === currentCollection
+            if (match) {
+              const {_publishLink, settings = {}, slug} = match
+              const isSelected = slug === currentCollection
 
-            if (isSelected) {
-              groupHasSelectedCollection = true
+              if (isSelected) {
+                groupHasSelectedCollection = true
+              }
+
+              processedSlugs[slug] = true
+
+              return {
+                id: slug,
+                label: settings.displayName || slug,
+                href: _publishLink,
+                isSelected
+              }
             }
-
-            processedSlugs[slug] = true
-
-            return {
-              id: slug,
-              label: settings.displayName || slug,
-              href: _publishLink,
-              isSelected
-            }
-          }
-        }).filter(Boolean)
+          })
+          .filter(Boolean)
 
         if (groupCollections.length > 0) {
           navItems.push({
@@ -127,16 +129,10 @@ class CollectionNav extends React.Component {
       isSelected: collection === Constants.MEDIA_COLLECTION_SCHEMA.slug
     })
 
-    return (
-      <Nav
-        items={items}
-        mobile={state.app.breakpoint === null}
-      />
-    )
+    return <Nav items={items} mobile={state.app.breakpoint === null} />
   }
 }
 
-export default connectRouter(connectRedux(
-  apiActions,
-  appActions
-)(CollectionNav))
+export default connectRouter(
+  connectRedux(apiActions, appActions)(CollectionNav)
+)

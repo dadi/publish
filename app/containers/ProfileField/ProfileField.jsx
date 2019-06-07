@@ -72,36 +72,32 @@ class ProfileField extends React.Component {
 
     // Validating the field. If validation fails, `error` will be set. If it
     // passes, `error` will be `undefined`.
-    this.validate(value).catch(error => error).then(error => {
-      let update = {
-        update: {
-          [name]: value
+    this.validate(value)
+      .catch(error => error)
+      .then(error => {
+        let update = {
+          update: {
+            [name]: value
+          }
         }
-      }
 
-      if (componentError || error) {
-        update.error = {
-          [name]: componentError || error.message || error
+        if (componentError || error) {
+          update.error = {
+            [name]: componentError || error.message || error
+          }
         }
-      }
 
-      actions.updateLocalUser(update)
-    })
+        actions.updateLocalUser(update)
+      })
   }
 
   // Renders a field, deciding which component to use based on the field type.
   render() {
-    const {
-      field,
-      onBuildBaseUrl,
-      state
-    } = this.props
+    const {field, onBuildBaseUrl, state} = this.props
     const {app, user} = state
     const {local, remote, validationErrors} = user
     const userData = Object.assign({}, remote, local)
-    const isReadOnly = Boolean(
-      field.publish && field.publish.readonly
-    )
+    const isReadOnly = Boolean(field.publish && field.publish.readonly)
     const displayName = field.label || field._id
 
     // As per API docs, validation messages are in the format "must be xxx", which
@@ -112,10 +108,11 @@ class ProfileField extends React.Component {
     const error = (validationErrors && validationErrors[field._id]) || null
     const fieldType = getFieldType(field)
     const fieldComponentName = `Field${fieldType}`
-    const FieldComponent = fieldComponents[fieldComponentName] &&
+    const FieldComponent =
+      fieldComponents[fieldComponentName] &&
       fieldComponents[fieldComponentName].edit
     const fieldComment = field.comment || field.example
-    
+
     if (!FieldComponent) {
       console.warn('Unknown field type:', fieldType)
 
@@ -138,21 +135,19 @@ class ProfileField extends React.Component {
           required={field.required}
           schema={field}
           value={userData[field._id]}
-        />      
+        />
       </Field>
     )
   }
 
   validate(value) {
     const {field} = this.props
-    const arrayValue = Array.isArray(value)
-      ? value
-      : [value]
-    const allValuesAreUploads = (['media', 'reference']).includes(
-      field.type.toLowerCase()
-    ) && arrayValue.every(value => {
-      return value && value._previewData && value._file
-    })
+    const arrayValue = Array.isArray(value) ? value : [value]
+    const allValuesAreUploads =
+      ['media', 'reference'].includes(field.type.toLowerCase()) &&
+      arrayValue.every(value => {
+        return value && value._previewData && value._file
+      })
 
     // If we're looking at a media file that the user is trying to upload,
     // there's no point in sending it to the validator module because it
@@ -169,6 +164,4 @@ class ProfileField extends React.Component {
   }
 }
 
-export default connectRouter(connectRedux(
-  userActions
-)(ProfileField))
+export default connectRouter(connectRedux(userActions)(ProfileField))

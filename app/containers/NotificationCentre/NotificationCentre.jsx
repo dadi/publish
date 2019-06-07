@@ -41,21 +41,24 @@ class NotificationCentre extends React.Component {
       this.start()
     }
 
-    if (prevNotification && notification &&
-        prevNotification.timestamp !== notification.timestamp) {
+    if (
+      prevNotification &&
+      notification &&
+      prevNotification.timestamp !== notification.timestamp
+    ) {
       setTimeout(() => {
         this.enqueuedNotification = null
 
         this.start()
       }, 300)
     }
-  }  
+  }
 
   componentWillReceiveProps(nextProps) {
     const notification = this.props.state.app.notification
     const nextNotification = nextProps.state.app.notification
     const currentRoute = this.props.route.path
-    const nextRoute = nextProps.route.path    
+    const nextRoute = nextProps.route.path
 
     if (
       notification &&
@@ -70,10 +73,10 @@ class NotificationCentre extends React.Component {
     if (
       notification &&
       notification.dismissAfterRouteChange &&
-      (currentRoute !== nextRoute)
+      currentRoute !== nextRoute
     ) {
       return this.dismiss()
-    }    
+    }
   }
 
   dismiss() {
@@ -111,18 +114,12 @@ class NotificationCentre extends React.Component {
 
   render() {
     const {state} = this.props
-    const {
-      faded,
-      visible
-    } = this.state
+    const {faded, visible} = this.state
     const notification = this.enqueuedNotification || state.app.notification
 
     if (!notification) return null
 
-    const {
-      message,
-      options
-    } = notification
+    const {message, options} = notification
 
     return (
       <Notification
@@ -156,7 +153,7 @@ class NotificationCentre extends React.Component {
     //   (currentRoute !== nextRoute)
     // ) {
     //   return true
-    // }    
+    // }
 
     if (
       notification &&
@@ -171,10 +168,7 @@ class NotificationCentre extends React.Component {
 
   start() {
     const notification = this.props.state.app.notification
-    const {
-      dismissAfterSeconds,
-      fadeAfterSeconds,
-    } = notification
+    const {dismissAfterSeconds, fadeAfterSeconds} = notification
 
     clearTimeout(this.timeout)
 
@@ -195,6 +189,4 @@ class NotificationCentre extends React.Component {
   }
 }
 
-export default connectRouter(connectRedux(
-  appActions
-)(NotificationCentre))
+export default connectRouter(connectRedux(appActions)(NotificationCentre))

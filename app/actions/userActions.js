@@ -12,12 +12,7 @@ import apiBridgeClient from 'lib/api-bridge-client'
  * @param  {Object} client          Client object
  * @param  {Object} config          Config object
  */
-export function authenticate ({
-  accessToken,
-  accessTokenTTL,
-  client,
-  config
-}) {
+export function authenticate({accessToken, accessTokenTTL, client, config}) {
   return {
     accessToken,
     accessTokenTTL,
@@ -30,7 +25,7 @@ export function authenticate ({
 /**
  * Registers an attempt to save changes to the current user.
  */
-export function registerSaveUserAttempt () {
+export function registerSaveUserAttempt() {
   return {
     type: Types.ATTEMPT_SAVE_USER
   }
@@ -39,11 +34,9 @@ export function registerSaveUserAttempt () {
 /**
  * Saves changes to the current user.
  */
-export function saveUser () {
+export function saveUser() {
   return (dispatch, getState) => {
-    dispatch(
-      setUserStatus(Constants.STATUS_SAVING)
-    )
+    dispatch(setUserStatus(Constants.STATUS_SAVING))
 
     let {api} = getState().app.config
     let update = getState().user.local
@@ -71,19 +64,13 @@ export function saveUser () {
       .update(update)
       .then(({results}) => {
         if (results.length !== 1) {
-          return dispatch(
-            setUserStatus(Constants.STATUS_FAILED)
-          )
+          return dispatch(setUserStatus(Constants.STATUS_FAILED))
         }
 
-        dispatch(
-          setRemoteUser(results[0])
-        )
+        dispatch(setRemoteUser(results[0]))
       })
       .catch(error => {
-        let actions = [
-          setUserStatus(Constants.STATUS_FAILED, error)
-        ]
+        let actions = [setUserStatus(Constants.STATUS_FAILED, error)]
 
         // The operation failed because the current secret was missing
         // or invalid, so we must create a validation error accordingly.
@@ -100,9 +87,7 @@ export function saveUser () {
           )
         }
 
-        dispatch(
-          batchActions(actions)
-        )
+        dispatch(batchActions(actions))
       })
   }
 }
@@ -112,7 +97,7 @@ export function saveUser () {
  *
  * @param  {Object} user  User object
  */
-export function setRemoteUser (user) {
+export function setRemoteUser(user) {
   return {
     type: Types.SET_REMOTE_USER,
     user
@@ -125,7 +110,7 @@ export function setRemoteUser (user) {
  * @param  {String} status  Status code
  * @param  {Object} data    Optional data object
  */
-export function setUserStatus (status, data) {
+export function setUserStatus(status, data) {
   return {
     data,
     status,
@@ -139,7 +124,7 @@ export function setUserStatus (status, data) {
  * @param  {String} clientId  Client ID
  * @param  {String} secret    Secret
  */
-export function signIn (clientId, secret) {
+export function signIn(clientId, secret) {
   return (dispatch, getState) => {
     const {api} = getState().app.config
     const apiUrl = `${api.host}:${api.port}`
@@ -155,20 +140,20 @@ export function signIn (clientId, secret) {
         secret
       }),
       headers: {
-        'Accept': 'application/json',
+        Accept: 'application/json',
         'Content-Type': 'application/json',
         'x-dadi-requires': requiredFeatures.join(';')
       },
       method: 'POST'
     }
 
-    dispatch(
-      setUserStatus(Constants.STATUS_LOADING)
-    )
+    dispatch(setUserStatus(Constants.STATUS_LOADING))
 
     return fetch(`${apiUrl}/token`, options)
       .then(response => {
-        const supportedFeatures = (response.headers.get('X-DADI-Supports') || '').split(';')
+        const supportedFeatures = (
+          response.headers.get('X-DADI-Supports') || ''
+        ).split(';')
         const missingFeatures = requiredFeatures.filter(feature => {
           return supportedFeatures.indexOf(feature) === -1
         })
@@ -224,20 +209,16 @@ export function signIn (clientId, secret) {
           // API has CORS disabled.
           return fetch(`${apiUrl}/hello`, {
             mode: 'no-cors'
-          }).then(() => {
-            dispatch(
-              setUserStatus(Constants.STATUS_FAILED, 'NO-CORS')
-            )
-          }).catch(() => {
-            dispatch(
-              setUserStatus(Constants.STATUS_FAILED, 404)
-            )
           })
+            .then(() => {
+              dispatch(setUserStatus(Constants.STATUS_FAILED, 'NO-CORS'))
+            })
+            .catch(() => {
+              dispatch(setUserStatus(Constants.STATUS_FAILED, 404))
+            })
         }
 
-        dispatch(
-          setUserStatus(Constants.STATUS_FAILED, error.status || 404)
-        )
+        dispatch(setUserStatus(Constants.STATUS_FAILED, error.status || 404))
       })
   }
 }
@@ -248,9 +229,7 @@ export function signIn (clientId, secret) {
  * @param  {String} sessionHasExpired  Whether the termination was caused by
  *    an expired access token
  */
-export function signOut ({
-  sessionHasExpired = false
-} = {}) {
+export function signOut({sessionHasExpired = false} = {}) {
   return {
     sessionHasExpired,
     type: Types.SIGN_OUT
@@ -263,7 +242,7 @@ export function signOut ({
  * @param  {Object} error   Error update
  * @param  {Object} update  Data update
  */
-export function updateLocalUser ({error = {}, update = {}}) {
+export function updateLocalUser({error = {}, update = {}}) {
   return {
     error,
     type: Types.UPDATE_LOCAL_USER,

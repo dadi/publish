@@ -89,7 +89,7 @@ export default class RichEditorLink extends React.Component {
 
     const {right, top} = element.getBoundingClientRect()
     const offsetRight = right - bounds.right
-    const offsetTop = top - bounds.top - (element.clientHeight * 2.5)
+    const offsetTop = top - bounds.top - element.clientHeight * 2.5
 
     this.hasAdjustedPosition = true
 
@@ -106,7 +106,7 @@ export default class RichEditorLink extends React.Component {
 
     const {onChange} = this.props
     const {href} = this.state
-    
+
     if (typeof onChange === 'function') {
       onChange(href)
     }
@@ -119,16 +119,12 @@ export default class RichEditorLink extends React.Component {
   render() {
     const {children} = this.props
     const {editing, href, offsetRight, offsetTop} = this.state
-    
+
     return (
-      <span
-        className={styles.container}
-        ref={el => this.container = el}
-      >
-        <a
-          href={href}
-          onClick={this.handleLinkClick.bind(this)}
-        >{children}</a>
+      <span className={styles.container} ref={el => (this.container = el)}>
+        <a href={href} onClick={this.handleLinkClick.bind(this)}>
+          {children}
+        </a>
 
         {editing && (
           <div
@@ -139,10 +135,7 @@ export default class RichEditorLink extends React.Component {
               transform: `translate3d(-${offsetRight}px, ${offsetTop}px, 0)`
             }}
           >
-            <form
-              className={styles.form}
-              onSubmit={this.handleSave.bind(this)}
-            >
+            <form className={styles.form} onSubmit={this.handleSave.bind(this)}>
               <input
                 autoFocus
                 className={styles.input}
@@ -151,10 +144,9 @@ export default class RichEditorLink extends React.Component {
                 value={href}
               />
 
-              <button
-                className={styles.button}
-                type="submit"
-              >Save</button>
+              <button className={styles.button} type="submit">
+                Save
+              </button>
             </form>
           </div>
         )}

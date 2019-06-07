@@ -10,7 +10,7 @@ const NOTIFICATION_DEFAULTS = {
   type: Constants.NOTIFICATION_TYPE_WARNING
 }
 
-export function registerNetworkCall (status, onComplete) {
+export function registerNetworkCall(status, onComplete) {
   return {
     onComplete,
     status,
@@ -18,21 +18,21 @@ export function registerNetworkCall (status, onComplete) {
   }
 }
 
-export function registerNetworkError (error) {
+export function registerNetworkError(error) {
   return {
     error,
     type: Types.REGISTER_NETWORK_ERROR
   }
 }
 
-export function setNetworkStatus (networkStatus) {
+export function setNetworkStatus(networkStatus) {
   return {
     networkStatus,
     type: Types.SET_NETWORK_STATUS
   }
 }
 
-export function setNotification (notification) {
+export function setNotification(notification) {
   const notificationObject = {
     ...NOTIFICATION_DEFAULTS,
     ...notification,
@@ -52,7 +52,7 @@ export function setNotification (notification) {
   }
 }
 
-export function setScreenWidth (width) {
+export function setScreenWidth(width) {
   return {
     type: Types.SET_SCREEN_WIDTH,
     width

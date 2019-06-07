@@ -42,11 +42,7 @@ class Header extends React.Component {
   }
 
   render() {
-    const {
-      children,
-      currentCollection,
-      state
-    } = this.props
+    const {children, currentCollection, state} = this.props
     const compact = state.app.breakpoint === null
 
     const {whitelabel} = state.app.config
@@ -63,10 +59,13 @@ class Header extends React.Component {
     contentStyle.addIf('content-expanded', this.state.expanded)
     innerStyle.addIf('inner-content-compact', compact)
 
-    let displayName = [
-      state.user.remote.data && state.user.remote.data.publishFirstName,
-      state.user.remote.data && state.user.remote.data.publishLastName
-    ].filter(Boolean).join(' ') || 'Profile'
+    let displayName =
+      [
+        state.user.remote.data && state.user.remote.data.publishFirstName,
+        state.user.remote.data && state.user.remote.data.publishLastName
+      ]
+        .filter(Boolean)
+        .join(' ') || 'Profile'
 
     return (
       <header className={styles.header}>
@@ -76,12 +75,15 @@ class Header extends React.Component {
               <img src={`/_public/${logo}`} />
             </div>
 
-            <div className={styles['toggle-icon']} onClick={this.toggleCollapsed.bind(this, undefined)}>
-              {this.state.expanded ?
+            <div
+              className={styles['toggle-icon']}
+              onClick={this.toggleCollapsed.bind(this, undefined)}
+            >
+              {this.state.expanded ? (
                 <span className={styles['icon-close']}>Close</span>
-                :
+              ) : (
                 <span className={styles['icon-open']}>Open</span>
-              }
+              )}
             </div>
 
             {state.user.accessToken && this.state.expanded && (
@@ -89,26 +91,29 @@ class Header extends React.Component {
                 <Link
                   className={`${styles.control} ${styles['control-action']}`}
                   to="/profile"
-                >{displayName}</Link>
+                >
+                  {displayName}
+                </Link>
 
                 <Link
                   className={`${styles.control} ${styles['control-action']}`}
                   to="/sign-out"
-                >Sign out</Link>
+                >
+                  Sign out
+                </Link>
 
-                {displayVersionNumber &&
-                  <span className={styles.control}>
-                    v{state.app.version}
-                  </span>
-                }
+                {displayVersionNumber && (
+                  <span className={styles.control}>v{state.app.version}</span>
+                )}
               </div>
             )}
           </div>
 
-          <div className={innerStyle.getClasses()} onClick={this.toggleCollapsed.bind(this, false)}>
-            <CollectionNav
-              currentCollection={currentCollection}
-            />
+          <div
+            className={innerStyle.getClasses()}
+            onClick={this.toggleCollapsed.bind(this, false)}
+          >
+            <CollectionNav currentCollection={currentCollection} />
           </div>
         </div>
 
@@ -128,6 +133,4 @@ class Header extends React.Component {
   }
 }
 
-export default connectRedux(
-  userActions
-)(Header)
+export default connectRedux(userActions)(Header)

@@ -1,6 +1,6 @@
 'use strict'
 
-function clear (key) {
+function clear(key) {
   if (!window.localStorage) return null
 
   try {
@@ -16,7 +16,7 @@ function clear (key) {
   }
 }
 
-function read (key) {
+function read(key) {
   if (!window.localStorage) return null
 
   try {
@@ -24,7 +24,10 @@ function read (key) {
     const deserialisedItem = JSON.parse(item)
 
     if (process.env.NODE_ENV === 'development') {
-      console.log(`Reading from local storage with key ${key}:`, deserialisedItem)
+      console.log(
+        `Reading from local storage with key ${key}:`,
+        deserialisedItem
+      )
     }
 
     return deserialisedItem
@@ -33,7 +36,7 @@ function read (key) {
   }
 }
 
-function write (key, payload) {
+function write(key, payload) {
   if (!window.localStorage) return false
 
   try {
@@ -51,15 +54,15 @@ function write (key, payload) {
   }
 }
 
-export function clearDocument (key) {
+export function clearDocument(key) {
   return clear(key)
 }
 
-export function readDocument (key) {
+export function readDocument(key) {
   return read(key)
 }
 
-export function writeDocument (key, value) {
+export function writeDocument(key, value) {
   const hasSetKeys = Object.keys(value).some(key => {
     return value[key] !== undefined
   })

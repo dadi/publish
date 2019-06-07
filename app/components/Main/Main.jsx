@@ -10,10 +10,6 @@ export default class Main extends React.Component {
   render() {
     const {children} = this.props
 
-    return (
-      <main>
-        {children}
-      </main>
-    )
+    return <main>{children}</main>
   }
 }

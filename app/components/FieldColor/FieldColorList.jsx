@@ -27,11 +27,10 @@ export default class FieldColorList extends React.Component {
 
   render() {
     const {value} = this.props
-    
 
     return (
       <div className={styles.list}>
-        <div 
+        <div
           className={styles.swatch}
           style={value ? {backgroundColor: value} : null}
         />

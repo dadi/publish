@@ -13,19 +13,17 @@ export class RichEditorToolbar extends React.Component {
     /**
      * Whether the button is disabled.
      */
-    fullscreen: proptypes.bool,    
+    fullscreen: proptypes.bool
   }
 
   render() {
     const {children, fullscreen} = this.props
-    const containerStyle = new Style(styles, 'container')
-      .addIf('container-fullscreen', fullscreen)    
-
-    return (
-      <div className={containerStyle.getClasses()}>
-        {children}
-      </div>
+    const containerStyle = new Style(styles, 'container').addIf(
+      'container-fullscreen',
+      fullscreen
     )
+
+    return <div className={containerStyle.getClasses()}>{children}</div>
   }
 }
 
@@ -40,7 +38,7 @@ export class RichEditorToolbarButton extends React.Component {
      * Whether the button is active.
      */
     active: proptypes.bool,
-    
+
     /**
      * Whether the button is disabled.
      */
@@ -70,9 +68,7 @@ export class RichEditorToolbarButton extends React.Component {
     const buttonStyle = new Style(styles, 'button')
       .addIf('button-active', active)
       .addIf('button-icon', icon)
-    const inlineStyle = icon
-      ? {backgroundImage: `url(${icon})`}
-      : null
+    const inlineStyle = icon ? {backgroundImage: `url(${icon})`} : null
 
     return (
       <button

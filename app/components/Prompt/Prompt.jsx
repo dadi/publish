@@ -46,10 +46,7 @@ export default class Prompt extends React.Component {
     /**
      * The position of the prompt tooltip.
      */
-    position: proptypes.oneOf([
-      'left',
-      'right'
-    ]),
+    position: proptypes.oneOf(['left', 'right'])
   }
 
   static defaultProps = {
@@ -58,14 +55,7 @@ export default class Prompt extends React.Component {
   }
 
   render() {
-    const {
-      accent,
-      action,
-      children,
-      className,
-      onClick,
-      position
-    } = this.props
+    const {accent, action, children, className, onClick, position} = this.props
     const promptStyle = new Style(styles, 'container')
       .add(`container-${accent}`)
       .add(`container-${position}`)
@@ -76,11 +66,9 @@ export default class Prompt extends React.Component {
         {children}
 
         <div className={styles.action}>
-          <Button
-            accent="destruct"
-            onClick={onClick}
-            size="small"
-          >{action}</Button>
+          <Button accent="destruct" onClick={onClick} size="small">
+            {action}
+          </Button>
         </div>
       </div>
     )

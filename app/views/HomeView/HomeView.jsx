@@ -18,11 +18,11 @@ class HomeView extends React.Component {
     }
 
     const hasAccessToCollections = api.collections.length > 0
-    const message = hasAccessToCollections ?
-      'You can use the menu to navigate collections and start editing documents.' :
-      'You do not currently have access to any collections, please contact an administrator.'
-    const displayName = user.remote['data.publishFirstName']
-      || user.remote.clientId
+    const message = hasAccessToCollections
+      ? 'You can use the menu to navigate collections and start editing documents.'
+      : 'You do not currently have access to any collections, please contact an administrator.'
+    const displayName =
+      user.remote['data.publishFirstName'] || user.remote.clientId
 
     setPageTitle()
 
@@ -31,9 +31,7 @@ class HomeView extends React.Component {
         <Header />
 
         <Main>
-          {api.isLoading && (
-            <SpinningWheel />
-          )}
+          {api.isLoading && <SpinningWheel />}
 
           {!api.isLoading && (
             <HeroMessage
@@ -47,6 +45,4 @@ class HomeView extends React.Component {
   }
 }
 
-export default connectRedux(
-  userActions
-)(HomeView)
+export default connectRedux(userActions)(HomeView)

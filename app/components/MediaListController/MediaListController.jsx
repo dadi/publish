@@ -21,23 +21,16 @@ export default class MediaListController extends React.Component {
 
     return (
       <div>
-        <DropArea
-          className={styles.droparea}
-          onDrop={onUpload}
-        >
+        <DropArea className={styles.droparea} onDrop={onUpload}>
           <div className={styles.wrapper}>
             <p>Drop files to upload</p>
 
             <span className={styles.separator}>or</span>
 
-            <FileUpload
-              multiple={true}
-              onChange={onUpload}
-            >
-              <Button
-                accent="data"
-                type="mock-stateful"
-              >Select files</Button>
+            <FileUpload multiple={true} onChange={onUpload}>
+              <Button accent="data" type="mock-stateful">
+                Select files
+              </Button>
             </FileUpload>
           </div>
         </DropArea>

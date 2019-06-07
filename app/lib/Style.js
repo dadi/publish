@@ -1,7 +1,7 @@
 /**
  * @constructor
  */
-const Style = function (styles, ...initClasses) {
+const Style = function(styles, ...initClasses) {
   this.styles = styles
   this.classes = initClasses
     .filter(className => styles[className])
@@ -15,8 +15,8 @@ const Style = function (styles, ...initClasses) {
  *
  * @return {Style} The Style instance.
  */
-Style.prototype.add = function (className) {
-  if ((typeof className === 'string') && this.styles[className]) {
+Style.prototype.add = function(className) {
+  if (typeof className === 'string' && this.styles[className]) {
     this.classes.push(this.styles[className])
   }
 
@@ -32,7 +32,7 @@ Style.prototype.add = function (className) {
  *
  * @return {Style}
  */
-Style.prototype.addIf = function (className, condition) {
+Style.prototype.addIf = function(className, condition) {
   if (!condition) return this
 
   return this.add(className)
@@ -45,7 +45,7 @@ Style.prototype.addIf = function (className, condition) {
  *
  * @return {Style} The Style instance.
  */
-Style.prototype.addResolved = function (className) {
+Style.prototype.addResolved = function(className) {
   if (className && className.length) {
     this.classes.push(className)
   }
@@ -59,7 +59,7 @@ Style.prototype.addResolved = function (className) {
  *
  * @return {string} The rendered class names.
  */
-Style.prototype.getClasses = function () {
+Style.prototype.getClasses = function() {
   return this.classes.join(' ')
 }
 

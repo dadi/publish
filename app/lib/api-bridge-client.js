@@ -12,14 +12,14 @@ let onError = null
 let onUpdate = null
 let throttle = null
 
-function throttleAllow () {
+function throttleAllow() {
   clearInterval(throttle)
-  throttle = setTimeout(() => callCount = 0, 1000)
+  throttle = setTimeout(() => (callCount = 0), 1000)
 
   return ++callCount <= MAX_CALLS_PER_SECOND
 }
 
-const apiBridgeFetch = function (requestObject) {
+const apiBridgeFetch = function(requestObject) {
   if (!throttleAllow()) {
     return Promise.reject('API_CALL_QUOTA_EXCEEDED')
   }
@@ -51,7 +51,7 @@ const apiBridgeFetch = function (requestObject) {
   })
 }
 
-const apiBridgeFactory = function ({
+const apiBridgeFactory = function({
   accessToken,
   api,
   collection = {},
@@ -61,14 +61,8 @@ const apiBridgeFactory = function ({
     throw 'apiBridgeFactory: Missing API'
   }
 
-  const {
-    host,
-    port
-  } = api
-  const {
-    database,
-    version
-  } = collection
+  const {host, port} = api
+  const {database, version} = collection
 
   const callback = requestObject => {
     let augmentedRequestObject = Object.assign({}, requestObject, {
@@ -85,21 +79,23 @@ const apiBridgeFactory = function ({
       onUpdate.call(this, Constants.STATUS_LOADING)
     }
 
-    return apiBridgeFetch(query).then(response => {
-      if (typeof onUpdate === 'function') {
-        const onComplete = onUpdate.bind(this, Constants.STATUS_COMPLETE)
+    return apiBridgeFetch(query)
+      .then(response => {
+        if (typeof onUpdate === 'function') {
+          const onComplete = onUpdate.bind(this, Constants.STATUS_COMPLETE)
 
-        onUpdate.call(this, Constants.STATUS_IDLE, onComplete)
-      }
+          onUpdate.call(this, Constants.STATUS_IDLE, onComplete)
+        }
 
-      return response
-    }).catch(err => {
-      if (typeof onUpdate === 'function') {
-        onUpdate.call(this, Constants.STATUS_FAILED)
-      }
+        return response
+      })
+      .catch(err => {
+        if (typeof onUpdate === 'function') {
+          onUpdate.call(this, Constants.STATUS_FAILED)
+        }
 
-      return Promise.reject(err)
-    })
+        return Promise.reject(err)
+      })
   }
 
   const apiWrapperOptions = {

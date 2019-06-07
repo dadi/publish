@@ -31,7 +31,7 @@ function flattenUser(user) {
   }
 }
 
-function signOut (action) {
+function signOut(action) {
   Cookies.remove('accessToken')
   Cookies.remove('accessTokenExpiry')
 
@@ -44,7 +44,7 @@ function signOut (action) {
   }
 }
 
-export default function user (state = initialState, action = {}) {
+export default function user(state = initialState, action = {}) {
   switch (action.type) {
     case Types.ATTEMPT_SAVE_USER:
       return {
@@ -53,12 +53,8 @@ export default function user (state = initialState, action = {}) {
       }
 
     case Types.AUTHENTICATE:
-      let {
-        accessToken,
-        accessTokenTTL,
-        client
-      } = action
-      let expiryTimestamp = Date.now() + (accessTokenTTL * 1000)
+      let {accessToken, accessTokenTTL, client} = action
+      let expiryTimestamp = Date.now() + accessTokenTTL * 1000
       let expiryDate = new Date(expiryTimestamp)
 
       Cookies.set('accessToken', accessToken, {
@@ -155,7 +151,7 @@ export default function user (state = initialState, action = {}) {
 
         return errors
       }, {})
-    
+
       return {
         ...state,
         local: {

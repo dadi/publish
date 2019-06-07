@@ -25,7 +25,7 @@ export default class NavItem extends React.Component {
     mobile: proptypes.bool,
 
     /**
-     * Text content for navigation anchor. 
+     * Text content for navigation anchor.
      */
     text: proptypes.string
   }
@@ -48,13 +48,7 @@ export default class NavItem extends React.Component {
   }
 
   render() {
-    const {
-      active,
-      children,
-      href,
-      mobile,
-      text
-    } = this.props
+    const {active, children, href, mobile, text} = this.props
     const containerStyle = new Style(styles, 'container')
       .addIf('container-desktop', !mobile)
       .addIf('container-expanded', this.state.expanded)
@@ -72,27 +66,14 @@ export default class NavItem extends React.Component {
         onClick={this.toggleExpanded.bind(this, false)}
       >
         {href && (
-          <Link
-            className={navItemStyle.getClasses()}
-            to={href}
-          >
-            <span className={styles['nav-item-text']}>
-              {text}
-            </span>
+          <Link className={navItemStyle.getClasses()} to={href}>
+            <span className={styles['nav-item-text']}>{text}</span>
           </Link>
         )}
 
-        {!href && (
-          <span
-            className={navItemStyle.getClasses()}
-          >{text}</span>
-        )}
+        {!href && <span className={navItemStyle.getClasses()}>{text}</span>}
 
-        {children && (
-          <div className={styles.children}>
-            {children}
-          </div>
-        )}
+        {children && <div className={styles.children}>{children}</div>}
       </li>
     )
   }

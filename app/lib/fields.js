@@ -1,7 +1,8 @@
-export function getFieldType (schema) {
-  let fieldType = (schema.publish && schema.publish.subType) ?
-    schema.publish.subType :
-    schema.type
+export function getFieldType(schema) {
+  let fieldType =
+    schema.publish && schema.publish.subType
+      ? schema.publish.subType
+      : schema.type
 
   // For backwards compatibility.
   if (fieldType === 'Image') {
@@ -11,10 +12,7 @@ export function getFieldType (schema) {
   return fieldType
 }
 
-export function getVisibleFields ({
-  fields = {},
-  viewType
-}) {
+export function getVisibleFields({fields = {}, viewType}) {
   let foundDisplayProperty = false
   let enabledFields = Object.keys(fields).reduce((enabledFields, field) => {
     // Is there a publish block with a display property defined fro this view

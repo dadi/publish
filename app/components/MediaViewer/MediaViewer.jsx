@@ -21,43 +21,29 @@ export default class MediaViewer extends React.Component {
   render() {
     const {cdn, document} = this.props
     const {mimeType = ''} = document
-    const canonicalPath = document.path && (
-      document.path.indexOf('/') === 0 ? document.path : `/${document.path}`
-    )
-    const url = cdn && cdn.publicUrl
-      ? `${cdn.publicUrl}${canonicalPath}`
-      : (document.url || canonicalPath)
+    const canonicalPath =
+      document.path &&
+      (document.path.indexOf('/') === 0 ? document.path : `/${document.path}`)
+    const url =
+      cdn && cdn.publicUrl
+        ? `${cdn.publicUrl}${canonicalPath}`
+        : document.url || canonicalPath
 
     if (mimeType.indexOf('image/') === 0) {
-      return (
-        <img
-          className={styles.image}
-          src={url}
-        />
-      )
+      return <img className={styles.image} src={url} />
     }
 
     if (mimeType.indexOf('video/') === 0) {
       return (
-        <video
-          className={styles.video}
-          controls
-        >
-          <source
-            type={mimeType}
-            src={url}
-          />
+        <video className={styles.video} controls>
+          <source type={mimeType} src={url} />
         </video>
       )
     }
 
     if (mimeType === 'application/pdf') {
       return (
-        <object
-          className={styles.pdf}
-          data={url}
-          type="application/pdf"
-        >
+        <object className={styles.pdf} data={url} type="application/pdf">
           <iframe src={url} />
         </object>
       )

@@ -17,10 +17,7 @@ export default class ButtonWithPrompt extends React.Component {
     /**
      * The position of the prompt relative to the button.
      */
-    position: proptypes.oneOf([
-      'left',
-      'right'
-    ]),
+    position: proptypes.oneOf(['left', 'right']),
 
     /**
      * The text to be displayed in the call-to-action button.
@@ -39,7 +36,7 @@ export default class ButtonWithPrompt extends React.Component {
 
   constructor(props) {
     super(props)
-    
+
     this.state = {
       visible: false
     }
@@ -106,24 +103,22 @@ export default class ButtonWithPrompt extends React.Component {
     delete buttonProps.promptCallToAction
     delete buttonProps.promptMessage
 
-    const promptStyle = new Style(styles, 'prompt')
-      .add(`prompt-${position}`)
-    
+    const promptStyle = new Style(styles, 'prompt').add(`prompt-${position}`)
+
     return (
-      <div
-        className={styles.container}
-        ref={el => this.containerEl = el}
-      >
+      <div className={styles.container} ref={el => (this.containerEl = el)}>
         <Button {...buttonProps}>{children}</Button>
-        
-        {visible &&
+
+        {visible && (
           <Prompt
             action={promptCallToAction}
             className={promptStyle.getClasses()}
             onClick={modifiedOnClick}
             position={position}
-          >{promptMessage}</Prompt>
-        }
+          >
+            {promptMessage}
+          </Prompt>
+        )}
       </div>
     )
   }

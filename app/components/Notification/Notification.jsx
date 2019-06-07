@@ -12,11 +12,7 @@ export default class Notification extends React.Component {
     /**
      * Colour accent.
      */
-    accent: proptypes.oneOf([
-      'destruct',
-      'save',
-      'system'
-    ]),
+    accent: proptypes.oneOf(['destruct', 'save', 'system']),
 
     /**
      * The notification message.
@@ -69,8 +65,10 @@ export default class Notification extends React.Component {
       options,
       visible
     } = this.props
-    const containerStyle = new Style(styles, 'container')
-      .addIf('container-visible', visible)
+    const containerStyle = new Style(styles, 'container').addIf(
+      'container-visible',
+      visible
+    )
     const notificationStyle = new Style(styles, 'notification')
       .add(`notification-${accent}`)
       .addIf('notification-faded', faded)
@@ -90,26 +88,31 @@ export default class Notification extends React.Component {
         >
           <span>{message}</span>
 
-          {options && Object.keys(options).map(label => {
-            if (typeof options[label] === 'string') {
+          {options &&
+            Object.keys(options).map(label => {
+              if (typeof options[label] === 'string') {
+                return (
+                  <a
+                    className={styles.option}
+                    href={options[label]}
+                    key={label}
+                    onClick={onOptionClick.bind(this, options[label])}
+                  >
+                    {label}
+                  </a>
+                )
+              }
+
               return (
-                <a
+                <button
                   className={styles.option}
-                  href={options[label]}
                   key={label}
                   onClick={onOptionClick.bind(this, options[label])}
-                >{label}</a>
+                >
+                  {label}
+                </button>
               )
-            }
-
-            return (
-              <button
-                className={styles.option}
-                key={label}
-                onClick={onOptionClick.bind(this, options[label])}
-              >{label}</button>
-            )
-          })}
+            })}
         </div>
       </div>
     )

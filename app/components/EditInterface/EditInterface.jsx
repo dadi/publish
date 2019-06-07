@@ -22,15 +22,10 @@ export default class EditInterface extends React.Component {
 
     return (
       <div className={styles.container}>
-        {(children.length > 1) && (
+        {children.length > 1 && (
           <div className={styles.navigation}>
             {React.Children.map(children, section => {
-              const {
-                hasErrors,
-                href,
-                isActive,
-                label
-              } = section.props
+              const {hasErrors, href, isActive, label} = section.props
 
               return (
                 <SubNavItem
@@ -38,7 +33,9 @@ export default class EditInterface extends React.Component {
                   error={Boolean(hasErrors)}
                   href={href}
                   key={href}
-                >{label}</SubNavItem>
+                >
+                  {label}
+                </SubNavItem>
               )
             })}
           </div>

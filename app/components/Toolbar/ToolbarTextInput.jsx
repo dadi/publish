@@ -40,15 +40,8 @@ export default class ToolbarTextInput extends React.Component {
   }
 
   render() {
-    const {
-      className,
-      onChange,
-      placeholder,
-      type,
-      value
-    } = this.props
-    const inputStyle = new Style(styles, 'input')
-      .addResolved(className)
+    const {className, onChange, placeholder, type, value} = this.props
+    const inputStyle = new Style(styles, 'input').addResolved(className)
 
     return (
       <TextInput

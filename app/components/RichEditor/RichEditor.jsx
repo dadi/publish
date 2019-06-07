@@ -81,14 +81,12 @@ export default class RichEditor extends React.Component {
     /**
      * The unique cache key for the document being edited.
      */
-    contentKey: proptypes.string,    
+    contentKey: proptypes.string,
 
     /**
      * The format used for input and output.
      */
-    format: proptypes.oneOf([
-      'markdown'
-    ]),
+    format: proptypes.oneOf(['markdown']),
 
     /**
      * Callback to be executed when the text loses focus (onBlur event).
@@ -119,20 +117,17 @@ export default class RichEditor extends React.Component {
     /**
      * The initial value of the editor.
      */
-    value: proptypes.oneOfType([
-      proptypes.object,
-      proptypes.string
-    ])
+    value: proptypes.oneOfType([proptypes.object, proptypes.string])
   }
 
   constructor(props) {
     super(props)
 
     this.hotKeys = new HotKeys({
-      'escape': this.handleToggleFullscreen.bind(this, false),
+      escape: this.handleToggleFullscreen.bind(this, false),
       'mod+b': this.handleToggleMark.bind(this, 'bold'),
       'mod+i': this.handleToggleMark.bind(this, 'italic')
-    })    
+    })
 
     this.initialMediaState = {
       isSelectingMedia: false,
@@ -185,7 +180,7 @@ export default class RichEditor extends React.Component {
     if (Value.isValue(value)) {
       return value
     }
-    
+
     if (typeof value === 'string') {
       if (!isRawMode && format === FORMAT_MARKDOWN) {
         return this.markdown.deserialize(value)
@@ -223,7 +218,7 @@ export default class RichEditor extends React.Component {
         if (isRawMode) {
           return this.editor.insertText(`![](${mediaObject.url})`)
         }
-  
+
         this.editor.insertBlock({
           type: 'image',
           data: {
@@ -236,7 +231,7 @@ export default class RichEditor extends React.Component {
 
   handleSave({value}) {
     return this.serialise(value)
-  }  
+  }
 
   handleToggleBlock(type) {
     if (this.state.isRawMode) {
@@ -268,17 +263,14 @@ export default class RichEditor extends React.Component {
           .unwrapBlock(NODE_BULLETED_LIST)
           .unwrapBlock(NODE_NUMBERED_LIST)
       } else if (isList) {
-        const oldListType = type === NODE_BULLETED_LIST
-          ? NODE_NUMBERED_LIST
-          : NODE_BULLETED_LIST
+        const oldListType =
+          type === NODE_BULLETED_LIST ? NODE_NUMBERED_LIST : NODE_BULLETED_LIST
 
-        this.editor
-          .unwrapBlock(oldListType)
-          .wrapBlock(type)
+        this.editor.unwrapBlock(oldListType).wrapBlock(type)
       } else {
         this.editor.setBlocks(NODE_LIST_ITEM).wrapBlock(type)
       }
-    }    
+    }
   }
 
   handleToggleCode(valueIsCodeBlock, valueIsCodeMark) {
@@ -326,16 +318,16 @@ export default class RichEditor extends React.Component {
     if (valueIsLink) {
       return this.editor.unwrapInline(NODE_LINK)
     }
-    
+
     if (this.value.selection.isExpanded) {
       this.editor.wrapInline({
         type: NODE_LINK,
         data: {
           href: ''
-        },
+        }
       })
     }
-  }  
+  }
 
   handleToggleMark(type) {
     if (this.state.isRawMode) {
@@ -356,7 +348,7 @@ export default class RichEditor extends React.Component {
     const {isRawMode} = this.state
     const serialisedValue = this.serialise(this.value)
 
-    onChange.call(this, serialisedValue)    
+    onChange.call(this, serialisedValue)
 
     this.setState({
       isRawMode: !isRawMode
@@ -383,9 +375,8 @@ export default class RichEditor extends React.Component {
     if (blocks.size > 0) {
       const parent = document.getParent(blocks.first().key)
 
-      valueIsInList = this.hasBlock(NODE_LIST_ITEM) &&
-        parent &&
-        parent.type === type 
+      valueIsInList =
+        this.hasBlock(NODE_LIST_ITEM) && parent && parent.type === type
     }
 
     return valueIsInList
@@ -404,17 +395,17 @@ export default class RichEditor extends React.Component {
     const valueIsLink = this.hasInline(NODE_LINK)
 
     return (
-      <div ref={el => this.container = el}>
+      <div ref={el => (this.container = el)}>
         {isSelectingMedia && (
           <Modal
             onRequestClose={this.handleToggleMediaSelect.bind(this, false)}
             scrollContent={false}
-          >{this.renderMediaSelect()}</Modal>
+          >
+            {this.renderMediaSelect()}
+          </Modal>
         )}
 
-        <RichEditorToolbar
-          fullscreen={isFullscreen}
-        >
+        <RichEditorToolbar fullscreen={isFullscreen}>
           <div>
             <RichEditorToolbarButton
               action={this.handleToggleMark.bind(this, NODE_BOLD)}
@@ -473,7 +464,11 @@ export default class RichEditor extends React.Component {
               text="Bulleted list"
             />
             <RichEditorToolbarButton
-              action={this.handleToggleCode.bind(this, valueIsCodeBlock, valueIsCodeMark)}
+              action={this.handleToggleCode.bind(
+                this,
+                valueIsCodeBlock,
+                valueIsCodeMark
+              )}
               active={valueIsCodeBlock || valueIsCodeMark}
               disabled={isRawMode}
               icon={IconCode}
@@ -499,19 +494,17 @@ export default class RichEditor extends React.Component {
               icon={IconFullscreen}
               text="Full-screen"
             />
-          </div>  
+          </div>
         </RichEditorToolbar>
 
-        <div
-          className={editorWrapperStyle.getClasses()}
-        >
+        <div className={editorWrapperStyle.getClasses()}>
           <Editor
             className={styles.editor}
             onChange={this.handleChange.bind(this)}
             renderBlock={this.renderBlock.bind(this)}
             renderInline={this.renderInline.bind(this)}
             renderMark={this.renderMark.bind(this)}
-            ref={el => this.editor = el}
+            ref={el => (this.editor = el)}
             schema={SCHEMA}
             value={this.value}
           />
@@ -526,41 +519,36 @@ export default class RichEditor extends React.Component {
     switch (node.type) {
       case NODE_CODE:
         return (
-          <code
-            {...attributes}
-            className={styles['code-block']}
-          >{children}</code>
-        )
-      
-      case NODE_BLOCKQUOTE:
-        return (
-          <blockquote {...attributes}>{children}</blockquote>
+          <code {...attributes} className={styles['code-block']}>
+            {children}
+          </code>
         )
 
+      case NODE_BLOCKQUOTE:
+        return <blockquote {...attributes}>{children}</blockquote>
+
       case NODE_BULLETED_LIST:
-        return (
-          <ul {...attributes}>{children}</ul>
-        )
+        return <ul {...attributes}>{children}</ul>
 
       case NODE_HEADING1:
         return (
-          <h1
-            {...attributes}
-            className={styles.heading}
-          >{children}</h1>
+          <h1 {...attributes} className={styles.heading}>
+            {children}
+          </h1>
         )
 
       case NODE_HEADING2:
         return (
-          <h2
-            {...attributes}
-            className={styles.heading}
-          >{children}</h2>
+          <h2 {...attributes} className={styles.heading}>
+            {children}
+          </h2>
         )
 
       case NODE_IMAGE: {
-        const imageStyle = new Style(styles, 'image')
-          .addIf('image-focused', isFocused)
+        const imageStyle = new Style(styles, 'image').addIf(
+          'image-focused',
+          isFocused
+        )
 
         return (
           <img
@@ -572,14 +560,10 @@ export default class RichEditor extends React.Component {
       }
 
       case NODE_LIST_ITEM:
-        return (
-          <li {...attributes}>{children}</li>
-        )
+        return <li {...attributes}>{children}</li>
 
       case NODE_NUMBERED_LIST:
-        return (
-          <ol {...attributes}>{children}</ol>
-        )
+        return <ol {...attributes}>{children}</ol>
 
       default:
         return next()
@@ -610,19 +594,13 @@ export default class RichEditor extends React.Component {
   renderMark({children, mark, attributes}, _, next) {
     switch (mark.type) {
       case NODE_BOLD:
-        return (
-          <strong {...attributes}>{children}</strong>
-        )
+        return <strong {...attributes}>{children}</strong>
 
       case NODE_CODE:
-        return (
-          <code {...attributes}>{children}</code>
-        )
+        return <code {...attributes}>{children}</code>
 
       case NODE_ITALIC:
-        return (
-          <em {...attributes}>{children}</em>
-        )
+        return <em {...attributes}>{children}</em>
 
       default:
         return next()
@@ -632,10 +610,12 @@ export default class RichEditor extends React.Component {
   renderMediaSelect() {
     const {contentKey} = this.props
     const {mediaFilters, mediaPage, mediaSelection} = this.state
-    const compoundContentKey = contentKey + JSON.stringify({
-      filters: mediaFilters,
-      page: mediaPage
-    })
+    const compoundContentKey =
+      contentKey +
+      JSON.stringify({
+        filters: mediaFilters,
+        page: mediaPage
+      })
     const collection = Constants.MEDIA_COLLECTION_SCHEMA
 
     return (
@@ -648,11 +628,10 @@ export default class RichEditor extends React.Component {
             title="No media yet."
             subtitle="There are no items in the media library."
           >
-            <Button
-              accent="save"
-              href="/media"
-            >Upload some</Button>
-          </HeroMessage> 
+            <Button accent="save" href="/media">
+              Upload some
+            </Button>
+          </HeroMessage>
         )}
         onRender={({documents, metadata, onSelect, selectedDocuments}) => (
           <>
@@ -660,9 +639,11 @@ export default class RichEditor extends React.Component {
               <DocumentFilters
                 collection={collection}
                 filters={mediaFilters}
-                onUpdateFilters={newFilters => this.setState({
-                  mediaFilters: newFilters
-                })}
+                onUpdateFilters={newFilters =>
+                  this.setState({
+                    mediaFilters: newFilters
+                  })
+                }
               />
             </div>
 
@@ -675,7 +656,7 @@ export default class RichEditor extends React.Component {
                     isSelected={isSelected}
                     item={item}
                     onSelect={onSelect}
-                  />                
+                  />
                 )}
                 onSelect={onSelect}
                 selectedDocuments={selectedDocuments}
@@ -685,25 +666,30 @@ export default class RichEditor extends React.Component {
             <div className={styles['media-select-toolbar']}>
               <DocumentListToolbar
                 metadata={metadata}
-                pageChangeHandler={() => page => this.setState({
-                  mediaPage: page
-                })}
+                pageChangeHandler={() => page =>
+                  this.setState({
+                    mediaPage: page
+                  })}
               >
                 <Button
                   accent="save"
                   disabled={mediaSelection.length === 0}
                   onClick={this.handleMediaInsert.bind(this)}
-                >Insert items</Button>
+                >
+                  Insert items
+                </Button>
               </DocumentListToolbar>
             </div>
           </>
         )}
-        onSelect={newSelection => this.setState({
-          mediaSelection: newSelection
-        })}
+        onSelect={newSelection =>
+          this.setState({
+            mediaSelection: newSelection
+          })
+        }
         page={mediaPage}
         selection={mediaSelection}
-      />      
+      />
     )
   }
 
@@ -718,7 +704,7 @@ export default class RichEditor extends React.Component {
 
       return PlainSerializer.serialize(value)
     }
-  
+
     return value
   }
 
@@ -726,7 +712,7 @@ export default class RichEditor extends React.Component {
     if (Value.isValue(value)) {
       return Promise.resolve()
     }
-  
+
     return validateFn(value)
   }
 }

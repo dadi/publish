@@ -1,10 +1,6 @@
-import DateTime from 'lib/datetime'
-import DateTimePicker from 'components/DateTimePicker/DateTimePicker'
 import Label from 'components/Label/Label'
 import proptypes from 'prop-types'
 import React from 'react'
-import styles from './FieldDateTime.css'
-import TextInput from 'components/TextInput/TextInput'
 import TextInputWithDatePicker from 'components/TextInputWithDatePicker/TextInputWithDatePicker'
 
 /**
@@ -72,16 +68,16 @@ export default class FieldDateTimeEdit extends React.Component {
      * The field schema.
      */
     schema: proptypes.object,
-    
+
     /**
      * The field value.
      */
-    value: proptypes.number
+    value: proptypes.oneOfType([proptypes.number, proptypes.string])
   }
 
   handleChange(newValue) {
     const {onChange} = this.props
-    
+
     if (typeof onChange === 'function') {
       onChange.call(this, newValue)
     }
@@ -90,27 +86,30 @@ export default class FieldDateTimeEdit extends React.Component {
   render() {
     const {
       comment,
+      config,
       displayName,
       error,
       readOnly,
       required,
+      schema,
       value
     } = this.props
-    const commentString = comment ||
-      required && 'Required' ||
-      readOnly && 'Read only' ||
-      null
+    const commentString =
+      comment || (required && 'Required') || (readOnly && 'Read only') || null
+    const format = schema.format || config.formats.date.long
 
     return (
       <Label
-        comment={commentString}  
+        comment={commentString}
         error={Boolean(error)}
         errorMessage={typeof error === 'string' ? error : null}
         label={displayName}
       >
         <TextInputWithDatePicker
+          format={format}
           onChange={this.handleChange.bind(this)}
           onKeyUp={this.handleChange.bind(this)}
+          readOnly={readOnly}
           value={value}
         />
       </Label>

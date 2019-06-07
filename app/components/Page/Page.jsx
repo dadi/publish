@@ -6,10 +6,6 @@ import styles from './Page.css'
  */
 export default class Page extends React.Component {
   render() {
-    return (
-      <div className={styles.container}>
-        {this.props.children}
-      </div>
-    )
+    return <div className={styles.container}>{this.props.children}</div>
   }
 }

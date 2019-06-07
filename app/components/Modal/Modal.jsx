@@ -47,22 +47,24 @@ export default class Modal extends React.Component {
       isOpen: false
     })
   }
-  
+
   render() {
     const {children, onRequestClose, scrollContent} = this.props
     const {isOpen} = this.state
-    const contentStyle = new Style(styles, 'content')
-      .addIf('content-scrollable', scrollContent)
+    const contentStyle = new Style(styles, 'content').addIf(
+      'content-scrollable',
+      scrollContent
+    )
 
     return (
       <ReactModal
         bodyOpenClassName={styles['body-open']}
         className={contentStyle.getClasses()}
-        contentRef={el => this.contentRef = el}
+        contentRef={el => (this.contentRef = el)}
         isOpen={isOpen}
         onRequestClose={onRequestClose}
         overlayClassName={styles.overlay}
-        overlayRef={el => this.overlayRef = el}
+        overlayRef={el => (this.overlayRef = el)}
         shouldCloseOnOverlayClick={true}
         shouldCloseOnEsc={true}
       >

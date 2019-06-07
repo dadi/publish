@@ -34,13 +34,7 @@ export default class Checkbox extends React.Component {
   }
 
   render() {
-    const {
-      id,
-      name,
-      onChange,
-      readOnly,
-      value
-    } = this.props
+    const {id, name, onChange, readOnly, value} = this.props
 
     return (
       <input

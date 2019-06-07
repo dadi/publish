@@ -1,9 +1,7 @@
 import * as Constants from 'lib/constants'
 import * as Types from 'actions/actionTypes'
 
-const serverData = typeof window !== 'undefined'
-  ? window.__api__
-  : null
+const serverData = typeof window !== 'undefined' ? window.__api__ : null
 
 export const initialState = {
   collections: (serverData && serverData.collections) || [],
@@ -15,7 +13,7 @@ export const initialState = {
   url: null
 }
 
-export default function api (state = initialState, action = {}) {
+export default function api(state = initialState, action = {}) {
   switch (action.type) {
     /*case Types.SET_API:
       const {
@@ -96,7 +94,7 @@ export default function api (state = initialState, action = {}) {
   }
 }
 
-function addCollectionLinks (apis) {
+function addCollectionLinks(apis) {
   // A hash object keeping a count for each menu item + collection name
   // pair. Whenever a count is greater than 1, it means a collection –
   // i.e. two collections with the same name either under the same menu
@@ -115,71 +113,73 @@ function addCollectionLinks (apis) {
 
     return {
       key,
-      suffix: (counts[key] > 1) ? `-${counts[key]}` : ''
+      suffix: counts[key] > 1 ? `-${counts[key]}` : ''
     }
   }
 
-  apis.filter(api => {
-    return Boolean(api.collections && api.collections.length)
-  }).forEach(api => {
-    // There are some collections that we don't want to display on the menu,
-    // like auth or media collections.
-    let filteredCollections = api.collections.filter(collection => {
-      let isMediaCollection = collection.settings &&
-        collection.settings.type === 'media'
-
-      return !isMediaCollection
+  apis
+    .filter(api => {
+      return Boolean(api.collections && api.collections.length)
     })
-    let {menu = []} = api
+    .forEach(api => {
+      // There are some collections that we don't want to display on the menu,
+      // like auth or media collections.
+      let filteredCollections = api.collections.filter(collection => {
+        let isMediaCollection =
+          collection.settings && collection.settings.type === 'media'
 
-    // We start by adding all the collections that are referenced in the menu
-    // object.
-    menu.forEach(menuItem => {
-      // If this is a menu item with nested collections, we'll process each of
-      // them individually.
-      if (menuItem.title && menuItem.collections) {
-        let menuSlug = Format.slugify(menuItem.title)
+        return !isMediaCollection
+      })
+      let {menu = []} = api
 
-        menuItem.collections.forEach(collectionName => {
+      // We start by adding all the collections that are referenced in the menu
+      // object.
+      menu.forEach(menuItem => {
+        // If this is a menu item with nested collections, we'll process each of
+        // them individually.
+        if (menuItem.title && menuItem.collections) {
+          let menuSlug = Format.slugify(menuItem.title)
+
+          menuItem.collections.forEach(collectionName => {
+            let collection = api.collections.find(item => {
+              return item.slug === collectionName
+            })
+
+            if (!collection) return
+
+            let {key, suffix} = getKeyAndSuffix(collectionName, menuSlug)
+
+            collection._publishLink = `/${key}${suffix}`
+            collection._publishMenu = menuItem.title
+          })
+        } else if (typeof menuItem === 'string') {
+          // This is a top-level collection, so `menuItem` is the name of the
+          // a collection.
           let collection = api.collections.find(item => {
-            return item.slug === collectionName
+            return item.slug === menuItem
           })
 
           if (!collection) return
 
-          let {key, suffix} = getKeyAndSuffix(collectionName, menuSlug)
+          let {key, suffix} = getKeyAndSuffix(menuItem)
 
           collection._publishLink = `/${key}${suffix}`
-          collection._publishMenu = menuItem.title
-        })
-      } else if (typeof menuItem === 'string') {
-        // This is a top-level collection, so `menuItem` is the name of the
-        // a collection.
-        let collection = api.collections.find(item => {
-          return item.slug === menuItem
-        })
+          collection._publishMenu = null
+        }
+      })
 
-        if (!collection) return
+      // Then we loop through all collections in the API and process any that
+      // are missing from the menu object.
+      filteredCollections.forEach(collection => {
+        // The collection has already been processed, nothing to do here.
+        if (collection._publishLink) {
+          return
+        }
 
-        let {key, suffix} = getKeyAndSuffix(menuItem)
+        let {key, suffix} = getKeyAndSuffix(collection.slug)
 
         collection._publishLink = `/${key}${suffix}`
         collection._publishMenu = null
-      }
+      })
     })
-
-    // Then we loop through all collections in the API and process any that
-    // are missing from the menu object.
-    filteredCollections.forEach(collection => {
-      // The collection has already been processed, nothing to do here.
-      if (collection._publishLink) {
-        return
-      }
-
-      let {key, suffix} = getKeyAndSuffix(collection.slug)
-
-      collection._publishLink = `/${key}${suffix}`
-      collection._publishMenu = null
-    })
-  })
 }

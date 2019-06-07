@@ -1,8 +1,4 @@
-import {
-  applyMiddleware,
-  compose,
-  createStore
-} from 'redux'
+import {applyMiddleware, compose, createStore} from 'redux'
 import {enableBatching} from './lib/redux'
 import {Provider} from 'react-redux'
 import App from './containers/App/App'
@@ -16,8 +12,9 @@ const store = storeComposer(applyMiddleware(thunk))(createStore)(
   enableBatching(reducers)
 )
 
-ReactDOM.render((
+ReactDOM.render(
   <Provider store={store}>
     <App />
-  </Provider>
-), document.getElementById('app'))
+  </Provider>,
+  document.getElementById('app')
+)

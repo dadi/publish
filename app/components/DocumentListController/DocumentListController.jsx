@@ -32,8 +32,8 @@ class DocumentListController extends React.Component {
     filters: proptypes.object,
 
     /**
-    * A callback to be fired whenever the filters are changed.
-    */
+     * A callback to be fired whenever the filters are changed.
+     */
     onUpdateFilters: proptypes.func
   }
 
@@ -57,35 +57,31 @@ class DocumentListController extends React.Component {
     return (
       <div className={styles.wrapper}>
         <div className={styles.filters}>
-          {enableFilters &&
+          {enableFilters && (
             <DocumentFilters
               collection={collection}
               filters={filters}
               onUpdateFilters={onUpdateFilters}
             />
-          }
+          )}
         </div>
 
         <div className={styles.actions}>
-          {createNewHref &&
+          {createNewHref && (
             <div className={styles['new-button-large']}>
-              <Button
-                accent="save"
-                href={createNewHref}
-                type="fill"
-              >Create new</Button>
+              <Button accent="save" href={createNewHref} type="fill">
+                Create new
+              </Button>
             </div>
-          }
+          )}
 
-          {createNewHref &&
+          {createNewHref && (
             <div className={styles['new-button-small']}>
-              <Button
-                accent="save"
-                href={createNewHref}
-                type="fill"
-              >New</Button>
+              <Button accent="save" href={createNewHref} type="fill">
+                New
+              </Button>
             </div>
-          }
+          )}
         </div>
       </div>
     )

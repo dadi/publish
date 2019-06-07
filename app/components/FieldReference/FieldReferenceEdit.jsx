@@ -73,16 +73,13 @@ export default class FieldReferenceEdit extends React.Component {
      * The field schema.
      */
     schema: proptypes.object,
-    
+
     /**
      * The field value.
      */
     value: proptypes.oneOfType([
       proptypes.arrayOf(
-        proptypes.oneOfType([
-          proptypes.object,
-          proptypes.string
-        ])        
+        proptypes.oneOfType([proptypes.object, proptypes.string])
       ),
       proptypes.object,
       proptypes.string
@@ -115,7 +112,8 @@ export default class FieldReferenceEdit extends React.Component {
       schema,
       value
     } = this.props
-    const referencedCollectionName = schema.settings && schema.settings.collection
+    const referencedCollectionName =
+      schema.settings && schema.settings.collection
 
     if (!referencedCollectionName) return null
 
@@ -140,16 +138,11 @@ export default class FieldReferenceEdit extends React.Component {
     const values = value && !(value instanceof Array) ? [value] : value
     const publishBlock = schema.publish || {}
     const isReadOnly = publishBlock.readonly === true
-    const comment = schema.comment ||
-      required && 'Required' ||
-      isReadOnly && 'Read only'
+    const comment =
+      schema.comment || (required && 'Required') || (isReadOnly && 'Read only')
 
     return (
-      <Label
-        comment={comment || null}
-        error={error}
-        label={displayName}
-      >
+      <Label comment={comment || null} error={error} label={displayName}>
         {value && (
           <div className={styles['value-container']}>
             <div className={styles.values}>
@@ -162,18 +155,15 @@ export default class FieldReferenceEdit extends React.Component {
                       key={value._id}
                     >
                       <span className={styles.value}>
-                        {displayField && value[displayField] || `Referenced ${displayName}`}
+                        {(displayField && value[displayField]) ||
+                          `Referenced ${displayName}`}
                       </span>
                     </a>
-                  )                  
+                  )
                 }
 
                 return (
-                  <span
-                    className={styles.value}
-                    key={index}
-                    title={value}
-                  >
+                  <span className={styles.value} key={index} title={value}>
                     Document not found
                   </span>
                 )
@@ -186,7 +176,9 @@ export default class FieldReferenceEdit extends React.Component {
                 className={styles['control-button']}
                 href={editLink}
                 size="small"
-              >Edit</Button>
+              >
+                Edit
+              </Button>
             )}
 
             {!isReadOnly && (
@@ -195,26 +187,24 @@ export default class FieldReferenceEdit extends React.Component {
                 className={styles['control-button']}
                 onClick={this.handleRemove.bind(this)}
                 size="small"
-              >Remove</Button>
+              >
+                Remove
+              </Button>
             )}
           </div>
         )}
 
         {!value && !isReadOnly && (
           <div className={styles.placeholder}>
-            <Button
-              accent="neutral"
-              href={editLink}
-              size="small"
-            >Select existing {displayName.toLowerCase()}</Button>
+            <Button accent="neutral" href={editLink} size="small">
+              Select existing {displayName.toLowerCase()}
+            </Button>
           </div>
         )}
 
         {!value && isReadOnly && (
           <div className={styles['value-container']}>
-            <span className={styles.value}>
-              None
-            </span>
+            <span className={styles.value}>None</span>
           </div>
         )}
       </Label>

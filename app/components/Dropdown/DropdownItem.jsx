@@ -36,23 +36,19 @@ export default class DropdownItem extends React.Component {
   }
 
   render() {
-    const {
-      active,
-      children,
-      href,
-      onClick
-    } =  this.props
-    const itemStyle = new Style(styles, 'dropdown-item')
-      .addIf('dropdown-item-active', active)
+    const {active, children, href, onClick} = this.props
+    const itemStyle = new Style(styles, 'dropdown-item').addIf(
+      'dropdown-item-active',
+      active
+    )
 
     // If the `href` prop is set, we render a link.
     if (href) {
       return (
         <li>
-          <Link
-            className={itemStyle.getClasses()}
-            to={href}
-          >{children}</Link>
+          <Link className={itemStyle.getClasses()} to={href}>
+            {children}
+          </Link>
         </li>
       )
     }
@@ -64,7 +60,9 @@ export default class DropdownItem extends React.Component {
           className={itemStyle.getClasses()}
           onClick={onClick}
           type="button"
-        >{children}</button>
+        >
+          {children}
+        </button>
       </li>
     )
   }

@@ -12,24 +12,19 @@ class SignInView extends React.Component {
     const {isSignedIn} = state.user
 
     if (isSignedIn) {
-      return (
-        <Redirect to='/'/>
-      )
+      return <Redirect to="/" />
     }
 
     return (
       <Page>
         <Main>
-          <SignIn 
-            setPageTitle={this.handlePageTitleChange}
-            token={token}
-          />
+          <SignIn setPageTitle={this.handlePageTitleChange} token={token} />
         </Main>
       </Page>
     )
   }
 
-  handlePageTitleChange (title) {
+  handlePageTitleChange(title) {
     setPageTitle(title)
   }
 }

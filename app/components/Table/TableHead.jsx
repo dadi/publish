@@ -61,7 +61,7 @@ export default class TableHead extends React.Component {
     return (
       <thead className={styles.head}>
         <tr>
-          {selectable &&
+          {selectable && (
             <TableHeadCell select={true}>
               <input
                 className={styles.select}
@@ -72,7 +72,7 @@ export default class TableHead extends React.Component {
                 value={allSelected}
               />
             </TableHeadCell>
-          }
+          )}
           {this.props.children}
         </tr>
       </thead>

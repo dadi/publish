@@ -41,11 +41,7 @@ export default class FileUpload extends React.Component {
   }
 
   render() {
-    const {
-      children,
-      className,
-      draggingText
-    } = this.props
+    const {children, className, draggingText} = this.props
     const {isDragging} = this.state
     const dropStyles = new Style(styles, 'droparea')
       .addIf('droparea-active', isDragging)
@@ -55,13 +51,11 @@ export default class FileUpload extends React.Component {
       <div
         className={dropStyles.getClasses()}
         data-dragtext={draggingText}
-        onDrop={this.handleDrop.bind(this)} 
+        onDrop={this.handleDrop.bind(this)}
         onDragEnter={this.handleDrag.bind(this, true)}
         onDragLeave={this.handleDrag.bind(this, false)}
       >
-        <div className={styles.contents}>
-          {children}
-        </div>
+        <div className={styles.contents}>{children}</div>
       </div>
     )
   }

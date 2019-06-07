@@ -1,4 +1,5 @@
 .DS_Store
+app/lib/field-components.js
 dist/
 log/
 node_modules/

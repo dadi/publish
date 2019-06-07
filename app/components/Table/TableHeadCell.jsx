@@ -43,21 +43,19 @@ export default class TableHeadCell extends React.Component {
 
     return (
       <th className={cellStyle.getClasses()}>
-        {arrow &&
+        {arrow && (
           <IconArrow
             className={styles['head-cell-arrow']}
             width={8}
             height={5}
             direction={arrow}
           />
-        }
+        )}
 
-        <span className={styles['head-cell-label']}>
-          {children}
-        </span>
+        <span className={styles['head-cell-label']}>{children}</span>
 
         {annotation}
       </th>
     )
-  }     
+  }
 }

@@ -56,66 +56,63 @@ module.exports = accessToken => {
     json: true
   }
 
-  return request(
-    `${api.host}:${api.port}/api/client`,
-    requestOptions
-  ).then(({results: clients}) => {
-    if (clients.length === 0) {
-      return Promise.reject()
-    }
-
-    response.client = clients[0]
-    response.config = config.get()
-
-    return request(
-      `${api.host}:${api.port}/api/languages`,
-      requestOptions
-    )
-  }).then(({results: languages}) => {
-    response.config.api.languages = languages
-
-    return request(
-      `${api.host}:${api.port}/api/collections`,
-      requestOptions
-    )
-  }).then(({collections}) => {
-    const {menu} = response.config.api
-
-    // A map corresponding collection names to a group, if they are part
-    // of one.
-    const collectionGroups = menu.reduce((groups, item) => {
-      const {collections, title} = item
-
-      if (Array.isArray(collections) && typeof title === 'string') {
-        collections.forEach(collection => {
-          groups.set(collection, title)
-        })
+  return request(`${api.host}:${api.port}/api/client`, requestOptions)
+    .then(({results: clients}) => {
+      if (clients.length === 0) {
+        return Promise.reject()
       }
 
-      return groups
-    }, new Map())
+      response.client = clients[0]
+      response.config = config.get()
 
-    // Augmenting collection objects with `_publishLink` properties, which
-    // contain a link to the collection (i.e. group + collection).
-    const augmentedCollections = collections.map(collection => {
-      const group = collectionGroups.get(collection.slug)
-      const href = group
-        ? `/${slugify(group)}/${collection.slug}`
-        : `/${collection.slug}`
-
-      return {
-        ...collection,
-        fields: applyDefaultPublishParams(collection.fields),
-        _publishLink: href
-      }
-    }).filter(({settings}) => {
-      return !(settings.publish && settings.publish.hidden)
+      return request(`${api.host}:${api.port}/api/languages`, requestOptions)
     })
+    .then(({results: languages}) => {
+      response.config.api.languages = languages
 
-    response.config.api.collections = augmentedCollections
+      return request(`${api.host}:${api.port}/api/collections`, requestOptions)
+    })
+    .then(({collections}) => {
+      const {menu} = response.config.api
 
-    return response
-  }).catch(() => {
-    return unauthenticatedResponse
-  })
+      // A map corresponding collection names to a group, if they are part
+      // of one.
+      const collectionGroups = menu.reduce((groups, item) => {
+        const {collections, title} = item
+
+        if (Array.isArray(collections) && typeof title === 'string') {
+          collections.forEach(collection => {
+            groups.set(collection, title)
+          })
+        }
+
+        return groups
+      }, new Map())
+
+      // Augmenting collection objects with `_publishLink` properties, which
+      // contain a link to the collection (i.e. group + collection).
+      const augmentedCollections = collections
+        .map(collection => {
+          const group = collectionGroups.get(collection.slug)
+          const href = group
+            ? `/${slugify(group)}/${collection.slug}`
+            : `/${collection.slug}`
+
+          return {
+            ...collection,
+            fields: applyDefaultPublishParams(collection.fields),
+            _publishLink: href
+          }
+        })
+        .filter(({settings}) => {
+          return !(settings.publish && settings.publish.hidden)
+        })
+
+      response.config.api.collections = augmentedCollections
+
+      return response
+    })
+    .catch(() => {
+      return unauthenticatedResponse
+    })
 }

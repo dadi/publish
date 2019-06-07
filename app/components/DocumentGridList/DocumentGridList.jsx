@@ -14,9 +14,9 @@ export default class DocumentGridList extends React.Component {
     documents: proptypes.array,
 
     /**
-    * A callback to be used to obtain the base URL for the given page, as
-    * determined by the view.
-    */
+     * A callback to be used to obtain the base URL for the given page, as
+     * determined by the view.
+     */
     onBuildBaseUrl: proptypes.func,
 
     /**
@@ -42,7 +42,7 @@ export default class DocumentGridList extends React.Component {
 
   static defaultProps = {
     selectedDocuments: {},
-    selectLimit: Infinity,
+    selectLimit: Infinity
   }
 
   constructor(props) {
@@ -74,11 +74,7 @@ export default class DocumentGridList extends React.Component {
   }
 
   handleItemSelect(index) {
-    const {
-      onSelect,
-      selectedDocuments,
-      selectLimit
-    } = this.props
+    const {onSelect, selectedDocuments, selectLimit} = this.props
     const isSelected = !Boolean(selectedDocuments[index])
 
     let newSelectedDocuments = {}
@@ -104,11 +100,7 @@ export default class DocumentGridList extends React.Component {
   }
 
   render() {
-    const {
-      documents,
-      onRenderCard,
-      selectedDocuments
-    } = this.props
+    const {documents, onRenderCard, selectedDocuments} = this.props
 
     if (typeof onRenderCard !== 'function') {
       return null

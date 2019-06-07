@@ -16,17 +16,13 @@ class ErrorView extends React.Component {
     // showing a flashing 404 page whilst routes are still being loaded.
     return (
       <Page>
-        <Header
-          currentCollection={currentCollection}
-        />
+        <Header currentCollection={currentCollection} />
 
         <Main>
-          {(hasConfig || data) &&
-            <ErrorMessage type={type} data={data} />
-          }
+          {(hasConfig || data) && <ErrorMessage type={type} data={data} />}
         </Main>
       </Page>
-    ) 
+    )
   }
 }
 

@@ -60,13 +60,17 @@ const SCHEMA = {
     frequency: {
       default: 2000,
       doc: 'Interval between health checks, in milliseconds',
-      format: function check (val) {
+      format: function check(val) {
         if (isNaN(val)) {
-          throw new Error('Healthcheck frequency must be a valid number and greater than 1000')
+          throw new Error(
+            'Healthcheck frequency must be a valid number and greater than 1000'
+          )
         }
 
         if (val < 1000) {
-          throw new Error('Healthcheck frequency must be greater than 1000 milliseconds')
+          throw new Error(
+            'Healthcheck frequency must be greater than 1000 milliseconds'
+          )
         }
       },
       showToUnauthenticatedUsers: true
@@ -100,7 +104,8 @@ const SCHEMA = {
     },
     accessLog: {
       enabled: {
-        doc: 'If true, HTTP access logging is enabled. The log file name is similar to the setting used for normal logging, with the addition of "access". For example `publish.access.log`.',
+        doc:
+          'If true, HTTP access logging is enabled. The log file name is similar to the setting used for normal logging, with the addition of "access". For example `publish.access.log`.',
         format: Boolean,
         default: true
       }
@@ -108,19 +113,22 @@ const SCHEMA = {
   },
   publicUrl: {
     host: {
-      doc: 'The host of the URL where the Publish instance can be publicly reached',
+      doc:
+        'The host of the URL where the Publish instance can be publicly reached',
       format: '*',
       default: null,
       env: 'URL_HOST'
     },
     port: {
-      doc: 'The port of the URL where the Publish instance can be publicly reached',
+      doc:
+        'The port of the URL where the Publish instance can be publicly reached',
       format: '*',
       default: null,
       env: 'URL_PORT'
     },
     protocol: {
-      doc: 'The protocol of the URL where the Publish instance can be publicly reached',
+      doc:
+        'The protocol of the URL where the Publish instance can be publicly reached',
       format: 'String',
       default: 'http',
       env: 'URL_PROTOCOL'
@@ -173,11 +181,12 @@ const SCHEMA = {
       env: 'SSL_INTERMEDIATE_CERTIFICATE_PATH'
     },
     sslIntermediateCertificatePaths: {
-      doc: 'The paths to SSL intermediate certificates, overrides sslIntermediateCertificate (singular)',
+      doc:
+        'The paths to SSL intermediate certificates, overrides sslIntermediateCertificate (singular)',
       format: Array,
       default: [],
       env: 'SSL_INTERMEDIATE_CERTIFICATE_PATHS'
-    },
+    }
   },
   whitelabel: {
     backgroundImage: {
@@ -188,10 +197,11 @@ const SCHEMA = {
     },
     displayVersionNumber: {
       default: true,
-      doc: 'Whether to display the version of the application in the navigation menu',
+      doc:
+        'Whether to display the version of the application in the navigation menu',
       format: Boolean,
       showToUnauthenticatedUsers: true
-    },    
+    },
     logo: {
       default: 'logo.png',
       doc: 'The logo URL',
