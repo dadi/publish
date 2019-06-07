@@ -77,34 +77,29 @@ module.exports = {
     webService: (locate('label').withText('Web service').as('Web Service')),
     authorPage: (locate('a').withText('4').as('Page 4')),
     nevermindButton: (locate('a').withText('Nevermind, back to document').as('Back to document')),
-    boldButton: (locate('button[title="Bold"]').as('Bold Button')),
-    italicButton: (locate('button[title="Italic"]').as('Italic Button')),
-    strikeThruButton: (locate('button[title="Strike-through"]').as('Strike-through Button')),
-    linkButton: (locate('button[title="Link"]').as('Link Button')),
-    h1Button: (locate('button[title="Heading 1"]').as('Header 1 Button')),
-    h2Button: (locate('button[title="Heading 2"]').as('Header 2 Button')),
-    quoteButton: (locate('button[title="Quote"]').as('Blockquote Button')),
-    orderedListButton: (locate('button[title="Ordered List"]').as('Numbered List Button')),
-    unOrderedListButton: (locate('button[title="Unordered List"]').as('Bullet Point Button')),
-    codeButton: (locate('button[title="Code"]').as('Code Button')),
-    imageButton: (locate('button[title="Image"]').as('Image Button')),
-    fullScreenButton: (locate('button[title="Fullscreen"]').as('Full Screen Button')),
-    textButton: (locate('button[title="Text"]').as('Text Button')),
-    boldText: (locate('b').withText('Bold').as('Bold Text')),
-    italicText: (locate('i').withText('Italic').as('Italic Text')),
-    strikeText: (locate('strike').withText('Strike-through').as('Strike-through Text')),
+    boldButton: (locate('button').withText('Bold').as('Bold Button')),
+    italicButton: (locate('button').withText('Italic').as('Italic Button')),
+    linkButton: (locate('button').withText('Link').as('Link Button')),
+    h1Button: (locate('button').withText('Heading 1').as('Header 1 Button')),
+    h2Button: (locate('button').withText('Heading 2').as('Header 2 Button')),
+    quoteButton: (locate('button').withText('Quote').as('Blockquote Button')),
+    orderedListButton: (locate('button').withText('Numbered list').as('Numbered List Button')),
+    unOrderedListButton: (locate('button').withText('Bulleted list').as('Bullet Point Button')),
+    codeButton: (locate('button').withText('Code').as('Code Button')),
+    imageButton: (locate('button').withText('Media').as('Image Button')),
+    fullScreenButton: (locate('button').withText('Full-screen').as('Full Screen Button')),
+    textButton: (locate('button').withText('Raw mode').as('Text Button')),
+    boldText: (locate('span').withText('Bold').inside('strong').as('Bold Text')),
+    italicText: (locate('span').withText('Italic').inside('em').as('Italic Text')),
     textArea: (locate('div[class*="RichEditor__editor-wysiwyg"]').as('Rich Editor Text')),
     markdownText: (locate('textarea[class*="RichEditor__editor-text"]').as('Markdown Text')),
-    quoteText: (locate('blockquote').withText('Blockquote').as('Blockquote Text')),
+    quoteText: (locate('span').withText('Blockquote').inside('blockquote').as('Blockquote Text')),
     linkText: (locate('a').withAttr({ 'href': 'www.link.com'}).as('Link Text')),
-    orderedList: (locate('div').withAttr({
-        'data-field-name': 'body'
-      }).find('ol').as('Numbered List Text')),
-    unorderedList: (locate('div').withAttr({
-        'data-field-name': 'body'
-      }).find('ul').as('Bullet Point Text')),
-    linkField: (locate('input[class*="RichEditor__link-input"]').as('Link Field')),
-    linkSave: (locate('button[class*="RichEditor__link-control"]').withText('Save').as('Save Link Button')),
+    orderedList1: (locate('span').withText('Point 1').inside('li').inside('ol').as('Ordered List Item 1')),
+    orderedList2: (locate('span').withText('Point 2').inside('li').inside('ol').as('Ordered List Item 2')),
+    unorderedList1: (locate('span').withText('Bullet 1').inside('li').inside('ul').as('Unordered List Item 1')),
+    unorderedList2: (locate('span').withText('Bullet 2').inside('li').inside('ul').as('Unordered List Item 2')),
+    linkField: (locate('input[class*="RichEditorLink__input"]').as('Link Field')),
     filterButton: (locate('button[class*="DocumentFilters__button"]').as('Filter Button')),
     filterForm: (locate('form[class*="DocumentFilters__tooltip"]').as('Add Filter Form')),
     filterField: (locate('select[class*="DocumentFilters__tooltip-dropdown-left"]').as('Filter Field')),
@@ -406,16 +401,14 @@ module.exports = {
     await I.click(this.locators.boldButton)
     await I.appendField(this.locators.bodyField, '  ')
     await I.click(this.locators.boldButton)
+    await I.pressKey('Enter')
+    await I.pressKey('Enter')
     // Italic
     await I.typeAndSelect(this.locators.bodyField, 'Italic')
     await I.click(this.locators.italicButton)
     await I.appendField(this.locators.bodyField, '  ')
     await I.click(this.locators.italicButton)
-    // Strike-through
-    await I.typeAndSelect(this.locators.bodyField, 'Strike-through')
-    await I.click(this.locators.strikeThruButton)
-    await I.appendField(this.locators.bodyField, '')
-    await I.click(this.locators.strikeThruButton)
+    await I.pressKey('Enter')
     await I.pressKey('Enter')
     // H1
     await I.typeAndSelect(this.locators.bodyField, 'Header 1')
@@ -441,8 +434,9 @@ module.exports = {
     await I.appendField(this.locators.bodyField, '')
     await I.typeAndSelect(this.locators.bodyField, 'Link')
     await I.click(this.locators.linkButton)
+    await I.waitForElement(this.locators.linkField)
     await I.fillField(this.locators.linkField, 'www.link.com')
-    await I.click(this.locators.linkSave)
+    await I.pressKey('Enter')
     await I.appendField(this.locators.bodyField, '  ')
     await I.pressKey('Enter')
     // Ordered List
@@ -463,39 +457,33 @@ module.exports = {
     await I.click(this.locators.saveArticle)
     await I.waitForText('The document has been created', 2)
 
-    let bold = await I.grabHTMLFrom(this.locators.boldText)
-    
-    let italic = await I.grabHTMLFrom(this.locators.italicText)
-    
-    let strike = await I.grabHTMLFrom(this.locators.strikeText)
-    
-    let quote = await I.grabHTMLFrom(this.locators.quoteText)
-    
-    let link = await I.grabHTMLFrom(this.locators.linkText)
-    
-    let olist = await I.grabHTMLFrom(this.locators.orderedList)
-    
-    let ulist = await I.grabHTMLFrom(this.locators.unorderedList)
+    await I.seeElement(this.locators.boldText)
+    await I.seeElement(this.locators.italicText)
+    await I.seeElement(this.locators.quoteText)
+    await I.seeElement(this.locators.linkText)
+    await I.seeElement(this.locators.orderedList1)
+    await I.seeElement(this.locators.orderedList2)
+    await I.seeElement(this.locators.unorderedList1)
+    await I.seeElement(this.locators.unorderedList2)
 
-    await I.seeStringContains(bold, 'Bold')
-    await I.seeStringContains(italic, 'Italic')
-    await I.seeStringContains(strike, 'Strike-through')
-    await I.seeStringContains(quote, 'Blockquote')
-    await I.seeStringContains(link, 'Link')
-    await I.seeStringContains(olist, '<li><span>Point 1</span></li><li><span>Point 2</span></li>')
-    await I.seeStringContains(ulist, '<li>Bullet 1</li><li>Bullet 2</li>')
-    // markdown view
-    await I.click(this.locators.textButton)
-    I.wait(2)
-    await I.seeInField(this.locators.markdownText, '**Bold** _Italic_ ~~Strike-through~~')
-    await I.seeInField(this.locators.markdownText, '# Header 1')
-    await I.seeInField(this.locators.markdownText, '## Header 2')
-    await I.seeInField(this.locators.markdownText, '> Blockquote')
-    await I.seeInField(this.locators.markdownText, '[Link](www.link.com)')
-    await I.seeInField(this.locators.markdownText, '1. Point 1')
-    await I.seeInField(this.locators.markdownText, '1. Point 2')
-    await I.seeInField(this.locators.markdownText, '* Bullet 1')
-    await I.seeInField(this.locators.markdownText, '* Bullet 2')
+    // (!) TO DO: We need a better way of testing the rich editor. Currently,
+    // it works by typing *and* selecting text at the same time, which means
+    // that styles are being persisted across paragraphs. Ideally, we'd type
+    // and only then select different portions of the text and apply the
+    // formats. Until that's done, the Markdown output will be messy and
+    // probably not worth testing.
+    //    -- eb (07/06/2019)
+    // await I.click(this.locators.textButton)
+    // I.wait(2)
+    // await I.see('**Bold** _Italic_')
+    // await I.see('# Header 1')
+    // await I.see('## Header 2')
+    // await I.see('> Blockquote')
+    // await I.see('[Link](www.link.com)')
+    // await I.see('1. Point 1')
+    // await I.see('1. Point 2')
+    // await I.see('* Bullet 1')
+    // await I.see('* Bullet 2')
   }
 
 }
