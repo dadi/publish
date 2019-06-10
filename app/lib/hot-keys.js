@@ -10,10 +10,12 @@ class HotKeys {
     })
   }
 
-  _capture(event) {
+  _capture(event, allowDefaultHandlers) {
     Object.keys(this.handlers).some(key => {
       if (this.handlers[key].hotKey(event)) {
-        event.preventDefault()
+        if (!allowDefaultHandlers) {
+          event.preventDefault()
+        }
 
         this.handlers[key].callback(event)
 
@@ -26,8 +28,8 @@ class HotKeys {
     window.addEventListener('keydown', this.eventHandler)
   }
 
-  capture() {
-    return this._capture.bind(this)
+  capture(allowDefaultHandlers) {
+    return this._capture.bind(this, allowDefaultHandlers)
   }
 
   on(key, callback) {
