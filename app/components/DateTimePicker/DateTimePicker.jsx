@@ -1,10 +1,8 @@
+import DateTime from 'lib/datetime'
 import React from 'react'
 import proptypes from 'prop-types'
-
 import Style from 'lib/Style'
 import styles from './DateTimePicker.css'
-
-import DateTime from 'lib/datetime'
 
 /**
  * Dialog for picking date and time for an input field.
@@ -24,7 +22,12 @@ export default class DateTimePicker extends React.Component {
     /**
      * A callback to be fired when a new date is selected.
      */
-    onChange: proptypes.func
+    onChange: proptypes.func,
+
+    /**
+     * Whether to show the time picker.
+     */
+    showTimePicker: proptypes.bool
   }
 
   constructor(props) {
@@ -36,7 +39,9 @@ export default class DateTimePicker extends React.Component {
     this.hoursRefs = []
 
     const date = props.date || new Date()
-    const displayDate = new Date(date.getFullYear(), date.getMonth(), 1)
+    const displayDate = new Date(date)
+
+    displayDate.setDate(1)
 
     this.state = {
       displayDate,
@@ -48,22 +53,36 @@ export default class DateTimePicker extends React.Component {
   componentWillReceiveProps(nextProps) {
     const {date} = this.props
     const {date: nextDate} = nextProps
+    const {displayDate} = this.state
+
+    let newState = null
 
     if (date && nextDate && date.getTime() !== nextDate.getTime()) {
-      this.setState({
+      newState = {
+        ...newState,
         monthOffset: 0
-      })
+      }
+    }
+
+    if (nextDate && nextDate.getTime() !== displayDate.getTime()) {
+      newState = {
+        ...newState,
+        displayDate: nextDate
+      }
+    }
+
+    if (newState) {
+      this.setState(newState)
     }
   }
 
-  componentDidUpdate(prevProps, prevState) {
+  componentDidUpdate(_, prevState) {
+    const {date} = this.props
     const {pickingTime} = this.state
 
     // Let's find the closest hour to the one currently selected, so we can
     // adjust the scroll position accordingly.
     if (!prevState.pickingTime && pickingTime) {
-      const date = this.getInternalDate()
-
       let closestDate
 
       this.hoursRefs.some(hourRef => {
@@ -83,23 +102,36 @@ export default class DateTimePicker extends React.Component {
     }
   }
 
-  getInternalDate(overrides = {}, monthOffset = this.state.monthOffset) {
+  getInternalDate(overrides = {}) {
     const date = this.props.date || new Date()
-    const dateTime = new DateTime(date)
 
-    if (!dateTime.isValid()) {
+    if (!new DateTime(date).isValid()) {
       return null
     }
 
-    const {year, month, day, hours, minutes} = overrides
+    const newDate = new Date(date)
 
-    return new Date(
-      year !== undefined ? year : date.getFullYear(),
-      month !== undefined ? month : date.getMonth() + monthOffset,
-      day !== undefined ? day : date.getDate(),
-      hours !== undefined ? hours : date.getHours(),
-      minutes !== undefined ? minutes : date.getMinutes()
-    )
+    if (overrides.year !== undefined) {
+      newDate.setUTCFullYear(overrides.year)
+    }
+
+    if (overrides.month !== undefined) {
+      newDate.setUTCMonth(overrides.month)
+    }
+
+    if (overrides.day !== undefined) {
+      newDate.setUTCDate(overrides.day)
+    }
+
+    if (overrides.hours !== undefined) {
+      newDate.setUTCHours(overrides.hours)
+    }
+
+    if (overrides.minutes !== undefined) {
+      newDate.setUTCMinutes(overrides.minutes)
+    }
+
+    return newDate
   }
 
   handleDatePick(date) {
@@ -112,9 +144,7 @@ export default class DateTimePicker extends React.Component {
 
   handleMonthChange(change) {
     const {displayDate} = this.state
-    const newDate = new Date(displayDate.getTime())
-
-    console.log({change})
+    const newDate = new Date(displayDate)
 
     newDate.setMonth(newDate.getMonth() + change)
 
@@ -132,18 +162,14 @@ export default class DateTimePicker extends React.Component {
   }
 
   render() {
-    const {className} = this.props
+    const {className, showTimePicker} = this.props
     const {displayDate, pickingTime} = this.state
     const containerStyle = new Style(styles, 'container').addResolved(className)
     const firstDayOfMonth = new Date(
-      displayDate.getFullYear(),
-      displayDate.getMonth(),
-      1
+      Date.UTC(displayDate.getUTCFullYear(), displayDate.getUTCMonth(), 1)
     )
     const lastDayOfMonth = new Date(
-      displayDate.getFullYear(),
-      displayDate.getMonth() + 1,
-      0
+      Date.UTC(displayDate.getUTCFullYear(), displayDate.getUTCMonth() + 1, 0)
     )
     const daysFromPreviousMonth = firstDayOfMonth.getDay()
     const numWeeks = Math.ceil(
@@ -206,15 +232,19 @@ export default class DateTimePicker extends React.Component {
           <tbody>{rows}</tbody>
         </table>
 
-        <button
-          className={styles['hours-launcher']}
-          onClick={this.handleTimeToggle.bind(this)}
-          type="button"
-        >
-          {displayDateTime.format('HH:mm')}
-        </button>
+        {showTimePicker && (
+          <>
+            <button
+              className={styles['hours-launcher']}
+              onClick={this.handleTimeToggle.bind(this)}
+              type="button"
+            >
+              {displayDateTime.format('HH:mm')}
+            </button>
 
-        {pickingTime && this.renderHours()}
+            {pickingTime && this.renderHours()}
+          </>
+        )}
       </div>
     )
   }
