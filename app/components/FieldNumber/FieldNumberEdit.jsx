@@ -80,7 +80,8 @@ export default class FieldNumberEdit extends React.Component {
     super(props)
 
     this.state = {
-      hasFocus: false
+      hasFocus: false,
+      internalValue: null
     }
   }
 
@@ -92,6 +93,7 @@ export default class FieldNumberEdit extends React.Component {
 
   handleOnChange(event) {
     const {onChange, value} = this.props
+    const {internalValue} = this.state
     const newValue =
       event.target.value !== '' ? parseFloat(event.target.value) : null
 
@@ -101,7 +103,13 @@ export default class FieldNumberEdit extends React.Component {
     // which are casted to the same number. When this happens, we don't
     // want to propagate the new value upstream just yet.
     if (newValue === value) {
-      return
+      return this.setState({
+        internalValue: event.target.value
+      })
+    } else if (internalValue !== null) {
+      this.setState({
+        internalValue: null
+      })
     }
 
     if (typeof onChange === 'function') {
@@ -120,7 +128,7 @@ export default class FieldNumberEdit extends React.Component {
       schema,
       value
     } = this.props
-    const {hasFocus} = this.state
+    const {hasFocus, internalValue} = this.state
     const publishBlock = schema.publish || {}
     const commentString =
       comment || (required && 'Required') || (readOnly && 'Read only') || null
@@ -140,7 +148,7 @@ export default class FieldNumberEdit extends React.Component {
           onFocus={this.handleFocusChange.bind(this, true)}
           readOnly={publishBlock.readonly === true}
           type="number"
-          value={value && value.toString()}
+          value={internalValue || (value && value.toString())}
         />
       </Label>
     )
