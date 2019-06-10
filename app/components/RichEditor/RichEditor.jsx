@@ -7,6 +7,7 @@ import DocumentFilters from 'containers/DocumentFilters/DocumentFilters'
 import DocumentGridList from 'components/DocumentGridList/DocumentGridList'
 import DocumentList from 'containers/DocumentList/DocumentList'
 import DocumentListToolbar from 'components/DocumentListToolbar/DocumentListToolbar'
+import Fullscreen from 'components/Fullscreen/Fullscreen'
 import HeroMessage from 'components/HeroMessage/HeroMessage'
 import HotKeys from 'lib/hot-keys'
 import IconBold from './icons/bold.svg'
@@ -158,14 +159,6 @@ export default class RichEditor extends React.Component {
 
     if (typeof onValidateRegister === 'function') {
       onValidateRegister(this.validate.bind(this))
-    }
-  }
-
-  componentDidUpdate(_, oldState) {
-    if (!oldState.isFullscreen && this.state.isFullscreen) {
-      document.body.classList.add(styles['body-in-fullscreen'])
-    } else if (oldState.isFullscreen && !this.state.isFullscreen) {
-      document.body.classList.remove(styles['body-in-fullscreen'])
     }
   }
 
@@ -383,10 +376,82 @@ export default class RichEditor extends React.Component {
   }
 
   render() {
+    const {isFullscreen} = this.state
+
+    if (isFullscreen) {
+      return <Fullscreen>{this.renderEditor()}</Fullscreen>
+    }
+
+    return this.renderEditor()
+  }
+
+  renderBlock(props, _, next) {
+    const {attributes, children, isFocused, node} = props
+
+    switch (node.type) {
+      case NODE_CODE:
+        return (
+          <code {...attributes} className={styles['code-block']}>
+            {children}
+          </code>
+        )
+
+      case NODE_BLOCKQUOTE:
+        return <blockquote {...attributes}>{children}</blockquote>
+
+      case NODE_BULLETED_LIST:
+        return <ul {...attributes}>{children}</ul>
+
+      case NODE_HEADING1:
+        return (
+          <h1 {...attributes} className={styles.heading}>
+            {children}
+          </h1>
+        )
+
+      case NODE_HEADING2:
+        return (
+          <h2 {...attributes} className={styles.heading}>
+            {children}
+          </h2>
+        )
+
+      case NODE_IMAGE: {
+        const imageStyle = new Style(styles, 'image').addIf(
+          'image-focused',
+          isFocused
+        )
+
+        return (
+          <img
+            {...attributes}
+            className={imageStyle.getClasses()}
+            src={node.data.get('src')}
+          />
+        )
+      }
+
+      case NODE_LIST_ITEM:
+        return <li {...attributes}>{children}</li>
+
+      case NODE_NUMBERED_LIST:
+        return <ol {...attributes}>{children}</ol>
+
+      default:
+        return next()
+    }
+  }
+
+  renderEditor() {
     const {isFullscreen, isRawMode, isSelectingMedia} = this.state
-    const editorWrapperStyle = new Style(styles, 'editor-wrapper')
-      .addIf('editor-wrapper-fullscreen', isFullscreen)
-      .addIf('editor-wrapper-raw', isRawMode)
+    const containerStyle = new Style(styles).addIf(
+      'container-fullscreen',
+      isFullscreen
+    )
+    const editorWrapperStyle = new Style(styles, 'editor-wrapper').addIf(
+      'editor-wrapper-raw',
+      isRawMode
+    )
 
     this.value = this.deserialise(this.props.value)
 
@@ -395,7 +460,10 @@ export default class RichEditor extends React.Component {
     const valueIsLink = this.hasInline(NODE_LINK)
 
     return (
-      <div ref={el => (this.container = el)}>
+      <div
+        className={containerStyle.getClasses()}
+        ref={el => (this.container = el)}
+      >
         {isSelectingMedia && (
           <Modal
             onRequestClose={this.handleToggleMediaSelect.bind(this, false)}
@@ -405,7 +473,7 @@ export default class RichEditor extends React.Component {
           </Modal>
         )}
 
-        <RichEditorToolbar fullscreen={isFullscreen}>
+        <RichEditorToolbar>
           <div>
             <RichEditorToolbarButton
               action={this.handleToggleMark.bind(this, NODE_BOLD)}
@@ -511,63 +579,6 @@ export default class RichEditor extends React.Component {
         </div>
       </div>
     )
-  }
-
-  renderBlock(props, _, next) {
-    const {attributes, children, isFocused, node} = props
-
-    switch (node.type) {
-      case NODE_CODE:
-        return (
-          <code {...attributes} className={styles['code-block']}>
-            {children}
-          </code>
-        )
-
-      case NODE_BLOCKQUOTE:
-        return <blockquote {...attributes}>{children}</blockquote>
-
-      case NODE_BULLETED_LIST:
-        return <ul {...attributes}>{children}</ul>
-
-      case NODE_HEADING1:
-        return (
-          <h1 {...attributes} className={styles.heading}>
-            {children}
-          </h1>
-        )
-
-      case NODE_HEADING2:
-        return (
-          <h2 {...attributes} className={styles.heading}>
-            {children}
-          </h2>
-        )
-
-      case NODE_IMAGE: {
-        const imageStyle = new Style(styles, 'image').addIf(
-          'image-focused',
-          isFocused
-        )
-
-        return (
-          <img
-            {...attributes}
-            className={imageStyle.getClasses()}
-            src={node.data.get('src')}
-          />
-        )
-      }
-
-      case NODE_LIST_ITEM:
-        return <li {...attributes}>{children}</li>
-
-      case NODE_NUMBERED_LIST:
-        return <ol {...attributes}>{children}</ol>
-
-      default:
-        return next()
-    }
   }
 
   renderInline({children, node}, _, next) {

@@ -11,16 +11,12 @@
   z-index: 20;
 }
 
-.container-fullscreen {
-  left: 10px;
-  position: fixed;
-  right: 10px;
-  top: 0;
-  z-index: 1003;
-}
-
 .container:after {
-  background: linear-gradient(to top, rgba(255,255,255,0), rgba(0,0,0,0.03));
+  background: linear-gradient(
+    to top,
+    rgba(255, 255, 255, 0),
+    rgba(0, 0, 0, 0.03)
+  );
   content: ' ';
   display: block;
   left: 0;
@@ -38,7 +34,7 @@
   margin-right: 6px;
   opacity: 0.65;
   padding: 5px 10px;
-  position: relative;  
+  position: relative;
 }
 
 .button[disabled] {
@@ -59,5 +55,5 @@
   background-repeat: no-repeat;
   background-size: auto 22px;
   font-size: 0;
-  padding: 12px;  
+  padding: 12px;
 }

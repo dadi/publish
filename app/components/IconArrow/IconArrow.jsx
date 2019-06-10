@@ -1,7 +1,5 @@
-import React from 'react'
 import proptypes from 'prop-types'
-
-import Style from 'lib/Style'
+import React from 'react'
 import styles from './IconArrow.css'
 
 /**

@@ -8,22 +8,13 @@ export class RichEditorToolbar extends React.Component {
     /**
      * The contents of the toolbar.
      */
-    children: proptypes.node,
-
-    /**
-     * Whether the button is disabled.
-     */
-    fullscreen: proptypes.bool
+    children: proptypes.node
   }
 
   render() {
-    const {children, fullscreen} = this.props
-    const containerStyle = new Style(styles, 'container').addIf(
-      'container-fullscreen',
-      fullscreen
-    )
+    const {children} = this.props
 
-    return <div className={containerStyle.getClasses()}>{children}</div>
+    return <div className={styles.container}>{children}</div>
   }
 }
 

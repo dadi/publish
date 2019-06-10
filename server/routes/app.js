@@ -16,10 +16,10 @@ const template = ({client, config, version}) => `
       <link rel="icon" type="image/png" href="/_public/images/favicon.png">
     </head>
     <body>
+      <div id="app-fullscreen"></div>
       <div id="app"></div>
       <script>window.__client__ = ${JSON.stringify(client)}</script>
       <script>window.__config__ = ${JSON.stringify(config)}</script>
-      <script>/*@@apiError@@*/</script>
       <script>window.__version__ = ${JSON.stringify(version)}</script>
       <script src="/_dist/bundle.js?v=${version}"></script>
     </body>
