@@ -990,7 +990,7 @@ module.exports = {
     await I.seeInCurrentUrl('/select/mediaRequired')
     I.waitForText('Media')
     await I.click(this.locators.nevermindButton)
-    await I.seeInCurrentUrl('/field-test-media/new/reference-and-media')
+    await I.seeInCurrentUrl('/field-test-media/new')
     await I.click(this.locators.saveContinue)
     await I.seeElement(this.locators.mediaReqError)
     await I.click(this.locators.mediaReqExisting)
@@ -1010,14 +1010,14 @@ module.exports = {
     await I.dontSeeInCurrentUrl('/new')
     await I.attachFile(
       this.locators.mediafieldUpload,
-      'test/functional/images/Watson.jpeg'
+      'functional/images/Watson.jpeg'
     )
     await I.waitForFunction(() => document.readyState === 'complete')
     await I.seeElement(this.locators.mediaJpegAttach)
     await I.scrollTo(this.locators.mediaPdfDrop)
     await I.attachFile(
       this.locators.mediaJpegUpload,
-      'test/functional/images/girl.png'
+      'functional/images/girl.png'
     )
     await I.waitForFunction(() => document.readyState === 'complete')
     await I.seeElement(this.locators.mediaJpegUploadErr)
@@ -1035,7 +1035,7 @@ module.exports = {
     await I.scrollTo(this.locators.mediaPngDrop)
     await I.attachFile(
       this.locators.mediaPngUpload,
-      'test/functional/images/dog.jpg'
+      'functional/images/dog.jpg'
     )
     await I.waitForFunction(() => document.readyState === 'complete')
     await I.seeElement(this.locators.mediaPngUploadErr)
@@ -1055,7 +1055,7 @@ module.exports = {
     await I.scrollTo(this.locators.scrollDown)
     await I.attachFile(
       this.locators.mediaJnPUpload,
-      'test/functional/images/DADI_Publish.pdf'
+      'functional/images/DADI_Publish.pdf'
     )
     await I.waitForFunction(() => document.readyState === 'complete')
     await I.seeElement(this.locators.mediaJnPUploadErr)
@@ -1077,7 +1077,7 @@ module.exports = {
     await I.scrollTo(this.locators.scrollDown)
     await I.attachFile(
       this.locators.mediaPdfUpload,
-      'test/functional/images/girl.png'
+      'functional/images/girl.png'
     )
     await I.waitForFunction(() => document.readyState === 'complete')
     await I.seeElement(this.locators.mediaPdfUploadErr)

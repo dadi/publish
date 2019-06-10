@@ -9,7 +9,6 @@ module.exports = {
       // Bootstrap the database
       return new Bootstrap().run()
     }).then(() => {
-      console.log('!!! RUNNING')
       return publish.run({
         configPath: path.resolve(__dirname, '../../dev-config')
       })
