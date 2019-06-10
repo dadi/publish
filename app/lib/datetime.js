@@ -3,7 +3,8 @@ import fecha from 'fecha'
 const FORMAT_ISO8601 = 'YYYY-MM-DDTHH:mm:ss.SSSZ'
 
 export default class DateTime {
-  constructor(date, inputFormat) {
+  constructor(date, inputFormat, defaultFormat) {
+    this.defaultFormat = defaultFormat
     this.localDate = this._parse(date, inputFormat)
   }
 
@@ -24,7 +25,7 @@ export default class DateTime {
     } else if (typeof date === 'string') {
       // If there is a `format` specified, we'll try to parse the date using
       // that.
-      if (format) {
+      if (format && format !== 'unix') {
         try {
           const parsedDate = fecha.parse(date, format)
 
@@ -89,7 +90,14 @@ export default class DateTime {
         ? this._getUTCDateFromLocalDate(this.localDate)
         : this.localDate
 
-      output = fecha.format(date, format)
+      if (format === 'unix') {
+        output =
+          typeof this.defaultFormat === 'string'
+            ? fecha.format(date, this.defaultFormat)
+            : date.getTime().toString()
+      } else {
+        output = fecha.format(date, format)
+      }
     } catch (err) {
       console.error('Error formatting date:', err)
     }

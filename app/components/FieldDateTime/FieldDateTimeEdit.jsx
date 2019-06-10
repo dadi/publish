@@ -122,6 +122,7 @@ export default class FieldDateTimeEdit extends React.Component {
         label={displayName}
       >
         <TextInputWithDatePicker
+          defaultFormat={config.formats.date.long}
           format={format}
           onChange={this.handleChange.bind(this)}
           readOnly={readOnly}

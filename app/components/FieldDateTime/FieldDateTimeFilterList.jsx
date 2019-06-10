@@ -25,7 +25,7 @@ export default class FieldDateTimeFilter extends React.Component {
     /**
      * Field value.
      */
-    value: proptypes.object
+    value: proptypes.number
   }
 
   render() {

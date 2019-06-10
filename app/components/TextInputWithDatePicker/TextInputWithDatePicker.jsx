@@ -12,6 +12,16 @@ import TextInput from 'components/TextInput/TextInput'
 export default class TextInputWithDatePicker extends React.Component {
   static propTypes = {
     /**
+     * A set of class names to be applied to the container element.
+     */
+    containerClassName: proptypes.string,
+
+    /**
+     * The preferred format as specified by the application config,
+     */
+    defaultFormat: proptypes.string,
+
+    /**
      * Format to be used by the DateTime object.
      */
     format: proptypes.string,
@@ -184,6 +194,7 @@ export default class TextInputWithDatePicker extends React.Component {
   render() {
     const {
       containerClassName,
+      defaultFormat,
       format,
       inputClassName,
       placeholder,
@@ -202,7 +213,7 @@ export default class TextInputWithDatePicker extends React.Component {
     let dateObj = null
 
     if (value && !internalValue) {
-      const dateTimeObj = new DateTime(value, format)
+      const dateTimeObj = new DateTime(value, format, defaultFormat)
 
       if (dateTimeObj.isValid()) {
         dateObj = dateTimeObj
