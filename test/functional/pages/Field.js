@@ -21,138 +21,100 @@ module.exports = {
     createNewButton: (locate('a').withText('Create new').as('Create New Button')),
     boolReq: (locate('div').withAttr({
       'data-field-name': 'boolRequired'
-    }).find('input').withAttr({
-      'name': 'boolRequired'
-    }).as('A boolean')),
+    }).find('input').as('A boolean')),
     boolReadOnly: (locate('div').withAttr({
       'data-field-name': 'boolReadOnly'
-    }).find('input').withAttr({
-      'name': 'boolReadOnly'
-    }).as('Read-only boolean')),
+    }).find('input').as('Read-only boolean')),
     dateReq: (locate('div').withAttr({
       'data-field-name': 'dateRequired'
-    }).find('input').withAttr({
-      'name': 'dateRequired'
-    }).as('A date')),
+    }).find('input').as('A date')),
     dateReqError: (locate('div').withAttr({
       'data-field-name': 'dateRequired'
     }).find('p').withText('This field must be specified').as('Required Field Error Message')),
     dateReadOnly: (locate('div').withAttr({
       'data-field-name': 'dateReadOnly'
-    }).find('input').withAttr({
-      'name': 'dateReadOnly'
-    }).as('Read-only date')),
+    }).find('input').as('Read-only date')),
     dateFuture: (locate('div').withAttr({
       'data-field-name': 'dateFuture'
-    }).find('input').withAttr({
-      'name': 'dateFuture'
-    }).as('A future date')),
+    }).find('input').as('A future date')),
     dateFutureError: (locate('div').withAttr({
       'data-field-name': 'dateFuture'
     }).find('p').withText('This field must be after').as('Future Date Error Message')),
     datePast: (locate('div').withAttr({
       'data-field-name': 'datePast'
-    }).find('input').withAttr({
-      'name': 'datePast'
-    }).as('A past date')),
+    }).find('input').as('A past date')),
     datePastError: (locate('div').withAttr({
       'data-field-name': 'datePast'
     }).find('p').withText('This field must be before').as('Past Date Error Message')),
     dateAfter: (locate('div').withAttr({
       'data-field-name': 'dateAfter'
-    }).find('input').withAttr({
-      'name': 'dateAfter'
-    }).as('A date after x')),
+    }).find('input').as('A date after x')),
     dateAfterError: (locate('div').withAttr({
       'data-field-name': 'dateAfter'
     }).find('p').withText('This field must be after Mon Jan 01 2018').as('A Date After Error Message')),
     dateBefore: (locate('div').withAttr({
       'data-field-name': 'dateBefore'
-    }).find('input').withAttr({
-      'name': 'dateBefore'
-    }).as('A date before x')),
+    }).find('input').as('A date before x')),
     dateBeforeError: (locate('div').withAttr({
       'data-field-name': 'dateBefore'
     }).find('p').withText('This field must be before Mon Jan 01 2018').as('A Date Before Error Message')),
     numberReq: (locate('div').withAttr({
       'data-field-name': 'numberRequired'
-    }).find('input').withAttr({
-      'name': 'numberRequired'
-    }).as('A number')),
+    }).find('input').as('A number')),
     numberReqError: (locate('div').withAttr({
       'data-field-name': 'numberRequired'
     }).find('p').withText('This field must be specified').as('Required Field Error Message')),
     numberNoLabel: (locate('div').withAttr({
       'data-field-name': 'numberNoLabel'
-    }).find('input').withAttr({
-      'name': 'numberNoLabel'
-    }).as('numberNoLabel')),
+    }).find('input').as('numberNoLabel')),
     numberGT: (locate('div').withAttr({
       'data-field-name': 'numberGreaterThan'
-    }).find('input').withAttr({
-      'name': 'numberGreaterThan'
-    }).as('Number greaterThan')),
+    }).find('input').as('Number greaterThan')),
     numberGTError: (locate('div').withAttr({
       'data-field-name': 'numberGreaterThan'
     }).find('p').withText('This field must be greater than 10').as('Number Greater Than 10 Error Message')),
     numberLT: (locate('div').withAttr({
       'data-field-name': 'numberLessThan'
-    }).find('input').withAttr({
-      'name': 'numberLessThan'
-    }).as('Number lessThan')),
+    }).find('input').as('Number lessThan')),
     numberLTError: (locate('div').withAttr({
       'data-field-name': 'numberLessThan'
     }).find('p').withText('This field must be less than 10').as('Number Less Than 10 Error Message')),
     numberReadOnly: (locate('div').withAttr({
       'data-field-name': 'numberReadOnly'
-    }).find('input').withAttr({
-      'readonly': 'true'
-    }).as('A read-only number')),
+    }).find('input').as('A read-only number')),
     numberOdd: (locate('div').withAttr({
       'data-field-name': 'numberOdd'
-    }).find('input').withAttr({
-      'name': 'numberOdd'
-    }).as('Number odd')),
+    }).find('input').as('Number odd')),
     numberOddError: (locate('div').withAttr({
       'data-field-name': 'numberOdd'
     }).find('p').withText('This field must be odd').as('Number Odd Error Message')),
     numberEven: (locate('div').withAttr({
       'data-field-name': 'numberEven'
-    }).find('input').withAttr({
-      'name': 'numberEven'
-    }).as('Number even')),
+    }).find('input').as('Number even')),
     numberEvenError: (locate('div').withAttr({
       'data-field-name': 'numberEven'
     }).find('p').withText('This field must be even').as('Number Even Error Message')),
     numberInt: (locate('div').withAttr({
       'data-field-name': 'numberInteger'
-    }).find('input').withAttr({
-      'name': 'numberInteger'
-    }).as('Number integer')),
+    }).find('input').as('Number integer')),
     numberIntError: (locate('div').withAttr({
       'data-field-name': 'numberInteger'
     }).find('p').withText('This field must be integer').as('Number Integer Error Message')),
     numberFloat: (locate('div').withAttr({
       'data-field-name': 'numberNotInteger'
-    }).find('input').withAttr({
-      'name': 'numberNotInteger'
-    }).as('Number float')),
+    }).find('input').as('Number float')),
     numberFloatError: (locate('div').withAttr({
       'data-field-name': 'numberNotInteger'
     }).find('p').withText('This field must not be integer').as('Number Float Error Message')),
     stringReq: (locate('div').withAttr({
       'data-field-name': 'stringRequired'
-    }).find('input').withAttr({
-      'name': 'stringRequired'
-    }).as('Required string')),
+    }).find('input').as('Required string')),
     stringReqError: (locate('div').withAttr({
       'data-field-name': 'stringRequired'
     }).find('p').withText('This field must be specified').as('Required Field Error Message')),
     stringReadOnly: (locate('div').withAttr({
       'data-field-name': 'stringReadonly'
-    }).find('input').withAttr({
-      'readonly': 'true'
-    }).as('A read-only string')),
+    }).find('input').as('A read-only string')),
     stringMulti: (locate('div').withAttr({
       'data-field-name': 'stringMultiLine'
     }).find('textarea').withAttr({
@@ -175,35 +137,25 @@ module.exports = {
     }).as('Multi line string with heightType=full and resizable')),
     stringNoLabel: (locate('div').withAttr({
       'data-field-name': 'stringNoLabel'
-    }).find('input').withAttr({
-      'name': 'stringNoLabel'
-    }).as('stringNoLabel')),
+    }).find('input').as('stringNoLabel')),
     stringAutoGen: (locate('div').withAttr({
       'data-field-name': 'stringAutoGenerated'
-    }).find('input').withAttr({
-      'name': 'stringAutoGenerated'
-    }).as('Auto generated string')),
+    }).find('input').as('Auto generated string')),
     stringMinLength: (locate('div').withAttr({
       'data-field-name': 'stringMinLength'
-    }).find('input').withAttr({
-      'name': 'stringMinLength'
-    }).as('Must have at least 5 characters')),
+    }).find('input').as('Must have at least 5 characters')),
     stringMinLengthError: (locate('div').withAttr({
       'data-field-name': 'stringMinLength'
     }).find('p').withText('This field must be at least 5 characters long').as('Minimum Length Error Message')),
     stringMaxLength: (locate('div').withAttr({
       'data-field-name': 'stringMaxLength'
-    }).find('input').withAttr({
-      'name': 'stringMaxLength'
-    }).as('Must have at most 5 characters')),
+    }).find('input').as('Must have at most 5 characters')),
     stringMaxLengthError: (locate('div').withAttr({
       'data-field-name': 'stringMaxLength'
     }).find('p').withText('This field must be at most 5 characters long').as('Maximum Length Error Message')),
     stringRegex: (locate('div').withAttr({
       'data-field-name': 'stringRegex'
-    }).find('input').withAttr({
-      'name': 'stringRegex'
-    }).as('Must contain only p and q')),
+    }).find('input').as('Must contain only p and q')),
     stringRegexError: (locate('div').withAttr({
       'data-field-name': 'stringRegex'
     }).find('p').withText('This field is not in the right format').as('Regex Error Message')),
@@ -423,19 +375,22 @@ module.exports = {
     await I.click(this.locators.saveContinue)
     await I.waitForVisible(this.locators.dateReqError)
     var formattedDate = moment(new Date()).format('YYYY/MM/DD 09:00')
-    await I.click(this.locators.datePast)
     await I.fillField(this.locators.dateReq, formattedDate)
+    await I.pressKey('Enter')
     var futureDateErr = moment(new Date(), 'YYYY/MM/DD').subtract(_.random(1, 7), 'days')
     futureDateErr = futureDateErr.format('YYYY/MM/DD 09:00')
     await I.fillField(this.locators.dateFuture, futureDateErr)
+    await I.pressKey('Enter')
     await I.click(this.locators.datePast)
     await I.waitForVisible(this.locators.dateFutureError)
     var pastDateErr = moment(new Date(), 'YYYY/MM/DD').add(_.random(1, 7), 'days')
     pastDateErr = pastDateErr.format('YYYY/MM/DD 09:00')
     await I.fillField(this.locators.datePast, pastDateErr)
+    await I.pressKey('Enter')
     await I.click(this.locators.dateAfter)
     await I.waitForVisible(this.locators.datePastError)
     await I.fillField(this.locators.dateAfter, '2017/12/31 09:00')
+    await I.pressKey('Enter')
     await I.click(this.locators.dateBefore)
     await I.waitForVisible(this.locators.dateAfterError)
     var dateBefore = moment(new Date()).format('YYYY/MM/DD 09:00')
