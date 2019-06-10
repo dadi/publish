@@ -55,6 +55,22 @@ export default class FieldDateTimeEdit extends React.Component {
     onChange: proptypes.func,
 
     /**
+     * A callback to be fired when the components mounts, in case it wishes to
+     * register an `onSave` callback with the store. That callback is then
+     * fired before the field is saved, allowing the function to modify its
+     * value before it is persisted.
+     */
+    onSaveRegister: proptypes.func,
+
+    /**
+     * A callback to be fired when the components mounts, in case it wishes to
+     * register an `onValidate` callback with the store. That callback is then
+     * fired when the field is validated, overriding the default validation
+     * method introduced by the API validator module.
+     */
+    onValidateRegister: proptypes.func,
+
+    /**
      * Whether the field is read-only.
      */
     readOnly: proptypes.bool,
@@ -108,7 +124,6 @@ export default class FieldDateTimeEdit extends React.Component {
         <TextInputWithDatePicker
           format={format}
           onChange={this.handleChange.bind(this)}
-          onKeyUp={this.handleChange.bind(this)}
           readOnly={readOnly}
           value={value}
         />

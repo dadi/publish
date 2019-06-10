@@ -1,13 +1,10 @@
+import DateTime from 'lib/datetime'
+import DateTimePicker from 'components/DateTimePicker/DateTimePicker'
 import React from 'react'
 import proptypes from 'prop-types'
-
 import Style from 'lib/Style'
 import styles from './TextInputWithDatePicker.css'
-
-import DateTimePicker from 'components/DateTimePicker/DateTimePicker'
 import TextInput from 'components/TextInput/TextInput'
-
-import DateTime from 'lib/datetime'
 
 /**
  * Component for API fields of type DateTime
@@ -85,6 +82,7 @@ export default class TextInputWithDatePicker extends React.Component {
     super(props)
 
     this.state = {
+      internalValue: null,
       pickerVisible: false
     }
 
@@ -100,27 +98,6 @@ export default class TextInputWithDatePicker extends React.Component {
     window.removeEventListener('click', this.pickerClickHandler)
 
     clearTimeout(this.losingFocusTimeout)
-  }
-
-  handleChange(event) {
-    const {format, onChange, value} = this.props
-    const newDate = new DateTime(event.target.value, format)
-
-    let newValue = null
-
-    if (event.target.value.length > 0) {
-      if (newDate.isValid()) {
-        newValue = newDate.getDate().getTime()
-      } else {
-        newValue = value
-      }
-    }
-
-    this.propagateChange(newValue)
-
-    if (typeof onChange === 'function') {
-      onChange.call(this, newValue)
-    }
   }
 
   handleFocus(hasFocus) {
@@ -144,8 +121,45 @@ export default class TextInputWithDatePicker extends React.Component {
     }
   }
 
-  handlePickerChange(newDate) {
-    this.propagateChange(newDate)
+  handleInputChange(event) {
+    const {format, onChange} = this.props
+    const {value} = event.target
+    const newDate = new DateTime(event.target.value, format)
+
+    if (value.length > 0) {
+      if (value.length === format.length && newDate.isValid()) {
+        if (typeof onChange === 'function') {
+          const utcDate = newDate.getDate({toUTC: true})
+
+          onChange(utcDate.getTime())
+        }
+
+        this.setState({
+          internalValue: null
+        })
+      } else {
+        if (typeof onChange === 'function') {
+          onChange(null)
+        }
+
+        this.setState({
+          internalValue: value
+        })
+      }
+    }
+  }
+
+  handlePickerChange(value) {
+    const {format, onChange} = this.props
+    const newDate = new DateTime(value, format)
+
+    if (typeof onChange === 'function') {
+      if (!newDate.isValid()) {
+        onChange(null)
+      }
+
+      onChange(newDate.getDate().getTime())
+    }
 
     setTimeout(() => {
       this.setState({
@@ -167,19 +181,6 @@ export default class TextInputWithDatePicker extends React.Component {
     }
   }
 
-  propagateChange(value) {
-    const {format, onChange} = this.props
-    const newDate = new DateTime(value, format)
-    const sanitisedValue = newDate.isValid()
-      ? newDate.getDate().getTime()
-      : null
-
-    if (typeof onChange === 'function') {
-      console.log('---> propagating:', {id: this.props.id, sanitisedValue})
-      onChange.call(this, sanitisedValue)
-    }
-  }
-
   render() {
     const {
       containerClassName,
@@ -189,22 +190,24 @@ export default class TextInputWithDatePicker extends React.Component {
       readOnly,
       value
     } = this.props
-    const {pickerVisible} = this.state
+    const {internalValue, pickerVisible} = this.state
+    const containerStyles = new Style(styles, 'container').addResolved(
+      containerClassName
+    )
+    const showTimePicker =
+      typeof format !== 'string' ||
+      format.includes('HH') ||
+      format.includes('mm')
 
     let dateObj = null
 
-    if (value) {
-      console.log({id: this.props.id, value})
-      const dateTimeObj = new DateTime(value)
+    if (value && !internalValue) {
+      const dateTimeObj = new DateTime(value, format)
 
       if (dateTimeObj.isValid()) {
         dateObj = dateTimeObj
       }
     }
-
-    const containerStyles = new Style(styles, 'container').addResolved(
-      containerClassName
-    )
 
     return (
       <div
@@ -214,12 +217,12 @@ export default class TextInputWithDatePicker extends React.Component {
         <TextInput
           className={inputClassName}
           onBlur={null && this.handleFocus.bind(this, false)}
-          onChange={this.handleChange.bind(this)}
+          onChange={this.handleInputChange.bind(this)}
           onFocus={this.handleFocus.bind(this, true)}
           placeholder={placeholder}
           readOnly={readOnly}
           type="text"
-          value={dateObj && dateObj.format(format)}
+          value={internalValue || (dateObj && dateObj.format(format))}
         />
 
         {pickerVisible && (
@@ -227,6 +230,7 @@ export default class TextInputWithDatePicker extends React.Component {
             className={styles.picker}
             date={dateObj && dateObj.getDate()}
             onChange={this.handlePickerChange.bind(this)}
+            showTimePicker={showTimePicker}
           />
         )}
       </div>
