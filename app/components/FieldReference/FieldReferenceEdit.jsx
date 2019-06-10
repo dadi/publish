@@ -65,6 +65,22 @@ export default class FieldReferenceEdit extends React.Component {
     onError: proptypes.func,
 
     /**
+     * A callback to be fired when the components mounts, in case it wishes to
+     * register an `onSave` callback with the store. That callback is then
+     * fired before the field is saved, allowing the function to modify its
+     * value before it is persisted.
+     */
+    onSaveRegister: proptypes.func,
+
+    /**
+     * A callback to be fired when the components mounts, in case it wishes to
+     * register an `onValidate` callback with the store. That callback is then
+     * fired when the field is validated, overriding the default validation
+     * method introduced by the API validator module.
+     */
+    onValidateRegister: proptypes.func,
+
+    /**
      * Whether the field is required.
      */
     required: proptypes.bool,
@@ -84,6 +100,14 @@ export default class FieldReferenceEdit extends React.Component {
       proptypes.object,
       proptypes.string
     ])
+  }
+
+  componentDidMount() {
+    const {onValidateRegister} = this.props
+
+    if (typeof onValidateRegister === 'function') {
+      onValidateRegister(this.validate.bind(this))
+    }
   }
 
   findFirstStringField(fields) {
@@ -209,5 +233,22 @@ export default class FieldReferenceEdit extends React.Component {
         )}
       </Label>
     )
+  }
+
+  validate({validateFn, value}) {
+    const arrayValue = Array.isArray(value) ? value : [value]
+    const allValuesAreUploads = arrayValue.every(value => {
+      return value && value._previewData && value._file
+    })
+
+    // If we're looking at a media file that the user is trying to upload,
+    // there's no point in sending it to the validator module because it
+    // is in a format that the module will not understand, causing the
+    // validation to fail.
+    if (allValuesAreUploads) {
+      return Promise.resolve()
+    }
+
+    return validateFn(value)
   }
 }

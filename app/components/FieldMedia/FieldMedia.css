@@ -2,8 +2,9 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background-color: var(--theme-colour-background-shade-1, #FAFAFA);
-  border: 1px solid var(--theme-colour-background-shade-4, #E4E4E4);
+  background-color: var(--theme-colour-background-shade-1, #fafafa);
+  border: 1px solid var(--theme-colour-background-shade-4, #e4e4e4);
+  font-family: var(--theme-font-family, sans-serif);
   padding: 0 11px;
   margin-bottom: -1px;
   font-size: 15px;
@@ -25,7 +26,7 @@
 }
 
 .more {
-  color: var(--theme-colour-background-shade-2,#aaa);
+  color: var(--theme-colour-background-shade-2, #aaa);
   margin-left: 5px;
 }
 
@@ -100,7 +101,7 @@
 }
 
 .value:hover .file-name {
-  border-bottom-color: var(--theme-colour-data,#4a91ff);
+  border-bottom-color: var(--theme-colour-data, #4a91ff);
 }
 
 .file-ext {
@@ -117,7 +118,8 @@
 
 .remove-existing {
   border-radius: 100px;
-  width: 20px; height: 20px;
+  width: 20px;
+  height: 20px;
   padding: 0;
   background: #888;
   font-size: 16px;
@@ -132,7 +134,9 @@
 
 .remove-existing span {
   position: absolute;
-  top: 9px; left: 0; right: 0;
+  top: 9px;
+  left: 0;
+  right: 0;
   font-size: 19px;
 }
 

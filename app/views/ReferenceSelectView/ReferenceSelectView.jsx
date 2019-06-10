@@ -1,8 +1,9 @@
 import * as Constants from 'lib/constants'
 import * as documentActions from 'actions/documentActions'
+import * as fieldComponents from 'lib/field-components'
 import * as selectionActions from 'actions/selectionActions'
 import {connectRedux} from 'lib/redux'
-import {getVisibleFields} from 'lib/fields'
+import {getFieldType, getVisibleFields} from 'lib/fields'
 import {Redirect} from 'react-router-dom'
 import {slugify} from 'shared/lib/string'
 import Button from 'components/Button/Button'
@@ -221,26 +222,50 @@ class ReferenceSelectView extends React.Component {
     // Getting the schema of the reference field.
     const referenceField = collection.fields[referenceFieldName]
 
-    // If the `referenceField` parameter doesn't match a field of type
-    // `Reference`, we render nothing.
-    if (!referenceField || referenceField.type !== 'Reference') {
+    if (!referenceField) {
       return null
     }
 
-    // Getting the name of the referenced collection.
-    const referencedCollectionName =
-      referenceField.settings && referenceField.settings.collection
+    // Getting the component for the given reference field.
+    const fieldType = getFieldType(referenceField)
+    const fieldComponent = fieldComponents[`Field${fieldType}`]
 
-    // Watching out for the legacy media collection format.
-    const referencedCollection =
-      referencedCollectionName === Constants.MEDIA_COLLECTION
-        ? Constants.MEDIA_COLLECTION_SCHEMA
-        : api.collections.find(({slug}) => {
-            return referencedCollectionName === slug
-          })
+    // If the field component does not declare a `onReferenceSelect` method, it
+    // means it's not meant to handle references.
+    if (
+      !fieldComponent ||
+      typeof fieldComponent.onReferenceSelect !== 'function'
+    ) {
+      return null
+    }
 
-    // If the `settings.collection` parameter of the reference field does not
-    // match a valid collection, we render nothing.
+    // If the `referenceField` parameter doesn't match a field of type
+    // `Reference`, we render nothing.
+    if (
+      !referenceField ||
+      (referenceField.type !== 'Media' && referenceField.type !== 'Reference')
+    ) {
+      return null
+    }
+
+    // Using the component's `onReferenceSelect` method to find the schema of
+    // the referenced collection. This method is expected to return an object
+    // with the following properties:
+    //
+    // - collection: the schema of the referenced collection;
+    // - filters (optional): a set of filters to apply to the collection when
+    //   fetching documents
+    const {
+      collection: referencedCollection,
+      filters = {}
+    } = fieldComponent.onReferenceSelect({
+      api,
+      collection,
+      field: referenceFieldName
+    })
+
+    // If we don't have a referenced collection at this point, we render
+    // nothing.
     if (!referencedCollection) {
       return null
     }
@@ -305,7 +330,10 @@ class ReferenceSelectView extends React.Component {
                 <DocumentList
                   collection={referencedCollection}
                   contentKey={contentKey}
-                  filters={search.filter}
+                  filters={{
+                    ...search.filter,
+                    ...filters
+                  }}
                   onBuildBaseUrl={onBuildBaseUrl.bind(this)}
                   onEmptyList={this.handleEmptyDocumentList.bind(this)}
                   onRender={({documents, onSelect, selectedDocuments}) => {
