@@ -1,5 +1,6 @@
 import DateTime from 'lib/datetime'
 import DateTimePicker from 'components/DateTimePicker/DateTimePicker'
+import HotKeys from 'lib/hot-keys'
 import React from 'react'
 import proptypes from 'prop-types'
 import Style from 'lib/Style'
@@ -91,6 +92,10 @@ export default class TextInputWithDatePicker extends React.Component {
   constructor(props) {
     super(props)
 
+    this.hotKeys = new HotKeys({
+      enter: this.handleInputReturn.bind(this)
+    })
+
     this.state = {
       internalValue: null,
       pickerVisible: false
@@ -157,6 +162,12 @@ export default class TextInputWithDatePicker extends React.Component {
         })
       }
     }
+  }
+
+  handleInputReturn() {
+    this.setState({
+      pickerVisible: false
+    })
   }
 
   handlePickerChange(value) {
@@ -229,6 +240,7 @@ export default class TextInputWithDatePicker extends React.Component {
           className={inputClassName}
           onBlur={null && this.handleFocus.bind(this, false)}
           onChange={this.handleInputChange.bind(this)}
+          onKeyDown={this.hotKeys.capture(true)}
           onFocus={this.handleFocus.bind(this, true)}
           placeholder={placeholder}
           readOnly={readOnly}
