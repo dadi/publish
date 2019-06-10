@@ -423,7 +423,11 @@ export function saveDocument({contentKey, collection, documentId}) {
       Object.keys(collection.fields).forEach(fieldName => {
         const field = collection.fields[fieldName]
 
-        if (field.required && field.type === 'Boolean') {
+        if (
+          payload[fieldName] === undefined &&
+          field.required &&
+          field.type === 'Boolean'
+        ) {
           payload[fieldName] = false
         }
       })
