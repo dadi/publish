@@ -257,6 +257,7 @@ class ReferenceSelectView extends React.Component {
     // Computing the URL that users will be taken to if they wish to cancel
     // the reference selection.
     const returnCtaUrl = onBuildBaseUrl.call(this, {
+      createNew: !Boolean(documentId),
       referenceFieldSelect: null
     })
 
