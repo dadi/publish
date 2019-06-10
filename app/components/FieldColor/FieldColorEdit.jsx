@@ -69,7 +69,7 @@ export default class FieldColorEdit extends React.Component {
     /**
      * The field value.
      */
-    value: proptypes.bool
+    value: proptypes.string
   }
 
   constructor(props) {
@@ -197,7 +197,7 @@ export default class FieldColorEdit extends React.Component {
 
         <div
           className={styles.swatch}
-          style={value ? {backgroundColor: value} : null}
+          style={value ? {backgroundColor: `#${value}`} : null}
         />
 
         {pickerVisible && (

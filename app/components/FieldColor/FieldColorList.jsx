@@ -32,7 +32,7 @@ export default class FieldColorList extends React.Component {
       <div className={styles.list}>
         <div
           className={styles.swatch}
-          style={value ? {backgroundColor: value} : null}
+          style={value ? {backgroundColor: `#${value}`} : null}
         />
         {value}
       </div>
