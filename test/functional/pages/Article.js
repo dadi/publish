@@ -276,7 +276,7 @@ module.exports = {
     let randomNum = _.random(0,10)
     let pastDateFilter = moment(new Date(), 'YYYY/MM/DD').subtract(randomNum, 'months')
     pastDateFilter = pastDateFilter.format('YYYY/MM/DD 09:00')
-    let datesToFilter = await articleDateTimes.filter((datetime) => datetime < pastDateFilter)
+    let datesToFilter = await articleDateTimes.filter((datetime) => datetime > pastDateFilter)
     let dateFilter = datesToFilter.length
     let articlePublished = await I.grabTextFrom(this.locators.published)
     let yesPublish = await articlePublished.filter((article) => article === 'Yes')
@@ -322,12 +322,14 @@ module.exports = {
     I.seeElement(this.locators.filterForm)
     I.selectOption(this.locators.filterField, 'Date & Time')
     I.seeElement(this.locators.filterOperator)
+    I.selectOption(this.locators.filterOperator, 'is after')
+    I.click(this.locators.dateTimeValue)
     I.fillField(this.locators.dateTimeValue, pastDateFilter)
     I.click(this.locators.filterOperator)
     I.click(this.locators.addFilter)
     I.seeElement(this.locators.filterWrapper)
-    let datesBefore = await I.grabNumberOfVisibleElements(this.locators.articleRows)
-    I.seeNumbersAreEqual(datesBefore, dateFilter)
+    let datesAfter = await I.grabNumberOfVisibleElements(this.locators.articleRows)
+    I.seeNumbersAreEqual(datesAfter, dateFilter)
   },
 
   async deleteArticle() {

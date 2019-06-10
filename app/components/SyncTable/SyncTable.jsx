@@ -133,7 +133,7 @@ export default class SyncTable extends React.Component {
       <Table
         head={
           <TableHead>
-            {columns.map(column => {
+            {columns.map((column, index) => {
               let content = column.label
               let arrow = null
               let linkSortOrder = 'asc'
@@ -158,7 +158,7 @@ export default class SyncTable extends React.Component {
                 <TableHeadCell
                   annotation={column.annotation}
                   arrow={arrow}
-                  key={column.label}
+                  key={column.label + index}
                 >
                   {content}
                 </TableHeadCell>

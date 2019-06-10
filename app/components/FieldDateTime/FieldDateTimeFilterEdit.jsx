@@ -28,7 +28,7 @@ export default class FieldDateTimeFilter extends React.Component {
     const {config = {}, onUpdate, value} = this.props
     const formats = config.formats || {}
     const date = formats.date || {}
-    const format = date.short
+    const format = date.long
 
     return (
       <TextInputWithDatePicker
