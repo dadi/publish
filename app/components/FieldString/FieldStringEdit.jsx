@@ -73,6 +73,14 @@ export default class FieldStringEdit extends React.Component {
     onSaveRegister: proptypes.func,
 
     /**
+     * A callback to be fired when the components mounts, in case it wishes to
+     * register an `onValidate` callback with the store. That callback is then
+     * fired when the field is validated, overriding the default validation
+     * method introduced by the API validator module.
+     */
+    onValidateRegister: proptypes.func,
+
+    /**
      * Whether the field is read-only.
      */
     readOnly: proptypes.bool,
