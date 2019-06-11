@@ -1,119 +1,275 @@
 'use strict'
 
-const {
-  assert,
-  expect
-} = require('chai')
+const {assert, expect} = require('chai')
 const moment = require('moment')
 const _ = require('lodash')
 
 let I
 
 module.exports = {
-
   _init() {
     I = require('../stepDefinitions/steps_file.js')()
   },
 
   // insert your locators and methods here
   locators: {
-    publishMenu: (locate('a').withAttr({
-      href: '/'
-    }).as('Publish Menu')),
-    navigationMenu: (locate('.//nav').as('Navigation Menu')),
-    articleLink: (locate('a').withAttr({
-      href: '/articles'
-    }).as('Article Link')),
-    articleTitleHeading: (locate('a').withText('Title').as('Article Heading')),
-    footer: (locate('.//footer').as('Article Page Footer')),
-    createNewButton: (locate('a').withText('Create new').as('Create New Button')),
-    articleRows: (locate('.//tbody/tr').as('Article Rows')),
-    numberOfArticles: (locate('.//strong[1]').as('Number Of Articles On Page')),
-    totalArticles: (locate('.//strong[2]').as('Number Of Articles On Page')),
-    signOutButton: (locate('button').withText('Sign out').as('Sign Out Button')),
-    titleField: (locate('div').withAttr({
-      'data-field-name': 'title'
-    }).find('input').as('Title Field')),
-    selectAuthor: (locate('a').withText('Select existing author').as('Select Author Button')),
-    numOfAuthors: (locate('//table/tbody/tr/td[2]').as('Number of Authors')),
-    numOfCategories: (locate('//table/tbody/tr/td[2]').as('Number of Categories')),
-    numOfSubCategories: (locate('//table/tbody/tr/td[2]').as('Number of Sub Categories')),
-    numOfWebServices: (locate('//table/tbody/tr/td[2]').as('Number of Web Services')),
-    numOfNetworkServices: (locate('//table/tbody/tr/td[2]').as('Number of Network Services')),
-    addAuthor: (locate('button').withText('Add selected document').as('Add The Author')),
-    excerptField: (locate('div').withAttr({
-      'data-field-name': 'excerpt'
-    }).find('textarea').as('Excerpt Field')),
-    bodyField: (locate('div[class^="RichEditor__editor"]').as('Body Field')),
-    metaTab: (locate('a').withText('Meta').as('Meta Tab')),
-    metaTitle: (locate('div').withAttr({
-      'data-field-name': 'metaTitle'
-    }).find('input').as('Meta Title Field')),
-    saveMenu: (locate('button[class*="ButtonWithOptions__launcher"]').as('Save Menu')),
-    saveGoBack: (locate('button').withText('Save and go back').as('Save And Go Back Button')),
-    saveArticle: (locate('button').withText('Save and continue').as('Save And Continue Button')),
-    createdArticle: (locate('a').withText('This Is A New Article').as('New Article')),
-    signOutArticle: (locate('//table/tbody/tr[1]/td[2]/a').as('Sign Out Article')),
-    updatedArticle: (locate('a').withText('This Article Is Updated').as('Updated Article')),
-    slugField: (locate('div').withAttr({
-      'data-field-name': 'slug'
-    }).find('input').as('Slugified Field')),
-    checkArticle: (locate('td').withText('This is the excerpt').as('Select Article')),
-    applyButton: (locate('button').withText('Apply').as('Apply Button')),
-    selectDelete: (locate('select[class*="BulkActionSelector"]').as('Select Delete')),
-    deleteButton: (locate('button').withText('Yes, delete it.').as('Delete Button')),
-    selectCategory: (locate('a').withText('Select existing category').as('Select Existing Category Button')),
-    selectSubCategory: (locate('a').withText('Select existing sub category').as('Select Existing Sub Category Button')),
-    selectWebService: (locate('a').withText('Select existing web service').as('Select Existing Web Service Button')),
-    selectNetworkService: (locate('a').withText('Select existing network service').as('Select Existing Newtork Service Button')),
-    addSelected: (locate('button').withText('Add selected document').as('Add Selected Document Button')),
-    removeNetworkButton: (locate('div').withAttr({
-      'data-field-name': 'network-service'
-    }).find('button').as('Remove Network Service Button')),
-    editWebServiceButton: (locate('div').withAttr({
-      'data-field-name': 'web-service'
-    }).find('a').withText('Edit').as('Edit Web Service Button')),
-    networkService: (locate('label').withText('Network service').as('Network Service')),
-    webService: (locate('label').withText('Web service').as('Web Service')),
-    authorPage: (locate('a').withText('4').as('Page 4')),
-    nevermindButton: (locate('a').withText('Nevermind, back to document').as('Back to document')),
-    boldButton: (locate('button').withText('Bold').as('Bold Button')),
-    italicButton: (locate('button').withText('Italic').as('Italic Button')),
-    linkButton: (locate('button').withText('Link').as('Link Button')),
-    h1Button: (locate('button').withText('Heading 1').as('Header 1 Button')),
-    h2Button: (locate('button').withText('Heading 2').as('Header 2 Button')),
-    quoteButton: (locate('button').withText('Quote').as('Blockquote Button')),
-    orderedListButton: (locate('button').withText('Numbered list').as('Numbered List Button')),
-    unOrderedListButton: (locate('button').withText('Bulleted list').as('Bullet Point Button')),
-    codeButton: (locate('button').withText('Code').as('Code Button')),
-    imageButton: (locate('button').withText('Media').as('Image Button')),
-    fullScreenButton: (locate('button').withText('Full-screen').as('Full Screen Button')),
-    textButton: (locate('button').withText('Raw mode').as('Text Button')),
-    boldText: (locate('span').withText('Bold').inside('strong').as('Bold Text')),
-    italicText: (locate('span').withText('Italic').inside('em').as('Italic Text')),
-    textArea: (locate('div[class*="RichEditor__editor-wysiwyg"]').as('Rich Editor Text')),
-    markdownText: (locate('textarea[class*="RichEditor__editor-text"]').as('Markdown Text')),
-    quoteText: (locate('span').withText('Blockquote').inside('blockquote').as('Blockquote Text')),
-    linkText: (locate('a').withAttr({ 'href': 'www.link.com'}).as('Link Text')),
-    orderedList1: (locate('span').withText('Point 1').inside('li').inside('ol').as('Ordered List Item 1')),
-    orderedList2: (locate('span').withText('Point 2').inside('li').inside('ol').as('Ordered List Item 2')),
-    unorderedList1: (locate('span').withText('Bullet 1').inside('li').inside('ul').as('Unordered List Item 1')),
-    unorderedList2: (locate('span').withText('Bullet 2').inside('li').inside('ul').as('Unordered List Item 2')),
-    linkField: (locate('input[class*="RichEditorLink__input"]').as('Link Field')),
-    filterButton: (locate('button[class*="DocumentFilters__button"]').as('Filter Button')),
-    filterForm: (locate('form[class*="DocumentFilters__tooltip"]').as('Add Filter Form')),
-    filterField: (locate('select[class*="DocumentFilters__tooltip-dropdown-left"]').as('Filter Field')),
-    filterOperator: (locate('select[class*="DocumentFilters__tooltip-dropdown-right"]').as('Filter Operator')),
-    filterValue: (locate('input[class*="FieldString__filter-input"]').as('Search Value')),
-    addFilter: (locate('button[class*="DocumentFilters__tooltip"]').withText('Add filter').as('Add Filter Button')),
-    updateFilter: (locate('button[class*="DocumentFilters__tooltip"]').withText('Update filter').as('Update Filter Button')),
-    filterWrapper: (locate('div[class*="DocumentFilters__filter-wrapper"]').as('Filtered Detail')),
-    titles: (locate('//table/tbody/tr/td[2]').as('Article Titles')),
-    dateTime: (locate('//table/tbody/tr/td[3]').as('Date & Time')),
-    published: (locate('//table/tbody/tr/td[4]').as('Published?')),
-    filterClose: (locate('button[class*="DocumentFilters__filter-close"]').as('Filter Close Button')),
-    filterValueSelect: (locate('select[class*="DropdownNative__dropdown-text-small"]').withText('No').as('Filter Value Select')),
-    dateTimeValue: (locate('input[class*="FieldDateTime__filter-input"]').as('Date Time Filter Field'))
+    publishMenu: locate('a')
+      .withAttr({
+        href: '/'
+      })
+      .as('Publish Menu'),
+    navigationMenu: locate('.//nav').as('Navigation Menu'),
+    articleLink: locate('a')
+      .withAttr({
+        href: '/articles'
+      })
+      .as('Article Link'),
+    articleTitleHeading: locate('a')
+      .withText('Title')
+      .as('Article Heading'),
+    footer: locate('.//footer').as('Article Page Footer'),
+    createNewButton: locate('a')
+      .withText('Create new')
+      .as('Create New Button'),
+    articleRows: locate('.//tbody/tr').as('Article Rows'),
+    numberOfArticles: locate('.//strong[1]').as('Number Of Articles On Page'),
+    totalArticles: locate('.//strong[2]').as('Number Of Articles On Page'),
+    signOutButton: locate('button')
+      .withText('Sign out')
+      .as('Sign Out Button'),
+    titleField: locate('div')
+      .withAttr({
+        'data-field-name': 'title'
+      })
+      .find('input')
+      .as('Title Field'),
+    selectAuthor: locate('a')
+      .withText('Select existing author')
+      .as('Select Author Button'),
+    numOfAuthors: locate('//table/tbody/tr/td[2]').as('Number of Authors'),
+    numOfCategories: locate('//table/tbody/tr/td[2]').as(
+      'Number of Categories'
+    ),
+    numOfSubCategories: locate('//table/tbody/tr/td[2]').as(
+      'Number of Sub Categories'
+    ),
+    numOfWebServices: locate('//table/tbody/tr/td[2]').as(
+      'Number of Web Services'
+    ),
+    numOfNetworkServices: locate('//table/tbody/tr/td[2]').as(
+      'Number of Network Services'
+    ),
+    addAuthor: locate('button')
+      .withText('Add selected document')
+      .as('Add The Author'),
+    excerptField: locate('div')
+      .withAttr({
+        'data-field-name': 'excerpt'
+      })
+      .find('textarea')
+      .as('Excerpt Field'),
+    bodyField: locate('div[class^="RichEditor__editor"]').as('Body Field'),
+    metaTab: locate('a')
+      .withText('Meta')
+      .as('Meta Tab'),
+    metaTitle: locate('div')
+      .withAttr({
+        'data-field-name': 'metaTitle'
+      })
+      .find('input')
+      .as('Meta Title Field'),
+    saveMenu: locate('button[class*="ButtonWithOptions__launcher"]').as(
+      'Save Menu'
+    ),
+    saveGoBack: locate('button')
+      .withText('Save and go back')
+      .as('Save And Go Back Button'),
+    saveArticle: locate('button')
+      .withText('Save and continue')
+      .as('Save And Continue Button'),
+    createdArticle: locate('a')
+      .withText('This Is A New Article')
+      .as('New Article'),
+    signOutArticle: locate('//table/tbody/tr[1]/td[2]/a').as(
+      'Sign Out Article'
+    ),
+    updatedArticle: locate('a')
+      .withText('This Article Is Updated')
+      .as('Updated Article'),
+    slugField: locate('div')
+      .withAttr({
+        'data-field-name': 'slug'
+      })
+      .find('input')
+      .as('Slugified Field'),
+    checkArticle: locate('td')
+      .withText('This is the excerpt')
+      .as('Select Article'),
+    applyButton: locate('button')
+      .withText('Apply')
+      .as('Apply Button'),
+    selectDelete: locate('select[class*="BulkActionSelector"]').as(
+      'Select Delete'
+    ),
+    deleteButton: locate('button')
+      .withText('Yes, delete it.')
+      .as('Delete Button'),
+    selectCategory: locate('a')
+      .withText('Select existing category')
+      .as('Select Existing Category Button'),
+    selectSubCategory: locate('a')
+      .withText('Select existing sub category')
+      .as('Select Existing Sub Category Button'),
+    selectWebService: locate('a')
+      .withText('Select existing web service')
+      .as('Select Existing Web Service Button'),
+    selectNetworkService: locate('a')
+      .withText('Select existing network service')
+      .as('Select Existing Newtork Service Button'),
+    addSelected: locate('button')
+      .withText('Add selected document')
+      .as('Add Selected Document Button'),
+    removeNetworkButton: locate('div')
+      .withAttr({
+        'data-field-name': 'network-service'
+      })
+      .find('button')
+      .as('Remove Network Service Button'),
+    editWebServiceButton: locate('div')
+      .withAttr({
+        'data-field-name': 'web-service'
+      })
+      .find('a')
+      .withText('Edit')
+      .as('Edit Web Service Button'),
+    networkService: locate('label')
+      .withText('Network service')
+      .as('Network Service'),
+    webService: locate('label')
+      .withText('Web service')
+      .as('Web Service'),
+    authorPage: locate('a')
+      .withText('4')
+      .as('Page 4'),
+    nevermindButton: locate('a')
+      .withText('Nevermind, back to document')
+      .as('Back to document'),
+    boldButton: locate('button')
+      .withText('Bold')
+      .as('Bold Button'),
+    italicButton: locate('button')
+      .withText('Italic')
+      .as('Italic Button'),
+    linkButton: locate('button')
+      .withText('Link')
+      .as('Link Button'),
+    h1Button: locate('button')
+      .withText('Heading 1')
+      .as('Header 1 Button'),
+    h2Button: locate('button')
+      .withText('Heading 2')
+      .as('Header 2 Button'),
+    quoteButton: locate('button')
+      .withText('Quote')
+      .as('Blockquote Button'),
+    orderedListButton: locate('button')
+      .withText('Numbered list')
+      .as('Numbered List Button'),
+    unOrderedListButton: locate('button')
+      .withText('Bulleted list')
+      .as('Bullet Point Button'),
+    codeButton: locate('button')
+      .withText('Code')
+      .as('Code Button'),
+    imageButton: locate('button')
+      .withText('Media')
+      .as('Image Button'),
+    fullScreenButton: locate('button')
+      .withText('Full-screen')
+      .as('Full Screen Button'),
+    textButton: locate('button')
+      .withText('Raw mode')
+      .as('Text Button'),
+    boldText: locate('span')
+      .withText('Bold')
+      .inside('strong')
+      .as('Bold Text'),
+    italicText: locate('span')
+      .withText('Italic')
+      .inside('em')
+      .as('Italic Text'),
+    textArea: locate('div[class*="RichEditor__editor-wysiwyg"]').as(
+      'Rich Editor Text'
+    ),
+    markdownText: locate('textarea[class*="RichEditor__editor-text"]').as(
+      'Markdown Text'
+    ),
+    quoteText: locate('span')
+      .withText('Blockquote')
+      .inside('blockquote')
+      .as('Blockquote Text'),
+    linkText: locate('a')
+      .withAttr({href: 'www.link.com'})
+      .as('Link Text'),
+    orderedList1: locate('span')
+      .withText('Point 1')
+      .inside('li')
+      .inside('ol')
+      .as('Ordered List Item 1'),
+    orderedList2: locate('span')
+      .withText('Point 2')
+      .inside('li')
+      .inside('ol')
+      .as('Ordered List Item 2'),
+    unorderedList1: locate('span')
+      .withText('Bullet 1')
+      .inside('li')
+      .inside('ul')
+      .as('Unordered List Item 1'),
+    unorderedList2: locate('span')
+      .withText('Bullet 2')
+      .inside('li')
+      .inside('ul')
+      .as('Unordered List Item 2'),
+    linkField: locate('input[class*="RichEditorLink__input"]').as('Link Field'),
+    filterButton: locate('button[class*="DocumentFilters__button"]').as(
+      'Filter Button'
+    ),
+    filterForm: locate('form[class*="DocumentFilters__tooltip"]').as(
+      'Add Filter Form'
+    ),
+    filterField: locate(
+      'select[class*="DocumentFilters__tooltip-dropdown-left"]'
+    ).as('Filter Field'),
+    filterOperator: locate(
+      'select[class*="DocumentFilters__tooltip-dropdown-right"]'
+    ).as('Filter Operator'),
+    filterValue: locate('input[class*="FieldString__filter-input"]').as(
+      'Search Value'
+    ),
+    addFilter: locate('button[class*="DocumentFilters__tooltip"]')
+      .withText('Add filter')
+      .as('Add Filter Button'),
+    updateFilter: locate('button[class*="DocumentFilters__tooltip"]')
+      .withText('Update filter')
+      .as('Update Filter Button'),
+    filterWrapper: locate('div[class*="DocumentFilters__filter-wrapper"]').as(
+      'Filtered Detail'
+    ),
+    titles: locate('//table/tbody/tr/td[2]').as('Article Titles'),
+    dateTime: locate('//table/tbody/tr/td[3]').as('Date & Time'),
+    published: locate('//table/tbody/tr/td[4]').as('Published?'),
+    filterClose: locate('button[class*="DocumentFilters__filter-close"]').as(
+      'Filter Close Button'
+    ),
+    filterValueSelect: locate(
+      'select[class*="DropdownNative__dropdown-text-small"]'
+    )
+      .withText('No')
+      .as('Filter Value Select'),
+    dateTimeValue: locate('input[class*="FieldDateTime__filter-input"]').as(
+      'Date Time Filter Field'
+    )
   },
 
   async validateArticlePage() {
@@ -121,7 +277,9 @@ module.exports = {
     await I.waitForVisible(this.locators.articleTitleHeading)
     await I.waitForElement(this.locators.footer)
     await I.seeElement(this.locators.createNewButton)
-    let articles = await I.grabNumberOfVisibleElements(this.locators.articleRows)
+    let articles = await I.grabNumberOfVisibleElements(
+      this.locators.articleRows
+    )
     await I.seeNumberOfVisibleElements(this.locators.articleRows, articles)
     let range = await I.grabTextFrom(this.locators.numberOfArticles)
     let number = range.substring(2, 4).trim()
@@ -152,7 +310,9 @@ module.exports = {
     I.waitForFunction(() => document.readyState === 'complete')
     I.seeInCurrentUrl('/select/author')
     I.waitForText('Author')
-    let numberAuthors = await I.grabNumberOfVisibleElements(this.locators.numOfAuthors)
+    let numberAuthors = await I.grabNumberOfVisibleElements(
+      this.locators.numOfAuthors
+    )
     I.seeNumbersAreEqual(numberAuthors, 5)
     let authorsNames = await I.grabTextFrom(this.locators.numOfAuthors)
     I.click(locate('//tbody/tr[2]/td[1]').as('Selected Author'))
@@ -165,10 +325,16 @@ module.exports = {
     I.waitForFunction(() => document.readyState === 'complete')
     I.seeInCurrentUrl('/select/category')
     I.waitForText('Category')
-    let numberCategories = await I.grabNumberOfVisibleElements(this.locators.numOfCategories)
+    let numberCategories = await I.grabNumberOfVisibleElements(
+      this.locators.numOfCategories
+    )
     I.seeNumbersAreEqual(numberCategories, 5)
     let categoryNames = await I.grabTextFrom(this.locators.numOfCategories)
-    I.click(locate('//td[2]').withText(categoryNames[3].trim()).as('Selected Category'))
+    I.click(
+      locate('//td[2]')
+        .withText(categoryNames[3].trim())
+        .as('Selected Category')
+    )
     I.click(this.locators.addSelected)
     I.waitForFunction(() => document.readyState === 'complete')
     I.see(categoryNames[3].trim())
@@ -179,10 +345,18 @@ module.exports = {
     I.waitForFunction(() => document.readyState === 'complete')
     I.seeInCurrentUrl('/select/sub-category')
     I.waitForText('Sub category')
-    let numberSubCategories = await I.grabNumberOfVisibleElements(this.locators.numOfSubCategories)
+    let numberSubCategories = await I.grabNumberOfVisibleElements(
+      this.locators.numOfSubCategories
+    )
     I.seeNumbersAreEqual(numberSubCategories, 5)
-    let subCategoryNames = await I.grabTextFrom(this.locators.numOfSubCategories)
-    I.click(locate('//td[2]').withText(subCategoryNames[1].trim()).as('Selected Sub Category'))
+    let subCategoryNames = await I.grabTextFrom(
+      this.locators.numOfSubCategories
+    )
+    I.click(
+      locate('//td[2]')
+        .withText(subCategoryNames[1].trim())
+        .as('Selected Sub Category')
+    )
     I.click(this.locators.addSelected)
     I.waitForFunction(() => document.readyState === 'complete')
     I.see(subCategoryNames[1].trim())
@@ -192,11 +366,21 @@ module.exports = {
     I.click(this.locators.selectWebService)
     I.waitForFunction(() => document.readyState === 'complete')
     I.seeInCurrentUrl('/select/web-service')
-    let numberWebServices = await I.grabNumberOfVisibleElements(this.locators.numOfWebServices)
+    let numberWebServices = await I.grabNumberOfVisibleElements(
+      this.locators.numOfWebServices
+    )
     I.seeNumbersAreEqual(numberWebServices, 5)
     let webServicesNames = await I.grabTextFrom(this.locators.numOfWebServices)
-    I.click(locate('//td[2]').withText(webServicesNames[0].trim()).as('First Selected Web Service'))
-    I.click(locate('//td[2]').withText(webServicesNames[4].trim()).as('Second Selected Web Service'))
+    I.click(
+      locate('//td[2]')
+        .withText(webServicesNames[0].trim())
+        .as('First Selected Web Service')
+    )
+    I.click(
+      locate('//td[2]')
+        .withText(webServicesNames[4].trim())
+        .as('Second Selected Web Service')
+    )
     I.click(this.locators.addSelected)
     I.waitForFunction(() => document.readyState === 'complete')
     I.scrollTo(this.locators.webService)
@@ -209,10 +393,18 @@ module.exports = {
     I.waitForFunction(() => document.readyState === 'complete')
     I.seeInCurrentUrl('/select/network-service')
     I.waitForText('Network service')
-    let numberNetworkServices = await I.grabNumberOfVisibleElements(this.locators.numOfNetworkServices)
+    let numberNetworkServices = await I.grabNumberOfVisibleElements(
+      this.locators.numOfNetworkServices
+    )
     I.seeNumbersAreEqual(numberNetworkServices, 5)
-    let networkServicesNames = await I.grabTextFrom(this.locators.numOfNetworkServices)
-    I.click(locate('//td[2]').withText(networkServicesNames[3].trim()).as('Selected Network Service'))
+    let networkServicesNames = await I.grabTextFrom(
+      this.locators.numOfNetworkServices
+    )
+    I.click(
+      locate('//td[2]')
+        .withText(networkServicesNames[3].trim())
+        .as('Selected Network Service')
+    )
     I.click(this.locators.addSelected)
     I.waitForFunction(() => document.readyState === 'complete')
     I.scrollTo(this.locators.networkService)
@@ -252,7 +444,11 @@ module.exports = {
     I.seeInCurrentUrl('/select/web-service')
     I.waitForText('Web service')
     let webServicesNames = await I.grabTextFrom(this.locators.numOfWebServices)
-    I.click(locate('//td[2]').withText(webServicesNames[4].trim()).as('Second Selected Web Service'))
+    I.click(
+      locate('//td[2]')
+        .withText(webServicesNames[4].trim())
+        .as('Second Selected Web Service')
+    )
     I.click(this.locators.addSelected)
     I.waitForFunction(() => document.readyState === 'complete')
     I.scrollTo(this.locators.webService)
@@ -271,16 +467,23 @@ module.exports = {
   },
 
   async filterArticle() {
-    let originalArticles = await I.grabNumberOfVisibleElements(this.locators.articleRows)
+    let originalArticles = await I.grabNumberOfVisibleElements(
+      this.locators.articleRows
+    )
     let articleDateTimes = await I.grabTextFrom(this.locators.dateTime)
-    let randomNum = _.random(0,10)
-    let pastDateFilter = moment(new Date(), 'YYYY/MM/DD').subtract(randomNum, 'months')
+    let randomNum = _.random(0, 10)
+    let pastDateFilter = moment(new Date(), 'YYYY/MM/DD').subtract(
+      randomNum,
+      'months'
+    )
     pastDateFilter = pastDateFilter.format('YYYY/MM/DD 09:00')
-    let datesToFilter = await articleDateTimes.filter((datetime) => datetime > pastDateFilter)
+    let datesToFilter = await articleDateTimes.filter(
+      datetime => datetime > pastDateFilter
+    )
     let dateFilter = datesToFilter.length
     let articlePublished = await I.grabTextFrom(this.locators.published)
-    let yesPublish = await articlePublished.filter((article) => article === 'Yes')
-    let noPublish = await articlePublished.filter((article) => article === 'No')
+    let yesPublish = await articlePublished.filter(article => article === 'Yes')
+    let noPublish = await articlePublished.filter(article => article === 'No')
     let numberYes = yesPublish.length
     let numberNo = noPublish.length
     I.click(this.locators.filterButton)
@@ -290,17 +493,23 @@ module.exports = {
     I.fillField(this.locators.filterValue, 'DADI')
     I.click(this.locators.addFilter)
     I.seeElement(this.locators.filterWrapper)
-    let articles = await I.grabNumberOfVisibleElements(this.locators.articleRows)
+    let articles = await I.grabNumberOfVisibleElements(
+      this.locators.articleRows
+    )
     I.seeNumbersAreEqual(articles, 3)
     let articleTitles = await I.grabTextFrom(this.locators.titles)
     I.click(this.locators.filterWrapper)
     I.selectOption(this.locators.filterOperator, 'is')
     I.fillField(this.locators.filterValue, articleTitles[1])
     I.click(this.locators.updateFilter)
-    let updatedArticles = await I.grabNumberOfVisibleElements(this.locators.articleRows)
+    let updatedArticles = await I.grabNumberOfVisibleElements(
+      this.locators.articleRows
+    )
     I.seeNumbersAreEqual(updatedArticles, 1)
     I.click(this.locators.filterClose)
-    let newTotal = await I.grabNumberOfVisibleElements(this.locators.articleRows)
+    let newTotal = await I.grabNumberOfVisibleElements(
+      this.locators.articleRows
+    )
     I.seeNumbersAreEqual(originalArticles, newTotal)
     I.click(this.locators.filterButton)
     I.seeElement(this.locators.filterForm)
@@ -308,12 +517,16 @@ module.exports = {
     I.seeElement(this.locators.filterOperator)
     I.click(this.locators.addFilter)
     I.seeElement(this.locators.filterWrapper)
-    let publishedNo = await I.grabNumberOfVisibleElements(this.locators.articleRows)
+    let publishedNo = await I.grabNumberOfVisibleElements(
+      this.locators.articleRows
+    )
     I.seeNumbersAreEqual(publishedNo, numberNo)
     I.click(this.locators.filterWrapper)
     I.selectOption(this.locators.filterValueSelect, 'Yes')
     I.click(this.locators.updateFilter)
-    let publishedYes = await I.grabNumberOfVisibleElements(this.locators.articleRows)
+    let publishedYes = await I.grabNumberOfVisibleElements(
+      this.locators.articleRows
+    )
     I.seeNumbersAreEqual(publishedYes, numberYes)
     I.click(this.locators.filterClose)
     newTotal = await I.grabNumberOfVisibleElements(this.locators.articleRows)
@@ -328,7 +541,9 @@ module.exports = {
     I.click(this.locators.filterOperator)
     I.click(this.locators.addFilter)
     I.seeElement(this.locators.filterWrapper)
-    let datesAfter = await I.grabNumberOfVisibleElements(this.locators.articleRows)
+    let datesAfter = await I.grabNumberOfVisibleElements(
+      this.locators.articleRows
+    )
     I.seeNumbersAreEqual(datesAfter, dateFilter)
   },
 
@@ -362,7 +577,7 @@ module.exports = {
   async insertDocument(body, excerpt, title) {
     await I.createArticle(body, excerpt, title)
   },
-  
+
   async deleteDocument(title) {
     await I.deleteArticleByTitle(title)
   },
@@ -487,5 +702,4 @@ module.exports = {
     // await I.see('* Bullet 1')
     // await I.see('* Bullet 2')
   }
-
 }

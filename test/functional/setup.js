@@ -5,18 +5,23 @@ const publish = require('./../../index')
 
 module.exports = {
   bootstrap: done => {
-    api.start().then(() => {
-      // Bootstrap the database
-      return new Bootstrap().run()
-    }).then(() => {
-      return publish.run({
-        configPath: path.resolve(__dirname, '../../dev-config')
+    api
+      .start()
+      .then(() => {
+        // Bootstrap the database
+        return new Bootstrap().run()
       })
-    }).then(done).catch(error => {
-      console.error(error)
+      .then(() => {
+        return publish.run({
+          configPath: path.resolve(__dirname, '../../dev-config')
+        })
+      })
+      .then(done)
+      .catch(error => {
+        console.error(error)
 
-      process.exit(1)
-    })
+        process.exit(1)
+      })
   },
 
   teardown: done => {

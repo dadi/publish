@@ -2,32 +2,42 @@
 
 const I = actor()
 
-const {
-  assert,
-  expect
-} = require('chai')
+const {assert, expect} = require('chai')
 
 module.exports = {
-
   // insert your locators and methods here
   locators: {
-    usernameField: (locate('input').withAttr({
-      placeholder: 'Your username'
-    }).as('Username Field')),
-    passwordField: (locate('input').withAttr({
-      placeholder: 'Your password'
-    }).as('Password Field')),
-    signInButtonDisabled: (locate('button[type=submit][disabled]').as('Sign In Button Disabled')),
-    signInButton: (locate('button[type = submit]').withText('Sign In').as('Sign In Button')),
-    publishMenu: (locate('a').withAttr({
-      href: '/'
-    }).as('Publish Menu')),
-    navigationMenu: (locate('.//nav').as('Navigation Menu')),
-    articleLink: (locate('a').withAttr({
+    usernameField: locate('input')
+      .withAttr({
+        placeholder: 'Your username'
+      })
+      .as('Username Field'),
+    passwordField: locate('input')
+      .withAttr({
+        placeholder: 'Your password'
+      })
+      .as('Password Field'),
+    signInButtonDisabled: locate('button[type=submit][disabled]').as(
+      'Sign In Button Disabled'
+    ),
+    signInButton: locate('button[type = submit]')
+      .withText('Sign In')
+      .as('Sign In Button'),
+    publishMenu: locate('a')
+      .withAttr({
+        href: '/'
+      })
+      .as('Publish Menu'),
+    navigationMenu: locate('.//nav').as('Navigation Menu'),
+    articleLink: locate('a').withAttr({
       href: '/articles'
-    })),
-    signOutButton: (locate('a').withText('Sign out').as('Sign Out Button')),
-    accountMenuOpen: (locate('span').withText('Open').as('Account Menu Open'))
+    }),
+    signOutButton: locate('a')
+      .withText('Sign out')
+      .as('Sign Out Button'),
+    accountMenuOpen: locate('span')
+      .withText('Open')
+      .as('Account Menu Open')
   },
 
   async validateSignInPage() {

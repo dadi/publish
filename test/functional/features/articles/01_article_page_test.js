@@ -4,7 +4,8 @@ BeforeSuite(async (articlePage, loginPage) => {
   await articlePage.deleteDocument('This Is A New Article')
   await articlePage.deleteDocument('This Article Is Updated')
   await loginPage.deleteUser('syst_two')
-  await loginPage.addUser('syst_two', '123456', ['collection:cloud_articles',
+  await loginPage.addUser('syst_two', '123456', [
+    'collection:cloud_articles',
     'collection:cloud_team',
     'collection:cloud_categories',
     'collection:cloud_sub-categories',
@@ -19,15 +20,15 @@ AfterSuite(async (I, loginPage) => {
   await loginPage.deleteUser('syst_two')
 })
 
-Scenario('Create Article', async (articlePage) => {
+Scenario('Create Article', async articlePage => {
   await articlePage.validateArticlePage()
   await articlePage.addArticle()
 })
 
-Scenario('Edit Article', async (articlePage) => {
+Scenario('Edit Article', async articlePage => {
   await articlePage.editArticle()
 })
 
-Scenario('Delete Article', async (articlePage) => {
+Scenario('Delete Article', async articlePage => {
   await articlePage.deleteArticle()
 })

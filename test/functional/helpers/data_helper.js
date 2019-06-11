@@ -44,13 +44,17 @@ class Data extends Helper {
       .inClients()
       .create(client)
       .then(doc => {
-        return this.getToken()
-          .then(result => {
-            this.addResources(JSON.parse(result).accessToken, client, selectedResources).then(result => {
-              // console.log('result :', result)
-            })
+        return this.getToken().then(result => {
+          this.addResources(
+            JSON.parse(result).accessToken,
+            client,
+            selectedResources
+          ).then(result => {
+            // console.log('result :', result)
           })
-      }).catch(err => {
+        })
+      })
+      .catch(err => {
         console.log('! Error:', err)
       })
   }
@@ -64,7 +68,8 @@ class Data extends Helper {
       .delete()
       .then(() => {
         // console.log('Deleted ' + id)
-      }).catch(_err => {
+      })
+      .catch(_err => {
         // console.log('! Error:', err)
       })
   }
@@ -82,7 +87,8 @@ class Data extends Helper {
       })
       .then(doc => {
         // console.log('New document:', doc)
-      }).catch(err => {
+      })
+      .catch(err => {
         console.log('! Error:', err)
       })
   }
@@ -96,7 +102,8 @@ class Data extends Helper {
       .delete()
       .then(() => {
         // console.log('Deleted ' + title)
-      }).catch(err => {
+      })
+      .catch(err => {
         console.log('! Error:', err)
       })
   }
@@ -110,7 +117,8 @@ class Data extends Helper {
       .delete()
       .then(() => {
         // console.log('Deleted ' + title)
-      }).catch(err => {
+      })
+      .catch(err => {
         console.log('! Error:', err)
       })
   }
@@ -124,7 +132,8 @@ class Data extends Helper {
       .delete()
       .then(() => {
         // console.log('Deleted ' + title)
-      }).catch(err => {
+      })
+      .catch(err => {
         console.log('! Error:', err)
       })
   }
@@ -138,7 +147,8 @@ class Data extends Helper {
       .delete()
       .then(() => {
         // console.log('Deleted ' + title)
-      }).catch(err => {
+      })
+      .catch(err => {
         console.log('! Error:', err)
       })
   }
@@ -152,7 +162,8 @@ class Data extends Helper {
       .delete()
       .then(() => {
         // console.log('Deleted ' + title)
-      }).catch(err => {
+      })
+      .catch(err => {
         console.log('! Error:', err)
       })
   }
@@ -166,7 +177,8 @@ class Data extends Helper {
       .delete()
       .then(() => {
         // console.log('Deleted ' + title)
-      }).catch(err => {
+      })
+      .catch(err => {
         console.log('! Error:', err)
       })
   }
@@ -183,7 +195,8 @@ class Data extends Helper {
       })
       .then(doc => {
         // console.log('New document:', doc)
-      }).catch(err => {
+      })
+      .catch(err => {
         console.log('! Error:', err)
       })
   }
@@ -198,7 +211,8 @@ class Data extends Helper {
       .delete()
       .then(doc => {
         // console.log('New document:', doc)
-      }).catch(err => {
+      })
+      .catch(err => {
         console.log('! Error:', err)
       })
   }
@@ -215,7 +229,8 @@ class Data extends Helper {
       })
       .then(doc => {
         // console.log('New document:', doc)
-      }).catch(err => {
+      })
+      .catch(err => {
         console.log('! Error:', err)
       })
   }
@@ -231,7 +246,8 @@ class Data extends Helper {
       })
       .then(doc => {
         // console.log('New document:', doc)
-      }).catch(err => {
+      })
+      .catch(err => {
         console.log('! Error:', err)
       })
   }
@@ -249,7 +265,8 @@ class Data extends Helper {
       })
       .then(doc => {
         // console.log('New document:', doc)
-      }).catch(err => {
+      })
+      .catch(err => {
         console.log('! Error:', err)
       })
   }
@@ -267,49 +284,49 @@ class Data extends Helper {
       })
       .then(doc => {
         // console.log('New document:', doc)
-      }).catch(err => {
+      })
+      .catch(err => {
         console.log('! Error:', err)
       })
   }
 
   async createMedia(file) {
-    return this.getToken()
-      .then(result => {
-        let token = JSON.parse(result).accessToken
+    return this.getToken().then(result => {
+      let token = JSON.parse(result).accessToken
 
-        let options = {
-          host: process.env.API_HOST,
-          port: process.env.API_PORT,
-          credentials: {
-            clientId: process.env.API_CLIENT_ID,
-            secret: process.env.API_CLIENT_SECRET
-          },
-          path: '/media/upload',
-          headers: {
-            'Authorization': `Bearer ${token}`,
-            'Accept': 'application/json'
-          }
+      let options = {
+        host: process.env.API_HOST,
+        port: process.env.API_PORT,
+        credentials: {
+          clientId: process.env.API_CLIENT_ID,
+          secret: process.env.API_CLIENT_SECRET
+        },
+        path: '/media/upload',
+        headers: {
+          Authorization: `Bearer ${token}`,
+          Accept: 'application/json'
         }
+      }
 
-        let uploadResult = ''
-        let form = new FormData()
+      let uploadResult = ''
+      let form = new FormData()
 
-        form.append('file', fs.createReadStream(file))
+      form.append('file', fs.createReadStream(file))
 
-        form.submit(options, (err, response, body) => {
-          if (err) throw err
+      form.submit(options, (err, response, body) => {
+        if (err) throw err
 
-          response.on('data', chunk => {
-            if (chunk) {
-              uploadResult += chunk
-            }
-          })
+        response.on('data', chunk => {
+          if (chunk) {
+            uploadResult += chunk
+          }
+        })
 
-          response.on('end', () => {
-            // console.log(uploadResult)
-          })
+        response.on('end', () => {
+          // console.log(uploadResult)
         })
       })
+    })
   }
 
   async deleteAllMedia(fileName) {
@@ -319,9 +336,10 @@ class Data extends Helper {
       .inMedia('mediaStore')
       .whereFieldContains('fileName', fileName)
       .delete()
-      .then(()=> {
+      .then(() => {
         // console.log('New document:', doc)
-      }).catch(err => {
+      })
+      .catch(err => {
         console.log('! Error:', err)
       })
   }
@@ -376,7 +394,7 @@ class Data extends Helper {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${accessToken}`
+        Authorization: `Bearer ${accessToken}`
       }
     }
 
@@ -420,7 +438,7 @@ class Data extends Helper {
 
   makeRequest(obj) {
     return new Promise((resolve, reject) => {
-      let req = http.request(obj.options, (res) => {
+      let req = http.request(obj.options, res => {
         // console.log(`STATUS: ${res.statusCode}`)
         // console.log(`HEADERS: ${JSON.stringify(res.headers)}`)
         let data = ''
