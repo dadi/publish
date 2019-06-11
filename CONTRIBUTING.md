@@ -36,7 +36,7 @@ You should use this live URL to double check that the functionality you've modif
 
 ## Git commit guidelines
 
-### One Change Per Commit
+### One change per commit
 
 A commit should contain exactly one logical change. A logical change includes adding a new feature, fixing a specific bug, etc. If it's not possible to describe the high level change in a few words, it is most likely too complex for a single commit. The diff itself should be as concise as reasonably possibly and it's almost always better to err on the side of too many patches than too few. As a rule of thumb, given only the commit message, another developer should be able to implement the same patch in a reasonable amount of time.
 
@@ -48,7 +48,7 @@ We use [Semantic Release](https://github.com/semantic-release/semantic-release) 
 
 The commit message format validation can be initialised by running `npm run init` from the root of the repository. This will add a symlink at `.git/hooks/commit-msg` which will be run every time you commit.
 
-#### Message Format
+#### Message format
 
 ```
 type: subject
@@ -93,7 +93,7 @@ The body should include the motivation for the change and contrast this with pre
 
 The footer should contain any information about **Breaking Changes** and is also the place to reference GitHub issues that this commit might **Fix** or **Close**.
 
-**Breaking Changes** should start with the words `BREAKING CHANGE:` followed by a space or two newlines. The rest of the commit message is then used for this.
+**Breaking changes** should start with the words `BREAKING CHANGE:` followed by a space or two newlines. The rest of the commit message is then used for this.
 
 **Autoclose issues and pull requests**
 
@@ -104,7 +104,7 @@ The footer should contain any information about **Breaking Changes** and is also
 
 - Use `Ref #xxx` when referencing an issue or pull request that is already closed or should remain open. Examples include partial fixes and commits that add a test but not a fix.
 
-#### Line Length
+#### Line length
 
 Any line of the commit message cannot be longer 100 characters. This allows the message to be easier to read on GitHub as well as in various git tools.
 
