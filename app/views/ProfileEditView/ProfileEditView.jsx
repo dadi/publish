@@ -12,6 +12,7 @@ import Page from 'components/Page/Page'
 import ProfileEditToolbar from 'containers/ProfileEditToolbar/ProfileEditToolbar'
 import ProfileField from 'containers/ProfileField/ProfileField'
 import React from 'react'
+import styles from './ProfileEditView.css'
 
 const PROFILE_SCHEMA = {
   _publishLink: '/profile',
@@ -203,11 +204,11 @@ class ProfileEditView extends React.Component {
       <Page>
         <Header />
 
-        <Main>
+        <div className={styles.toolbar}>
           <ProfileEditToolbar />
+        </div>
 
-          {this.renderFields({sections})}
-        </Main>
+        <Main>{this.renderFields({sections})}</Main>
       </Page>
     )
   }
