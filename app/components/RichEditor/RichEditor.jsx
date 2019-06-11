@@ -191,6 +191,14 @@ export default class RichEditor extends React.Component {
     onChange.call(this, value)
   }
 
+  handleLinkClick(node, currentHref, event) {
+    event.preventDefault()
+
+    const newHref = this.openLinkPrompt(currentHref)
+
+    return this.handleLinkUpdate(node, newHref)
+  }
+
   handleLinkUpdate(node, href) {
     if (href === '') {
       return this.editor.unwrapInlineByKey(node.key, NODE_LINK)
@@ -313,6 +321,21 @@ export default class RichEditor extends React.Component {
     }
 
     if (this.value.selection.isExpanded) {
+      if (this.isNarrowViewport) {
+        const href = this.openLinkPrompt()
+
+        if (href !== '') {
+          this.editor.wrapInline({
+            type: NODE_LINK,
+            data: {
+              href
+            }
+          })
+        }
+
+        return
+      }
+
       this.editor.wrapInline({
         type: NODE_LINK,
         data: {
@@ -373,6 +396,13 @@ export default class RichEditor extends React.Component {
     }
 
     return valueIsInList
+  }
+
+  openLinkPrompt(currentHref) {
+    return window.prompt(
+      'Enter the link URL or clear the field to remove the link',
+      currentHref || ''
+    )
   }
 
   render() {
@@ -453,6 +483,12 @@ export default class RichEditor extends React.Component {
       isRawMode
     )
 
+    // This will be used by certain elements (e.g. links) to adjust their
+    // behaviour based on the viewport size.
+    this.isNarrowViewport = window.innerWidth < 1000
+
+    // Deserialising the value and caching the result, so that other methods
+    // can use it.
     this.value = this.deserialise(this.props.value)
 
     const valueIsCodeBlock = this.hasBlock(NODE_CODE)
@@ -585,6 +621,17 @@ export default class RichEditor extends React.Component {
     switch (node.type) {
       case NODE_LINK: {
         const href = node.data.get('href')
+
+        if (this.isNarrowViewport) {
+          return (
+            <a
+              href={href}
+              onClick={this.handleLinkClick.bind(this, node, href)}
+            >
+              {children}
+            </a>
+          )
+        }
 
         return (
           <RichEditorLink

@@ -1,5 +1,6 @@
 .container-fullscreen {
-  padding: 0 10px;
+  overflow: hidden;
+  padding: 0 10px 40px 10px;
 }
 
 .editor {
