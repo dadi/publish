@@ -156,23 +156,11 @@ const SCHEMA = {
       format: 'port',
       default: 0
     },
-    sslPrivateKeyPath: {
-      doc: 'The path to a SSL private key',
-      format: String,
-      default: '',
-      env: 'SSL_PRIVATE_KEY_PATH'
-    },
     sslCertificatePath: {
       doc: 'The path to a SSL certificate',
       format: String,
       default: '',
       env: 'SSL_CERTIFICATE_PATH'
-    },
-    sslPassphrase: {
-      doc: 'The passphrase of the SSL private key',
-      format: String,
-      default: '',
-      env: 'SSL_PRIVATE_KEY_PASSPHRASE'
     },
     sslIntermediateCertificatePath: {
       doc: 'The path to a SSL intermediate certificate, if any',
@@ -186,6 +174,18 @@ const SCHEMA = {
       format: Array,
       default: [],
       env: 'SSL_INTERMEDIATE_CERTIFICATE_PATHS'
+    },
+    sslPassphrase: {
+      doc: 'The passphrase of the SSL private key',
+      format: String,
+      default: '',
+      env: 'SSL_PRIVATE_KEY_PASSPHRASE'
+    },
+    sslPrivateKeyPath: {
+      doc: 'The path to a SSL private key',
+      format: String,
+      default: '',
+      env: 'SSL_PRIVATE_KEY_PATH'
     }
   },
   whitelabel: {

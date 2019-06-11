@@ -13,7 +13,7 @@ class Server {
     ]
   }
 
-  attachRoutes(server) {
+  attachMainServerRoutes(server) {
     server
       .use(restify.plugins.gzipResponse())
       .use(restify.plugins.queryParser({mapParams: true}))
@@ -26,6 +26,18 @@ class Server {
     })
 
     return server
+  }
+
+  attachRedirectServerRoutes(server) {
+    server.get('*', (req, res) => {
+      const port = config.get('server.port')
+      const hostname = req.headers.host.split(':')[0]
+      const location = `https://${hostname}:${port}${req.url}`
+
+      res.setHeader('Location', location)
+      res.statusCode = 301
+      res.end()
+    })
   }
 
   createHttpServer() {
@@ -95,23 +107,45 @@ class Server {
 
   start() {
     const port = config.get('server.port')
-    const server = this.createHttpServer()
+    const redirectPort = config.get('server.redirectPort')
+    const protocol = config.get('server.protocol')
+    const mainServer =
+      protocol === 'https' ? this.createHttpsServer() : this.createHttpServer()
 
-    this.httpServer = server
+    this.mainServer = mainServer
 
     // Initialise routes.
-    this.attachRoutes(server)
+    this.attachMainServerRoutes(mainServer)
 
     // Initialise logger.
     log.init(config.get('logging'), {}, config.get('env'))
 
-    return new Promise(resolve => {
-      server.listen(port, resolve)
-    })
+    let servers = [
+      new Promise(resolve => {
+        mainServer.listen(port, resolve)
+      })
+    ]
+
+    // Do we need to create an HTTP server to redirect traffic to HTTPS?
+    if (protocol === 'https' && redirectPort > 0) {
+      const redirectServer = this.createHttpServer()
+
+      this.redirectServer = redirectServer
+
+      this.attachRedirectServerRoutes(redirectServer)
+
+      servers.push(
+        new Promise(resolve => redirectServer.listen(redirectPort, resolve))
+      )
+    }
+
+    return Promise.all(servers)
   }
 
   stop() {
-    const runningServers = [this.httpServer, this.httpsServer].filter(Boolean)
+    const runningServers = [this.mainServer, this.redirectServer].filter(
+      Boolean
+    )
 
     let closedServers = 0
 
