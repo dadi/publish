@@ -1,0 +1,49 @@
+.container {
+  position: fixed;
+  left: 50%;
+  top: 0;
+  text-align: center;
+  opacity: 0;
+  transform: translate3d(-50%, -100%, 0);
+  transition: all 0.2s ease-out;
+  z-index: 1002;
+}
+
+.container-visible {
+  opacity: 1;
+  transform: translate3d(-50%, 0, 0);
+}
+
+.notification {
+  display: inline-block;
+  line-height: 1.25;
+  font-family: var(--theme-font-family, sans-serif);
+  padding: 10px 50px;
+  border-bottom-left-radius: 3px;
+  border-bottom-right-radius: 3px;
+  transition: all 0.2s ease-out;
+}
+
+.notification-visible {
+  color: red !important;
+}
+
+/* Accent: system */
+.notification-system {
+  background-color: var(--theme-colour-system, #ffbf0d);
+  color: var(--theme-colour-primary, #000000);
+}
+
+.notification-system.notification-faded {
+  background-color: #b3870b;
+}
+
+.option {
+  cursor: pointer;
+  margin-left: 10px;
+  font-weight: bold;
+}
+
+.option:hover {
+  text-decoration: underline;
+}

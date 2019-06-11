@@ -1,0 +1,43 @@
+.button {
+  background-color: white;
+  border-radius: 4px;
+  color: black;
+  font-size: 12px;
+  margin-left: 10px;
+}
+
+.container {
+  font-family: var(--theme-font-family, sans-serif);
+  position: relative;
+}
+
+.form {
+  display: flex;
+}
+
+.input {
+  background: none;
+  border: 0;
+  border-bottom: 1px solid #888;
+  border-radius: 0;
+  color: white;
+  font-family: 'Roboto Mono', monospace;
+  outline: none;
+}
+
+input:focus {
+  border-color: white;
+}
+
+.popup {
+  background-color: black;
+  border-radius: 4px;
+  bottom: 100%;
+  box-shadow: 7px 6px 25px rgba(0, 0, 0, 0.3);
+  color: white;
+  left: 0;
+  margin: 6px 0 10px 0;
+  padding: 5px 10px;
+  position: absolute;
+  z-index: 10;
+}

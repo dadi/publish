@@ -5,11 +5,11 @@
 // } = require('chai')
 
 class Editor extends Helper {
-  async getPage () {
+  async getPage() {
     return this.helpers['Puppeteer'].page
   }
 
-  async typeAndSelect (locator, text) {
+  async typeAndSelect(locator, text) {
     let page = await this.getPage()
 
     await page.click(locator.value)
@@ -25,7 +25,7 @@ class Editor extends Helper {
     // await page.click(locators.boldButton.value)
   }
 
-  async getThePage () {
+  async getThePage() {
     console.log('this :', this)
     const browser = this.helpers['Puppeteer'].browser
     let x = await browser.pages() // List of pages in the browser

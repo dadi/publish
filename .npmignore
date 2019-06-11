@@ -1,28 +1,12 @@
-# NPM
-node_modules/
-
-# Logging
-log/
-npm-debug.log
-
-# Test suite
-coverage/
-
-# Config
-config/
-
-.wallet
+.DS_Store
 .tmp
-frontend/
-!frontend/components
-
-# Webpack-generated files
-component-map.json
-stats.json
-jest*
-workspace/
-
-test/
-stories/
-scripts/
+.wallet
+app/
+dev-config/
+dist/
 docs/
+log/
+node_modules/
+npm-debug.log
+test/
+workspace/

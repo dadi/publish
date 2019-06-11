@@ -1,76 +1,65 @@
-'use strict'
+const bootMessage = require('@dadi/boot')
+const config = require('./config')
+const packageJSON = require('./package.json')
+const Server = require('./server')
 
-const app = require('./app')
-const colors = require('colors') // eslint-disable-line
-const config = require(paths.config)
-const dadiBoot = require('@dadi/boot')
-const log = require('@dadi/logger')
-const nodeVersion = Number(process.version.match(/^v(\d+\.\d+)/)[1])
-const pkg = require('./package.json')
+class App {
+  printStartupMessage() {
+    const env = config.get('env')
+    const port =
+      config.get('server.protocol') === 'https'
+        ? 443
+        : config.get('server.port')
 
-const Publish = function () {}
+    // Where can the user access Publish?
+    const server = config.get('publicUrl.host')
+      ? `${config.get('publicUrl.protocol')}://${config.get(
+          'publicUrl.host'
+        )}:${port}`
+      : `http://${config.get('server.host')}:${port}`
 
-Publish.prototype.getStartupMessage = function () {
-  let env = config.get('env')
+    // Print out API.
+    const api = config.get('api')
+    const apiUrl = api.host && `${api.host}:${api.port}`
+    const footer = {
+      API: apiUrl || colors.red('Not connected')
+    }
 
-  log.init(config.get('logging'), {}, env)
-
-  let port = config.get('server.protocol') === 'https' ? 443 : config.get('server.port')
-
-  // Where can the user access Publish?
-  let server = config.get('publicUrl.host')
-    ? `${config.get('publicUrl.protocol')}://${config.get('publicUrl.host')}:${port}`
-    : `http://${config.get('server.host')}:${port}`
-
-  // Print out API.
-  let apis = config.get('apis')
-  let apiUrl = (apis.length > 0) && `${apis[0].host}:${apis[0].port}`
-  let footer = {
-    'API': apiUrl || colors.red('Not connected')
+    if (env !== 'test') {
+      bootMessage.started({
+        body: {
+          Version: packageJSON.version,
+          'Node.js': Number(process.version.match(/^v(\d+\.\d+)/)[1]),
+          Environment: env
+        },
+        header: {
+          app: config.get('app.name')
+        },
+        footer,
+        server
+      })
+    }
   }
 
-  if (env !== 'test') {
-    dadiBoot.started({
-      server,
-      header: {
-        app: config.get('app.name')
-      },
-      body: {
-        'Version': pkg.version,
-        'Node.js': nodeVersion,
-        'Environment': env
-      },
-      footer
+  run({configPath} = {}) {
+    // Initialise config.
+    config.initialise(configPath)
+
+    // Initialise startup message package.
+    if (config.get('env') !== 'test') {
+      bootMessage.start(packageJSON)
+    }
+
+    this.server = new Server()
+
+    return this.server.start().then(() => {
+      this.printStartupMessage()
     })
   }
-}
 
-Publish.prototype.run = function () {
-  if (config.get('env') !== 'test') {
-    dadiBoot.start(require('./package.json'))
+  stop() {
+    return this.server.stop()
   }
-
-  return app
-    .start()
-    .then(this.getStartupMessage)
-    .catch(err => {
-      console.log('App failed to start', err)
-    })
 }
 
-Publish.prototype.stop = function () {
-  return app.stop().catch(err => {
-    console.log('App failed to stop', err)
-  })
-}
-
-// Run-type switch
-if (require.main === module) {
-  // App called directly
-  module.exports = new Publish().run()
-} else {
-  // App called as module
-  module.exports = new Publish()
-  module.exports.Publish = Publish
-}
-
+module.exports = new App()

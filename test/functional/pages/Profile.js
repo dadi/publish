@@ -3,42 +3,80 @@
 const I = actor()
 
 module.exports = {
-
   // insert your locators and methods here
   locators: {
-    profileLink: (locate('a').withAttr({
-      href: '/profile'
-    }).as('Profile Link')),
-    credentialsLink: (locate('a').withText('Credentials').as('Credentials Link')),
-    personalDetailsLink: (locate('a').withText('Personal details').as('Personal Details Link')),
-    idField: (locate('div').withAttr({
-      'data-field-name': 'userName'
-    }).find('input').as('Username Field')),
-    currentPasswordField: (locate('div').withAttr({
-      'data-field-name': 'password'
-    }).find('input').before(locate('div').withText('Current password')).as('Current Password Field')),
-    newPasswordField: (locate('.//div[2]/div[1]/div/label[2]/input').as('New Password Field')),
-    confirmNewPasswordField: (locate('div').withAttr({
-      'data-field-name': 'password'
-    }).find('input').before(locate('div').withText('New password (confirm)')).as('Confirm New Password Field')),
-    firstNameField: (locate('div').withAttr({
-      'data-field-name': 'firstName'
-    }).find('input').as('First Name Field')),
-    lastNameField: (locate('div').withAttr({
-      'data-field-name': 'lastName'
-    }).find('input').as('Last Name Field')),
-    saveSettings: (locate('button').withText('Save settings').as('Save Settings Button')),
-    saveSetttingsDisabled: (locate('button[disabled]').withText('Save settings').as('Save Settings Button Disabled')),
-    signOutButton: (locate('button').withText('Sign out').as('Sign Out Button')),
-    confirmation: (locate('span').withText('Your profile')),
-    articleLink: (locate('a').withAttr({
-      href: '/articles'
-    }).as('Article Link')),
-    tryPassword: (locate('input').withAttr({
-      type: 'password'
-    }).at(1)),
-    accountMenuOpen: (locate('span').withText('Open').as('Account Menu Open')),
-    accountMenuClose: (locate('span').withText('Close').as('Account Menu Close'))
+    profileLink: locate('a')
+      .withAttr({
+        href: '/profile'
+      })
+      .as('Profile Link'),
+    credentialsLink: locate('a')
+      .withText('Credentials')
+      .as('Credentials Link'),
+    personalDetailsLink: locate('a')
+      .withText('Personal details')
+      .as('Personal Details Link'),
+    idField: locate('div')
+      .withAttr({
+        'data-field-name': 'userName'
+      })
+      .find('input')
+      .as('Username Field'),
+    currentPasswordField: locate('div')
+      .withAttr({
+        'data-field-name': 'password'
+      })
+      .find('input')
+      .before(locate('div').withText('Current password'))
+      .as('Current Password Field'),
+    newPasswordField: locate('.//div[2]/div[1]/div/label[2]/input').as(
+      'New Password Field'
+    ),
+    confirmNewPasswordField: locate('div')
+      .withAttr({
+        'data-field-name': 'password'
+      })
+      .find('input')
+      .before(locate('div').withText('New password (confirm)'))
+      .as('Confirm New Password Field'),
+    firstNameField: locate('div')
+      .withAttr({
+        'data-field-name': 'firstName'
+      })
+      .find('input')
+      .as('First Name Field'),
+    lastNameField: locate('div')
+      .withAttr({
+        'data-field-name': 'lastName'
+      })
+      .find('input')
+      .as('Last Name Field'),
+    saveSettings: locate('button')
+      .withText('Save settings')
+      .as('Save Settings Button'),
+    saveSetttingsDisabled: locate('button[disabled]')
+      .withText('Save settings')
+      .as('Save Settings Button Disabled'),
+    signOutButton: locate('button')
+      .withText('Sign out')
+      .as('Sign Out Button'),
+    confirmation: locate('span').withText('Your profile'),
+    articleLink: locate('a')
+      .withAttr({
+        href: '/articles'
+      })
+      .as('Article Link'),
+    tryPassword: locate('input')
+      .withAttr({
+        type: 'password'
+      })
+      .at(1),
+    accountMenuOpen: locate('span')
+      .withText('Open')
+      .as('Account Menu Open'),
+    accountMenuClose: locate('span')
+      .withText('Close')
+      .as('Account Menu Close')
   },
 
   async changePersonalDetails(first, last) {
@@ -67,7 +105,11 @@ module.exports = {
     I.click(this.locators.accountMenuClose)
   },
 
-  async invalidCurrentPassword(currentPassword, newPassword, confirmNewPassword) {
+  async invalidCurrentPassword(
+    currentPassword,
+    newPassword,
+    confirmNewPassword
+  ) {
     await I.amOnPage('/profile/credentials')
     I.waitForFunction(() => document.readyState === 'complete')
     I.seeInCurrentUrl('/profile/credentials')
@@ -92,7 +134,11 @@ module.exports = {
     I.seeElement(this.locators.saveSetttingsDisabled)
   },
 
-  async successfulPasswordChange(currentPassword, newPassword, confirmNewPassword) {
+  async successfulPasswordChange(
+    currentPassword,
+    newPassword,
+    confirmNewPassword
+  ) {
     await I.amOnPage('/profile/credentials')
     I.waitForFunction(() => document.readyState === 'complete')
     I.seeInCurrentUrl('/profile/credentials')

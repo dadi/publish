@@ -1,0 +1,32 @@
+.body-open {
+  overflow: hidden;
+}
+
+.content {
+  background: rgb(255, 255, 255);
+  border: 1px solid rgb(204, 204, 204);
+  border-radius: 4px;
+  box-shadow: 7px 6px 25px rgba(0, 0, 0, 0.3);
+  bottom: 40px;
+  left: 40px;
+  outline: none;
+  overflow: hidden;
+  right: 40px;
+  position: absolute;
+  top: 40px;
+}
+
+.content-scrollable {
+  overflow: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.overlay {
+  background-color: rgba(255, 255, 255, 0.75);
+  bottom: 0px;
+  left: 0px;
+  position: fixed;
+  right: 0px;
+  top: 0px;
+  z-index: 2000;
+}

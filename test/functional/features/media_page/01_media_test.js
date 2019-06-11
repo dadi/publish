@@ -15,18 +15,18 @@ AfterSuite(async (I, loginPage, mediaPage) => {
   await loginPage.deleteUser('media')
 })
 
-Scenario('Add Media', async (mediaPage) => {
+Scenario('Add Media', async mediaPage => {
   await mediaPage.addMedia()
 })
 
-Scenario('Select Media', async (mediaPage) => {
+Scenario('Select Media', async mediaPage => {
   await mediaPage.selectMedia()
 })
 
-Scenario('Filter Media', async (mediaPage) => {
+Scenario('Filter Media', async mediaPage => {
   await mediaPage.filterMedia()
 })
 
-Scenario('Delete Media', async (mediaPage) => {
+Scenario('Delete Media', async mediaPage => {
   await mediaPage.deleteMedia()
 })

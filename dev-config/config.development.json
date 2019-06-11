@@ -1,0 +1,27 @@
+{
+  "api": {
+    "_host": "http://api-develop.publish.dadi.technology",
+    "_port": 80,
+    "host": "http://localhost",
+    "port": 8081,
+    "menu": [
+      {
+        "collections": [
+          "images",
+          "pages",
+          "team",
+          "partners"
+        ],
+        "title": "Content"
+      },
+      {
+        "collections": [
+          "categories",
+          "sub-categories",
+          "milestones"
+        ],
+        "title": "Taxonomy"
+      }
+    ]      
+  }
+}

@@ -4,9 +4,9 @@ BeforeSuite(async (articlePage, loginPage) => {
   await articlePage.deleteDocument('This Is A New Article')
   await articlePage.deleteDocument('This Article Is Updated')
   await articlePage.deleteDocument('Rich Text')
-  await articlePage.deleteDocument('Inline Image')
   await loginPage.deleteUser('filter')
-  await loginPage.addUser('filter', '123456', ['collection:cloud_articles',
+  await loginPage.addUser('filter', '123456', [
+    'collection:cloud_articles',
     'collection:cloud_team',
     'collection:cloud_categories',
     'collection:cloud_sub-categories',
@@ -21,7 +21,7 @@ AfterSuite(async (I, loginPage) => {
   await loginPage.deleteUser('filter')
 })
 
-Scenario('Test Filter', async (articlePage) => {
+Scenario('Test Filter', async articlePage => {
   await articlePage.validateArticlePage()
   await articlePage.filterArticle()
 })

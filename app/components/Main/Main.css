@@ -1,0 +1,92 @@
+/* karla-regular - latin */
+@font-face {
+  font-family: 'Karla';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Karla'), local('Karla-Regular'),
+       url('/_public/fonts/karla-v5-latin-regular.woff2') format('woff2'), /* Chrome 26+, Opera 23+, Firefox 39+ */
+       url('/_public/fonts/karla-v5-latin-regular.woff') format('woff'); /* Chrome 6+, Firefox 3.6+, IE 9+, Safari 5.1+ */
+}
+/* karla-italic - latin */
+@font-face {
+  font-family: 'Karla';
+  font-style: italic;
+  font-weight: 400;
+  src: local('Karla Italic'), local('Karla-Italic'),
+       url('/_public/fonts/karla-v5-latin-italic.woff2') format('woff2'), /* Chrome 26+, Opera 23+, Firefox 39+ */
+       url('/_public/fonts/karla-v5-latin-italic.woff') format('woff'); /* Chrome 6+, Firefox 3.6+, IE 9+, Safari 5.1+ */
+}
+/* karla-700 - latin */
+@font-face {
+  font-family: 'Karla';
+  font-style: normal;
+  font-weight: 700;
+  src: local('Karla Bold'), local('Karla-Bold'),
+       url('/_public/fonts/karla-v5-latin-700.woff2') format('woff2'), /* Chrome 26+, Opera 23+, Firefox 39+ */
+       url('/_public/fonts/karla-v5-latin-700.woff') format('woff'); /* Chrome 6+, Firefox 3.6+, IE 9+, Safari 5.1+ */
+}
+/* karla-700 (explicit) - latin */
+@font-face {
+  font-family: 'Karla Bold';
+  src: local('Karla Bold'), local('Karla-Bold'),
+       url('/_public/fonts/karla-v5-latin-700.woff2') format('woff2'), /* Chrome 26+, Opera 23+, Firefox 39+ */
+       url('/_public/fonts/karla-v5-latin-700.woff') format('woff'); /* Chrome 6+, Firefox 3.6+, IE 9+, Safari 5.1+ */
+}
+/* karla-700italic - latin */
+@font-face {
+  font-family: 'Karla';
+  font-style: italic;
+  font-weight: 700;
+  src: local('Karla Bold Italic'), local('Karla-BoldItalic'),
+       url('/_public/fonts/karla-v5-latin-700italic.woff2') format('woff2'), /* Chrome 26+, Opera 23+, Firefox 39+ */
+       url('/_public/fonts/karla-v5-latin-700italic.woff') format('woff'); /* Chrome 6+, Firefox 3.6+, IE 9+, Safari 5.1+ */
+}
+/* roboto-mono-regular - latin */
+/* roboto-mono-regular - latin */
+@font-face {
+  font-family: 'Roboto Mono';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Roboto Mono'), local('RobotoMono-Regular'),
+       url('/_public/fonts/roboto-mono-v5-latin-regular.woff2') format('woff2'), /* Chrome 26+, Opera 23+, Firefox 39+ */
+       url('/_public/fonts/roboto-mono-v5-latin-regular.woff') format('woff'); /* Chrome 6+, Firefox 3.6+, IE 9+, Safari 5.1+ */
+}
+
+
+:root strong {
+  font-weight: bold;
+}
+
+body {
+  min-height: 100vh;
+  background-color: var(--theme-colour-background-shade-1, #FAFAFA);
+  background-repeat: repeat;
+  background-size: cover;
+}
+
+:global :root {
+  --theme-colour-background: #FFFFFF;
+  --theme-colour-background-shade-1: #FAFAFA;
+  --theme-colour-background-shade-2: #AAAAAA;
+  --theme-colour-background-shade-3: #EEEEEE;
+  --theme-colour-background-shade-4: #E4E4E4;
+  --theme-colour-background-shade-5: #CBCBCB;
+  --theme-colour-secondary-background: #17273F;
+  --theme-colour-data: #3585f9;
+  --theme-colour-data-shade-1: #1772ff;
+  --theme-colour-error: #E5462C;
+  --theme-colour-error-shade-1: #982613;
+  --theme-colour-error-shade-2: #FEF8F8;
+  --theme-colour-primary: #000000;
+  --theme-colour-primary-shade-1: #777777;
+  --theme-colour-save: #88c24c;
+  --theme-colour-secondary: #FFFFFF;
+  --theme-colour-system: #ffbf0d;
+  --theme-colour-system-invert: #040609;
+  --theme-colour-highlight-1: #f3f8ff;
+  --theme-font-family: 'Karla', 'Helvetica Neue', Arial, Helvetica, Geneva, sans-serif;
+  --theme-font-size-small: 13px;
+  --theme-font-size-normal: 16px;
+  --theme-font-size-large: 20px;
+  --theme-toolbar-height: 63px;
+}

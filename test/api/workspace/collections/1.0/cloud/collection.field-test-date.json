@@ -46,7 +46,6 @@
       "type": "DateTime",
       "label": "A date after x",
       "comment": "Must be after 2018/01/01",
-      "format": "YYYY-MM-DD",
       "publish": {
         "section": "Dates",
         "placement": "sidebar"

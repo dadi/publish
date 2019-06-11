@@ -7,8 +7,15 @@ BeforeSuite(async (mediaPage, fieldPage, loginPage) => {
   await mediaPage.insertMedia('test/functional/images/DADI_Publish.pdf')
   await mediaPage.insertMedia('test/functional/images/girl.png')
   await loginPage.deleteUser('media-field')
-  await loginPage.addUser('media-field', '123456', ['media:mediaStore', 'collection:cloud_field-test-media'])
-  await loginPage.createSession('media-field', '123456', '/field-testing/field-test-media')
+  await loginPage.addUser('media-field', '123456', [
+    'media:mediaStore',
+    'collection:cloud_field-test-media'
+  ])
+  await loginPage.createSession(
+    'media-field',
+    '123456',
+    '/field-testing/field-test-media'
+  )
 })
 
 AfterSuite(async (I, loginPage, mediaPage) => {
@@ -21,6 +28,6 @@ AfterSuite(async (I, loginPage, mediaPage) => {
   await loginPage.deleteUser('media-field')
 })
 
-Scenario('Media Field Validation Tests', async (fieldPage) => {
+Scenario('Media Field Validation Tests', async fieldPage => {
   await fieldPage.validateMedia()
 })

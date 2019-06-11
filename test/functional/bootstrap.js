@@ -122,11 +122,11 @@ class Bootstrap {
           },
           published: {
             format: '{{random.boolean}}',
-            transform: (value) => value === "true" ? true : false
+            transform: value => (value === 'true' ? true : false)
           },
           publishedAt: {
             format: '{{date.past}}',
-            transform: (value) => {
+            transform: value => {
               let date = new Date(value)
               return date
             }
@@ -143,7 +143,7 @@ class Bootstrap {
             reference: {
               collection: 'web-services'
             }
-          },
+          }
         },
         version: '1.0'
       })
@@ -175,11 +175,11 @@ class Bootstrap {
           },
           published: {
             format: '{{random.boolean}}',
-            transform: (value) => value === "true" ? true : false
+            transform: value => (value === 'true' ? true : false)
           },
           publishedAt: {
             format: '{{date.past}}',
-            transform: (value) => {
+            transform: value => {
               let date = new Date(value)
               return date
             }
@@ -191,13 +191,13 @@ class Bootstrap {
           },
           title: {
             format: '{{random.word(2)}}',
-            transform: (value) => 'DADI ' + value
+            transform: value => 'DADI ' + value
           },
           'web-service': {
             reference: {
               collection: 'web-services'
             }
-          },
+          }
         },
         version: '1.0'
       })
