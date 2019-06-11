@@ -192,7 +192,7 @@ class DocumentField extends React.Component {
     const fieldComment = field.comment || field.example
 
     if (!FieldComponent) {
-      console.warn('Unknown field type:', fieldType)
+      console.warn(`No component found for field ${field._id}. Ignoring.`)
 
       return null
     }
