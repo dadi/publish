@@ -269,7 +269,8 @@ module.exports = {
       .as('Filter Value Select'),
     dateTimeValue: locate('input[class*="FieldDateTime__filter-input"]').as(
       'Date Time Filter Field'
-    )
+    ),
+    navMenu: locate('nav[class*="Nav"]').as('Navigation Menu')
   },
 
   async validateArticlePage() {
@@ -279,6 +280,11 @@ module.exports = {
     await I.seeElement(this.locators.createNewButton)
     let articles = await I.grabNumberOfVisibleElements(
       this.locators.articleRows
+    )
+    let navItems = await I.grabTextFrom(this.locators.navMenu)
+    await I.seeStringsAreEqual(
+      navItems,
+      'ArticlesContentTaxonomyWeb servicesNetwork servicesMedia Library'
     )
     await I.seeNumberOfVisibleElements(this.locators.articleRows, articles)
     let range = await I.grabTextFrom(this.locators.numberOfArticles)

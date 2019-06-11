@@ -10,21 +10,17 @@
     "name": "Publish Test API",
     "host": "http://localhost",
     "port": 3004,
-    "menu": [{
-        "collections": [
-          "pages",
-          "team"
-        ],
+    "menu": [
+      "articles",
+      {
+        "collections": ["pages", "team"],
         "title": "Content"
       },
       {
-        "collections": [
-          "categories",
-          "sub-categories",
-          "milestones"
-        ],
+        "collections": ["categories", "sub-categories", "milestones"],
         "title": "Taxonomy"
       },
+      "web-services",
       {
         "collections": [
           "field-test-boolean",
