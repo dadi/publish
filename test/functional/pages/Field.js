@@ -677,7 +677,16 @@ module.exports = {
     colourHue: locate('div[class*="ColorPicker__hue"]').as('Colour Hue'),
     colourSlider: locate('div[class*="ColorPicker__slider"]').as(
       'Colour Slider'
-    )
+    ),
+    filterButton: locate('button[class*="DocumentFilters__button"]').as(
+      'Filter Button'
+    ),
+    filterButtonDisabled: locate('button[class*="button-disabled"]')
+      .withText('Add filter')
+      .as('Disabled Add Filter Button'),
+    filterField: locate(
+      'select[class*="DocumentFilters__tooltip-dropdown-left"]'
+    ).as('Filter Field')
   },
 
   async validateBoolean() {
@@ -1127,5 +1136,18 @@ module.exports = {
     await I.click(this.locators.saveGoBack)
     I.waitForText('The document has been created')
     await I.see('094285')
+    // check filter only contains string filter field
+    await I.click(this.locators.filterButton)
+    await I.seeElement(this.locators.filterField)
+    let filterValue = await I.grabTextFrom(this.locators.filterField)
+    await I.seeStringsAreEqual(filterValue, 'Normal String field')
+  },
+
+  async validateNoFilter() {
+    await I.amOnPage('/field-testing/no-filterable-fields')
+    await I.waitForFunction(() => document.readyState === 'complete')
+    await I.waitForElement(this.locators.footer)
+    await I.seeElement(this.locators.createNewButton)
+    await I.seeElement(this.locators.filterButtonDisabled)
   }
 }

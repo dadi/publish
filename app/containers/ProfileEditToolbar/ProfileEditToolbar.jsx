@@ -7,11 +7,6 @@ import React from 'react'
 import styles from './ProfileEditToolbar.css'
 import Toolbar from 'components/Toolbar/Toolbar'
 
-const actions = {
-  ...appActions,
-  ...userActions
-}
-
 /**
  * A toolbar used in a document edit view.
  */
@@ -61,11 +56,12 @@ class ProfileEditToolbar extends React.Component {
 
   render() {
     const {state} = this.props
-    const validationErrors = state.validationErrors
-    const hasValidationErrors =
+    const {validationErrors} = state.user
+    const hasValidationErrors = Boolean(
       validationErrors &&
-      Object.keys(validationErrors).filter(field => validationErrors[field])
-        .length
+        Object.keys(validationErrors).filter(field => validationErrors[field])
+          .length
+    )
 
     return (
       <Toolbar>

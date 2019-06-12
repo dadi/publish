@@ -131,6 +131,7 @@ class SignIn extends React.Component {
                 <div className={styles.input}>
                   <Label label="Username">
                     <TextInput
+                      autoFocus={true}
                       name="username"
                       onChange={this.handleInputChange.bind(this, 'email')}
                       onInput={this.handleInputChange.bind(this, 'email')}

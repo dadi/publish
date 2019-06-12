@@ -10,6 +10,12 @@ import styles from './TextInput.css'
 export default class TextInput extends React.Component {
   static propTypes = {
     /**
+     * Whether to add focus to the input element automatically when mounting
+     * the component.
+     */
+    autoFocus: proptypes.bool,
+
+    /**
      * Classes to append to the input element.
      */
     className: proptypes.string,
@@ -176,6 +182,7 @@ export default class TextInput extends React.Component {
 
   render() {
     const {
+      autoFocus,
       className,
       heightType,
       id,
@@ -206,6 +213,7 @@ export default class TextInput extends React.Component {
     if (type === 'multiline') {
       return (
         <textarea
+          autoFocus={autoFocus}
           className={inputStyle.getClasses()}
           id={id}
           name={name}
@@ -227,6 +235,7 @@ export default class TextInput extends React.Component {
     // Otherwise, we render an `<input>`
     return (
       <input
+        autoFocus={autoFocus}
         className={inputStyle.getClasses()}
         id={id}
         name={name}

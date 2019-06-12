@@ -5,9 +5,9 @@ const {slugify} = require('../../shared/lib/string')
 /**
  * Augment collection schema with a `publish` block for each field.
  *
- * @param  {Object} fields     Collection fields.
- * @param  {Object} settings     Collection settings.
- * @return {Object} Mutated collection schema.
+ * @param  {Object} fields
+ * @param  {Object} settings
+ * @return {Object}
  */
 const applyDefaultPublishParams = fields => {
   const defaultBlock = {
@@ -15,7 +15,7 @@ const applyDefaultPublishParams = fields => {
       edit: true,
       list: false
     },
-    placement: 'sidebar',
+    placement: 'main',
     section: 'General'
   }
 
