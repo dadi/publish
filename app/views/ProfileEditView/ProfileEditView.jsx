@@ -40,7 +40,7 @@ const PROFILE_SCHEMA = {
       type: 'String'
     },
     secret: {
-      label: 'Password',
+      label: 'New password',
       publish: {
         requireConfirmation: true,
         section: 'Credentials',

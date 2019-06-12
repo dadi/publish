@@ -16,38 +16,22 @@ module.exports = {
     personalDetailsLink: locate('a')
       .withText('Personal details')
       .as('Personal Details Link'),
-    idField: locate('div')
-      .withAttr({
-        'data-field-name': 'userName'
-      })
-      .find('input')
-      .as('Username Field'),
-    currentPasswordField: locate('div')
-      .withAttr({
-        'data-field-name': 'password'
-      })
-      .find('input')
-      .before(locate('div').withText('Current password'))
-      .as('Current Password Field'),
-    newPasswordField: locate('.//div[2]/div[1]/div/label[2]/input').as(
-      'New Password Field'
+    currentPasswordField: locate('input[name="currentSecret"]').as(
+      'Current Password Field'
     ),
-    confirmNewPasswordField: locate('div')
-      .withAttr({
-        'data-field-name': 'password'
-      })
-      .find('input')
-      .before(locate('div').withText('New password (confirm)'))
-      .as('Confirm New Password Field'),
+    newPasswordField: locate('input[name="secret"]').as('New Password Field'),
+    confirmNewPasswordField: locate('input[name="secret-confirm"]').as(
+      'Confirm New Password Field'
+    ),
     firstNameField: locate('div')
       .withAttr({
-        'data-field-name': 'firstName'
+        'data-field-name': 'data.publishFirstName'
       })
       .find('input')
       .as('First Name Field'),
     lastNameField: locate('div')
       .withAttr({
-        'data-field-name': 'lastName'
+        'data-field-name': 'data.publishLastName'
       })
       .find('input')
       .as('Last Name Field'),
@@ -57,7 +41,7 @@ module.exports = {
     saveSetttingsDisabled: locate('button[disabled]')
       .withText('Save settings')
       .as('Save Settings Button Disabled'),
-    signOutButton: locate('button')
+    signOutButton: locate('a')
       .withText('Sign out')
       .as('Sign Out Button'),
     confirmation: locate('span').withText('Your profile'),
@@ -82,8 +66,13 @@ module.exports = {
   async changePersonalDetails(first, last) {
     await I.amOnPage('/profile')
     I.seeInCurrentUrl('/profile')
-    I.see('Username')
-    I.seeElement(this.locators.idField)
+    I.see('First name')
+    await I.fillField(this.locators.firstNameField, first)
+    I.see('Last name')
+    await I.fillField(this.locators.lastNameField, '')
+    await I.fillField(this.locators.lastNameField, last)
+    I.click(this.locators.credentialsLink)
+    I.seeInCurrentUrl('/profile/credentials')
     I.see('Current password')
     I.seeElement(this.locators.currentPasswordField)
     I.see('New password')
@@ -92,17 +81,9 @@ module.exports = {
     I.seeElement(this.locators.confirmNewPasswordField)
     I.click(this.locators.personalDetailsLink)
     I.seeInCurrentUrl('/profile/personal-details')
-    I.see('First name')
-    await I.fillField(this.locators.firstNameField, first)
-    I.see('Last name')
-    await I.fillField(this.locators.lastNameField, '')
-    await I.fillField(this.locators.lastNameField, last)
     I.click(this.locators.saveSettings)
-    I.waitForText('Your profile has been updated')
+    I.waitForText('Your settings have been updated')
     I.waitForFunction(() => document.readyState === 'complete')
-    I.click(this.locators.accountMenuOpen)
-    I.see(`${first} ${last}`)
-    I.click(this.locators.accountMenuClose)
   },
 
   async invalidCurrentPassword(
@@ -118,8 +99,8 @@ module.exports = {
     await I.fillField(this.locators.confirmNewPasswordField, confirmNewPassword)
     I.click(this.locators.saveSettings)
     I.waitForFunction(() => document.readyState === 'complete')
-    I.waitForText('This password is incorrect')
-    I.dontSee('Your profile has been updated')
+    I.waitForText('The current password is incorrect')
+    I.dontSee('Your settings have been updated')
     I.seeElement(this.locators.saveSetttingsDisabled)
   },
 
@@ -146,7 +127,7 @@ module.exports = {
     await I.fillField(this.locators.newPasswordField, newPassword)
     await I.fillField(this.locators.confirmNewPasswordField, confirmNewPassword)
     I.click(this.locators.saveSettings)
-    I.waitForText('Your profile has been updated')
+    I.waitForText('Your settings have been updated')
     I.click(this.locators.accountMenuOpen)
     I.retry(3).click(this.locators.signOutButton)
   },

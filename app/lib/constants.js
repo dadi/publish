@@ -11,7 +11,7 @@ export const ERROR_DOCUMENT_NOT_FOUND = 'ERROR_DOCUMENT_NOT_FOUND'
 export const ERROR_MISSING_FIELDS = 'ERROR_MISSING_FIELDS'
 export const ERROR_PASSWORD_MISMATCH = 'ERROR_PASSWORD_MISMATCH'
 export const ERROR_ROUTE_NOT_FOUND = 'ERROR_ROUTE_NOT_FOUND'
-export const ERROR_WRONG_PASSWORD = 'The current password is not valid'
+export const ERROR_WRONG_PASSWORD = 'The current password is incorrect'
 export const FIELD_SAVE_OPTIONS = 'publishSaveOptionsLastUsed'
 export const MEDIA_COLLECTION = 'mediaStore'
 /* eslint-disable sort-keys */

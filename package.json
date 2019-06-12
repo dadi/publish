@@ -8,7 +8,7 @@
     "format": "prettier --write \"./**/*.{js,jsx}\"",
     "test": "npm run test:lint && npm run build && npm run test:functional",
     "test:functional:pre": "rm -rf test/functional/output && mkdir -p test/api/test/api/workspace && cp -R test/api/workspace/hooks test/api/test/api/workspace && cp test/api/workspace/db.template test/api/workspace/db",
-    "test:functional:run": "API_CLIENT_ID=testClient API_CLIENT_SECRET=testSecret API_HOST=localhost API_PORT=3004 NODE_ENV=test ./node_modules/codeceptjs/bin/codecept.js run functional/features/articles/01_article_page_test.js --steps --config=./test/codecept.json",
+    "test:functional:run": "API_CLIENT_ID=testClient API_CLIENT_SECRET=testSecret API_HOST=localhost API_PORT=3004 NODE_ENV=test ./node_modules/codeceptjs/bin/codecept.js run --steps --config=./test/codecept.json",
     "test:functional": "npm run test:functional:pre && npm run test:functional:run",
     "test:lint": "prettier --check \"./**/*.{js,jsx}\"",
     "watch": "NODE_ENV=development npm-run-all --parallel watch:server watch:app",
