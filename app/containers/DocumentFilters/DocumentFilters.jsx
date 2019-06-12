@@ -122,6 +122,20 @@ class DocumentFilters extends React.Component {
     return fieldSchema.label || fieldName
   }
 
+  getFilterableFields() {
+    const {collection} = this.props
+
+    // Finding fields that are filterable (i.e. their component exports a
+    // `filter` component)
+    const filterableFields = Object.keys(collection.fields).filter(slug => {
+      const fieldComponent = this.getFieldComponent(slug)
+
+      return fieldComponent && fieldComponent.filterEdit
+    })
+
+    return filterableFields
+  }
+
   handleClick(event) {
     const {selectedFilterField} = this.state
 
@@ -380,8 +394,9 @@ class DocumentFilters extends React.Component {
         </div>
 
         <Button
-          className={styles.button}
           accent="data"
+          disabled={this.getFilterableFields().length === 0}
+          className={styles.button}
           onClick={this.handleFiltersButtonClick.bind(this)}
           type="button"
         >
@@ -464,30 +479,22 @@ class DocumentFilters extends React.Component {
   }
 
   renderFilterTooltip({field, isUpdate, operator, value} = {}) {
-    const {collection, filters, state} = this.props
+    const {filters, state} = this.props
 
-    // Finding fields that are filterable (i.e. their component exports a
-    // `filter` component) and don't already have a filter applied. The
-    // result is an object mapping filterable field slugs to their human-
+    // Finding fields that are filterable and don't already have a filter applied.
+    // The result is an object mapping filterable field slugs to their human-
     // friendly name.
-    let filterableFields = Object.keys(collection.fields).reduce(
-      (result, slug) => {
-        let fieldComponent = this.getFieldComponent(slug)
+    const filterableFields = this.getFilterableFields()
+    const availableFields = filterableFields.reduce((result, slug) => {
+      if (field === slug || !filters || filters[slug] === undefined) {
+        result[slug] = this.getFieldName(slug)
+      }
 
-        if (
-          fieldComponent.filterEdit &&
-          (field === slug || !filters || filters[slug] === undefined)
-        ) {
-          result[slug] = this.getFieldName(slug)
-        }
-
-        return result
-      },
-      {}
-    )
+      return result
+    }, {})
 
     // Applying defaults.
-    field = field || Object.keys(filterableFields)[0]
+    field = field || Object.keys(availableFields)[0]
 
     const {filterEdit: FilterEditComponent, filterOperators: operators = {}} =
       this.getFieldComponent(field) || {}
@@ -519,7 +526,7 @@ class DocumentFilters extends React.Component {
           <DropdownNative
             className={fieldSelectorStyle.getClasses()}
             onChange={this.handleSelectedFilterFieldChange.bind(this)}
-            options={filterableFields}
+            options={availableFields}
             textSize="small"
             value={field || Object.keys(filterableFields)[0]}
           />
