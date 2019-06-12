@@ -1,11 +1,11 @@
 'use strict'
 
-const { assert, expect } = require('chai')
+const {assert, expect} = require('chai')
 
 let I
 
 module.exports = {
-  _init () {
+  _init() {
     I = require('../stepDefinitions/steps_file.js')()
   },
 
@@ -129,7 +129,7 @@ module.exports = {
     urlField: locate('input[name*="url"]').as('URL Field')
   },
 
-  async addMedia () {
+  async addMedia() {
     await I.amOnPage('/media')
     await I.waitForFunction(() => document.readyState === 'complete')
     await I.waitForText('Media Library')
@@ -147,7 +147,7 @@ module.exports = {
     await I.see('Stone.jpeg')
   },
 
-  async selectMedia () {
+  async selectMedia() {
     await I.amOnPage('/media')
     await I.waitForFunction(() => document.readyState === 'complete')
     await I.waitForText('Media Library')
@@ -254,7 +254,7 @@ module.exports = {
     I.waitForText('The document has been updated successfully')
   },
 
-  async filterMedia () {
+  async filterMedia() {
     await I.amOnPage('/media')
     await I.waitForFunction(() => document.readyState === 'complete')
     await I.waitForText('Media Library')
@@ -337,7 +337,7 @@ module.exports = {
     await I.seeNumberOfVisibleElements(this.locators.images, captionFilter)
   },
 
-  async deleteMedia () {
+  async deleteMedia() {
     await I.amOnPage('/media')
     await I.waitForFunction(() => document.readyState === 'complete')
     await I.waitForText('Media Library')
@@ -358,11 +358,11 @@ module.exports = {
     I.seeTotalHasDecreased(newTotal, total)
   },
 
-  async insertMedia (file) {
+  async insertMedia(file) {
     await I.createMedia(file)
   },
 
-  async deleteAllMedia (fileName) {
+  async deleteAllMedia(fileName) {
     await I.deleteAllMedia(fileName)
   }
 }

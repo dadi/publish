@@ -69,7 +69,7 @@ module.exports = {
       .as('Credentials Tab')
   },
 
-  async changePersonalDetails (first, last) {
+  async changePersonalDetails(first, last) {
     await I.amOnPage('/profile/personal-details')
     I.seeInCurrentUrl('/profile/personal-details')
     I.seeElement(this.locators.personalDetailsTab)
@@ -89,7 +89,7 @@ module.exports = {
     // I.click(this.locators.accountMenuClose)
   },
 
-  async invalidCurrentPassword (
+  async invalidCurrentPassword(
     currentPassword,
     newPassword,
     confirmNewPassword
@@ -108,7 +108,7 @@ module.exports = {
     I.seeElement(this.locators.saveSetttingsDisabled)
   },
 
-  async newPasswordsNoMatch (currentPassword, newPassword, confirmNewPassword) {
+  async newPasswordsNoMatch(currentPassword, newPassword, confirmNewPassword) {
     await I.amOnPage('/profile/credentials')
     I.waitForFunction(() => document.readyState === 'complete')
     I.seeInCurrentUrl('/profile/credentials')
@@ -119,7 +119,7 @@ module.exports = {
     I.seeElement(this.locators.saveSetttingsDisabled)
   },
 
-  async successfulPasswordChange (
+  async successfulPasswordChange(
     currentPassword,
     newPassword,
     confirmNewPassword
@@ -136,7 +136,7 @@ module.exports = {
     I.retry(3).click(this.locators.signOutButton)
   },
 
-  async gotoProfilePage () {
+  async gotoProfilePage() {
     I.click(this.locators.accountMenuOpen)
     I.click(this.locators.profileLink)
   }
