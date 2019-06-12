@@ -1,7 +1,7 @@
-import * as appActions from 'actions/appActions'
 import * as userActions from 'actions/userActions'
 import {connectRedux} from 'lib/redux'
 import Button from 'components/Button/Button'
+import HotKeys from 'lib/hot-keys'
 import proptypes from 'prop-types'
 import React from 'react'
 import styles from './ProfileEditToolbar.css'
@@ -46,6 +46,22 @@ class ProfileEditToolbar extends React.Component {
      * The global state object.
      */
     state: proptypes.object
+  }
+
+  constructor(props) {
+    super(props)
+
+    this.hotkeys = new HotKeys({
+      'mod+s': this.handleSave.bind(this)
+    })
+  }
+
+  componentDidMount() {
+    this.hotkeys.addListener()
+  }
+
+  componentWillUnmount() {
+    this.hotkeys.removeListener()
   }
 
   handleSave() {

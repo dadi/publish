@@ -2,7 +2,7 @@ import isHotkey from 'is-hotkey'
 
 class HotKeys {
   constructor(handlers) {
-    this.eventHandler = this._capture.bind(this, true)
+    this.eventHandler = this._capture.bind(this, false)
     this.handlers = {}
 
     Object.keys(handlers || {}).forEach(key => {
