@@ -154,6 +154,7 @@ export default class Paginator extends React.Component {
         pageNumber === currentPage && pageNumber === firstPage
       )
       .addIf('page-last', pageNumber === currentPage && pageNumber === lastPage)
+    const pageNumberString = pageNumber.toLocaleString()
 
     if (pageNumber === currentPage) {
       return (
@@ -163,7 +164,7 @@ export default class Paginator extends React.Component {
           key={pageNumber}
           type="mock"
         >
-          {pageNumber}
+          {pageNumberString}
         </Button>
       )
     }
@@ -174,7 +175,7 @@ export default class Paginator extends React.Component {
         className={pageStyle.getClasses()}
         key={pageNumber}
       >
-        {pageNumber}
+        {pageNumberString}
       </Button>
     )
   }

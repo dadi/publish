@@ -118,11 +118,11 @@ class DocumentListToolbar extends React.Component {
         {metadata.totalCount > 0 && (
           <div className={styles.section}>
             <span className={styles['count-label']}>
-              <strong>{`${metadata.offset + 1}-${Math.min(
+              <strong>{`${(metadata.offset + 1).toLocaleString()}-${Math.min(
                 metadata.offset + metadata.limit,
                 metadata.totalCount
-              )} `}</strong>
-              of <strong>{metadata.totalCount}</strong>
+              ).toLocaleString()} `}</strong>
+              of <strong>{metadata.totalCount.toLocaleString()}</strong>
               {showSelectedDocumentsUrl && (
                 <span className={selectionCounter.getClasses()}>
                   (
@@ -130,7 +130,7 @@ class DocumentListToolbar extends React.Component {
                     className={styles['selection-counter-button']}
                     to={showSelectedDocumentsUrl}
                   >
-                    {selectedDocuments.length} selected
+                    {selectedDocuments.length.toLocaleString()} selected
                   </Link>
                   )
                 </span>
