@@ -42,29 +42,6 @@ class ProfileField extends React.Component {
     this.validator = new Validator()
   }
 
-  componentDidUpdate(oldProps) {
-    const {field, state} = this.props
-    const {state: oldState} = oldProps
-    const {user} = state
-    const {user: oldUser} = oldState
-    const {local} = user
-
-    // If we have just tried to save the document for the first time, we must
-    // validate it and communicate to the store any validation errors.
-    if (oldUser.saveAttempts === 0 && user.saveAttempts > 0) {
-      this.validate(this.value).catch(error => {
-        // actions.updateLocalDocument({
-        //   error: {
-        //     [this.name]: error.message || error
-        //   },
-        //   update: {
-        //     [this.name]: this.value
-        //   }
-        // })
-      })
-    }
-  }
-
   // Handles the callback that fires whenever a field changes and the new value
   // is ready to be sent to the store.
   handleFieldChange(name, value, componentError) {
