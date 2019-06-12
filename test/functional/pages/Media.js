@@ -1,11 +1,11 @@
 'use strict'
 
-const {assert, expect} = require('chai')
+const { assert, expect } = require('chai')
 
 let I
 
 module.exports = {
-  _init() {
+  _init () {
     I = require('../stepDefinitions/steps_file.js')()
   },
 
@@ -28,12 +28,15 @@ module.exports = {
     stoneImage: locate('img[src*="Stone"]').as('Stone Image'),
     dogImage: locate('img[src*="dog"]').as('Dog Image'),
     girlImage: locate('img[src*="girl"]').as('Girl Image'),
+    metaDataTab: locate('a[class*="SubNavItem"]')
+      .withText('Metadata')
+      .as('Metadata Tab'),
     editImage: locate('img[class *= "MediaViewer__image___"]').as(
       'Image Preview'
     ),
-    mediaMetadataTab: locate('a')
-      .withText('Metadata')
-      .as('Media Metadata tab'),
+    openNewWindow: locate('a')
+      .withText('Open in new window')
+      .as('Open In New Window Link'),
     captionField: locate('input')
       .withAttr({
         name: 'caption'
@@ -63,9 +66,15 @@ module.exports = {
     )
       .withText('Filename contains')
       .as('Filename Contains Filter'),
+    saveMenu: locate('button[class*="ButtonWithOptions__launcher"]').as(
+      'Save Menu'
+    ),
+    saveGoBack: locate('button')
+      .withText('Save and go back')
+      .as('Save And Go Back Button'),
     saveButton: locate('button')
-      .withText('Save')
-      .as('Save Button'),
+      .withText('Save and continue')
+      .as('Save And Continue Button'),
     totalImages: locate('.//strong[2]').as('Total Number of Images'),
     checkImage: locate('input[class *= "MediaGridCard__select___"]')
       .first()
@@ -112,10 +121,15 @@ module.exports = {
     ),
     filterText: locate('div[class*="DocumentFilters__filter___"]').as(
       'Filter Text'
-    )
+    ),
+    fileNameField: locate('input[name*="fileName"]').as('Filename Field'),
+    mimeField: locate('input[name*="mimeType"]').as('Mime Type Field'),
+    heightField: locate('input[name*="height"]').as('Height Field'),
+    widthField: locate('input[name*="width"]').as('Width Field'),
+    urlField: locate('input[name*="url"]').as('URL Field')
   },
 
-  async addMedia() {
+  async addMedia () {
     await I.amOnPage('/media')
     await I.waitForFunction(() => document.readyState === 'complete')
     await I.waitForText('Media Library')
@@ -133,7 +147,7 @@ module.exports = {
     await I.see('Stone.jpeg')
   },
 
-  async selectMedia() {
+  async selectMedia () {
     await I.amOnPage('/media')
     await I.waitForFunction(() => document.readyState === 'complete')
     await I.waitForText('Media Library')
@@ -142,63 +156,105 @@ module.exports = {
     I.wait(2)
     await I.see('Stone.jpeg')
     let link = await I.grabAttributeFrom(this.locators.firstImage, 'href')
+    // console.log(link[0])
+    // console.log(link[1])
+    // console.log(link[2])
     await I.click(this.locators.stoneImage)
     await I.waitForFunction(() => document.readyState === 'complete')
     await I.seeInCurrentUrl(link[0])
+    await I.see('Details')
+    await I.see('Metadata')
     await I.seeElement(this.locators.editImage)
-    await I.see('MIME type')
-    await I.see('URL')
-    await I.see('Width')
-    await I.see('Height')
-    await I.click(this.locators.mediaMetadataTab)
+    await I.seeElement(this.locators.fileNameField)
+    let stoneFileNameText = await I.grabValueFrom(this.locators.fileNameField)
+    await I.seeElement(this.locators.mimeField)
+    let stoneMimeText = await I.grabValueFrom(this.locators.mimeField)
+    await I.seeElement(this.locators.heightField)
+    let stoneHeightText = await I.grabValueFrom(this.locators.heightField)
+    await I.seeElement(this.locators.widthField)
+    let stoneWidthText = await I.grabValueFrom(this.locators.widthField)
+    await I.seeElement(this.locators.urlField)
+    let stoneUrlText = await I.grabValueFrom(this.locators.urlField)
+    I.seeStringsAreEqual(stoneFileNameText, 'Stone.jpeg')
+    I.seeStringsAreEqual(stoneMimeText, 'image/jpeg')
+    I.seeStringsAreEqual(stoneHeightText, '317')
+    I.seeStringsAreEqual(stoneWidthText, '214')
+    I.seeStringContains(stoneUrlText, 'Stone.jpeg')
+    await I.click(this.locators.metaDataTab)
+    await I.see('Alternative text')
+    await I.fillField(this.locators.altTextField, 'Alt Text')
     await I.see('Caption')
     await I.fillField(this.locators.captionField, 'Stone Caption')
-    await I.see('Alternative text')
-    await I.fillField(this.locators.altTextField, 'Alternative Text')
     await I.see('Copyright information')
     await I.fillField(this.locators.copyrightField, 'Copyright DADI')
-    I.click(this.locators.saveButton)
-    I.waitForText('The document has been updated')
-    I.click(this.locators.mediaLibraryLink)
+    I.click(this.locators.saveMenu)
+    I.click(this.locators.saveGoBack)
+    I.waitForText('The document has been updated successfully')
     await I.click(this.locators.dogImage)
     await I.waitForFunction(() => document.readyState === 'complete')
     await I.seeInCurrentUrl(link[1])
+    await I.see('Details')
+    await I.see('Metadata')
     await I.seeElement(this.locators.editImage)
-    await I.see('MIME type')
-    await I.see('URL')
-    await I.see('Width')
-    await I.see('Height')
-    await I.click(this.locators.mediaMetadataTab)
-    await I.see('Caption')
-    await I.fillField(this.locators.captionField, 'Dog wants biscuit')
+    await I.seeElement(this.locators.fileNameField)
+    let dogFileNameText = await I.grabValueFrom(this.locators.fileNameField)
+    await I.seeElement(this.locators.mimeField)
+    let dogMimeText = await I.grabValueFrom(this.locators.mimeField)
+    await I.seeElement(this.locators.heightField)
+    let dogHeightText = await I.grabValueFrom(this.locators.heightField)
+    await I.seeElement(this.locators.widthField)
+    let dogWidthText = await I.grabValueFrom(this.locators.widthField)
+    await I.seeElement(this.locators.urlField)
+    let dogUrlText = await I.grabValueFrom(this.locators.urlField)
+    I.seeStringsAreEqual(dogFileNameText, 'dog.jpg')
+    I.seeStringsAreEqual(dogMimeText, 'image/jpeg')
+    I.seeStringsAreEqual(dogHeightText, '675')
+    I.seeStringsAreEqual(dogWidthText, '1200')
+    I.seeStringContains(dogUrlText, 'dog.jpg')
+    await I.click(this.locators.metaDataTab)
     await I.see('Alternative text')
     await I.fillField(this.locators.altTextField, 'Dog Biscuit')
+    await I.see('Caption')
+    await I.fillField(this.locators.captionField, 'Dog wants biscuit')
     await I.see('Copyright information')
     await I.fillField(this.locators.copyrightField, 'DADI')
-    I.click(this.locators.saveButton)
-    I.waitForText('The document has been updated')
-    I.click(this.locators.mediaLibraryLink)
+    I.click(this.locators.saveMenu)
+    I.click(this.locators.saveGoBack)
+    I.waitForText('The document has been updated successfully')
     await I.click(this.locators.girlImage)
     await I.waitForFunction(() => document.readyState === 'complete')
     await I.seeInCurrentUrl(link[2])
+    await I.see('Details')
+    await I.see('Metadata')
     await I.seeElement(this.locators.editImage)
-    await I.see('MIME type')
-    await I.see('URL')
-    await I.see('Width')
-    await I.see('Height')
-    await I.click(this.locators.mediaMetadataTab)
-    await I.see('Caption')
-    await I.fillField(this.locators.captionField, 'A Chinese lady on a path')
+    await I.seeElement(this.locators.fileNameField)
+    let girlFileNameText = await I.grabValueFrom(this.locators.fileNameField)
+    await I.seeElement(this.locators.mimeField)
+    let girlMimeText = await I.grabValueFrom(this.locators.mimeField)
+    await I.seeElement(this.locators.heightField)
+    let girlHeightText = await I.grabValueFrom(this.locators.heightField)
+    await I.seeElement(this.locators.widthField)
+    let girlWidthText = await I.grabValueFrom(this.locators.widthField)
+    await I.seeElement(this.locators.urlField)
+    let girlUrlText = await I.grabValueFrom(this.locators.urlField)
+    I.seeStringsAreEqual(girlFileNameText, 'girl.png')
+    I.seeStringsAreEqual(girlMimeText, 'image/png')
+    I.seeStringsAreEqual(girlHeightText, '2400')
+    I.seeStringsAreEqual(girlWidthText, '3840')
+    I.seeStringContains(girlUrlText, 'girl.png')
+    await I.click(this.locators.metaDataTab)
     await I.see('Alternative text')
     await I.fillField(this.locators.altTextField, 'Chinese lady')
+    await I.see('Caption')
+    await I.fillField(this.locators.captionField, 'A Chinese lady on a path')
     await I.see('Copyright information')
     await I.fillField(this.locators.copyrightField, 'X-MEN')
-    I.click(this.locators.saveButton)
-    I.waitForText('The document has been updated')
-    I.click(this.locators.mediaLibraryLink)
+    I.click(this.locators.saveMenu)
+    I.click(this.locators.saveGoBack)
+    I.waitForText('The document has been updated successfully')
   },
 
-  async filterMedia() {
+  async filterMedia () {
     await I.amOnPage('/media')
     await I.waitForFunction(() => document.readyState === 'complete')
     await I.waitForText('Media Library')
@@ -281,7 +337,7 @@ module.exports = {
     await I.seeNumberOfVisibleElements(this.locators.images, captionFilter)
   },
 
-  async deleteMedia() {
+  async deleteMedia () {
     await I.amOnPage('/media')
     await I.waitForFunction(() => document.readyState === 'complete')
     await I.waitForText('Media Library')
@@ -302,11 +358,11 @@ module.exports = {
     I.seeTotalHasDecreased(newTotal, total)
   },
 
-  async insertMedia(file) {
+  async insertMedia (file) {
     await I.createMedia(file)
   },
 
-  async deleteAllMedia(fileName) {
+  async deleteAllMedia (fileName) {
     await I.deleteAllMedia(fileName)
   }
 }

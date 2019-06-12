@@ -16,25 +16,25 @@ module.exports = {
     personalDetailsLink: locate('a')
       .withText('Personal details')
       .as('Personal Details Link'),
-    currentPasswordField: locate('input[name="currentSecret"]').as(
+    idField: locate('div')
+      .withAttr({
+        'data-field-name': 'userName'
+      })
+      .find('input')
+      .as('Username Field'),
+    currentPasswordField: locate('input[name*="currentSecret"]').as(
       'Current Password Field'
     ),
-    newPasswordField: locate('input[name="secret"]').as('New Password Field'),
-    confirmNewPasswordField: locate('input[name="secret-confirm"]').as(
+    newPasswordField: locate('input[name*="secret"]').as('New Password Field'),
+    confirmNewPasswordField: locate('input[name*="secret-confirm"]').as(
       'Confirm New Password Field'
     ),
-    firstNameField: locate('div')
-      .withAttr({
-        'data-field-name': 'data.publishFirstName'
-      })
-      .find('input')
-      .as('First Name Field'),
-    lastNameField: locate('div')
-      .withAttr({
-        'data-field-name': 'data.publishLastName'
-      })
-      .find('input')
-      .as('Last Name Field'),
+    firstNameField: locate('input[name*="data.publishFirstName"]').as(
+      'First Name Field'
+    ),
+    lastNameField: locate('input[name*="data.publishLastName"]').as(
+      'Last Name Field'
+    ),
     saveSettings: locate('button')
       .withText('Save settings')
       .as('Save Settings Button'),
@@ -60,33 +60,36 @@ module.exports = {
       .as('Account Menu Open'),
     accountMenuClose: locate('span')
       .withText('Close')
-      .as('Account Menu Close')
+      .as('Account Menu Close'),
+    personalDetailsTab: locate('a[class*="SubNavItem"]')
+      .withText('Personal details')
+      .as('Personal Details Tab'),
+    credentialsTab: locate('a[class*="SubNavItem"]')
+      .withText('Credentials')
+      .as('Credentials Tab')
   },
 
-  async changePersonalDetails(first, last) {
-    await I.amOnPage('/profile')
-    I.seeInCurrentUrl('/profile')
+  async changePersonalDetails (first, last) {
+    await I.amOnPage('/profile/personal-details')
+    I.seeInCurrentUrl('/profile/personal-details')
+    I.seeElement(this.locators.personalDetailsTab)
+    I.seeElement(this.locators.credentialsTab)
+    I.seeElement(this.locators.firstNameField)
+    I.seeElement(this.locators.lastNameField)
     I.see('First name')
     await I.fillField(this.locators.firstNameField, first)
     I.see('Last name')
     await I.fillField(this.locators.lastNameField, '')
     await I.fillField(this.locators.lastNameField, last)
-    I.click(this.locators.credentialsLink)
-    I.seeInCurrentUrl('/profile/credentials')
-    I.see('Current password')
-    I.seeElement(this.locators.currentPasswordField)
-    I.see('New password')
-    I.seeElement(this.locators.newPasswordField)
-    I.see('New password (confirm)')
-    I.seeElement(this.locators.confirmNewPasswordField)
-    I.click(this.locators.personalDetailsLink)
-    I.seeInCurrentUrl('/profile/personal-details')
     I.click(this.locators.saveSettings)
     I.waitForText('Your settings have been updated')
     I.waitForFunction(() => document.readyState === 'complete')
+    // I.click(this.locators.accountMenuOpen)
+    // I.see(`${first} ${last}`)
+    // I.click(this.locators.accountMenuClose)
   },
 
-  async invalidCurrentPassword(
+  async invalidCurrentPassword (
     currentPassword,
     newPassword,
     confirmNewPassword
@@ -100,11 +103,12 @@ module.exports = {
     I.click(this.locators.saveSettings)
     I.waitForFunction(() => document.readyState === 'complete')
     I.waitForText('The current password is incorrect')
-    I.dontSee('Your settings have been updated')
+    I.waitForText('Could not update your settings')
+    I.dontSee('Your profile has been updated')
     I.seeElement(this.locators.saveSetttingsDisabled)
   },
 
-  async newPasswordsNoMatch(currentPassword, newPassword, confirmNewPassword) {
+  async newPasswordsNoMatch (currentPassword, newPassword, confirmNewPassword) {
     await I.amOnPage('/profile/credentials')
     I.waitForFunction(() => document.readyState === 'complete')
     I.seeInCurrentUrl('/profile/credentials')
@@ -115,7 +119,7 @@ module.exports = {
     I.seeElement(this.locators.saveSetttingsDisabled)
   },
 
-  async successfulPasswordChange(
+  async successfulPasswordChange (
     currentPassword,
     newPassword,
     confirmNewPassword
@@ -132,7 +136,7 @@ module.exports = {
     I.retry(3).click(this.locators.signOutButton)
   },
 
-  async gotoProfilePage() {
+  async gotoProfilePage () {
     I.click(this.locators.accountMenuOpen)
     I.click(this.locators.profileLink)
   }
