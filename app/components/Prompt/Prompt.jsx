@@ -1,10 +1,9 @@
-import React from 'react'
+import Button from 'components/Button/Button'
+import HotKeys from 'lib/hot-keys'
 import proptypes from 'prop-types'
-
+import React from 'react'
 import Style from 'lib/Style'
 import styles from './Prompt.css'
-
-import Button from 'components/Button/Button'
 
 /**
  * A prompt dialog with a message and action button.
@@ -29,6 +28,11 @@ export default class Prompt extends React.Component {
     action: proptypes.string.isRequired,
 
     /**
+     * Whether to accept the Enter key as confirmation.
+     */
+    confirmOnEnterKey: proptypes.bool,
+
+    /**
      * The child elements to be rendered next to the message.
      */
     children: proptypes.node,
@@ -51,7 +55,26 @@ export default class Prompt extends React.Component {
 
   static defaultProps = {
     accent: 'destruct',
+    confirmOnEnterKey: true,
     position: 'left'
+  }
+
+  constructor(props) {
+    super(props)
+
+    this.hotkeys = new HotKeys({})
+
+    if (props.confirmOnEnterKey && typeof props.onClick === 'function') {
+      this.hotkeys.on('enter', props.onClick)
+    }
+  }
+
+  componentDidMount() {
+    this.hotkeys.addListener()
+  }
+
+  componentWillUnmount() {
+    this.hotkeys.removeListener()
   }
 
   render() {
