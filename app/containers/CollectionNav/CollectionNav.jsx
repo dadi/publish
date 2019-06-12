@@ -50,7 +50,7 @@ class CollectionNav extends React.Component {
         if (match) {
           navItems.push({
             id: match.slug,
-            label: match.displayName || match.slug,
+            label: match.name || match.slug,
             href: match._publishLink,
             isSelected: match.slug === currentCollection
           })
