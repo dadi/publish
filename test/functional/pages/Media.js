@@ -22,9 +22,15 @@ module.exports = {
     ),
     dropArea: locate('[class *= "DropArea__droparea"]').as('Drop File Area'),
     fileUpload: locate('input[class *= "FileUpload__file"]').as('File Upload'),
-    firstImage: locate('a[class *= "MediaGridCard__image-holder___"]')
-      .first()
-      .as('First Image'),
+    stoneURL: locate('a[class *= "MediaGridCard__image-holder___"]').withChild(
+      'img[src*="Stone"]'
+    ),
+    dogURL: locate('a[class *= "MediaGridCard__image-holder___"]').withChild(
+      'img[src*="dog"]'
+    ),
+    girlURL: locate('a[class *= "MediaGridCard__image-holder___"]').withChild(
+      'img[src*="girl"]'
+    ),
     stoneImage: locate('img[src*="Stone"]').as('Stone Image'),
     dogImage: locate('img[src*="dog"]').as('Dog Image'),
     girlImage: locate('img[src*="girl"]').as('Girl Image'),
@@ -155,13 +161,12 @@ module.exports = {
     await I.seeElement(this.locators.dropArea)
     I.wait(2)
     await I.see('Stone.jpeg')
-    let link = await I.grabAttributeFrom(this.locators.firstImage, 'href')
-    // console.log(link[0])
-    // console.log(link[1])
-    // console.log(link[2])
+    let stoneLink = await I.grabAttributeFrom(this.locators.stoneURL, 'href')
+    let dogLink = await I.grabAttributeFrom(this.locators.dogURL, 'href')
+    let girlLink = await I.grabAttributeFrom(this.locators.girlURL, 'href')
     await I.click(this.locators.stoneImage)
     await I.waitForFunction(() => document.readyState === 'complete')
-    await I.seeInCurrentUrl(link[0])
+    await I.seeInCurrentUrl(stoneLink)
     await I.see('Details')
     await I.see('Metadata')
     await I.seeElement(this.locators.editImage)
@@ -192,7 +197,7 @@ module.exports = {
     I.waitForText('The document has been updated successfully')
     await I.click(this.locators.dogImage)
     await I.waitForFunction(() => document.readyState === 'complete')
-    await I.seeInCurrentUrl(link[1])
+    await I.seeInCurrentUrl(dogLink)
     await I.see('Details')
     await I.see('Metadata')
     await I.seeElement(this.locators.editImage)
@@ -223,7 +228,7 @@ module.exports = {
     I.waitForText('The document has been updated successfully')
     await I.click(this.locators.girlImage)
     await I.waitForFunction(() => document.readyState === 'complete')
-    await I.seeInCurrentUrl(link[2])
+    await I.seeInCurrentUrl(girlLink)
     await I.see('Details')
     await I.see('Metadata')
     await I.seeElement(this.locators.editImage)
