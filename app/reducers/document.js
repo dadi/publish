@@ -184,6 +184,7 @@ export default function document(state = initialState, action = {}) {
             ...action.fromLocalStorage,
             ...(state[action.key] && state[action.key].local)
           },
+          remote: null,
           wasLoadedFromLocalStorage: Boolean(action.fromLocalStorage)
         }
       }
