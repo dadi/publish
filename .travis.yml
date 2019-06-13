@@ -1,12 +1,16 @@
 language: node_js
 cache:
   directories:
-  - node_modules
+    - node_modules
 after_failure:
-- "./test/functional/scripts/upload-artifacts.sh /home/travis/build/dadi/publish/test/functional/output"
+  - './test/functional/scripts/upload-artifacts.sh /home/travis/build/dadi/publish/test/functional/output'
 notifications:
   email: false
   slack:
     secure: jnmTBfHGzU4rR9RAVsRmwMI3Rdul5PEKioh2oIsWv245DQrqr5DIwEONPRMsCbs1Duk69jiQFAzfLgzjtOjHleac79p0076pSxaG2zXNyzgya5YBMgYv6wrFh9eNZJoXyMvDw8jcipbRbx/Xp05aayClY39BJ7UUFlklvIeFb5wFqRfIlVXbLu5MFFatwCzB1IOeSeD90ZTX9VsWw97SJoJdta5gn7dx0P06SStPSJNOrLmV1/aXrSorBYmeTNJgUWPg4zHanocll8b7TR1a8Iyc5JBip0tEUpf1vJOMb/7bMdmNJ1XL8rzWw/87JujuzdOKikrsi52fzHE70TgsEBf0+BkwtFK2SzRvrwIKVesjj+ek/E2P1gal2qeqDVLVGZYuKAqbigv/0r6MHDcqJLoWb9MGHTLgcobZOfX3+UZetIc8dDA9/yme1auC8efrD4LOdo4Glhf6EZP4xCFUJpZive3VCKQfg/sMBaWAMWY508cxV+ey+fucV8fEqIsZHNPv7mCWoeMc5PnMd5TlR49UDgNrq0xcS8q2n9EKdZZARdsnqwdpmwJ3Ygd3gPsQTdYKsIBUxEoQKhMycO1XaqkbcUSHi8nSw85775cdEUscEob01WRN7D9IX7sGGp3LksFeR1CtjigBtMM9gHwmODUcPmcD+YRPYnnquoGzV9I=
+  webhooks:
+    secure: 'QKZ+bhvdfTxe0+VhUokiOgBRrD8nKndZr7w33dsDmotUpAYsSW+MWq2jgmVWkjPCMDp5s+MfZPqI5YvJsmp6qtH4Fm6pJrBhs2LqMqJ3lwA7NjkfywAgGvFv1rf3MIQq+w6yF1/+0Bt6xWf6v05/kWeHrSs9kSYC0lbQRqbskMBX2BldONB2fC8YhDILMl0+ZesCtu5koFnO4T677H3i10SmCzOXnNVPggjm8jsjmqF/IFfLzEn9rLyWf4NqwR95kKnlNZPiZSFzH8AfM/g32MHW4CeKrE4Pc32w/BiVTx89fL3IEoUkA6Jt+RcoIclIZ81LH0dE0wT7s73p6NKmu2dvp48GVenc7HfbVHnFrl9HCLct+TFHxEba6deS3vfKYb1ML+YEFyGE5x/K90iglzUC7CVetHyc9g6vZ0AV5OCPviGzTAuZnSHhjTgVYsI1QF4lkPv7wEv1GO3gTpezDAKU9lfEygvTuOZ0rHEQ60q6ZweYgrs9WUlxysGfUtjjDvWocJsmcPAO+ChtUpsaPC7DwyuN4VbJoySMCfyaVuhQY/g0IjI19nn+lZEHGiX4ClxZ0/metH5Jlk2lWR8xopwPu4iFtvkPsORQ5bIu9hhnh4uE87hFumkVEiSzvJfzT23Fzt79axtr0P3xM8BUjnExuEBoEB1pey7NkbJggSI='
 node_js:
-- '8'
+  - '8'
+  - '10'
+  - 'lts/*'
