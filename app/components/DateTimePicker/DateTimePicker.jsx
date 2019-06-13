@@ -38,8 +38,12 @@ export default class DateTimePicker extends React.Component {
     this.hoursContainerRef = null
     this.hoursRefs = []
 
-    const date = props.date || new Date()
-    const displayDate = new Date(date)
+    const displayDate = props.date
+      ? new Date(props.date)
+      : this.getInternalDate({
+          hours: 0,
+          minutes: 0
+        })
 
     displayDate.setDate(1)
 
@@ -82,7 +86,7 @@ export default class DateTimePicker extends React.Component {
 
     // Let's find the closest hour to the one currently selected, so we can
     // adjust the scroll position accordingly.
-    if (!prevState.pickingTime && pickingTime) {
+    if (date && !prevState.pickingTime && pickingTime) {
       let closestDate
 
       this.hoursRefs.some(hourRef => {
