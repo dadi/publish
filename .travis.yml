@@ -11,9 +11,9 @@ notifications:
   webhooks:
     urls:
       - secure: 'QKZ+bhvdfTxe0+VhUokiOgBRrD8nKndZr7w33dsDmotUpAYsSW+MWq2jgmVWkjPCMDp5s+MfZPqI5YvJsmp6qtH4Fm6pJrBhs2LqMqJ3lwA7NjkfywAgGvFv1rf3MIQq+w6yF1/+0Bt6xWf6v05/kWeHrSs9kSYC0lbQRqbskMBX2BldONB2fC8YhDILMl0+ZesCtu5koFnO4T677H3i10SmCzOXnNVPggjm8jsjmqF/IFfLzEn9rLyWf4NqwR95kKnlNZPiZSFzH8AfM/g32MHW4CeKrE4Pc32w/BiVTx89fL3IEoUkA6Jt+RcoIclIZ81LH0dE0wT7s73p6NKmu2dvp48GVenc7HfbVHnFrl9HCLct+TFHxEba6deS3vfKYb1ML+YEFyGE5x/K90iglzUC7CVetHyc9g6vZ0AV5OCPviGzTAuZnSHhjTgVYsI1QF4lkPv7wEv1GO3gTpezDAKU9lfEygvTuOZ0rHEQ60q6ZweYgrs9WUlxysGfUtjjDvWocJsmcPAO+ChtUpsaPC7DwyuN4VbJoySMCfyaVuhQY/g0IjI19nn+lZEHGiX4ClxZ0/metH5Jlk2lWR8xopwPu4iFtvkPsORQ5bIu9hhnh4uE87hFumkVEiSzvJfzT23Fzt79axtr0P3xM8BUjnExuEBoEB1pey7NkbJggSI='
-    on_success: change
+    on_success: always
     on_failure: always
-    on_start: change
+    on_start: always
     on_cancel: always
     on_error: always
 node_js:
