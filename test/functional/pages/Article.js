@@ -201,9 +201,7 @@ module.exports = {
     textArea: locate('div[class*="RichEditor__editor-wysiwyg"]').as(
       'Rich Editor Text'
     ),
-    markdownText: locate('textarea[class*="RichEditor__editor-text"]').as(
-      'Markdown Text'
-    ),
+    markdownText: locate('div[role*="textbox"]').as('Markdown Text'),
     quoteText: locate('span')
       .withText('Blockquote')
       .inside('blockquote')
@@ -270,7 +268,12 @@ module.exports = {
     dateTimeValue: locate('input[class*="FieldDateTime__filter-input"]').as(
       'Date Time Filter Field'
     ),
-    navMenu: locate('nav[class*="Nav"]').as('Navigation Menu')
+    navMenu: locate('nav[class*="Nav"]').as('Navigation Menu'),
+    dogImage: locate('img[src*="dog"]').as('Dog Image'),
+    insertButton: locate('button')
+      .withText('Insert items')
+      .as('Insert Items Button'),
+    mediaModal: locate('div[class*="ReactModal__Content"]')
   },
 
   async validateArticlePage() {
@@ -707,5 +710,41 @@ module.exports = {
     // await I.see('1. Point 2')
     // await I.see('* Bullet 1')
     // await I.see('* Bullet 2')
+  },
+
+  async inlineImage() {
+    await I.amOnPage('/articles/new')
+    await I.waitForFunction(() => document.readyState === 'complete')
+    await I.seeInCurrentUrl('/articles/new')
+    await I.waitForVisible(this.locators.titleField)
+    await I.fillField(this.locators.titleField, 'Inline Image')
+
+    // Inline Image
+    await I.appendField(this.locators.bodyField, '')
+    await I.click(this.locators.imageButton)
+    await I.seeElement(this.locators.mediaModal)
+    await I.click(this.locators.dogImage)
+    await I.click(this.locators.insertButton)
+    await I.click(this.locators.saveArticle)
+    await I.waitForText('The document has been created', 2)
+    // Get today's date for URL
+    let year = await moment(new Date()).format('YYYY')
+    let month = await moment(new Date()).format('MM')
+    let day = await moment(new Date()).format('DD')
+    let imageLink = await I.grabAttributeFrom(this.locators.dogImage, 'src')
+    let expectedImageLink =
+      'http://localhost:3004/media/' +
+      year +
+      '/' +
+      month +
+      '/' +
+      day +
+      '/dog.jpg'
+    await I.seeStringContains(imageLink, expectedImageLink)
+    // markdown view
+    await I.click(this.locators.textButton)
+    await I.seeElement(this.locators.markdownText)
+    let imageText = await I.grabTextFrom(this.locators.markdownText)
+    await I.seeStringsAreEqual(imageText, '![](' + expectedImageLink + ')')
   }
 }
