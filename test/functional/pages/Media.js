@@ -22,15 +22,15 @@ module.exports = {
     ),
     dropArea: locate('[class *= "DropArea__droparea"]').as('Drop File Area'),
     fileUpload: locate('input[class *= "FileUpload__file"]').as('File Upload'),
-    stoneURL: locate('a[class *= "MediaGridCard__image-holder___"]').withChild(
-      'img[src*="Stone"]'
-    ),
-    dogURL: locate('a[class *= "MediaGridCard__image-holder___"]').withChild(
-      'img[src*="dog"]'
-    ),
-    girlURL: locate('a[class *= "MediaGridCard__image-holder___"]').withChild(
-      'img[src*="girl"]'
-    ),
+    stoneURL: locate('a[class *= "MediaGridCard__image-holder___"]')
+      .withChild('img[src*="Stone"]')
+      .as('Stone Image URL'),
+    dogURL: locate('a[class *= "MediaGridCard__image-holder___"]')
+      .withChild('img[src*="dog"]')
+      .as('Dog Image URL'),
+    girlURL: locate('a[class *= "MediaGridCard__image-holder___"]')
+      .withChild('img[src*="girl"]')
+      .as('Girl Image URL'),
     stoneImage: locate('img[src*="Stone"]').as('Stone Image'),
     dogImage: locate('img[src*="dog"]').as('Dog Image'),
     girlImage: locate('img[src*="girl"]').as('Girl Image'),
@@ -132,7 +132,10 @@ module.exports = {
     mimeField: locate('input[name*="mimeType"]').as('Mime Type Field'),
     heightField: locate('input[name*="height"]').as('Height Field'),
     widthField: locate('input[name*="width"]').as('Width Field'),
-    urlField: locate('input[name*="url"]').as('URL Field')
+    urlField: locate('input[name*="url"]').as('URL Field'),
+    editDeleteButton: locate('button')
+      .withText('Delete')
+      .as('Delete Button')
   },
 
   async addMedia() {
@@ -141,13 +144,13 @@ module.exports = {
     await I.waitForText('Media Library')
     await I.waitForElement(this.locators.footer)
     await I.seeElement(this.locators.dropArea)
-    I.wait(2)
+    // I.wait(2)
     let images = await I.grabNumberOfVisibleElements(this.locators.images)
     await I.seeNumberOfVisibleElements(this.locators.images, images)
     await I.seeTotalGreaterThanZero(images)
     await I.attachFile(this.locators.fileUpload, 'functional/images/Stone.jpeg')
     await I.waitForFunction(() => document.readyState === 'complete')
-    I.wait(2)
+    // I.wait(2)
     let newImages = await I.grabNumberOfVisibleElements(this.locators.images)
     I.seeTotalHasIncreased(newImages, images)
     await I.see('Stone.jpeg')
@@ -159,7 +162,7 @@ module.exports = {
     await I.waitForText('Media Library')
     await I.waitForElement(this.locators.footer)
     await I.seeElement(this.locators.dropArea)
-    I.wait(2)
+    // I.wait(2)
     await I.see('Stone.jpeg')
     let stoneLink = await I.grabAttributeFrom(this.locators.stoneURL, 'href')
     let dogLink = await I.grabAttributeFrom(this.locators.dogURL, 'href')
@@ -265,7 +268,7 @@ module.exports = {
     await I.waitForText('Media Library')
     await I.waitForElement(this.locators.footer)
     await I.seeElement(this.locators.dropArea)
-    I.wait(2)
+    // I.wait(2)
     let mediaImages = await I.grabNumberOfVisibleElements(this.locators.images)
     await I.seeNumberOfVisibleElements(this.locators.images, mediaImages)
     await I.seeTotalGreaterThanZero(mediaImages)
@@ -348,7 +351,7 @@ module.exports = {
     await I.waitForText('Media Library')
     await I.waitForElement(this.locators.footer)
     await I.seeElement(this.locators.dropArea)
-    I.wait(2)
+    // I.wait(2)
     let total = await I.grabTextFrom(this.locators.totalImages)
     await I.see('Stone.jpeg')
     I.click(this.locators.checkImage)
@@ -357,10 +360,24 @@ module.exports = {
     I.waitForText('Are you sure you want to delete the selected document?')
     I.click(this.locators.deleteButton)
     I.waitForText('The document has been deleted')
-    I.wait(2)
+    // I.wait(2)
     await I.dontSee('Stone.jpeg')
     let newTotal = await I.grabTextFrom(this.locators.totalImages)
     I.seeTotalHasDecreased(newTotal, total)
+    let dogLink = await I.grabAttributeFrom(this.locators.dogURL, 'href')
+    let girlLink = await I.grabAttributeFrom(this.locators.girlURL, 'href')
+    await I.click(this.locators.dogImage)
+    await I.waitForFunction(() => document.readyState === 'complete')
+    await I.seeInCurrentUrl(dogLink)
+    await I.see('Details')
+    await I.see('Metadata')
+    await I.seeElement(this.locators.editImage)
+    await I.click(this.locators.editDeleteButton)
+    I.waitForText('Are you sure you want to delete this document?')
+    I.pressKey('Enter')
+    I.waitForText('The document has been deleted')
+    // I.wait(2)
+    await I.dontSee('dog.jpg')
   },
 
   async insertMedia(file) {

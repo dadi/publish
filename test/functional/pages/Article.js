@@ -273,7 +273,7 @@ module.exports = {
     insertButton: locate('button')
       .withText('Insert items')
       .as('Insert Items Button'),
-    mediaModal: locate('div[class*="ReactModal__Content"]')
+    mediaModal: locate('div[class*="ReactModal__Content"]').as('Media Modal')
   },
 
   async validateArticlePage() {
@@ -562,7 +562,7 @@ module.exports = {
     I.selectOption(this.locators.selectDelete, 'Delete (1)')
     I.click(this.locators.applyButton)
     I.waitForText('Are you sure you want to delete the selected document?')
-    I.click(this.locators.deleteButton)
+    I.pressKey('Enter')
     I.waitForText('The document has been deleted', 2)
     I.dontSee('This Article Is Updated')
     let newTotal = await I.grabTextFrom(this.locators.totalArticles)

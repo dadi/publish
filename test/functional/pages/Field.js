@@ -715,7 +715,7 @@ module.exports = {
 
   async validateDate() {
     await I.amOnPage('/field-testing/field-test-date')
-    I.wait(2)
+    // I.wait(2)
     await I.waitForFunction(() => document.readyState === 'complete')
     await I.waitForElement(this.locators.footer)
     await I.seeElement(this.locators.createNewButton)
@@ -791,7 +791,7 @@ module.exports = {
 
   async validateNumber() {
     await I.amOnPage('/field-testing/field-test-number')
-    I.wait(2)
+    // I.wait(2)
     await I.waitForFunction(() => document.readyState === 'complete')
     await I.waitForElement(this.locators.footer)
     await I.seeElement(this.locators.createNewButton)
@@ -850,7 +850,7 @@ module.exports = {
 
   async validateString() {
     await I.amOnPage('/field-testing/field-test-string')
-    I.wait(2)
+    // I.wait(2)
     await I.waitForFunction(() => document.readyState === 'complete')
     await I.waitForElement(this.locators.footer)
     await I.seeElement(this.locators.createNewButton)
@@ -917,7 +917,7 @@ module.exports = {
 
   async validateReference() {
     await I.amOnPage('/field-testing/field-test-reference')
-    I.wait(2)
+    // I.wait(2)
     await I.waitForFunction(() => document.readyState === 'complete')
     await I.waitForElement(this.locators.footer)
     await I.seeElement(this.locators.createNewButton)
@@ -1112,7 +1112,7 @@ module.exports = {
 
   async validateMiscField() {
     await I.amOnPage('/field-testing/field-test-other')
-    I.wait(2)
+    // I.wait(2)
     await I.waitForFunction(() => document.readyState === 'complete')
     await I.waitForElement(this.locators.footer)
     await I.seeElement(this.locators.createNewButton)

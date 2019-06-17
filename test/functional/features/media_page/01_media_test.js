@@ -9,7 +9,6 @@ BeforeSuite(async (loginPage, mediaPage) => {
 })
 
 AfterSuite(async (I, loginPage, mediaPage) => {
-  await mediaPage.deleteAllMedia('dog.jpg')
   await mediaPage.deleteAllMedia('girl.png')
   await I.clearCookie('accessToken')
   await loginPage.deleteUser('media')
