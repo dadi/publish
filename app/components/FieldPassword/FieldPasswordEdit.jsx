@@ -117,7 +117,7 @@ export default class FieldPasswordEdit extends React.Component {
             onChange={this.handleOnChange.bind(this, 'value')}
             placeholder={schema.placeholder}
             ref={element => (this.valueRef = element)}
-            type="password"
+            type='password'
             value={value}
           />
         </Label>
@@ -136,7 +136,7 @@ export default class FieldPasswordEdit extends React.Component {
               onChange={this.handleOnChange.bind(this, 'valueConfirm')}
               placeholder={schema.placeholder}
               ref={element => (this.valueConfirmRef = element)}
-              type="password"
+              type='password'
               value={valueConfirm}
             />
           </Label>

@@ -89,7 +89,7 @@ export default class Prompt extends React.Component {
         {children}
 
         <div className={styles.action}>
-          <Button accent="destruct" onClick={onClick} size="small">
+          <Button accent='destruct' onClick={onClick} size='small'>
             {action}
           </Button>
         </div>

@@ -196,10 +196,10 @@ export default class FieldReferenceEdit extends React.Component {
 
             {!isReadOnly && (
               <Button
-                accent="data"
+                accent='data'
                 className={styles['control-button']}
                 href={editLink}
-                size="small"
+                size='small'
               >
                 Edit
               </Button>
@@ -207,10 +207,10 @@ export default class FieldReferenceEdit extends React.Component {
 
             {!isReadOnly && (
               <Button
-                accent="destruct"
+                accent='destruct'
                 className={styles['control-button']}
                 onClick={this.handleRemove.bind(this)}
-                size="small"
+                size='small'
               >
                 Remove
               </Button>
@@ -220,7 +220,7 @@ export default class FieldReferenceEdit extends React.Component {
 
         {!value && !isReadOnly && (
           <div className={styles.placeholder}>
-            <Button accent="neutral" href={editLink} size="small">
+            <Button accent='neutral' href={editLink} size='small'>
               Select existing {displayName.toLowerCase()}
             </Button>
           </div>

@@ -203,7 +203,7 @@ export default class DateTimePicker extends React.Component {
           <button
             className={styles.arrow}
             onClick={this.handleMonthChange.bind(this, -1)}
-            type="button"
+            type='button'
           >
             ←
           </button>
@@ -215,7 +215,7 @@ export default class DateTimePicker extends React.Component {
           <button
             className={styles.arrow}
             onClick={this.handleMonthChange.bind(this, 1)}
-            type="button"
+            type='button'
           >
             →
           </button>
@@ -241,7 +241,7 @@ export default class DateTimePicker extends React.Component {
             <button
               className={styles['hours-launcher']}
               onClick={this.handleTimeToggle.bind(this)}
-              type="button"
+              type='button'
             >
               {displayDateTime.format('HH:mm')}
             </button>
@@ -274,7 +274,7 @@ export default class DateTimePicker extends React.Component {
         <button
           className={dayStyle.getClasses()}
           onClick={this.handleDatePick.bind(this, newDate)}
-          type="button"
+          type='button'
         >
           {paddedDay}
         </button>
@@ -302,7 +302,7 @@ export default class DateTimePicker extends React.Component {
                 element
               }
             }}
-            type="button"
+            type='button'
           >
             {new DateTime(date).format('HH:mm')}
           </button>

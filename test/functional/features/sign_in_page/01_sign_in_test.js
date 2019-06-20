@@ -18,7 +18,8 @@ Scenario('Unauthenticated Page Load', async loginPage => {
 })
 
 // DataTable to test different combinations of sign in fields
-let passwords = new DataTable(['username', 'password'])
+const passwords = new DataTable(['username', 'password'])
+
 passwords.add(['syst_on', '123456'])
 passwords.add(['syst_one', '12345'])
 

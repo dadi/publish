@@ -170,8 +170,8 @@ class DocumentListToolbar extends React.Component {
                           })
                         }
                       }}
-                      size="small"
-                      placeholder="Go to page"
+                      size='small'
+                      placeholder='Go to page'
                       value={goToPageValue}
                     />
                   </form>

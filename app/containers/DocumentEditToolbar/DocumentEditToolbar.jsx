@@ -222,13 +222,13 @@ class DocumentEditToolbar extends React.Component {
           {remote && (
             <div className={styles.button}>
               <ButtonWithPrompt
-                accent="destruct"
+                accent='destruct'
                 className={styles.button}
                 disabled={Boolean(hasConnectionIssues)}
                 onClick={this.handleDelete.bind(this)}
-                promptCallToAction="Yes, delete it."
-                position="left"
-                promptMessage="Are you sure you want to delete this document?"
+                promptCallToAction='Yes, delete it.'
+                position='left'
+                promptMessage='Are you sure you want to delete this document?'
               >
                 Delete
               </ButtonWithPrompt>
@@ -237,7 +237,7 @@ class DocumentEditToolbar extends React.Component {
 
           <div className={styles.button}>
             <ButtonWithOptions
-              accent="save"
+              accent='save'
               disabled={Boolean(
                 hasConnectionIssues || hasValidationErrors || isSaving
               )}

@@ -49,7 +49,7 @@ export default class FieldBooleanFilter extends React.Component {
           true: 'Yes',
           false: 'No'
         }}
-        textSize="small"
+        textSize='small'
         value={this.coerceToBoolean(value)}
       />
     )

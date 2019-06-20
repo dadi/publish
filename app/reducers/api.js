@@ -94,92 +94,92 @@ export default function api(state = initialState, action = {}) {
   }
 }
 
-function addCollectionLinks(apis) {
-  // A hash object keeping a count for each menu item + collection name
-  // pair. Whenever a count is greater than 1, it means a collection –
-  // i.e. two collections with the same name either under the same menu
-  // item or under no menu.
-  let counts = {}
+// function addCollectionLinks(apis) {
+//   // A hash object keeping a count for each menu item + collection name
+//   // pair. Whenever a count is greater than 1, it means a collection –
+//   // i.e. two collections with the same name either under the same menu
+//   // item or under no menu.
+//   const counts = {}
 
-  // This method takes a menu item slug and a collection name. It adds
-  // the pair to the `counts` hash map and returns a key for the pair,
-  // as well as a suffix which is something like '-2', '-3' etc. if
-  // there is a collision or an empty string otherwise.
-  let getKeyAndSuffix = (collectionName, menuSlug) => {
-    let key = menuSlug ? `${menuSlug}/${collectionName}` : collectionName
+//   // This method takes a menu item slug and a collection name. It adds
+//   // the pair to the `counts` hash map and returns a key for the pair,
+//   // as well as a suffix which is something like '-2', '-3' etc. if
+//   // there is a collision or an empty string otherwise.
+//   const getKeyAndSuffix = (collectionName, menuSlug) => {
+//     const key = menuSlug ? `${menuSlug}/${collectionName}` : collectionName
 
-    counts[key] = counts[key] || 0
-    counts[key]++
+//     counts[key] = counts[key] || 0
+//     counts[key]++
 
-    return {
-      key,
-      suffix: counts[key] > 1 ? `-${counts[key]}` : ''
-    }
-  }
+//     return {
+//       key,
+//       suffix: counts[key] > 1 ? `-${counts[key]}` : ''
+//     }
+//   }
 
-  apis
-    .filter(api => {
-      return Boolean(api.collections && api.collections.length)
-    })
-    .forEach(api => {
-      // There are some collections that we don't want to display on the menu,
-      // like auth or media collections.
-      let filteredCollections = api.collections.filter(collection => {
-        let isMediaCollection =
-          collection.settings && collection.settings.type === 'media'
+//   apis
+//     .filter(api => {
+//       return Boolean(api.collections && api.collections.length)
+//     })
+//     .forEach(api => {
+//       // There are some collections that we don't want to display on the menu,
+//       // like auth or media collections.
+//       const filteredCollections = api.collections.filter(collection => {
+//         const isMediaCollection =
+//           collection.settings && collection.settings.type === 'media'
 
-        return !isMediaCollection
-      })
-      let {menu = []} = api
+//         return !isMediaCollection
+//       })
+//       const {menu = []} = api
 
-      // We start by adding all the collections that are referenced in the menu
-      // object.
-      menu.forEach(menuItem => {
-        // If this is a menu item with nested collections, we'll process each of
-        // them individually.
-        if (menuItem.title && menuItem.collections) {
-          let menuSlug = Format.slugify(menuItem.title)
+//       // We start by adding all the collections that are referenced in the menu
+//       // object.
+//       menu.forEach(menuItem => {
+//         // If this is a menu item with nested collections, we'll process each of
+//         // them individually.
+//         if (menuItem.title && menuItem.collections) {
+//           const menuSlug = Format.slugify(menuItem.title)
 
-          menuItem.collections.forEach(collectionName => {
-            let collection = api.collections.find(item => {
-              return item.slug === collectionName
-            })
+//           menuItem.collections.forEach(collectionName => {
+//             const collection = api.collections.find(item => {
+//               return item.slug === collectionName
+//             })
 
-            if (!collection) return
+//             if (!collection) return
 
-            let {key, suffix} = getKeyAndSuffix(collectionName, menuSlug)
+//             const {key, suffix} = getKeyAndSuffix(collectionName, menuSlug)
 
-            collection._publishLink = `/${key}${suffix}`
-            collection._publishMenu = menuItem.title
-          })
-        } else if (typeof menuItem === 'string') {
-          // This is a top-level collection, so `menuItem` is the name of the
-          // a collection.
-          let collection = api.collections.find(item => {
-            return item.slug === menuItem
-          })
+//             collection._publishLink = `/${key}${suffix}`
+//             collection._publishMenu = menuItem.title
+//           })
+//         } else if (typeof menuItem === 'string') {
+//           // This is a top-level collection, so `menuItem` is the name of the
+//           // a collection.
+//           const collection = api.collections.find(item => {
+//             return item.slug === menuItem
+//           })
 
-          if (!collection) return
+//           if (!collection) return
 
-          let {key, suffix} = getKeyAndSuffix(menuItem)
+//           const {key, suffix} = getKeyAndSuffix(menuItem)
 
-          collection._publishLink = `/${key}${suffix}`
-          collection._publishMenu = null
-        }
-      })
+//           collection._publishLink = `/${key}${suffix}`
+//           collection._publishMenu = null
+//         }
+//       })
 
-      // Then we loop through all collections in the API and process any that
-      // are missing from the menu object.
-      filteredCollections.forEach(collection => {
-        // The collection has already been processed, nothing to do here.
-        if (collection._publishLink) {
-          return
-        }
+//       // Then we loop through all collections in the API and process any that
+//       // are missing from the menu object.
+//       filteredCollections.forEach(collection => {
+//         // The collection has already been processed, nothing to do here.
+//         if (collection._publishLink) {
+//           return
+//         }
 
-        let {key, suffix} = getKeyAndSuffix(collection.slug)
+//         const {key, suffix} = getKeyAndSuffix(collection.slug)
 
-        collection._publishLink = `/${key}${suffix}`
-        collection._publishMenu = null
-      })
-    })
-}
+//         collection._publishLink = `/${key}${suffix}`
+//         collection._publishMenu = null
+//       })
+//     })
+// }

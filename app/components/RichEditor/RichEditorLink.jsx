@@ -140,11 +140,11 @@ export default class RichEditorLink extends React.Component {
                 autoFocus
                 className={styles.input}
                 onChange={this.handleLinkUpdate.bind(this)}
-                type="text"
+                type='text'
                 value={href}
               />
 
-              <button className={styles.button} type="submit">
+              <button className={styles.button} type='submit'>
                 Save
               </button>
             </form>

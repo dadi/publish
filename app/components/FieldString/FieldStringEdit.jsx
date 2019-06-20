@@ -214,7 +214,7 @@ export default class FieldStringEdit extends React.Component {
           value={selectedValue}
         >
           {!multiple && (
-            <option className={styles['dropdown-option']} disabled value="">
+            <option className={styles['dropdown-option']} disabled value=''>
               {selectLabel}
             </option>
           )}
@@ -298,11 +298,11 @@ export default class FieldStringEdit extends React.Component {
 
         {isLink && (
           <Button
-            accent="neutral"
+            accent='neutral'
             className={styles['link-preview']}
             href={formattedLink}
             openInNewWindow={true}
-            size="small"
+            size='small'
           >
             Open in new window
           </Button>

@@ -68,7 +68,7 @@ export default class TableHead extends React.Component {
                 indeterminate={(!allSelected && hasSelected).toString()}
                 onChange={this.handleSelectClick.bind(this)}
                 style={!allowBulkSelection ? {display: none} : null}
-                type="checkbox"
+                type='checkbox'
                 value={allSelected}
               />
             </TableHeadCell>

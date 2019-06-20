@@ -65,7 +65,7 @@ const apiBridgeFactory = function({
   const {database, version} = collection
 
   const callback = requestObject => {
-    let augmentedRequestObject = Object.assign({}, requestObject, {
+    const augmentedRequestObject = Object.assign({}, requestObject, {
       headers: {
         Authorization: `Bearer ${accessToken}`
       }

@@ -14,7 +14,7 @@ export function getFieldType(schema) {
 
 export function getVisibleFields({fields = {}, viewType}) {
   let foundDisplayProperty = false
-  let enabledFields = Object.keys(fields).reduce((enabledFields, field) => {
+  const enabledFields = Object.keys(fields).reduce((enabledFields, field) => {
     // Is there a publish block with a display property defined fro this view
     // type?
     if (

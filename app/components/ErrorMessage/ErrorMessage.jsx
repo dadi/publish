@@ -33,7 +33,7 @@ export default class ErrorMessage extends React.Component {
       case Constants.ERROR_DOCUMENT_NOT_FOUND:
         return {
           body: data.href && (
-            <Button accent="system" href={data.href}>
+            <Button accent='system' href={data.href}>
               List documents
             </Button>
           ),
@@ -50,7 +50,7 @@ export default class ErrorMessage extends React.Component {
       case Constants.STATUS_FAILED:
         return {
           body: (
-            <Button accent="system" href={window.location.pathname}>
+            <Button accent='system' href={window.location.pathname}>
               Try again
             </Button>
           ),
@@ -61,7 +61,7 @@ export default class ErrorMessage extends React.Component {
       case Constants.API_CONNECTION_ERROR:
         return {
           body: (
-            <Button accent="system" href={window.location.pathname}>
+            <Button accent='system' href={window.location.pathname}>
               Try again
             </Button>
           ),

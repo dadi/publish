@@ -57,7 +57,7 @@ export default class FileUpload extends React.Component {
           className={styles['file-input']}
           id={this.fileInputId}
           multiple={multiple}
-          type="file"
+          type='file'
           onChange={this.handleFileSelect.bind(this)}
         />
         <label className={styles['label-file']} htmlFor={this.fileInputId}>

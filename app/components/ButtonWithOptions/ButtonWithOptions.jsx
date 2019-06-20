@@ -131,7 +131,7 @@ export default class ButtonWithOptions extends React.Component {
           accent={accent}
           disabled={disabled}
           href={href}
-          inGroup="left"
+          inGroup='left'
           isLoading={isLoading}
           onClick={onClick}
           type={type}
@@ -140,10 +140,10 @@ export default class ButtonWithOptions extends React.Component {
         </Button>
 
         <Button
-          accent="inherit"
+          accent='inherit'
           disabled={disabled}
           className={launcherStyle.getClasses()}
-          inGroup="right"
+          inGroup='right'
           onClick={this.toggleOptions.bind(this, null)}
         >
           <IconArrow direction={open ? 'down' : 'up'} height={6} width={10} />
@@ -151,7 +151,7 @@ export default class ButtonWithOptions extends React.Component {
 
         {open && !disabled && (
           <div className={styles.options}>
-            <Dropdown tooltip="right">
+            <Dropdown tooltip='right'>
               {Object.keys(options).map(option => {
                 return (
                   <DropdownItem

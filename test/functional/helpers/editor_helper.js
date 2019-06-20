@@ -10,13 +10,14 @@ class Editor extends Helper {
   }
 
   async typeAndSelect(locator, text) {
-    let page = await this.getPage()
+    const page = await this.getPage()
 
     await page.click(locator.value)
     await page.keyboard.type(text)
     await page.keyboard.down('Shift')
 
     for (let i = 0; i < text.length; i++) {
+      // eslint-disable-next-line no-await-in-loop
       await page.keyboard.press('ArrowLeft')
     }
 
@@ -28,10 +29,11 @@ class Editor extends Helper {
   async getThePage() {
     console.log('this :', this)
     const browser = this.helpers['Puppeteer'].browser
-    let x = await browser.pages() // List of pages in the browser
+    const x = await browser.pages() // List of pages in the browser
 
     const currentPage = this.helpers['Puppeteer'].page
-    let y = await currentPage.url() // Get the url of the current page
+    const y = await currentPage.url() // Get the url of the current page
+
     console.log('object :', x, y)
   }
 }

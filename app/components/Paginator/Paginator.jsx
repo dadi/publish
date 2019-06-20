@@ -159,10 +159,10 @@ export default class Paginator extends React.Component {
     if (pageNumber === currentPage) {
       return (
         <Button
-          accent="data"
+          accent='data'
           className={pageStyle.getClasses()}
           key={pageNumber}
-          type="mock"
+          type='mock'
         >
           {pageNumberString}
         </Button>

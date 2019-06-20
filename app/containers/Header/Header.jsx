@@ -90,14 +90,14 @@ class Header extends React.Component {
               <div className={styles.controls}>
                 <Link
                   className={`${styles.control} ${styles['control-action']}`}
-                  to="/profile"
+                  to='/profile'
                 >
                   {displayName}
                 </Link>
 
                 <Link
                   className={`${styles.control} ${styles['control-action']}`}
-                  to="/sign-out"
+                  to='/sign-out'
                 >
                   Sign out
                 </Link>

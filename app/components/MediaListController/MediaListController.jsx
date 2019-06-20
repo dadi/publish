@@ -28,7 +28,7 @@ export default class MediaListController extends React.Component {
             <span className={styles.separator}>or</span>
 
             <FileUpload multiple={true} onChange={onUpload}>
-              <Button accent="data" type="mock-stateful">
+              <Button accent='data' type='mock-stateful'>
                 Select files
               </Button>
             </FileUpload>

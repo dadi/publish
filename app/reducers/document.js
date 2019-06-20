@@ -189,7 +189,7 @@ export default function document(state = initialState, action = {}) {
         }
       }
 
-    case Types.UPDATE_LOCAL_DOCUMENT:
+    case Types.UPDATE_LOCAL_DOCUMENT: {
       const errorUpdate = Object.keys(action.update).reduce((errors, field) => {
         errors[field] = action.error[field]
 
@@ -211,6 +211,7 @@ export default function document(state = initialState, action = {}) {
           }
         }
       }
+    }
 
     default:
       return state

@@ -69,7 +69,7 @@ class DocumentListController extends React.Component {
         <div className={styles.actions}>
           {createNewHref && (
             <div className={styles['new-button-large']}>
-              <Button accent="save" href={createNewHref} type="fill">
+              <Button accent='save' href={createNewHref} type='fill'>
                 Create new
               </Button>
             </div>
@@ -77,7 +77,7 @@ class DocumentListController extends React.Component {
 
           {createNewHref && (
             <div className={styles['new-button-small']}>
-              <Button accent="save" href={createNewHref} type="fill">
+              <Button accent='save' href={createNewHref} type='fill'>
                 New
               </Button>
             </div>

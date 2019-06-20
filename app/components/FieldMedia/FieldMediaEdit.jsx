@@ -267,10 +267,10 @@ export default class FieldMediaEdit extends React.Component {
                   <span className={styles['file-ext']}>{displayName}</span>
 
                   <Button
-                    accent="destruct"
+                    accent='destruct'
                     className={styles['remove-existing']}
                     onClick={this.handleRemoveFile.bind(this, id)}
-                    size="small"
+                    size='small'
                   >
                     <span>×</span>
                   </Button>
@@ -295,7 +295,7 @@ export default class FieldMediaEdit extends React.Component {
             </div>
 
             <div className={styles.placeholder}>
-              <Button accent="neutral" size="small" href={href}>
+              <Button accent='neutral' size='small' href={href}>
                 Select existing {fieldLocalType.toLowerCase()}
               </Button>
             </div>
@@ -307,10 +307,10 @@ export default class FieldMediaEdit extends React.Component {
                 onChange={this.handleFileChange.bind(this)}
               >
                 <Button
-                  accent="neutral"
+                  accent='neutral'
                   className={styles['upload-select']}
-                  size="small"
-                  type="mock-stateful"
+                  size='small'
+                  type='mock-stateful'
                 >
                   Select from device
                 </Button>

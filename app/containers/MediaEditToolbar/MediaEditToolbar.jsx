@@ -137,13 +137,13 @@ class MediaEditToolbar extends React.Component {
           {document && (
             <div className={styles.button}>
               <ButtonWithPrompt
-                accent="destruct"
+                accent='destruct'
                 className={styles.button}
                 disabled={hasConnectionIssues}
                 onClick={this.handleDelete.bind(this)}
-                promptCallToAction="Yes, delete it."
-                position="left"
-                promptMessage="Are you sure you want to delete this document?"
+                promptCallToAction='Yes, delete it.'
+                position='left'
+                promptMessage='Are you sure you want to delete this document?'
               >
                 Delete
               </ButtonWithPrompt>
@@ -152,7 +152,7 @@ class MediaEditToolbar extends React.Component {
 
           <div className={styles.button}>
             <Button
-              accent="save"
+              accent='save'
               disabled={hasConnectionIssues || isSaving}
               isLoading={isSaving}
               onClick={this.handleSave.bind(this)}

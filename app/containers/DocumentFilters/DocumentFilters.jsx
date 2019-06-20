@@ -360,7 +360,7 @@ class DocumentFilters extends React.Component {
             )}
             placeholder={`Search ${collection.name}`}
             value={searchValue}
-            tabindex="1"
+            tabindex='1'
           />
 
           {searchValue && (
@@ -376,7 +376,7 @@ class DocumentFilters extends React.Component {
                     className={suggestionStyle.getClasses()}
                     key={fieldName + searchValue}
                     onClick={this.handleFilterSubmit.bind(this, fieldName)}
-                    type="button"
+                    type='button'
                   >
                     <span className={styles['suggestion-prefix']}>
                       {this.getFieldName(fieldName)} contains
@@ -394,11 +394,11 @@ class DocumentFilters extends React.Component {
         </div>
 
         <Button
-          accent="data"
+          accent='data'
           disabled={this.getFilterableFields().length === 0}
           className={styles.button}
           onClick={this.handleFiltersButtonClick.bind(this)}
-          type="button"
+          type='button'
         >
           Add filter
         </Button>
@@ -527,7 +527,7 @@ class DocumentFilters extends React.Component {
             className={fieldSelectorStyle.getClasses()}
             onChange={this.handleSelectedFilterFieldChange.bind(this)}
             options={availableFields}
-            textSize="small"
+            textSize='small'
             value={field || Object.keys(filterableFields)[0]}
           />
 
@@ -545,7 +545,7 @@ class DocumentFilters extends React.Component {
                 },
                 operators
               )}
-              textSize="small"
+              textSize='small'
               value={selectedOperator}
             />
           )}
@@ -566,10 +566,10 @@ class DocumentFilters extends React.Component {
         </div>
 
         <Button
-          accent="data"
+          accent='data'
           className={styles['tooltip-cta']}
           disabled={valueIsEmpty}
-          type="submit"
+          type='submit'
         >
           {isUpdate ? 'Update' : 'Add'} filter
         </Button>

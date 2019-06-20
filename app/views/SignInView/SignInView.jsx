@@ -12,7 +12,7 @@ class SignInView extends React.Component {
     const {isSignedIn} = state.user
 
     if (isSignedIn) {
-      return <Redirect to="/" />
+      return <Redirect to='/' />
     }
 
     return (

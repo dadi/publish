@@ -59,7 +59,7 @@ export default class DropdownItem extends React.Component {
         <button
           className={itemStyle.getClasses()}
           onClick={onClick}
-          type="button"
+          type='button'
         >
           {children}
         </button>

@@ -43,7 +43,7 @@ export default class MediaViewer extends React.Component {
 
     if (mimeType === 'application/pdf') {
       return (
-        <object className={styles.pdf} data={url} type="application/pdf">
+        <object className={styles.pdf} data={url} type='application/pdf'>
           <iframe src={url} />
         </object>
       )

@@ -36,7 +36,7 @@ export default class Peer extends React.Component {
     const peerClass = new Style(styles, 'avatar').addIf('active', active) // {!} TD - Set this using timestamp
 
     return (
-      <Button accent="data" className={peerClass.getClasses()} type="mock">
+      <Button accent='data' className={peerClass.getClasses()} type='mock'>
         {initial}
       </Button>
     )

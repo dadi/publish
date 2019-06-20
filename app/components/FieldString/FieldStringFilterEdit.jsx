@@ -38,7 +38,7 @@ export default class FieldStringFilter extends React.Component {
       <TextInput
         className={styles['filter-input']}
         onInput={event => onUpdate(event.target.value)}
-        placeholder="Search value"
+        placeholder='Search value'
         value={value}
       />
     )
