@@ -9,6 +9,15 @@ class Editor extends Helper {
     return this.helpers['Puppeteer'].page
   }
 
+  // 'Command+S' to save document
+  async commandSave() {
+    let page = await this.getPage()
+
+    await page.keyboard.down('Meta')
+    await page.keyboard.press('S')
+    await page.keyboard.up('Meta')
+  }
+
   async typeAndSelect(locator, text) {
     let page = await this.getPage()
 
