@@ -5,12 +5,12 @@
   "main": "index.js",
   "scripts": {
     "build": "NODE_ENV=production webpack --progress",
-    "format": "prettier --write \"./**/*.{js,jsx}\"",
+    "format": "prettier --write \"./**/*.{js,jsx,md,html}\"",
     "test": "npm run test:lint && npm run build && npm run test:functional",
     "test:functional:pre": "rm -rf test/functional/output && mkdir -p test/api/test/api/workspace && cp -R test/api/workspace/hooks test/api/test/api/workspace && cp test/api/workspace/db.template test/api/workspace/db",
     "test:functional:run": "API_CLIENT_ID=testClient API_CLIENT_SECRET=testSecret API_HOST=localhost API_PORT=3004 NODE_ENV=test ./node_modules/codeceptjs/bin/codecept.js run --steps --config=./test/codecept.json",
     "test:functional": "npm run test:functional:pre && npm run test:functional:run",
-    "test:lint": "prettier --check \"./**/*.{js,jsx}\"",
+    "test:lint": "prettier --check \"./**/*.{js,jsx,md,html}\"",
     "watch": "NODE_ENV=development npm-run-all --parallel watch:server watch:app",
     "watch:app": "webpack --watch --mode=development",
     "watch:server": "nodemon \"./start.js\" --watch \"./server\""
@@ -29,17 +29,24 @@
     "@dadi/api-validator": "^1.2.0",
     "@dadi/api-wrapper": "^3.2.2",
     "@dadi/api-wrapper-core": "^3.1.1",
+    "@dadi/eslint-config": "^1.1.0",
+    "@dadi/prettier-config": "^1.0.0",
     "@edithq/slate-md-serializer": "^1.1.0",
     "autoprefixer": "^9.5.1",
     "babel-loader": "^8.0.5",
     "chai": "^4.2.0",
     "codeceptjs": "^2.1.2",
     "css-loader": "^2.1.1",
+    "eslint": "^5.16.0",
+    "eslint-plugin-codeceptjs": "^0.5.0",
+    "eslint-plugin-react": "^7.13.0",
     "fecha": "^3.0.3",
     "file-size": "^1.0.0",
+    "husky": "^2.4.1",
     "immutable": "^4.0.0-rc.12",
     "is-hotkey": "^0.1.4",
     "js-cookie": "^2.2.0",
+    "lint-staged": "^8.2.1",
     "marked": "^0.6.2",
     "mini-css-extract-plugin": "^0.6.0",
     "nodemon": "^1.19.0",
@@ -47,7 +54,7 @@
     "pell": "^1.0.6",
     "postcss-loader": "^3.0.0",
     "pre-build-webpack": "^0.1.0",
-    "prettier": "1.18.2",
+    "prettier": "^1.18.2",
     "prop-types": "^15.7.2",
     "puppeteer": "^1.16.0",
     "react": "^16.8.6",
@@ -84,9 +91,21 @@
   "dependencies": {
     "@dadi/boot": "^1.1.4",
     "@dadi/logger": "^1.4.1",
+    "colors": "^1.3.3",
     "convict": "^4.4.1",
     "request-promise": "^4.2.4",
     "restify": "^8.3.1",
     "restify-cookies": "^0.2.5"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "*.{js,jsx,md,html}": [
+      "prettier --write",
+      "git add"
+    ]
   }
 }
