@@ -148,7 +148,7 @@ export default class FieldNumberEdit extends React.Component {
           onFocus={this.handleFocusChange.bind(this, true)}
           readOnly={publishBlock.readonly === true}
           type="number"
-          value={internalValue || (value && value.toString())}
+          value={(internalValue || value || '').toString()}
         />
       </Label>
     )
