@@ -44,7 +44,7 @@ export default class Checkbox extends React.Component {
         id={id}
         name={name}
         onChange={onChange}
-        type='checkbox'
+        type="checkbox"
       />
     )
   }

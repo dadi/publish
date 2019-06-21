@@ -67,7 +67,7 @@ export class RichEditorToolbarButton extends React.Component {
         disabled={disabled}
         onMouseDown={this.handleClick.bind(this)}
         style={inlineStyle}
-        type='button'
+        type="button"
       >
         {text}
       </button>

@@ -244,7 +244,7 @@ export default class TextInputWithDatePicker extends React.Component {
           onFocus={this.handleFocus.bind(this, true)}
           placeholder={placeholder}
           readOnly={readOnly}
-          type='text'
+          type="text"
           value={internalValue || (dateObj && dateObj.format(format))}
         />
 

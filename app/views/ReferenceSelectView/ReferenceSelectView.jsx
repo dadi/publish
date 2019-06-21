@@ -118,11 +118,11 @@ class ReferenceSelectView extends React.Component {
 
       return (
         <HeroMessage
-          title='No documents found.'
+          title="No documents found."
           subtitle="We can't find anything matching those filters."
         >
           <Button
-            accent='system'
+            accent="system"
             href={onBuildBaseUrl.call(this, {
               search: {}
             })}
@@ -135,8 +135,8 @@ class ReferenceSelectView extends React.Component {
 
     return (
       <HeroMessage
-        title='No documents yet.'
-        subtitle='Once created, they will appear here.'
+        title="No documents yet."
+        subtitle="Once created, they will appear here."
       />
     )
   }
@@ -367,7 +367,7 @@ class ReferenceSelectView extends React.Component {
                   showSelectedDocumentsUrl={showSelectedDocumentsUrl}
                 >
                   <Button
-                    accent='save'
+                    accent="save"
                     disabled={selection.length === 0}
                     onClick={this.handleDocumentSelect.bind(this, {
                       referenceField,

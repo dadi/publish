@@ -89,20 +89,20 @@ export default class BulkActionSelector extends React.Component {
           options={modifiedActions}
           placeholderLabel={placeholder}
           placeholderValue={ACTION_PLACEHOLDER}
-          textSize='small'
+          textSize="small"
           value={selected}
         />
 
         {needsButtonWithPrompt && (
           <ButtonWithPrompt
-            accent='data'
+            accent="data"
             disabled={
               selected === ACTION_PLACEHOLDER || actions[selected].disabled
             }
             onClick={this.onApply.bind(this)}
             promptCallToAction={actions[selected].ctaMessage}
             promptMessage={actions[selected].confirmationMessage}
-            size='small'
+            size="small"
           >
             Apply
           </ButtonWithPrompt>
@@ -110,10 +110,10 @@ export default class BulkActionSelector extends React.Component {
 
         {!needsButtonWithPrompt && (
           <Button
-            accent='data'
+            accent="data"
             disabled={selected === ACTION_PLACEHOLDER}
             onClick={this.onApply.bind(this)}
-            size='small'
+            size="small"
           >
             Apply
           </Button>

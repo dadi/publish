@@ -83,7 +83,7 @@ class ProfileEditToolbar extends React.Component {
       <Toolbar>
         <div className={styles.container}>
           <Button
-            accent='save'
+            accent="save"
             disabled={hasValidationErrors}
             onClick={this.handleSave.bind(this)}
           >

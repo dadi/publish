@@ -229,7 +229,7 @@ class App extends React.Component {
             isSignedIn={isSignedIn}
             exact
             mustBeSignedIn
-            path='/'
+            path="/"
             component={HomeView}
             config={state.app.config}
           />
@@ -238,7 +238,7 @@ class App extends React.Component {
             isSignedIn={isSignedIn}
             exact
             mustBeSignedIn
-            path='/profile/:section?'
+            path="/profile/:section?"
             component={ProfileEditView}
             config={state.app.config}
           />
@@ -247,7 +247,7 @@ class App extends React.Component {
             isSignedIn={isSignedIn}
             exact
             mustBeSignedIn
-            path='/profile/select/:referenceField/:page[^\d+$]?'
+            path="/profile/select/:referenceField/:page[^\d+$]?"
             component={ProfileEditView}
             config={state.app.config}
           />
@@ -255,7 +255,7 @@ class App extends React.Component {
           <Route
             isSignedIn={isSignedIn}
             exact
-            path='/sign-in/:token?'
+            path="/sign-in/:token?"
             component={SignInView}
             config={state.app.config}
           />
@@ -264,11 +264,11 @@ class App extends React.Component {
             isSignedIn={isSignedIn}
             exact
             mustBeSignedIn
-            path='/sign-out'
+            path="/sign-out"
             render={() => {
               actions.signOut()
 
-              return <Redirect to='/' />
+              return <Redirect to="/" />
             }}
             config={state.app.config}
           />

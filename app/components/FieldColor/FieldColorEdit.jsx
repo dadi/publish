@@ -191,7 +191,7 @@ export default class FieldColorEdit extends React.Component {
           onInput={this.handleChange.bind(this)}
           onFocus={this.handleFocus.bind(this, true)}
           readonly={publishBlock.readonly === true}
-          type='text'
+          type="text"
           value={value}
         />
 

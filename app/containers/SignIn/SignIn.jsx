@@ -105,7 +105,7 @@ class SignIn extends React.Component {
     const hasConnectionIssues = networkStatus !== Constants.NETWORK_OK
 
     if (state.user.isSignedIn) {
-      return <Redirect to='/' />
+      return <Redirect to="/" />
     }
 
     setPageTitle('Sign In')
@@ -119,7 +119,7 @@ class SignIn extends React.Component {
       >
         <div className={styles.overlay}>
           <div className={styles.container}>
-            <form method='POST' onSubmit={this.handleSignIn.bind(this)}>
+            <form method="POST" onSubmit={this.handleSignIn.bind(this)}>
               <img className={styles.logo} src={`/_public/${logo}`} />
               {this.getErrorBanner({
                 noAPIConfigured: !Boolean(api),
@@ -129,26 +129,26 @@ class SignIn extends React.Component {
 
               <div className={styles.inputs}>
                 <div className={styles.input}>
-                  <Label label='Username'>
+                  <Label label="Username">
                     <TextInput
                       autoFocus={true}
-                      name='username'
+                      name="username"
                       onChange={this.handleInputChange.bind(this, 'email')}
                       onInput={this.handleInputChange.bind(this, 'email')}
-                      placeholder='Your username'
+                      placeholder="Your username"
                       value={email}
                     />
                   </Label>
                 </div>
 
                 <div className={styles.input}>
-                  <Label label='Password'>
+                  <Label label="Password">
                     <TextInput
-                      name='password'
+                      name="password"
                       onChange={this.handleInputChange.bind(this, 'password')}
                       onInput={this.handleInputChange.bind(this, 'password')}
                       placeholder={'Your password'}
-                      type='password'
+                      type="password"
                       value={password}
                     />
                   </Label>
@@ -156,14 +156,14 @@ class SignIn extends React.Component {
               </div>
 
               <Button
-                accent='system'
+                accent="system"
                 disabled={
                   hasConnectionIssues ||
                   (userHasInteracted && !formDataIsValid) ||
                   !Boolean(api)
                 }
                 isLoading={state.user.isAuthenticating}
-                type='submit'
+                type="submit"
               >
                 Sign In
               </Button>
@@ -171,8 +171,8 @@ class SignIn extends React.Component {
               {poweredBy && (
                 <p className={styles['powered-by']}>
                   <span>Powered by</span>
-                  <a href='https://dadi.cloud/publish/' target='_blank'>
-                    <img src='/_public/images/publish.png' height='25' />
+                  <a href="https://dadi.cloud/publish/" target="_blank">
+                    <img src="/_public/images/publish.png" height="25" />
                   </a>
                 </p>
               )}

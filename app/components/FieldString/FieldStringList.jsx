@@ -109,7 +109,7 @@ export default class FieldStringList extends React.Component {
     }
 
     return (
-      <a href={value} target='_blank'>
+      <a href={value} target="_blank">
         {valueFormatted}
       </a>
     )

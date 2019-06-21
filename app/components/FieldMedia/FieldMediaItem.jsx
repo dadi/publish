@@ -41,7 +41,7 @@ export default class FieldMediaItem extends React.Component {
 
     let icon = (
       <div className={styles.file}>
-        <img src='/_public/images/icon-file.svg' width='25' />
+        <img src="/_public/images/icon-file.svg" width="25" />
         {extension && <span className={styles.ext}>{extension}</span>}
       </div>
     )
@@ -70,7 +70,7 @@ export default class FieldMediaItem extends React.Component {
         {icon}
         <a
           href={src}
-          target='_blank'
+          target="_blank"
           className={styles['file-name']}
           title={value.fileName}
         >

@@ -60,7 +60,7 @@ export default class ReferenceSelectHeader extends React.Component {
           <span> — {instructionText}</span>
         </p>
 
-        <Button accent='destruct' href={returnCtaUrl} size='small'>
+        <Button accent="destruct" href={returnCtaUrl} size="small">
           {returnCtaText}
         </Button>
 

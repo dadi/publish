@@ -37,7 +37,7 @@ export default class FieldDateTimeFilter extends React.Component {
         inputClassName={styles['filter-input']}
         onChange={onUpdate}
         onKeyUp={onUpdate}
-        placeholder='Search value'
+        placeholder="Search value"
         value={value}
       />
     )

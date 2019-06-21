@@ -115,11 +115,11 @@ class DocumentListView extends React.Component {
 
       return (
         <HeroMessage
-          title='No documents found.'
+          title="No documents found."
           subtitle="We can't find anything matching those filters."
         >
           <Button
-            accent='system'
+            accent="system"
             href={onBuildBaseUrl.call(this, {
               search: {}
             })}
@@ -135,19 +135,19 @@ class DocumentListView extends React.Component {
     if (route.params.collection === Constants.MEDIA_COLLECTION_SCHEMA.slug) {
       return (
         <HeroMessage
-          title='No media yet.'
-          subtitle='Once you upload media files, they will appear here.'
+          title="No media yet."
+          subtitle="Once you upload media files, they will appear here."
         />
       )
     }
 
     return (
       <HeroMessage
-        title='No documents yet.'
-        subtitle='Once created, they will appear here.'
+        title="No documents yet."
+        subtitle="Once created, they will appear here."
       >
         <Button
-          accent='save'
+          accent="save"
           href={onBuildBaseUrl.call(this, {
             createNew: true
           })}
@@ -363,7 +363,7 @@ class DocumentListView extends React.Component {
             onSelect={this.handleSelect.bind(this)}
             order={search.order}
             page={pageNumber}
-            selectAllHotKey='mod+a'
+            selectAllHotKey="mod+a"
             selection={selection}
             sort={search.sort}
           />
