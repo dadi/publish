@@ -74,17 +74,18 @@ module.exports = async accessToken => {
     response.client = clients[0]
     response.config = config.get()
 
-    const {results: languages} = await request(
+    const languagesPromise = request(
       `${apiAddress}/api/languages`,
       requestOptions
     )
-
-    response.config.api.languages = languages
-
-    const {collections} = await request(
+    const collectionsPromise = request(
       `${apiAddress}/api/collections`,
       requestOptions
     )
+    const {results: languages} = await languagesPromise
+    const {collections} = await collectionsPromise
+
+    response.config.api.languages = languages
 
     const {menu} = response.config.api
 
