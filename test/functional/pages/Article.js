@@ -381,16 +381,17 @@ module.exports = {
     I.seeNumbersAreEqual(numberWebServices, 5)
     let webServicesNames = await I.grabTextFrom(this.locators.numOfWebServices)
     I.click(
-      locate('td')
-        .before(locate('td').withText(webServicesNames[0].trim()))
+      locate('//td[2]')
+        .withText(webServicesNames[0].trim())
         .as('First Selected Web Service')
     )
     I.click(
-      locate('td')
-        .before(locate('td').withText(webServicesNames[4].trim()))
+      locate('//td[2]')
+        .withText(webServicesNames[4].trim())
         .as('Second Selected Web Service')
     )
-    I.click(this.locators.addSelected)
+    I.wait(1)
+    await I.click(this.locators.addSelected)
     I.waitForFunction(() => document.readyState === 'complete')
     I.scrollTo(this.locators.webService)
     I.see(webServicesNames[0].trim())
@@ -410,8 +411,8 @@ module.exports = {
       this.locators.numOfNetworkServices
     )
     I.click(
-      locate('td')
-        .before(locate('td').withText(networkServicesNames[3].trim()))
+      locate('//td[2]')
+        .withText(networkServicesNames[3].trim())
         .as('Selected Network Service')
     )
     I.click(this.locators.addSelected)
