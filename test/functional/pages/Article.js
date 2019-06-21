@@ -394,15 +394,17 @@ module.exports = {
     )
 
     I.click(
-      locate('td')
-        .before(locate('td').withText(webServicesNames[0].trim()))
+      locate('//td[2]')
+        .withText(webServicesNames[0].trim())
         .as('First Selected Web Service')
     )
+    I.wait(1)
     I.click(
-      locate('td')
-        .before(locate('td').withText(webServicesNames[4].trim()))
+      locate('//td[2]')
+        .withText(webServicesNames[4].trim())
         .as('Second Selected Web Service')
     )
+    I.wait(1)
     I.click(this.locators.addSelected)
     I.waitForFunction(() => document.readyState === 'complete')
     I.scrollTo(this.locators.webService)
@@ -425,8 +427,8 @@ module.exports = {
     )
 
     I.click(
-      locate('td')
-        .before(locate('td').withText(networkServicesNames[3].trim()))
+      locate('//td[2]')
+        .withText(networkServicesNames[3].trim())
         .as('Selected Network Service')
     )
     I.click(this.locators.addSelected)
@@ -474,9 +476,10 @@ module.exports = {
       this.locators.numOfWebServices
     )
 
+    I.wait(1)
     I.click(
-      locate('td')
-        .before(locate('td').withText(webServicesNames[4].trim()))
+      locate('//td[2]')
+        .withText(webServicesNames[4].trim())
         .as('Second Selected Web Service')
     )
     I.click(this.locators.addSelected)
