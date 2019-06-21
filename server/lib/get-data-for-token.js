@@ -56,7 +56,12 @@ module.exports = accessToken => {
     json: true
   }
 
-  return request(`${api.host}:${api.port}/api/client`, requestOptions)
+  const apiAddr =
+    api.localHost && api.localPort
+      ? `${api.localHost}:${api.localPort}`
+      : `${api.host}:${api.port}`
+
+  return request(`${apiAddr}/api/client`, requestOptions)
     .then(({results: clients}) => {
       if (clients.length === 0) {
         return Promise.reject()
@@ -65,12 +70,12 @@ module.exports = accessToken => {
       response.client = clients[0]
       response.config = config.get()
 
-      return request(`${api.host}:${api.port}/api/languages`, requestOptions)
+      return request(`${apiAddr}/api/languages`, requestOptions)
     })
     .then(({results: languages}) => {
       response.config.api.languages = languages
 
-      return request(`${api.host}:${api.port}/api/collections`, requestOptions)
+      return request(`${apiAddr}/api/collections`, requestOptions)
     })
     .then(({collections}) => {
       const {menu} = response.config.api
