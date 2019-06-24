@@ -347,9 +347,8 @@ module.exports = {
     const categoryNames = await I.grabTextFrom(this.locators.numOfCategories)
 
     I.click(
-      locate('//td[2]')
-        .withText(categoryNames[3].trim())
-        .as('Selected Category')
+      locate('//td[2]').withText(categoryNames[3].trim())
+      // .as('Selected Category')
     )
     I.click(this.locators.addSelected)
     I.waitForFunction(() => document.readyState === 'complete')
@@ -371,9 +370,8 @@ module.exports = {
     )
 
     I.click(
-      locate('//td[2]')
-        .withText(subCategoryNames[1].trim())
-        .as('Selected Sub Category')
+      locate('//td[2]').withText(subCategoryNames[1].trim())
+      // .as('Selected Sub Category')
     )
     I.click(this.locators.addSelected)
     I.waitForFunction(() => document.readyState === 'complete')
@@ -394,17 +392,15 @@ module.exports = {
     )
 
     I.click(
-      locate('//td[2]')
-        .withText(webServicesNames[0].trim())
+      locate('td')
+        .before('//td[.="' + webServicesNames[0].trim() + '"]')
         .as('First Selected Web Service')
     )
-    I.wait(1)
     I.click(
-      locate('//td[2]')
-        .withText(webServicesNames[4].trim())
+      locate('td')
+        .before('//td[.="' + webServicesNames[4].trim() + '"]')
         .as('Second Selected Web Service')
     )
-    I.wait(1)
     I.click(this.locators.addSelected)
     I.waitForFunction(() => document.readyState === 'complete')
     I.scrollTo(this.locators.webService)
@@ -427,8 +423,8 @@ module.exports = {
     )
 
     I.click(
-      locate('//td[2]')
-        .withText(networkServicesNames[3].trim())
+      locate('td')
+        .before('//td[.="' + networkServicesNames[3].trim() + '"]')
         .as('Selected Network Service')
     )
     I.click(this.locators.addSelected)
@@ -476,12 +472,12 @@ module.exports = {
       this.locators.numOfWebServices
     )
 
-    I.wait(1)
     I.click(
-      locate('//td[2]')
-        .withText(webServicesNames[4].trim())
+      locate('td')
+        .before('//td[.="' + webServicesNames[4].trim() + '"]')
         .as('Second Selected Web Service')
     )
+    I.wait(1)
     I.click(this.locators.addSelected)
     I.waitForFunction(() => document.readyState === 'complete')
     I.scrollTo(this.locators.webService)
