@@ -730,22 +730,25 @@ module.exports = {
     await I.seeElement(this.locators.dateBefore)
     await I.click(this.locators.saveContinue)
     await I.waitForVisible(this.locators.dateReqError)
-    var formattedDate = moment(new Date()).format('YYYY/MM/DD 09:00')
+    const formattedDate = moment(new Date()).format('YYYY/MM/DD 09:00')
+
     await I.fillField(this.locators.dateReq, formattedDate)
     await I.pressKey('Enter')
-    var futureDateErr = moment(new Date(), 'YYYY/MM/DD').subtract(
+    let futureDateErr = moment(new Date(), 'YYYY/MM/DD').subtract(
       _.random(1, 7),
       'days'
     )
+
     futureDateErr = futureDateErr.format('YYYY/MM/DD 09:00')
     await I.fillField(this.locators.dateFuture, futureDateErr)
     await I.pressKey('Enter')
     await I.click(this.locators.datePast)
     await I.waitForVisible(this.locators.dateFutureError)
-    var pastDateErr = moment(new Date(), 'YYYY/MM/DD').add(
+    let pastDateErr = moment(new Date(), 'YYYY/MM/DD').add(
       _.random(1, 7),
       'days'
     )
+
     pastDateErr = pastDateErr.format('YYYY/MM/DD 09:00')
     await I.fillField(this.locators.datePast, pastDateErr)
     await I.pressKey('Enter')
@@ -755,23 +758,26 @@ module.exports = {
     await I.pressKey('Enter')
     await I.click(this.locators.dateBefore)
     await I.waitForVisible(this.locators.dateAfterError)
-    var dateBefore = moment(new Date()).format('YYYY/MM/DD 09:00')
+    const dateBefore = moment(new Date()).format('YYYY/MM/DD 09:00')
+
     await I.fillField(this.locators.dateBefore, dateBefore)
     await I.click(this.locators.dateReq)
     await I.waitForVisible(this.locators.dateBeforeError)
     await I.click(this.locators.saveContinue)
     await I.clearField(this.locators.dateFuture)
-    var futureDate = moment(new Date(), 'YYYY/MM/DD').add(
+    let futureDate = moment(new Date(), 'YYYY/MM/DD').add(
       _.random(1, 60),
       'days'
     )
+
     futureDate = futureDate.format('YYYY/MM/DD 09:00')
     await I.fillField(this.locators.dateFuture, futureDate)
     await I.clearField(this.locators.datePast)
-    var pastDate = moment(new Date(), 'YYYY/MM/DD').subtract(
+    let pastDate = moment(new Date(), 'YYYY/MM/DD').subtract(
       _.random(1, 180),
       'days'
     )
+
     pastDate = pastDate.format('YYYY/MM/DD 09:00')
     await I.fillField(this.locators.datePast, pastDate)
     await I.clearField(this.locators.dateAfter)
@@ -903,7 +909,8 @@ module.exports = {
     await I.click(this.locators.saveContinue)
     await I.waitForText('The document has been created', 2)
     await I.dontSeeInCurrentUrl('/new')
-    let updatedSlug = await I.grabValueFrom(this.locators.stringAutoGen)
+    const updatedSlug = await I.grabValueFrom(this.locators.stringAutoGen)
+
     await I.seeStringsAreEqual(updatedSlug, 'this-is-a-required-string')
     await I.see('Option three', this.locators.stringOptions)
     await I.click(this.locators.saveMenu)
@@ -938,11 +945,13 @@ module.exports = {
     I.waitForFunction(() => document.readyState === 'complete')
     await I.seeInCurrentUrl('/select/referenceRequired')
     I.waitForText('Reference')
-    let numberAuthors = await I.grabNumberOfVisibleElements(
+    const numberAuthors = await I.grabNumberOfVisibleElements(
       this.locators.numOfAuthors
     )
+
     I.seeNumbersAreEqual(numberAuthors, 5)
-    let authorsNames = await I.grabTextFrom(this.locators.numOfAuthors)
+    const authorsNames = await I.grabTextFrom(this.locators.numOfAuthors)
+
     I.click(
       locate('td')
         .before(locate('td').withText(authorsNames[2].trim()))
@@ -951,14 +960,19 @@ module.exports = {
     I.click(this.locators.addAuthor)
     I.waitForFunction(() => document.readyState === 'complete')
     I.see(authorsNames[2].trim())
-    let link = await I.grabAttributeFrom(
+    const link = await I.grabAttributeFrom(
       locate('a').withText(authorsNames[2].trim()),
       'href'
     )
+
     await I.click(this.locators.saveMenu)
     await I.click(this.locators.saveGoBack)
     await I.waitForText(authorsNames[2].trim())
-    let newLink = await I.grabAttributeFrom(this.locators.referenceLink, 'href')
+    const newLink = await I.grabAttributeFrom(
+      this.locators.referenceLink,
+      'href'
+    )
+
     await I.seeStringsAreEqual(link, newLink)
   },
 
@@ -1128,9 +1142,11 @@ module.exports = {
     await I.seeElement(this.locators.colourHue)
     await I.seeElement(this.locators.colourSlider)
     await I.fillField(this.locators.colourField, '4073b1')
-    let before = await I.grabValueFrom(this.locators.colourField)
+    const before = await I.grabValueFrom(this.locators.colourField)
+
     await I.dragAndDrop(this.locators.colourPicker, this.locators.colourSlider)
-    let after = await I.grabValueFrom(this.locators.colourField)
+    const after = await I.grabValueFrom(this.locators.colourField)
+
     await I.seeStringsAreNotEqual(after, before)
     await I.click(this.locators.saveMenu)
     await I.click(this.locators.saveGoBack)
@@ -1139,7 +1155,8 @@ module.exports = {
     // check filter only contains string filter field
     await I.click(this.locators.filterButton)
     await I.seeElement(this.locators.filterField)
-    let filterValue = await I.grabTextFrom(this.locators.filterField)
+    const filterValue = await I.grabTextFrom(this.locators.filterField)
+
     await I.seeStringsAreEqual(filterValue, 'Normal String field')
   },
 

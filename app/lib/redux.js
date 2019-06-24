@@ -8,7 +8,7 @@ export function batchActions(...args) {
   const actions = args.length === 1 ? args[0] : args
 
   return {
-    actions: actions,
+    actions,
     type: Types.BATCH_ACTIONS
   }
 }

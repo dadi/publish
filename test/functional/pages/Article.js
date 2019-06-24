@@ -281,22 +281,25 @@ module.exports = {
     await I.waitForVisible(this.locators.articleTitleHeading)
     await I.waitForElement(this.locators.footer)
     await I.seeElement(this.locators.createNewButton)
-    let articles = await I.grabNumberOfVisibleElements(
+    const articles = await I.grabNumberOfVisibleElements(
       this.locators.articleRows
     )
-    let navItems = await I.grabTextFrom(this.locators.navMenu)
+    const navItems = await I.grabTextFrom(this.locators.navMenu)
+
     await I.seeStringsAreEqual(
       navItems,
       'ArticlesContentTaxonomyWeb servicesNetwork servicesMedia Library'
     )
     await I.seeNumberOfVisibleElements(this.locators.articleRows, articles)
-    let range = await I.grabTextFrom(this.locators.numberOfArticles)
-    let number = range.substring(2, 4).trim()
+    const range = await I.grabTextFrom(this.locators.numberOfArticles)
+    const number = range.substring(2, 4).trim()
+
     await I.seeNumbersAreEqual(articles.toString(), number)
   },
 
   async addArticle() {
-    let total = await I.grabTextFrom(this.locators.totalArticles)
+    const total = await I.grabTextFrom(this.locators.totalArticles)
+
     I.click(this.locators.createNewButton)
     I.waitForFunction(() => document.readyState === 'complete')
     I.seeInCurrentUrl('/articles/new')
@@ -319,11 +322,13 @@ module.exports = {
     I.waitForFunction(() => document.readyState === 'complete')
     I.seeInCurrentUrl('/select/author')
     I.waitForText('Author')
-    let numberAuthors = await I.grabNumberOfVisibleElements(
+    const numberAuthors = await I.grabNumberOfVisibleElements(
       this.locators.numOfAuthors
     )
+
     I.seeNumbersAreEqual(numberAuthors, 5)
-    let authorsNames = await I.grabTextFrom(this.locators.numOfAuthors)
+    const authorsNames = await I.grabTextFrom(this.locators.numOfAuthors)
+
     I.click(locate('//tbody/tr[2]/td[1]').as('Selected Author'))
     I.click(this.locators.addAuthor)
     I.waitForFunction(() => document.readyState === 'complete')
@@ -334,15 +339,16 @@ module.exports = {
     I.waitForFunction(() => document.readyState === 'complete')
     I.seeInCurrentUrl('/select/category')
     I.waitForText('Category')
-    let numberCategories = await I.grabNumberOfVisibleElements(
+    const numberCategories = await I.grabNumberOfVisibleElements(
       this.locators.numOfCategories
     )
+
     I.seeNumbersAreEqual(numberCategories, 5)
-    let categoryNames = await I.grabTextFrom(this.locators.numOfCategories)
+    const categoryNames = await I.grabTextFrom(this.locators.numOfCategories)
+
     I.click(
-      locate('//td[2]')
-        .withText(categoryNames[3].trim())
-        .as('Selected Category')
+      locate('//td[2]').withText(categoryNames[3].trim())
+      // .as('Selected Category')
     )
     I.click(this.locators.addSelected)
     I.waitForFunction(() => document.readyState === 'complete')
@@ -354,17 +360,18 @@ module.exports = {
     I.waitForFunction(() => document.readyState === 'complete')
     I.seeInCurrentUrl('/select/sub-category')
     I.waitForText('Sub category')
-    let numberSubCategories = await I.grabNumberOfVisibleElements(
+    const numberSubCategories = await I.grabNumberOfVisibleElements(
       this.locators.numOfSubCategories
     )
+
     I.seeNumbersAreEqual(numberSubCategories, 5)
-    let subCategoryNames = await I.grabTextFrom(
+    const subCategoryNames = await I.grabTextFrom(
       this.locators.numOfSubCategories
     )
+
     I.click(
-      locate('//td[2]')
-        .withText(subCategoryNames[1].trim())
-        .as('Selected Sub Category')
+      locate('//td[2]').withText(subCategoryNames[1].trim())
+      // .as('Selected Sub Category')
     )
     I.click(this.locators.addSelected)
     I.waitForFunction(() => document.readyState === 'complete')
@@ -375,19 +382,23 @@ module.exports = {
     I.click(this.locators.selectWebService)
     I.waitForFunction(() => document.readyState === 'complete')
     I.seeInCurrentUrl('/select/web-service')
-    let numberWebServices = await I.grabNumberOfVisibleElements(
+    const numberWebServices = await I.grabNumberOfVisibleElements(
       this.locators.numOfWebServices
     )
+
     I.seeNumbersAreEqual(numberWebServices, 5)
-    let webServicesNames = await I.grabTextFrom(this.locators.numOfWebServices)
+    const webServicesNames = await I.grabTextFrom(
+      this.locators.numOfWebServices
+    )
+
     I.click(
       locate('td')
-        .before(locate('td').withText(webServicesNames[0].trim()))
+        .before('//td[.="' + webServicesNames[0].trim() + '"]')
         .as('First Selected Web Service')
     )
     I.click(
       locate('td')
-        .before(locate('td').withText(webServicesNames[4].trim()))
+        .before('//td[.="' + webServicesNames[4].trim() + '"]')
         .as('Second Selected Web Service')
     )
     I.click(this.locators.addSelected)
@@ -402,16 +413,18 @@ module.exports = {
     I.waitForFunction(() => document.readyState === 'complete')
     I.seeInCurrentUrl('/select/network-service')
     I.waitForText('Network service')
-    let numberNetworkServices = await I.grabNumberOfVisibleElements(
+    const numberNetworkServices = await I.grabNumberOfVisibleElements(
       this.locators.numOfNetworkServices
     )
+
     I.seeNumbersAreEqual(numberNetworkServices, 5)
-    let networkServicesNames = await I.grabTextFrom(
+    const networkServicesNames = await I.grabTextFrom(
       this.locators.numOfNetworkServices
     )
+
     I.click(
       locate('td')
-        .before(locate('td').withText(networkServicesNames[3].trim()))
+        .before('//td[.="' + networkServicesNames[3].trim() + '"]')
         .as('Selected Network Service')
     )
     I.click(this.locators.addSelected)
@@ -433,17 +446,20 @@ module.exports = {
     I.see('This Is A New Article')
 
     // Ensure total number of articles has increased
-    let newTotal = await I.grabTextFrom(this.locators.totalArticles)
+    const newTotal = await I.grabTextFrom(this.locators.totalArticles)
+
     I.seeTotalHasIncreased(newTotal, total)
   },
 
   async editArticle() {
-    let link = await I.grabAttributeFrom(this.locators.createdArticle, 'href')
-    let start = link.indexOf('/articles/')
-    let id = link.slice(start)
+    const link = await I.grabAttributeFrom(this.locators.createdArticle, 'href')
+    const start = link.indexOf('/articles/')
+    const id = link.slice(start)
+
     I.click(this.locators.createdArticle)
     I.seeInCurrentUrl(id)
-    let slug = await I.grabValueFrom(this.locators.slugField)
+    const slug = await I.grabValueFrom(this.locators.slugField)
+
     I.seeStringsAreEqual(slug, 'this-is-a-new-article')
     I.fillField(this.locators.titleField, '')
     I.fillField(this.locators.titleField, 'This Article Is Updated')
@@ -452,12 +468,16 @@ module.exports = {
     I.waitForFunction(() => document.readyState === 'complete')
     I.seeInCurrentUrl('/select/web-service')
     I.waitForText('Web service')
-    let webServicesNames = await I.grabTextFrom(this.locators.numOfWebServices)
+    const webServicesNames = await I.grabTextFrom(
+      this.locators.numOfWebServices
+    )
+
     I.click(
       locate('td')
-        .before(locate('td').withText(webServicesNames[4].trim()))
+        .before('//td[.="' + webServicesNames[4].trim() + '"]')
         .as('Second Selected Web Service')
     )
+    I.wait(1)
     I.click(this.locators.addSelected)
     I.waitForFunction(() => document.readyState === 'complete')
     I.scrollTo(this.locators.webService)
@@ -470,31 +490,36 @@ module.exports = {
     I.see('This Article Is Updated')
     I.click(this.locators.updatedArticle)
     I.seeInCurrentUrl(id)
-    let updatedSlug = await I.grabValueFrom(this.locators.slugField)
+    const updatedSlug = await I.grabValueFrom(this.locators.slugField)
+
     I.seeStringsAreEqual(updatedSlug, 'this-article-is-updated')
     I.click(this.locators.articleLink)
   },
 
   async filterArticle() {
-    let originalArticles = await I.grabNumberOfVisibleElements(
+    const originalArticles = await I.grabNumberOfVisibleElements(
       this.locators.articleRows
     )
-    let articleDateTimes = await I.grabTextFrom(this.locators.dateTime)
-    let randomNum = _.random(0, 10)
+    const articleDateTimes = await I.grabTextFrom(this.locators.dateTime)
+    const randomNum = _.random(0, 10)
     let pastDateFilter = moment(new Date(), 'YYYY/MM/DD').subtract(
       randomNum,
       'months'
     )
+
     pastDateFilter = pastDateFilter.format('YYYY/MM/DD 09:00')
-    let datesToFilter = await articleDateTimes.filter(
+    const datesToFilter = await articleDateTimes.filter(
       datetime => datetime > pastDateFilter
     )
-    let dateFilter = datesToFilter.length
-    let articlePublished = await I.grabTextFrom(this.locators.published)
-    let yesPublish = await articlePublished.filter(article => article === 'Yes')
-    let noPublish = await articlePublished.filter(article => article === 'No')
-    let numberYes = yesPublish.length
-    let numberNo = noPublish.length
+    const dateFilter = datesToFilter.length
+    const articlePublished = await I.grabTextFrom(this.locators.published)
+    const yesPublish = await articlePublished.filter(
+      article => article === 'Yes'
+    )
+    const noPublish = await articlePublished.filter(article => article === 'No')
+    const numberYes = yesPublish.length
+    const numberNo = noPublish.length
+
     I.click(this.locators.filterButton)
     I.seeElement(this.locators.filterForm)
     I.seeElement(this.locators.filterField)
@@ -502,23 +527,27 @@ module.exports = {
     I.fillField(this.locators.filterValue, 'DADI')
     I.click(this.locators.addFilter)
     I.seeElement(this.locators.filterWrapper)
-    let articles = await I.grabNumberOfVisibleElements(
+    const articles = await I.grabNumberOfVisibleElements(
       this.locators.articleRows
     )
+
     I.seeNumbersAreEqual(articles, 3)
-    let articleTitles = await I.grabTextFrom(this.locators.titles)
+    const articleTitles = await I.grabTextFrom(this.locators.titles)
+
     I.click(this.locators.filterWrapper)
     I.selectOption(this.locators.filterOperator, 'is')
     I.fillField(this.locators.filterValue, articleTitles[1])
     I.click(this.locators.updateFilter)
-    let updatedArticles = await I.grabNumberOfVisibleElements(
+    const updatedArticles = await I.grabNumberOfVisibleElements(
       this.locators.articleRows
     )
+
     I.seeNumbersAreEqual(updatedArticles, 1)
     I.click(this.locators.filterClose)
     let newTotal = await I.grabNumberOfVisibleElements(
       this.locators.articleRows
     )
+
     I.seeNumbersAreEqual(originalArticles, newTotal)
     I.click(this.locators.filterButton)
     I.seeElement(this.locators.filterForm)
@@ -526,16 +555,18 @@ module.exports = {
     I.seeElement(this.locators.filterOperator)
     I.click(this.locators.addFilter)
     I.seeElement(this.locators.filterWrapper)
-    let publishedNo = await I.grabNumberOfVisibleElements(
+    const publishedNo = await I.grabNumberOfVisibleElements(
       this.locators.articleRows
     )
+
     I.seeNumbersAreEqual(publishedNo, numberNo)
     I.click(this.locators.filterWrapper)
     I.selectOption(this.locators.filterValueSelect, 'Yes')
     I.click(this.locators.updateFilter)
-    let publishedYes = await I.grabNumberOfVisibleElements(
+    const publishedYes = await I.grabNumberOfVisibleElements(
       this.locators.articleRows
     )
+
     I.seeNumbersAreEqual(publishedYes, numberYes)
     I.click(this.locators.filterClose)
     newTotal = await I.grabNumberOfVisibleElements(this.locators.articleRows)
@@ -550,14 +581,16 @@ module.exports = {
     I.click(this.locators.filterOperator)
     I.click(this.locators.addFilter)
     I.seeElement(this.locators.filterWrapper)
-    let datesAfter = await I.grabNumberOfVisibleElements(
+    const datesAfter = await I.grabNumberOfVisibleElements(
       this.locators.articleRows
     )
+
     I.seeNumbersAreEqual(datesAfter, dateFilter)
   },
 
   async deleteArticle() {
-    let total = await I.grabTextFrom(this.locators.totalArticles)
+    const total = await I.grabTextFrom(this.locators.totalArticles)
+
     I.click(this.locators.checkArticle)
     I.selectOption(this.locators.selectDelete, 'Delete (1)')
     I.click(this.locators.applyButton)
@@ -565,7 +598,8 @@ module.exports = {
     I.pressKey('Enter')
     I.waitForText('The document has been deleted', 2)
     I.dontSee('This Article Is Updated')
-    let newTotal = await I.grabTextFrom(this.locators.totalArticles)
+    const newTotal = await I.grabTextFrom(this.locators.totalArticles)
+
     I.seeTotalHasDecreased(newTotal, total)
   },
 
@@ -576,9 +610,10 @@ module.exports = {
   },
 
   async editSignOut() {
-    let link = await I.grabAttributeFrom(this.locators.signOutArticle, 'href')
-    let start = link.indexOf('/articles/')
-    let id = link.slice(start)
+    const link = await I.grabAttributeFrom(this.locators.signOutArticle, 'href')
+    const start = link.indexOf('/articles/')
+    const id = link.slice(start)
+
     I.click(this.locators.signOutArticle)
     I.seeInCurrentUrl(id)
   },
@@ -728,11 +763,11 @@ module.exports = {
     await I.click(this.locators.saveArticle)
     await I.waitForText('The document has been created', 2)
     // Get today's date for URL
-    let year = await moment(new Date()).format('YYYY')
-    let month = await moment(new Date()).format('MM')
-    let day = await moment(new Date()).format('DD')
-    let imageLink = await I.grabAttributeFrom(this.locators.dogImage, 'src')
-    let expectedImageLink =
+    const year = await moment(new Date()).format('YYYY')
+    const month = await moment(new Date()).format('MM')
+    const day = await moment(new Date()).format('DD')
+    const imageLink = await I.grabAttributeFrom(this.locators.dogImage, 'src')
+    const expectedImageLink =
       'http://localhost:3004/media/' +
       year +
       '/' +
@@ -740,11 +775,13 @@ module.exports = {
       '/' +
       day +
       '/dog.jpg'
+
     await I.seeStringContains(imageLink, expectedImageLink)
     // markdown view
     await I.click(this.locators.textButton)
     await I.seeElement(this.locators.markdownText)
-    let imageText = await I.grabTextFrom(this.locators.markdownText)
+    const imageText = await I.grabTextFrom(this.locators.markdownText)
+
     await I.seeStringsAreEqual(imageText, '![](' + expectedImageLink + ')')
   }
 }

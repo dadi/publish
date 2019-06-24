@@ -52,10 +52,10 @@ export default function user(state = initialState, action = {}) {
         saveAttempts: state.saveAttempts + 1
       }
 
-    case Types.AUTHENTICATE:
-      let {accessToken, accessTokenTTL, client} = action
-      let expiryTimestamp = Date.now() + accessTokenTTL * 1000
-      let expiryDate = new Date(expiryTimestamp)
+    case Types.AUTHENTICATE: {
+      const {accessToken, accessTokenTTL, client} = action
+      const expiryTimestamp = Date.now() + accessTokenTTL * 1000
+      const expiryDate = new Date(expiryTimestamp)
 
       Cookies.set('accessToken', accessToken, {
         expires: expiryDate
@@ -74,6 +74,7 @@ export default function user(state = initialState, action = {}) {
         remote: client,
         sessionHasExpired: false
       }
+    }
 
     case Types.REGISTER_NETWORK_ERROR:
       // We're interested in processing errors with the code API-0005 only, as
@@ -145,7 +146,7 @@ export default function user(state = initialState, action = {}) {
     case Types.SIGN_OUT:
       return signOut(action)
 
-    case Types.UPDATE_LOCAL_USER:
+    case Types.UPDATE_LOCAL_USER: {
       const errorUpdate = Object.keys(action.update).reduce((errors, field) => {
         errors[field] = action.error[field]
 
@@ -163,6 +164,7 @@ export default function user(state = initialState, action = {}) {
           ...errorUpdate
         }
       }
+    }
 
     default:
       return state

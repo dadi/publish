@@ -31,7 +31,7 @@ export function arrayToObject(arr, keyField) {
     {},
     ...arr
       .map(obj => {
-        if (!obj.value || !obj[keyField]) return
+        if (!obj.value || !obj[keyField]) return null
 
         return {[obj[keyField] || 'key']: obj.value}
       })
@@ -45,9 +45,9 @@ export function isValidJSON(string) {
 
   return /^[\],:{}\s]*$/.test(
     string
-      .replace(/\\["\\\/bfnrtu]/g, '@')
+      .replace(/\\["\\/bfnrtu]/g, '@')
       .replace(
-        /"[^"\\\n\r]*"|true|false|null|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?/g,
+        /"[^"\\\n\r]*"|true|false|null|-?\d+(?:\.\d*)?(?:[eE][+-]?\d+)?/g,
         ']'
       )
       .replace(/(?:^|:|,)(?:\s*\[)+/g, '')
@@ -60,13 +60,14 @@ export function debounce(func, wait, immediate) {
   // Must return standard function.
   // An arrow function here would not use arguments.
   return function() {
-    let context = this
-    let args = arguments
-    let later = () => {
+    const context = this
+    const args = arguments
+    const later = () => {
       timeout = null
       if (!immediate) func.apply(context, args)
     }
-    let callNow = immediate && !timeout
+
+    const callNow = immediate && !timeout
 
     clearTimeout(timeout)
     timeout = setTimeout(later, wait)

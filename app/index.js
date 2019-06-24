@@ -1,7 +1,7 @@
 import {applyMiddleware, compose, createStore} from 'redux'
+import App from './containers/App/App'
 import {enableBatching} from './lib/redux'
 import {Provider} from 'react-redux'
-import App from './containers/App/App'
 import React from 'react'
 import ReactDOM from 'react-dom'
 import reducers from './reducers'

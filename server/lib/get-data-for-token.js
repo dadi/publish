@@ -21,7 +21,7 @@ const applyDefaultPublishParams = fields => {
 
   // Mutate fields to include required publish config.
   const augmentedFields = Object.keys(fields).reduce((result, key) => {
-    let field = fields[key]
+    const field = fields[key]
 
     field.publish = field.publish || defaultBlock
     field.publish.section = field.publish.section || defaultBlock.section
@@ -47,7 +47,7 @@ module.exports = async accessToken => {
     return Promise.resolve(unauthenticatedResponse)
   }
 
-  let response = {}
+  const response = {}
 
   const requestOptions = {
     headers: {
@@ -108,13 +108,16 @@ module.exports = async accessToken => {
     const augmentedCollections = collections
       .map(collection => {
         const group = collectionGroups.get(collection.slug)
+        const slugifiedGroup = group ? slugify(group) : null
         const href = group
-          ? `/${slugify(group)}/${collection.slug}`
+          ? `/${slugifiedGroup}/${collection.slug}`
           : `/${collection.slug}`
 
         return {
           ...collection,
           fields: applyDefaultPublishParams(collection.fields),
+          _publishCollection: collection.slug,
+          _publishGroup: slugifiedGroup,
           _publishLink: href
         }
       })

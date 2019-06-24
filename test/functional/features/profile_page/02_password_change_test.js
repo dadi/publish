@@ -12,11 +12,12 @@ AfterSuite(async (I, loginPage) => {
 })
 
 // DataTable to test different combinations of password fields
-let passwords = new DataTable([
+const passwords = new DataTable([
   'currentPassword',
   'newPassword',
   'confirmNewPassword'
 ])
+
 passwords.add(['123456', '123456', '123455'])
 passwords.add(['123456', '123457', '123456'])
 

@@ -28,7 +28,7 @@ let debouncedNetworkCall = null
 function getActiveBreakpoint(windowWidth) {
   let breakpointName = null
 
-  for (let breakpoint in VIEWPORT_BREAKPOINTS) {
+  for (const breakpoint in VIEWPORT_BREAKPOINTS) {
     if (windowWidth < VIEWPORT_BREAKPOINTS[breakpoint]) {
       break
     }
@@ -129,7 +129,7 @@ export default function app(state = initialState, action = {}) {
       }
 
     // App action: set screen width
-    case Types.SET_SCREEN_WIDTH:
+    case Types.SET_SCREEN_WIDTH: {
       const breakpoint = getActiveBreakpoint(action.width)
 
       if (breakpoint === state.breakpoint) {
@@ -140,6 +140,7 @@ export default function app(state = initialState, action = {}) {
         ...state,
         breakpoint
       }
+    }
 
     // User action: user signed out
     case Types.SIGN_OUT:

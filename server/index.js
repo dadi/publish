@@ -72,7 +72,7 @@ class Server {
       ca = fs.readFileSync(caPath, 'utf8')
     }
 
-    let options = {
+    const options = {
       ca,
       certificate,
       log,
@@ -120,7 +120,7 @@ class Server {
     // Initialise logger.
     log.init(config.get('logging'), {}, config.get('env'))
 
-    let servers = [
+    const servers = [
       new Promise(resolve => {
         mainServer.listen(port, resolve)
       })

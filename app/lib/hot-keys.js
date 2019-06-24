@@ -11,6 +11,7 @@ class HotKeys {
   }
 
   _capture(allowDefaultHandlers, event) {
+    // eslint-disable-next-line array-callback-return
     Object.keys(this.handlers).some(key => {
       if (this.handlers[key].hotKey(event)) {
         if (!allowDefaultHandlers) {

@@ -127,7 +127,8 @@ class Bootstrap {
           publishedAt: {
             format: '{{date.past}}',
             transform: value => {
-              let date = new Date(value)
+              const date = new Date(value)
+
               return date
             }
           },
@@ -180,7 +181,8 @@ class Bootstrap {
           publishedAt: {
             format: '{{date.past}}',
             transform: value => {
-              let date = new Date(value)
+              const date = new Date(value)
+
               return date
             }
           },

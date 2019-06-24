@@ -421,7 +421,10 @@ class ReferenceSelectView extends React.Component {
       })
     ).concat(Constants.DEFAULT_FIELDS)
 
-    const [_, group, collection] = referencedCollection._publishLink.split('/')
+    const {
+      _publishCollection: collection,
+      _publishGroup: group
+    } = referencedCollection
 
     return (
       <DocumentTableList
