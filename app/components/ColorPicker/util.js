@@ -1,3 +1,5 @@
+/* eslint-disable prefer-const */
+
 /**
  * Convert HSV representation to RGB HEX string.
  * Credits to raphaeljs
@@ -17,11 +19,11 @@ function hsv2rgb(hsv) {
   G += [X, C, C, X, 0, 0][h]
   B += [0, 0, X, C, C, X][h]
 
-  let r = Math.floor(R * 255)
-  let g = Math.floor(G * 255)
-  let b = Math.floor(B * 255)
+  const r = Math.floor(R * 255)
+  const g = Math.floor(G * 255)
+  const b = Math.floor(B * 255)
 
-  let hex = (16777216 | b | (g << 8) | (r << 16)).toString(16).slice(1)
+  const hex = (16777216 | b | (g << 8) | (r << 16)).toString(16).slice(1)
 
   return {r, g, b, hex} // eslint-disable-line
 }

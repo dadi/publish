@@ -92,10 +92,11 @@ module.exports = {
   },
 
   async createSession(id, secret, url) {
-    let data = await I.getSessionToken(id, secret)
-    let x = JSON.parse(data)
-    let token = x.accessToken
-    let value = Date.now() + 1800 * 1000
+    const data = await I.getSessionToken(id, secret)
+    const x = JSON.parse(data)
+    const token = x.accessToken
+    const value = Date.now() + 1800 * 1000
+
     await I.amOnPage(url)
     await I.setCookie({
       name: 'accessToken',

@@ -57,7 +57,7 @@ class Config {
   }
 
   sanitiseConfigData(inputData) {
-    let data = {...inputData}
+    const data = {...inputData}
 
     if (data.apis && !data.api) {
       data.api = data.apis[0]
@@ -90,6 +90,7 @@ module.exports.getUnauthenticated = () => {
     authenticated: false
   })
 }
+
 module.exports.initialise = configPath => {
   config.load(configPath)
 }

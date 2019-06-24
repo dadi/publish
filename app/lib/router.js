@@ -1,6 +1,6 @@
 import {decodeSearch} from 'lib/util/url'
-import {withRouter} from 'react-router'
 import React from 'react'
+import {withRouter} from 'react-router'
 
 export function connectRouter(WrappedComponent) {
   class Extractor extends React.Component {

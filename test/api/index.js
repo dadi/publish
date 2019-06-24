@@ -5,7 +5,7 @@ let api
 module.exports = {
   start: () =>
     new Promise((resolve, reject) => {
-      let cwd = process.cwd()
+      const cwd = process.cwd()
 
       process.chdir(path.join(cwd, 'test/api'))
 

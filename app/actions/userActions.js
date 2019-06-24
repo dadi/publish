@@ -1,8 +1,8 @@
 import 'unfetch/polyfill'
 import * as Constants from 'lib/constants'
 import * as Types from 'actions/actionTypes'
-import {batchActions} from 'lib/redux'
 import apiBridgeClient from 'lib/api-bridge-client'
+import {batchActions} from 'lib/redux'
 
 /**
  * Registers a successful authentication.
@@ -38,9 +38,9 @@ export function saveUser() {
   return (dispatch, getState) => {
     dispatch(setUserStatus(Constants.STATUS_SAVING))
 
-    let {api} = getState().app.config
-    let update = getState().user.local
-    let apiBridge = apiBridgeClient({
+    const {api} = getState().app.config
+    const update = getState().user.local
+    const apiBridge = apiBridgeClient({
       accessToken: getState().user.accessToken,
       api
     })
@@ -70,7 +70,7 @@ export function saveUser() {
         dispatch(setRemoteUser(results[0]))
       })
       .catch(error => {
-        let actions = [setUserStatus(Constants.STATUS_FAILED, error)]
+        const actions = [setUserStatus(Constants.STATUS_FAILED, error)]
 
         // The operation failed because the current secret was missing
         // or invalid, so we must create a validation error accordingly.

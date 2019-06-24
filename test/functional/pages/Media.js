@@ -145,13 +145,15 @@ module.exports = {
     await I.waitForElement(this.locators.footer)
     await I.seeElement(this.locators.dropArea)
     // I.wait(2)
-    let images = await I.grabNumberOfVisibleElements(this.locators.images)
+    const images = await I.grabNumberOfVisibleElements(this.locators.images)
+
     await I.seeNumberOfVisibleElements(this.locators.images, images)
     await I.seeTotalGreaterThanZero(images)
     await I.attachFile(this.locators.fileUpload, 'functional/images/Stone.jpeg')
     await I.waitForFunction(() => document.readyState === 'complete')
     // I.wait(2)
-    let newImages = await I.grabNumberOfVisibleElements(this.locators.images)
+    const newImages = await I.grabNumberOfVisibleElements(this.locators.images)
+
     I.seeTotalHasIncreased(newImages, images)
     await I.see('Stone.jpeg')
   },
@@ -164,9 +166,10 @@ module.exports = {
     await I.seeElement(this.locators.dropArea)
     // I.wait(2)
     await I.see('Stone.jpeg')
-    let stoneLink = await I.grabAttributeFrom(this.locators.stoneURL, 'href')
-    let dogLink = await I.grabAttributeFrom(this.locators.dogURL, 'href')
-    let girlLink = await I.grabAttributeFrom(this.locators.girlURL, 'href')
+    const stoneLink = await I.grabAttributeFrom(this.locators.stoneURL, 'href')
+    const dogLink = await I.grabAttributeFrom(this.locators.dogURL, 'href')
+    const girlLink = await I.grabAttributeFrom(this.locators.girlURL, 'href')
+
     await I.click(this.locators.stoneImage)
     await I.waitForFunction(() => document.readyState === 'complete')
     await I.seeInCurrentUrl(stoneLink)
@@ -174,15 +177,20 @@ module.exports = {
     await I.see('Metadata')
     await I.seeElement(this.locators.editImage)
     await I.seeElement(this.locators.fileNameField)
-    let stoneFileNameText = await I.grabValueFrom(this.locators.fileNameField)
+    const stoneFileNameText = await I.grabValueFrom(this.locators.fileNameField)
+
     await I.seeElement(this.locators.mimeField)
-    let stoneMimeText = await I.grabValueFrom(this.locators.mimeField)
+    const stoneMimeText = await I.grabValueFrom(this.locators.mimeField)
+
     await I.seeElement(this.locators.heightField)
-    let stoneHeightText = await I.grabValueFrom(this.locators.heightField)
+    const stoneHeightText = await I.grabValueFrom(this.locators.heightField)
+
     await I.seeElement(this.locators.widthField)
-    let stoneWidthText = await I.grabValueFrom(this.locators.widthField)
+    const stoneWidthText = await I.grabValueFrom(this.locators.widthField)
+
     await I.seeElement(this.locators.urlField)
-    let stoneUrlText = await I.grabValueFrom(this.locators.urlField)
+    const stoneUrlText = await I.grabValueFrom(this.locators.urlField)
+
     I.seeStringsAreEqual(stoneFileNameText, 'Stone.jpeg')
     I.seeStringsAreEqual(stoneMimeText, 'image/jpeg')
     I.seeStringsAreEqual(stoneHeightText, '317')
@@ -205,15 +213,20 @@ module.exports = {
     await I.see('Metadata')
     await I.seeElement(this.locators.editImage)
     await I.seeElement(this.locators.fileNameField)
-    let dogFileNameText = await I.grabValueFrom(this.locators.fileNameField)
+    const dogFileNameText = await I.grabValueFrom(this.locators.fileNameField)
+
     await I.seeElement(this.locators.mimeField)
-    let dogMimeText = await I.grabValueFrom(this.locators.mimeField)
+    const dogMimeText = await I.grabValueFrom(this.locators.mimeField)
+
     await I.seeElement(this.locators.heightField)
-    let dogHeightText = await I.grabValueFrom(this.locators.heightField)
+    const dogHeightText = await I.grabValueFrom(this.locators.heightField)
+
     await I.seeElement(this.locators.widthField)
-    let dogWidthText = await I.grabValueFrom(this.locators.widthField)
+    const dogWidthText = await I.grabValueFrom(this.locators.widthField)
+
     await I.seeElement(this.locators.urlField)
-    let dogUrlText = await I.grabValueFrom(this.locators.urlField)
+    const dogUrlText = await I.grabValueFrom(this.locators.urlField)
+
     I.seeStringsAreEqual(dogFileNameText, 'dog.jpg')
     I.seeStringsAreEqual(dogMimeText, 'image/jpeg')
     I.seeStringsAreEqual(dogHeightText, '675')
@@ -236,15 +249,20 @@ module.exports = {
     await I.see('Metadata')
     await I.seeElement(this.locators.editImage)
     await I.seeElement(this.locators.fileNameField)
-    let girlFileNameText = await I.grabValueFrom(this.locators.fileNameField)
+    const girlFileNameText = await I.grabValueFrom(this.locators.fileNameField)
+
     await I.seeElement(this.locators.mimeField)
-    let girlMimeText = await I.grabValueFrom(this.locators.mimeField)
+    const girlMimeText = await I.grabValueFrom(this.locators.mimeField)
+
     await I.seeElement(this.locators.heightField)
-    let girlHeightText = await I.grabValueFrom(this.locators.heightField)
+    const girlHeightText = await I.grabValueFrom(this.locators.heightField)
+
     await I.seeElement(this.locators.widthField)
-    let girlWidthText = await I.grabValueFrom(this.locators.widthField)
+    const girlWidthText = await I.grabValueFrom(this.locators.widthField)
+
     await I.seeElement(this.locators.urlField)
-    let girlUrlText = await I.grabValueFrom(this.locators.urlField)
+    const girlUrlText = await I.grabValueFrom(this.locators.urlField)
+
     I.seeStringsAreEqual(girlFileNameText, 'girl.png')
     I.seeStringsAreEqual(girlMimeText, 'image/png')
     I.seeStringsAreEqual(girlHeightText, '2400')
@@ -269,34 +287,42 @@ module.exports = {
     await I.waitForElement(this.locators.footer)
     await I.seeElement(this.locators.dropArea)
     // I.wait(2)
-    let mediaImages = await I.grabNumberOfVisibleElements(this.locators.images)
+    const mediaImages = await I.grabNumberOfVisibleElements(
+      this.locators.images
+    )
+
     await I.seeNumberOfVisibleElements(this.locators.images, mediaImages)
     await I.seeTotalGreaterThanZero(mediaImages)
     // Text Search Box
     await I.fillField(this.locators.mediaSearchField, 'gi')
     await I.seeElement(this.locators.docFilterSuggestionsForm)
-    let filterOptions = await I.grabNumberOfVisibleElements(
+    const filterOptions = await I.grabNumberOfVisibleElements(
       this.locators.docFilterSuggestionsOptions
     )
+
     await I.seeNumberOfVisibleElements(
       this.locators.docFilterSuggestionsOptions,
       filterOptions
     )
     I.click(this.locators.fileNameContainsFilter)
-    let imagesFiltered = await I.grabNumberOfVisibleElements(
+    const imagesFiltered = await I.grabNumberOfVisibleElements(
       this.locators.images
     )
+
     await I.seeNumberOfVisibleElements(this.locators.images, imagesFiltered)
     await I.seeElement(this.locators.filterWrapper)
-    let containsFilterValue = await I.grabTextFrom(this.locators.filterText)
+    const containsFilterValue = await I.grabTextFrom(this.locators.filterText)
+
     I.seeStringsAreEqual(containsFilterValue, "Filenamecontains'gi'\n×")
     I.click(this.locators.filterWrapper)
-    let filenameValue = await I.grabValueFrom(this.locators.filterValueString)
+    const filenameValue = await I.grabValueFrom(this.locators.filterValueString)
+
     await I.seeStringsAreEqual(filenameValue, 'gi')
     I.click(this.locators.filterClose)
-    let mediaImagesReset = await I.grabNumberOfVisibleElements(
+    const mediaImagesReset = await I.grabNumberOfVisibleElements(
       this.locators.images
     )
+
     await I.seeNumberOfVisibleElements(this.locators.images, mediaImagesReset)
     // Number value retained
     I.click(this.locators.filterButton)
@@ -305,18 +331,21 @@ module.exports = {
     I.selectOption(this.locators.filterOperator, 'is less than or equal to')
     I.fillField(this.locators.filterValueNumber, '675')
     I.click(this.locators.addFilter)
-    let heightFiltered = await I.grabNumberOfVisibleElements(
+    const heightFiltered = await I.grabNumberOfVisibleElements(
       this.locators.images
     )
+
     await I.seeNumberOfVisibleElements(this.locators.images, heightFiltered)
     await I.seeElement(this.locators.filterWrapper)
-    let numberFilterValue = await I.grabTextFrom(this.locators.filterText)
+    const numberFilterValue = await I.grabTextFrom(this.locators.filterText)
+
     I.seeStringsAreEqual(
       numberFilterValue,
       "Heightis less than or equal to'675'\n×"
     )
     I.click(this.locators.filterWrapper)
-    let heightValue = await I.grabValueFrom(this.locators.filterValueNumber)
+    const heightValue = await I.grabValueFrom(this.locators.filterValueNumber)
+
     await I.seeNumbersAreEqual(heightValue, '675')
     I.click(this.locators.filterClose)
     // Filter search summary is correct and case-sensitive
@@ -326,22 +355,26 @@ module.exports = {
     I.selectOption(this.locators.filterOperator, 'contains')
     I.fillField(this.locators.filterValueString, 'Dog')
     I.click(this.locators.addFilter)
-    let altTextFilter = await I.grabNumberOfVisibleElements(
+    const altTextFilter = await I.grabNumberOfVisibleElements(
       this.locators.images
     )
+
     await I.seeNumberOfVisibleElements(this.locators.images, altTextFilter)
     await I.seeElement(this.locators.filterWrapper)
-    let altTextFilterValue = await I.grabTextFrom(this.locators.filterText)
+    const altTextFilterValue = await I.grabTextFrom(this.locators.filterText)
+
     I.seeStringsAreEqual(altTextFilterValue, "Alternative textcontains'Dog'\n×")
     I.click(this.locators.filterWrapper)
     I.selectOption(this.locators.filterField, 'Caption')
     I.fillField(this.locators.filterValueString, 'Dog')
     I.click(this.locators.updateFilter)
-    let captionFilterValue = await I.grabTextFrom(this.locators.filterText)
+    const captionFilterValue = await I.grabTextFrom(this.locators.filterText)
+
     I.seeStringsAreEqual(captionFilterValue, "Captioncontains'Dog'\n×")
-    let captionFilter = await I.grabNumberOfVisibleElements(
+    const captionFilter = await I.grabNumberOfVisibleElements(
       this.locators.images
     )
+
     await I.seeNumberOfVisibleElements(this.locators.images, captionFilter)
   },
 
@@ -352,7 +385,8 @@ module.exports = {
     await I.waitForElement(this.locators.footer)
     await I.seeElement(this.locators.dropArea)
     // I.wait(2)
-    let total = await I.grabTextFrom(this.locators.totalImages)
+    const total = await I.grabTextFrom(this.locators.totalImages)
+
     await I.see('Stone.jpeg')
     I.click(this.locators.checkImage)
     I.selectOption(this.locators.selectDelete, 'Delete (1)')
@@ -362,10 +396,12 @@ module.exports = {
     I.waitForText('The document has been deleted')
     // I.wait(2)
     await I.dontSee('Stone.jpeg')
-    let newTotal = await I.grabTextFrom(this.locators.totalImages)
+    const newTotal = await I.grabTextFrom(this.locators.totalImages)
+
     I.seeTotalHasDecreased(newTotal, total)
-    let dogLink = await I.grabAttributeFrom(this.locators.dogURL, 'href')
-    let girlLink = await I.grabAttributeFrom(this.locators.girlURL, 'href')
+    const dogLink = await I.grabAttributeFrom(this.locators.dogURL, 'href')
+    const girlLink = await I.grabAttributeFrom(this.locators.girlURL, 'href')
+
     await I.click(this.locators.dogImage)
     await I.waitForFunction(() => document.readyState === 'complete')
     await I.seeInCurrentUrl(dogLink)

@@ -21,7 +21,7 @@ const applyDefaultPublishParams = fields => {
 
   // Mutate fields to include required publish config.
   const augmentedFields = Object.keys(fields).reduce((result, key) => {
-    let field = fields[key]
+    const field = fields[key]
 
     field.publish = field.publish || defaultBlock
     field.publish.section = field.publish.section || defaultBlock.section
@@ -47,7 +47,7 @@ module.exports = accessToken => {
     return Promise.resolve(unauthenticatedResponse)
   }
 
-  let response = {}
+  const response = {}
 
   const requestOptions = {
     headers: {

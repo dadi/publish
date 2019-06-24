@@ -54,10 +54,10 @@ export default class DateTime {
         // as a timestamp.
         if (intDate.toString() === date) {
           return new Date(intDate)
-        } else {
-          // We assume the input string is in ISO8601 format.
-          return this._parse(date, FORMAT_ISO8601)
         }
+
+        // We assume the input string is in ISO8601 format.
+        return this._parse(date, FORMAT_ISO8601)
       }
     }
   }

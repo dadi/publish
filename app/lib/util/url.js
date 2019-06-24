@@ -14,7 +14,9 @@ export function decodeSearch(searchString) {
     try {
       // Trying to parse valid JSON parameters.
       parameters[key] = JSON.parse(parameters[key])
-    } catch (err) {}
+    } catch (err) {
+      // noop
+    }
   })
 
   return parameters
@@ -34,7 +36,7 @@ export function encodeSearch(searchObject) {
         })
 
         if (!hasSetKeys) {
-          return
+          return ''
         }
 
         try {

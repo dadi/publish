@@ -33,12 +33,12 @@ function getApi() {
 
 class Data extends Helper {
   async createClient(id, secret, selectedResources) {
-    let client = {
+    const client = {
       clientId: id,
-      secret: secret
+      secret
     }
 
-    let api = getApi()
+    const api = getApi()
 
     await api
       .inClients()
@@ -60,7 +60,7 @@ class Data extends Helper {
   }
 
   async deleteClient(id) {
-    let api = getApi()
+    const api = getApi()
 
     await api
       .inClients()
@@ -76,14 +76,14 @@ class Data extends Helper {
 
   // Create Article for setup
   async createArticle(body, excerpt, title) {
-    let api = getApi()
+    const api = getApi()
 
     await api
       .in('articles')
       .create({
-        body: body,
-        excerpt: excerpt,
-        title: title
+        body,
+        excerpt,
+        title
       })
       .then(doc => {
         // console.log('New document:', doc)
@@ -94,7 +94,7 @@ class Data extends Helper {
   }
 
   async deleteArticleByTitle(title) {
-    let api = getApi()
+    const api = getApi()
 
     await api
       .in('articles')
@@ -109,7 +109,7 @@ class Data extends Helper {
   }
 
   async deleteFieldTestBooleans() {
-    let api = getApi()
+    const api = getApi()
 
     await api
       .in('field-test-boolean')
@@ -124,7 +124,7 @@ class Data extends Helper {
   }
 
   async deleteFieldTestDates() {
-    let api = getApi()
+    const api = getApi()
 
     await api
       .in('field-test-date')
@@ -139,7 +139,7 @@ class Data extends Helper {
   }
 
   async deleteFieldTestNumbers() {
-    let api = getApi()
+    const api = getApi()
 
     await api
       .in('field-test-number')
@@ -154,7 +154,7 @@ class Data extends Helper {
   }
 
   async deleteFieldTestString() {
-    let api = getApi()
+    const api = getApi()
 
     await api
       .in('field-test-string')
@@ -169,7 +169,7 @@ class Data extends Helper {
   }
 
   async deleteFieldTestReferences() {
-    let api = getApi()
+    const api = getApi()
 
     await api
       .in('field-test-reference')
@@ -185,13 +185,13 @@ class Data extends Helper {
 
   // Create Author for setup
   async createTeam(name, body) {
-    let api = getApi()
+    const api = getApi()
 
     await api
       .in('team')
       .create({
-        name: name,
-        body: body
+        name,
+        body
       })
       .then(doc => {
         // console.log('New document:', doc)
@@ -203,7 +203,7 @@ class Data extends Helper {
 
   // Delete author
   async deleteTeam(name) {
-    let api = getApi()
+    const api = getApi()
 
     await api
       .in('team')
@@ -219,13 +219,13 @@ class Data extends Helper {
 
   // Create Category for setup
   async createCategory(name, desc) {
-    let api = getApi()
+    const api = getApi()
 
     await api
       .in('categories')
       .create({
-        name: name,
-        desc: desc
+        name,
+        desc
       })
       .then(doc => {
         // console.log('New document:', doc)
@@ -237,12 +237,12 @@ class Data extends Helper {
 
   // Create SubCategory for setup
   async createSubCategory(name) {
-    let api = getApi()
+    const api = getApi()
 
     await api
       .in('sub-categories')
       .create({
-        name: name
+        name
       })
       .then(doc => {
         // console.log('New document:', doc)
@@ -254,13 +254,12 @@ class Data extends Helper {
 
   // Create Network Service for setup
   async createNetworkService(name, overview) {
-    let api = getApi()
+    const api = getApi()
 
     await api
       .in('network-services')
       .create({
-        name: name,
-        overview,
+        name,
         overview
       })
       .then(doc => {
@@ -273,13 +272,12 @@ class Data extends Helper {
 
   // Create Web Service for setup
   async createWebService(name, overview) {
-    let api = getApi()
+    const api = getApi()
 
     await api
       .in('web-services')
       .create({
-        name: name,
-        overview,
+        name,
         overview
       })
       .then(doc => {
@@ -292,9 +290,9 @@ class Data extends Helper {
 
   async createMedia(file) {
     return this.getToken().then(result => {
-      let token = JSON.parse(result).accessToken
+      const token = JSON.parse(result).accessToken
 
-      let options = {
+      const options = {
         host: process.env.API_HOST,
         port: process.env.API_PORT,
         credentials: {
@@ -309,7 +307,7 @@ class Data extends Helper {
       }
 
       let uploadResult = ''
-      let form = new FormData()
+      const form = new FormData()
 
       form.append('file', fs.createReadStream(file))
 
@@ -330,7 +328,7 @@ class Data extends Helper {
   }
 
   async deleteAllMedia(fileName) {
-    let api = getApi()
+    const api = getApi()
 
     await api
       .inMedia('mediaStore')
@@ -345,10 +343,10 @@ class Data extends Helper {
   }
 
   getToken() {
-    let postData = JSON.stringify(config.api.credentials)
+    const postData = JSON.stringify(config.api.credentials)
     // console.log("THIS" + postData)
 
-    let options = {
+    const options = {
       hostname: config.api.host,
       port: config.api.port,
       path: `/token`,
@@ -365,12 +363,12 @@ class Data extends Helper {
   }
 
   async getSessionToken(id, secret) {
-    let postData = JSON.stringify({
+    const postData = JSON.stringify({
       clientId: id,
-      secret: secret
+      secret
     })
 
-    let options = {
+    const options = {
       hostname: config.api.host,
       port: config.api.port,
       path: `/token`,
@@ -387,7 +385,7 @@ class Data extends Helper {
   }
 
   addResources(accessToken, client, selectedResources) {
-    let options = {
+    const options = {
       hostname: config.api.host,
       port: config.api.port,
       path: `/api/clients/${client.clientId}/resources`,
@@ -398,7 +396,7 @@ class Data extends Helper {
       }
     }
 
-    let resourceList = selectedResources || [
+    const resourceList = selectedResources || [
       'collection:cloud_articles',
       'media:mediaStore',
       'collection:cloud_team',
@@ -414,11 +412,11 @@ class Data extends Helper {
       'collection:cloud_field-test-reference',
       'collection:cloud_field-test-string'
     ]
-    let resources = []
+    const resources = []
 
     resourceList.forEach(resource => {
       resources.push({
-        options: options,
+        options,
         data: JSON.stringify({
           name: resource,
           access: {
@@ -438,7 +436,7 @@ class Data extends Helper {
 
   makeRequest(obj) {
     return new Promise((resolve, reject) => {
-      let req = http.request(obj.options, res => {
+      const req = http.request(obj.options, res => {
         // console.log(`STATUS: ${res.statusCode}`)
         // console.log(`HEADERS: ${JSON.stringify(res.headers)}`)
         let data = ''
@@ -455,6 +453,7 @@ class Data extends Helper {
 
       req.on('error', e => {
         console.error(`problem with request: ${e.message}`)
+
         return reject(e)
       })
 

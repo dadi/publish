@@ -1,4 +1,5 @@
 const bootMessage = require('@dadi/boot')
+const colors = require('colors/safe')
 const config = require('./config')
 const packageJSON = require('./package.json')
 const Server = require('./server')
