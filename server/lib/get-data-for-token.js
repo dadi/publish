@@ -94,13 +94,16 @@ module.exports = accessToken => {
       const augmentedCollections = collections
         .map(collection => {
           const group = collectionGroups.get(collection.slug)
+          const slugifiedGroup = group ? slugify(group) : null
           const href = group
-            ? `/${slugify(group)}/${collection.slug}`
+            ? `/${slugifiedGroup}/${collection.slug}`
             : `/${collection.slug}`
 
           return {
             ...collection,
             fields: applyDefaultPublishParams(collection.fields),
+            _publishCollection: collection.slug,
+            _publishGroup: slugifiedGroup,
             _publishLink: href
           }
         })
