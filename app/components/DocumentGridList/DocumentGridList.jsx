@@ -68,14 +68,14 @@ export default class DocumentGridList extends React.Component {
       return 5
     } else if (windowWidth > 550) {
       return 3
-    } else {
-      return 1
     }
+
+    return 1
   }
 
   handleItemSelect(index) {
     const {onSelect, selectedDocuments, selectLimit} = this.props
-    const isSelected = !Boolean(selectedDocuments[index])
+    const isSelected = !selectedDocuments[index]
 
     let newSelectedDocuments = {}
 
@@ -108,7 +108,7 @@ export default class DocumentGridList extends React.Component {
 
     const numberOfColumns = this.getNumberOfColumns()
 
-    let columns = Array.apply(null, {length: numberOfColumns}).map(i => [])
+    const columns = Array.apply(null, {length: numberOfColumns}).map(i => [])
 
     documents.forEach((document, index) => {
       columns[index % numberOfColumns][index] = document

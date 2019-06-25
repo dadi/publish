@@ -1,6 +1,6 @@
 import * as userActions from 'actions/userActions'
-import {connectRedux} from 'lib/redux'
 import Button from 'components/Button/Button'
+import {connectRedux} from 'lib/redux'
 import HotKeys from 'lib/hot-keys'
 import proptypes from 'prop-types'
 import React from 'react'

@@ -1,6 +1,6 @@
-import React from 'react'
 import normalize from './Normalize.css'
 import proptypes from 'prop-types'
+import React from 'react'
 import styles from './Main.css'
 
 /**

@@ -1,5 +1,5 @@
-import React from 'react'
 import proptypes from 'prop-types'
+import React from 'react'
 
 /**
  * Component for rendering API fields of type String on a list view.
@@ -87,7 +87,7 @@ export default class FieldStringList extends React.Component {
 
     if (value.length > maxLength) {
       // https://stackoverflow.com/a/25575009/8583207
-      const punctuation = /[\u2000-\u206F\u2E00-\u2E7F\\'!"#$%&()*+,\-.\/:;<=>?@\[\]^_`{|}~]+$/
+      const punctuation = /[\u2000-\u206F\u2E00-\u2E7F\\'!"#$%&()*+,\-./:;<=>?@[\]^_`{|}~]+$/
 
       return (
         value
@@ -102,7 +102,7 @@ export default class FieldStringList extends React.Component {
   }
 
   renderLinkValue(value, template) {
-    let valueFormatted = value.replace(/(^\w+:|^)\/\//, '').replace(/\/$/, '')
+    const valueFormatted = value.replace(/(^\w+:|^)\/\//, '').replace(/\/$/, '')
 
     if (typeof template === 'string') {
       value = template.replace(/{value}/, value)

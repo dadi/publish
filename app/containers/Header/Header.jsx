@@ -1,7 +1,7 @@
 import * as userActions from 'actions/userActions'
+import CollectionNav from 'containers/CollectionNav/CollectionNav'
 import {connectRedux} from 'lib/redux'
 import {Link} from 'react-router-dom'
-import CollectionNav from 'containers/CollectionNav/CollectionNav'
 import proptypes from 'prop-types'
 import React from 'react'
 import Style from 'lib/Style'
@@ -52,14 +52,14 @@ class Header extends React.Component {
       return null
     }
 
-    let contentStyle = new Style(styles, 'content')
-    let innerStyle = new Style(styles)
+    const contentStyle = new Style(styles, 'content')
+    const innerStyle = new Style(styles)
 
     contentStyle.addIf('content-compact', compact)
     contentStyle.addIf('content-expanded', this.state.expanded)
     innerStyle.addIf('inner-content-compact', compact)
 
-    let displayName =
+    const displayName =
       [
         state.user.remote.data && state.user.remote.data.publishFirstName,
         state.user.remote.data && state.user.remote.data.publishLastName

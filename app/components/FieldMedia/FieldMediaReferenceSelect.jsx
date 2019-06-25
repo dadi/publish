@@ -1,13 +1,7 @@
-import React from 'react'
-import proptypes from 'prop-types'
-
-import {debounce} from 'lib/util'
-
-import Style from 'lib/Style'
-import styles from './FieldMediaReferenceSelect.css'
-
 import DocumentGridList from 'components/DocumentGridList/DocumentGridList'
 import MediaGridCard from 'containers/MediaGridCard/MediaGridCard'
+import proptypes from 'prop-types'
+import React from 'react'
 
 /**
  * Component for rendering API fields of type Media on a reference field select

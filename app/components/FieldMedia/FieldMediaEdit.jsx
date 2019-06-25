@@ -224,7 +224,7 @@ export default class FieldMediaEdit extends React.Component {
         : schema.type
     const href = onBuildBaseUrl
       ? onBuildBaseUrl({
-          createNew: !Boolean(documentId),
+          createNew: !documentId,
           documentId,
           referenceFieldSelect: name
         })
@@ -249,8 +249,8 @@ export default class FieldMediaEdit extends React.Component {
         {values && (
           <div className={styles.values}>
             {values.map((value, index) => {
-              let id = value._id || value
-              let displayName = value.fileName
+              const id = value._id || value
+              const displayName = value.fileName
                 ? value.fileName.split('.').pop()
                 : 'Document not found'
 

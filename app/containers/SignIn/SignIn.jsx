@@ -1,13 +1,13 @@
 import * as Constants from 'lib/constants'
 import * as userActions from 'actions/userActions'
-import {connectRedux} from 'lib/redux'
 import Banner from 'components/Banner/Banner'
 import Button from 'components/Button/Button'
+import {connectRedux} from 'lib/redux'
 import Label from 'components/Label/Label'
-import TextInput from 'components/TextInput/TextInput'
 import proptypes from 'prop-types'
 import React from 'react'
 import styles from './SignIn.css'
+import TextInput from 'components/TextInput/TextInput'
 
 class SignIn extends React.Component {
   static propTypes = {
@@ -122,7 +122,7 @@ class SignIn extends React.Component {
             <form method="POST" onSubmit={this.handleSignIn.bind(this)}>
               <img className={styles.logo} src={`/_public/${logo}`} />
               {this.getErrorBanner({
-                noAPIConfigured: !Boolean(api),
+                noAPIConfigured: !api,
                 remoteError: state.user.remoteError,
                 sessionHasExpired: state.user.sessionHasExpired
               })}
@@ -160,7 +160,7 @@ class SignIn extends React.Component {
                 disabled={
                   hasConnectionIssues ||
                   (userHasInteracted && !formDataIsValid) ||
-                  !Boolean(api)
+                  !api
                 }
                 isLoading={state.user.isAuthenticating}
                 type="submit"

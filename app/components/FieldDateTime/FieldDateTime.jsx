@@ -1,7 +1,7 @@
 import edit from './FieldDateTimeEdit'
-import list from './FieldDateTimeList'
 import filterEdit from './FieldDateTimeFilterEdit'
 import filterList from './FieldDateTimeFilterList'
+import list from './FieldDateTimeList'
 
 const filterOperators = {
   $lt: 'is before',

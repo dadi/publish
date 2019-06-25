@@ -3,29 +3,29 @@ import * as appActions from 'actions/appActions'
 import * as Constants from 'lib/constants'
 import * as documentActions from 'actions/documentActions'
 import * as userActions from 'actions/userActions'
-import React from 'react'
-import {debounce} from 'lib/util'
 import {decodeSearch, encodeSearch} from 'lib/util/url'
-import {connectRedux} from 'lib/redux'
 import {
-  BrowserRouter as Router,
-  Redirect,
   Route as RawRoute,
+  Redirect,
+  BrowserRouter as Router,
   Switch
 } from 'react-router-dom'
 import {
   registerErrorCallback,
   registerProgressCallback
 } from 'lib/api-bridge-client'
+import {connectRedux} from 'lib/redux'
+import {debounce} from 'lib/util'
 import DocumentEditView from 'views/DocumentEditView/DocumentEditView'
 import DocumentListView from 'views/DocumentListView/DocumentListView'
 import ErrorView from 'views/ErrorView/ErrorView'
 import HomeView from 'views/HomeView/HomeView'
 import LoadingBar from 'containers/LoadingBar/LoadingBar'
 import NotificationCentre from 'containers/NotificationCentre/NotificationCentre'
+import ProfileEditView from 'views/ProfileEditView/ProfileEditView'
+import React from 'react'
 import ReferenceSelectView from 'views/ReferenceSelectView/ReferenceSelectView'
 import SignInView from 'views/SignInView/SignInView'
-import ProfileEditView from 'views/ProfileEditView/ProfileEditView'
 
 const REGEX_NUMBER = '([0-9]+)'
 const REGEX_DOCUMENT_ID =

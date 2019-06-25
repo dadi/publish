@@ -1,5 +1,5 @@
-import React from 'react'
 import proptypes from 'prop-types'
+import React from 'react'
 
 import Style from 'lib/Style'
 import styles from './EditInterface.css'
@@ -33,8 +33,8 @@ export default class EditInterfaceSection extends React.Component {
   render() {
     const {hasErrors, isActive, main, sidebar} = this.props
 
-    let sectionStyle = new Style(styles, 'section')
-    let mainBodyStyle = new Style(styles, 'main')
+    const sectionStyle = new Style(styles, 'section')
+    const mainBodyStyle = new Style(styles, 'main')
 
     sectionStyle.addIf('section-active', isActive)
 

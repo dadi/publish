@@ -1,11 +1,9 @@
-import React from 'react'
-import proptypes from 'prop-types'
-
-import Style from 'lib/Style'
-import styles from './ButtonWithPrompt.css'
-
 import Button from 'components/Button/Button'
 import Prompt from 'components/Prompt/Prompt'
+import proptypes from 'prop-types'
+import React from 'react'
+import Style from 'lib/Style'
+import styles from './ButtonWithPrompt.css'
 
 /**
  * A simple call-to-action button with a prompt message. This component hijacks

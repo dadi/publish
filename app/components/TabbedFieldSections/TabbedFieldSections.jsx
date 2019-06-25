@@ -1,5 +1,5 @@
-import React from 'react'
 import proptypes from 'prop-types'
+import React from 'react'
 
 import Style from 'lib/Style'
 import styles from './TabbedFieldSections.css'
@@ -51,7 +51,7 @@ export default class TabbedFieldSections extends React.Component {
         )}
 
         {sections.map(section => {
-          let fields = {
+          const fields = {
             main: section.fields.filter(field => {
               return (
                 !field.publish ||
@@ -68,8 +68,8 @@ export default class TabbedFieldSections extends React.Component {
             })
           }
 
-          let sectionStyle = new Style(styles, 'section')
-          let mainBodyStyle = new Style(styles, 'main')
+          const sectionStyle = new Style(styles, 'section')
+          const mainBodyStyle = new Style(styles, 'main')
 
           sectionStyle.addIf('section-active', section.slug === activeSection)
 

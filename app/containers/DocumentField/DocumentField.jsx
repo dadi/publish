@@ -2,8 +2,8 @@ import * as documentActions from 'actions/documentActions'
 import * as fieldComponents from 'lib/field-components'
 import {connectRedux} from 'lib/redux'
 import {connectRouter} from 'lib/router'
-import {getFieldType} from 'lib/fields'
 import Field from 'components/Field/Field'
+import {getFieldType} from 'lib/fields'
 import proptypes from 'prop-types'
 import React from 'react'
 import Validator from '@dadi/api-validator'
@@ -92,7 +92,7 @@ class DocumentField extends React.Component {
     this.validate(value)
       .catch(error => error)
       .then(error => {
-        let data = {
+        const data = {
           contentKey,
           update: {
             [name]: value
@@ -157,13 +157,13 @@ class DocumentField extends React.Component {
     // the API, but currently Publish doesn't have a way of knowing this. For now,
     // we hardcode the default character, and in a future release of API we need to
     // expose this information in the /api/languages endpoint.
-    let languageFieldCharacter = ':'
+    const languageFieldCharacter = ':'
     let displayName = field.label || field._id
     let fieldName = field._id
     let placeholder = field.placeholder
 
     if (isTranslation && isTranslatable) {
-      let language = api.languages.find(language => {
+      const language = api.languages.find(language => {
         return language.code === currentLanguage
       })
 

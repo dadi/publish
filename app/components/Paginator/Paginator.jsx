@@ -1,6 +1,6 @@
-import React from 'react'
 import Button from 'components/Button/Button'
 import proptypes from 'prop-types'
+import React from 'react'
 import Style from 'lib/Style'
 import styles from './Paginator.css'
 
@@ -97,7 +97,7 @@ export default class Paginator extends React.Component {
     const firstPage = Math.max(1, currentPage - previousPages)
     const lastPage = currentPage + nextPages
 
-    let items = []
+    const items = []
 
     for (let i = firstPage; i <= lastPage; i++) {
       items.push(this.renderPageNumber(i, firstPage, lastPage, currentPage))

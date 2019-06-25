@@ -1,12 +1,10 @@
-import React from 'react'
-import proptypes from 'prop-types'
-
-import Style from 'lib/Style'
-import styles from './BulkActionSelector.css'
-
 import Button from 'components/Button/Button'
 import ButtonWithPrompt from 'components/ButtonWithPrompt/ButtonWithPrompt'
 import DropdownNative from 'components/DropdownNative/DropdownNative'
+import proptypes from 'prop-types'
+import React from 'react'
+import Style from 'lib/Style'
+import styles from './BulkActionSelector.css'
 
 const ACTION_PLACEHOLDER = 'ACTION_PLACEHOLDER'
 
@@ -71,7 +69,8 @@ export default class BulkActionSelector extends React.Component {
     const placeholder = 'Bulk actions'
 
     // Generate new actions object for the dropdown options
-    let modifiedActions = {}
+    const modifiedActions = {}
+
     Object.keys(actions).forEach(key => {
       modifiedActions[key] = actions[key].label
     })

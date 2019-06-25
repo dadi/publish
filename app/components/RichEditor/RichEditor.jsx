@@ -1,12 +1,11 @@
 import * as Constants from 'lib/constants'
-import {Editor} from 'slate-react'
 import {RichEditorToolbar, RichEditorToolbarButton} from './RichEditorToolbar'
-import {Value} from 'slate'
 import Button from 'components/Button/Button'
 import DocumentFilters from 'containers/DocumentFilters/DocumentFilters'
 import DocumentGridList from 'components/DocumentGridList/DocumentGridList'
 import DocumentList from 'containers/DocumentList/DocumentList'
 import DocumentListToolbar from 'components/DocumentListToolbar/DocumentListToolbar'
+import {Editor} from 'slate-react'
 import Fullscreen from 'components/Fullscreen/Fullscreen'
 import HeroMessage from 'components/HeroMessage/HeroMessage'
 import HotKeys from 'lib/hot-keys'
@@ -31,6 +30,7 @@ import React from 'react'
 import RichEditorLink from './RichEditorLink'
 import Style from 'lib/Style'
 import styles from './RichEditor.css'
+import {Value} from 'slate'
 
 const DEFAULT_NODE = 'paragraph'
 const EMPTY_VALUE = {
@@ -255,7 +255,9 @@ export default class RichEditor extends React.Component {
       const {document} = this.value
       const isList = this.hasBlock(NODE_LIST_ITEM)
       const isType = this.value.blocks.some(block => {
-        return !!document.getClosest(block.key, parent => parent.type === type)
+        return Boolean(
+          document.getClosest(block.key, parent => parent.type === type)
+        )
       })
 
       if (isList && isType) {

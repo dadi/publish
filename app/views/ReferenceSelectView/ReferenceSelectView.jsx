@@ -2,11 +2,9 @@ import * as Constants from 'lib/constants'
 import * as documentActions from 'actions/documentActions'
 import * as fieldComponents from 'lib/field-components'
 import * as selectionActions from 'actions/selectionActions'
-import {connectRedux} from 'lib/redux'
 import {getFieldType, getVisibleFields} from 'lib/fields'
-import {Redirect} from 'react-router-dom'
-import {slugify} from 'shared/lib/string'
 import Button from 'components/Button/Button'
+import {connectRedux} from 'lib/redux'
 import Document from 'containers/Document/Document'
 import DocumentGridList from 'components/DocumentGridList/DocumentGridList'
 import DocumentList from 'containers/DocumentList/DocumentList'
@@ -18,7 +16,9 @@ import Main from 'components/Main/Main'
 import MediaGridCard from 'containers/MediaGridCard/MediaGridCard'
 import Page from 'components/Page/Page'
 import React from 'react'
+import {Redirect} from 'react-router-dom'
 import ReferenceSelectHeader from 'components/ReferenceSelectHeader/ReferenceSelectHeader'
+import {slugify} from 'shared/lib/string'
 import styles from './ReferenceSelectView.css'
 
 class ReferenceSelectView extends React.Component {
@@ -82,7 +82,7 @@ class ReferenceSelectView extends React.Component {
       schema.publish.section &&
       slugify(schema.publish.section)
     const redirectUrl = onBuildBaseUrl.call(this, {
-      createNew: !Boolean(documentId),
+      createNew: !documentId,
       referenceFieldSelect: null,
       search: {
         ...route.search,
@@ -282,7 +282,7 @@ class ReferenceSelectView extends React.Component {
     // Computing the URL that users will be taken to if they wish to cancel
     // the reference selection.
     const returnCtaUrl = onBuildBaseUrl.call(this, {
-      createNew: !Boolean(documentId),
+      createNew: !documentId,
       referenceFieldSelect: null
     })
 
@@ -358,7 +358,7 @@ class ReferenceSelectView extends React.Component {
                   metadata={metadata}
                   pageChangeHandler={page =>
                     onBuildBaseUrl.call(this, {
-                      createNew: !Boolean(documentId),
+                      createNew: !documentId,
                       page,
                       referenceFieldSelect: referenceFieldName
                     })

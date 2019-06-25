@@ -1,7 +1,6 @@
-import React from 'react'
-import proptypes from 'prop-types'
-
 import FieldMediaItem from './FieldMediaItem'
+import proptypes from 'prop-types'
+import React from 'react'
 import styles from './FieldMedia.css'
 
 export default class FieldMediaList extends React.Component {

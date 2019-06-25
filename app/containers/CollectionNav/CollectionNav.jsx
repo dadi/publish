@@ -37,8 +37,8 @@ class CollectionNav extends React.Component {
       return !isMediaCollection
     })
 
-    let navItems = []
-    let processedSlugs = {}
+    const navItems = []
+    const processedSlugs = {}
 
     const menu = Array.isArray(api.menu) ? api.menu : []
 
@@ -86,6 +86,8 @@ class CollectionNav extends React.Component {
                 isSelected
               }
             }
+
+            return null
           })
           .filter(Boolean)
 

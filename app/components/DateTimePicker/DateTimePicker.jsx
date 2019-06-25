@@ -1,6 +1,6 @@
 import DateTime from 'lib/datetime'
-import React from 'react'
 import proptypes from 'prop-types'
+import React from 'react'
 import Style from 'lib/Style'
 import styles from './DateTimePicker.css'
 
@@ -95,6 +95,8 @@ export default class DateTimePicker extends React.Component {
         }
 
         closestDate = hourRef
+
+        return false
       })
 
       const offset = closestDate && closestDate.element.offsetTop
@@ -185,10 +187,10 @@ export default class DateTimePicker extends React.Component {
     )
     const displayDateTime = new DateTime(displayDate)
 
-    let rows = []
+    const rows = []
 
     for (let week = 0; week < numWeeks; week++) {
-      let days = []
+      const days = []
 
       for (let weekDay = 1; weekDay <= 7; weekDay++) {
         days.push(this.renderDay(week * 7 + weekDay - daysFromPreviousMonth))
@@ -283,7 +285,7 @@ export default class DateTimePicker extends React.Component {
   }
 
   renderHours() {
-    let hours = []
+    const hours = []
 
     for (let i = 0; i < 24 * this.TIME_PICKER_HOUR_SUBDIVISIONS; i++) {
       const date = this.getInternalDate({
