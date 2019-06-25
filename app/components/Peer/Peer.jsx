@@ -1,10 +1,8 @@
-import React from 'react'
+import Button from 'components/Button/Button'
 import proptypes from 'prop-types'
-
+import React from 'react'
 import Style from 'lib/Style'
 import styles from './Peer.css'
-
-import Button from 'components/Button/Button'
 
 export default class Peer extends React.Component {
   static propTypes = {

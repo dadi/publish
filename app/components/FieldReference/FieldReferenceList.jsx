@@ -63,9 +63,9 @@ export default class FieldReferenceList extends React.Component {
       return (
         <div className={styles.values}>
           {values.map(val => {
-            let collection = schema.settings.collection
-            let editLink = `${referencedCollection._publishLink}/${val._id}`
-            let displayField =
+            const collection = schema.settings.collection
+            const editLink = `${referencedCollection._publishLink}/${val._id}`
+            const displayField =
               (optionsBlock && optionsBlock.displayField) || firstStringField
                 ? firstStringField.key
                 : null
@@ -83,12 +83,12 @@ export default class FieldReferenceList extends React.Component {
           })}
         </div>
       )
-    } else {
-      return (
-        <div className={styles.values}>
-          <div className={styles.empty}>None</div>
-        </div>
-      )
     }
+
+    return (
+      <div className={styles.values}>
+        <div className={styles.empty}>None</div>
+      </div>
+    )
   }
 }

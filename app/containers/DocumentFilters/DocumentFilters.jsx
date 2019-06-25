@@ -1,8 +1,8 @@
 import * as fieldComponents from 'lib/field-components'
-import {connectRedux} from 'lib/redux'
-import {getFieldType} from 'lib/fields'
 import Button from 'components/Button/Button'
+import {connectRedux} from 'lib/redux'
 import DropdownNative from 'components/DropdownNative/DropdownNative'
+import {getFieldType} from 'lib/fields'
 import proptypes from 'prop-types'
 import React from 'react'
 import Style from 'lib/Style'
@@ -158,7 +158,7 @@ class DocumentFilters extends React.Component {
 
     // If the "Add filter" popup is already visible, clicking on the filters
     // button should hide the popup. Otherwise, it should show it.
-    let newIndex = selectedFilterIndex === -1 ? null : -1
+    const newIndex = selectedFilterIndex === -1 ? null : -1
 
     this.setState({
       selectedFilterField: null,
@@ -502,7 +502,7 @@ class DocumentFilters extends React.Component {
 
     const tooltipStyle = new Style(styles, 'tooltip').addIf(
       'tooltip-right',
-      !Boolean(isUpdate)
+      !isUpdate
     )
     const fieldSelectorStyle = new Style(styles).addIf(
       'tooltip-dropdown-left',

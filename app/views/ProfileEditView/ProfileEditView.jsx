@@ -1,9 +1,6 @@
 import * as appActions from 'actions/appActions'
 import * as userActions from 'actions/userActions'
 import {connectRedux} from 'lib/redux'
-import {Redirect} from 'react-router-dom'
-import {setPageTitle} from 'lib/util'
-import {slugify} from 'shared/lib/string'
 import EditInterface from 'components/EditInterface/EditInterface'
 import EditInterfaceSection from 'components/EditInterface/EditInterfaceSection'
 import Header from 'containers/Header/Header'
@@ -12,6 +9,9 @@ import Page from 'components/Page/Page'
 import ProfileEditToolbar from 'containers/ProfileEditToolbar/ProfileEditToolbar'
 import ProfileField from 'containers/ProfileField/ProfileField'
 import React from 'react'
+import {Redirect} from 'react-router-dom'
+import {setPageTitle} from 'lib/util'
+import {slugify} from 'shared/lib/string'
 import styles from './ProfileEditView.css'
 
 const PROFILE_SCHEMA = {
@@ -115,7 +115,7 @@ class ProfileEditView extends React.Component {
     const {route} = this.props
     const {section: activeSectionSlug} = route.params
 
-    let sections = {}
+    const sections = {}
 
     Object.keys(fields).forEach(fieldSlug => {
       const field = Object.assign({}, fields[fieldSlug], {
@@ -191,7 +191,7 @@ class ProfileEditView extends React.Component {
     // If the section isn't valid, we redirect to the first one that is.
     if (!activeSection) {
       const {slug: firstSection} = sections[0]
-      const redirectUrl = onBuildBaseUrl.call(this, {
+      const redirectUrl = this.props.onBuildBaseUrl.call(this, {
         section: firstSection
       })
 

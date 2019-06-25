@@ -1,7 +1,7 @@
 import * as appActions from 'actions/appActions'
-import React from 'react'
 import {connectRedux} from 'lib/redux'
 import proptypes from 'prop-types'
+import React from 'react'
 import styles from './LoadingBar.css'
 
 const INTERVAL_UPDATE = 250

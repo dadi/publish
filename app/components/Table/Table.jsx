@@ -186,7 +186,7 @@ export default class Table extends React.Component {
       const rowIsSelected = Boolean(selectedRows[index])
       const selectionExhausted = selectedRows.length >= selectLimit
 
-      let newProps = {
+      const newProps = {
         ...commonProps,
         onSelect: this.handleRowSelect.bind(this),
         selected: rowIsSelected,
@@ -207,7 +207,7 @@ export default class Table extends React.Component {
   selectAll() {
     const {children, onSelect} = this.props
 
-    let newSelectedRows = {}
+    const newSelectedRows = {}
 
     for (let i = 0; i < children.length; i++) {
       newSelectedRows[i] = true

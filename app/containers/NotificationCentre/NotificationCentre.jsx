@@ -1,9 +1,9 @@
 import * as appActions from 'actions/appActions'
-import React from 'react'
 import {connectRedux} from 'lib/redux'
 import {connectRouter} from 'lib/router'
 import Notification from 'components/Notification/Notification'
 import proptypes from 'prop-types'
+import React from 'react'
 
 /**
  * A global notification centre.

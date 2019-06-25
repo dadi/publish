@@ -1,10 +1,8 @@
-import React from 'react'
-import proptypes from 'prop-types'
-
 import * as Constants from 'lib/constants'
-
 import Button from 'components/Button/Button'
 import HeroMessage from 'components/HeroMessage/HeroMessage'
+import proptypes from 'prop-types'
+import React from 'react'
 
 /**
  * An error message using the HeroMessage component.

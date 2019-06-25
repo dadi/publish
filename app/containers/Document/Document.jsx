@@ -1,9 +1,9 @@
 import * as appActions from 'actions/appActions'
 import * as documentActions from 'actions/documentActions'
 import {connectRedux} from 'lib/redux'
-import SpinningWheel from 'components/SpinningWheel/SpinningWheel'
 import proptypes from 'prop-types'
 import React from 'react'
+import SpinningWheel from 'components/SpinningWheel/SpinningWheel'
 
 /**
  * The interface for editing a document.

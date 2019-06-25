@@ -1,9 +1,9 @@
-import * as userActions from 'actions/userActions'
 import * as fieldComponents from 'lib/field-components'
+import * as userActions from 'actions/userActions'
 import {connectRedux} from 'lib/redux'
 import {connectRouter} from 'lib/router'
-import {getFieldType} from 'lib/fields'
 import Field from 'components/Field/Field'
+import {getFieldType} from 'lib/fields'
 import proptypes from 'prop-types'
 import React from 'react'
 import Validator from '@dadi/api-validator'
@@ -52,7 +52,7 @@ class ProfileField extends React.Component {
     this.validate(value)
       .catch(error => error)
       .then(error => {
-        let update = {
+        const update = {
           update: {
             [name]: value
           }

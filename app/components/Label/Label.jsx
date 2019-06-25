@@ -77,7 +77,7 @@ export default class Label extends React.Component {
         return child
       }
 
-      let childProps = {
+      const childProps = {
         inLabel: true
       }
 
@@ -98,7 +98,7 @@ export default class Label extends React.Component {
   }
 
   render() {
-    let {
+    const {
       className,
       comment,
       compact,
@@ -123,13 +123,11 @@ export default class Label extends React.Component {
       return null
     }
 
-    label = label || ''
-
     return (
       <label htmlFor={this.id} className={labelStyle.getClasses()}>
         {this.renderChildren()}
 
-        <div className={styles.label}>{label}</div>
+        <div className={styles.label}>{label || ''}</div>
 
         {comment && <sub className={styles.comment}>{comment}</sub>}
 

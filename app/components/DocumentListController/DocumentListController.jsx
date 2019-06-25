@@ -1,5 +1,5 @@
-import {connectRouter} from 'lib/router'
 import Button from 'components/Button/Button'
+import {connectRouter} from 'lib/router'
 import DocumentFilters from 'containers/DocumentFilters/DocumentFilters'
 import proptypes from 'prop-types'
 import React from 'react'

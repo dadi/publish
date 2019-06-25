@@ -1,9 +1,9 @@
 import {connectRedux} from 'lib/redux'
-import {Redirect} from 'react-router-dom'
-import {setPageTitle} from 'lib/util'
 import Main from 'components/Main/Main'
 import Page from 'components/Page/Page'
 import React from 'react'
+import {Redirect} from 'react-router-dom'
+import {setPageTitle} from 'lib/util'
 import SignIn from 'containers/SignIn/SignIn'
 
 class SignInView extends React.Component {

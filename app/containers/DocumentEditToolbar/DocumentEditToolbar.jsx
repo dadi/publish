@@ -2,10 +2,10 @@ import * as appActions from 'actions/appActions'
 import * as Constants from 'lib/constants'
 import * as documentActions from 'actions/documentActions'
 import * as userActions from 'actions/userActions'
-import {connectRedux} from 'lib/redux'
-import {connectRouter} from 'lib/router'
 import ButtonWithOptions from 'components/ButtonWithOptions/ButtonWithOptions'
 import ButtonWithPrompt from 'components/ButtonWithPrompt/ButtonWithPrompt'
+import {connectRedux} from 'lib/redux'
+import {connectRouter} from 'lib/router'
 import DateTime from 'components/DateTime/DateTime'
 import DropdownNative from 'components/DropdownNative/DropdownNative'
 import HotKeys from 'lib/hot-keys'
@@ -86,7 +86,7 @@ class DocumentEditToolbar extends React.Component {
       ),
       label: 'Save and continue'
     }
-    let secondary = {
+    const secondary = {
       'Save and create new': this.handleSave.bind(
         this,
         Constants.SAVE_ACTION_SAVE_AND_CREATE_NEW
@@ -170,7 +170,7 @@ class DocumentEditToolbar extends React.Component {
     // No language is selected, so we'll set the value of the dropdown to the
     // value of the default language.
     if (languages && !currentLanguage) {
-      let defaultLanguage = api.languages.find(language => {
+      const defaultLanguage = api.languages.find(language => {
         return Boolean(language.default)
       })
 

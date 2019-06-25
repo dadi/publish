@@ -1,5 +1,5 @@
-import React from 'react'
 import proptypes from 'prop-types'
+import React from 'react'
 import styles from './FieldMedia.css'
 
 export default class FieldMediaItem extends React.Component {
@@ -47,7 +47,7 @@ export default class FieldMediaItem extends React.Component {
     )
 
     // For backwards compatibility.
-    let mimeType = value.mimeType || value.mimetype
+    const mimeType = value.mimeType || value.mimetype
 
     // Render an image document.
     let cdnThumb = false

@@ -1,5 +1,5 @@
-import React from 'react'
 import proptypes from 'prop-types'
+import React from 'react'
 
 /**
  * Component for rendering API fields of type Boolean on a list view.

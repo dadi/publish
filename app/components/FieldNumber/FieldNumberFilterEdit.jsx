@@ -1,5 +1,5 @@
-import React from 'react'
 import proptypes from 'prop-types'
+import React from 'react'
 import Style from 'lib/Style'
 import styles from './FieldNumber.css'
 import TextInput from 'components/TextInput/TextInput'

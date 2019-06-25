@@ -1,7 +1,6 @@
-import React from 'react'
-import proptypes from 'prop-types'
-
 import DropdownNative from 'components/DropdownNative/DropdownNative'
+import proptypes from 'prop-types'
+import React from 'react'
 
 /**
  * Component for rendering API fields of type Boolean in a filter.
