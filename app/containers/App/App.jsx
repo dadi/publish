@@ -207,10 +207,12 @@ class App extends React.Component {
 
     if (state.api.error) {
       return (
-        <ErrorView
-          data={state.api.error}
-          type={Constants.API_CONNECTION_ERROR}
-        />
+        <Router>
+          <ErrorView
+            data={state.api.error}
+            type={Constants.API_CONNECTION_ERROR}
+          />
+        </Router>
       )
     }
 

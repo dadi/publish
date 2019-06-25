@@ -70,6 +70,7 @@ export default function apiData(state = initialState, action = {}) {
         ...state,
         [action.key]: {
           ...(state[action.key] || blankDataBucket),
+          error: null,
           dirty: false,
           isLoading: false,
           metadata: action.metadata,
@@ -89,6 +90,7 @@ export default function apiData(state = initialState, action = {}) {
           break
 
         case Constants.STATUS_FAILED:
+          setDocumentListStatusData.dirty = false
           setDocumentListStatusData.error = action.data || true
           setDocumentListStatusData.isLoading = false
 
@@ -103,6 +105,15 @@ export default function apiData(state = initialState, action = {}) {
         }
       }
     }
+
+    case Types.TOUCH_DOCUMENT_LIST:
+      return {
+        ...state,
+        [action.key]: {
+          ...state[action.key],
+          dirty: true
+        }
+      }
 
     case Types.UPLOAD_MEDIA_FAILURE:
       return {

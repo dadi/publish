@@ -559,30 +559,32 @@ export function saveDocument({contentKey, collection, documentId}) {
               })
             }
           })
-          .catch(({errors}) => {
+          .catch(error => {
             dispatch({
-              data: errors,
+              data: error.errors || error,
               key: contentKey,
               type: Types.SAVE_DOCUMENT_FAILURE
             })
 
-            const dataUpdate = {}
-            const errorUpdate = {}
+            if (error.errors) {
+              const dataUpdate = {}
+              const errorUpdate = {}
 
-            errors.forEach(error => {
-              if (error.field) {
-                dataUpdate[error.field] = null
-                errorUpdate[error.field] = error.message
-              }
-            })
-
-            dispatch(
-              updateLocalDocument({
-                contentKey,
-                error: errorUpdate,
-                update: dataUpdate
+              error.errors.forEach(error => {
+                if (error.field) {
+                  dataUpdate[error.field] = null
+                  errorUpdate[error.field] = error.message
+                }
               })
-            )
+
+              dispatch(
+                updateLocalDocument({
+                  contentKey,
+                  error: errorUpdate,
+                  update: dataUpdate
+                })
+              )
+            }
           })
       })
       .catch(error => {
@@ -757,6 +759,30 @@ export function startDocument({contentKey: key}) {
     key,
     fromLocalStorage,
     type: Types.START_NEW_DOCUMENT
+  }
+}
+
+/**
+ * Sets a document's `dirty` flag to true.
+ *
+ * @param  {String}  contentKey   Content key
+ */
+export function touchDocument({contentKey: key}) {
+  return {
+    key,
+    type: Types.TOUCH_DOCUMENT
+  }
+}
+
+/**
+ * Sets a document list's `dirty` flag to true.
+ *
+ * @param  {String}  contentKey   Content key
+ */
+export function touchDocumentList({contentKey: key}) {
+  return {
+    key,
+    type: Types.TOUCH_DOCUMENT_LIST
   }
 }
 

@@ -48,6 +48,11 @@ class DocumentList extends React.Component {
     onLoading: proptypes.func,
 
     /**
+     * A callback to render an error message when there is a network error.
+     */
+    onNetworkError: proptypes.func,
+
+    /**
      * A function responsible for rendering the documents. It is called with
      * the following named parameters:
      *
@@ -184,6 +189,7 @@ class DocumentList extends React.Component {
       contentKey,
       onEmptyList,
       onLoading,
+      onNetworkError,
       onRender,
       onSelect,
       selection,
@@ -202,7 +208,11 @@ class DocumentList extends React.Component {
       return <SpinningWheel />
     }
 
-    const {metadata, results} = data
+    const {metadata, results, error} = data
+
+    if (error && error.toString().includes('NetworkError')) {
+      return typeof onNetworkError === 'function' && onNetworkError({error})
+    }
 
     // If there are no results to display, we call the `onEmptyList` callback
     // if it is defined, or render `null` otherwise.

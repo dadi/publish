@@ -37,6 +37,11 @@ class Document extends React.Component {
     onDocumentNotFound: proptypes.func,
 
     /**
+     * A callback to render an error message when there is a network error.
+     */
+    onNetworkError: proptypes.func,
+
+    /**
      * A callback to render the document when it is loaded successfully.
      * It is called with a single named parameter, `document`, containing
      * the document object.
@@ -89,6 +94,7 @@ class Document extends React.Component {
       contentKey,
       documentId,
       onDocumentNotFound,
+      onNetworkError,
       onRender,
       state
     } = this.props
@@ -108,6 +114,13 @@ class Document extends React.Component {
       }
 
       return null
+    }
+
+    if (remoteError && remoteError.toString().includes('NetworkError')) {
+      return (
+        typeof onNetworkError === 'function' &&
+        onNetworkError({error: remoteError})
+      )
     }
 
     if (typeof onRender !== 'function') {

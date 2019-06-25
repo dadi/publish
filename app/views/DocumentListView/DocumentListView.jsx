@@ -32,15 +32,16 @@ class DocumentListView extends React.Component {
     const {actions, state} = this.props
     const data = state.documents[this.getContentKey()] || {}
     const oldData = oldProps.state.documents[this.getContentKey()] || {}
-    const {isDeleting} = data
+    const {isDeleting, error} = data
     const {isDeleting: wasDeleting} = oldData
 
     // Have we just deleted some documents?
     if (wasDeleting && !isDeleting) {
-      const message =
-        wasDeleting > 1
-          ? `${wasDeleting} documents have been deleted`
-          : 'The document has been deleted'
+      const message = error
+        ? `The document${wasDeleting > 1 ? 's' : ''} couldn't be deleted`
+        : wasDeleting > 1
+        ? `${wasDeleting} documents have been deleted`
+        : 'The document has been deleted'
 
       actions.setNotification({
         message
@@ -155,6 +156,20 @@ class DocumentListView extends React.Component {
           Create new document
         </Button>
       </HeroMessage>
+    )
+  }
+
+  handleNetworkError() {
+    return (
+      <ErrorMessage
+        data={{
+          onClick: () =>
+            this.props.actions.touchDocumentList({
+              contentKey: this.getContentKey()
+            })
+        }}
+        type={Constants.STATUS_FAILED}
+      />
     )
   }
 
@@ -344,6 +359,7 @@ class DocumentListView extends React.Component {
             contentKey={contentKey}
             filters={search.filter}
             onEmptyList={this.handleEmptyDocumentList.bind(this)}
+            onNetworkError={this.handleNetworkError.bind(this)}
             onRender={({documents, onSelect, selectedDocuments}) => (
               <DocumentGridList
                 documents={documents}
@@ -388,6 +404,7 @@ class DocumentListView extends React.Component {
         fields={visibleFields}
         filters={search.filter}
         onEmptyList={this.handleEmptyDocumentList.bind(this)}
+        onNetworkError={this.handleNetworkError.bind(this)}
         onRender={({documents, onSelect, selectedDocuments}) => (
           <DocumentTableList
             collection={collection}
