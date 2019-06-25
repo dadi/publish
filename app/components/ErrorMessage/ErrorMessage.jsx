@@ -50,7 +50,12 @@ export default class ErrorMessage extends React.Component {
       case Constants.STATUS_FAILED:
         return {
           body: (
-            <Button accent="system" href={window.location.pathname}>
+            // href allows the button to work with 'open in new tab'
+            <Button
+              accent="system"
+              href={window.location.pathname}
+              onClick={data.onClick}
+            >
               Try again
             </Button>
           ),
@@ -61,7 +66,12 @@ export default class ErrorMessage extends React.Component {
       case Constants.API_CONNECTION_ERROR:
         return {
           body: (
-            <Button accent="system" href={window.location.pathname}>
+            // href allows the button to work with 'open in new tab'
+            <Button
+              accent="system"
+              href={window.location.pathname}
+              onClick={window.document.location.reload}
+            >
               Try again
             </Button>
           ),

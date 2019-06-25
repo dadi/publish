@@ -88,6 +88,8 @@ export default function document(state = initialState, action = {}) {
         ...state,
         [action.key]: {
           ...(state[action.key] || blankDataBucket),
+          dirty: false,
+          isLoading: false,
           remoteError: action.data || DEFAULT_ERROR_MESSAGE
         }
       }
@@ -106,6 +108,7 @@ export default function document(state = initialState, action = {}) {
         ...state,
         [action.key]: {
           ...(state[action.key] || blankDataBucket),
+          dirty: false,
           isLoading: false,
           isSaving: false,
           local: {
@@ -186,6 +189,15 @@ export default function document(state = initialState, action = {}) {
           },
           remote: null,
           wasLoadedFromLocalStorage: Boolean(action.fromLocalStorage)
+        }
+      }
+
+    case Types.TOUCH_DOCUMENT:
+      return {
+        ...state,
+        [action.key]: {
+          ...state[action.key],
+          dirty: true
         }
       }
 

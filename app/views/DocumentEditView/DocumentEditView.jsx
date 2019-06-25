@@ -248,6 +248,18 @@ class DocumentEditView extends React.Component {
     )
   }
 
+  handleNetworkError() {
+    return (
+      <ErrorMessage
+        type={Constants.STATUS_FAILED}
+        data={{
+          onClick: () =>
+            this.props.actions.touchDocument({contentKey: this.contentKey})
+        }}
+      />
+    )
+  }
+
   handleUserClosingBrowser() {
     this.saveDocumentLocally()
   }
@@ -354,6 +366,7 @@ class DocumentEditView extends React.Component {
             contentKey={this.contentKey}
             documentId={documentId}
             onDocumentNotFound={this.handleDocumentNotFound.bind(this)}
+            onNetworkError={this.handleNetworkError.bind(this)}
             onRender={({document}) =>
               this.renderDocument({
                 collection,
