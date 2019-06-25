@@ -162,13 +162,13 @@ class DocumentListView extends React.Component {
   handleNetworkError() {
     return (
       <ErrorMessage
-        type={Constants.STATUS_FAILED}
         data={{
           onClick: () =>
             this.props.actions.touchDocumentList({
               contentKey: this.getContentKey()
             })
         }}
+        type={Constants.STATUS_FAILED}
       />
     )
   }

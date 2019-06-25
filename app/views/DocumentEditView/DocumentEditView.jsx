@@ -251,11 +251,11 @@ class DocumentEditView extends React.Component {
   handleNetworkError() {
     return (
       <ErrorMessage
-        type={Constants.STATUS_FAILED}
         data={{
           onClick: () =>
             this.props.actions.touchDocument({contentKey: this.contentKey})
         }}
+        type={Constants.STATUS_FAILED}
       />
     )
   }

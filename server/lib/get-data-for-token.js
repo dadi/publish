@@ -74,7 +74,7 @@ module.exports = async accessToken => {
     response.client = clients[0]
     response.config = config.get()
 
-    // run requests in parallel, then await both at once
+    // Run requests in parallel, then await both at once.
     const languagesPromise = request(
       `${apiAddress}/api/languages`,
       requestOptions

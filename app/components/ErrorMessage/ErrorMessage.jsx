@@ -50,7 +50,7 @@ export default class ErrorMessage extends React.Component {
       case Constants.STATUS_FAILED:
         return {
           body: (
-            // href allows the button to work with 'open in new tab'
+            // `href` allows the button to work with 'open in new tab'.
             <Button
               accent="system"
               href={window.location.pathname}
@@ -66,7 +66,7 @@ export default class ErrorMessage extends React.Component {
       case Constants.API_CONNECTION_ERROR:
         return {
           body: (
-            // href allows the button to work with 'open in new tab'
+            // `href` allows the button to work with 'open in new tab'.
             <Button
               accent="system"
               href={window.location.pathname}
