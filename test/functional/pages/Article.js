@@ -306,7 +306,7 @@ module.exports = {
     I.fillField(this.locators.titleField, 'This Is A New Article')
     I.fillField(this.locators.excerptField, 'This is the excerpt')
     I.fillField(this.locators.bodyField, 'This is the body of the new article')
-    I.click(this.locators.saveArticle)
+    await I.emulateCommandButtonPressSave()
     I.waitForText('The document has been created', 2)
     I.click(this.locators.selectAuthor)
     I.waitForFunction(() => document.readyState === 'complete')
