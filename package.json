@@ -1,6 +1,6 @@
 {
   "name": "@dadi/publish",
-  "version": "3.0.0",
+  "version": "3.0.0-rc1",
   "description": "DADI Publish",
   "main": "index.js",
   "scripts": {
