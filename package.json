@@ -6,6 +6,7 @@
   "scripts": {
     "build": "NODE_ENV=production webpack --progress",
     "format": "prettier --write \"./**/*.{js,jsx,md,html}\"",
+    "prepublishOnly": "npm run build",
     "test": "npm run test:lint && npm run build && npm run test:functional",
     "test:functional:pre": "rm -rf test/functional/output && mkdir -p test/api/test/api/workspace && cp -R test/api/workspace/hooks test/api/test/api/workspace && cp test/api/workspace/db.template test/api/workspace/db",
     "test:functional:run": "API_CLIENT_ID=testClient API_CLIENT_SECRET=testSecret API_HOST=localhost API_PORT=3004 NODE_ENV=test ./node_modules/codeceptjs/bin/codecept.js run --steps --config=./test/codecept.json",
