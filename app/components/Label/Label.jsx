@@ -125,12 +125,13 @@ export default class Label extends React.Component {
 
     return (
       <label htmlFor={this.id} className={labelStyle.getClasses()}>
-        {this.renderChildren()}
-
-        <div className={styles.label}>{label || ''}</div>
-
-        {comment && <sub className={styles.comment}>{comment}</sub>}
-
+        {(label || comment) && (
+          <div className={styles.header}>
+            <div className={styles.label}>{label || ''}</div>
+            {comment && <div className={styles.comment}>{comment}</div>}
+          </div>
+        )}
+        <div>{this.renderChildren()}</div>
         {errorMessage && (
           <p className={styles['error-message']}>{errorMessage}</p>
         )}
