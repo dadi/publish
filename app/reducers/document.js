@@ -88,6 +88,8 @@ export default function document(state = initialState, action = {}) {
         ...state,
         [action.key]: {
           ...(state[action.key] || blankDataBucket),
+          dirty: false,
+          isLoading: false,
           remoteError: action.data || DEFAULT_ERROR_MESSAGE
         }
       }
@@ -106,6 +108,7 @@ export default function document(state = initialState, action = {}) {
         ...state,
         [action.key]: {
           ...(state[action.key] || blankDataBucket),
+          dirty: false,
           isLoading: false,
           isSaving: false,
           local: {
@@ -189,7 +192,16 @@ export default function document(state = initialState, action = {}) {
         }
       }
 
-    case Types.UPDATE_LOCAL_DOCUMENT:
+    case Types.TOUCH_DOCUMENT:
+      return {
+        ...state,
+        [action.key]: {
+          ...state[action.key],
+          dirty: true
+        }
+      }
+
+    case Types.UPDATE_LOCAL_DOCUMENT: {
       const errorUpdate = Object.keys(action.update).reduce((errors, field) => {
         errors[field] = action.error[field]
 
@@ -211,6 +223,7 @@ export default function document(state = initialState, action = {}) {
           }
         }
       }
+    }
 
     default:
       return state

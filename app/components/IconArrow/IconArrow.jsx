@@ -90,7 +90,7 @@ export default class IconArrow extends React.Component {
       borderWidth: borderWidthsValue
     }
 
-    let classes = [styles.icon]
+    const classes = [styles.icon]
 
     if (className) {
       classes.push(className)

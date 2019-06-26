@@ -1,6 +1,6 @@
-import React from 'react'
-import proptypes from 'prop-types'
 import DateTime from 'lib/datetime'
+import proptypes from 'prop-types'
+import React from 'react'
 
 /**
  * Component for rendering API fields of type DateTime in a filter.

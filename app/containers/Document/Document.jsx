@@ -1,9 +1,9 @@
 import * as appActions from 'actions/appActions'
 import * as documentActions from 'actions/documentActions'
 import {connectRedux} from 'lib/redux'
-import SpinningWheel from 'components/SpinningWheel/SpinningWheel'
 import proptypes from 'prop-types'
 import React from 'react'
+import SpinningWheel from 'components/SpinningWheel/SpinningWheel'
 
 /**
  * The interface for editing a document.
@@ -35,6 +35,11 @@ class Document extends React.Component {
      * not be found.
      */
     onDocumentNotFound: proptypes.func,
+
+    /**
+     * A callback to render an error message when there is a network error.
+     */
+    onNetworkError: proptypes.func,
 
     /**
      * A callback to render the document when it is loaded successfully.
@@ -89,6 +94,7 @@ class Document extends React.Component {
       contentKey,
       documentId,
       onDocumentNotFound,
+      onNetworkError,
       onRender,
       state
     } = this.props
@@ -108,6 +114,13 @@ class Document extends React.Component {
       }
 
       return null
+    }
+
+    if (remoteError && remoteError.toString().includes('NetworkError')) {
+      return (
+        typeof onNetworkError === 'function' &&
+        onNetworkError({error: remoteError})
+      )
     }
 
     if (typeof onRender !== 'function') {

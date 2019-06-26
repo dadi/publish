@@ -2,8 +2,8 @@ import * as fieldComponents from 'lib/field-components'
 import {connectRedux} from 'lib/redux'
 import {getFieldType} from 'lib/fields'
 import {Link} from 'react-router-dom'
-import React from 'react'
 import proptypes from 'prop-types'
+import React from 'react'
 import SyncTable from 'components/SyncTable/SyncTable'
 
 /**
@@ -134,7 +134,7 @@ class DocumentTableList extends React.Component {
       {}
     )
     const tableColumns = Object.keys(listableFields).map(field => {
-      if (!collection.fields[field]) return
+      if (!collection.fields[field]) return undefined
 
       return {
         annotation: this.renderAnnotation(collection.fields[field]),

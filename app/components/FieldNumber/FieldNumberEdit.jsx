@@ -1,7 +1,6 @@
-import React from 'react'
-import proptypes from 'prop-types'
-
 import Label from 'components/Label/Label'
+import proptypes from 'prop-types'
+import React from 'react'
 import TextInput from 'components/TextInput/TextInput'
 
 /**

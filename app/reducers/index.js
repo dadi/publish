@@ -1,6 +1,6 @@
-import {combineReducers} from 'redux'
 import api from './api'
 import app from './app'
+import {combineReducers} from 'redux'
 import document from './document'
 import documents from './documents'
 import selection from './selection'

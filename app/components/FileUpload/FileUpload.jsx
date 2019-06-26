@@ -1,11 +1,7 @@
-import React from 'react'
-import proptypes from 'prop-types'
-
-import Style from 'lib/Style'
-import styles from './FileUpload.css'
 import {getUniqueId} from 'lib/util'
-
-import Button from 'components/Button/Button'
+import proptypes from 'prop-types'
+import React from 'react'
+import styles from './FileUpload.css'
 
 export default class FileUpload extends React.Component {
   static propTypes = {

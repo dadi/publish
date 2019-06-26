@@ -290,8 +290,8 @@ export function fetchDocumentList({
         dispatch(
           setDocumentList({
             contentKey,
-            metadata: metadata,
-            results: results,
+            metadata,
+            results,
             timestamp: currentTs
           })
         )
@@ -457,7 +457,7 @@ export function saveDocument({contentKey, collection, documentId}) {
         !payload[field] ||
         !['Media', 'Reference'].includes(schema.type)
       ) {
-        return
+        return null
       }
 
       const schemaSettings = schema.settings || {}
@@ -478,14 +478,16 @@ export function saveDocument({contentKey, collection, documentId}) {
         // that must be uploaded first. When the upload is complete, this array
         // can be used to reconstruct `referencedDocuments` with the result of
         // the uploads.
-        let uploadIndexes = []
-        let documentsToUpload = referencedDocuments.filter(
+        const uploadIndexes = []
+        const documentsToUpload = referencedDocuments.filter(
           (document, index) => {
             if (document._id === undefined) {
               uploadIndexes.push(index)
 
               return true
             }
+
+            return false
           }
         )
         let uploadJob = Promise.resolve(referencedDocuments)
@@ -520,13 +522,15 @@ export function saveDocument({contentKey, collection, documentId}) {
           .then(reference => {
             payload[field] = referenceLimit > 1 ? reference : reference[0]
           })
-      } else {
-        const reference = referencedDocuments
-          .map(document => document._id)
-          .filter(Boolean)
-
-        payload[field] = referenceLimit > 1 ? reference : reference[0]
       }
+
+      const reference = referencedDocuments
+        .map(document => document._id)
+        .filter(Boolean)
+
+      payload[field] = referenceLimit > 1 ? reference : reference[0]
+
+      return null
     })
 
     Promise.all(referenceQueue)
@@ -555,30 +559,32 @@ export function saveDocument({contentKey, collection, documentId}) {
               })
             }
           })
-          .catch(({errors}) => {
+          .catch(error => {
             dispatch({
-              data: errors,
+              data: error.errors || error,
               key: contentKey,
               type: Types.SAVE_DOCUMENT_FAILURE
             })
 
-            let dataUpdate = {}
-            let errorUpdate = {}
+            if (error.errors) {
+              const dataUpdate = {}
+              const errorUpdate = {}
 
-            errors.forEach(error => {
-              if (error.field) {
-                dataUpdate[error.field] = null
-                errorUpdate[error.field] = error.message
-              }
-            })
-
-            dispatch(
-              updateLocalDocument({
-                contentKey,
-                error: errorUpdate,
-                update: dataUpdate
+              error.errors.forEach(error => {
+                if (error.field) {
+                  dataUpdate[error.field] = null
+                  errorUpdate[error.field] = error.message
+                }
               })
-            )
+
+              dispatch(
+                updateLocalDocument({
+                  contentKey,
+                  error: errorUpdate,
+                  update: dataUpdate
+                })
+              )
+            }
           })
       })
       .catch(error => {
@@ -753,6 +759,30 @@ export function startDocument({contentKey: key}) {
     key,
     fromLocalStorage,
     type: Types.START_NEW_DOCUMENT
+  }
+}
+
+/**
+ * Sets a document's `dirty` flag to true.
+ *
+ * @param  {String}  contentKey   Content key
+ */
+export function touchDocument({contentKey: key}) {
+  return {
+    key,
+    type: Types.TOUCH_DOCUMENT
+  }
+}
+
+/**
+ * Sets a document list's `dirty` flag to true.
+ *
+ * @param  {String}  contentKey   Content key
+ */
+export function touchDocumentList({contentKey: key}) {
+  return {
+    key,
+    type: Types.TOUCH_DOCUMENT_LIST
   }
 }
 

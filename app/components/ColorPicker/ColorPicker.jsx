@@ -1,10 +1,8 @@
-import React from 'react'
+import Color from './util.js'
 import proptypes from 'prop-types'
-
+import React from 'react'
 import Style from 'lib/Style'
 import styles from './ColorPicker.css'
-
-import Color from './util.js'
 
 /**
  * Dialog for picking date and time for an input field.
@@ -45,20 +43,25 @@ export default class ColorPicker extends React.Component {
     this.handleStartSettingHue = () => {
       this.isSettingHue = true
     }
+
     this.handleStopSettingHue = () => {
       this.isSettingHue = false
     }
+
     this.handleProcessHue = event => {
       if (this.isSettingHue) {
         this.handleHueChange(event)
       }
     }
+
     this.handleStartSettingPalette = () => {
       this.isSettingPalette = true
     }
+
     this.handleStopSettingPalette = () => {
       this.isSettingPalette = false
     }
+
     this.handleProcessPalette = event => {
       if (this.isSettingPalette) {
         this.handlePaletteChange(event)
@@ -190,9 +193,9 @@ export default class ColorPicker extends React.Component {
 
   normalisePosition(event) {
     // Handle touch events.
-    if (~event.type.indexOf('touch')) {
-      let touch = event.touches[0] || event.changedTouches[0]
-      let rect = event.target.getBoundingClientRect()
+    if (event.type.indexOf('touch') !== -1) {
+      const touch = event.touches[0] || event.changedTouches[0]
+      const rect = event.target.getBoundingClientRect()
 
       return {
         x: Math.round(touch.pageX - rect.left - window.scrollX),
@@ -217,7 +220,7 @@ export default class ColorPicker extends React.Component {
     }
 
     // Handle Firefox event.
-    let wrapper = event.target.parentNode.parentNode
+    const wrapper = event.target.parentNode.parentNode
 
     return {
       x: event.layerX - wrapper.offsetLeft,

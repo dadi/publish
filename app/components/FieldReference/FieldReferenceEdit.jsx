@@ -1,8 +1,8 @@
-import React from 'react'
-import {getVisibleFields} from 'lib/fields'
 import Button from 'components/Button/Button'
+import {getVisibleFields} from 'lib/fields'
 import Label from 'components/Label/Label'
 import proptypes from 'prop-types'
+import React from 'react'
 import styles from './FieldReference.css'
 
 /**
@@ -156,7 +156,7 @@ export default class FieldReferenceEdit extends React.Component {
     const firstStringField = this.findFirstStringField(displayableFields)
     const displayField = value && firstStringField ? firstStringField.key : null
     const editLink = onBuildBaseUrl({
-      createNew: !Boolean(documentId),
+      createNew: !documentId,
       referenceFieldSelect: name
     })
     const values = value && !(value instanceof Array) ? [value] : value

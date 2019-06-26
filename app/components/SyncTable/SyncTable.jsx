@@ -1,5 +1,5 @@
-import React from 'react'
 import proptypes from 'prop-types'
+import React from 'react'
 
 import Table from 'components/Table/Table'
 import TableHead from 'components/Table/TableHead'

@@ -1,6 +1,6 @@
 import {connectRouter} from 'lib/router'
-import {Link} from 'react-router-dom'
 import DropdownNative from 'components/DropdownNative/DropdownNative'
+import {Link} from 'react-router-dom'
 import Paginator from 'components/Paginator/Paginator'
 import proptypes from 'prop-types'
 import React from 'react'

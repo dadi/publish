@@ -1,22 +1,22 @@
-import * as Constants from 'lib/constants'
 import * as appActions from 'actions/appActions'
+import * as Constants from 'lib/constants'
 import * as documentActions from 'actions/documentActions'
 import {connectRedux} from 'lib/redux'
-import {getVisibleFields} from 'lib/fields'
-import {Redirect} from 'react-router-dom'
-import {slugify} from 'shared/lib/string'
-import {setPageTitle} from 'lib/util'
 import Document from 'containers/Document/Document'
-import DocumentField from 'containers/DocumentField/DocumentField'
 import DocumentEditToolbar from 'containers/DocumentEditToolbar/DocumentEditToolbar'
+import DocumentField from 'containers/DocumentField/DocumentField'
 import EditInterface from 'components/EditInterface/EditInterface'
 import EditInterfaceSection from 'components/EditInterface/EditInterfaceSection'
 import ErrorMessage from 'components/ErrorMessage/ErrorMessage'
+import {getVisibleFields} from 'lib/fields'
 import Header from 'containers/Header/Header'
 import Main from 'components/Main/Main'
 import MediaViewer from 'components/MediaViewer/MediaViewer'
 import Page from 'components/Page/Page'
 import React from 'react'
+import {Redirect} from 'react-router-dom'
+import {setPageTitle} from 'lib/util'
+import {slugify} from 'shared/lib/string'
 import styles from './DocumentEditView.css'
 
 class DocumentEditView extends React.Component {
@@ -97,7 +97,7 @@ class DocumentEditView extends React.Component {
     const document = state.document[this.contentKey] || {}
     const {route, state: newState} = newProps
     const newDocument = newState.document[this.contentKey] || {}
-    const {documentId} = route.params
+    const {documentId, section} = route.params
 
     if (document.isSaving && !newDocument.isSaving) {
       const {lastSaveMode: mode} = newDocument
@@ -187,7 +187,7 @@ class DocumentEditView extends React.Component {
     const {onBuildBaseUrl, route} = this.props
     const {documentId, section: activeSectionSlug} = route.params
 
-    let sections = {}
+    const sections = {}
 
     Object.keys(fields).forEach(fieldSlug => {
       const field = Object.assign({}, fields[fieldSlug], {
@@ -222,7 +222,7 @@ class DocumentEditView extends React.Component {
       return {
         fields: fieldsInPlacements,
         href: onBuildBaseUrl.call(this, {
-          createNew: !Boolean(documentId),
+          createNew: !documentId,
           section: slug
         }),
         isActive,
@@ -244,6 +244,18 @@ class DocumentEditView extends React.Component {
       <ErrorMessage
         data={{href: listRoute}}
         type={Constants.ERROR_DOCUMENT_NOT_FOUND}
+      />
+    )
+  }
+
+  handleNetworkError() {
+    return (
+      <ErrorMessage
+        data={{
+          onClick: () =>
+            this.props.actions.touchDocument({contentKey: this.contentKey})
+        }}
+        type={Constants.STATUS_FAILED}
       />
     )
   }
@@ -354,6 +366,7 @@ class DocumentEditView extends React.Component {
             contentKey={this.contentKey}
             documentId={documentId}
             onDocumentNotFound={this.handleDocumentNotFound.bind(this)}
+            onNetworkError={this.handleNetworkError.bind(this)}
             onRender={({document}) =>
               this.renderDocument({
                 collection,

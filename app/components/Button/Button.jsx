@@ -138,6 +138,7 @@ export default class Button extends React.Component {
             className={buttonStyle.getClasses()}
             href={href}
             target={openInNewWindow && '_blank'}
+            onClick={onClick}
           >
             {children}
           </a>
@@ -145,7 +146,7 @@ export default class Button extends React.Component {
       }
 
       return (
-        <Link className={buttonStyle.getClasses()} to={href}>
+        <Link className={buttonStyle.getClasses()} to={href} onClick={onClick}>
           {children}
         </Link>
       )

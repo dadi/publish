@@ -38,10 +38,10 @@ export default function apiData(state = initialState, action = {}) {
         }
       }
 
-    case Types.DELETE_DOCUMENTS_SUCCESS:
+    case Types.DELETE_DOCUMENTS_SUCCESS: {
       const {slug: collection} = action.collection
 
-      let newState = {...state}
+      const newState = {...state}
 
       // We must go through all the keys in the store and flag as dirty all
       // the document lists for the collection which we've just deleted a
@@ -63,12 +63,14 @@ export default function apiData(state = initialState, action = {}) {
           isDeleting: 0
         }
       }
+    }
 
     case Types.SET_DOCUMENT_LIST:
       return {
         ...state,
         [action.key]: {
           ...(state[action.key] || blankDataBucket),
+          error: null,
           dirty: false,
           isLoading: false,
           metadata: action.metadata,
@@ -77,8 +79,8 @@ export default function apiData(state = initialState, action = {}) {
         }
       }
 
-    case Types.SET_DOCUMENT_LIST_STATUS:
-      let setDocumentListStatusData = {}
+    case Types.SET_DOCUMENT_LIST_STATUS: {
+      const setDocumentListStatusData = {}
 
       switch (action.status) {
         case Constants.STATUS_LOADING:
@@ -88,6 +90,7 @@ export default function apiData(state = initialState, action = {}) {
           break
 
         case Constants.STATUS_FAILED:
+          setDocumentListStatusData.dirty = false
           setDocumentListStatusData.error = action.data || true
           setDocumentListStatusData.isLoading = false
 
@@ -99,6 +102,16 @@ export default function apiData(state = initialState, action = {}) {
         [action.key]: {
           ...(state[action.key] || blankDataBucket),
           ...setDocumentListStatusData
+        }
+      }
+    }
+
+    case Types.TOUCH_DOCUMENT_LIST:
+      return {
+        ...state,
+        [action.key]: {
+          ...state[action.key],
+          dirty: true
         }
       }
 

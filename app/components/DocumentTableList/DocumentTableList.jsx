@@ -153,7 +153,7 @@ export default class DocumentTableList extends React.Component {
       {}
     )
     const tableColumns = Object.keys(listableFields).map(field => {
-      if (!collection.fields[field]) return
+      if (!collection.fields[field]) return undefined
 
       return {
         annotation: this.renderAnnotation(collection.fields[field]),

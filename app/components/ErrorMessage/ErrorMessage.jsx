@@ -1,10 +1,8 @@
-import React from 'react'
-import proptypes from 'prop-types'
-
 import * as Constants from 'lib/constants'
-
 import Button from 'components/Button/Button'
 import HeroMessage from 'components/HeroMessage/HeroMessage'
+import proptypes from 'prop-types'
+import React from 'react'
 
 /**
  * An error message using the HeroMessage component.
@@ -50,7 +48,12 @@ export default class ErrorMessage extends React.Component {
       case Constants.STATUS_FAILED:
         return {
           body: (
-            <Button accent="system" href={window.location.pathname}>
+            // `href` allows the button to work with 'open in new tab'.
+            <Button
+              accent="system"
+              href={window.location.pathname}
+              onClick={data.onClick}
+            >
               Try again
             </Button>
           ),
@@ -61,7 +64,12 @@ export default class ErrorMessage extends React.Component {
       case Constants.API_CONNECTION_ERROR:
         return {
           body: (
-            <Button accent="system" href={window.location.pathname}>
+            // `href` allows the button to work with 'open in new tab'.
+            <Button
+              accent="system"
+              href={window.location.pathname}
+              onClick={window.document.location.reload}
+            >
               Try again
             </Button>
           ),

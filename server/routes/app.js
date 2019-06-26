@@ -1,7 +1,7 @@
 const getDataForToken = require('../lib/get-data-for-token')
 const packageJSON = require('../../package.json')
 
-const template = ({client, config, version}) => `
+const template = ({client, config, error, version}) => `
   <!DOCTYPE html>
   <html>
     <head>
@@ -20,6 +20,7 @@ const template = ({client, config, version}) => `
       <div id="app"></div>
       <script>window.__client__ = ${JSON.stringify(client)}</script>
       <script>window.__config__ = ${JSON.stringify(config)}</script>
+      <script>window.__error__ = ${JSON.stringify(error)}</script>
       <script>window.__version__ = ${JSON.stringify(version)}</script>
       <script src="/_dist/bundle.js?v=${version}"></script>
     </body>
@@ -32,10 +33,11 @@ module.exports = server => {
 
     res.header('Content-Type', 'text/html; charset=utf-8')
 
-    return getDataForToken(accessToken).then(({client, config}) => {
+    return getDataForToken(accessToken).then(({client, config, error}) => {
       const html = template({
         client,
         config,
+        error,
         version: packageJSON.version
       })
 

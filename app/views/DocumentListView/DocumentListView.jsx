@@ -2,18 +2,16 @@ import * as appActions from 'actions/appActions'
 import * as Constants from 'lib/constants'
 import * as documentActions from 'actions/documentActions'
 import * as selectionActions from 'actions/selectionActions'
-import {connectRedux} from 'lib/redux'
-import {getVisibleFields} from 'lib/fields'
-import {Redirect} from 'react-router-dom'
-import {setPageTitle} from 'lib/util'
-import Button from 'components/Button/Button'
 import BulkActionSelector from 'components/BulkActionSelector/BulkActionSelector'
+import Button from 'components/Button/Button'
+import {connectRedux} from 'lib/redux'
 import DocumentGridList from 'components/DocumentGridList/DocumentGridList'
 import DocumentList from 'containers/DocumentList/DocumentList'
 import DocumentListController from 'components/DocumentListController/DocumentListController'
 import DocumentListToolbar from 'components/DocumentListToolbar/DocumentListToolbar'
 import DocumentTableList from 'containers/DocumentTableList/DocumentTableList'
 import ErrorMessage from 'components/ErrorMessage/ErrorMessage'
+import {getVisibleFields} from 'lib/fields'
 import Header from 'containers/Header/Header'
 import HeroMessage from 'components/HeroMessage/HeroMessage'
 import Main from 'components/Main/Main'
@@ -21,6 +19,8 @@ import MediaGridCard from 'containers/MediaGridCard/MediaGridCard'
 import MediaListController from 'components/MediaListController/MediaListController'
 import Page from 'components/Page/Page'
 import React from 'react'
+import {Redirect} from 'react-router-dom'
+import {setPageTitle} from 'lib/util'
 import styles from './DocumentListView.css'
 
 const BULK_ACTIONS = {
@@ -32,15 +32,16 @@ class DocumentListView extends React.Component {
     const {actions, state} = this.props
     const data = state.documents[this.getContentKey()] || {}
     const oldData = oldProps.state.documents[this.getContentKey()] || {}
-    const {isDeleting} = data
+    const {isDeleting, error} = data
     const {isDeleting: wasDeleting} = oldData
 
     // Have we just deleted some documents?
     if (wasDeleting && !isDeleting) {
-      const message =
-        wasDeleting > 1
-          ? `${wasDeleting} documents have been deleted`
-          : 'The document has been deleted'
+      const message = error
+        ? `The document${wasDeleting > 1 ? 's' : ''} couldn't be deleted`
+        : wasDeleting > 1
+        ? `${wasDeleting} documents have been deleted`
+        : 'The document has been deleted'
 
       actions.setNotification({
         message
@@ -155,6 +156,20 @@ class DocumentListView extends React.Component {
           Create new document
         </Button>
       </HeroMessage>
+    )
+  }
+
+  handleNetworkError() {
+    return (
+      <ErrorMessage
+        data={{
+          onClick: () =>
+            this.props.actions.touchDocumentList({
+              contentKey: this.getContentKey()
+            })
+        }}
+        type={Constants.STATUS_FAILED}
+      />
     )
   }
 
@@ -344,6 +359,7 @@ class DocumentListView extends React.Component {
             contentKey={contentKey}
             filters={search.filter}
             onEmptyList={this.handleEmptyDocumentList.bind(this)}
+            onNetworkError={this.handleNetworkError.bind(this)}
             onRender={({documents, onSelect, selectedDocuments}) => (
               <DocumentGridList
                 documents={documents}
@@ -388,6 +404,7 @@ class DocumentListView extends React.Component {
         fields={visibleFields}
         filters={search.filter}
         onEmptyList={this.handleEmptyDocumentList.bind(this)}
+        onNetworkError={this.handleNetworkError.bind(this)}
         onRender={({documents, onSelect, selectedDocuments}) => (
           <DocumentTableList
             collection={collection}
