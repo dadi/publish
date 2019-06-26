@@ -7,7 +7,6 @@ app/
 CHANGELOG.md
 CONTRIBUTING.md
 dev-config/
-dist/
 log/
 node_modules/
 npm-debug.log
