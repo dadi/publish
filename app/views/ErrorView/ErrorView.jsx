@@ -8,7 +8,6 @@ import React from 'react'
 class ErrorView extends React.Component {
   render() {
     const {data, state, type} = this.props
-    const {currentCollection} = state.api
     const hasConfig = state.app && state.app.config
 
     // We only treat this as an actual error, and therefore display the error
@@ -16,7 +15,7 @@ class ErrorView extends React.Component {
     // showing a flashing 404 page whilst routes are still being loaded.
     return (
       <Page>
-        <Header currentCollection={currentCollection} />
+        <Header />
 
         <Main>
           {(hasConfig || data) && <ErrorMessage type={type} data={data} />}

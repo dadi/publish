@@ -23,11 +23,6 @@ class Header extends React.Component {
     children: proptypes.node,
 
     /**
-     * The schema of the collection being edited.
-     */
-    currentCollection: proptypes.object,
-
-    /**
      * The global state object.
      */
     state: proptypes.object
@@ -42,7 +37,7 @@ class Header extends React.Component {
   }
 
   render() {
-    const {children, currentCollection, state} = this.props
+    const {children, state} = this.props
     const compact = state.app.breakpoint === null
 
     const {whitelabel} = state.app.config
@@ -113,7 +108,7 @@ class Header extends React.Component {
             className={innerStyle.getClasses()}
             onClick={this.toggleCollapsed.bind(this, false)}
           >
-            <CollectionNav currentCollection={currentCollection} />
+            <CollectionNav />
           </div>
         </div>
 
