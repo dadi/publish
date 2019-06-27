@@ -1,5 +1,7 @@
 'use strict'
 
+/*global window KeyboardEvent:true*/
+
 // const {
 //   expect
 // } = require('chai')
