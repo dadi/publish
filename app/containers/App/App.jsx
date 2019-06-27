@@ -105,6 +105,23 @@ class Route extends React.Component {
             return <Redirect to={`/sign-in${redirectParam}`} />
           }
 
+          const apiError = window.__error__
+
+          if (apiError) {
+            if (apiError.statusCode === 404) {
+              window.__error__ = null
+
+              return <Redirect to="sign-in" />
+            }
+
+            return (
+              <ErrorView
+                data={apiError}
+                type={Constants.API_CONNECTION_ERROR}
+              />
+            )
+          }
+
           if (typeof render === 'function') {
             return render(props)
           }
@@ -204,18 +221,6 @@ class App extends React.Component {
 
   render() {
     const {actions, state} = this.props
-
-    if (state.api.error) {
-      return (
-        <Router>
-          <ErrorView
-            data={state.api.error}
-            type={Constants.API_CONNECTION_ERROR}
-          />
-        </Router>
-      )
-    }
-
     const {isSignedIn} = state.user
 
     if (isSignedIn && !this.sessionTimer) {
