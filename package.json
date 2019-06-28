@@ -63,7 +63,7 @@
     "react-dom": "^16.8.6",
     "react-modal": "^3.8.1",
     "react-redux": "^7.0.3",
-    "react-router-dom": "^5.0.0",
+    "react-router-dom": "^5.0.1",
     "redux": "^4.0.1",
     "redux-thunk": "^2.3.0",
     "slate": "^0.47.3",
