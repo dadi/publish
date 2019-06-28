@@ -61,26 +61,31 @@ export default class FieldReferenceList extends React.Component {
 
     if (values) {
       return (
-        <div className={styles.values}>
-          {values.map(val => {
-            const collection = schema.settings.collection
-            const editLink = `${referencedCollection._publishLink}/${val._id}`
-            const displayField =
-              (optionsBlock && optionsBlock.displayField) || firstStringField
-                ? firstStringField.key
-                : null
+        <div className={styles['list-value-container']}>
+          <div className={styles.values}>
+            {values.map(val => {
+              const collection = schema.settings.collection
+              const editLink = `${referencedCollection._publishLink}/${val._id}`
+              const displayField =
+                (optionsBlock && optionsBlock.displayField) || firstStringField
+                  ? firstStringField.key
+                  : null
 
-            return (
-              <Link
-                className={styles['value-link']}
-                key={editLink}
-                to={editLink}
-              >
-                {(displayField && val[displayField]) ||
-                  `Referenced ${collection}`}
-              </Link>
-            )
-          })}
+              return (
+                <Link
+                  className={styles['value-link']}
+                  key={editLink}
+                  to={editLink}
+                >
+                  <div className={styles['list-value']}>
+                    {(displayField && val[displayField]) ||
+                      `Referenced ${collection}`}
+                  </div>
+                </Link>
+              )
+            })}
+          </div>
+          <div />
         </div>
       )
     }

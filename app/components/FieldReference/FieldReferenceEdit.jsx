@@ -178,10 +178,10 @@ export default class FieldReferenceEdit extends React.Component {
                       href={`${referencedCollection._publishLink}/${value._id}`}
                       key={value._id}
                     >
-                      <span className={styles.value}>
+                      <div className={styles.value}>
                         {(displayField && value[displayField]) ||
                           `Referenced ${displayName}`}
-                      </span>
+                      </div>
                     </a>
                   )
                 }
@@ -194,27 +194,29 @@ export default class FieldReferenceEdit extends React.Component {
               })}
             </div>
 
-            {!isReadOnly && (
-              <Button
-                accent="data"
-                className={styles['control-button']}
-                href={editLink}
-                size="small"
-              >
-                Edit
-              </Button>
-            )}
+            <div className={styles.buttons}>
+              {!isReadOnly && (
+                <Button
+                  accent="data"
+                  className={styles['control-button']}
+                  href={editLink}
+                  size="small"
+                >
+                  Edit
+                </Button>
+              )}
 
-            {!isReadOnly && (
-              <Button
-                accent="destruct"
-                className={styles['control-button']}
-                onClick={this.handleRemove.bind(this)}
-                size="small"
-              >
-                Remove
-              </Button>
-            )}
+              {!isReadOnly && (
+                <Button
+                  accent="destruct"
+                  className={styles['control-button']}
+                  onClick={this.handleRemove.bind(this)}
+                  size="small"
+                >
+                  Remove
+                </Button>
+              )}
+            </div>
           </div>
         )}
 
