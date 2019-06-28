@@ -1,6 +1,6 @@
-'use strict'
+/* eslint-env browser */
 
-/*global window KeyboardEvent:true*/
+'use strict'
 
 // const {
 //   expect
