@@ -142,6 +142,15 @@ module.exports = {
       .find('a')
       .withText('Edit')
       .as('Edit Web Service Button'),
+    removeWebServiceButton: locate('div')
+      .withAttr({
+        'data-field-name': 'web-service'
+      })
+      .find('button')
+      .as('Remove Web Service Button'),
+    webServiceSelected: locate('a[href*="/web-services/"]').as(
+      'Web Service Selected'
+    ),
     networkService: locate('label')
       .withText('Network service')
       .as('Network Service'),
@@ -273,7 +282,11 @@ module.exports = {
     insertButton: locate('button')
       .withText('Insert items')
       .as('Insert Items Button'),
-    mediaModal: locate('div[class*="ReactModal__Content"]').as('Media Modal')
+    mediaModal: locate('div[class*="ReactModal__Content"]').as('Media Modal'),
+    numEditArticles: locate('//table/tbody/tr/td[2]').as('Number of Articles'),
+    delArticleButton: locate('button[class*="button-destruct"]').as(
+      'Delete Article Button'
+    )
   },
 
   async validateArticlePage() {
@@ -347,8 +360,9 @@ module.exports = {
     const categoryNames = await I.grabTextFrom(this.locators.numOfCategories)
 
     I.click(
-      locate('//td[2]').withText(categoryNames[3].trim())
-      // .as('Selected Category')
+      locate('//td[2]')
+        .withText(categoryNames[3].trim())
+        .as('Selected Category')
     )
     I.click(this.locators.addSelected)
     I.waitForFunction(() => document.readyState === 'complete')
@@ -370,8 +384,9 @@ module.exports = {
     )
 
     I.click(
-      locate('//td[2]').withText(subCategoryNames[1].trim())
-      // .as('Selected Sub Category')
+      locate('//td[2]')
+        .withText(subCategoryNames[1].trim())
+        .as('Selected Sub Category')
     )
     I.click(this.locators.addSelected)
     I.waitForFunction(() => document.readyState === 'complete')
@@ -452,48 +467,44 @@ module.exports = {
   },
 
   async editArticle() {
-    const link = await I.grabAttributeFrom(this.locators.createdArticle, 'href')
-    const start = link.indexOf('/articles/')
-    const id = link.slice(start)
+    await I.amOnPage('/articles')
+    await I.waitForVisible(this.locators.articleTitleHeading)
+    await I.waitForElement(this.locators.footer)
+    await I.seeElement(this.locators.createNewButton)
 
-    I.click(this.locators.createdArticle)
-    I.seeInCurrentUrl(id)
-    const slug = await I.grabValueFrom(this.locators.slugField)
+    const articlesNames = await I.grabTextFrom(this.locators.numEditArticles)
 
-    I.seeStringsAreEqual(slug, 'this-is-a-new-article')
-    I.fillField(this.locators.titleField, '')
-    I.fillField(this.locators.titleField, 'This Article Is Updated')
-    I.scrollTo(this.locators.webService)
-    I.click(this.locators.editWebServiceButton)
-    I.waitForFunction(() => document.readyState === 'complete')
-    I.seeInCurrentUrl('/select/web-service')
-    I.waitForText('Web service')
-    const webServicesNames = await I.grabTextFrom(
-      this.locators.numOfWebServices
+    const link = await I.grabAttributeFrom(
+      locate('a')
+        .withText(articlesNames[1])
+        .as('Edit Article Link'),
+      'href'
     )
 
     I.click(
-      locate('td')
-        .before('//td[.="' + webServicesNames[4].trim() + '"]')
-        .as('Second Selected Web Service')
+      locate('a')
+        .withText(articlesNames[1])
+        .as('Article to Edit')
     )
-    I.wait(1)
-    I.click(this.locators.addSelected)
-    I.waitForFunction(() => document.readyState === 'complete')
+    I.seeInCurrentUrl(link)
+    I.fillField(this.locators.titleField, '')
+    I.fillField(this.locators.titleField, 'This Article Is Updated')
     I.scrollTo(this.locators.webService)
-    I.see(webServicesNames[0].trim())
-    I.dontSee(webServicesNames[4].trim())
+    const wsSelected = await I.grabTextFrom(this.locators.webServiceSelected)
+
+    I.click(this.locators.removeWebServiceButton)
+    I.dontSee(wsSelected)
     I.click(this.locators.saveMenu)
     I.click(this.locators.saveGoBack)
     I.waitForText('The document has been updated', 2)
     I.seeInCurrentUrl('/articles')
+    I.dontSee(articlesNames[1])
     I.see('This Article Is Updated')
     I.click(this.locators.updatedArticle)
-    I.seeInCurrentUrl(id)
+    I.seeInCurrentUrl(link)
     const updatedSlug = await I.grabValueFrom(this.locators.slugField)
 
     I.seeStringsAreEqual(updatedSlug, 'this-article-is-updated')
-    I.click(this.locators.articleLink)
   },
 
   async filterArticle() {
@@ -589,18 +600,41 @@ module.exports = {
   },
 
   async deleteArticle() {
+    await I.amOnPage('/articles')
+    await I.waitForVisible(this.locators.articleTitleHeading)
+    await I.waitForElement(this.locators.footer)
+    await I.seeElement(this.locators.createNewButton)
     const total = await I.grabTextFrom(this.locators.totalArticles)
 
-    I.click(this.locators.checkArticle)
+    const deleteArticles = await I.grabTextFrom(this.locators.numEditArticles)
+
+    I.click(
+      locate('td')
+        .before('//td[.="' + deleteArticles[0].trim() + '"]')
+        .as('First Article to Delete')
+    )
     I.selectOption(this.locators.selectDelete, 'Delete (1)')
     I.click(this.locators.applyButton)
     I.waitForText('Are you sure you want to delete the selected document?')
     I.pressKey('Enter')
     I.waitForText('The document has been deleted', 2)
-    I.dontSee('This Article Is Updated')
+    I.dontSee(deleteArticles[0])
     const newTotal = await I.grabTextFrom(this.locators.totalArticles)
 
     I.seeTotalHasDecreased(newTotal, total)
+    I.click(
+      locate('a')
+        .withText(deleteArticles[1])
+        .as('Second Article to Delete')
+    )
+    I.click(this.locators.delArticleButton)
+    I.waitForText('Are you sure you want to delete this document?')
+    I.pressKey('Enter')
+    I.waitForText('The document has been deleted', 2)
+    I.dontSee(deleteArticles[1])
+    const newestTotal = await I.grabTextFrom(this.locators.totalArticles)
+
+    I.seeTotalHasDecreased(newestTotal, newTotal)
   },
 
   async newSignOut() {

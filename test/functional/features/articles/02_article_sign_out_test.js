@@ -26,9 +26,3 @@ Scenario('New Article Sign Out', async (articlePage, loginPage) => {
   await articlePage.newSignOut()
   await loginPage.validateSignOut()
 })
-
-Scenario('Edit Article Sign Out', async (articlePage, loginPage) => {
-  await articlePage.validateArticlePage()
-  await articlePage.editSignOut()
-  await loginPage.validateSignOut()
-})
