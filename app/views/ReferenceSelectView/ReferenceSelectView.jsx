@@ -69,7 +69,7 @@ class ReferenceSelectView extends React.Component {
     actions.updateLocalDocument({
       contentKey: this.getParentContentKey(),
       update: {
-        [referenceField]: selection
+        [referenceField]: selection && selection.length > 0 ? selection : null
       }
     })
 
@@ -368,14 +368,12 @@ class ReferenceSelectView extends React.Component {
                 >
                   <Button
                     accent="save"
-                    disabled={selection.length === 0}
                     onClick={this.handleDocumentSelect.bind(this, {
                       referenceField,
                       selection
                     })}
                   >
-                    Add selected{' '}
-                    {selection.length === 1 ? 'document' : 'documents'}
+                    Save selection
                   </Button>
                 </DocumentListToolbar>
               </div>

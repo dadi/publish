@@ -60,7 +60,7 @@ module.exports = {
       'Number of Network Services'
     ),
     addAuthor: locate('button')
-      .withText('Add selected document')
+      .withText('Save selection')
       .as('Add The Author'),
     excerptField: locate('div')
       .withAttr({
@@ -127,7 +127,7 @@ module.exports = {
       .withText('Select existing network service')
       .as('Select Existing Newtork Service Button'),
     addSelected: locate('button')
-      .withText('Add selected document')
+      .withText('Save selection')
       .as('Add Selected Document Button'),
     removeNetworkButton: locate('div')
       .withAttr({

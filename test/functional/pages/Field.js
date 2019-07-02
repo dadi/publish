@@ -453,7 +453,7 @@ module.exports = {
       .as('Reference required error box'),
     numOfAuthors: locate('//table/tbody/tr/td[2]').as('Number of Authors'),
     addAuthor: locate('button')
-      .withText('Add selected document')
+      .withText('Save selection')
       .as('Add The Author'),
     referenceLink: locate('a[class*="FieldReference__value-link"]').as(
       'Added reference'
@@ -615,7 +615,7 @@ module.exports = {
       .find('div[class*="FieldMedia__upload-drop"]')
       .as('Drop files to upload PDF Only'),
     addSelected: locate('button')
-      .withText('Add selected document')
+      .withText('Save selection')
       .as('Add Selected Document Button'),
     mediaJpegAdded: locate('div')
       .withAttr({
