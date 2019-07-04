@@ -16,7 +16,7 @@ module.exports = {
         href: '/media'
       })
       .as('Media Library Link'),
-    footer: locate('.//footer').as('Article Page Footer'),
+    footer: locate('footer').as('Article Page Footer'),
     images: locate('[class *= "MediaGridCard__wrapper___"]').as(
       'Number of Images'
     ),
@@ -40,9 +40,6 @@ module.exports = {
     editImage: locate('img[class *= "MediaViewer__image___"]').as(
       'Image Preview'
     ),
-    openNewWindow: locate('a')
-      .withText('Open in new window')
-      .as('Open In New Window Link'),
     captionField: locate('input')
       .withAttr({
         name: 'caption'
@@ -81,7 +78,9 @@ module.exports = {
     saveButton: locate('button')
       .withText('Save and continue')
       .as('Save And Continue Button'),
-    totalImages: locate('.//strong[2]').as('Total Number of Images'),
+    totalImages: locate('span strong:nth-child(2)').as(
+      'Total Number of Images'
+    ),
     checkImage: locate('input[class *= "MediaGridCard__select___"]')
       .first()
       .as('Select Image'),
@@ -400,7 +399,6 @@ module.exports = {
 
     I.seeTotalHasDecreased(newTotal, total)
     const dogLink = await I.grabAttributeFrom(this.locators.dogURL, 'href')
-    const girlLink = await I.grabAttributeFrom(this.locators.girlURL, 'href')
 
     await I.click(this.locators.dogImage)
     await I.waitForFunction(() => document.readyState === 'complete')
@@ -413,6 +411,7 @@ module.exports = {
     I.pressKey('Enter')
     I.waitForText('The document has been deleted')
     // I.wait(2)
+    await I.see('girl.png')
     await I.dontSee('dog.jpg')
   },
 

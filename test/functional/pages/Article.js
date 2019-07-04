@@ -18,7 +18,6 @@ module.exports = {
         href: '/'
       })
       .as('Publish Menu'),
-    navigationMenu: locate('.//nav').as('Navigation Menu'),
     articleLink: locate('a')
       .withAttr({
         href: '/articles'
@@ -27,13 +26,17 @@ module.exports = {
     articleTitleHeading: locate('a')
       .withText('Title')
       .as('Article Heading'),
-    footer: locate('.//footer').as('Article Page Footer'),
+    footer: locate('footer').as('Article Page Footer'),
     createNewButton: locate('a')
       .withText('Create new')
       .as('Create New Button'),
-    articleRows: locate('.//tbody/tr').as('Article Rows'),
-    numberOfArticles: locate('.//strong[1]').as('Number Of Articles On Page'),
-    totalArticles: locate('.//strong[2]').as('Number Of Articles On Page'),
+    articleRows: locate('tbody tr').as('Article Rows'),
+    numberOfArticles: locate('span strong:nth-child(1)').as(
+      'Number Of Articles On Page'
+    ),
+    totalArticles: locate('span strong:nth-child(2)').as(
+      'Number Of Articles On Page'
+    ),
     signOutButton: locate('button')
       .withText('Sign out')
       .as('Sign Out Button'),
@@ -46,22 +49,15 @@ module.exports = {
     selectAuthor: locate('a')
       .withText('Select existing author')
       .as('Select Author Button'),
-    numOfAuthors: locate('//table/tbody/tr/td[2]').as('Number of Authors'),
-    numOfCategories: locate('//table/tbody/tr/td[2]').as(
-      'Number of Categories'
-    ),
-    numOfSubCategories: locate('//table/tbody/tr/td[2]').as(
+    numOfAuthors: locate('td:nth-child(2)').as('Number of Authors'),
+    numOfCategories: locate('td:nth-child(2)').as('Number of Categories'),
+    numOfSubCategories: locate('td:nth-child(2)').as(
       'Number of Sub Categories'
     ),
-    numOfWebServices: locate('//table/tbody/tr/td[2]').as(
-      'Number of Web Services'
-    ),
-    numOfNetworkServices: locate('//table/tbody/tr/td[2]').as(
+    numOfWebServices: locate('td:nth-child(2)').as('Number of Web Services'),
+    numOfNetworkServices: locate('td:nth-child(2)').as(
       'Number of Network Services'
     ),
-    // addAuthor: locate('button')
-    //   .withText('Save selection')
-    //   .as('Add The Author'),
     excerptField: locate('div')
       .withAttr({
         'data-field-name': 'excerpt'
@@ -263,9 +259,9 @@ module.exports = {
     filterWrapper: locate('div[class*="DocumentFilters__filter-wrapper"]').as(
       'Filtered Detail'
     ),
-    titles: locate('//table/tbody/tr/td[2]').as('Article Titles'),
-    dateTime: locate('//table/tbody/tr/td[3]').as('Date & Time'),
-    published: locate('//table/tbody/tr/td[4]').as('Published?'),
+    titles: locate('td:nth-child(2)').as('Article Titles'),
+    dateTime: locate('td:nth-child(3)').as('Date & Time'),
+    published: locate('td:nth-child(4)').as('Published?'),
     filterClose: locate('button[class*="DocumentFilters__filter-close"]').as(
       'Filter Close Button'
     ),
@@ -283,7 +279,7 @@ module.exports = {
       .withText('Insert items')
       .as('Insert Items Button'),
     mediaModal: locate('div[class*="ReactModal__Content"]').as('Media Modal'),
-    numEditArticles: locate('//table/tbody/tr/td[2]').as('Number of Articles'),
+    numEditArticles: locate('td:nth-child(2)').as('Number of Articles'),
     delArticleButton: locate('button[class*="button-destruct"]').as(
       'Delete Article Button'
     ),
@@ -808,7 +804,7 @@ module.exports = {
     await I.see('# Header 1')
     await I.see('## Header 2')
     await I.see('> Blockquote')
-    await I.see('[Link](www.link.com)')
+    await I.see('(www.link.com)')
     await I.see('1. Point 1')
     await I.see('1. Point 2')
     await I.see('* Bullet 1')

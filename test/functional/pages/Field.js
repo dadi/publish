@@ -13,7 +13,7 @@ module.exports = {
 
   // insert your locators and methods here
   locators: {
-    footer: locate('.//footer').as('Field Test Page Footer'),
+    footer: locate('footer').as('Field Test Page Footer'),
     createNewButton: locate('a')
       .withText('Create new')
       .as('Create New Button'),
@@ -415,13 +415,6 @@ module.exports = {
     pdf: locate('p[class*="MediaGridCard__filename"]')
       .withText('DADI_Publish.pdf')
       .as('PDF Document'),
-    applyButton: locate('button')
-      .withText('Apply')
-      .as('Apply Button'),
-    selectDelete: locate('.//select').as('Select Delete'),
-    deleteButton: locate('button')
-      .withText('Yes, delete it.')
-      .as('Delete Button'),
     nevermindButton: locate('a')
       .withText('Nevermind, back to document')
       .as('Back to document'),
@@ -451,10 +444,7 @@ module.exports = {
       })
       .find('label[class*="container-error"]')
       .as('Reference required error box'),
-    numOfAuthors: locate('//table/tbody/tr/td[2]').as('Number of Authors'),
-    // addAuthor: locate('button')
-    //   .withText('Save selection')
-    //   .as('Add The Author'),
+    numOfAuthors: locate('td:nth-child(2)').as('Number of Authors'),
     referenceLink: locate('a[class*="FieldReference__value-link"]').as(
       'Added reference'
     ),

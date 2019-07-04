@@ -31,7 +31,6 @@
     "I": "./functional/stepDefinitions/steps_file.js",
     "articlePage": "./functional/pages/Article.js",
     "fieldPage": "./functional/pages/Field.js",
-    "homePage": "./functional/pages/Home.js",
     "loginPage": "./functional/pages/Login.js",
     "mediaPage": "./functional/pages/Media.js",
     "profilePage": "./functional/pages/Profile.js"
