@@ -18,9 +18,11 @@ BeforeSuite(async (articlePage, loginPage, mediaPage) => {
   await loginPage.createSession('rich_text', '123456', '/articles/new')
 })
 
-AfterSuite(async (I, loginPage, mediaPage) => {
+AfterSuite(async (I, articlePage, loginPage, mediaPage) => {
   await mediaPage.deleteAllMedia('dog.jpg')
   await mediaPage.deleteAllMedia('girl.png')
+  await articlePage.deleteDocument('Rich Text')
+  await articlePage.deleteDocument('Inline Image')
   await I.clearCookie('accessToken')
   await loginPage.deleteUser('rich_text')
 })

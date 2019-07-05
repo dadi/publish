@@ -18,7 +18,6 @@ module.exports = {
         href: '/'
       })
       .as('Publish Menu'),
-    navigationMenu: locate('.//nav').as('Navigation Menu'),
     articleLink: locate('a')
       .withAttr({
         href: '/articles'
@@ -27,13 +26,17 @@ module.exports = {
     articleTitleHeading: locate('a')
       .withText('Title')
       .as('Article Heading'),
-    footer: locate('.//footer').as('Article Page Footer'),
+    footer: locate('footer').as('Article Page Footer'),
     createNewButton: locate('a')
       .withText('Create new')
       .as('Create New Button'),
-    articleRows: locate('.//tbody/tr').as('Article Rows'),
-    numberOfArticles: locate('.//strong[1]').as('Number Of Articles On Page'),
-    totalArticles: locate('.//strong[2]').as('Number Of Articles On Page'),
+    articleRows: locate('tbody tr').as('Article Rows'),
+    numberOfArticles: locate('span strong:nth-child(1)').as(
+      'Number Of Articles On Page'
+    ),
+    totalArticles: locate('span strong:nth-child(2)').as(
+      'Number Of Articles On Page'
+    ),
     signOutButton: locate('button')
       .withText('Sign out')
       .as('Sign Out Button'),
@@ -46,22 +49,15 @@ module.exports = {
     selectAuthor: locate('a')
       .withText('Select existing author')
       .as('Select Author Button'),
-    numOfAuthors: locate('//table/tbody/tr/td[2]').as('Number of Authors'),
-    numOfCategories: locate('//table/tbody/tr/td[2]').as(
-      'Number of Categories'
-    ),
-    numOfSubCategories: locate('//table/tbody/tr/td[2]').as(
+    numOfAuthors: locate('td:nth-child(2)').as('Number of Authors'),
+    numOfCategories: locate('td:nth-child(2)').as('Number of Categories'),
+    numOfSubCategories: locate('td:nth-child(2)').as(
       'Number of Sub Categories'
     ),
-    numOfWebServices: locate('//table/tbody/tr/td[2]').as(
-      'Number of Web Services'
-    ),
-    numOfNetworkServices: locate('//table/tbody/tr/td[2]').as(
+    numOfWebServices: locate('td:nth-child(2)').as('Number of Web Services'),
+    numOfNetworkServices: locate('td:nth-child(2)').as(
       'Number of Network Services'
     ),
-    addAuthor: locate('button')
-      .withText('Save selection')
-      .as('Add The Author'),
     excerptField: locate('div')
       .withAttr({
         'data-field-name': 'excerpt'
@@ -126,9 +122,9 @@ module.exports = {
     selectNetworkService: locate('a')
       .withText('Select existing network service')
       .as('Select Existing Newtork Service Button'),
-    addSelected: locate('button')
+    saveSelected: locate('button')
       .withText('Save selection')
-      .as('Add Selected Document Button'),
+      .as('Save Selection Button'),
     removeNetworkButton: locate('div')
       .withAttr({
         'data-field-name': 'network-service'
@@ -142,6 +138,15 @@ module.exports = {
       .find('a')
       .withText('Edit')
       .as('Edit Web Service Button'),
+    removeWebServiceButton: locate('div')
+      .withAttr({
+        'data-field-name': 'web-service'
+      })
+      .find('button')
+      .as('Remove Web Service Button'),
+    webServiceSelected: locate('a[href*="/web-services/"]').as(
+      'Web Service Selected'
+    ),
     networkService: locate('label')
       .withText('Network service')
       .as('Network Service'),
@@ -254,9 +259,9 @@ module.exports = {
     filterWrapper: locate('div[class*="DocumentFilters__filter-wrapper"]').as(
       'Filtered Detail'
     ),
-    titles: locate('//table/tbody/tr/td[2]').as('Article Titles'),
-    dateTime: locate('//table/tbody/tr/td[3]').as('Date & Time'),
-    published: locate('//table/tbody/tr/td[4]').as('Published?'),
+    titles: locate('td:nth-child(2)').as('Article Titles'),
+    dateTime: locate('td:nth-child(3)').as('Date & Time'),
+    published: locate('td:nth-child(4)').as('Published?'),
     filterClose: locate('button[class*="DocumentFilters__filter-close"]').as(
       'Filter Close Button'
     ),
@@ -273,7 +278,19 @@ module.exports = {
     insertButton: locate('button')
       .withText('Insert items')
       .as('Insert Items Button'),
-    mediaModal: locate('div[class*="ReactModal__Content"]').as('Media Modal')
+    mediaModal: locate('div[class*="ReactModal__Content"]').as('Media Modal'),
+    numEditArticles: locate('td:nth-child(2)').as('Number of Articles'),
+    delArticleButton: locate('button[class*="button-destruct"]').as(
+      'Delete Article Button'
+    ),
+    h1Text: locate('span')
+      .withText('Header 1')
+      .inside('h1')
+      .as('Header 1 Text'),
+    h2Text: locate('span')
+      .withText('Header 1')
+      .inside('h1')
+      .as('Header 2 Text')
   },
 
   async validateArticlePage() {
@@ -330,7 +347,7 @@ module.exports = {
     const authorsNames = await I.grabTextFrom(this.locators.numOfAuthors)
 
     I.click(locate('//tbody/tr[2]/td[1]').as('Selected Author'))
-    I.click(this.locators.addAuthor)
+    I.click(this.locators.saveSelected)
     I.waitForFunction(() => document.readyState === 'complete')
     I.see(authorsNames[1].trim())
 
@@ -347,10 +364,11 @@ module.exports = {
     const categoryNames = await I.grabTextFrom(this.locators.numOfCategories)
 
     I.click(
-      locate('//td[2]').withText(categoryNames[3].trim())
-      // .as('Selected Category')
+      locate('//td[2]')
+        .withText(categoryNames[3].trim())
+        .as('Selected Category')
     )
-    I.click(this.locators.addSelected)
+    I.click(this.locators.saveSelected)
     I.waitForFunction(() => document.readyState === 'complete')
     I.see(categoryNames[3].trim())
 
@@ -370,10 +388,11 @@ module.exports = {
     )
 
     I.click(
-      locate('//td[2]').withText(subCategoryNames[1].trim())
-      // .as('Selected Sub Category')
+      locate('//td[2]')
+        .withText(subCategoryNames[1].trim())
+        .as('Selected Sub Category')
     )
-    I.click(this.locators.addSelected)
+    I.click(this.locators.saveSelected)
     I.waitForFunction(() => document.readyState === 'complete')
     I.see(subCategoryNames[1].trim())
 
@@ -401,7 +420,7 @@ module.exports = {
         .before('//td[.="' + webServicesNames[4].trim() + '"]')
         .as('Second Selected Web Service')
     )
-    I.click(this.locators.addSelected)
+    I.click(this.locators.saveSelected)
     I.waitForFunction(() => document.readyState === 'complete')
     I.scrollTo(this.locators.webService)
     I.see(webServicesNames[0].trim())
@@ -427,7 +446,7 @@ module.exports = {
         .before('//td[.="' + networkServicesNames[3].trim() + '"]')
         .as('Selected Network Service')
     )
-    I.click(this.locators.addSelected)
+    I.click(this.locators.saveSelected)
     I.waitForFunction(() => document.readyState === 'complete')
     I.scrollTo(this.locators.networkService)
     I.see(networkServicesNames[3].trim())
@@ -452,48 +471,44 @@ module.exports = {
   },
 
   async editArticle() {
-    const link = await I.grabAttributeFrom(this.locators.createdArticle, 'href')
-    const start = link.indexOf('/articles/')
-    const id = link.slice(start)
+    await I.amOnPage('/articles')
+    await I.waitForVisible(this.locators.articleTitleHeading)
+    await I.waitForElement(this.locators.footer)
+    await I.seeElement(this.locators.createNewButton)
 
-    I.click(this.locators.createdArticle)
-    I.seeInCurrentUrl(id)
-    const slug = await I.grabValueFrom(this.locators.slugField)
+    const articlesNames = await I.grabTextFrom(this.locators.numEditArticles)
 
-    I.seeStringsAreEqual(slug, 'this-is-a-new-article')
-    I.fillField(this.locators.titleField, '')
-    I.fillField(this.locators.titleField, 'This Article Is Updated')
-    I.scrollTo(this.locators.webService)
-    I.click(this.locators.editWebServiceButton)
-    I.waitForFunction(() => document.readyState === 'complete')
-    I.seeInCurrentUrl('/select/web-service')
-    I.waitForText('Web service')
-    const webServicesNames = await I.grabTextFrom(
-      this.locators.numOfWebServices
+    const link = await I.grabAttributeFrom(
+      locate('a')
+        .withText(articlesNames[1])
+        .as('Edit Article Link'),
+      'href'
     )
 
     I.click(
-      locate('td')
-        .before('//td[.="' + webServicesNames[4].trim() + '"]')
-        .as('Second Selected Web Service')
+      locate('a')
+        .withText(articlesNames[1])
+        .as('Article to Edit')
     )
-    I.wait(1)
-    I.click(this.locators.addSelected)
-    I.waitForFunction(() => document.readyState === 'complete')
+    I.seeInCurrentUrl(link)
+    I.fillField(this.locators.titleField, '')
+    I.fillField(this.locators.titleField, 'This Article Is Updated')
     I.scrollTo(this.locators.webService)
-    I.see(webServicesNames[0].trim())
-    I.dontSee(webServicesNames[4].trim())
+    const wsSelected = await I.grabTextFrom(this.locators.webServiceSelected)
+
+    I.click(this.locators.removeWebServiceButton)
+    I.dontSee(wsSelected)
     I.click(this.locators.saveMenu)
     I.click(this.locators.saveGoBack)
     I.waitForText('The document has been updated', 2)
     I.seeInCurrentUrl('/articles')
+    I.dontSee(articlesNames[1])
     I.see('This Article Is Updated')
     I.click(this.locators.updatedArticle)
-    I.seeInCurrentUrl(id)
+    I.seeInCurrentUrl(link)
     const updatedSlug = await I.grabValueFrom(this.locators.slugField)
 
     I.seeStringsAreEqual(updatedSlug, 'this-article-is-updated')
-    I.click(this.locators.articleLink)
   },
 
   async filterArticle() {
@@ -589,18 +604,41 @@ module.exports = {
   },
 
   async deleteArticle() {
+    await I.amOnPage('/articles')
+    await I.waitForVisible(this.locators.articleTitleHeading)
+    await I.waitForElement(this.locators.footer)
+    await I.seeElement(this.locators.createNewButton)
     const total = await I.grabTextFrom(this.locators.totalArticles)
 
-    I.click(this.locators.checkArticle)
+    const deleteArticles = await I.grabTextFrom(this.locators.numEditArticles)
+
+    I.click(
+      locate('td')
+        .before('//td[.="' + deleteArticles[0].trim() + '"]')
+        .as('First Article to Delete')
+    )
     I.selectOption(this.locators.selectDelete, 'Delete (1)')
     I.click(this.locators.applyButton)
     I.waitForText('Are you sure you want to delete the selected document?')
     I.pressKey('Enter')
     I.waitForText('The document has been deleted', 2)
-    I.dontSee('This Article Is Updated')
+    I.dontSee(deleteArticles[0])
     const newTotal = await I.grabTextFrom(this.locators.totalArticles)
 
     I.seeTotalHasDecreased(newTotal, total)
+    I.click(
+      locate('a')
+        .withText(deleteArticles[1])
+        .as('Second Article to Delete')
+    )
+    I.click(this.locators.delArticleButton)
+    I.waitForText('Are you sure you want to delete this document?')
+    I.pressKey('Enter')
+    I.waitForText('The document has been deleted', 2)
+    I.dontSee(deleteArticles[1])
+    const newestTotal = await I.grabTextFrom(this.locators.totalArticles)
+
+    I.seeTotalHasDecreased(newestTotal, newTotal)
   },
 
   async newSignOut() {
@@ -658,48 +696,63 @@ module.exports = {
     await I.fillField(this.locators.titleField, 'Rich Text')
 
     // Bold
-    await I.typeAndSelect(this.locators.bodyField, 'Bold')
-    await I.click(this.locators.boldButton)
+    await I.fillField(this.locators.bodyField, 'Bold Text')
+    await I.pressKey('ArrowLeft')
+    await I.pressKey('ArrowLeft')
+    await I.pressKey('ArrowLeft')
+    await I.pressKey('ArrowLeft')
+    await I.pressKey('ArrowLeft')
+    await I.pressKey(['Shift', 'Home', 'Shift'])
+    await I.emulateCommandButtonPressBold()
     await I.appendField(this.locators.bodyField, '  ')
-    await I.click(this.locators.boldButton)
     await I.pressKey('Enter')
     await I.pressKey('Enter')
+
     // Italic
-    await I.typeAndSelect(this.locators.bodyField, 'Italic')
-    await I.click(this.locators.italicButton)
+    await I.fillField(this.locators.bodyField, 'Italic Text')
+    await I.pressKey('ArrowLeft')
+    await I.pressKey('ArrowLeft')
+    await I.pressKey('ArrowLeft')
+    await I.pressKey('ArrowLeft')
+    await I.pressKey('ArrowLeft')
+    await I.pressKey(['Shift', 'Home', 'Shift'])
+    await I.emulateCommandButtonPressItalic()
     await I.appendField(this.locators.bodyField, '  ')
-    await I.click(this.locators.italicButton)
     await I.pressKey('Enter')
     await I.pressKey('Enter')
+
     // H1
-    await I.typeAndSelect(this.locators.bodyField, 'Header 1')
     await I.click(this.locators.h1Button)
-    await I.appendField(this.locators.bodyField, '')
+    await I.fillField(this.locators.bodyField, 'Header 1')
     await I.pressKey('Enter')
-    await I.pressKey('Enter')
+    await I.click(this.locators.h1Button)
+
     // H2
-    await I.appendField(this.locators.bodyField, '')
-    await I.typeAndSelect(this.locators.bodyField, 'Header 2')
     await I.click(this.locators.h2Button)
-    await I.appendField(this.locators.bodyField, '  ')
+    await I.fillField(this.locators.bodyField, 'Header 2')
     await I.pressKey('Enter')
-    await I.pressKey('Enter')
+    await I.click(this.locators.h2Button)
+
     // Blockquote
-    await I.appendField(this.locators.bodyField, '')
-    await I.typeAndSelect(this.locators.bodyField, 'Blockquote')
+    await I.fillField(this.locators.bodyField, 'Some text')
+    await I.pressKey('Enter')
+    await I.fillField(this.locators.bodyField, 'Blockquote')
     await I.click(this.locators.quoteButton)
-    await I.appendField(this.locators.bodyField, '  ')
     await I.pressKey('Enter')
-    await I.pressKey('Enter')
+    await I.click(this.locators.quoteButton)
+
     // Link
-    await I.appendField(this.locators.bodyField, '')
-    await I.typeAndSelect(this.locators.bodyField, 'Link')
+    await I.fillField(this.locators.bodyField, 'Some more text')
+    await I.pressKey('Enter')
+    await I.fillField(this.locators.bodyField, 'Link')
+    await I.pressKey(['Shift', 'Home', 'Shift'])
     await I.click(this.locators.linkButton)
     await I.waitForElement(this.locators.linkField)
     await I.fillField(this.locators.linkField, 'www.link.com')
     await I.pressKey('Enter')
     await I.appendField(this.locators.bodyField, '  ')
     await I.pressKey('Enter')
+
     // Ordered List
     await I.click(this.locators.orderedListButton)
     await I.fillField(this.locators.bodyField, 'Point 1')
@@ -707,6 +760,7 @@ module.exports = {
     await I.fillField(this.locators.bodyField, 'Point 2')
     await I.pressKey('Enter')
     await I.click(this.locators.orderedListButton)
+
     // Unordered List
     await I.click(this.locators.unOrderedListButton)
     await I.fillField(this.locators.bodyField, 'Bullet 1')
@@ -715,11 +769,14 @@ module.exports = {
     await I.pressKey('Enter')
     await I.click(this.locators.unOrderedListButton)
 
+    // Save
     await I.click(this.locators.saveArticle)
     await I.waitForText('The document has been created', 2)
 
     await I.seeElement(this.locators.boldText)
     await I.seeElement(this.locators.italicText)
+    await I.seeElement(this.locators.h1Text)
+    await I.seeElement(this.locators.h2Text)
     await I.seeElement(this.locators.quoteText)
     await I.seeElement(this.locators.linkText)
     await I.seeElement(this.locators.orderedList1)
@@ -734,17 +791,25 @@ module.exports = {
     // formats. Until that's done, the Markdown output will be messy and
     // probably not worth testing.
     //    -- eb (07/06/2019)
-    // await I.click(this.locators.textButton)
-    // I.wait(2)
-    // await I.see('**Bold** _Italic_')
-    // await I.see('# Header 1')
-    // await I.see('## Header 2')
-    // await I.see('> Blockquote')
-    // await I.see('[Link](www.link.com)')
-    // await I.see('1. Point 1')
-    // await I.see('1. Point 2')
-    // await I.see('* Bullet 1')
-    // await I.see('* Bullet 2')
+
+    // Updated rich editor test to use keyboard shortcuts (CMD+B, CMD+I etc)
+    // and to be more realistic in selecting text to highlight.
+    //    -- dm (03/07/2019)
+
+    // Text mode and Full Screen
+    await I.click(this.locators.textButton)
+    await I.click(this.locators.fullScreenButton)
+    await I.see('**Bold** Text')
+    await I.see('_Italic_ Text')
+    await I.see('# Header 1')
+    await I.see('## Header 2')
+    await I.see('> Blockquote')
+    await I.see('(www.link.com)')
+    await I.see('1. Point 1')
+    await I.see('1. Point 2')
+    await I.see('* Bullet 1')
+    await I.see('* Bullet 2')
+    await I.click(this.locators.fullScreenButton)
   },
 
   async inlineImage() {

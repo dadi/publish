@@ -23,12 +23,7 @@ module.exports = {
     signInButton: locate('button[type = submit]')
       .withText('Sign In')
       .as('Sign In Button'),
-    publishMenu: locate('a')
-      .withAttr({
-        href: '/'
-      })
-      .as('Publish Menu'),
-    navigationMenu: locate('.//nav').as('Navigation Menu'),
+    navigationMenu: locate('nav[class*="Nav"]').as('Navigation Menu'),
     articleLink: locate('a').withAttr({
       href: '/articles'
     }),

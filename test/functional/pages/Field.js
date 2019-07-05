@@ -13,7 +13,7 @@ module.exports = {
 
   // insert your locators and methods here
   locators: {
-    footer: locate('.//footer').as('Field Test Page Footer'),
+    footer: locate('footer').as('Field Test Page Footer'),
     createNewButton: locate('a')
       .withText('Create new')
       .as('Create New Button'),
@@ -415,13 +415,6 @@ module.exports = {
     pdf: locate('p[class*="MediaGridCard__filename"]')
       .withText('DADI_Publish.pdf')
       .as('PDF Document'),
-    applyButton: locate('button')
-      .withText('Apply')
-      .as('Apply Button'),
-    selectDelete: locate('.//select').as('Select Delete'),
-    deleteButton: locate('button')
-      .withText('Yes, delete it.')
-      .as('Delete Button'),
     nevermindButton: locate('a')
       .withText('Nevermind, back to document')
       .as('Back to document'),
@@ -451,10 +444,7 @@ module.exports = {
       })
       .find('label[class*="container-error"]')
       .as('Reference required error box'),
-    numOfAuthors: locate('//table/tbody/tr/td[2]').as('Number of Authors'),
-    addAuthor: locate('button')
-      .withText('Save selection')
-      .as('Add The Author'),
+    numOfAuthors: locate('td:nth-child(2)').as('Number of Authors'),
     referenceLink: locate('a[class*="FieldReference__value-link"]').as(
       'Added reference'
     ),
@@ -614,9 +604,9 @@ module.exports = {
       })
       .find('div[class*="FieldMedia__upload-drop"]')
       .as('Drop files to upload PDF Only'),
-    addSelected: locate('button')
+    saveSelected: locate('button')
       .withText('Save selection')
-      .as('Add Selected Document Button'),
+      .as('Save Selection Button'),
     mediaJpegAdded: locate('div')
       .withAttr({
         'data-field-name': 'mediaJpeg'
@@ -957,7 +947,7 @@ module.exports = {
         .before(locate('td').withText(authorsNames[2].trim()))
         .as('Selected Author')
     )
-    I.click(this.locators.addAuthor)
+    I.click(this.locators.saveSelected)
     I.waitForFunction(() => document.readyState === 'complete')
     I.see(authorsNames[2].trim())
     const link = await I.grabAttributeFrom(
@@ -1023,7 +1013,7 @@ module.exports = {
     await I.click(this.locators.pdf)
     await I.click(this.locators.stoneJpeg)
     await I.click(this.locators.girlPng)
-    await I.click(this.locators.addSelected)
+    await I.click(this.locators.saveSelected)
     I.waitForFunction(() => document.readyState === 'complete')
     await I.seeElement(this.locators.mediaReqPdf)
     await I.seeElement(this.locators.mediaReqJpeg)
@@ -1052,7 +1042,7 @@ module.exports = {
     await I.dontSee('.png')
     await I.dontSee('.pdf')
     await I.click(this.locators.dogJpg)
-    await I.click(this.locators.addSelected)
+    await I.click(this.locators.saveSelected)
     I.waitForFunction(() => document.readyState === 'complete')
     await I.seeElement(this.locators.mediaJpegAdded)
     await I.scrollTo(this.locators.mediaPngDrop)
@@ -1071,7 +1061,7 @@ module.exports = {
     await I.dontSee('.jpg')
     await I.dontSee('.pdf')
     await I.click(this.locators.girlPng)
-    await I.click(this.locators.addSelected)
+    await I.click(this.locators.saveSelected)
     I.waitForFunction(() => document.readyState === 'complete')
     await I.scrollTo(this.locators.mediaJnPDrop)
     await I.seeElement(this.locators.mediaPngAdded)
@@ -1092,7 +1082,7 @@ module.exports = {
     await I.dontSee('.pdf')
     await I.click(this.locators.dogJpg)
     await I.click(this.locators.girlPng)
-    await I.click(this.locators.addSelected)
+    await I.click(this.locators.saveSelected)
     I.waitForFunction(() => document.readyState === 'complete')
     await I.scrollTo(this.locators.mediaJnPDevice)
     await I.seeElement(this.locators.mediaJnPJpegAdded)
@@ -1113,7 +1103,7 @@ module.exports = {
     await I.dontSee('.jpg')
     await I.dontSee('.png')
     await I.click(this.locators.pdf)
-    await I.click(this.locators.addSelected)
+    await I.click(this.locators.saveSelected)
     I.waitForFunction(() => document.readyState === 'complete')
     await I.scrollTo(this.locators.mediaJnPDrop)
     await I.seeElement(this.locators.mediaPdfAdded)
