@@ -34,6 +34,11 @@ export default class TextInput extends React.Component {
     inLabel: proptypes.bool,
 
     /**
+     * Ref callback which takes the input DOM element as a parameter.
+     */
+    inputRef: proptypes.func,
+
+    /**
      * full | content | static
      *
      * full: screen height
@@ -147,15 +152,21 @@ export default class TextInput extends React.Component {
 
   componentDidMount() {
     this.adjustHeightIfNeeded()
+
+    const {inputRef} = this.props
+
+    typeof inputRef === 'function' && inputRef(this.base)
   }
 
   componentDidUpdate(oldProps) {
     const {oldHeightType} = oldProps
-    const {heightType} = this.props
+    const {heightType, inputRef} = this.props
 
     if (oldHeightType !== heightType && heightType === 'content') {
       this.adjustHeightIfNeeded()
     }
+
+    typeof inputRef === 'function' && inputRef(this.base)
   }
 
   handleChange(type, event) {
@@ -164,11 +175,11 @@ export default class TextInput extends React.Component {
     this.adjustHeightIfNeeded()
 
     if (type === 'onChange' && typeof onChange === 'function') {
-      onChange.call(this, event)
+      onChange(event)
     }
 
     if (type === 'onInput' && typeof onInput === 'function') {
-      onInput.call(this, event)
+      onInput(event)
     }
 
     return true
@@ -176,7 +187,7 @@ export default class TextInput extends React.Component {
 
   handleEvent(callback, event) {
     if (typeof this.props[callback] === 'function') {
-      this.props[callback].call(this, event)
+      this.props[callback](event)
     }
   }
 
