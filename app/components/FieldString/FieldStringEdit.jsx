@@ -251,14 +251,17 @@ export default class FieldStringEdit extends React.Component {
   }
 
   handleInputChange(value, options) {
-    const {onChange, schema} = this.props
+    const {
+      onChange,
+      schema: {format, publish = {}}
+    } = this.props
 
     if (typeof onChange !== 'function') return
 
     // We prefer sending a `null` over an empty string.
     onChange(value || null, options)
 
-    if (!schema.publish || !schema.publish.options) {
+    if (!publish.options && !format) {
       const {selectionStart, selectionEnd} = this.inputRefs[0]
 
       this.cursor = {selectionRange: [selectionStart, selectionEnd]}
