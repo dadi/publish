@@ -1,0 +1,52 @@
+.list-container {
+  position: relative;
+}
+
+.list-item {
+  display: flex;
+  align-items: center;
+  padding: 3px;
+  min-height: 31px;
+  background-color: var(--theme-colour-background, white);
+}
+
+.icon-add,
+.icon-drag {
+  background-position: 50%;
+  background-color: var(--theme-colour-background, white);
+  background-image: url('/_public/images/icon-add.svg');
+  background-size: auto 100%;
+  font-size: 0;
+  width: 24px;
+  height: 21px;
+  display: block;
+  flex-shrink: 0;
+  opacity: 0.2;
+}
+
+.icon-drag {
+  background-image: url('/_public/images/icon-drag.svg');
+  cursor: move;
+}
+
+.list-item:hover .icon-drag,
+.dragged .icon-drag {
+  opacity: 1;
+}
+
+.link-preview {
+  white-space: nowrap;
+  margin-right: 5px;
+}
+
+.dragged {
+  position: absolute;
+  transform: scale(1.02);
+  box-shadow: 0px 0px 8px 2px rgba(0, 0, 0, 0.2);
+  z-index: 2;
+}
+
+.drag-placeholder {
+  border-radius: 4px;
+  border: dashed 1px #dad7d7;
+}

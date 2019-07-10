@@ -136,6 +136,8 @@ export default class TextInput extends React.Component {
   constructor(props) {
     super(props)
 
+    this.cursor = null
+
     this.state = {
       value: props.value || ''
     }
@@ -155,7 +157,9 @@ export default class TextInput extends React.Component {
 
     const {inputRef} = this.props
 
-    typeof inputRef === 'function' && inputRef(this.base)
+    if (typeof inputRef === 'function') {
+      inputRef(this.base)
+    }
   }
 
   componentDidUpdate(oldProps) {
@@ -166,12 +170,21 @@ export default class TextInput extends React.Component {
       this.adjustHeightIfNeeded()
     }
 
-    typeof inputRef === 'function' && inputRef(this.base)
+    if (this.cursor) {
+      this.setCursor(this.cursor)
+      this.cursor = null
+    }
+
+    if (typeof inputRef === 'function') {
+      inputRef(this.base)
+    }
   }
 
   handleChange(type, event) {
     const {onChange, onInput} = this.props
+    const {selectionStart, selectionEnd} = this.base
 
+    this.cursor = [selectionStart, selectionEnd]
     this.adjustHeightIfNeeded()
 
     if (type === 'onChange' && typeof onChange === 'function') {
@@ -263,5 +276,9 @@ export default class TextInput extends React.Component {
         value={value || ''}
       />
     )
+  }
+
+  setCursor(selectionRange) {
+    this.base.setSelectionRange(...selectionRange)
   }
 }
