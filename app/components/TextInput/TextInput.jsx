@@ -136,6 +136,7 @@ export default class TextInput extends React.Component {
   constructor(props) {
     super(props)
 
+    this.base = null
     this.cursor = null
 
     this.state = {
@@ -279,6 +280,10 @@ export default class TextInput extends React.Component {
   }
 
   setCursor(selectionRange) {
-    this.base.setSelectionRange(...selectionRange)
+    try {
+      this.base.setSelectionRange(...selectionRange)
+    } catch {
+      // setSelectionRange not supported for this type of input.
+    }
   }
 }
