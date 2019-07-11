@@ -2,7 +2,7 @@ import Button from 'components/Button/Button'
 import formatLink from 'lib/util/formatLink'
 import React from 'react'
 import Style from 'lib/Style'
-import styles from './StringArray.css'
+import styles from './SortableList.css'
 import TextInput from 'components/TextInput/TextInput'
 
 export default class StringArray extends React.Component {

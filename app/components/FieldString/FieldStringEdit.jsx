@@ -4,7 +4,7 @@ import Label from 'components/Label/Label'
 import proptypes from 'prop-types'
 import React from 'react'
 import RichEditor from 'components/RichEditor/RichEditor'
-import StringArray from 'components/StringArray/StringArray'
+import SortableList from 'components/SortableList/SortableList'
 import Style from 'lib/Style'
 import styles from './FieldString.css'
 import TextInput from 'components/TextInput/TextInput'
@@ -340,7 +340,7 @@ export default class FieldStringEdit extends React.Component {
         hasFocus={hasFocus}
         label={displayName}
       >
-        <StringArray
+        <SortableList
           name={name}
           onChange={this.handleInputChange.bind(this)}
           onFocus={this.handleFocusChange.bind(this)}
