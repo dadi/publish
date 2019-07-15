@@ -48,6 +48,11 @@ export default class TextInput extends React.Component {
     name: proptypes.string,
 
     /**
+     * Turns off autocomplete for this field.
+     */
+    noAutoComplete: proptypes.bool,
+
+    /**
      * Callback to be executed when the text loses focus (onBlur event).
      */
     onBlur: proptypes.func,
@@ -188,6 +193,7 @@ export default class TextInput extends React.Component {
       id,
       inLabel,
       name,
+      noAutoComplete,
       placeholder,
       readOnly,
       required,
@@ -235,6 +241,7 @@ export default class TextInput extends React.Component {
     // Otherwise, we render an `<input>`
     return (
       <input
+        autoComplete={noAutoComplete && 'off'}
         autoFocus={autoFocus}
         className={inputStyle.getClasses()}
         id={id}
