@@ -327,6 +327,48 @@ module.exports = {
         name: 'stringOptionsMultiple'
       })
       .as('String options multiple'),
+    stringList: locate(
+      'span[class*="SortableList__icon-add"] + input[value=""]'
+    ).as('Multi-Entry String Field'),
+    stringListAdd: locate('div')
+      .withAttr({
+        'data-field-name': 'stringList'
+      })
+      .find('span')
+      .withText('Add')
+      .as('Multi-Entry String Add Button'),
+    stringListDrag: locate('div')
+      .withAttr({
+        'data-field-name': 'stringList'
+      })
+      .find('span')
+      .withText('Drag')
+      .as('Multi-Entry String Drag Element'),
+    stringListRemoveButton: locate('div')
+      .withAttr({
+        'data-field-name': 'stringList'
+      })
+      .find('button')
+      .withText('Remove')
+      .as('Multi-Entry String Remove Button'),
+    stringListItem: locate('div[class*="SortableList__list-item"]').as(
+      'Multi-Entry String Items'
+    ),
+    stringListEmptyField: locate(
+      'span[class*="SortableList__icon-drag"] + input[value=""]'
+    ).as('Empty Multi-Entry String Item'),
+    secondElement: locate('span[class*="SortableList__icon-drag"]')
+      .before('input[value="Second String"]')
+      .as('Second String'),
+    thirdElement: locate('span[class*="SortableList__icon-drag"]')
+      .before('input[value="Third String"]')
+      .as('Third String'),
+    multiEntryStringText: locate('input[value*="String"]').as(
+      'Multi-Entry String Text'
+    ),
+    mutliEntryFirstRemoveButton: locate(
+      'input[value*="First"] + button[class*="destruct"]'
+    ).as('Multi-Entry First String Remove Button'),
     images: locate('[class *= "MediaGridCard__wrapper___"]').as(
       'Number of Images'
     ),
@@ -856,6 +898,8 @@ module.exports = {
     await I.seeElement(this.locators.stringReq)
     await I.seeElement(this.locators.stringReadOnly)
     await I.seeElement(this.locators.stringMulti)
+    await I.seeElement(this.locators.stringList)
+    await I.seeElement(this.locators.stringListAdd)
     await I.seeElement(this.locators.stringHeightContent)
     await I.seeElement(this.locators.stringHeightFull)
     await I.seeElement(this.locators.stringResizable)
@@ -896,6 +940,83 @@ module.exports = {
     await I.fillField(this.locators.stringRegex, 'pqpq')
     await I.waitForInvisible(this.locators.stringRegexError)
     await I.selectOption(this.locators.stringOptions, 'Option three')
+
+    await I.scrollTo(this.locators.stringList)
+    await I.fillField(this.locators.stringList, 'First String')
+    await I.pressKey('Enter')
+    await I.fillField(this.locators.stringListEmptyField, 'Second String')
+    await I.pressKey('ArrowDown')
+    await I.fillField(this.locators.stringList, 'Third String')
+
+    const initialNumDragElements = await I.grabNumberOfVisibleElements(
+      this.locators.stringListDrag
+    )
+
+    await I.seeNumbersAreEqual(initialNumDragElements, 3)
+
+    const initialNumRemoveButtons = await I.grabNumberOfVisibleElements(
+      this.locators.stringListRemoveButton
+    )
+
+    await I.seeNumbersAreEqual(initialNumRemoveButtons, 3)
+
+    const initialNumListItems = await I.grabNumberOfVisibleElements(
+      this.locators.stringListItem
+    )
+
+    await I.seeNumbersAreEqual(initialNumListItems, 4)
+
+    const initialNumStringListAddElements = await I.grabNumberOfVisibleElements(
+      this.locators.stringListAdd
+    )
+
+    await I.seeNumbersAreEqual(initialNumStringListAddElements, 1)
+
+    const stringValueArray = await I.grabAttributeFrom(
+      this.locators.multiEntryStringText,
+      'value'
+    )
+
+    await I.dragAndDrop(this.locators.thirdElement, this.locators.secondElement)
+    const stringValueArrayAfter = await I.grabAttributeFrom(
+      this.locators.multiEntryStringText,
+      'value'
+    )
+
+    await I.seeStringsAreNotEqual(
+      stringValueArray.toString(),
+      stringValueArrayAfter.toString()
+    )
+
+    await I.click(this.locators.mutliEntryFirstRemoveButton)
+
+    const numDragElements = await I.grabNumberOfVisibleElements(
+      this.locators.stringListDrag
+    )
+
+    await I.seeTotalHasDecreased(numDragElements, initialNumDragElements)
+
+    const numRemoveButtons = await I.grabNumberOfVisibleElements(
+      this.locators.stringListRemoveButton
+    )
+
+    await I.seeTotalHasDecreased(numRemoveButtons, initialNumRemoveButtons)
+
+    const numListItems = await I.grabNumberOfVisibleElements(
+      this.locators.stringListItem
+    )
+
+    await I.seeTotalHasDecreased(numListItems, initialNumListItems)
+
+    const numStringListAddElements = await I.grabNumberOfVisibleElements(
+      this.locators.stringListAdd
+    )
+
+    await I.seeNumbersAreEqual(
+      numStringListAddElements,
+      initialNumStringListAddElements
+    )
+
     await I.click(this.locators.saveContinue)
     await I.waitForText('The document has been created', 2)
     await I.dontSeeInCurrentUrl('/new')
