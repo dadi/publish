@@ -1,0 +1,7 @@
+{
+  "database": {
+    "path": "database",
+    "autosaveInterval": 10000,
+    "serializationMethod": "normal"
+  }
+}

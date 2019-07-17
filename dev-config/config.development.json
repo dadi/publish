@@ -6,22 +6,13 @@
     "port": 8081,
     "menu": [
       {
-        "collections": [
-          "images",
-          "pages",
-          "team",
-          "partners"
-        ],
+        "collections": ["images", "pages", "team", "partners"],
         "title": "Content"
       },
       {
-        "collections": [
-          "categories",
-          "sub-categories",
-          "milestones"
-        ],
+        "collections": ["categories", "sub-categories", "milestones"],
         "title": "Taxonomy"
       }
-    ]      
+    ]
   }
 }

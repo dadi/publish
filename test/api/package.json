@@ -1,0 +1,18 @@
+{
+  "name": "publish-test-api",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "license": "ISC",
+  "dependencies": {
+    "@dadi/api": "beta",
+    "@dadi/api-filestore": "latest",
+    "entities": "^1.1.1",
+    "remark": "^6.2.0",
+    "slugify": "^1.3.0",
+    "strip-markdown": "^3.0.0"
+  }
+}

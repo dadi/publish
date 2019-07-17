@@ -1,0 +1,44 @@
+{
+  "app": {
+    "name": "DADI Publish Dev",
+    "publisher": "DADI"
+  },
+  "server": {
+    "host": "0.0.0.0",
+    "port": 8080
+  },
+  "apis": [
+    {
+      "name": "DADI Publish - Dev API",
+      "host": "http://@@API_URL@@",
+      "port": 80,
+      "menu": [
+        {
+          "collections": ["pages", "team"],
+          "title": "Content"
+        },
+        {
+          "collections": ["categories", "sub-categories", "milestones"],
+          "title": "Taxonomy"
+        },
+        {
+          "collections": [
+            "field-test-boolean",
+            "field-test-date",
+            "field-test-media",
+            "field-test-other",
+            "field-test-number",
+            "field-test-reference",
+            "field-test-string"
+          ],
+          "title": "Field Testing"
+        }
+      ]
+    }
+  ],
+  "publicUrl": {
+    "host": "publish-dev.eb.dev.dadi.technology",
+    "port": 80,
+    "protocol": "http"
+  }
+}
