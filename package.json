@@ -24,7 +24,7 @@
     "@babel/plugin-proposal-class-properties": "^7.5.0",
     "@babel/preset-env": "^7.5.4",
     "@babel/preset-react": "^7.0.0",
-    "@dadi/api": "^4.4.5",
+    "@dadi/api": "^6.0.0-rc1",
     "@dadi/api-filestore": "^0.11.4",
     "@dadi/api-testbed": "^1.0.0",
     "@dadi/api-validator": "^1.2.0",
