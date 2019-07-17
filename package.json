@@ -26,7 +26,7 @@
     "@babel/preset-react": "^7.0.0",
     "@dadi/api": "^6.0.0-rc1",
     "@dadi/api-filestore": "^0.11.4",
-    "@dadi/api-testbed": "^1.0.0",
+    "@dadi/api-testbed": "^2.0.0",
     "@dadi/api-validator": "^1.2.0",
     "@dadi/api-wrapper": "^4.0.0-rc2",
     "@dadi/api-wrapper-core": "^4.0.0-rc2",
