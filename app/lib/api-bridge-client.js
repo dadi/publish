@@ -62,7 +62,7 @@ const apiBridgeFactory = function({
   }
 
   const {host, port} = api
-  const {database, version} = collection
+  const {property} = collection
 
   const callback = requestObject => {
     const augmentedRequestObject = Object.assign({}, requestObject, {
@@ -100,10 +100,9 @@ const apiBridgeFactory = function({
 
   const apiWrapperOptions = {
     callback,
-    database,
     port,
-    uri: host,
-    version
+    property,
+    uri: host
   }
 
   let apiWrapperInstance = new APIWrapper(apiWrapperOptions)
