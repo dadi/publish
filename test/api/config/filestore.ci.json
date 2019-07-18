@@ -1,6 +1,6 @@
 {
   "database": {
-    "path": "database",
+    "path": "ci-db",
     "autosaveInterval": 10000,
     "serializationMethod": "normal"
   }
