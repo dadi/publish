@@ -3,8 +3,9 @@ WORKDIR /dadi/publish
 COPY package*.json ./
 RUN pwd
 RUN ls
-RUN npm install && npm run build
+RUN npm install
 COPY . .
+RUN npm run build
 RUN ls
 EXPOSE 8080
 CMD [ "node", "start.js" ]
