@@ -14,7 +14,7 @@ class Bootstrap {
       await myTest.addData({
         collection: 'team',
         count: 5,
-        database: 'cloud',
+        property: 'cloud',
         fields: {
           body: {
             format: '{{lorem.paragraph}}'
@@ -31,15 +31,14 @@ class Bootstrap {
           twitter: {
             format: '{{internet.userName}}'
           }
-        },
-        version: '1.0'
+        }
       })
 
       // Create categories
       await myTest.addData({
         collection: 'categories',
         count: 5,
-        database: 'cloud',
+        property: 'cloud',
         fields: {
           desc: {
             format: '{{lorem.paragraph}}'
@@ -47,28 +46,26 @@ class Bootstrap {
           name: {
             format: '{{random.word}}'
           }
-        },
-        version: '1.0'
+        }
       })
 
       // Create sub-categories
       await myTest.addData({
         collection: 'sub-categories',
         count: 5,
-        database: 'cloud',
+        property: 'cloud',
         fields: {
           name: {
             format: '{{random.word}}'
           }
-        },
-        version: '1.0'
+        }
       })
 
       // Create web-services
       await myTest.addData({
         collection: 'web-services',
         count: 5,
-        database: 'cloud',
+        property: 'cloud',
         fields: {
           name: {
             format: '{{random.word}}'
@@ -76,15 +73,14 @@ class Bootstrap {
           overview: {
             format: '{{random.words(7)}}'
           }
-        },
-        version: '1.0'
+        }
       })
 
       // Create network-services
       await myTest.addData({
         collection: 'network-services',
         count: 5,
-        database: 'cloud',
+        property: 'cloud',
         fields: {
           name: {
             format: '{{random.word}}'
@@ -92,15 +88,14 @@ class Bootstrap {
           overview: {
             format: '{{random.words(7)}}'
           }
-        },
-        version: '1.0'
+        }
       })
 
       // Create articles
       await myTest.addData({
         collection: 'articles',
         count: 4,
-        database: 'cloud',
+        property: 'cloud',
         fields: {
           author: {
             reference: {
@@ -145,8 +140,7 @@ class Bootstrap {
               collection: 'web-services'
             }
           }
-        },
-        version: '1.0'
+        }
       })
 
       // Create filter articles
@@ -154,7 +148,7 @@ class Bootstrap {
         cleanup: false,
         collection: 'articles',
         count: 3,
-        database: 'cloud',
+        property: 'cloud',
         fields: {
           author: {
             reference: {
@@ -200,8 +194,7 @@ class Bootstrap {
               collection: 'web-services'
             }
           }
-        },
-        version: '1.0'
+        }
       })
 
       return resolve()

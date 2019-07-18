@@ -1,6 +1,4 @@
-import * as Constants from 'lib/constants'
 import * as Types from 'actions/actionTypes'
-import apiBridgeClient from 'lib/api-bridge-client'
 
 export function setApi(api) {
   return {

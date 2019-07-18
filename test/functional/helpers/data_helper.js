@@ -26,8 +26,7 @@ function getApi() {
       clientId: config.api.credentials.clientId,
       secret: config.api.credentials.secret
     },
-    version: '1.0',
-    database: 'cloud'
+    property: 'cloud'
   })
 }
 

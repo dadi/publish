@@ -1,16 +1,16 @@
 {
   "cluster": false,
   "app": {
-    "name": "Publish Test API"
+    "name": "Publish API"
   },
   "publicUrl": {
-    "host": "localhost",
-    "port": 3004,
+    "host": "@@HOST@@",
+    "port": 80,
     "protocol": "http"
   },
   "server": {
     "host": "0.0.0.0",
-    "port": 3004
+    "port": 8081
   },
   "datastore": "@dadi/api-filestore",
   "auth": {
@@ -40,17 +40,17 @@
   "paths": {
     "collections": "workspace/collections",
     "endpoints": "workspace/endpoints",
-    "hooks": "test/api/workspace/hooks"
+    "hooks": "workspace/hooks"
   },
   "logging": {
     "enabled": true,
-    "level": "debug",
+    "level": "info",
     "path": "./log",
     "filename": "api",
     "extension": "log"
   },
   "feedback": false,
-  "query": {
-    "useVersionFilter": true
+  "i18n": {
+    "languages": ["pt", "fr", "es"]
   }
 }
