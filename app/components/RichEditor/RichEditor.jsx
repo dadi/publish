@@ -227,6 +227,8 @@ export default class RichEditor extends React.Component {
           }
         })
       })
+
+      this.editor.insertBlock('p')
     })
   }
 
