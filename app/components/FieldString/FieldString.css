@@ -28,12 +28,6 @@
   padding-top: 6px;
 }
 
-.link-preview {
-  width: 100%;
-  margin-top: 5px;
-  margin-bottom: 5px;
-}
-
 .filter-input {
   border: 1px solid var(--theme-colour-background-shade-4, #e4e4e4) !important;
   border-radius: 4px !important;

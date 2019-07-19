@@ -1,8 +1,10 @@
 import Button from 'components/Button/Button'
+import formatLink from 'lib/util/formatLink'
 import Label from 'components/Label/Label'
 import proptypes from 'prop-types'
 import React from 'react'
 import RichEditor from 'components/RichEditor/RichEditor'
+import SortableList from 'components/SortableList/SortableList'
 import Style from 'lib/Style'
 import styles from './FieldString.css'
 import TextInput from 'components/TextInput/TextInput'
@@ -113,6 +115,9 @@ export default class FieldStringEdit extends React.Component {
   constructor(props) {
     super(props)
 
+    this.cursor = null
+    this.inputRefs = []
+
     this.state = {
       hasFocus: false
     }
@@ -139,23 +144,25 @@ export default class FieldStringEdit extends React.Component {
     })
   }
 
-  handleOnChange(value, options) {
+  handleInputChange(value, options) {
     const {onChange} = this.props
 
-    // We prefer sending a `null` over an empty string.
-    const sanitisedValue = value === '' ? null : value
-
     if (typeof onChange === 'function') {
-      onChange.call(this, sanitisedValue, options)
+      // We prefer sending a `null` over an empty string.
+      onChange(value || null, options)
     }
   }
 
   render() {
-    const {schema} = this.props
+    const {schema, value} = this.props
     const publishBlock = schema.publish
 
     if (publishBlock && publishBlock.options) {
       return this.renderAsDropdown()
+    }
+
+    if ((publishBlock && publishBlock.list) || Array.isArray(value)) {
+      return this.renderAsList()
     }
 
     if (schema.format) {
@@ -206,7 +213,7 @@ export default class FieldStringEdit extends React.Component {
           className={dropdownStyle.getClasses()}
           disabled={readOnly}
           onChange={el =>
-            this.handleOnChange(this.getValueOfDropdown(el.target))
+            this.handleInputChange(this.getValueOfDropdown(el.target))
           }
           multiple={multiple}
           name={name}
@@ -253,21 +260,13 @@ export default class FieldStringEdit extends React.Component {
       heightType,
       multiline,
       readonly,
-      rows,
-      resizable
+      resizable,
+      rows
     } = publishBlock
     const type = multiline ? 'multiline' : 'text'
     const readOnly = readonly === true
 
-    // Is the field flagged as a link?
-    const isLink =
-      display.link &&
-      typeof value === 'string' &&
-      value.indexOf('http://') * value.indexOf('https://') === 0
-    const formattedLink =
-      typeof display.link === 'string'
-        ? display.link.replace(/{value}/, value)
-        : value
+    const link = formatLink(value, display.link)
 
     return (
       <Label
@@ -284,10 +283,13 @@ export default class FieldStringEdit extends React.Component {
       >
         <TextInput
           heightType={heightType}
+          inputRef={ref => {
+            this.inputRefs[0] = ref
+          }}
           name={name}
           onBlur={this.handleFocusChange.bind(this, false)}
-          onInput={el => this.handleOnChange(el.target.value)}
           onFocus={this.handleFocusChange.bind(this, true)}
+          onInput={el => this.handleInputChange(el.target.value)}
           placeholder={placeholder}
           readOnly={readOnly}
           resizable={resizable}
@@ -296,11 +298,11 @@ export default class FieldStringEdit extends React.Component {
           value={value}
         />
 
-        {isLink && (
+        {link && (
           <Button
             accent="neutral"
             className={styles['link-preview']}
-            href={formattedLink}
+            href={link}
             openInNewWindow={true}
             size="small"
           >
@@ -311,15 +313,54 @@ export default class FieldStringEdit extends React.Component {
     )
   }
 
+  renderAsList() {
+    const {
+      comment,
+      displayName,
+      error,
+      name,
+      placeholder,
+      required,
+      schema: {publish: publishSettings = {}},
+      value
+    } = this.props
+    const {hasFocus} = this.state
+    const readOnly = publishSettings.readonly === true
+
+    return (
+      <Label
+        comment={
+          comment ||
+          (required && 'Required') ||
+          (readOnly && 'Read only') ||
+          null
+        }
+        error={Boolean(error)}
+        errorMessage={typeof error === 'string' ? error : null}
+        hasFocus={hasFocus}
+        label={displayName}
+      >
+        <SortableList
+          name={name}
+          onChange={this.handleInputChange.bind(this)}
+          onFocus={this.handleFocusChange.bind(this)}
+          placeholder={placeholder}
+          publishSettings={publishSettings}
+          valuesArray={value}
+        />
+      </Label>
+    )
+  }
+
   renderAsRichEditor(format) {
     const {
       contentKey,
       displayName,
       error,
       name,
-      required,
       onSaveRegister,
       onValidateRegister,
+      required,
       value
     } = this.props
     const {hasFocus} = this.state
@@ -339,7 +380,7 @@ export default class FieldStringEdit extends React.Component {
           contentKey={contentKey + fieldContentKey}
           format={format}
           onBlur={this.handleFocusChange.bind(this, false)}
-          onChange={this.handleOnChange.bind(this)}
+          onChange={this.handleInputChange.bind(this)}
           onFocus={this.handleFocusChange.bind(this, true)}
           onSaveRegister={onSaveRegister}
           onValidateRegister={onValidateRegister}
