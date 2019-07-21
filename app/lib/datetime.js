@@ -23,10 +23,8 @@ export default class DateTime {
     // Unix timestamp in a string.
     if (intDate.toString() === date) return new Date(intDate)
 
-    let parsedDate
-
     try {
-      parsedDate =
+      const parsedDate =
         // Fecha requires a format. If no format is specified, try ISO.
         fecha.parse(date, format || FORMAT_ISO8601) ||
         // If format is specified but parsing fails, the value has probably been
