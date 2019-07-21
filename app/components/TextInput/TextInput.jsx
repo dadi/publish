@@ -169,16 +169,15 @@ export default class TextInput extends React.Component {
   }
 
   componentDidUpdate(oldProps) {
-    const {oldHeightType} = oldProps
-    const {heightType, inputRef} = this.props
+    const {heightType: oldHeightType, value: oldValue} = oldProps
+    const {heightType, inputRef, value} = this.props
 
     if (oldHeightType !== heightType && heightType === 'content') {
       this.adjustHeightIfNeeded()
     }
 
-    if (this.cursor) {
+    if (oldValue !== value && this.cursor) {
       this.setCursor(this.cursor)
-      this.cursor = null
     }
 
     if (typeof inputRef === 'function') {
