@@ -70,6 +70,9 @@ class ReferenceSelectView extends React.Component {
       contentKey: this.getParentContentKey(),
       update: {
         [referenceField]: selection && selection.length > 0 ? selection : null
+      },
+      error: {
+        [referenceField]: undefined
       }
     })
 
