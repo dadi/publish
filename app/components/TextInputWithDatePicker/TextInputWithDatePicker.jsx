@@ -141,26 +141,24 @@ export default class TextInputWithDatePicker extends React.Component {
     const {value} = event.target
     const newDate = new DateTime(event.target.value, format)
 
-    if (value.length > 0) {
-      if (value.length === format.length && newDate.isValid()) {
-        if (typeof onChange === 'function') {
-          const utcDate = newDate.getDate({toUTC: true})
+    if (value.length === format.length && newDate.isValid()) {
+      if (typeof onChange === 'function') {
+        const utcDate = newDate.getDate({toUTC: true})
 
-          onChange(utcDate.getTime())
-        }
-
-        this.setState({
-          internalValue: null
-        })
-      } else {
-        if (typeof onChange === 'function') {
-          onChange(null)
-        }
-
-        this.setState({
-          internalValue: value
-        })
+        onChange(utcDate.getTime())
       }
+
+      this.setState({
+        internalValue: null
+      })
+    } else {
+      if (typeof onChange === 'function') {
+        onChange(null)
+      }
+
+      this.setState({
+        internalValue: value
+      })
     }
   }
 
