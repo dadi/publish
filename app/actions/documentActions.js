@@ -572,7 +572,6 @@ export function saveDocument({contentKey, collection, documentId}) {
 
               error.errors.forEach(error => {
                 if (error.field) {
-                  dataUpdate[error.field] = null
                   errorUpdate[error.field] = error.message
                 }
               })

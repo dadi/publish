@@ -99,10 +99,8 @@ class DocumentField extends React.Component {
           }
         }
 
-        if (error) {
-          data.error = {
-            [name]: error.message || error
-          }
+        data.error = {
+          [name]: error && error.message
         }
 
         actions.updateLocalDocument(data)
