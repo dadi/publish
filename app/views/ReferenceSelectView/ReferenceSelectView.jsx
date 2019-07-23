@@ -88,7 +88,6 @@ class ReferenceSelectView extends React.Component {
       createNew: !documentId,
       referenceFieldSelect: null,
       search: {
-        ...route.search,
         filter: null
       },
       section: fieldSection || null
@@ -430,6 +429,7 @@ class ReferenceSelectView extends React.Component {
     return (
       <DocumentTableList
         collection={referencedCollection}
+        buildSortUrl={onBuildBaseUrl.bind(this)}
         documents={documents}
         fields={visibleFields}
         onBuildBaseUrl={params =>
