@@ -38,12 +38,13 @@ export default class RichEditorLink extends React.Component {
     this.state = {
       editing: props.href === '',
       href: props.href,
-      offsetRight: 0
+      popupStyle: {}
     }
   }
 
   componentDidMount() {
     document.body.addEventListener('mousedown', this.clickHandler)
+    this.offsetPopup()
   }
 
   componentWillUnmount() {
@@ -80,25 +81,24 @@ export default class RichEditorLink extends React.Component {
     })
   }
 
-  handlePopupRef(element) {
+  offsetPopup() {
     const {bounds} = this.props
+    const {popupElement, container} = this
 
-    if (!bounds || !element || this.hasAdjustedPosition) {
+    if (!bounds || !popupElement || !container) {
       return
     }
 
-    const {right, top} = element.getBoundingClientRect()
-    const offsetRight = right - bounds.right
-    const offsetTop = top - bounds.top - element.clientHeight * 2.5
+    const {right} = popupElement.getBoundingClientRect()
+    const {top: linkTop} = this.container.getBoundingClientRect()
 
-    this.hasAdjustedPosition = true
+    const leftOffset = Math.min(bounds.right - right, 0)
+    const verticalOffset = -popupElement.clientHeight * 1.5
+    const topOrBottom = bounds.top > linkTop + verticalOffset ? 'bottom' : 'top'
 
-    if (offsetRight > 0 || offsetTop < 0) {
-      this.setState({
-        offsetRight: Math.max(offsetRight, 0),
-        offsetTop: Math.abs(Math.min(offsetTop, 0))
-      })
-    }
+    this.setState({
+      popupStyle: {left: leftOffset, [topOrBottom]: verticalOffset}
+    })
   }
 
   handleSave(event) {
@@ -118,10 +118,15 @@ export default class RichEditorLink extends React.Component {
 
   render() {
     const {children} = this.props
-    const {editing, href, offsetRight, offsetTop} = this.state
+    const {editing, href, popupStyle} = this.state
 
     return (
-      <span className={styles.container} ref={el => (this.container = el)}>
+      <span
+        className={styles.container}
+        ref={el => {
+          this.container = el
+        }}
+      >
         <a href={href} onClick={this.handleLinkClick.bind(this)}>
           {children}
         </a>
@@ -130,10 +135,10 @@ export default class RichEditorLink extends React.Component {
           <div
             className={styles.popup}
             contentEditable={false}
-            ref={this.handlePopupRef.bind(this)}
-            style={{
-              transform: `translate3d(-${offsetRight}px, ${offsetTop}px, 0)`
+            ref={el => {
+              this.popupElement = el
             }}
+            style={popupStyle}
           >
             <form className={styles.form} onSubmit={this.handleSave.bind(this)}>
               <input
