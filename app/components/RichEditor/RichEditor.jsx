@@ -162,6 +162,12 @@ export default class RichEditor extends React.Component {
     }
   }
 
+  componentDidUpdate(_, prevState) {
+    if (this.state.isFullscreen !== prevState.isFullscreen) {
+      this.containerBounds = this.container.getBoundingClientRect()
+    }
+  }
+
   componentWillMount() {
     this.hotKeys.removeListener()
   }
@@ -500,10 +506,7 @@ export default class RichEditor extends React.Component {
     const valueIsLink = this.hasInline(NODE_LINK)
 
     return (
-      <div
-        className={containerStyle.getClasses()}
-        ref={el => (this.container = el)}
-      >
+      <div className={containerStyle.getClasses()}>
         {isSelectingMedia && (
           <Modal
             onRequestClose={this.handleToggleMediaSelect.bind(this, false)}
@@ -605,7 +608,10 @@ export default class RichEditor extends React.Component {
           </div>
         </RichEditorToolbar>
 
-        <div className={editorWrapperStyle.getClasses()}>
+        <div
+          className={editorWrapperStyle.getClasses()}
+          ref={el => (this.container = el)}
+        >
           <Editor
             className={styles.editor}
             onChange={this.handleChange.bind(this)}
