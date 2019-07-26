@@ -49,6 +49,19 @@ module.exports = {
     selectAuthor: locate('a')
       .withText('Select existing author')
       .as('Select Author Button'),
+    editAuthorButton: locate('div')
+      .withAttr({
+        'data-field-name': 'author'
+      })
+      .find('a')
+      .withText('Edit')
+      .as('Edit Author Button'),
+    authorNameAsc: locate('a[href*="?order=asc&sort=name"]').as(
+      'Authors Names Ascending'
+    ),
+    authorNameDesc: locate('a[href*="?order=desc&sort=name"]').as(
+      'Authors Names Descending'
+    ),
     numOfAuthors: locate('td:nth-child(2)').as('Number of Authors'),
     numOfCategories: locate('td:nth-child(2)').as('Number of Categories'),
     numOfSubCategories: locate('td:nth-child(2)').as(
@@ -493,6 +506,45 @@ module.exports = {
     I.seeInCurrentUrl(link)
     I.fillField(this.locators.titleField, '')
     I.fillField(this.locators.titleField, 'This Article Is Updated')
+    I.click(this.locators.editAuthorButton)
+    I.waitForFunction(() => document.readyState === 'complete')
+    I.seeInCurrentUrl('/select/author')
+    I.waitForText('Author')
+    const numberAuthors = await I.grabNumberOfVisibleElements(
+      this.locators.numOfAuthors
+    )
+
+    I.seeNumbersAreEqual(numberAuthors, 5)
+    const authorsNames = await I.grabTextFrom(this.locators.numOfAuthors)
+
+    // Sort names alphabetically ascending
+    const sortNamesAsc = [...authorsNames].sort()
+
+    // Sort names alphabetically descending
+    const sortNamesDesc = [...sortNamesAsc].reverse()
+
+    I.click(this.locators.authorNameAsc)
+
+    const authorsNamesAsc = await I.grabTextFrom(this.locators.numOfAuthors)
+
+    // Check names sorted correctly ascending alphabetically
+    await I.seeStringsAreEqual(
+      authorsNamesAsc.toString(),
+      sortNamesAsc.toString()
+    )
+
+    I.click(this.locators.authorNameDesc)
+
+    const authorsNamesDesc = await I.grabTextFrom(this.locators.numOfAuthors)
+
+    // Check names sorted correctly descending alphabetically
+    await I.seeStringsAreEqual(
+      authorsNamesDesc.toString(),
+      sortNamesDesc.toString()
+    )
+
+    I.click(this.locators.saveSelected)
+    I.waitForFunction(() => document.readyState === 'complete')
     I.scrollTo(this.locators.webService)
     const wsSelected = await I.grabTextFrom(this.locators.webServiceSelected)
 
