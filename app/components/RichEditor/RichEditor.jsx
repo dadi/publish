@@ -507,10 +507,18 @@ export default class RichEditor extends React.Component {
     const valueIsCodeMark = this.hasMark(NODE_CODE)
     const valueIsLink = this.hasInline(NODE_LINK)
 
-    const {data} = this.value
+    const {
+      data,
+      document: {nodes, text}
+    } = this.value
 
     const undos = data.get('undos')
     const redos = data.get('redos')
+
+    const words = nodes
+      .map(({text}) => text.split(/\s/).filter(Boolean).length)
+      .reduce((total, item) => total + item)
+    const chars = text.length
 
     return (
       <div className={containerStyle.getClasses()}>
@@ -609,6 +617,14 @@ export default class RichEditor extends React.Component {
               icon={IconMedia}
               text="Media"
             />
+          </div>
+
+          <div className={styles['word-counter']}>
+            <div>Words: {words} /</div>
+            <div>
+              <pre> </pre>
+            </div>
+            <div>Chars: {chars}</div>
           </div>
 
           <div>
