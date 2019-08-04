@@ -301,6 +301,24 @@ class App extends React.Component {
           <Route
             isSignedIn={isSignedIn}
             exact
+            component={ReferenceSelectView}
+            config={state.app.config}
+            mustBeSignedIn
+            path={`/:collection${REGEX_SLUG}/select/:referenceField/:page${REGEX_NUMBER}?`}
+          />
+
+          <Route
+            isSignedIn={isSignedIn}
+            exact
+            component={ReferenceSelectView}
+            config={state.app.config}
+            mustBeSignedIn
+            path={`/:group${REGEX_SLUG}/:collection${REGEX_SLUG}/select/:referenceField/:page${REGEX_NUMBER}?`}
+          />
+
+          <Route
+            isSignedIn={isSignedIn}
+            exact
             component={DocumentEditView}
             config={state.app.config}
             mustBeSignedIn

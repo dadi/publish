@@ -126,6 +126,7 @@ export default class FieldReferenceEdit extends React.Component {
 
   render() {
     const {
+      collection,
       config,
       displayName,
       documentId,
@@ -155,8 +156,13 @@ export default class FieldReferenceEdit extends React.Component {
     })
     const firstStringField = this.findFirstStringField(displayableFields)
     const displayField = value && firstStringField ? firstStringField.key : null
+
+    const isSingleDocument =
+      collection.settings &&
+      collection.settings.publish &&
+      collection.settings.publish.isSingleDocument
     const editLink = onBuildBaseUrl({
-      createNew: !documentId,
+      createNew: !documentId && !isSingleDocument,
       referenceFieldSelect: name
     })
     const values = value && !(value instanceof Array) ? [value] : value

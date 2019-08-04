@@ -1,0 +1,34 @@
+{
+  "fields": {
+    "title": {
+      "type": "String",
+      "label": "Title",
+      "publish": {
+        "placement": "main",
+        "display": {
+          "edit": true,
+          "list": true
+        }
+      }
+    },
+    "reference": {
+      "type": "Reference",
+      "label": "Reference",
+      "publish": {
+        "placement": "main",
+        "display": {
+          "edit": true
+        }
+      },
+      "settings": {
+        "collection": "team"
+      }
+    }
+  },
+  "settings": {
+    "displayName": "Single-document collection",
+    "publish": {
+      "isSingleDocument": true
+    }
+  }
+}

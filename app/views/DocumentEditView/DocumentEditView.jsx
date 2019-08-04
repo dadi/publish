@@ -28,12 +28,11 @@ class DocumentEditView extends React.Component {
   }
 
   componentDidMount() {
-    const {actions, route} = this.props
-    const {documentId} = route.params
+    const {actions, contentKey, documentId} = this.props
 
     if (!documentId) {
       actions.startDocument({
-        contentKey: this.contentKey
+        contentKey
       })
     }
 
@@ -41,15 +40,15 @@ class DocumentEditView extends React.Component {
   }
 
   componentDidUpdate(oldProps) {
-    const {actions, route, state} = this.props
+    const {actions, collection, contentKey, documentId, state} = this.props
     const {state: oldState} = oldProps
-    const {documentId} = route.params
-    const document = state.document[this.contentKey] || {}
-    const oldDocument = oldState.document[this.contentKey] || {}
+    const document = state.document[contentKey] || {}
+    const oldDocument = oldState.document[contentKey] || {}
     const isSaving = (oldDocument.saveAttempts || 0) < document.saveAttempts
 
     // Are there unsaved changes?
     if (
+      !document.isLoading &&
       document.wasLoadedFromLocalStorage &&
       !this.shownUnsavedChangesNotification
     ) {
@@ -59,7 +58,7 @@ class DocumentEditView extends React.Component {
         message: 'You have unsaved changes',
         options: {
           'Discard them?': actions.discardUnsavedChanges.bind(this, {
-            contentKey: this.contentKey
+            contentKey
           })
         }
       }
@@ -85,19 +84,25 @@ class DocumentEditView extends React.Component {
       }
 
       return actions.saveDocument({
-        collection: this.collection,
-        contentKey: this.contentKey,
+        collection,
+        contentKey,
         documentId: asDuplicate ? null : documentId
       })
     }
   }
 
   componentWillReceiveProps(newProps) {
-    const {actions, onBuildBaseUrl, state} = this.props
-    const document = state.document[this.contentKey] || {}
-    const {route, state: newState} = newProps
-    const newDocument = newState.document[this.contentKey] || {}
-    const {documentId, section} = route.params
+    const {
+      actions,
+      contentKey,
+      isSingleDocument,
+      onBuildBaseUrl,
+      state
+    } = this.props
+    const document = state.document[contentKey] || {}
+    const {documentId, route, state: newState} = newProps
+    const newDocument = newState.document[contentKey] || {}
+    const {section} = route.params
 
     if (document.isSaving && !newDocument.isSaving) {
       const {lastSaveMode: mode} = newDocument
@@ -128,7 +133,7 @@ class DocumentEditView extends React.Component {
 
         default:
           // If we've just created a new document, we redirect to its new URL.
-          if (!document.remote && newDocument.remote) {
+          if (!document.remote && newDocument.remote && !isSingleDocument) {
             this.redirectUrl = onBuildBaseUrl.call(this, {
               documentId: newDocument.remote._id
             })
@@ -184,8 +189,8 @@ class DocumentEditView extends React.Component {
   // - `name`: name of the section
   // - `slug`: slug of the section
   groupFieldsIntoSections(fields) {
-    const {onBuildBaseUrl, route} = this.props
-    const {documentId, section: activeSectionSlug} = route.params
+    const {documentId, onBuildBaseUrl, route} = this.props
+    const {section: activeSectionSlug} = route.params
 
     const sections = {}
 
@@ -249,11 +254,12 @@ class DocumentEditView extends React.Component {
   }
 
   handleNetworkError() {
+    const {actions, contentKey} = this.props
+
     return (
       <ErrorMessage
         data={{
-          onClick: () =>
-            this.props.actions.touchDocument({contentKey: this.contentKey})
+          onClick: () => actions.touchDocument({contentKey})
         }}
         type={Constants.STATUS_FAILED}
       />
@@ -273,15 +279,16 @@ class DocumentEditView extends React.Component {
       return <Redirect to={redirectUrl} />
     }
 
-    const {actions, onBuildBaseUrl, route, section, state} = this.props
-    const {api} = state.app.config
-    const {collection: collectionName, documentId} = route.params
-    const collection =
-      collectionName === Constants.MEDIA_COLLECTION_SCHEMA.slug
-        ? Constants.MEDIA_COLLECTION_SCHEMA
-        : api.collections.find(collection => {
-            return collection.slug === route.params.collection
-          })
+    const {
+      actions,
+      collection,
+      contentKey,
+      documentId,
+      isSingleDocument,
+      onBuildBaseUrl,
+      section,
+      state
+    } = this.props
 
     if (!collection) {
       return (
@@ -295,18 +302,7 @@ class DocumentEditView extends React.Component {
       )
     }
 
-    // Storing the collection in an instance variable so that other lifecycle
-    // methods can use it.
-    this.collection = collection
-
-    // Computing the content key and storing it in an instance variable so that
-    // other lifecycle methods can use it.
-    this.contentKey = JSON.stringify({
-      collection: collection.slug,
-      documentId
-    })
-
-    const document = state.document[this.contentKey] || {}
+    const document = state.document[contentKey] || {}
 
     if (document.isDeleted) {
       actions.setNotification({
@@ -352,8 +348,9 @@ class DocumentEditView extends React.Component {
         <div className={styles.toolbar}>
           <DocumentEditToolbar
             collection={collection}
-            contentKey={this.contentKey}
+            contentKey={contentKey}
             documentId={documentId}
+            isSingleDocument={isSingleDocument}
             multiLanguage={!collection.IS_MEDIA_BUCKET}
             onBuildBaseUrl={onBuildBaseUrl.bind(this)}
             section={section}
@@ -363,14 +360,14 @@ class DocumentEditView extends React.Component {
         <Main>
           <Document
             collection={collection}
-            contentKey={this.contentKey}
+            contentKey={contentKey}
             documentId={documentId}
             onDocumentNotFound={this.handleDocumentNotFound.bind(this)}
             onNetworkError={this.handleNetworkError.bind(this)}
             onRender={({document}) =>
               this.renderDocument({
                 collection,
-                contentKey: this.contentKey,
+                contentKey,
                 document,
                 sections
               })
@@ -501,12 +498,41 @@ class DocumentEditView extends React.Component {
   }
 
   saveDocumentLocally() {
-    const {actions} = this.props
+    const {actions, contentKey} = this.props
 
     actions.saveDocumentLocally({
-      contentKey: this.contentKey
+      contentKey
     })
   }
 }
 
-export default connectRedux(appActions, documentActions)(DocumentEditView)
+function mapState(state, ownProps) {
+  const {
+    isSingleDocument,
+    route: {params}
+  } = ownProps
+  const documentId = isSingleDocument ? ownProps.documentId : params.documentId
+  const collection =
+    params.collection === Constants.MEDIA_COLLECTION_SCHEMA.slug
+      ? Constants.MEDIA_COLLECTION_SCHEMA
+      : state.app.config.api.collections.find(collection => {
+          return collection.slug === params.collection
+        })
+  const contentKey = isSingleDocument
+    ? JSON.stringify({collection: collection.slug})
+    : JSON.stringify({
+        collection: collection.slug,
+        documentId
+      })
+
+  return {
+    collection,
+    contentKey,
+    documentId,
+    state
+  }
+}
+
+export default connectRedux(mapState, appActions, documentActions)(
+  DocumentEditView
+)

@@ -28,46 +28,19 @@ class ReferenceSelectView extends React.Component {
     this.hasPropagatedInitialSelection = {}
   }
 
-  getContentKey() {
-    const {route} = this.props
-    const {collection, group, page = '1', referenceField} = route.params
-    const {searchString} = route
-
-    return JSON.stringify({
-      collection,
-      group,
-      page,
-      referenceField,
-      searchString
-    })
-  }
-
-  getParentContentKey() {
-    const {route} = this.props
-    const {collection, documentId} = route.params
-
-    return JSON.stringify({
-      collection,
-      documentId
-    })
-  }
-
-  getSelectionKey() {
-    const {route} = this.props
-    const {collection, referenceField} = route.params
-
-    return JSON.stringify({
-      collection,
-      referenceField
-    })
-  }
-
   handleDocumentSelect({referenceField: schema, selection}) {
-    const {actions, history, onBuildBaseUrl, route} = this.props
-    const {documentId, referenceField} = route.params
+    const {
+      actions,
+      history,
+      isNewDocument,
+      onBuildBaseUrl,
+      parentContentKey,
+      route
+    } = this.props
+    const {referenceField} = route.params
 
     actions.updateLocalDocument({
-      contentKey: this.getParentContentKey(),
+      contentKey: parentContentKey,
       update: {
         [referenceField]: selection && selection.length > 0 ? selection : null
       },
@@ -85,7 +58,7 @@ class ReferenceSelectView extends React.Component {
       schema.publish.section &&
       slugify(schema.publish.section)
     const redirectUrl = onBuildBaseUrl.call(this, {
-      createNew: !documentId,
+      createNew: isNewDocument,
       referenceFieldSelect: null,
       search: {
         filter: null
@@ -160,17 +133,16 @@ class ReferenceSelectView extends React.Component {
   }
 
   handleSelectionChange(selection) {
-    const {actions} = this.props
+    const {actions, selectionKey} = this.props
 
     actions.setDocumentSelection({
-      key: this.getSelectionKey(),
+      key: selectionKey,
       selection
     })
   }
 
   propagateInitialSelection(selection) {
-    const {actions} = this.props
-    const selectionKey = this.getSelectionKey()
+    const {actions, selectionKey} = this.props
 
     // Because this method is called multiple times, off the back of `render`,
     // we must ensure that we only set the initial selection once for each
@@ -195,25 +167,20 @@ class ReferenceSelectView extends React.Component {
   }
 
   render() {
-    const {onBuildBaseUrl, route, state} = this.props
-    const {api} = state.app.config
     const {
-      collection: collectionName,
-      documentId,
-      page,
-      referenceField: referenceFieldName
-    } = route.params
+      collection,
+      contentKey,
+      isSingleDocument,
+      onBuildBaseUrl,
+      parentContentKey,
+      route,
+      selectionKey,
+      state
+    } = this.props
+    const {documentId, page, referenceField: referenceFieldName} = route.params
     const {search} = route
     const parsedPage = Number.parseInt(page)
     const pageNumber = parsedPage.toString() === page ? parsedPage : undefined
-
-    // Getting the schema for the parent collection.
-    const collection =
-      collectionName === Constants.MEDIA_COLLECTION_SCHEMA.slug
-        ? Constants.MEDIA_COLLECTION_SCHEMA
-        : api.collections.find(collection => {
-            return collection.slug === route.params.collection
-          })
 
     // If the `collection` parameter doesn't match a valid collection,
     // we render nothing.
@@ -257,6 +224,7 @@ class ReferenceSelectView extends React.Component {
     // - collection: the schema of the referenced collection;
     // - filters (optional): a set of filters to apply to the collection when
     //   fetching documents
+    const {api} = state.app.config
     const {
       collection: referencedCollection,
       filters = {}
@@ -273,12 +241,10 @@ class ReferenceSelectView extends React.Component {
     }
 
     // Getting documents from store.
-    const contentKey = this.getContentKey()
     const data = state.documents[contentKey] || {}
     const {metadata} = data
 
     // Getting the IDs of the selected documents.
-    const selectionKey = this.getSelectionKey()
     const selection = state.selection[selectionKey] || []
 
     // Computing the URL that users will be taken to if they wish to cancel
@@ -305,10 +271,10 @@ class ReferenceSelectView extends React.Component {
         })
       : undefined
 
-    return (
+    const renderPageContents = documentId => (
       <Document
         collection={collection}
-        contentKey={this.getParentContentKey()}
+        contentKey={parentContentKey}
         documentId={documentId}
         onRender={({document}) => {
           this.propagateInitialSelection(document._merged[referenceFieldName])
@@ -384,6 +350,21 @@ class ReferenceSelectView extends React.Component {
         }}
       />
     )
+
+    if (isSingleDocument) {
+      // In this case the documentId is not in the url, so we have to fetch the
+      // document list and grab the _id from the fetched document.
+      return (
+        <DocumentList
+          collection={collection}
+          contentKey={JSON.stringify({collection: collection.slug})}
+          onEmptyList={() => renderPageContents()}
+          onRender={({documents}) => renderPageContents(documents[0]._id)}
+        />
+      )
+    }
+
+    return renderPageContents(documentId)
   }
 
   renderList({
@@ -449,6 +430,51 @@ class ReferenceSelectView extends React.Component {
   }
 }
 
-export default connectRedux(documentActions, selectionActions)(
+function mapState(state, ownProps) {
+  const {
+    route: {params, path, searchString}
+  } = ownProps
+
+  const collection =
+    params.collection === Constants.MEDIA_COLLECTION_SCHEMA.slug
+      ? Constants.MEDIA_COLLECTION_SCHEMA
+      : state.app.config.api.collections.find(collection => {
+          return collection.slug === params.collection
+        })
+
+  const isNewDocument = /\/new\/?/.test(path) && !params.documentId
+  const isSingleDocument = !isNewDocument && !params.documentId
+
+  const {group, page = '1', referenceField} = params
+
+  const {slug} = collection
+  const contentKey = JSON.stringify({
+    collection: slug,
+    group,
+    page,
+    referenceField,
+    searchString
+  })
+  const parentContentKey = JSON.stringify({
+    collection: slug,
+    documentId: params.documentId
+  })
+  const selectionKey = JSON.stringify({
+    collection: slug,
+    referenceField
+  })
+
+  return {
+    collection,
+    contentKey,
+    isNewDocument,
+    isSingleDocument,
+    parentContentKey,
+    selectionKey,
+    state
+  }
+}
+
+export default connectRedux(mapState, documentActions, selectionActions)(
   ReferenceSelectView
 )

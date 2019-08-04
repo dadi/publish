@@ -5,6 +5,7 @@ import * as selectionActions from 'actions/selectionActions'
 import BulkActionSelector from 'components/BulkActionSelector/BulkActionSelector'
 import Button from 'components/Button/Button'
 import {connectRedux} from 'lib/redux'
+import DocumentEditView from 'views/DocumentEditView/DocumentEditView'
 import DocumentGridList from 'components/DocumentGridList/DocumentGridList'
 import DocumentList from 'containers/DocumentList/DocumentList'
 import DocumentListController from 'components/DocumentListController/DocumentListController'
@@ -21,6 +22,7 @@ import Page from 'components/Page/Page'
 import React from 'react'
 import {Redirect} from 'react-router-dom'
 import {setPageTitle} from 'lib/util'
+import SpinningWheel from 'components/SpinningWheel/SpinningWheel'
 import styles from './DocumentListView.css'
 
 const BULK_ACTIONS = {
@@ -29,9 +31,9 @@ const BULK_ACTIONS = {
 
 class DocumentListView extends React.Component {
   componentDidUpdate(oldProps) {
-    const {actions, state} = this.props
-    const data = state.documents[this.getContentKey()] || {}
-    const oldData = oldProps.state.documents[this.getContentKey()] || {}
+    const {actions, contentKey, state} = this.props
+    const data = state.documents[contentKey] || {}
+    const oldData = oldProps.state.documents[contentKey] || {}
     const {isDeleting, error} = data
     const {isDeleting: wasDeleting} = oldData
 
@@ -49,24 +51,9 @@ class DocumentListView extends React.Component {
     }
   }
 
-  getContentKey() {
-    const {route} = this.props
-    const {collection, group, page = '1'} = route.params
-    const {searchString} = route
-
-    return JSON.stringify({collection, group, page, searchString})
-  }
-
-  getSelectionKey() {
-    const {route} = this.props
-    const {collection, group} = route.params
-
-    return JSON.stringify({collection, group})
-  }
-
   handleBulkActionApply(collection, actionType) {
-    const {actions, state} = this.props
-    const selection = state.selection[this.getSelectionKey()] || []
+    const {actions, contentKey, selectionKey, state} = this.props
+    const selection = state.selection[selectionKey] || []
 
     switch (actionType) {
       case BULK_ACTIONS.DELETE:
@@ -75,12 +62,12 @@ class DocumentListView extends React.Component {
 
           actions.deleteDocuments({
             collection,
-            contentKey: this.getContentKey(),
+            contentKey,
             ids
           })
 
           actions.setDocumentSelection({
-            key: this.getSelectionKey(),
+            key: selectionKey,
             selection: []
           })
         }
@@ -160,13 +147,12 @@ class DocumentListView extends React.Component {
   }
 
   handleNetworkError() {
+    const {actions, contentKey} = this.props
+
     return (
       <ErrorMessage
         data={{
-          onClick: () =>
-            this.props.actions.touchDocumentList({
-              contentKey: this.getContentKey()
-            })
+          onClick: () => actions.touchDocumentList({contentKey})
         }}
         type={Constants.STATUS_FAILED}
       />
@@ -188,34 +174,33 @@ class DocumentListView extends React.Component {
   }
 
   handleMediaUpload(files) {
-    const {actions} = this.props
+    const {actions, contentKey} = this.props
 
     actions.uploadMediaDocuments({
-      contentKey: this.getContentKey(),
+      contentKey,
       files: Array.from(files)
     })
   }
 
   handleSelect(selection) {
-    const {actions} = this.props
+    const {actions, selectionKey} = this.props
 
     actions.setDocumentSelection({
-      key: this.getSelectionKey(),
+      key: selectionKey,
       selection
     })
   }
 
   render() {
-    const {onBuildBaseUrl, route, state} = this.props
-    const {api} = state.app.config
-    const {collection: collectionName} = route.params
-    const {search} = route
-    const collection =
-      collectionName === Constants.MEDIA_COLLECTION_SCHEMA.slug
-        ? Constants.MEDIA_COLLECTION_SCHEMA
-        : api.collections.find(collection => {
-            return collection.slug === route.params.collection
-          })
+    const {
+      collection,
+      contentKey,
+      isSingleDocument,
+      onBuildBaseUrl,
+      route: {search},
+      selectionKey,
+      state
+    } = this.props
 
     if (!collection) {
       return (
@@ -229,8 +214,36 @@ class DocumentListView extends React.Component {
       )
     }
 
+    if (isSingleDocument) {
+      return (
+        <DocumentList
+          collection={collection}
+          contentKey={contentKey}
+          onEmptyList={() => (
+            <DocumentEditView {...this.props} isSingleDocument />
+          )}
+          onLoading={() => (
+            <Page>
+              <Header />
+
+              <Main>
+                <SpinningWheel />
+              </Main>
+            </Page>
+          )}
+          onNetworkError={this.handleNetworkError.bind(this)}
+          onRender={({documents}) => (
+            <DocumentEditView
+              {...this.props}
+              isSingleDocument
+              documentId={documents[0]._id}
+            />
+          )}
+        />
+      )
+    }
+
     // Getting documents from store.
-    const contentKey = this.getContentKey()
     const data = state.documents[contentKey] || {}
     const {metadata} = data
     const {page, totalPages} = metadata || {}
@@ -246,7 +259,6 @@ class DocumentListView extends React.Component {
     }
 
     // Getting the IDs of the selected documents.
-    const selectionKey = this.getSelectionKey()
     const selection = state.selection[selectionKey] || []
 
     // Computing bulk action options.
@@ -400,7 +412,7 @@ class DocumentListView extends React.Component {
     return (
       <DocumentList
         collection={collection}
-        contentKey={this.getContentKey()}
+        contentKey={contentKey}
         fields={visibleFields}
         filters={search.filter}
         onEmptyList={this.handleEmptyDocumentList.bind(this)}
@@ -427,6 +439,46 @@ class DocumentListView extends React.Component {
   }
 }
 
-export default connectRedux(appActions, documentActions, selectionActions)(
-  DocumentListView
-)
+function mapState(state, ownProps) {
+  const {
+    route: {params, searchString}
+  } = ownProps
+
+  const collection =
+    params.collection === Constants.MEDIA_COLLECTION_SCHEMA.slug
+      ? Constants.MEDIA_COLLECTION_SCHEMA
+      : state.app.config.api.collections.find(collection => {
+          return collection.slug === params.collection
+        })
+
+  const isSingleDocument =
+    collection.settings &&
+    collection.settings.publish &&
+    collection.settings.publish.isSingleDocument
+
+  const {group, page = '1'} = params
+  const contentKey = isSingleDocument
+    ? JSON.stringify({collection: collection.slug})
+    : JSON.stringify({
+        collection: collection.slug,
+        group,
+        page,
+        searchString
+      })
+  const selectionKey = JSON.stringify({collection: collection.slug, group})
+
+  return {
+    collection,
+    contentKey,
+    isSingleDocument,
+    selectionKey,
+    state
+  }
+}
+
+export default connectRedux(
+  mapState,
+  appActions,
+  documentActions,
+  selectionActions
+)(DocumentListView)
