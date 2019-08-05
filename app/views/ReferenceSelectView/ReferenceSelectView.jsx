@@ -10,7 +10,9 @@ import DocumentGridList from 'components/DocumentGridList/DocumentGridList'
 import DocumentList from 'containers/DocumentList/DocumentList'
 import DocumentListController from 'components/DocumentListController/DocumentListController'
 import DocumentListToolbar from 'components/DocumentListToolbar/DocumentListToolbar'
-import DocumentTableList from 'components/DocumentTableList/DocumentTableList'
+import DocumentTableList from 'containers/DocumentTableList/DocumentTableList'
+import ErrorMessage from 'components/ErrorMessage/ErrorMessage'
+import Header from 'containers/Header/Header'
 import HeroMessage from 'components/HeroMessage/HeroMessage'
 import Main from 'components/Main/Main'
 import MediaGridCard from 'containers/MediaGridCard/MediaGridCard'
@@ -170,6 +172,7 @@ class ReferenceSelectView extends React.Component {
     const {
       collection,
       contentKey,
+      isNewDocument,
       isSingleDocument,
       onBuildBaseUrl,
       parentContentKey,
@@ -181,6 +184,19 @@ class ReferenceSelectView extends React.Component {
     const {search} = route
     const parsedPage = Number.parseInt(page)
     const pageNumber = parsedPage.toString() === page ? parsedPage : undefined
+
+    if (!(isNewDocument || isSingleDocument || documentId)) {
+      // This is not a valid route.
+      return (
+        <Page>
+          <Header />
+
+          <Main>
+            <ErrorMessage type={Constants.ERROR_ROUTE_NOT_FOUND} />
+          </Main>
+        </Page>
+      )
+    }
 
     // If the `collection` parameter doesn't match a valid collection,
     // we render nothing.
@@ -250,7 +266,7 @@ class ReferenceSelectView extends React.Component {
     // Computing the URL that users will be taken to if they wish to cancel
     // the reference selection.
     const returnCtaUrl = onBuildBaseUrl.call(this, {
-      createNew: !documentId,
+      createNew: !documentId && !isSingleDocument,
       referenceFieldSelect: null
     })
 
@@ -443,7 +459,10 @@ function mapState(state, ownProps) {
         })
 
   const isNewDocument = /\/new\/?/.test(path) && !params.documentId
-  const isSingleDocument = !isNewDocument && !params.documentId
+  const isSingleDocument =
+    collection.settings &&
+    collection.settings.publish &&
+    collection.settings.publish.isSingleDocument
 
   const {group, page = '1', referenceField} = params
 
