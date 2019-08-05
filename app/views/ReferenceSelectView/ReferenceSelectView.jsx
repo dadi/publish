@@ -185,7 +185,7 @@ class ReferenceSelectView extends React.Component {
     const parsedPage = Number.parseInt(page)
     const pageNumber = parsedPage.toString() === page ? parsedPage : undefined
 
-    if (!(isNewDocument || isSingleDocument || documentId)) {
+    if (!isNewDocument && !isSingleDocument && !documentId) {
       // This is not a valid route.
       return (
         <Page>
@@ -368,7 +368,7 @@ class ReferenceSelectView extends React.Component {
     )
 
     if (isSingleDocument) {
-      // In this case the documentId is not in the url, so we have to fetch the
+      // In this case the documentId is not in the URL, so we have to fetch the
       // document list and grab the _id from the fetched document.
       return (
         <DocumentList
@@ -458,7 +458,7 @@ function mapState(state, ownProps) {
           return collection.slug === params.collection
         })
 
-  const isNewDocument = /\/new\/?/.test(path) && !params.documentId
+  const isNewDocument = /\/new(\/|$)/.test(path) && !params.documentId
   const isSingleDocument =
     collection.settings &&
     collection.settings.publish &&

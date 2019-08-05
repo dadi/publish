@@ -284,43 +284,44 @@ class App extends React.Component {
 
         <Switch>
           <Route
-            isSignedIn={isSignedIn}
-            exact
-            mustBeSignedIn
-            path="/"
             component={HomeView}
             config={state.app.config}
+            exact
+            isSignedIn={isSignedIn}
+            mustBeSignedIn
+            path="/"
           />
 
           <Route
-            isSignedIn={isSignedIn}
+            component={ProfileEditView}
+            config={state.app.config}
             exact
+            isSignedIn={isSignedIn}
             mustBeSignedIn
             path="/profile/:section?"
-            component={ProfileEditView}
-            config={state.app.config}
           />
 
           <Route
-            isSignedIn={isSignedIn}
+            component={ProfileEditView}
+            config={state.app.config}
             exact
+            isSignedIn={isSignedIn}
             mustBeSignedIn
             path="/profile/select/:referenceField/:page[^\d+$]?"
-            component={ProfileEditView}
-            config={state.app.config}
           />
 
           <Route
-            isSignedIn={isSignedIn}
-            exact
-            path="/sign-in/:token?"
             component={SignInView}
             config={state.app.config}
+            exact
+            isSignedIn={isSignedIn}
+            path="/sign-in/:token?"
           />
 
           <Route
-            isSignedIn={isSignedIn}
+            config={state.app.config}
             exact
+            isSignedIn={isSignedIn}
             mustBeSignedIn
             path="/sign-out"
             render={() => {
@@ -328,25 +329,24 @@ class App extends React.Component {
 
               return <Redirect to="/" />
             }}
-            config={state.app.config}
           />
 
           {collectionRoutes.map(({path, component}) => (
             <Route
-              key={path}
-              isSignedIn={isSignedIn}
-              exact
               component={component}
               config={state.app.config}
+              exact
+              isSignedIn={isSignedIn}
+              key={path}
               mustBeSignedIn
               path={path}
             />
           ))}
 
           <Route
-            isSignedIn={isSignedIn}
             component={ErrorView}
             config={state.app.config}
+            isSignedIn={isSignedIn}
           />
         </Switch>
       </Router>

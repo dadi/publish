@@ -235,8 +235,8 @@ class DocumentListView extends React.Component {
           onRender={({documents}) => (
             <DocumentEditView
               {...this.props}
-              isSingleDocument
               documentId={documents[0]._id}
+              isSingleDocument
             />
           )}
         />
