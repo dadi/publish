@@ -101,8 +101,8 @@ class DocumentTableList extends React.Component {
   }
 
   handleTableSort(value, sortBy, sortOrder) {
-    const {onBuildBaseUrl} = this.props
-    const link = onBuildBaseUrl({
+    const {buildSortUrl = this.props.onBuildBaseUrl} = this.props
+    const link = buildSortUrl({
       search: {
         order: sortOrder,
         sort: sortBy
