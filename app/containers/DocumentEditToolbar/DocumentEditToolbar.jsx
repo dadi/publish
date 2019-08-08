@@ -2,6 +2,7 @@ import * as appActions from 'actions/appActions'
 import * as Constants from 'lib/constants'
 import * as documentActions from 'actions/documentActions'
 import * as userActions from 'actions/userActions'
+import Button from 'components/Button/Button'
 import ButtonWithOptions from 'components/ButtonWithOptions/ButtonWithOptions'
 import ButtonWithPrompt from 'components/ButtonWithPrompt/ButtonWithPrompt'
 import {connectRedux} from 'lib/redux'
@@ -145,7 +146,14 @@ class DocumentEditToolbar extends React.Component {
   }
 
   render() {
-    const {contentKey, documentId, multiLanguage, router, state} = this.props
+    const {
+      contentKey,
+      documentId,
+      isSingleDocument,
+      multiLanguage,
+      router,
+      state
+    } = this.props
     const {api} = state.app.config
     const {document: documentStore} = state
     const document = documentStore[contentKey] || {}
@@ -219,7 +227,7 @@ class DocumentEditToolbar extends React.Component {
         </div>
 
         <div className={styles.buttons}>
-          {remote && (
+          {remote && !isSingleDocument && (
             <div className={styles.button}>
               <ButtonWithPrompt
                 accent="destruct"
@@ -236,17 +244,30 @@ class DocumentEditToolbar extends React.Component {
           )}
 
           <div className={styles.button}>
-            <ButtonWithOptions
-              accent="save"
-              disabled={Boolean(
-                hasConnectionIssues || hasValidationErrors || isSaving
-              )}
-              isLoading={isSaving}
-              onClick={saveOptions.primary.action}
-              options={saveOptions.secondary}
-            >
-              {saveOptions.primary.label}
-            </ButtonWithOptions>
+            {isSingleDocument ? (
+              <Button
+                accent="save"
+                disabled={Boolean(
+                  hasConnectionIssues || hasValidationErrors || isSaving
+                )}
+                isLoading={isSaving}
+                onClick={saveOptions.primary.action}
+              >
+                Save document
+              </Button>
+            ) : (
+              <ButtonWithOptions
+                accent="save"
+                disabled={Boolean(
+                  hasConnectionIssues || hasValidationErrors || isSaving
+                )}
+                isLoading={isSaving}
+                onClick={saveOptions.primary.action}
+                options={saveOptions.secondary}
+              >
+                {saveOptions.primary.label}
+              </ButtonWithOptions>
+            )}
           </div>
         </div>
       </Toolbar>

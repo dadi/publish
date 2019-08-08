@@ -150,6 +150,57 @@ class Route extends React.Component {
   }
 }
 
+const collectionRoutes = [
+  {
+    path: `/:collection${REGEX_SLUG}/new/select/:referenceField/:page${REGEX_NUMBER}?`,
+    component: ReferenceSelectView
+  },
+  {
+    path: `/:collection${REGEX_SLUG}/select/:referenceField/:page${REGEX_NUMBER}?`,
+    component: ReferenceSelectView
+  },
+  {
+    path: `/:collection${REGEX_SLUG}/new/:section?`,
+    component: DocumentEditView
+  },
+  {
+    path: `/:collection${REGEX_SLUG}/:documentId${REGEX_DOCUMENT_ID}/select/:referenceField/:page${REGEX_NUMBER}?`,
+    component: ReferenceSelectView
+  },
+  {
+    path: `/:group${REGEX_SLUG}/:collection${REGEX_SLUG}/new/select/:referenceField/:page${REGEX_NUMBER}?`,
+    component: ReferenceSelectView
+  },
+  {
+    path: `/:group${REGEX_SLUG}/:collection${REGEX_SLUG}/select/:referenceField/:page${REGEX_NUMBER}?`,
+    component: ReferenceSelectView
+  },
+  {
+    path: `/:group${REGEX_SLUG}/:collection${REGEX_SLUG}/new/:section?`,
+    component: DocumentEditView
+  },
+  {
+    path: `/:group${REGEX_SLUG}/:collection${REGEX_SLUG}/:documentId${REGEX_DOCUMENT_ID}/select/:referenceField/:page${REGEX_NUMBER}?`,
+    component: ReferenceSelectView
+  },
+  {
+    path: `/:collection${REGEX_SLUG}/:documentId${REGEX_DOCUMENT_ID}/:section?`,
+    component: DocumentEditView
+  },
+  {
+    path: `/:group${REGEX_SLUG}/:collection${REGEX_SLUG}/:documentId${REGEX_DOCUMENT_ID}/:section?`,
+    component: DocumentEditView
+  },
+  {
+    path: `/:collection${REGEX_SLUG}/:page${REGEX_NUMBER}?`,
+    component: DocumentListView
+  },
+  {
+    path: `/:group${REGEX_SLUG}/:collection${REGEX_SLUG}/:page${REGEX_NUMBER}?`,
+    component: DocumentListView
+  }
+]
+
 class App extends React.Component {
   componentWillMount() {
     const {actions} = this.props
@@ -233,43 +284,44 @@ class App extends React.Component {
 
         <Switch>
           <Route
-            isSignedIn={isSignedIn}
-            exact
-            mustBeSignedIn
-            path="/"
             component={HomeView}
             config={state.app.config}
+            exact
+            isSignedIn={isSignedIn}
+            mustBeSignedIn
+            path="/"
           />
 
           <Route
-            isSignedIn={isSignedIn}
+            component={ProfileEditView}
+            config={state.app.config}
             exact
+            isSignedIn={isSignedIn}
             mustBeSignedIn
             path="/profile/:section?"
-            component={ProfileEditView}
-            config={state.app.config}
           />
 
           <Route
-            isSignedIn={isSignedIn}
+            component={ProfileEditView}
+            config={state.app.config}
             exact
+            isSignedIn={isSignedIn}
             mustBeSignedIn
             path="/profile/select/:referenceField/:page[^\d+$]?"
-            component={ProfileEditView}
-            config={state.app.config}
           />
 
           <Route
-            isSignedIn={isSignedIn}
-            exact
-            path="/sign-in/:token?"
             component={SignInView}
             config={state.app.config}
+            exact
+            isSignedIn={isSignedIn}
+            path="/sign-in/:token?"
           />
 
           <Route
-            isSignedIn={isSignedIn}
+            config={state.app.config}
             exact
+            isSignedIn={isSignedIn}
             mustBeSignedIn
             path="/sign-out"
             render={() => {
@@ -277,103 +329,24 @@ class App extends React.Component {
 
               return <Redirect to="/" />
             }}
-            config={state.app.config}
           />
 
-          <Route
-            isSignedIn={isSignedIn}
-            exact
-            component={DocumentEditView}
-            config={state.app.config}
-            mustBeSignedIn
-            path={`/:collection${REGEX_SLUG}/new/:section?`}
-          />
+          {collectionRoutes.map(({path, component}) => (
+            <Route
+              component={component}
+              config={state.app.config}
+              exact
+              isSignedIn={isSignedIn}
+              key={path}
+              mustBeSignedIn
+              path={path}
+            />
+          ))}
 
           <Route
-            isSignedIn={isSignedIn}
-            exact
-            component={DocumentEditView}
-            config={state.app.config}
-            mustBeSignedIn
-            path={`/:group${REGEX_SLUG}/:collection${REGEX_SLUG}/new/:section?`}
-          />
-
-          <Route
-            isSignedIn={isSignedIn}
-            exact
-            component={DocumentEditView}
-            config={state.app.config}
-            mustBeSignedIn
-            path={`/:collection${REGEX_SLUG}/:documentId${REGEX_DOCUMENT_ID}/:section?`}
-          />
-
-          <Route
-            isSignedIn={isSignedIn}
-            exact
-            component={DocumentEditView}
-            config={state.app.config}
-            mustBeSignedIn
-            path={`/:group${REGEX_SLUG}/:collection${REGEX_SLUG}/:documentId${REGEX_DOCUMENT_ID}/:section?`}
-          />
-
-          <Route
-            isSignedIn={isSignedIn}
-            exact
-            component={DocumentListView}
-            config={state.app.config}
-            mustBeSignedIn
-            path={`/:collection${REGEX_SLUG}/:page${REGEX_NUMBER}?`}
-          />
-
-          <Route
-            isSignedIn={isSignedIn}
-            exact
-            component={ReferenceSelectView}
-            config={state.app.config}
-            mustBeSignedIn
-            path={`/:collection${REGEX_SLUG}/new/select/:referenceField/:page${REGEX_NUMBER}?`}
-          />
-
-          <Route
-            isSignedIn={isSignedIn}
-            exact
-            component={ReferenceSelectView}
-            config={state.app.config}
-            mustBeSignedIn
-            path={`/:collection${REGEX_SLUG}/:documentId${REGEX_DOCUMENT_ID}/select/:referenceField/:page${REGEX_NUMBER}?`}
-          />
-
-          <Route
-            isSignedIn={isSignedIn}
-            exact
-            component={DocumentListView}
-            config={state.app.config}
-            mustBeSignedIn
-            path={`/:group${REGEX_SLUG}/:collection${REGEX_SLUG}/:page${REGEX_NUMBER}?`}
-          />
-
-          <Route
-            isSignedIn={isSignedIn}
-            exact
-            component={ReferenceSelectView}
-            config={state.app.config}
-            mustBeSignedIn
-            path={`/:group${REGEX_SLUG}/:collection${REGEX_SLUG}/new/select/:referenceField/:page${REGEX_NUMBER}?`}
-          />
-
-          <Route
-            isSignedIn={isSignedIn}
-            exact
-            component={ReferenceSelectView}
-            config={state.app.config}
-            mustBeSignedIn
-            path={`/:group${REGEX_SLUG}/:collection${REGEX_SLUG}/:documentId${REGEX_DOCUMENT_ID}/select/:referenceField/:page${REGEX_NUMBER}?`}
-          />
-
-          <Route
-            isSignedIn={isSignedIn}
             component={ErrorView}
             config={state.app.config}
+            isSignedIn={isSignedIn}
           />
         </Switch>
       </Router>

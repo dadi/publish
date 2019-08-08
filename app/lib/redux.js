@@ -25,13 +25,19 @@ export function enableBatching(reducer) {
   }
 }
 
-export function connectRedux(...actions) {
+export function connectRedux(mapState, ...actions) {
+  const receivedMapper = typeof mapState === 'function'
+
+  if (!receivedMapper) {
+    actions.unshift(mapState)
+  }
+
   const mergedActions = actions.reduce((actions, action) => {
     return {...actions, ...action}
   }, {})
 
   return connect(
-    state => ({state}),
+    receivedMapper ? mapState : state => ({state}),
     dispatch => ({
       actions: bindActionCreators(mergedActions, dispatch)
     })

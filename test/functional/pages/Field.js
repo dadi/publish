@@ -718,7 +718,33 @@ module.exports = {
       .as('Disabled Add Filter Button'),
     filterField: locate(
       'select[class*="DocumentFilters__tooltip-dropdown-left"]'
-    ).as('Filter Field')
+    ).as('Filter Field'),
+    singleTitle: locate('div')
+      .withAttr({
+        'data-field-name': 'title'
+      })
+      .find('input')
+      .as('Title Field'),
+    singleReference: locate('div')
+      .withAttr({
+        'data-field-name': 'reference'
+      })
+      .find('a')
+      .as('Reference Field'),
+    saveDocument: locate('button[class*="save"]').as('Save Document Button'),
+    editReferenceButton: locate('div')
+      .withAttr({
+        'data-field-name': 'reference'
+      })
+      .find('a')
+      .withText('Edit')
+      .as('Edit Reference Button'),
+    removeReferenceButton: locate('div')
+      .withAttr({
+        'data-field-name': 'reference'
+      })
+      .find('button')
+      .as('Remove Reference Button')
   },
 
   async validateBoolean() {
@@ -1277,5 +1303,52 @@ module.exports = {
     await I.waitForElement(this.locators.footer)
     await I.seeElement(this.locators.createNewButton)
     await I.seeElement(this.locators.filterButtonDisabled)
+  },
+
+  async validateSingleDocument() {
+    await I.amOnPage('/test-single-document')
+    I.wait(2)
+    I.waitForFunction(() => document.readyState === 'complete')
+    I.waitForElement(this.locators.footer)
+    I.seeElement(this.locators.singleTitle)
+    I.seeElement(this.locators.singleReference)
+    I.seeElement(this.locators.saveDocument)
+
+    I.fillField(this.locators.singleTitle, 'Single Document')
+    I.click(this.locators.singleReference)
+
+    I.waitForFunction(() => document.readyState === 'complete')
+    I.seeInCurrentUrl('/test-single-document/select/reference')
+    I.dontSeeInCurrentUrl('new')
+
+    I.click(this.locators.nevermindButton)
+
+    I.waitForFunction(() => document.readyState === 'complete')
+    I.dontSeeInCurrentUrl('/select/reference')
+    I.seeInField(this.locators.singleTitle, 'Single Document')
+    I.click(this.locators.singleReference)
+
+    I.waitForFunction(() => document.readyState === 'complete')
+    I.seeInCurrentUrl('/test-single-document/select/reference')
+
+    I.waitForText('Reference')
+    const numberAuthors = await I.grabNumberOfVisibleElements(
+      this.locators.numOfAuthors
+    )
+
+    I.seeNumbersAreEqual(numberAuthors, 5)
+    const authorsNames = await I.grabTextFrom(this.locators.numOfAuthors)
+
+    I.click(locate('//tbody/tr[2]/td[1]').as('Selected Author'))
+    I.click(this.locators.saveSelected)
+    I.waitForFunction(() => document.readyState === 'complete')
+    I.see(authorsNames[1].trim())
+
+    I.seeElement(this.locators.editReferenceButton)
+    I.seeElement(this.locators.removeReferenceButton)
+
+    I.click(this.locators.saveDocument)
+
+    I.waitForText('The document has been created', 2)
   }
 }
