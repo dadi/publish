@@ -91,7 +91,7 @@ module.exports = {
     deleteButton: locate('button')
       .withText('Yes, delete it.')
       .as('Delete Button'),
-    nevermindButton: locate('a')
+    nevermindButton: locate('button')
       .withText('Nevermind, back to document')
       .as('Back to document'),
     filterButton: locate('button[class*="DocumentFilters__button"]').as(

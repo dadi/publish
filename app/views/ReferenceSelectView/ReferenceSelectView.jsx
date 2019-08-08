@@ -27,17 +27,58 @@ class ReferenceSelectView extends React.Component {
   constructor(props) {
     super(props)
 
+    this.cancelSelection = this.cancelSelection.bind(this)
+    this.saveSelection = this.saveSelection.bind(this)
     this.hasPropagatedInitialSelection = {}
   }
 
-  handleDocumentSelect({referenceField: schema, selection}) {
+  cancelSelection() {
+    const {actions, selectionKey} = this.props
+
+    actions.setDocumentSelection({
+      key: selectionKey,
+      selection: []
+    })
+
+    this.goBackToDocument()
+  }
+
+  goBackToDocument() {
     const {
-      actions,
       history,
       isNewDocument,
       onBuildBaseUrl,
+      referenceFieldSchema
+    } = this.props
+
+    // It's fair to assume that the user got here because they were editing
+    // the value of the reference field in the edit view. As such, we must
+    // take them back to whatever section the reference field belongs to, if
+    // any.
+    const fieldSection =
+      referenceFieldSchema.publish &&
+      referenceFieldSchema.publish.section &&
+      slugify(referenceFieldSchema.publish.section)
+
+    const redirectUrl = onBuildBaseUrl.call(this, {
+      createNew: isNewDocument,
+      referenceFieldSelect: null,
+      search: {
+        filter: null
+      },
+      section: fieldSection || null
+    })
+
+    history.push(redirectUrl)
+  }
+
+  saveSelection() {
+    const {
+      actions,
       parentContentKey,
-      route
+      route,
+      selection,
+      selectionKey
     } = this.props
     const {referenceField} = route.params
 
@@ -51,24 +92,12 @@ class ReferenceSelectView extends React.Component {
       }
     })
 
-    // It's fair to assume that the user got here because they were editing
-    // the value of the reference field in the edit view. As such, we must
-    // take them back to whatever section the reference field belongs to, if
-    // any.
-    const fieldSection =
-      schema.publish &&
-      schema.publish.section &&
-      slugify(schema.publish.section)
-    const redirectUrl = onBuildBaseUrl.call(this, {
-      createNew: isNewDocument,
-      referenceFieldSelect: null,
-      search: {
-        filter: null
-      },
-      section: fieldSection || null
+    actions.setDocumentSelection({
+      key: selectionKey,
+      selection: []
     })
 
-    history.push(redirectUrl)
+    this.goBackToDocument()
   }
 
   handleEmptyDocumentList({selection}) {
@@ -176,8 +205,9 @@ class ReferenceSelectView extends React.Component {
       isSingleDocument,
       onBuildBaseUrl,
       parentContentKey,
+      referenceFieldSchema,
       route,
-      selectionKey,
+      selection,
       state
     } = this.props
     const {documentId, page, referenceField: referenceFieldName} = route.params
@@ -204,15 +234,12 @@ class ReferenceSelectView extends React.Component {
       return null
     }
 
-    // Getting the schema of the reference field.
-    const referenceField = collection.fields[referenceFieldName]
-
-    if (!referenceField) {
+    if (!referenceFieldSchema) {
       return null
     }
 
     // Getting the component for the given reference field.
-    const fieldType = getFieldType(referenceField)
+    const fieldType = getFieldType(referenceFieldSchema)
     const fieldComponent = fieldComponents[`Field${fieldType}`]
 
     // If the field component does not declare a `onReferenceSelect` method, it
@@ -227,8 +254,9 @@ class ReferenceSelectView extends React.Component {
     // If the `referenceField` parameter doesn't match a field of type
     // `Reference`, we render nothing.
     if (
-      !referenceField ||
-      (referenceField.type !== 'Media' && referenceField.type !== 'Reference')
+      !referenceFieldSchema ||
+      (referenceFieldSchema.type !== 'Media' &&
+        referenceFieldSchema.type !== 'Reference')
     ) {
       return null
     }
@@ -257,18 +285,7 @@ class ReferenceSelectView extends React.Component {
     }
 
     // Getting documents from store.
-    const data = state.documents[contentKey] || {}
-    const {metadata} = data
-
-    // Getting the IDs of the selected documents.
-    const selection = state.selection[selectionKey] || []
-
-    // Computing the URL that users will be taken to if they wish to cancel
-    // the reference selection.
-    const returnCtaUrl = onBuildBaseUrl.call(this, {
-      createNew: !documentId && !isSingleDocument,
-      referenceFieldSelect: null
-    })
+    const {metadata} = state.documents[contentKey] || {}
 
     // Are we showing only selected documents?
     const isFilteringSelection =
@@ -298,8 +315,8 @@ class ReferenceSelectView extends React.Component {
           return (
             <Page>
               <ReferenceSelectHeader
-                referenceField={referenceField}
-                returnCtaUrl={returnCtaUrl}
+                onCancel={this.cancelSelection}
+                referenceField={referenceFieldSchema}
               />
 
               <DocumentListController
@@ -350,13 +367,7 @@ class ReferenceSelectView extends React.Component {
                   selectedDocuments={selection}
                   showSelectedDocumentsUrl={showSelectedDocumentsUrl}
                 >
-                  <Button
-                    accent="save"
-                    onClick={this.handleDocumentSelect.bind(this, {
-                      referenceField,
-                      selection
-                    })}
-                  >
+                  <Button accent="save" onClick={this.saveSelection}>
                     Save selection
                   </Button>
                 </DocumentListToolbar>
@@ -458,6 +469,8 @@ function mapState(state, ownProps) {
           return collection.slug === params.collection
         })
 
+  const referenceFieldSchema = collection.fields[params.referenceField]
+
   const isNewDocument = /\/new(\/|$)/.test(path) && !params.documentId
   const isSingleDocument =
     collection.settings &&
@@ -483,12 +496,16 @@ function mapState(state, ownProps) {
     referenceField
   })
 
+  const selection = state.selection[selectionKey] || []
+
   return {
     collection,
     contentKey,
     isNewDocument,
     isSingleDocument,
     parentContentKey,
+    referenceFieldSchema,
+    selection,
     selectionKey,
     state
   }

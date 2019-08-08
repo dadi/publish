@@ -169,7 +169,7 @@ module.exports = {
     authorPage: locate('a')
       .withText('4')
       .as('Page 4'),
-    nevermindButton: locate('a')
+    nevermindButton: locate('button')
       .withText('Nevermind, back to document')
       .as('Back to document'),
     boldButton: locate('button')
