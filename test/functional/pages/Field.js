@@ -2,7 +2,7 @@
 
 const {assert, expect} = require('chai')
 const moment = require('moment')
-const _ = require('lodash')
+const random = require('../helpers/random')
 
 let I
 
@@ -793,7 +793,7 @@ module.exports = {
     await I.fillField(this.locators.dateReq, formattedDate)
     await I.pressKey('Enter')
     let futureDateErr = moment(new Date(), 'YYYY/MM/DD').subtract(
-      _.random(1, 7),
+      random(1, 7),
       'days'
     )
 
@@ -802,10 +802,7 @@ module.exports = {
     await I.pressKey('Enter')
     await I.click(this.locators.datePast)
     await I.waitForVisible(this.locators.dateFutureError)
-    let pastDateErr = moment(new Date(), 'YYYY/MM/DD').add(
-      _.random(1, 7),
-      'days'
-    )
+    let pastDateErr = moment(new Date(), 'YYYY/MM/DD').add(random(1, 7), 'days')
 
     pastDateErr = pastDateErr.format('YYYY/MM/DD 09:00')
     await I.fillField(this.locators.datePast, pastDateErr)
@@ -823,16 +820,13 @@ module.exports = {
     await I.waitForVisible(this.locators.dateBeforeError)
     await I.click(this.locators.saveContinue)
     await I.clearField(this.locators.dateFuture)
-    let futureDate = moment(new Date(), 'YYYY/MM/DD').add(
-      _.random(1, 60),
-      'days'
-    )
+    let futureDate = moment(new Date(), 'YYYY/MM/DD').add(random(1, 60), 'days')
 
     futureDate = futureDate.format('YYYY/MM/DD 09:00')
     await I.fillField(this.locators.dateFuture, futureDate)
     await I.clearField(this.locators.datePast)
     let pastDate = moment(new Date(), 'YYYY/MM/DD').subtract(
-      _.random(1, 180),
+      random(1, 180),
       'days'
     )
 
