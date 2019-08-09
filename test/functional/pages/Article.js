@@ -2,7 +2,7 @@
 
 const {assert, expect} = require('chai')
 const moment = require('moment')
-const _ = require('lodash')
+const random = require('../helpers/random')
 
 let I
 
@@ -568,7 +568,7 @@ module.exports = {
       this.locators.articleRows
     )
     const articleDateTimes = await I.grabTextFrom(this.locators.dateTime)
-    const randomNum = _.random(0, 10)
+    const randomNum = random(0, 10)
     let pastDateFilter = moment(new Date(), 'YYYY/MM/DD').subtract(
       randomNum,
       'months'
