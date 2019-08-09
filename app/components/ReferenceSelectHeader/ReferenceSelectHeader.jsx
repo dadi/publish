@@ -20,6 +20,11 @@ export default class ReferenceSelectHeader extends React.Component {
     instructionText: proptypes.string,
 
     /**
+     * Callback called when the selection is cancelled.
+     */
+    onCancel: proptypes.func,
+
+    /**
      * The schema of a reference field currently being edited.
      */
     referenceField: proptypes.object,
@@ -27,12 +32,7 @@ export default class ReferenceSelectHeader extends React.Component {
     /**
      * The CTA text to display on the "return to document" button.
      */
-    returnCtaText: proptypes.string,
-
-    /**
-     * The URL of the "return to document" CTA button.
-     */
-    returnCtaUrl: proptypes.string
+    returnCtaText: proptypes.string
   }
 
   static defaultProps = {
@@ -46,7 +46,7 @@ export default class ReferenceSelectHeader extends React.Component {
       instructionText,
       referenceField,
       returnCtaText,
-      returnCtaUrl
+      onCancel
     } = this.props
 
     if (!referenceField) return null
@@ -60,7 +60,7 @@ export default class ReferenceSelectHeader extends React.Component {
           <span> — {instructionText}</span>
         </p>
 
-        <Button accent="destruct" href={returnCtaUrl} size="small">
+        <Button accent="destruct" onClick={onCancel} size="small">
           {returnCtaText}
         </Button>
 

@@ -457,7 +457,7 @@ module.exports = {
     pdf: locate('p[class*="MediaGridCard__filename"]')
       .withText('DADI_Publish.pdf')
       .as('PDF Document'),
-    nevermindButton: locate('a')
+    nevermindButton: locate('button')
       .withText('Nevermind, back to document')
       .as('Back to document'),
     boolYes: locate('span[class*="FieldBoolean__enabled"]')
