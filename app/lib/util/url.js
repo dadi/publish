@@ -3,7 +3,7 @@ export function decodeSearch(searchString) {
     return {}
   }
 
-  const sanitisedString = decodeURI(searchString)
+  const sanitisedString = decodeURIComponent(searchString)
     .replace(/^(\?)/, '')
     .replace(/"/g, '\\"')
     .replace(/&/g, '","')
