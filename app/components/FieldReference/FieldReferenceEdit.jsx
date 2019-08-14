@@ -126,13 +126,10 @@ export default class FieldReferenceEdit extends React.Component {
 
   render() {
     const {
-      collection,
       config,
       displayName,
-      documentId,
       error,
-      name,
-      onBuildBaseUrl,
+      onEditReference,
       required,
       schema,
       value
@@ -156,15 +153,6 @@ export default class FieldReferenceEdit extends React.Component {
     })
     const firstStringField = this.findFirstStringField(displayableFields)
     const displayField = value && firstStringField ? firstStringField.key : null
-
-    const isSingleDocument =
-      collection.settings &&
-      collection.settings.publish &&
-      collection.settings.publish.isSingleDocument
-    const editLink = onBuildBaseUrl({
-      createNew: !documentId && !isSingleDocument,
-      referenceFieldSelect: name
-    })
     const values = value && !(value instanceof Array) ? [value] : value
     const publishBlock = schema.publish || {}
     const isReadOnly = publishBlock.readonly === true
@@ -205,7 +193,7 @@ export default class FieldReferenceEdit extends React.Component {
                 <Button
                   accent="data"
                   className={styles['control-button']}
-                  href={editLink}
+                  onClick={onEditReference}
                   size="small"
                 >
                   Edit
@@ -228,7 +216,7 @@ export default class FieldReferenceEdit extends React.Component {
 
         {!value && !isReadOnly && (
           <div className={styles.placeholder}>
-            <Button accent="neutral" href={editLink} size="small">
+            <Button accent="neutral" onClick={onEditReference} size="small">
               Select existing {displayName.toLowerCase()}
             </Button>
           </div>

@@ -15,6 +15,7 @@ import MediaViewer from 'components/MediaViewer/MediaViewer'
 import Page from 'components/Page/Page'
 import React from 'react'
 import {Redirect} from 'react-router-dom'
+import ReferenceSelectView from 'views/ReferenceSelectView/ReferenceSelectView'
 import {setPageTitle} from 'lib/util'
 import {slugify} from 'shared/lib/string'
 import styles from './DocumentEditView.css'
@@ -23,8 +24,14 @@ class DocumentEditView extends React.Component {
   constructor(props) {
     super(props)
 
+    this.cancelSelection = this.cancelSelection.bind(this)
+    this.saveSelection = this.saveSelection.bind(this)
     this.sections = []
     this.userClosingBrowser = this.handleUserClosingBrowser.bind(this)
+
+    this.state = {
+      referenceFieldSelected: null
+    }
   }
 
   componentDidMount() {
@@ -40,10 +47,8 @@ class DocumentEditView extends React.Component {
   }
 
   componentDidUpdate(oldProps) {
-    const {actions, collection, contentKey, documentId, state} = this.props
-    const {state: oldState} = oldProps
-    const document = state.document[contentKey] || {}
-    const oldDocument = oldState.document[contentKey] || {}
+    const {actions, collection, contentKey, document, documentId} = this.props
+    const {document: oldDocument} = oldProps
     const isSaving = (oldDocument.saveAttempts || 0) < document.saveAttempts
 
     // Are there unsaved changes?
@@ -92,16 +97,8 @@ class DocumentEditView extends React.Component {
   }
 
   componentWillReceiveProps(newProps) {
-    const {
-      actions,
-      contentKey,
-      isSingleDocument,
-      onBuildBaseUrl,
-      state
-    } = this.props
-    const document = state.document[contentKey] || {}
-    const {documentId, route, state: newState} = newProps
-    const newDocument = newState.document[contentKey] || {}
+    const {actions, document, isSingleDocument, onBuildBaseUrl} = this.props
+    const {document: newDocument, documentId, route} = newProps
     const {section} = route.params
 
     if (document.isSaving && !newDocument.isSaving) {
@@ -270,6 +267,28 @@ class DocumentEditView extends React.Component {
     this.saveDocumentLocally()
   }
 
+  cancelSelection() {
+    this.setState({referenceFieldSelected: null})
+  }
+
+  saveSelection(selection) {
+    const {actions, contentKey} = this.props
+    const {referenceFieldSelected} = this.state
+
+    actions.updateLocalDocument({
+      contentKey,
+      update: {
+        [referenceFieldSelected]:
+          selection && selection.length > 0 ? selection : null
+      },
+      error: {
+        [referenceFieldSelected]: undefined
+      }
+    })
+
+    this.setState({referenceFieldSelected: null})
+  }
+
   render() {
     if (this.redirectUrl) {
       const redirectUrl = this.redirectUrl
@@ -283,11 +302,11 @@ class DocumentEditView extends React.Component {
       actions,
       collection,
       contentKey,
+      document,
       documentId,
       isSingleDocument,
       onBuildBaseUrl,
-      section,
-      state
+      section
     } = this.props
 
     if (!collection) {
@@ -301,8 +320,6 @@ class DocumentEditView extends React.Component {
         </Page>
       )
     }
-
-    const document = state.document[contentKey] || {}
 
     if (document.isDeleted) {
       actions.setNotification({
@@ -340,6 +357,22 @@ class DocumentEditView extends React.Component {
     }
 
     setPageTitle(`${documentId ? 'Edit' : 'New'} document`)
+
+    const {referenceFieldSelected} = this.state
+
+    if (referenceFieldSelected) {
+      const merged = {...document.remote, ...document.local}
+
+      return (
+        <ReferenceSelectView
+          buildUrl={onBuildBaseUrl.bind(this)}
+          initialSelection={merged[referenceFieldSelected]}
+          referenceFieldName={referenceFieldSelected}
+          onCancel={this.cancelSelection}
+          onSave={this.saveSelection}
+        />
+      )
+    }
 
     return (
       <Page>
@@ -391,6 +424,20 @@ class DocumentEditView extends React.Component {
       })
     }
 
+    const getFieldComponent = field => (
+      <DocumentField
+        collection={collection}
+        contentKey={contentKey}
+        document={document}
+        field={field}
+        key={field._id}
+        onBuildBaseUrl={onBuildBaseUrl.bind(this)}
+        onEditReference={() =>
+          this.setState({referenceFieldSelected: field._id})
+        }
+      />
+    )
+
     return (
       <EditInterface>
         {sections.map(item => {
@@ -405,26 +452,8 @@ class DocumentEditView extends React.Component {
               key={item.href}
               isActive={item.isActive}
               label={item.name}
-              main={item.fields.main.map(field => (
-                <DocumentField
-                  collection={collection}
-                  contentKey={contentKey}
-                  document={document}
-                  field={field}
-                  key={field._id}
-                  onBuildBaseUrl={onBuildBaseUrl.bind(this)}
-                />
-              ))}
-              sidebar={item.fields.sidebar.map(field => (
-                <DocumentField
-                  collection={collection}
-                  contentKey={contentKey}
-                  document={document}
-                  field={field}
-                  key={field._id}
-                  onBuildBaseUrl={onBuildBaseUrl.bind(this)}
-                />
-              ))}
+              main={item.fields.main.map(getFieldComponent)}
+              sidebar={item.fields.sidebar.map(getFieldComponent)}
               slug={item.slug}
             />
           )
@@ -441,6 +470,20 @@ class DocumentEditView extends React.Component {
       mainSection.fields.sidebar
     )
 
+    const getFieldComponent = field => (
+      <DocumentField
+        collection={collection}
+        contentKey={contentKey}
+        document={document}
+        field={field}
+        key={field._id}
+        onBuildBaseUrl={onBuildBaseUrl.bind(this)}
+        onEditReference={() =>
+          this.setState({referenceFieldSelected: field._id})
+        }
+      />
+    )
+
     return (
       <EditInterface>
         <EditInterfaceSection
@@ -450,16 +493,7 @@ class DocumentEditView extends React.Component {
           isActive={mainSection.isActive}
           label={mainSection.name}
           main={<MediaViewer document={document._merged} />}
-          sidebar={mainSectionFields.map(field => (
-            <DocumentField
-              collection={collection}
-              contentKey={contentKey}
-              document={document}
-              field={field}
-              key={field._id}
-              onBuildBaseUrl={onBuildBaseUrl.bind(this)}
-            />
-          ))}
+          sidebar={mainSectionFields.map(getFieldComponent)}
           slug={mainSection.slug}
         />
 
@@ -470,26 +504,8 @@ class DocumentEditView extends React.Component {
             key={item.href}
             isActive={item.isActive}
             label={item.name}
-            main={item.fields.main.map(field => (
-              <DocumentField
-                collection={collection}
-                contentKey={contentKey}
-                document={document}
-                field={field}
-                key={field._id}
-                onBuildBaseUrl={onBuildBaseUrl.bind(this)}
-              />
-            ))}
-            sidebar={item.fields.sidebar.map(field => (
-              <DocumentField
-                collection={collection}
-                contentKey={contentKey}
-                document={document}
-                field={field}
-                key={field._id}
-                onBuildBaseUrl={onBuildBaseUrl.bind(this)}
-              />
-            ))}
+            main={item.fields.main.map(getFieldComponent)}
+            sidebar={item.fields.sidebar.map(getFieldComponent)}
             slug={item.slug}
           />
         ))}
@@ -524,10 +540,12 @@ function mapState(state, ownProps) {
         collection: collection.slug,
         documentId
       })
+  const document = state.document[contentKey] || {}
 
   return {
     collection,
     contentKey,
+    document,
     documentId,
     state
   }

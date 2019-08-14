@@ -46,14 +46,14 @@ module.exports = {
       })
       .find('input')
       .as('Title Field'),
-    selectAuthor: locate('a')
+    selectAuthor: locate('a, button')
       .withText('Select existing author')
       .as('Select Author Button'),
     editAuthorButton: locate('div')
       .withAttr({
         'data-field-name': 'author'
       })
-      .find('a')
+      .find('a, button')
       .withText('Edit')
       .as('Edit Author Button'),
     authorNameAsc: locate('a[href*="?order=asc&sort=name"]').as(
@@ -169,7 +169,7 @@ module.exports = {
     authorPage: locate('a')
       .withText('4')
       .as('Page 4'),
-    nevermindButton: locate('button')
+    nevermindButton: locate('a, button')
       .withText('Nevermind, back to document')
       .as('Back to document'),
     boldButton: locate('button')
@@ -340,17 +340,14 @@ module.exports = {
     I.waitForText('The document has been created', 2)
     I.click(this.locators.selectAuthor)
     I.waitForFunction(() => document.readyState === 'complete')
-    I.seeInCurrentUrl('/select/author')
     I.waitForText('Author')
     I.click(this.locators.nevermindButton)
     I.waitForFunction(() => document.readyState === 'complete')
-    I.dontSeeInCurrentUrl('/select/author')
     I.seeInField(this.locators.titleField, 'This Is A New Article')
 
     // Select Author
     I.click(this.locators.selectAuthor)
     I.waitForFunction(() => document.readyState === 'complete')
-    I.seeInCurrentUrl('/select/author')
     I.waitForText('Author')
     const numberAuthors = await I.grabNumberOfVisibleElements(
       this.locators.numOfAuthors
@@ -367,7 +364,6 @@ module.exports = {
     // Select Category
     I.click(this.locators.selectCategory)
     I.waitForFunction(() => document.readyState === 'complete')
-    I.seeInCurrentUrl('/select/category')
     I.waitForText('Category')
     const numberCategories = await I.grabNumberOfVisibleElements(
       this.locators.numOfCategories
@@ -389,7 +385,6 @@ module.exports = {
     I.scrollTo(this.locators.selectSubCategory)
     I.click(this.locators.selectSubCategory)
     I.waitForFunction(() => document.readyState === 'complete')
-    I.seeInCurrentUrl('/select/sub-category')
     I.waitForText('Sub category')
     const numberSubCategories = await I.grabNumberOfVisibleElements(
       this.locators.numOfSubCategories
@@ -413,7 +408,6 @@ module.exports = {
     I.scrollTo(this.locators.selectWebService)
     I.click(this.locators.selectWebService)
     I.waitForFunction(() => document.readyState === 'complete')
-    I.seeInCurrentUrl('/select/web-service')
     const numberWebServices = await I.grabNumberOfVisibleElements(
       this.locators.numOfWebServices
     )
@@ -443,7 +437,6 @@ module.exports = {
     I.scrollTo(this.locators.selectNetworkService)
     I.click(this.locators.selectNetworkService)
     I.waitForFunction(() => document.readyState === 'complete')
-    I.seeInCurrentUrl('/select/network-service')
     I.waitForText('Network service')
     const numberNetworkServices = await I.grabNumberOfVisibleElements(
       this.locators.numOfNetworkServices
@@ -508,7 +501,6 @@ module.exports = {
     I.fillField(this.locators.titleField, 'This Article Is Updated')
     I.click(this.locators.editAuthorButton)
     I.waitForFunction(() => document.readyState === 'complete')
-    I.seeInCurrentUrl('/select/author')
     I.waitForText('Author')
     const numberAuthors = await I.grabNumberOfVisibleElements(
       this.locators.numOfAuthors

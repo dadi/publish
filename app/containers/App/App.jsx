@@ -1,12 +1,10 @@
 import * as apiActions from 'actions/apiActions'
 import * as appActions from 'actions/appActions'
-import * as Constants from 'lib/constants'
 import * as documentActions from 'actions/documentActions'
 import * as userActions from 'actions/userActions'
-import {decodeSearch, encodeSearch} from 'lib/util/url'
 import {
-  Route as RawRoute,
   Redirect,
+  Route,
   BrowserRouter as Router,
   Switch
 } from 'react-router-dom'
@@ -14,6 +12,7 @@ import {
   registerErrorCallback,
   registerProgressCallback
 } from 'lib/api-bridge-client'
+import buildGroupedRoutes from './buildGroupedRoutes'
 import {connectRedux} from 'lib/redux'
 import {debounce} from 'lib/util'
 import DocumentEditView from 'views/DocumentEditView/DocumentEditView'
@@ -24,337 +23,110 @@ import LoadingBar from 'containers/LoadingBar/LoadingBar'
 import NotificationCentre from 'containers/NotificationCentre/NotificationCentre'
 import ProfileEditView from 'views/ProfileEditView/ProfileEditView'
 import React from 'react'
-import ReferenceSelectView from 'views/ReferenceSelectView/ReferenceSelectView'
 import SignInView from 'views/SignInView/SignInView'
+import WrappedRoute from './WrappedRoute'
 
-const REGEX_NUMBER = '([0-9]+)'
-const REGEX_DOCUMENT_ID =
-  '([a-f0-9]{24}|[a-f0-9]{32}|[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12})'
-const REGEX_SLUG = '([a-z-]+)'
-
-class Route extends React.Component {
-  buildBaseUrl({
-    collection = this.props.route.params.collection,
-    createNew,
-    documentId = this.props.route.params.documentId,
-    group = this.props.route.params.group,
-    page,
-    referenceFieldSelect = this.props.route.params.referenceField,
-    search = decodeSearch(window.location.search),
-    section = this.props.route.params.section
-  } = {}) {
-    let urlNodes = [group, collection]
-
-    if (createNew) {
-      urlNodes.push('new')
-    } else {
-      urlNodes.push(documentId)
-    }
-
-    if (referenceFieldSelect) {
-      urlNodes = urlNodes.concat(['select', referenceFieldSelect])
-    } else if (documentId || createNew) {
-      urlNodes.push(section)
-    }
-
-    if (page) {
-      urlNodes.push(page)
-    }
-
-    const url = urlNodes.filter(Boolean).join('/') + encodeSearch(search)
-
-    return `/${url}`
-  }
-
-  componentWillReceiveProps(newProps) {
-    const {isSignedIn, location} = this.props
-
-    if (!isSignedIn && newProps.isSignedIn) {
-      const {redirect} = decodeSearch(location.search)
-
-      this.redirectUrl = redirect ? decodeURIComponent(redirect) : '/'
-    } else {
-      this.redirectUrl = undefined
-    }
-  }
-
-  render() {
-    if (this.redirectUrl) {
-      return <Redirect to={this.redirectUrl} />
-    }
-
-    const {
-      isSignedIn,
-      component: Component,
-      config,
-      mustBeSignedIn,
-      render,
-      ...routeProps
-    } = this.props
-
-    return (
-      <RawRoute
-        {...routeProps}
-        render={props => {
-          if (mustBeSignedIn && !isSignedIn) {
-            const redirectPath = routeProps.location.pathname
-            const redirectParam = ['/', '/sign-out'].includes(redirectPath)
-              ? ''
-              : `?redirect=${encodeURIComponent(redirectPath)}`
-
-            return <Redirect to={`/sign-in${redirectParam}`} />
-          }
-
-          const apiError = window.__error__
-
-          if (apiError) {
-            if (apiError.statusCode === 404) {
-              window.__error__ = null
-
-              return <Redirect to="sign-in" />
-            }
-
-            return (
-              <ErrorView
-                data={apiError}
-                type={Constants.API_CONNECTION_ERROR}
-              />
-            )
-          }
-
-          if (typeof render === 'function') {
-            return render(props)
-          }
-
-          const route = {
-            params: routeProps.computedMatch.params,
-            path: routeProps.location.pathname,
-            search: decodeSearch(routeProps.location.search),
-            searchString: routeProps.location.search
-          }
-
-          return (
-            <>
-              <NotificationCentre route={route} />
-
-              <Component
-                {...props}
-                onBuildBaseUrl={this.buildBaseUrl}
-                route={route}
-              />
-            </>
-          )
-        }}
-      />
-    )
-  }
-}
-
-const collectionRoutes = [
+const baseRoutes = [
   {
-    path: `/:collection${REGEX_SLUG}/new/select/:referenceField/:page${REGEX_NUMBER}?`,
-    component: ReferenceSelectView
+    path: '/:collection/new/:section?',
+    render: props => <DocumentEditView isNewDocument {...props} />
   },
   {
-    path: `/:collection${REGEX_SLUG}/select/:referenceField/:page${REGEX_NUMBER}?`,
-    component: ReferenceSelectView
-  },
-  {
-    path: `/:collection${REGEX_SLUG}/new/:section?`,
+    path: '/:collection/:documentId/:section?',
     component: DocumentEditView
   },
   {
-    path: `/:collection${REGEX_SLUG}/:documentId${REGEX_DOCUMENT_ID}/select/:referenceField/:page${REGEX_NUMBER}?`,
-    component: ReferenceSelectView
-  },
-  {
-    path: `/:group${REGEX_SLUG}/:collection${REGEX_SLUG}/new/select/:referenceField/:page${REGEX_NUMBER}?`,
-    component: ReferenceSelectView
-  },
-  {
-    path: `/:group${REGEX_SLUG}/:collection${REGEX_SLUG}/select/:referenceField/:page${REGEX_NUMBER}?`,
-    component: ReferenceSelectView
-  },
-  {
-    path: `/:group${REGEX_SLUG}/:collection${REGEX_SLUG}/new/:section?`,
-    component: DocumentEditView
-  },
-  {
-    path: `/:group${REGEX_SLUG}/:collection${REGEX_SLUG}/:documentId${REGEX_DOCUMENT_ID}/select/:referenceField/:page${REGEX_NUMBER}?`,
-    component: ReferenceSelectView
-  },
-  {
-    path: `/:collection${REGEX_SLUG}/:documentId${REGEX_DOCUMENT_ID}/:section?`,
-    component: DocumentEditView
-  },
-  {
-    path: `/:group${REGEX_SLUG}/:collection${REGEX_SLUG}/:documentId${REGEX_DOCUMENT_ID}/:section?`,
-    component: DocumentEditView
-  },
-  {
-    path: `/:collection${REGEX_SLUG}/:page${REGEX_NUMBER}?`,
-    component: DocumentListView
-  },
-  {
-    path: `/:group${REGEX_SLUG}/:collection${REGEX_SLUG}/:page${REGEX_NUMBER}?`,
+    path: '/:collection',
     component: DocumentListView
   }
 ]
 
 class App extends React.Component {
-  componentWillMount() {
-    const {actions} = this.props
+  constructor(props) {
+    super(props)
+
+    const {
+      actions,
+      api: {menu, properties}
+    } = props
+
+    this.routes = [...buildGroupedRoutes(menu, baseRoutes), ...baseRoutes]
+
+    if (properties && properties.length) {
+      this.routes = this.routes.map(route => ({
+        ...route,
+        path: '/:property' + route.path
+      }))
+    }
 
     registerErrorCallback(actions.registerNetworkError)
     registerProgressCallback(actions.registerNetworkCall)
   }
 
   componentDidMount() {
-    const {actions} = this.props
-
     window.addEventListener(
       'resize',
       debounce(() => {
-        actions.setScreenWidth(window.innerWidth)
-      }, 500)
+        this.props.actions.setScreenWidth(window.innerWidth)
+      }, 200)
     )
-    document.addEventListener('dragstart', this.handleDragDropEvents, false)
-    document.addEventListener('dragend', this.handleDragDropEvents, false)
-    document.addEventListener('dragover', this.handleDragDropEvents, false)
-    document.addEventListener('dragenter', this.handleDragDropEvents, false)
-    document.addEventListener('dragleave', this.handleDragDropEvents, false)
-    document.addEventListener('drop', this.handleDragDropEvents, false)
+    // Prevent accidental drops outside of asset drop handlers.
+    document.addEventListener('dragstart', e => e.preventDefault(), false)
+    document.addEventListener('dragend', e => e.preventDefault(), false)
+    document.addEventListener('dragover', e => e.preventDefault(), false)
+    document.addEventListener('dragenter', e => e.preventDefault(), false)
+    document.addEventListener('dragleave', e => e.preventDefault(), false)
+    document.addEventListener('drop', e => e.preventDefault(), false)
   }
 
-  componentDidUpdate(previousProps) {
-    const {state} = this.props
-    const previousState = previousProps.state
+  componentDidUpdate(prevProps) {
+    const {isSignedIn} = this.props
+    const {isSignedIn: wasSignedIn} = prevProps
 
-    // State change: user has signed in.
-    if (!previousState.user.isSignedIn && state.user.isSignedIn) {
-      // Scrolling to top (needed on mobile devices).
+    if (!wasSignedIn && isSignedIn) {
+      // Needed on mobile devices.
       window.scrollTo(0, 0)
-
-      // Initialise session timer.
-      this.initialiseSessionTimers()
-    }
-  }
-
-  /**
-   * Handle Drag Drop Events
-   * Block and drag and drop actions to handle accidental
-   * drop outside of FileUpload and other asset drop handlers.
-   * @param  {Event} event Event listener object.
-   */
-  handleDragDropEvents(event) {
-    event.preventDefault()
-  }
-
-  initialiseSessionTimers() {
-    const {actions, state} = this.props
-    const {user} = state
-
-    if (typeof user.accessTokenExpiry === 'number') {
-      // We'll set a timer to sign the user out 5 seconds before their token expires.
-      const timeout = user.accessTokenExpiry - Date.now() - 5000
-
-      if (timeout < 0) return
-
-      clearTimeout(this.sessionTimer)
-
-      this.sessionTimer = setTimeout(() => {
-        actions.signOut({
-          sessionHasExpired: true
-        })
-      }, timeout)
     }
   }
 
   render() {
-    const {actions, state} = this.props
-    const {isSignedIn} = state.user
-
-    if (isSignedIn && !this.sessionTimer) {
-      this.initialiseSessionTimers()
-    }
-
     return (
       <Router>
         <LoadingBar />
-
+        <NotificationCentre />
         <Switch>
-          <Route
-            component={HomeView}
-            config={state.app.config}
-            exact
-            isSignedIn={isSignedIn}
-            mustBeSignedIn
-            path="/"
-          />
-
-          <Route
-            component={ProfileEditView}
-            config={state.app.config}
-            exact
-            isSignedIn={isSignedIn}
-            mustBeSignedIn
-            path="/profile/:section?"
-          />
-
-          <Route
-            component={ProfileEditView}
-            config={state.app.config}
-            exact
-            isSignedIn={isSignedIn}
-            mustBeSignedIn
-            path="/profile/select/:referenceField/:page[^\d+$]?"
-          />
-
-          <Route
-            component={SignInView}
-            config={state.app.config}
-            exact
-            isSignedIn={isSignedIn}
+          <WrappedRoute path="/" exact component={HomeView} />
+          <WrappedRoute
             path="/sign-in/:token?"
+            component={SignInView}
+            isPublic
           />
-
           <Route
-            config={state.app.config}
-            exact
-            isSignedIn={isSignedIn}
-            mustBeSignedIn
             path="/sign-out"
             render={() => {
-              actions.signOut()
+              this.props.actions.signOut()
 
-              return <Redirect to="/" />
+              return <Redirect to="/sign-in" />
             }}
           />
-
-          {collectionRoutes.map(({path, component}) => (
-            <Route
-              component={component}
-              config={state.app.config}
-              exact
-              isSignedIn={isSignedIn}
-              key={path}
-              mustBeSignedIn
-              path={path}
-            />
+          <WrappedRoute path="/profile/:section?" component={ProfileEditView} />
+          {this.routes.map(route => (
+            <WrappedRoute key={route.path} exact {...route} />
           ))}
-
-          <Route
-            component={ErrorView}
-            config={state.app.config}
-            isSignedIn={isSignedIn}
-          />
+          <WrappedRoute component={ErrorView} />
         </Switch>
       </Router>
     )
   }
 }
 
+const mapState = state => ({
+  api: state.app.config.api,
+  isSignedIn: state.user.isSignedIn
+})
+
 export default connectRedux(
+  mapState,
   apiActions,
   appActions,
   documentActions,
