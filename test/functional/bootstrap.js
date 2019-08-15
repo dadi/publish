@@ -100,7 +100,8 @@ class Bootstrap {
           author: {
             reference: {
               collection: 'team'
-            }
+            },
+            transform: value => (Array.isArray(value) ? value : [value])
           },
           body: {
             format: '{{lorem.paragraph}}'

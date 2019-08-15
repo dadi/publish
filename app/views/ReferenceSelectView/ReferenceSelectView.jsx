@@ -192,6 +192,7 @@ class ReferenceSelectView extends React.Component {
           >
             <Button
               accent="save"
+              data-name="save-reference-selection-button"
               onClick={() => this.props.onSave(this.state.selection)}
             >
               Save selection

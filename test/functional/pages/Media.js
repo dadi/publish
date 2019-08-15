@@ -91,8 +91,10 @@ module.exports = {
     deleteButton: locate('button')
       .withText('Yes, delete it.')
       .as('Delete Button'),
-    nevermindButton: locate('a, button')
-      .withText('Nevermind, back to document')
+    nevermindButton: locate('*')
+      .withAttr({
+        'data-name': 'cancel-reference-selection-button'
+      })
       .as('Back to document'),
     filterButton: locate('button[class*="DocumentFilters__button"]').as(
       'Filter Button'

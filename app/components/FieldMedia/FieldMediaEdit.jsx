@@ -286,7 +286,12 @@ export default class FieldMediaEdit extends React.Component {
             </div>
 
             <div className={styles.placeholder}>
-              <Button accent="neutral" onClick={onEditReference} size="small">
+              <Button
+                accent="neutral"
+                data-name="select-existing-media-button"
+                onClick={onEditReference}
+                size="small"
+              >
                 Select existing {fieldLocalType.toLowerCase()}
               </Button>
             </div>

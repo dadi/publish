@@ -60,7 +60,12 @@ export default class ReferenceSelectHeader extends React.Component {
           <span> — {instructionText}</span>
         </p>
 
-        <Button accent="destruct" onClick={onCancel} size="small">
+        <Button
+          accent="destruct"
+          data-name="cancel-reference-selection-button"
+          onClick={onCancel}
+          size="small"
+        >
           {returnCtaText}
         </Button>
 

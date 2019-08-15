@@ -6,12 +6,25 @@
     "port": 8081,
     "menu": [
       {
-        "collections": ["images", "pages", "team", "partners"],
+        "collections": ["pages", "team"],
         "title": "Content"
       },
       {
         "collections": ["categories", "sub-categories", "milestones"],
         "title": "Taxonomy"
+      },
+      {
+        "collections": [
+          "field-test-boolean",
+          "field-test-date",
+          "field-test-media",
+          "field-test-other",
+          "field-test-number",
+          "field-test-reference",
+          "field-test-string",
+          "no-filterable-fields"
+        ],
+        "title": "Field Testing"
       }
     ]
   }

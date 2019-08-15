@@ -193,6 +193,7 @@ export default class FieldReferenceEdit extends React.Component {
                 <Button
                   accent="data"
                   className={styles['control-button']}
+                  data-name="edit-reference-button"
                   onClick={onEditReference}
                   size="small"
                 >
@@ -204,6 +205,7 @@ export default class FieldReferenceEdit extends React.Component {
                 <Button
                   accent="destruct"
                   className={styles['control-button']}
+                  data-name="remove-reference-button"
                   onClick={this.handleRemove.bind(this)}
                   size="small"
                 >
@@ -216,7 +218,12 @@ export default class FieldReferenceEdit extends React.Component {
 
         {!value && !isReadOnly && (
           <div className={styles.placeholder}>
-            <Button accent="neutral" onClick={onEditReference} size="small">
+            <Button
+              accent="neutral"
+              data-name="select-existing-reference-button"
+              onClick={onEditReference}
+              size="small"
+            >
               Select existing {displayName.toLowerCase()}
             </Button>
           </div>

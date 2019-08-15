@@ -46,22 +46,38 @@ module.exports = {
       })
       .find('input')
       .as('Title Field'),
-    selectAuthor: locate('a, button')
-      .withText('Select existing author')
+    selectAuthor: locate('div')
+      .withAttr({
+        'data-field-name': 'author'
+      })
+      .find('*')
+      .withAttr({
+        'data-name': 'select-existing-reference-button'
+      })
       .as('Select Author Button'),
     editAuthorButton: locate('div')
       .withAttr({
         'data-field-name': 'author'
       })
-      .find('a, button')
-      .withText('Edit')
+      .find('*')
+      .withAttr({
+        'data-name': 'edit-reference-button'
+      })
       .as('Edit Author Button'),
-    authorNameAsc: locate('a[href*="?order=asc&sort=name"]').as(
-      'Authors Names Ascending'
-    ),
-    authorNameDesc: locate('a[href*="?order=desc&sort=name"]').as(
-      'Authors Names Descending'
-    ),
+    authorNameAsc: locate('*')
+      .withAttr({
+        'data-column': 'name',
+        'data-name': 'column-header',
+        'data-sort-order': 'asc'
+      })
+      .as('Authors Names Ascending'),
+    authorNameDesc: locate('*')
+      .withAttr({
+        'data-column': 'name',
+        'data-name': 'column-header',
+        'data-sort-order': 'desc'
+      })
+      .as('Authors Names Descending'),
     numOfAuthors: locate('td:nth-child(2)').as('Number of Authors'),
     numOfCategories: locate('td:nth-child(2)').as('Number of Categories'),
     numOfSubCategories: locate('td:nth-child(2)').as(
@@ -123,39 +139,73 @@ module.exports = {
     deleteButton: locate('button')
       .withText('Yes, delete it.')
       .as('Delete Button'),
-    selectCategory: locate('a')
-      .withText('Select existing category')
+    selectCategory: locate('div')
+      .withAttr({
+        'data-field-name': 'category'
+      })
+      .find('*')
+      .withAttr({
+        'data-name': 'select-existing-reference-button'
+      })
       .as('Select Existing Category Button'),
-    selectSubCategory: locate('a')
-      .withText('Select existing sub category')
+    selectSubCategory: locate('div')
+      .withAttr({
+        'data-field-name': 'sub-category'
+      })
+      .find('*')
+      .withAttr({
+        'data-name': 'select-existing-reference-button'
+      })
       .as('Select Existing Sub Category Button'),
-    selectWebService: locate('a')
-      .withText('Select existing web service')
+    selectWebService: locate('div')
+      .withAttr({
+        'data-field-name': 'web-service'
+      })
+      .find('*')
+      .withAttr({
+        'data-name': 'select-existing-reference-button'
+      })
       .as('Select Existing Web Service Button'),
-    selectNetworkService: locate('a')
-      .withText('Select existing network service')
-      .as('Select Existing Newtork Service Button'),
-    saveSelected: locate('button')
-      .withText('Save selection')
+    selectNetworkService: locate('div')
+      .withAttr({
+        'data-field-name': 'network-service'
+      })
+      .find('*')
+      .withAttr({
+        'data-name': 'select-existing-reference-button'
+      })
+      .as('Select Existing Network Service Button'),
+    saveSelected: locate('*')
+      .withAttr({
+        'data-name': 'save-reference-selection-button'
+      })
       .as('Save Selection Button'),
     removeNetworkButton: locate('div')
       .withAttr({
         'data-field-name': 'network-service'
       })
-      .find('button')
+      .find('*')
+      .withAttr({
+        'data-name': 'remove-reference-button'
+      })
       .as('Remove Network Service Button'),
     editWebServiceButton: locate('div')
       .withAttr({
         'data-field-name': 'web-service'
       })
-      .find('a')
-      .withText('Edit')
+      .find('*')
+      .withAttr({
+        'data-name': 'edit-reference-button'
+      })
       .as('Edit Web Service Button'),
     removeWebServiceButton: locate('div')
       .withAttr({
         'data-field-name': 'web-service'
       })
-      .find('button')
+      .find('*')
+      .withAttr({
+        'data-name': 'remove-reference-button'
+      })
       .as('Remove Web Service Button'),
     webServiceSelected: locate('a[href*="/web-services/"]').as(
       'Web Service Selected'
@@ -169,8 +219,10 @@ module.exports = {
     authorPage: locate('a')
       .withText('4')
       .as('Page 4'),
-    nevermindButton: locate('a, button')
-      .withText('Nevermind, back to document')
+    nevermindButton: locate('*')
+      .withAttr({
+        'data-name': 'cancel-reference-selection-button'
+      })
       .as('Back to document'),
     boldButton: locate('button')
       .withText('Bold')
@@ -500,6 +552,7 @@ module.exports = {
     I.fillField(this.locators.titleField, '')
     I.fillField(this.locators.titleField, 'This Article Is Updated')
     I.click(this.locators.editAuthorButton)
+    I.wait(2)
     I.waitForFunction(() => document.readyState === 'complete')
     I.waitForText('Author')
     const numberAuthors = await I.grabNumberOfVisibleElements(

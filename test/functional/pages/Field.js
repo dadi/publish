@@ -457,8 +457,10 @@ module.exports = {
     pdf: locate('p[class*="MediaGridCard__filename"]')
       .withText('DADI_Publish.pdf')
       .as('PDF Document'),
-    nevermindButton: locate('a, button')
-      .withText('Nevermind, back to document')
+    nevermindButton: locate('*')
+      .withAttr({
+        'data-name': 'cancel-reference-selection-button'
+      })
       .as('Back to document'),
     boolYes: locate('span[class*="FieldBoolean__enabled"]')
       .withText('Yes')
@@ -470,8 +472,10 @@ module.exports = {
       .withAttr({
         'data-field-name': 'referenceRequired'
       })
-      .find('a, button')
-      .withText('Select existing reference')
+      .find('*')
+      .withAttr({
+        'data-name': 'select-existing-reference-button'
+      })
       .as('Required reference'),
     referenceReadOnly: locate('div')
       .withAttr({
@@ -500,8 +504,10 @@ module.exports = {
       .withAttr({
         'data-field-name': 'mediaRequired'
       })
-      .find('a, button')
-      .withText('Select existing media')
+      .find('*')
+      .withAttr({
+        'data-name': 'select-existing-media-button'
+      })
       .as('Select existing media Required'),
     mediaReqDevice: locate('div')
       .withAttr({
@@ -544,8 +550,10 @@ module.exports = {
       .withAttr({
         'data-field-name': 'media'
       })
-      .find('a, button')
-      .withText('Select existing media')
+      .find('*')
+      .withAttr({
+        'data-name': 'select-existing-media-button'
+      })
       .as('Select existing media Media Field'),
     mediaDevice: locate('div')
       .withAttr({
@@ -570,8 +578,10 @@ module.exports = {
       .withAttr({
         'data-field-name': 'mediaJpeg'
       })
-      .find('a, button')
-      .withText('Select existing media')
+      .find('*')
+      .withAttr({
+        'data-name': 'select-existing-media-button'
+      })
       .as('Select from existing JPEG Only'),
     mediaJpegDevice: locate('div')
       .withAttr({
@@ -590,8 +600,10 @@ module.exports = {
       .withAttr({
         'data-field-name': 'mediaPng'
       })
-      .find('a, button')
-      .withText('Select existing media')
+      .find('*')
+      .withAttr({
+        'data-name': 'select-existing-media-button'
+      })
       .as('Select existing media PNG Only'),
     mediaPngDevice: locate('div')
       .withAttr({
@@ -610,8 +622,10 @@ module.exports = {
       .withAttr({
         'data-field-name': 'mediaJpegAndPng'
       })
-      .find('a, button')
-      .withText('Select existing media')
+      .find('*')
+      .withAttr({
+        'data-name': 'select-existing-media-button'
+      })
       .as('Select existing media JPEG or PNG'),
     mediaJnPDevice: locate('div')
       .withAttr({
@@ -630,8 +644,10 @@ module.exports = {
       .withAttr({
         'data-field-name': 'mediaPdf'
       })
-      .find('a, button')
-      .withText('Select existing media')
+      .find('*')
+      .withAttr({
+        'data-name': 'select-existing-media-button'
+      })
       .as('Select existing media PDF Only'),
     mediaPdfDevice: locate('div')
       .withAttr({
@@ -729,15 +745,20 @@ module.exports = {
       .withAttr({
         'data-field-name': 'reference'
       })
-      .find('a, button')
+      .find('*')
+      .withAttr({
+        'data-name': 'select-existing-reference-button'
+      })
       .as('Reference Field'),
     saveDocument: locate('button[class*="save"]').as('Save Document Button'),
     editReferenceButton: locate('div')
       .withAttr({
         'data-field-name': 'reference'
       })
-      .find('a, button')
-      .withText('Edit')
+      .find('*')
+      .withAttr({
+        'data-name': 'edit-reference-button'
+      })
       .as('Edit Reference Button'),
     removeReferenceButton: locate('div')
       .withAttr({

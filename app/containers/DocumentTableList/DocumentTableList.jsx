@@ -101,7 +101,16 @@ class DocumentTableList extends React.Component {
   }
 
   handleTableSort(value, sortBy, sortOrder) {
-    return <a onClick={() => this.props.onSort({sortBy, sortOrder})}>{value}</a>
+    return (
+      <a
+        data-column={sortBy}
+        data-name="column-header"
+        data-sort-order={sortOrder}
+        onClick={() => this.props.onSort({sortBy, sortOrder})}
+      >
+        {value}
+      </a>
+    )
   }
 
   render() {
