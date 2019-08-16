@@ -54,10 +54,14 @@ class App extends React.Component {
   constructor(props) {
     super(props)
 
-    const {actions} = props
+    const {
+      actions,
+      api,
+      user: {isSignedIn}
+    } = props
 
     this.state = {
-      routes: []
+      routes: isSignedIn ? buildRoutes(api) : []
     }
 
     registerErrorCallback(actions.registerNetworkError)
@@ -65,8 +69,6 @@ class App extends React.Component {
   }
 
   componentDidMount() {
-    const {api, user} = this.props
-
     window.addEventListener(
       'resize',
       debounce(() => {
@@ -76,8 +78,6 @@ class App extends React.Component {
     // Prevent accidental drops outside of asset drop handlers.
     document.addEventListener('dragover', e => e.preventDefault(), false)
     document.addEventListener('drop', e => e.preventDefault(), false)
-
-    if (user.isSignedIn) this.setState({routes: buildRoutes(api)})
   }
 
   componentDidUpdate(prevProps) {
