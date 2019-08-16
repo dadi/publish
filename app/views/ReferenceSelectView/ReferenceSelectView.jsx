@@ -30,7 +30,7 @@ class ReferenceSelectView extends React.Component {
       page: 1,
       sortBy: undefined,
       sortOrder: undefined,
-      selection: props.initialSelection || undefined
+      selection: props.initialSelection
     }
   }
 

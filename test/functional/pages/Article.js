@@ -552,7 +552,6 @@ module.exports = {
     I.fillField(this.locators.titleField, '')
     I.fillField(this.locators.titleField, 'This Article Is Updated')
     I.click(this.locators.editAuthorButton)
-    I.wait(2)
     I.waitForFunction(() => document.readyState === 'complete')
     I.waitForText('Author')
     const numberAuthors = await I.grabNumberOfVisibleElements(

@@ -14,7 +14,7 @@ class Bootstrap {
       await myTest.addData({
         collection: 'team',
         count: 5,
-        property: 'second-property',
+        property: 'cloud',
         fields: {
           body: {
             format: '{{lorem.paragraph}}'

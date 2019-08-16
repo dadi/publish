@@ -362,12 +362,16 @@ class DocumentEditView extends React.Component {
 
     if (referenceFieldSelected) {
       const merged = {...document.remote, ...document.local}
+      const selection = merged[referenceFieldSelected] || []
+      const sanitizedSelection = Array.isArray(selection)
+        ? selection
+        : [selection]
 
       return (
         <ReferenceSelectView
           buildUrl={onBuildBaseUrl.bind(this)}
           collection={collection}
-          initialSelection={merged[referenceFieldSelected]}
+          initialSelection={sanitizedSelection}
           referenceFieldName={referenceFieldSelected}
           onCancel={this.cancelReferenceSelection}
           onSave={this.saveReferenceSelection}
