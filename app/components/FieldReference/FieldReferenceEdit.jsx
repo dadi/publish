@@ -126,13 +126,10 @@ export default class FieldReferenceEdit extends React.Component {
 
   render() {
     const {
-      collection,
       config,
       displayName,
-      documentId,
       error,
-      name,
-      onBuildBaseUrl,
+      onEditReference,
       required,
       schema,
       value
@@ -156,15 +153,6 @@ export default class FieldReferenceEdit extends React.Component {
     })
     const firstStringField = this.findFirstStringField(displayableFields)
     const displayField = value && firstStringField ? firstStringField.key : null
-
-    const isSingleDocument =
-      collection.settings &&
-      collection.settings.publish &&
-      collection.settings.publish.isSingleDocument
-    const editLink = onBuildBaseUrl({
-      createNew: !documentId && !isSingleDocument,
-      referenceFieldSelect: name
-    })
     const values = value && !(value instanceof Array) ? [value] : value
     const publishBlock = schema.publish || {}
     const isReadOnly = publishBlock.readonly === true
@@ -205,7 +193,8 @@ export default class FieldReferenceEdit extends React.Component {
                 <Button
                   accent="data"
                   className={styles['control-button']}
-                  href={editLink}
+                  data-name="edit-reference-button"
+                  onClick={onEditReference}
                   size="small"
                 >
                   Edit
@@ -216,6 +205,7 @@ export default class FieldReferenceEdit extends React.Component {
                 <Button
                   accent="destruct"
                   className={styles['control-button']}
+                  data-name="remove-reference-button"
                   onClick={this.handleRemove.bind(this)}
                   size="small"
                 >
@@ -228,7 +218,12 @@ export default class FieldReferenceEdit extends React.Component {
 
         {!value && !isReadOnly && (
           <div className={styles.placeholder}>
-            <Button accent="neutral" href={editLink} size="small">
+            <Button
+              accent="neutral"
+              data-name="select-existing-reference-button"
+              onClick={onEditReference}
+              size="small"
+            >
               Select existing {displayName.toLowerCase()}
             </Button>
           </div>

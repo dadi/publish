@@ -1,0 +1,18 @@
+{
+  "fields": {
+    "title": {
+      "type": "String",
+      "label": "Title",
+      "publish": {
+        "placement": "main",
+        "display": {
+          "edit": true,
+          "list": true
+        }
+      }
+    }
+  },
+  "settings": {
+    "displayName": "From 2nd property"
+  }
+}

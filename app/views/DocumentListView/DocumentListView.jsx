@@ -191,10 +191,24 @@ class DocumentListView extends React.Component {
     })
   }
 
+  handleSort({sortBy, sortOrder}) {
+    const {history, onBuildBaseUrl, route} = this.props
+    const newUrl = onBuildBaseUrl.call(this, {
+      search: {
+        ...route.search,
+        sort: sortBy,
+        order: sortOrder
+      }
+    })
+
+    history.push(newUrl)
+  }
+
   render() {
     const {
       collection,
       contentKey,
+      history,
       isSingleDocument,
       onBuildBaseUrl,
       route: {search},
@@ -252,7 +266,7 @@ class DocumentListView extends React.Component {
     // the current document set, we redirect to the last valid page.
     if (totalPages > 0 && page > totalPages) {
       const redirectUrl = onBuildBaseUrl.call(this, {
-        page: metadata.totalPages
+        search: {...search, page: metadata.totalPages}
       })
 
       return <Redirect to={redirectUrl} />
@@ -278,17 +292,19 @@ class DocumentListView extends React.Component {
       search.filter && search.filter.$selected === true
 
     // Computing URL for the "show only selected documents" button.
-    const showSelectedDocumentsUrl = !isFilteringSelection
-      ? onBuildBaseUrl.call(this, {
-          search: {
-            ...search,
-            filter: {
-              ...search.filter,
-              $selected: true
-            }
-          }
-        })
-      : undefined
+    const showSelectedDocumentsUrl = onBuildBaseUrl.call(this, {
+      search: {
+        ...search,
+        filter: {
+          ...search.filter,
+          $selected: true
+        }
+      }
+    })
+
+    const showSelectedDocuments = () => {
+      if (!isFilteringSelection) history.push(showSelectedDocumentsUrl)
+    }
 
     // Setting the page title.
     setPageTitle(collection.name)
@@ -313,9 +329,11 @@ class DocumentListView extends React.Component {
         <div className={styles.toolbar}>
           <DocumentListToolbar
             metadata={metadata}
-            pageChangeHandler={page => onBuildBaseUrl.call(this, {page})}
+            pageChangeHandler={page =>
+              onBuildBaseUrl.call(this, {search: {...search, page}})
+            }
             selectedDocuments={selection}
-            showSelectedDocumentsUrl={showSelectedDocumentsUrl}
+            showSelectedDocuments={showSelectedDocuments}
           >
             <BulkActionSelector
               actions={actions}
@@ -354,10 +372,8 @@ class DocumentListView extends React.Component {
 
   renderMain({collection, contentKey, isFilteringSelection, selection}) {
     const {onBuildBaseUrl, route} = this.props
-    const {page} = route.params
     const {search} = route
-    const parsedPage = Number.parseInt(page)
-    const pageNumber = parsedPage.toString() === page ? parsedPage : undefined
+    const pageNumber = search.page
 
     if (collection.IS_MEDIA_BUCKET) {
       return (
@@ -424,6 +440,7 @@ class DocumentListView extends React.Component {
             fields={visibleFields}
             onBuildBaseUrl={onBuildBaseUrl.bind(this)}
             onSelect={onSelect}
+            onSort={this.handleSort.bind(this)}
             order={search.order}
             selectedDocuments={selectedDocuments}
             sort={search.sort}
@@ -441,7 +458,7 @@ class DocumentListView extends React.Component {
 
 function mapState(state, ownProps) {
   const {
-    route: {params, searchString}
+    route: {params, search, searchString}
   } = ownProps
 
   const collection =
@@ -456,13 +473,13 @@ function mapState(state, ownProps) {
     collection.settings.publish &&
     collection.settings.publish.isSingleDocument
 
-  const {group, page = '1'} = params
+  const {group} = params
   const contentKey = isSingleDocument
     ? JSON.stringify({collection: collection.slug})
     : JSON.stringify({
         collection: collection.slug,
         group,
-        page,
+        page: search.page || 1,
         searchString
       })
   const selectionKey = JSON.stringify({collection: collection.slug, group})

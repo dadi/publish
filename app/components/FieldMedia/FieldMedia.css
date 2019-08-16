@@ -145,7 +145,8 @@
   text-align: center;
 }
 
-.placeholder a {
+.placeholder a,
+.placeholder button {
   width: 100%;
 }
 

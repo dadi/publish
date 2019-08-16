@@ -135,6 +135,7 @@ class DocumentField extends React.Component {
       document,
       field,
       onBuildBaseUrl,
+      onEditReference,
       router,
       state
     } = this.props
@@ -208,6 +209,7 @@ class DocumentField extends React.Component {
           meta={documentMetadata[fieldName]}
           name={fieldName}
           onBuildBaseUrl={onBuildBaseUrl}
+          onEditReference={onEditReference}
           onChange={this.handleFieldChange.bind(this, fieldName)}
           onSaveRegister={this.handleSaveCallbackRegister.bind(this)}
           onValidateRegister={this.handleValidationCallbackRegister.bind(this)}

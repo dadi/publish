@@ -6,6 +6,7 @@ import {connectRedux} from 'lib/redux'
 import Label from 'components/Label/Label'
 import proptypes from 'prop-types'
 import React from 'react'
+import {Redirect} from 'react-router-dom'
 import styles from './SignIn.css'
 import TextInput from 'components/TextInput/TextInput'
 

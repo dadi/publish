@@ -105,7 +105,8 @@ export default class Button extends React.Component {
       onClick,
       openInNewWindow,
       size,
-      type
+      type,
+      ...buttonProps
     } = this.props
     const buttonStyle = new Style(styles, 'button')
 
@@ -139,6 +140,7 @@ export default class Button extends React.Component {
             href={href}
             target={openInNewWindow && '_blank'}
             onClick={onClick}
+            {...buttonProps}
           >
             {children}
           </a>
@@ -146,7 +148,12 @@ export default class Button extends React.Component {
       }
 
       return (
-        <Link className={buttonStyle.getClasses()} to={href} onClick={onClick}>
+        <Link
+          className={buttonStyle.getClasses()}
+          onClick={onClick}
+          to={href}
+          {...buttonProps}
+        >
           {children}
         </Link>
       )
@@ -158,6 +165,7 @@ export default class Button extends React.Component {
         disabled={disabled || isLoading}
         onClick={onClick}
         type={type}
+        {...buttonProps}
       >
         {children}
       </button>

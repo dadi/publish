@@ -208,10 +208,8 @@ export default class FieldMediaEdit extends React.Component {
     const {
       config = {},
       displayName,
-      documentId,
       error,
-      name,
-      onBuildBaseUrl,
+      onEditReference,
       required,
       schema,
       value
@@ -222,13 +220,6 @@ export default class FieldMediaEdit extends React.Component {
       schema.publish && schema.publish.subType
         ? schema.publish.subType
         : schema.type
-    const href = onBuildBaseUrl
-      ? onBuildBaseUrl({
-          createNew: !documentId,
-          documentId,
-          referenceFieldSelect: name
-        })
-      : ''
     const singleFile = schema.settings && schema.settings.limit === 1
     const values = value && !Array.isArray(value) ? [value] : value
     const isReadOnly = schema.publish && schema.publish.readonly === true
@@ -248,7 +239,7 @@ export default class FieldMediaEdit extends React.Component {
       >
         {values && (
           <div className={styles.values}>
-            {values.map((value, index) => {
+            {values.map(value => {
               const id = value._id || value
               const displayName = value.fileName
                 ? value.fileName.split('.').pop()
@@ -295,7 +286,12 @@ export default class FieldMediaEdit extends React.Component {
             </div>
 
             <div className={styles.placeholder}>
-              <Button accent="neutral" size="small" href={href}>
+              <Button
+                accent="neutral"
+                data-name="select-existing-media-button"
+                onClick={onEditReference}
+                size="small"
+              >
                 Select existing {fieldLocalType.toLowerCase()}
               </Button>
             </div>

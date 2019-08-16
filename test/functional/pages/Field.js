@@ -457,8 +457,10 @@ module.exports = {
     pdf: locate('p[class*="MediaGridCard__filename"]')
       .withText('DADI_Publish.pdf')
       .as('PDF Document'),
-    nevermindButton: locate('button')
-      .withText('Nevermind, back to document')
+    nevermindButton: locate('*')
+      .withAttr({
+        'data-name': 'cancel-reference-selection-button'
+      })
       .as('Back to document'),
     boolYes: locate('span[class*="FieldBoolean__enabled"]')
       .withText('Yes')
@@ -470,8 +472,10 @@ module.exports = {
       .withAttr({
         'data-field-name': 'referenceRequired'
       })
-      .find('a')
-      .withText('Select existing reference')
+      .find('*')
+      .withAttr({
+        'data-name': 'select-existing-reference-button'
+      })
       .as('Required reference'),
     referenceReadOnly: locate('div')
       .withAttr({
@@ -500,8 +504,10 @@ module.exports = {
       .withAttr({
         'data-field-name': 'mediaRequired'
       })
-      .find('a')
-      .withText('Select existing media')
+      .find('*')
+      .withAttr({
+        'data-name': 'select-existing-media-button'
+      })
       .as('Select existing media Required'),
     mediaReqDevice: locate('div')
       .withAttr({
@@ -544,8 +550,10 @@ module.exports = {
       .withAttr({
         'data-field-name': 'media'
       })
-      .find('a')
-      .withText('Select existing media')
+      .find('*')
+      .withAttr({
+        'data-name': 'select-existing-media-button'
+      })
       .as('Select existing media Media Field'),
     mediaDevice: locate('div')
       .withAttr({
@@ -570,8 +578,10 @@ module.exports = {
       .withAttr({
         'data-field-name': 'mediaJpeg'
       })
-      .find('a')
-      .withText('Select existing media')
+      .find('*')
+      .withAttr({
+        'data-name': 'select-existing-media-button'
+      })
       .as('Select from existing JPEG Only'),
     mediaJpegDevice: locate('div')
       .withAttr({
@@ -590,8 +600,10 @@ module.exports = {
       .withAttr({
         'data-field-name': 'mediaPng'
       })
-      .find('a')
-      .withText('Select existing media')
+      .find('*')
+      .withAttr({
+        'data-name': 'select-existing-media-button'
+      })
       .as('Select existing media PNG Only'),
     mediaPngDevice: locate('div')
       .withAttr({
@@ -610,8 +622,10 @@ module.exports = {
       .withAttr({
         'data-field-name': 'mediaJpegAndPng'
       })
-      .find('a')
-      .withText('Select existing media')
+      .find('*')
+      .withAttr({
+        'data-name': 'select-existing-media-button'
+      })
       .as('Select existing media JPEG or PNG'),
     mediaJnPDevice: locate('div')
       .withAttr({
@@ -630,8 +644,10 @@ module.exports = {
       .withAttr({
         'data-field-name': 'mediaPdf'
       })
-      .find('a')
-      .withText('Select existing media')
+      .find('*')
+      .withAttr({
+        'data-name': 'select-existing-media-button'
+      })
       .as('Select existing media PDF Only'),
     mediaPdfDevice: locate('div')
       .withAttr({
@@ -729,15 +745,20 @@ module.exports = {
       .withAttr({
         'data-field-name': 'reference'
       })
-      .find('a')
+      .find('*')
+      .withAttr({
+        'data-name': 'select-existing-reference-button'
+      })
       .as('Reference Field'),
     saveDocument: locate('button[class*="save"]').as('Save Document Button'),
     editReferenceButton: locate('div')
       .withAttr({
         'data-field-name': 'reference'
       })
-      .find('a')
-      .withText('Edit')
+      .find('*')
+      .withAttr({
+        'data-name': 'edit-reference-button'
+      })
       .as('Edit Reference Button'),
     removeReferenceButton: locate('div')
       .withAttr({
@@ -1066,7 +1087,6 @@ module.exports = {
     await I.seeElement(this.locators.referenceReadOnly)
     await I.click(this.locators.referenceReq)
     I.waitForFunction(() => document.readyState === 'complete')
-    await I.seeInCurrentUrl('/select/referenceRequired')
     I.waitForText('Reference')
     await I.click(this.locators.nevermindButton)
     await I.seeInCurrentUrl('/field-test-reference/new')
@@ -1074,7 +1094,6 @@ module.exports = {
     await I.seeElement(this.locators.referenceReqError)
     await I.click(this.locators.referenceReq)
     I.waitForFunction(() => document.readyState === 'complete')
-    await I.seeInCurrentUrl('/select/referenceRequired')
     I.waitForText('Reference')
     const numberAuthors = await I.grabNumberOfVisibleElements(
       this.locators.numOfAuthors
@@ -1141,7 +1160,6 @@ module.exports = {
     await I.fillField(this.locators.mediaTitle, 'Media Document')
     await I.click(this.locators.mediaReqExisting)
     I.waitForFunction(() => document.readyState === 'complete')
-    await I.seeInCurrentUrl('/select/mediaRequired')
     I.waitForText('Media')
     await I.click(this.locators.nevermindButton)
     await I.seeInCurrentUrl('/field-test-media/new')
@@ -1149,7 +1167,6 @@ module.exports = {
     await I.seeElement(this.locators.mediaReqError)
     await I.click(this.locators.mediaReqExisting)
     I.waitForFunction(() => document.readyState === 'complete')
-    await I.seeInCurrentUrl('/select/mediaRequired')
     I.waitForText('Media')
     await I.click(this.locators.pdf)
     await I.click(this.locators.stoneJpeg)
@@ -1177,7 +1194,6 @@ module.exports = {
     await I.seeElement(this.locators.mediaJpegUploadErr)
     await I.click(this.locators.mediaJpegExisting)
     I.waitForFunction(() => document.readyState === 'complete')
-    await I.seeInCurrentUrl('/select/mediaJpeg')
     I.waitForText('Media (JPEG)')
     await I.see('.jpeg')
     await I.dontSee('.png')
@@ -1195,7 +1211,6 @@ module.exports = {
     await I.seeElement(this.locators.mediaPngUploadErr)
     await I.click(this.locators.mediaPngExisting)
     I.waitForFunction(() => document.readyState === 'complete')
-    await I.seeInCurrentUrl('/select/mediaPng')
     I.waitForText('Media (PNG)')
     await I.see('.png')
     await I.dontSee('.jpeg')
@@ -1215,7 +1230,6 @@ module.exports = {
     await I.seeElement(this.locators.mediaJnPUploadErr)
     await I.click(this.locators.mediaJnPExisting)
     I.waitForFunction(() => document.readyState === 'complete')
-    await I.seeInCurrentUrl('/select/mediaJpegAndPng')
     I.waitForText('Media (JPEG and PNG)')
     await I.see('.png')
     await I.see('.jpeg')
@@ -1237,7 +1251,6 @@ module.exports = {
     await I.seeElement(this.locators.mediaPdfUploadErr)
     await I.click(this.locators.mediaPdfExisting)
     I.waitForFunction(() => document.readyState === 'complete')
-    await I.seeInCurrentUrl('/select/mediaPdf')
     I.waitForText('Media (PDF)')
     await I.see('.pdf')
     await I.dontSee('.jpeg')
@@ -1312,18 +1325,15 @@ module.exports = {
     I.click(this.locators.singleReference)
 
     I.waitForFunction(() => document.readyState === 'complete')
-    I.seeInCurrentUrl('/test-single-document/select/reference')
     I.dontSeeInCurrentUrl('new')
 
     I.click(this.locators.nevermindButton)
 
     I.waitForFunction(() => document.readyState === 'complete')
-    I.dontSeeInCurrentUrl('/select/reference')
     I.seeInField(this.locators.singleTitle, 'Single Document')
     I.click(this.locators.singleReference)
 
     I.waitForFunction(() => document.readyState === 'complete')
-    I.seeInCurrentUrl('/test-single-document/select/reference')
 
     I.waitForText('Reference')
     const numberAuthors = await I.grabNumberOfVisibleElements(

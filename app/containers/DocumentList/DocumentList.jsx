@@ -164,14 +164,15 @@ class DocumentList extends React.Component {
         ...filters,
         _id: {
           $in: ids
-        },
-        $selected: undefined
+        }
       }
 
       bypassCache = true
     } else {
       sanitisedFilters = filters
     }
+
+    sanitisedFilters.$selected = undefined
 
     actions.fetchDocumentList({
       bypassCache,

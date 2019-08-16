@@ -57,8 +57,8 @@ class NotificationCentre extends React.Component {
   componentWillReceiveProps(nextProps) {
     const notification = this.props.state.app.notification
     const nextNotification = nextProps.state.app.notification
-    const currentRoute = this.props.route.path
-    const nextRoute = nextProps.route.path
+    const currentRoute = this.props.router.location.pathname
+    const nextRoute = nextProps.router.location.pathname
 
     if (
       notification &&
@@ -136,8 +136,6 @@ class NotificationCentre extends React.Component {
   shouldComponentUpdate(nextProps, nextState) {
     const notification = this.props.state.app.notification
     const nextNotification = nextProps.state.app.notification
-    const currentRoute = this.props.route.path
-    const nextRoute = nextProps.route.path
 
     if (this.state.faded !== nextState.faded) {
       return true
@@ -146,14 +144,6 @@ class NotificationCentre extends React.Component {
     if (this.state.visible !== nextState.visible) {
       return true
     }
-
-    // if (
-    //   notification &&
-    //   notification.dismissAfterRouteChange &&
-    //   (currentRoute !== nextRoute)
-    // ) {
-    //   return true
-    // }
 
     if (
       notification &&

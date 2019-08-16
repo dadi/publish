@@ -40,9 +40,9 @@ class DocumentListToolbar extends React.Component {
     selectedDocuments: proptypes.array,
 
     /**
-     * The URL for limiting the document list to only selected documents.
+     * Callback for limiting the document list to only selected documents.
      */
-    showSelectedDocumentsUrl: proptypes.string
+    showSelectedDocuments: proptypes.func
   }
 
   constructor(props) {
@@ -93,7 +93,7 @@ class DocumentListToolbar extends React.Component {
       metadata,
       pageChangeHandler,
       selectedDocuments = [],
-      showSelectedDocumentsUrl
+      showSelectedDocuments
     } = this.props
     const {goToPageValue} = this.state
 
@@ -123,15 +123,15 @@ class DocumentListToolbar extends React.Component {
                 metadata.totalCount
               ).toLocaleString()} `}</strong>
               of <strong>{metadata.totalCount.toLocaleString()}</strong>
-              {showSelectedDocumentsUrl && (
+              {showSelectedDocuments && (
                 <span className={selectionCounter.getClasses()}>
                   (
-                  <Link
+                  <a
                     className={styles['selection-counter-button']}
-                    to={showSelectedDocumentsUrl}
+                    onClick={showSelectedDocuments}
                   >
                     {selectedDocuments.length.toLocaleString()} selected
-                  </Link>
+                  </a>
                   )
                 </span>
               )}
