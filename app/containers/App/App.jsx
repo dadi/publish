@@ -82,8 +82,8 @@ class App extends React.Component {
 
   componentDidUpdate(prevProps) {
     const {
-      user: {isSignedIn},
-      api
+      api,
+      user: {isSignedIn}
     } = this.props
     const {isSignedIn: wasSignedIn} = prevProps.user
 
