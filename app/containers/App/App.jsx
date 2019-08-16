@@ -1,6 +1,4 @@
-import * as apiActions from 'actions/apiActions'
 import * as appActions from 'actions/appActions'
-import * as documentActions from 'actions/documentActions'
 import * as userActions from 'actions/userActions'
 import {
   Redirect,
@@ -12,6 +10,7 @@ import {
   registerErrorCallback,
   registerProgressCallback
 } from 'lib/api-bridge-client'
+import AuthenticatedRoute from './AuthenticatedRoute'
 import buildGroupedRoutes from './buildGroupedRoutes'
 import {connectRedux} from 'lib/redux'
 import {debounce} from 'lib/util'
@@ -24,7 +23,6 @@ import NotificationCentre from 'containers/NotificationCentre/NotificationCentre
 import ProfileEditView from 'views/ProfileEditView/ProfileEditView'
 import React from 'react'
 import SignInView from 'views/SignInView/SignInView'
-import WrappedRoute from './WrappedRoute'
 
 const baseRoutes = [
   {
@@ -41,22 +39,25 @@ const baseRoutes = [
   }
 ]
 
+function buildRoutes({menu, isMultiProperty}) {
+  const routes = [...buildGroupedRoutes(menu, baseRoutes), ...baseRoutes]
+
+  return isMultiProperty
+    ? routes.map(route => ({
+        ...route,
+        path: '/:property' + route.path
+      }))
+    : routes
+}
+
 class App extends React.Component {
   constructor(props) {
     super(props)
 
-    const {
-      actions,
-      api: {menu, properties}
-    } = props
+    const {actions} = props
 
-    this.routes = [...buildGroupedRoutes(menu, baseRoutes), ...baseRoutes]
-
-    if (properties && properties.length) {
-      this.routes = this.routes.map(route => ({
-        ...route,
-        path: '/:property' + route.path
-      }))
+    this.state = {
+      routes: []
     }
 
     registerErrorCallback(actions.registerNetworkError)
@@ -64,6 +65,8 @@ class App extends React.Component {
   }
 
   componentDidMount() {
+    const {api, user} = this.props
+
     window.addEventListener(
       'resize',
       debounce(() => {
@@ -71,21 +74,45 @@ class App extends React.Component {
       }, 200)
     )
     // Prevent accidental drops outside of asset drop handlers.
-    document.addEventListener('dragstart', e => e.preventDefault(), false)
-    document.addEventListener('dragend', e => e.preventDefault(), false)
     document.addEventListener('dragover', e => e.preventDefault(), false)
-    document.addEventListener('dragenter', e => e.preventDefault(), false)
-    document.addEventListener('dragleave', e => e.preventDefault(), false)
     document.addEventListener('drop', e => e.preventDefault(), false)
+
+    if (user.isSignedIn) this.setState({routes: buildRoutes(api)})
   }
 
   componentDidUpdate(prevProps) {
-    const {isSignedIn} = this.props
-    const {isSignedIn: wasSignedIn} = prevProps
+    const {
+      user: {isSignedIn},
+      api
+    } = this.props
+    const {isSignedIn: wasSignedIn} = prevProps.user
 
     if (!wasSignedIn && isSignedIn) {
+      this.setState({routes: buildRoutes(api)})
       // Needed on mobile devices.
       window.scrollTo(0, 0)
+    }
+
+    if (isSignedIn && !this.sessionTimeout) {
+      this.startSessionTimeout()
+    }
+  }
+
+  startSessionTimeout() {
+    const {actions, user} = this.props
+
+    if (typeof user.accessTokenExpiry === 'number') {
+      // We'll set a timer to sign the user out 5 seconds before their token expires.
+      const timeout = user.accessTokenExpiry - Date.now() - 5000
+
+      if (timeout < 0) return
+
+      clearTimeout(this.sessionTimeout)
+      this.sessionTimeout = setTimeout(() => {
+        actions.signOut({
+          sessionHasExpired: true
+        })
+      }, timeout)
     }
   }
 
@@ -95,8 +122,8 @@ class App extends React.Component {
         <LoadingBar />
         <NotificationCentre />
         <Switch>
-          <WrappedRoute path="/" exact component={HomeView} />
-          <WrappedRoute
+          <AuthenticatedRoute path="/" exact component={HomeView} />
+          <AuthenticatedRoute
             path="/sign-in/:token?"
             component={SignInView}
             isPublic
@@ -109,11 +136,30 @@ class App extends React.Component {
               return <Redirect to="/sign-in" />
             }}
           />
-          <WrappedRoute path="/profile/:section?" component={ProfileEditView} />
-          {this.routes.map(route => (
-            <WrappedRoute key={route.path} exact {...route} />
+          <AuthenticatedRoute
+            path="/profile/:section?"
+            component={ProfileEditView}
+          />
+          <AuthenticatedRoute
+            path="/media/:documentId/:section?"
+            render={props => {
+              props.route.params.collection = 'media'
+
+              return <DocumentEditView exact {...props} />
+            }}
+          />
+          <AuthenticatedRoute
+            path="/media"
+            render={props => {
+              props.route.params.collection = 'media'
+
+              return <DocumentListView exact {...props} />
+            }}
+          />
+          {this.state.routes.map(route => (
+            <AuthenticatedRoute key={route.path} exact {...route} />
           ))}
-          <WrappedRoute component={ErrorView} />
+          <AuthenticatedRoute component={ErrorView} />
         </Switch>
       </Router>
     )
@@ -122,13 +168,7 @@ class App extends React.Component {
 
 const mapState = state => ({
   api: state.app.config.api,
-  isSignedIn: state.user.isSignedIn
+  user: state.user
 })
 
-export default connectRedux(
-  mapState,
-  apiActions,
-  appActions,
-  documentActions,
-  userActions
-)(App)
+export default connectRedux(mapState, appActions, userActions)(App)

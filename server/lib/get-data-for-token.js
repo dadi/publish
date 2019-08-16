@@ -104,15 +104,22 @@ module.exports = async accessToken => {
       return groups
     }, new Map())
 
+    const isMultiProperty = collections.some(
+      (collection, index, collections) =>
+        collections[index - 1] &&
+        collection.property !== collections[index - 1].property
+    )
+
     // Augmenting collection objects with `_publishLink` properties, which
     // contain a link to the collection (i.e. group + collection).
     const augmentedCollections = collections
       .map(collection => {
+        const property = isMultiProperty ? `/${collection.property}` : ''
         const group = collectionGroups.get(collection.slug)
         const slugifiedGroup = group ? slugify(group) : null
         const href = group
-          ? `/${slugifiedGroup}/${collection.slug}`
-          : `/${collection.slug}`
+          ? `${property}/${slugifiedGroup}/${collection.slug}`
+          : `${property}/${collection.slug}`
 
         return {
           ...collection,
@@ -127,6 +134,7 @@ module.exports = async accessToken => {
       })
 
     response.config.api.collections = augmentedCollections
+    response.config.api.isMultiProperty = isMultiProperty
 
     return response
   } catch (error) {

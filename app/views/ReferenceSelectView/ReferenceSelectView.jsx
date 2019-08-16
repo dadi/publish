@@ -87,9 +87,6 @@ class ReferenceSelectView extends React.Component {
       collection,
       referenceFieldName,
       referenceFieldSchema,
-      router: {
-        match: {params}
-      },
       state
     } = this.props
 
@@ -124,7 +121,6 @@ class ReferenceSelectView extends React.Component {
 
     const contentKey = JSON.stringify({
       collection: collection.slug,
-      group: params.group,
       referenceFieldName,
       search: {filter, page, sortBy, sortOrder}
     })
@@ -260,25 +256,10 @@ class ReferenceSelectView extends React.Component {
 }
 
 function mapState(state, ownProps) {
-  const {
-    referenceFieldName,
-    router: {
-      match: {params}
-    }
-  } = ownProps
-
-  const collection =
-    params.collection === Constants.MEDIA_COLLECTION_SCHEMA.slug
-      ? Constants.MEDIA_COLLECTION_SCHEMA
-      : state.app.config.api.collections.find(collection => {
-          return collection.slug === params.collection
-        })
-
-  const referenceFieldSchema = collection.fields[referenceFieldName]
+  const {collection, referenceFieldName} = ownProps
 
   return {
-    collection,
-    referenceFieldSchema,
+    referenceFieldSchema: collection.fields[referenceFieldName],
     state
   }
 }

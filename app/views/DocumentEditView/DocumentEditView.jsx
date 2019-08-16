@@ -24,8 +24,8 @@ class DocumentEditView extends React.Component {
   constructor(props) {
     super(props)
 
-    this.cancelSelection = this.cancelSelection.bind(this)
-    this.saveSelection = this.saveSelection.bind(this)
+    this.cancelReferenceSelection = this.cancelReferenceSelection.bind(this)
+    this.saveReferenceSelection = this.saveReferenceSelection.bind(this)
     this.sections = []
     this.userClosingBrowser = this.handleUserClosingBrowser.bind(this)
 
@@ -267,11 +267,11 @@ class DocumentEditView extends React.Component {
     this.saveDocumentLocally()
   }
 
-  cancelSelection() {
+  cancelReferenceSelection() {
     this.setState({referenceFieldSelected: null})
   }
 
-  saveSelection(selection) {
+  saveReferenceSelection(selection) {
     const {actions, contentKey} = this.props
     const {referenceFieldSelected} = this.state
 
@@ -366,10 +366,11 @@ class DocumentEditView extends React.Component {
       return (
         <ReferenceSelectView
           buildUrl={onBuildBaseUrl.bind(this)}
+          collection={collection}
           initialSelection={merged[referenceFieldSelected]}
           referenceFieldName={referenceFieldSelected}
-          onCancel={this.cancelSelection}
-          onSave={this.saveSelection}
+          onCancel={this.cancelReferenceSelection}
+          onSave={this.saveReferenceSelection}
         />
       )
     }
@@ -527,6 +528,7 @@ function mapState(state, ownProps) {
     isSingleDocument,
     route: {params}
   } = ownProps
+
   const documentId = isSingleDocument ? ownProps.documentId : params.documentId
   const collection =
     params.collection === Constants.MEDIA_COLLECTION_SCHEMA.slug

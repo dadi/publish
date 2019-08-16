@@ -5,19 +5,25 @@ import {connectRedux} from 'lib/redux'
 import ErrorView from '../../views/ErrorView/ErrorView'
 import React from 'react'
 
-class WrappedRoute extends React.Component {
-  UNSAFE_componentWillReceiveProps(newProps) {
+class AuthenticatedRoute extends React.Component {
+  // Side effects in SCU—not ideal; feel free to rewrite if you have a better idea.
+  shouldComponentUpdate({
+    state: {
+      user: {isSignedIn}
+    }
+  }) {
     const {
       state: {
-        user: {isSignedIn}
+        user: {isSignedIn: wasSignedIn}
       },
       location: {search}
     } = this.props
 
     const {redirect} = decodeSearch(search)
 
-    this.redirectUrl =
-      !isSignedIn && newProps.state.user.isSignedIn ? redirect || '/' : null
+    this.redirectUrl = !wasSignedIn && isSignedIn ? redirect || '/' : null
+
+    return true
   }
 
   render() {
@@ -84,4 +90,4 @@ class WrappedRoute extends React.Component {
   }
 }
 
-export default connectRedux()(WrappedRoute)
+export default connectRedux()(AuthenticatedRoute)
