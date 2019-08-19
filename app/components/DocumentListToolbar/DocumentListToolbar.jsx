@@ -1,6 +1,5 @@
 import {connectRouter} from 'lib/router'
 import DropdownNative from 'components/DropdownNative/DropdownNative'
-import {Link} from 'react-router-dom'
 import Paginator from 'components/Paginator/Paginator'
 import proptypes from 'prop-types'
 import React from 'react'
@@ -54,7 +53,7 @@ class DocumentListToolbar extends React.Component {
   }
 
   goToPage(value) {
-    const {metadata, pageChangeHandler, router} = this.props
+    const {metadata, pageChangeHandler, route} = this.props
     const parsedValue = Number.parseInt(value)
 
     if (!metadata || typeof pageChangeHandler !== 'function') {
@@ -73,7 +72,7 @@ class DocumentListToolbar extends React.Component {
     // If the result of `pageChangeHandler` is a link, we redirect to it.
     // If it is a function, we call it.
     if (typeof action === 'string') {
-      router.history.push(action)
+      route.history.push(action)
     } else if (typeof action === 'function') {
       action(parsedValue)
     }

@@ -126,14 +126,14 @@ class DocumentEditToolbar extends React.Component {
   }
 
   handleLanguageChange(newLanguage) {
-    const {onBuildBaseUrl, router} = this.props
+    const {onBuildBaseUrl, route} = this.props
     const redirectUrl = onBuildBaseUrl({
       search: {
         lang: newLanguage
       }
     })
 
-    router.history.push(redirectUrl)
+    route.history.push(redirectUrl)
   }
 
   handleSave(mode) {
@@ -151,7 +151,7 @@ class DocumentEditToolbar extends React.Component {
       documentId,
       isSingleDocument,
       multiLanguage,
-      router,
+      route,
       state
     } = this.props
     const {api} = state.app.config
@@ -173,7 +173,7 @@ class DocumentEditToolbar extends React.Component {
             return languagesObject
           }, {})
 
-    let {lang: currentLanguage} = router.search
+    let {lang: currentLanguage} = route.search
 
     // No language is selected, so we'll set the value of the dropdown to the
     // value of the default language.

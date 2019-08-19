@@ -160,7 +160,7 @@ class DocumentListView extends React.Component {
   }
 
   handleFiltersUpdate(newFilters) {
-    const {history, onBuildBaseUrl, route} = this.props
+    const {onBuildBaseUrl, route} = this.props
     const newFilterValue =
       Object.keys(newFilters).length > 0 ? newFilters : null
     const newUrl = onBuildBaseUrl.call(this, {
@@ -170,7 +170,7 @@ class DocumentListView extends React.Component {
       }
     })
 
-    history.push(newUrl)
+    route.history.push(newUrl)
   }
 
   handleMediaUpload(files) {
@@ -192,7 +192,7 @@ class DocumentListView extends React.Component {
   }
 
   handleSort({sortBy, sortOrder}) {
-    const {history, onBuildBaseUrl, route} = this.props
+    const {onBuildBaseUrl, route} = this.props
     const newUrl = onBuildBaseUrl.call(this, {
       search: {
         ...route.search,
@@ -201,17 +201,16 @@ class DocumentListView extends React.Component {
       }
     })
 
-    history.push(newUrl)
+    route.history.push(newUrl)
   }
 
   render() {
     const {
       collection,
       contentKey,
-      history,
       isSingleDocument,
       onBuildBaseUrl,
-      route: {search},
+      route: {history, search},
       selectionKey,
       state
     } = this.props
