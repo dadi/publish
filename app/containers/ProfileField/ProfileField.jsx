@@ -1,7 +1,6 @@
 import * as fieldComponents from 'lib/field-components'
 import * as userActions from 'actions/userActions'
 import {connectRedux} from 'lib/redux'
-import {connectRouter} from 'lib/router'
 import Field from 'components/Field/Field'
 import {getFieldType} from 'lib/fields'
 import proptypes from 'prop-types'
@@ -141,4 +140,4 @@ class ProfileField extends React.Component {
   }
 }
 
-export default connectRouter(connectRedux(userActions)(ProfileField))
+export default connectRedux(userActions)(ProfileField)

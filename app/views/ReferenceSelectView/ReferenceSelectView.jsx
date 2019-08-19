@@ -3,7 +3,6 @@ import * as fieldComponents from 'lib/field-components'
 import {getFieldType, getVisibleFields} from 'lib/fields'
 import Button from 'components/Button/Button'
 import {connectRedux} from 'lib/redux'
-import {connectRouter} from '../../lib/router'
 import DocumentGridList from 'components/DocumentGridList/DocumentGridList'
 import DocumentList from 'containers/DocumentList/DocumentList'
 import DocumentListController from 'components/DocumentListController/DocumentListController'
@@ -264,4 +263,4 @@ function mapState(state, ownProps) {
   }
 }
 
-export default connectRouter(connectRedux(mapState)(ReferenceSelectView))
+export default connectRedux(mapState)(ReferenceSelectView)

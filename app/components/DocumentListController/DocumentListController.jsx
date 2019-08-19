@@ -1,5 +1,4 @@
 import Button from 'components/Button/Button'
-import {connectRouter} from 'lib/router'
 import DocumentFilters from 'containers/DocumentFilters/DocumentFilters'
 import proptypes from 'prop-types'
 import React from 'react'
@@ -8,7 +7,7 @@ import styles from './DocumentListController.css'
 /**
  * A controller bar for a list of documents.
  */
-class DocumentListController extends React.Component {
+export default class DocumentListController extends React.Component {
   static propTypes = {
     /**
      * The collection to operate on.
@@ -87,5 +86,3 @@ class DocumentListController extends React.Component {
     )
   }
 }
-
-export default connectRouter(DocumentListController)

@@ -57,8 +57,8 @@ class NotificationCentre extends React.Component {
   componentWillReceiveProps(nextProps) {
     const notification = this.props.state.app.notification
     const nextNotification = nextProps.state.app.notification
-    const currentRoute = this.props.router.location.pathname
-    const nextRoute = nextProps.router.location.pathname
+    const currentRoute = this.props.route.path
+    const nextRoute = nextProps.route.path
 
     if (
       notification &&

@@ -120,8 +120,8 @@ class CollectionNav extends React.Component {
   }
 
   render() {
-    const {router, state} = this.props
-    const {collection} = router.match.params
+    const {route, state} = this.props
+    const {collection} = route.params
     const items = this.getNavigationItems(collection)
 
     items.push({

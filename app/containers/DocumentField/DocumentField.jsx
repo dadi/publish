@@ -136,7 +136,7 @@ class DocumentField extends React.Component {
       field,
       onBuildBaseUrl,
       onEditReference,
-      router,
+      route,
       state
     } = this.props
     const {app} = state
@@ -146,7 +146,7 @@ class DocumentField extends React.Component {
     const documentMetadata = document.localMeta || {}
     const defaultApiLanguage =
       api.languages && api.languages.find(language => language.default)
-    const {lang: currentLanguage} = router.search
+    const {lang: currentLanguage} = route.search
     const isReadOnly = Boolean(field.publish && field.publish.readonly)
     const isTranslatable = field.type.toLowerCase() === 'string'
     const isTranslation =

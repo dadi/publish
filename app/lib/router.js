@@ -6,14 +6,16 @@ export function connectRouter(WrappedComponent) {
   class Extractor extends React.Component {
     render() {
       const {history, location, match, ...componentProps} = this.props
-      const search = decodeSearch(location.search)
 
-      return (
-        <WrappedComponent
-          {...componentProps}
-          router={{history, location, match, search}}
-        />
-      )
+      const route = {
+        history,
+        params: match.params,
+        path: location.pathname,
+        search: decodeSearch(location.search),
+        searchString: location.search
+      }
+
+      return <WrappedComponent {...componentProps} route={route} />
     }
   }
 

@@ -72,6 +72,7 @@ class AuthenticatedRoute extends React.Component {
             match,
             onBuildBaseUrl: buildUrl,
             route: {
+              history,
               params: match.params,
               path: location.pathname,
               search: decodeSearch(location.search),
