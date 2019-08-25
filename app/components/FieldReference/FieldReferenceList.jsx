@@ -30,6 +30,13 @@ export default class FieldReferenceList extends React.Component {
     schema: proptypes.object
   }
 
+  constructor(props) {
+    super(props)
+
+    this.hoverOn = () => props.onHover(true)
+    this.hoverOff = () => props.onHover(false)
+  }
+
   findFirstStringField(fields) {
     return Object.keys(fields)
       .map(key => Object.assign({}, fields[key], {key}))
@@ -75,6 +82,8 @@ export default class FieldReferenceList extends React.Component {
                 <Link
                   className={styles['value-link']}
                   key={editLink}
+                  onMouseEnter={this.hoverOn}
+                  onMouseLeave={this.hoverOff}
                   to={editLink}
                 >
                   <div className={styles['list-value']}>

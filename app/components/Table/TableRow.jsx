@@ -54,6 +54,19 @@ export default class TableRow extends React.Component {
     selected: false
   }
 
+  constructor(props) {
+    super(props)
+
+    this.handleChildHover = isChildHovered =>
+      this.setState({isHovered: !isChildHovered})
+    this.hoverOn = () => this.setState({isHovered: true})
+    this.hoverOff = () => this.setState({isHovered: false})
+
+    this.state = {
+      isHovered: false
+    }
+  }
+
   handleSelectClick(event) {
     const {onSelect, tableIndex} = this.props
 
@@ -81,19 +94,24 @@ export default class TableRow extends React.Component {
 
     return React.Children.map(children, child => {
       return React.cloneElement(child, {
-        fillBlanks
+        fillBlanks,
+        onHover: this.handleChildHover
       })
     })
   }
 
   render() {
     const {selectable, selectableMode, selected} = this.props
-    const rowStyle = new Style(styles, 'row').addIf('row-selected', selected)
+    const rowStyle = new Style(styles, 'row')
+      .addIf('row-selected', selected)
+      .addIf('row-hovered', this.state.isHovered)
 
     return (
       <tr
         className={rowStyle.getClasses()}
         onClick={this.handleSelectRow.bind(this)}
+        onMouseEnter={this.hoverOn}
+        onMouseLeave={this.hoverOff}
       >
         {selectable && (
           <TableRowCell select={true}>

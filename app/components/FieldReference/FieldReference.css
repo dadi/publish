@@ -53,19 +53,10 @@
   margin-top: 0;
 }
 
-.value-link:after {
-  background: url(/_public/images/icon-arrow-right.svg);
-  content: ' ';
-  width: 13px;
-  height: auto;
-  background-position: 50%;
-  background-size: 100% auto;
-  background-repeat: no-repeat;
-  top: 0;
-  bottom: 0;
-  left: 100%;
-  margin-left: 5px;
-  position: absolute;
+.value-link {
+  color: inherit;
+  text-decoration: none;
+  border-bottom: 1px solid #eee;
 }
 
 .value-link:hover {

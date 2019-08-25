@@ -86,15 +86,15 @@ class DocumentTableList extends React.Component {
     })
     const fieldSchema = collection.fields[column.id]
     const renderedValue = this.renderField(fieldSchema, value)
-    const firstStringField = Object.keys(listableFields).filter(field => {
+    const firstStringField = Object.keys(listableFields).find(field => {
       return listableFields[field].type === 'String'
-    })[0]
+    })
 
     if (
       (firstStringField && firstStringField === column.id) ||
       (!firstStringField && index === 0)
     ) {
-      return <Link to={editLink}>{renderedValue}</Link>
+      return React.cloneElement(renderedValue, {internalLink: editLink})
     }
 
     return renderedValue
