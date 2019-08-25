@@ -96,7 +96,8 @@
     "compose": true,
     "sort": "publishedAt",
     "sortOrder": -1,
-    "index": [{
+    "index": [
+      {
         "keys": {
           "publishedAt": 1
         }

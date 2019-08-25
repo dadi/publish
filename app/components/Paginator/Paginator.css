@@ -29,6 +29,6 @@
   }
 
   .page-secondary {
-    color: var(--theme-colour-background-shade-2, #AAAAAA);
+    color: var(--theme-colour-background-shade-2, #aaaaaa);
   }
-}  
+}

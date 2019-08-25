@@ -2,8 +2,8 @@
   width: 100%;
   box-shadow: 0 0 1px rgba(0, 0, 0, 0.08);
   border-bottom: 1px solid #e4e4e4;
-  box-shadow: 0 -5px 5px rgba(0,0,0,0.05);
-  background-color: rgba(255,255,255,0.97);
+  box-shadow: 0 -5px 5px rgba(0, 0, 0, 0.05);
+  background-color: rgba(255, 255, 255, 0.97);
   font-family: var(--theme-font-family, sans-serif);
   color: var(--theme-colour-primary, #000000);
 }
@@ -27,7 +27,7 @@
   height: 36px;
   margin: 0;
   color: rgba(0, 0, 0, 0.5);
-  background-color: #FFFFFF;
+  background-color: #ffffff;
   padding: 5px 10px;
   appearance: none;
   outline: 0;
@@ -36,11 +36,11 @@
   box-sizing: border-box;
   box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.02);
   transition: box-shadow 0.3s;
-  font-size: 15px;  
+  font-size: 15px;
 }
 
 .input:focus {
   box-shadow: 0 0 0 4px rgba(74, 145, 255, 0.1);
   border-color: #4a91ff;
-  color: #404040;  
+  color: #404040;
 }

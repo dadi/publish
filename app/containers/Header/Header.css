@@ -38,7 +38,7 @@
 .toggle {
   position: relative;
   display: block;
-  background-image: linear-gradient(to top, #020406, #17273F);
+  background-image: linear-gradient(to top, #020406, #17273f);
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
   padding: 16px 20px;
   text-align: left;
@@ -85,7 +85,7 @@
 }
 
 .control {
-  color: #4A596F;
+  color: #4a596f;
   display: block;
   padding: 6px 10px;
 }
@@ -117,7 +117,8 @@
   background-image: url('/_public/images/icon-burger.svg');
   background-size: auto 100%;
   font-size: 0;
-  width: 21px; height: 21px;
+  width: 21px;
+  height: 21px;
   display: block;
 }
 

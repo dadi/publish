@@ -6,7 +6,7 @@
   background-image: url(./loading-small.svg);
   background-position: -16px 50%;
   background-repeat: no-repeat;
-  background-size: auto 16px;  
+  background-size: auto 16px;
   color: var(--theme-colour-primary, #000000);
   line-height: 1.25;
   font-weight: bold;
@@ -22,17 +22,14 @@
   font-size: 15px;
   text-decoration: none;
   border-radius: 2px;
-  transition: background-color 0.1s,
-              box-shadow 0.1s,
-              padding 0.3s,
-              background-position 0.3s;
+  transition: background-color 0.1s, box-shadow 0.1s, padding 0.3s,
+    background-position 0.3s;
   position: relative;
 }
 
 .button:hover {
-  box-shadow: 10000px 0 0 rgba(0,0,0,0.1) inset,
-              0 -3px 0 0 rgba(0,0,0,0.05) inset,
-              0 0 5px 0px rgba(0,0,0,0.15);
+  box-shadow: 10000px 0 0 rgba(0, 0, 0, 0.1) inset,
+    0 -3px 0 0 rgba(0, 0, 0, 0.05) inset, 0 0 5px 0px rgba(0, 0, 0, 0.15);
 }
 .button:active {
   top: 1px;
@@ -88,34 +85,34 @@
 .button-destruct {
   background-color: var(--theme-colour-error, #ffbf0d);
   background-image: url(./loading-small-white.svg);
-  color: var(--theme-colour-secondary, #FFFFFF);
+  color: var(--theme-colour-secondary, #ffffff);
 }
 
 /* Accent: save */
 .button-save {
   background-color: var(--theme-colour-save, #88c24c);
   background-image: url(./loading-small-white.svg);
-  color: var(--theme-colour-secondary, #FFFFFF);
+  color: var(--theme-colour-secondary, #ffffff);
 }
 
 /* Accent: data */
 .button-data {
-  background-color: var(--theme-colour-data, #4A91FF);
+  background-color: var(--theme-colour-data, #4a91ff);
   background-image: url(./loading-small-white.svg);
-  color: var(--theme-colour-secondary, #FFFFFF);
+  color: var(--theme-colour-secondary, #ffffff);
 }
 
 /* Accent: neutral */
 .button-neutral {
-  box-shadow: 0 0 0 1px #EAEAEA inset;
-  background-color: var(--theme-colour-background, #FFFFFF);
+  box-shadow: 0 0 0 1px #eaeaea inset;
+  background-color: var(--theme-colour-background, #ffffff);
   color: var(--theme-colour-primary, #000000);
 }
 
 /* Disabled */
 .button[disabled]:not(.button-inherit),
 .button-disabled:not(.button-inherit) {
-  background-color: var(--theme-colour-background-shade-2, #AAAAAA) !important;
-  color: var(--theme-colour-secondary, #FFFFFF) !important;
+  background-color: var(--theme-colour-background-shade-2, #aaaaaa) !important;
+  color: var(--theme-colour-secondary, #ffffff) !important;
   cursor: not-allowed !important;
 }

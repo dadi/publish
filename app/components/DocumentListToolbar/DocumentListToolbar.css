@@ -87,5 +87,5 @@
 }
 
 .selection-counter:hover .selection-counter-button {
-  border-bottom-color: var(--theme-colour-data, #4A91FF);
+  border-bottom-color: var(--theme-colour-data, #4a91ff);
 }

@@ -66,7 +66,7 @@
   background: #fff;
   display: flex;
   align-items: center;
-  justify-content: space-between;  
+  justify-content: space-between;
   font-size: 13px;
   padding: 11px 15px;
   flex-wrap: wrap;
@@ -74,7 +74,7 @@
 
 .wrapper-selected .metadata {
   background-color: #475160;
-  color: var(--theme-colour-secondary, #FFFFFF);
+  color: var(--theme-colour-secondary, #ffffff);
 }
 
 .size {
@@ -82,5 +82,5 @@
 }
 
 .mimetype {
-  color: var(--theme-colour-background-shade-2, #AAAAAA);
+  color: var(--theme-colour-background-shade-2, #aaaaaa);
 }

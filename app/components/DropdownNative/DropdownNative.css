@@ -7,7 +7,7 @@
   background-repeat: no-repeat;
   background-size: 20px;
   background-position-x: right;
-  background-position-y: 50%;  
+  background-position-y: 50%;
   border: 1px solid #b8bfca;
   border-radius: 4px;
   font-family: var(--theme-font-family, sans-serif);
@@ -18,7 +18,7 @@
 }
 
 .dropdown:focus {
-  box-shadow: 2px 2px 10px 0 rgba(0,0,0,.3);
+  box-shadow: 2px 2px 10px 0 rgba(0, 0, 0, 0.3);
 }
 
 .dropdown-text-small {

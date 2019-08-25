@@ -10,7 +10,7 @@
   table-layout: auto;
   overflow: hidden;
   overflow-x: auto;
-  -webkit-overflow-scrolling: touch; 
+  -webkit-overflow-scrolling: touch;
   max-width: 100%;
   width: 100%;
   margin-bottom: 80px;
@@ -35,7 +35,7 @@
  * Table head
  */
 .head {
-  background-color: var(--theme-colour-background, #FFFFFF);
+  background-color: var(--theme-colour-background, #ffffff);
   color: var(--theme-colour-primary, #000000);
   font-size: 15px;
   font-weight: 700;
@@ -76,8 +76,7 @@
  * Table row
  */
 .row {
- 
-  background-color: var(--theme-colour-background, #FFFFFF);
+  background-color: var(--theme-colour-background, #ffffff);
   color: var(--theme-colour-primary, #000000);
   transition: all 0.2s;
 }
@@ -89,27 +88,27 @@
 }
 
 .row:nth-child(odd) {
-  background-color: var(--theme-colour-background-shade-1, #FAFAFA);
+  background-color: var(--theme-colour-background-shade-1, #fafafa);
 }
 
 .row:hover {
   background-color: var(--theme-colour-highlight-1);
-  box-shadow: 0 0 4px rgba(155,170,189,0.6);
+  box-shadow: 0 0 4px rgba(155, 170, 189, 0.6);
   position: relative;
   z-index: 1;
 }
 
 .row:hover a {
-  border-bottom-color: var(--theme-colour-data, #4A91FF);
+  border-bottom-color: var(--theme-colour-data, #4a91ff);
 }
 
 .row-cell-blank {
-  color: var(--theme-colour-background-shade-2, #AAAAAA);
+  color: var(--theme-colour-background-shade-2, #aaaaaa);
 }
 
 .row-selected {
   background-color: #79879b !important;
-  color: var(--theme-colour-secondary, #FFFFFF) !important;
+  color: var(--theme-colour-secondary, #ffffff) !important;
   animation: bounce 0.2s;
 }
 

@@ -11,7 +11,7 @@
     "test:functional:pre": "rm -rf test/functional/output && mkdir -p test/api/test/api/workspace && cp -R test/api/workspace/hooks test/api/test/api/workspace && cp test/api/workspace/db.template test/api/workspace/db",
     "test:functional:run": "API_CLIENT_ID=testClient API_CLIENT_SECRET=testSecret API_HOST=localhost API_PORT=3004 NODE_ENV=test ./node_modules/codeceptjs/bin/codecept.js run --steps --config=./test/codecept.json",
     "test:functional": "npm run test:functional:pre && npm run test:functional:run",
-    "test:lint": "eslint --ext js,jsx . && prettier --check \"./**/*.{js,jsx,md,html}\"",
+    "test:lint": "eslint --ext js,jsx . && prettier --check \"./**/*.{js,jsx,json,md,html,css}\"",
     "watch": "NODE_ENV=development npm-run-all --parallel watch:server watch:app",
     "watch:app": "webpack --watch --mode=development",
     "watch:server": "nodemon \"./start.js\" --watch \"./server\""
@@ -105,7 +105,7 @@
     }
   },
   "lint-staged": {
-    "*.{js,jsx,md,html}": [
+    "*.{js,jsx,json,md,html,css}": [
       "prettier --write",
       "git add"
     ]

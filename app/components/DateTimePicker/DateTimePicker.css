@@ -1,7 +1,7 @@
 .container {
   display: inline-block;
   padding: 10px;
-  background-color: var(--theme-colour-background, #FFFFFF);
+  background-color: var(--theme-colour-background, #ffffff);
   box-shadow: 7px 6px 25px rgba(0, 0, 0, 0.3);
   border: 1px solid #dddddd;
   border-radius: 4px;
@@ -46,12 +46,12 @@
 }
 
 .calendar-day:hover {
-  background-color: var(--theme-colour-background-shade-2, #AAAAAA);
-  color: var(--theme-colour-secondary, #FFFFFF);
+  background-color: var(--theme-colour-background-shade-2, #aaaaaa);
+  color: var(--theme-colour-secondary, #ffffff);
 }
 
 .calendar-day-current {
-  border-color: var(--theme-colour-data, #4A91FF);
+  border-color: var(--theme-colour-data, #4a91ff);
 }
 
 .calendar-day-faded {
@@ -59,14 +59,14 @@
 }
 
 .calendar-day-active {
-  background-color: var(--theme-colour-data, #4A91FF);
-  color: var(--theme-colour-secondary, #FFFFFF);
+  background-color: var(--theme-colour-data, #4a91ff);
+  color: var(--theme-colour-secondary, #ffffff);
 }
 
 .hours-launcher {
   border-radius: 3px;
-  background-color: var(--theme-colour-data, #4A91FF);
-  color: var(--theme-colour-secondary, #FFFFFF);
+  background-color: var(--theme-colour-data, #4a91ff);
+  color: var(--theme-colour-secondary, #ffffff);
   cursor: pointer;
   margin-top: 10px;
   padding: 5px;
@@ -78,7 +78,7 @@
 }
 
 .hours {
-  background-color: var(--theme-colour-background-shade-4, #E4E4E4);
+  background-color: var(--theme-colour-background-shade-4, #e4e4e4);
   border-radius: 4px;
   color: var(--theme-colour-primary, #000000);
   margin-top: 10px;
@@ -98,7 +98,7 @@
   height: 40px;
   content: ' ';
   display: block;
-  z-index: 1;  
+  z-index: 1;
 }
 
 .hours:before {
@@ -108,7 +108,7 @@
 
 .hours:after {
   background: linear-gradient(to top, #aaaaaa, rgba(255, 255, 255, 0));
-  bottom: 0;  
+  bottom: 0;
 }
 
 .hour {
@@ -117,6 +117,6 @@
 }
 
 .hour:hover {
-  background-color: var(--theme-colour-data, #4A91FF);
-  color: var(--theme-colour-secondary, #FFFFFF);
+  background-color: var(--theme-colour-data, #4a91ff);
+  color: var(--theme-colour-secondary, #ffffff);
 }

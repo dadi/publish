@@ -10,7 +10,7 @@
 
 .launcher[disabled] {
   background-color: var(--theme-colour-primary-shade-1, #777777) !important;
-  color: var(--theme-colour-secondary, #FFFFFF) !important;
+  color: var(--theme-colour-secondary, #ffffff) !important;
   cursor: not-allowed !important;
 }
 
@@ -37,12 +37,12 @@
 /* Accent: save */
 .launcher-save {
   background-color: var(--theme-colour-save-shade-1, #6ea338) !important;
-  color: var(--theme-colour-secondary, #FFFFFF) !important;
+  color: var(--theme-colour-secondary, #ffffff) !important;
 }
 
 .container:active .launcher-save,
 .container:focus .launcher-save,
 .container:hover .launcher-save {
   background-color: var(--theme-colour-save-shade-2, #58822d) !important;
-  color: var(--theme-colour-secondary, #FFFFFF) !important;
+  color: var(--theme-colour-secondary, #ffffff) !important;
 }

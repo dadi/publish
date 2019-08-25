@@ -20,7 +20,7 @@
 }
 
 .sub-nav-item-error {
-  color: var(--theme-colour-error, #E5462C);
+  color: var(--theme-colour-error, #e5462c);
 }
 
 .sub-nav-item-error:after {
@@ -31,10 +31,10 @@
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  background-color: var(--theme-colour-error, #E5462C);
+  background-color: var(--theme-colour-error, #e5462c);
 }
 
 .sub-nav-item-active {
-  background-image: linear-gradient(-180deg, #F3F3F3 0%, #E3E3E3 100%);
-  border-color: #E3E3E3;
+  background-image: linear-gradient(-180deg, #f3f3f3 0%, #e3e3e3 100%);
+  border-color: #e3e3e3;
 }

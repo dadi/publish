@@ -17,11 +17,11 @@
   width: 26px;
   height: 16px;
   display: block;
-  background-color: #AAAAAA;
+  background-color: #aaaaaa;
   user-select: none;
   tap-highlight-color: transparent;
   border-radius: 16px;
-  box-shadow: 0 0 0 2px #AAAAAA;
+  box-shadow: 0 0 0 2px #aaaaaa;
 }
 
 .checkbox:after {
@@ -32,7 +32,7 @@
   display: block;
   width: 16px;
   height: 16px;
-  background-color: #FFFFFF;
+  background-color: #ffffff;
   border-radius: 100%;
   transition: all 0.2s ease-out;
 }

@@ -8,6 +8,6 @@
 }
 
 .banner-error {
-  background-color: var(--theme-colour-error, #E5462C);
+  background-color: var(--theme-colour-error, #e5462c);
   color: #ffffff;
 }
