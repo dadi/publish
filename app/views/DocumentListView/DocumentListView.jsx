@@ -308,11 +308,26 @@ class DocumentListView extends React.Component {
     // Setting the page title.
     setPageTitle(collection.name)
 
+    // If we're on a media collection, we don't want to render a "Create new"
+    // button.
+    const createNewHref = collection.IS_MEDIA_BUCKET
+      ? undefined
+      : onBuildBaseUrl.call(this, {
+          createNew: true,
+          search: null
+        })
+
     return (
       <Page>
-        <Header currentCllection={collection}>
-          {this.renderController({collection})}
-        </Header>
+        <Header />
+
+        <DocumentListController
+          collection={collection}
+          createNewHref={createNewHref}
+          enableFilters={true}
+          filters={search.filter}
+          onUpdateFilters={this.handleFiltersUpdate.bind(this)}
+        />
 
         <Main>
           <div className={styles['list-container']}>
@@ -342,30 +357,6 @@ class DocumentListView extends React.Component {
           </DocumentListToolbar>
         </div>
       </Page>
-    )
-  }
-
-  renderController({collection}) {
-    const {onBuildBaseUrl, route} = this.props
-    const {search} = route
-
-    // If we're on a media collection, we don't want to render a "Create new"
-    // button.
-    const createNewHref = collection.IS_MEDIA_BUCKET
-      ? undefined
-      : onBuildBaseUrl.call(this, {
-          createNew: true,
-          search: null
-        })
-
-    return (
-      <DocumentListController
-        collection={collection}
-        createNewHref={createNewHref}
-        enableFilters={true}
-        filters={search.filter}
-        onUpdateFilters={this.handleFiltersUpdate.bind(this)}
-      />
     )
   }
 

@@ -111,8 +111,6 @@ class Header extends React.Component {
             <CollectionNav />
           </div>
         </div>
-
-        {children}
       </header>
     )
   }
