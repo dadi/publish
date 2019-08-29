@@ -13,6 +13,7 @@ export default React.forwardRef(function TextInput(
     error,
     multiline,
     inLabel: _,
+    readOnly,
     resizable,
     ...props
   },
@@ -73,11 +74,15 @@ export default React.forwardRef(function TextInput(
   const modifiedProps = {
     className: classnames(
       styles.input,
-      {[styles['accent--' + accent]]: accent},
-      {[styles.accent]: accent},
-      {[styles.resizable]: resizable},
+      {
+        [styles['accent--' + accent]]: accent && !readOnly,
+        [styles.accent]: accent && !readOnly,
+        [styles.readOnly]: readOnly,
+        [styles.resizable]: resizable
+      },
       className
     ),
+    readOnly,
     ref,
     rows: 10,
     ...props,

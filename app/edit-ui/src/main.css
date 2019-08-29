@@ -38,6 +38,14 @@
   --edit-color-border-light: var(--edit-color-grayscale-85);
   --edit-color-border-dark: var(--edit-color-grayscale-70);
 
+  --edit-margin-xxl: 40px;
+  --edit-margin-xl: 32px;
+  --edit-margin-lg: 24px;
+  --edit-margin-md: 16px;
+  --edit-margin-sm: 12px;
+  --edit-margin-xs: 8px;
+  --edit-margin-xxs: 4px;
+
   --edit-radius-standard: 2px;
   --edit-border-width-standard: 1px;
   --edit-transition-duration-standard: 0.1s;
@@ -45,13 +53,7 @@
   --edit-elem-height-small: 28px;
   --edit-elem-height-medium: 40px;
 
-  --edit-elem-padding-standard: 9px;
-  /* --edit-elem-padding-standard: calc(
-    (
-        var(--edit-elem-height-medium) - 2 * (var(--edit-border-width-standard)) -
-          var(--edit-line-height-standard) * var(--edit-font-size-medium)
-      ) / 2
-  ); */
+  --edit-elem-padding-standard: 9px var(--edit-margin-md);
 
   --edit-font-family: sans-serif;
 

@@ -35,3 +35,8 @@
 .input:focus {
   background-color: var(--edit-color-background-1);
 }
+
+.input:read-only {
+  border: none;
+  background-color: var(--edit-color-background-1);
+}
