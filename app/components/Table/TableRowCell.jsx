@@ -28,17 +28,15 @@ export default class TableRowCell extends React.Component {
   }
 
   render() {
-    const cellStyle = new Style(styles, 'cell').addIf(
-      'select-cell',
-      this.props.select
-    )
+    const {onHover, select} = this.props
 
-    const {onHover} = this.props
+    const cellStyle = new Style(styles, 'cell').addIf('select-cell', select)
 
     return (
       <td className={cellStyle.getClasses()}>
         {React.Children.map(this.renderChildren(), child =>
-          // HTML elements have type 'string'; we only want to pass `onHover` to React Components.
+          // If the child is a HTMLElement (type is a string), don't do anything.
+          // Otherwise the child is a React Component; pass the onHover callback.
           typeof child.type === 'string'
             ? child
             : React.cloneElement(child, {onHover})

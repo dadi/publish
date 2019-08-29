@@ -29,8 +29,7 @@ export default React.forwardRef(function TextInput(
     accent = 'error'
   }
 
-  // Resizing section
-
+  // Resizing section.
   const maybeResize = useCallback(() => {
     if (autoresize && !resizable && ref.current) {
       ref.current.style.height = 'auto'
@@ -40,8 +39,7 @@ export default React.forwardRef(function TextInput(
 
   useEffect(maybeResize, [value])
 
-  // Cursor maintaining section
-
+  // Cursor maintaining section.
   const cursor = useRef()
 
   useEffect(() => {
@@ -54,8 +52,7 @@ export default React.forwardRef(function TextInput(
     }
   }, [value])
 
-  // Handle value change
-
+  // onChange handling section.
   const onChange = useCallback(
     e => {
       maybeResize()
@@ -69,8 +66,7 @@ export default React.forwardRef(function TextInput(
     [props.onChange]
   )
 
-  // Render
-
+  // Render section.
   const modifiedProps = {
     className: classnames(
       styles.input,

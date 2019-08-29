@@ -196,7 +196,9 @@ export default class RichEditor extends React.Component {
     const {onChange} = this.props
     const {isFocused} = value.selection
 
-    if (this.state.isFocused !== isFocused) this.setState({isFocused})
+    if (this.state.isFocused !== isFocused) {
+      this.setState({isFocused})
+    }
 
     onChange.call(this, value)
   }

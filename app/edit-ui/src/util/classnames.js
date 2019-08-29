@@ -1,3 +1,4 @@
+// A copypaste of https://www.npmjs.com/package/classnames
 export default function classnames(...args) {
   const classes = []
 
