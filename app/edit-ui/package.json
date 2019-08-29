@@ -1,0 +1,84 @@
+{
+  "_from": "file:dadi-edit-ui-1.0.0.tgz",
+  "_id": "@dadi/edit-ui@1.0.0",
+  "_inBundle": false,
+  "_integrity": "sha512-E78U0CBfpXX4wJqpqf8gbrLyjPZGGKS9Fp7reng6IB5bbhkdOzbh0o2JpJh0WdXwQhwf2zQyH+cVwhz9qzfdIQ==",
+  "_location": "/@dadi/edit-ui",
+  "_phantomChildren": {},
+  "_requested": {
+    "type": "file",
+    "where": "/home/moses/work/publish",
+    "raw": "./dadi-edit-ui-1.0.0.tgz",
+    "rawSpec": "./dadi-edit-ui-1.0.0.tgz",
+    "saveSpec": "file:dadi-edit-ui-1.0.0.tgz",
+    "fetchSpec": "/home/moses/work/publish/dadi-edit-ui-1.0.0.tgz"
+  },
+  "_requiredBy": [
+    "#USER",
+    "/"
+  ],
+  "_resolved": "/home/moses/work/publish/dadi-edit-ui-1.0.0.tgz",
+  "_shasum": "5b0a1a04f1ce2556664bc8b99892fda209ed8751",
+  "_spec": "./dadi-edit-ui-1.0.0.tgz",
+  "_where": "/home/moses/work/publish",
+  "author": "",
+  "bugs": {
+    "url": "https://github.com/dadi/edit-ui/issues"
+  },
+  "bundleDependencies": false,
+  "dependencies": {
+    "prop-types": "^15.7.2"
+  },
+  "deprecated": false,
+  "description": "UI Components library for Edit.",
+  "devDependencies": {
+    "@babel/core": "^7.5.5",
+    "@dadi/eslint-config": "^1.1.0",
+    "@dadi/prettier-config": "^1.1.0",
+    "@storybook/addon-actions": "^5.1.9",
+    "@storybook/addon-links": "^5.1.9",
+    "@storybook/addons": "^5.1.9",
+    "@storybook/react": "^5.1.9",
+    "babel-loader": "^8.0.6",
+    "common-tags": "^1.8.0",
+    "eslint": "^6.1.0",
+    "eslint-plugin-import": "^2.18.2",
+    "eslint-plugin-react": "^7.14.3",
+    "husky": "^3.0.2",
+    "lint-staged": "^9.2.1",
+    "prettier": "^1.18.2",
+    "react": "^16.8.6",
+    "react-dom": "^16.8.6"
+  },
+  "homepage": "https://github.com/dadi/edit-ui#readme",
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "keywords": [],
+  "license": "ISC",
+  "lint-staged": {
+    "*.{js,jsx,json,md,html,css}": [
+      "prettier --write",
+      "git add"
+    ]
+  },
+  "main": "src/index.jsx",
+  "name": "@dadi/edit-ui",
+  "peerDependencies": {
+    "react": "^16.8.6"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dadi/edit-ui.git"
+  },
+  "scripts": {
+    "build": "node src/generate-exports.js",
+    "build-storybook": "build-storybook",
+    "storybook": "start-storybook -p 6006",
+    "test": "npm run test:lint",
+    "test:lint": "eslint --ext js,jsx . && prettier --check '**/*.{js,jsx,json,md,html,css}'"
+  },
+  "version": "1.0.0"
+}

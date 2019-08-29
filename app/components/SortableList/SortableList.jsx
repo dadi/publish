@@ -279,6 +279,7 @@ export default class StringArray extends React.Component {
   render() {
     const {
       name,
+      onBlur,
       onFocus,
       placeholder,
       publishSettings = {},
@@ -331,8 +332,8 @@ export default class StringArray extends React.Component {
                 this.inputRefs[index] = ref
               }}
               name={name}
-              onBlur={this.props.onFocus.bind(this, false)}
-              onFocus={this.props.onFocus.bind(this, true)}
+              onBlur={onBlur}
+              onFocus={onFocus}
               onInput={this.handleInputChange.bind(this, index)}
               onKeyDown={this.handleKeyDown.bind(this, index)}
               placeholder={placeholder}
@@ -399,8 +400,8 @@ export default class StringArray extends React.Component {
               this.inputRefs[valuesArray.length] = ref
             }}
             name={name}
-            onBlur={() => onFocus(false)}
-            onFocus={() => onFocus(true)}
+            onBlur={onBlur}
+            onFocus={onFocus}
             onInput={this.handleInputChange.bind(this, valuesArray.length)}
             onKeyDown={this.handleKeyDown.bind(this, valuesArray.length)}
             placeholder={placeholder}

@@ -1,8 +1,5 @@
 .metadata {
-  display: block;
-  font-size: 13px;
-  line-height: 1.3;
-  color: var(--theme-colour-primary-shade-1, #777777);
+  font-size: var(--edit-font-size-small);
 }
 
 @media (min-width: 600px) {
@@ -15,12 +12,8 @@
 
 @media (min-width: 800px) {
   .metadata {
-    flex-grow: 100;
+    flex-grow: 1;
   }
-}
-
-.metadata-emphasis {
-  color: var(--theme-colour-primary, #000000);
 }
 
 .peers {
@@ -50,12 +43,12 @@
 
 .button {
   display: inline-block;
-  margin-right: 3px;
+  margin-right: 5px;
   margin-left: 0;
 }
 @media (min-width: 600px) {
   .button {
-    margin-left: 5px;
+    margin-left: 10px;
     margin-right: 0;
   }
 }

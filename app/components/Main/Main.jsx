@@ -1,7 +1,4 @@
-import normalize from './Normalize.css'
-import proptypes from 'prop-types'
 import React from 'react'
-import styles from './Main.css'
 
 /**
  * The main content body element.

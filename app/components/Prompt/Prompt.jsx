@@ -1,4 +1,4 @@
-import Button from 'components/Button/Button'
+import {Button} from '@dadi/edit-ui'
 import HotKeys from 'lib/hot-keys'
 import proptypes from 'prop-types'
 import React from 'react'
@@ -89,7 +89,7 @@ export default class Prompt extends React.Component {
         {children}
 
         <div className={styles.action}>
-          <Button accent="destruct" onClick={onClick} size="small">
+          <Button accent="negative" compact filled onClick={onClick}>
             {action}
           </Button>
         </div>

@@ -64,14 +64,21 @@
 
 body {
   min-height: 100vh;
-  background-color: var(--theme-colour-background-shade-1, #fafafa);
-  background-repeat: repeat;
-  background-size: cover;
+  background-color: var(--edit-color-background-3);
+  line-height: var(--edit-line-height-standard);
+}
+
+body,
+button,
+input,
+textarea,
+select {
+  font-family: var(--theme-font-family);
 }
 
 :global :root {
   --theme-colour-background: #ffffff;
-  --theme-colour-background-shade-1: #fafafa;
+  --theme-colour-background-shade-1: #f2f2f2;
   --theme-colour-background-shade-2: #aaaaaa;
   --theme-colour-background-shade-3: #eeeeee;
   --theme-colour-background-shade-4: #e4e4e4;

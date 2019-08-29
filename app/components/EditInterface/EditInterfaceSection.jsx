@@ -31,22 +31,23 @@ export default class EditInterfaceSection extends React.Component {
   }
 
   render() {
-    const {hasErrors, isActive, main, sidebar} = this.props
-
-    const sectionStyle = new Style(styles, 'section')
-    const mainBodyStyle = new Style(styles, 'main')
-
-    sectionStyle.addIf('section-active', isActive)
-
-    // If there are no fields in the side bar, the main body can use
-    // the full width of the page.
-    //mainBodyStyle.addIf('main-full', !fields.sidebar.length)
+    const {isActive, main, sidebar} = this.props
+    const sectionStyle = new Style(styles, 'section').addIf(
+      'section-active',
+      isActive
+    )
+    const mainBodyStyle = new Style(styles, 'main').addIf(
+      'main-full',
+      !sidebar.length
+    )
 
     return (
       <section className={sectionStyle.getClasses()}>
         <div className={mainBodyStyle.getClasses()}>{main}</div>
 
-        {sidebar && <div className={styles.sidebar}>{sidebar}</div>}
+        {sidebar && sidebar.length > 0 && (
+          <div className={styles.sidebar}>{sidebar}</div>
+        )}
       </section>
     )
   }

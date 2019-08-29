@@ -3,9 +3,8 @@
   box-shadow: 0 0 1px rgba(0, 0, 0, 0.08);
   border-bottom: 1px solid #e4e4e4;
   box-shadow: 0 -5px 5px rgba(0, 0, 0, 0.05);
-  background-color: rgba(255, 255, 255, 0.97);
-  font-family: var(--theme-font-family, sans-serif);
-  color: var(--theme-colour-primary, #000000);
+  background-color: var(--edit-color-background-1);
+  font-family: var(--theme-font-family);
 }
 
 @media (min-width: 600px) {
@@ -19,7 +18,7 @@
 }
 
 .container-padded {
-  padding: 13px 25px;
+  padding: 20px 40px;
 }
 
 .input {

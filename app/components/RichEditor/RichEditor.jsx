@@ -141,6 +141,7 @@ export default class RichEditor extends React.Component {
 
     this.state = {
       ...this.initialMediaState,
+      isFocused: false,
       isFullscreen: false,
       isRawMode: false
     }
@@ -193,6 +194,9 @@ export default class RichEditor extends React.Component {
 
   handleChange({value}) {
     const {onChange} = this.props
+    const {isFocused} = value.selection
+
+    if (this.state.isFocused !== isFocused) this.setState({isFocused})
 
     onChange.call(this, value)
   }
@@ -492,6 +496,10 @@ export default class RichEditor extends React.Component {
       'editor-wrapper-raw',
       isRawMode
     )
+    const editorStyle = new Style(styles, 'editor').addIf(
+      'editor-focused',
+      this.state.isFocused
+    )
 
     // This will be used by certain elements (e.g. links) to adjust their
     // behaviour based on the viewport size.
@@ -516,7 +524,7 @@ export default class RichEditor extends React.Component {
           </Modal>
         )}
 
-        <RichEditorToolbar>
+        <RichEditorToolbar isFullscreen={isFullscreen}>
           <div>
             <RichEditorToolbarButton
               action={this.handleToggleMark.bind(this, NODE_BOLD)}
@@ -613,7 +621,7 @@ export default class RichEditor extends React.Component {
           ref={el => (this.container = el)}
         >
           <Editor
-            className={styles.editor}
+            className={editorStyle.getClasses()}
             onChange={this.handleChange.bind(this)}
             renderBlock={this.renderBlock.bind(this)}
             renderInline={this.renderInline.bind(this)}

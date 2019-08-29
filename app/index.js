@@ -1,3 +1,6 @@
+import './normalize.css'
+import '@dadi/edit-ui'
+import './main.css'
 import {applyMiddleware, compose, createStore} from 'redux'
 import App from './containers/App/App'
 import {enableBatching} from './lib/redux'

@@ -7,7 +7,18 @@ import RichEditor from 'components/RichEditor/RichEditor'
 import SortableList from 'components/SortableList/SortableList'
 import Style from 'lib/Style'
 import styles from './FieldString.css'
-import TextInput from 'components/TextInput/TextInput'
+import {TextInput} from '@dadi/edit-ui'
+
+function getValueOfDropdown(element) {
+  const selectedOptions = Array.from(
+    element.selectedOptions,
+    item => item.value
+  )
+
+  // If this isn't a multiple value select, we want to return the selected
+  // value as a single element and not wrapped in a one-element array.
+  return element.attributes.multiple ? selectedOptions : selectedOptions[0]
+}
 
 /**
  * Component for API fields of type String
@@ -115,33 +126,16 @@ export default class FieldStringEdit extends React.Component {
   constructor(props) {
     super(props)
 
-    this.cursor = null
-    this.inputRefs = []
+    this.handleBlur = () => this.setState({hasFocus: false})
+    this.handleFocus = () => this.setState({hasFocus: true})
+    this.handleInputChange = this.handleInputChange.bind(this)
+    this.handleInputChangeEvent = e => this.handleInputChange(e.target.value)
+    this.handleSelectionChangeEvent = e =>
+      this.handleInputChange(getValueOfDropdown(e.target))
 
     this.state = {
       hasFocus: false
     }
-  }
-
-  getValueOfDropdown(element) {
-    const selectedOptions = Array.from(
-      element.selectedOptions,
-      item => item.value
-    )
-
-    // If this isn't a multiple value select, we want to return the selected
-    // value as a single element and not wrapped in a one-element array.
-    if (element.attributes.multiple) {
-      return selectedOptions
-    }
-
-    return selectedOptions[0]
-  }
-
-  handleFocusChange(hasFocus) {
-    this.setState({
-      hasFocus
-    })
   }
 
   handleInputChange(value, options) {
@@ -212,9 +206,7 @@ export default class FieldStringEdit extends React.Component {
         <select
           className={dropdownStyle.getClasses()}
           disabled={readOnly}
-          onChange={el =>
-            this.handleInputChange(this.getValueOfDropdown(el.target))
-          }
+          onChange={this.handleSelectionChangeEvent}
           multiple={multiple}
           name={name}
           ref={this.selectDropdownOptions.bind(this, multiple)}
@@ -255,16 +247,7 @@ export default class FieldStringEdit extends React.Component {
     } = this.props
     const {hasFocus} = this.state
     const publishBlock = schema.publish || {}
-    const {
-      display = {},
-      heightType,
-      multiline,
-      readonly,
-      resizable,
-      rows
-    } = publishBlock
-    const type = multiline ? 'multiline' : 'text'
-    const readOnly = readonly === true
+    const {display = {}, multiline, readonly, resizable, rows} = publishBlock
 
     const link = formatLink(value, display.link)
 
@@ -277,24 +260,23 @@ export default class FieldStringEdit extends React.Component {
         comment={
           comment ||
           (required && 'Required') ||
-          (readOnly && 'Read only') ||
+          (readonly && 'Read only') ||
           null
         }
       >
         <TextInput
-          heightType={heightType}
-          inputRef={ref => {
-            this.inputRefs[0] = ref
-          }}
+          accent={error ? 'error' : undefined}
+          autoresize={multiline}
+          multiline={multiline}
           name={name}
-          onBlur={this.handleFocusChange.bind(this, false)}
-          onFocus={this.handleFocusChange.bind(this, true)}
-          onInput={el => this.handleInputChange(el.target.value)}
+          onBlur={this.handleBlur}
+          onFocus={this.handleFocus}
+          onChange={this.handleInputChangeEvent}
           placeholder={placeholder}
-          readOnly={readOnly}
+          readOnly={readonly}
           resizable={resizable}
           rows={rows}
-          type={type}
+          type="text"
           value={value}
         />
 
@@ -342,8 +324,9 @@ export default class FieldStringEdit extends React.Component {
       >
         <SortableList
           name={name}
-          onChange={this.handleInputChange.bind(this)}
-          onFocus={this.handleFocusChange.bind(this)}
+          onBlur={this.handleBlur}
+          onChange={this.handleInputChange}
+          onFocus={this.handleBlur}
           placeholder={placeholder}
           publishSettings={publishSettings}
           valuesArray={value}
@@ -379,9 +362,9 @@ export default class FieldStringEdit extends React.Component {
         <RichEditor
           contentKey={contentKey + fieldContentKey}
           format={format}
-          onBlur={this.handleFocusChange.bind(this, false)}
-          onChange={this.handleInputChange.bind(this)}
-          onFocus={this.handleFocusChange.bind(this, true)}
+          onBlur={this.handleBlur}
+          onChange={this.handleInputChange}
+          onFocus={this.handleFocus}
           onSaveRegister={onSaveRegister}
           onValidateRegister={onValidateRegister}
           value={value}

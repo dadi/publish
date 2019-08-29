@@ -2,8 +2,7 @@ import * as appActions from 'actions/appActions'
 import * as Constants from 'lib/constants'
 import * as documentActions from 'actions/documentActions'
 import * as userActions from 'actions/userActions'
-import Button from 'components/Button/Button'
-import ButtonWithOptions from 'components/ButtonWithOptions/ButtonWithOptions'
+import {Button, ButtonWithOptions} from '@dadi/edit-ui'
 import ButtonWithPrompt from 'components/ButtonWithPrompt/ButtonWithPrompt'
 import {connectRedux} from 'lib/redux'
 import {connectRouter} from 'lib/router'
@@ -85,24 +84,33 @@ class DocumentEditToolbar extends React.Component {
         this,
         Constants.SAVE_ACTION_SAVE_AND_CONTINUE
       ),
-      label: 'Save and continue'
+      label: 'Save & continue'
     }
-    const secondary = {
-      'Save and create new': this.handleSave.bind(
-        this,
-        Constants.SAVE_ACTION_SAVE_AND_CREATE_NEW
-      ),
-      'Save and go back': this.handleSave.bind(
-        this,
-        Constants.SAVE_ACTION_SAVE_AND_GO_BACK
-      )
-    }
+    const secondary = [
+      {
+        text: 'Save & create new',
+        action: this.handleSave.bind(
+          this,
+          Constants.SAVE_ACTION_SAVE_AND_CREATE_NEW
+        )
+      },
+      {
+        text: 'Save & go back',
+        action: this.handleSave.bind(
+          this,
+          Constants.SAVE_ACTION_SAVE_AND_GO_BACK
+        )
+      }
+    ]
 
     if (documentId) {
-      secondary['Save as duplicate'] = this.handleSave.bind(
-        this,
-        Constants.SAVE_ACTION_SAVE_AS_DUPLICATE
-      )
+      secondary.push({
+        text: 'Save as duplicate',
+        action: this.handleSave.bind(
+          this,
+          Constants.SAVE_ACTION_SAVE_AS_DUPLICATE
+        )
+      })
     }
 
     return {
@@ -212,7 +220,7 @@ class DocumentEditToolbar extends React.Component {
           )}
 
           {remote && remote._lastModifiedAt && (
-            <p className={styles['metadata-emphasis']}>
+            <p>
               <span>Last updated </span>
 
               {remote._lastModifiedBy && (
@@ -230,7 +238,7 @@ class DocumentEditToolbar extends React.Component {
           {remote && !isSingleDocument && (
             <div className={styles.button}>
               <ButtonWithPrompt
-                accent="destruct"
+                accent="negative"
                 className={styles.button}
                 disabled={Boolean(hasConnectionIssues)}
                 onClick={this.handleDelete.bind(this)}
@@ -246,7 +254,7 @@ class DocumentEditToolbar extends React.Component {
           <div className={styles.button}>
             {isSingleDocument ? (
               <Button
-                accent="save"
+                accent="positive"
                 disabled={Boolean(
                   hasConnectionIssues || hasValidationErrors || isSaving
                 )}
@@ -257,7 +265,7 @@ class DocumentEditToolbar extends React.Component {
               </Button>
             ) : (
               <ButtonWithOptions
-                accent="save"
+                accent="positive"
                 disabled={Boolean(
                   hasConnectionIssues || hasValidationErrors || isSaving
                 )}

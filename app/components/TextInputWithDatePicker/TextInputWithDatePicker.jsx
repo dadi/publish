@@ -5,7 +5,7 @@ import proptypes from 'prop-types'
 import React from 'react'
 import Style from 'lib/Style'
 import styles from './TextInputWithDatePicker.css'
-import TextInput from 'components/TextInput/TextInput'
+import {TextInput} from '@dadi/edit-ui'
 
 /**
  * Component for API fields of type DateTime
@@ -236,7 +236,7 @@ export default class TextInputWithDatePicker extends React.Component {
       >
         <TextInput
           className={inputClassName}
-          noAutoComplete
+          autoComplete="off"
           onBlur={null && this.handleFocus.bind(this, false)}
           onChange={this.handleInputChange.bind(this)}
           onKeyDown={this.hotKeys.capture(true)}

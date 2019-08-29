@@ -1,4 +1,4 @@
-import Button from 'components/Button/Button'
+import {Button} from '@dadi/edit-ui'
 import Prompt from 'components/Prompt/Prompt'
 import proptypes from 'prop-types'
 import React from 'react'
@@ -35,83 +35,51 @@ export default class ButtonWithPrompt extends React.Component {
   constructor(props) {
     super(props)
 
+    this.containerEl = React.createRef()
+    this.handleClickOut = this.handleClickOut.bind(this)
+    this.togglePrompt = this.togglePrompt.bind(this)
+
     this.state = {
-      visible: false
+      isPromptOpen: false
     }
 
-    this.clickHandler = this.handleClick.bind(this)
+    this.modifiedOnClick = () => {
+      this.setState({isPromptOpen: false})
+      props.onClick()
+    }
   }
 
-  componentDidMount() {
-    window.addEventListener('mousedown', this.clickHandler)
-  }
-
-  componentWillUnmount() {
-    window.removeEventListener('mousedown', this.clickHandler)
-  }
-
-  handleClick(event) {
+  handleClickOut(event) {
     if (
-      this.containerEl &&
-      !this.containerEl.contains(event.target) &&
-      this.state.visible
+      this.containerEl.current &&
+      !this.containerEl.current.contains(event.target)
     ) {
-      this.setState({
-        visible: false
-      })
+      this.setState({isPromptOpen: false})
     }
-  }
-
-  handleClickHijack() {
-    const {visible} = this.state
-
-    this.setState({
-      visible: !visible
-    })
   }
 
   render() {
     const {
       children,
-      onClick,
       position,
       promptCallToAction,
-      promptMessage
+      promptMessage,
+      ...props
     } = this.props
-    const {visible} = this.state
-
-    // This method augments the original `onClick` callback with a `setState`
-    // call that closes the prompt after the action has been triggered.
-    const modifiedOnClick = () => {
-      this.setState({
-        visible: false
-      })
-
-      onClick.apply(onClick)
-    }
-
-    // We pass all the props down to the main <Button>, but we replace
-    // the `onClick` prop with our hijacking function and remove the
-    // props that are specific to the prompt.
-    const buttonProps = {
-      ...this.props,
-      onClick: this.handleClickHijack.bind(this)
-    }
-
-    delete buttonProps.promptCallToAction
-    delete buttonProps.promptMessage
 
     const promptStyle = new Style(styles, 'prompt').add(`prompt-${position}`)
 
     return (
-      <div className={styles.container} ref={el => (this.containerEl = el)}>
-        <Button {...buttonProps}>{children}</Button>
+      <div className={styles.container} ref={this.containerEl}>
+        <Button filled {...props} onClick={this.togglePrompt}>
+          {children}
+        </Button>
 
-        {visible && (
+        {this.state.isPromptOpen && (
           <Prompt
             action={promptCallToAction}
             className={promptStyle.getClasses()}
-            onClick={modifiedOnClick}
+            onClick={this.modifiedOnClick}
             position={position}
           >
             {promptMessage}
@@ -119,5 +87,15 @@ export default class ButtonWithPrompt extends React.Component {
         )}
       </div>
     )
+  }
+
+  togglePrompt() {
+    if (this.state.isPromptOpen) {
+      window.removeEventListener('mousedown', this.handleClickOut)
+      this.setState({isPromptOpen: false})
+    } else {
+      window.addEventListener('mousedown', this.handleClickOut)
+      this.setState({isPromptOpen: true})
+    }
   }
 }

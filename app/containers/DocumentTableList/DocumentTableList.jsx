@@ -138,7 +138,6 @@ class DocumentTableList extends React.Component {
       if (!collection.fields[field]) return undefined
 
       return {
-        annotation: this.renderAnnotation(collection.fields[field]),
         id: field,
         label: collection.fields[field].label || field
       }
@@ -158,18 +157,6 @@ class DocumentTableList extends React.Component {
         sortOrder={order}
       />
     )
-  }
-
-  renderAnnotation(schema) {
-    const fieldType = getFieldType(schema)
-    const fieldComponentName = `Field${fieldType}`
-    const FieldComponentListHeadAnnotation =
-      fieldComponents[fieldComponentName] &&
-      fieldComponents[fieldComponentName].listHeadAnnotation
-
-    if (FieldComponentListHeadAnnotation) {
-      return <FieldComponentListHeadAnnotation />
-    }
   }
 
   renderField(schema, value) {

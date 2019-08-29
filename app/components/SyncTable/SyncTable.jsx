@@ -21,7 +21,6 @@ export default class SyncTable extends React.Component {
      *     {
      *        id: 'first_name',
      *        label: 'First name',
-     *        annotation: 'String'
      *     }
      *   ]
      *   ```
@@ -155,11 +154,7 @@ export default class SyncTable extends React.Component {
               }
 
               return (
-                <TableHeadCell
-                  annotation={column.annotation}
-                  arrow={arrow}
-                  key={column.label + index}
-                >
+                <TableHeadCell arrow={arrow} key={column.label + index}>
                   {content}
                 </TableHeadCell>
               )

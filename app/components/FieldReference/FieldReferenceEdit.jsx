@@ -1,4 +1,4 @@
-import Button from 'components/Button/Button'
+import {Button} from '@dadi/edit-ui'
 import {getVisibleFields} from 'lib/fields'
 import Label from 'components/Label/Label'
 import proptypes from 'prop-types'
@@ -102,6 +102,12 @@ export default class FieldReferenceEdit extends React.Component {
     ])
   }
 
+  constructor(props) {
+    super(props)
+
+    this.handleRemove = this.handleRemove.bind(this)
+  }
+
   componentDidMount() {
     const {onValidateRegister} = this.props
 
@@ -162,7 +168,7 @@ export default class FieldReferenceEdit extends React.Component {
     return (
       <Label comment={comment || null} error={error} label={displayName}>
         {value && (
-          <div className={styles['value-container']}>
+          <div className={styles['edit-value-container']}>
             <div className={styles.values}>
               {values.map((value, index) => {
                 if (value._id) {
@@ -191,11 +197,11 @@ export default class FieldReferenceEdit extends React.Component {
             <div className={styles.buttons}>
               {!isReadOnly && (
                 <Button
-                  accent="data"
-                  className={styles['control-button']}
+                  accent="positive"
+                  className={styles.button}
                   data-name="edit-reference-button"
+                  narrow
                   onClick={onEditReference}
-                  size="small"
                 >
                   Edit
                 </Button>
@@ -203,11 +209,11 @@ export default class FieldReferenceEdit extends React.Component {
 
               {!isReadOnly && (
                 <Button
-                  accent="destruct"
-                  className={styles['control-button']}
+                  accent="negative"
+                  className={styles.button}
                   data-name="remove-reference-button"
-                  onClick={this.handleRemove.bind(this)}
-                  size="small"
+                  narrow
+                  onClick={this.handleRemove}
                 >
                   Remove
                 </Button>
@@ -219,7 +225,8 @@ export default class FieldReferenceEdit extends React.Component {
         {!value && !isReadOnly && (
           <div className={styles.placeholder}>
             <Button
-              accent="neutral"
+              accent="positive"
+              className={styles.placeholderButton}
               data-name="select-existing-reference-button"
               onClick={onEditReference}
               size="small"
@@ -231,7 +238,7 @@ export default class FieldReferenceEdit extends React.Component {
 
         {!value && isReadOnly && (
           <div className={styles['value-container']}>
-            <span className={styles.value}>None</span>
+            <span className={styles.empty}>None</span>
           </div>
         )}
       </Label>

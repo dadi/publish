@@ -1,0 +1,37 @@
+@import '../../main.css';
+
+.input {
+  border-radius: 0;
+  border: solid var(--edit-border-width-standard) var(--edit-color-border-light);
+  color: var(--edit-color-grayscale-20);
+  background-color: var(--edit-color-background-2);
+  padding: var(--edit-elem-padding-standard);
+  line-height: var(--edit-line-height-standard);
+  min-height: var(--edit-elem-height-medium);
+  width: 100%;
+  box-sizing: border-box;
+  resize: none;
+  outline: none;
+  transition-property: border-color, background-color, color;
+  transition-duration: var(--edit-transition-duration-standard);
+}
+
+.input.resizable {
+  resize: vertical;
+}
+
+.input.accent--error {
+  border-color: var(--edit-color-negative);
+}
+
+.input.accent--info {
+  border-color: var(--edit-color-info);
+}
+
+.input:not(.accent):focus {
+  border-color: var(--edit-color-border-dark);
+}
+
+.input:focus {
+  background-color: var(--edit-color-background-1);
+}

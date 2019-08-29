@@ -1,6 +1,5 @@
 import edit from './FieldReferenceEdit'
 import list from './FieldReferenceList'
-import listHeadAnnotation from './FieldReferenceListHeadAnnotation'
 
 function onReferenceSelect({api, collection, field}) {
   const schema = collection.fields[field]
@@ -22,4 +21,4 @@ function onReferenceSelect({api, collection, field}) {
   }
 }
 
-export {edit, list, listHeadAnnotation, onReferenceSelect}
+export {edit, list, onReferenceSelect}
