@@ -1,5 +1,6 @@
 .metadata {
   font-size: var(--edit-font-size-small);
+  color: var(--edit-color-text-2);
 }
 
 @media (min-width: 600px) {
@@ -54,5 +55,5 @@
 }
 
 .language-dropdown {
-  margin-right: 16px;
+  margin-right: var(--edit-margin-xxl);
 }
