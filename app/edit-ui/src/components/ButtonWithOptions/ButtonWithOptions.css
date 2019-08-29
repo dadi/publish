@@ -17,8 +17,9 @@
   width: 40px !important;
 }
 
-.sideButton {
+.sideButton:not(:disabled) {
   background-color: var(--edit-color-positive-darker-1) !important;
+  border-color: var(--edit-color-positive-darker-1) !important;
 }
 
 .lift {
