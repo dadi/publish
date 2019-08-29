@@ -3,7 +3,6 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  color: var(--edit-color-heading);
   text-transform: uppercase;
   font-weight: 700;
   padding: 0 60px;
@@ -11,28 +10,29 @@
   border-right: solid 2px var(--edit-color-background-1);
   transition-property: border-color, background-color, color;
   transition-duration: var(--edit-transition-duration-standard);
-}
-
-.sub-nav-item-active {
-  background-color: var(--edit-color-background-1);
-}
-
-.sub-nav-item:not(.sub-nav-item-active) {
   background-color: var(--edit-color-background-3);
-  color: var(--edit-color-heading-2);
-}
-
-.sub-nav-item:not(.sub-nav-item-active):hover {
-  background-color: var(--edit-color-background-2);
-  border-color: var(--edit-color-background-2);
   color: var(--edit-color-heading);
 }
 
-.sub-nav-item-error {
+.sub-nav-item.active {
+  background-color: var(--edit-color-background-1);
+  color: var(--edit-color-heading);
+}
+
+.sub-nav-item:not(.active):hover {
+  background-color: var(--edit-color-background-2);
+  border-color: var(--edit-color-background-2);
+}
+
+.sub-nav-item:not(.active):not(.error):hover {
+  color: var(--edit-color-heading);
+}
+
+.sub-nav-item.error {
   color: var(--edit-color-negative);
 }
 
-.sub-nav-item-error:after {
+.sub-nav-item.error:after {
   content: ' ';
   position: absolute;
   top: 8px;

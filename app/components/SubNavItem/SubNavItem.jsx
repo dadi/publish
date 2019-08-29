@@ -43,8 +43,8 @@ export default class SubNavItem extends React.Component {
     const {active, children, error, href} = this.props
     const itemStyle = new Style(styles, 'sub-nav-item')
 
-    itemStyle.addIf('sub-nav-item-active', active)
-    itemStyle.addIf('sub-nav-item-error', error)
+    itemStyle.addIf('active', active)
+    itemStyle.addIf('error', error)
 
     return (
       <Link className={itemStyle.getClasses()} to={href}>
