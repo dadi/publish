@@ -48,7 +48,9 @@
 
   --edit-radius-standard: 2px;
   --edit-border-width-standard: 1px;
+
   --edit-transition-duration-standard: 0.1s;
+  --edit-transition-duration-long: 0.18s;
 
   --edit-elem-height-small: 28px;
   --edit-elem-height-medium: 40px;

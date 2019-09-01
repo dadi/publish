@@ -11,6 +11,6 @@
   margin-top: -2px;
 }
 .enabled:before {
-  border-color: var(--theme-colour-save);
-  background-color: var(--theme-colour-save);
+  border-color: var(--edit-color-positive);
+  background-color: var(--edit-color-positive);
 }
