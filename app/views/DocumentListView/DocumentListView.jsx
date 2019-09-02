@@ -434,6 +434,7 @@ class DocumentListView extends React.Component {
             order={search.order}
             selectedDocuments={selectedDocuments}
             sort={search.sort}
+            title={collection.name}
           />
         )}
         onSelect={this.handleSelect.bind(this)}

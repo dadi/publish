@@ -1,105 +1,63 @@
-/*
- * Table
- */
 .table {
-  display: inline-block;
-  font-size: 14px;
-  font-family: var(--theme-font-family, sans-serif);
-  border-collapse: collapse;
-  border-spacing: 0;
-  table-layout: auto;
-  overflow: hidden;
-  overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
-  max-width: 100%;
+  --cell-y-padding: var(--edit-margin-md);
+  --cell-x-padding: calc(var(--cell-y-padding) / 2);
+  --cell-padding: var(--cell-y-padding) var(--cell-x-padding);
+
+  border: solid var(--edit-border-width-standard) var(--edit-color-border-light);
+  text-align: left;
   width: 100%;
-  margin-bottom: 80px;
 }
 
-/*
- * Table cell (generic)
- */
 .cell {
-  cursor: default;
-  padding: 16px 15px;
-  overflow: hidden;
+  padding: var(--cell-padding);
   vertical-align: middle;
-  line-height: 1.3;
-  text-overflow: ellipsis;
   max-width: 500px;
   overflow: hidden;
+  text-overflow: ellipsis;
   white-space: nowrap;
 }
 
-/*
- * Table head
- */
-.head {
-  background-color: var(--theme-colour-background, #ffffff);
-  color: var(--theme-colour-primary, #000000);
-  font-size: 15px;
-  font-weight: 700;
-  text-align: left;
-  vertical-align: middle;
+.cell:first-child {
+  padding-left: calc(2 * var(--cell-x-padding));
 }
 
-.head-cell {
+.cell:last-child {
+  padding-right: calc(2 * var(--cell-x-padding));
+}
+
+.head {
+  background-color: var(--edit-color-background-4);
+}
+
+.head .cell:not(.select-cell) {
   position: relative;
   padding: 0;
-  border-bottom: 2px solid #f9f9f9;
 }
 
-.head-cell a {
-  display: inline-block;
-  padding: 12px 8px 10px 15px;
-}
-
-.head-cell-label {
-  vertical-align: middle;
-}
-
-.head-cell-selected {
-  background: var(--theme-colour-highlight-1);
-  color: var(--theme-colour-data, #000000);
-  padding-right: 5px;
-  border-bottom: 2px solid var(--theme-colour-data, #000000);
-}
-
-.head-cell-arrow {
-  color: var(--theme-colour-data, #000000);
-  position: absolute;
-  right: 0;
-  margin: 19px 12px 0 0;
-}
-
-/*
- * Table row
- */
 .row {
-  background-color: var(--theme-colour-background, #ffffff);
-  color: var(--theme-colour-primary, #000000);
-  transition: all 0.2s;
-}
-
-.row:nth-child(odd) {
-  background-color: var(--theme-colour-background-shade-1, #fafafa);
-}
-
-.row.row-hovered {
-  background-color: var(--theme-colour-highlight-1);
-  box-shadow: 0 0 4px rgba(155, 170, 189, 0.6);
+  background-color: var(--edit-color-background-1);
+  color: var(--edit-color-text-2);
+  transition: all var(--edit-transition-duration-long);
   position: relative;
-  z-index: 1;
 }
 
-.row-cell-blank {
-  color: var(--theme-colour-background-shade-2, #aaaaaa);
+.row:nth-child(even) {
+  background-color: var(--edit-color-background-2);
 }
 
-.row-selected {
-  background-color: #79879b !important;
-  color: var(--theme-colour-secondary, #ffffff) !important;
-  animation: bounce 0.2s;
+.row.row-hovered:not(.row-selected) {
+  background-color: var(--edit-color-highlight-2);
+}
+
+.row.row-selected {
+  background-color: var(--edit-color-highlight-1);
+  color: var(--edit-color-text-1);
+  animation: bounce var(--edit-transition-duration-long);
+}
+
+.row .row-cell-blank,
+.row.row-selected .row-cell-blank {
+  color: var(--edit-color-text-3);
 }
 
 @keyframes bounce {
@@ -114,20 +72,64 @@
   }
 }
 
-/*
- * Select checkbox
- */
-.select-cell {
-  width: 1%;
-  padding-left: 20px;
-  padding-right: 0;
+.checkbox {
+  --checkbox-size: 14px;
+
+  display: block;
+  position: relative;
+  width: var(--checkbox-size);
+  height: var(--checkbox-size);
+  margin: 4px;
+  border-radius: 0;
+  appearance: none;
+  outline: none;
 }
 
-.select {
-  border-radius: 3px;
+.checkbox::before {
+  content: ' ';
+  display: block;
+  width: 100%;
+  height: 100%;
+  background-color: var(--edit-color-background-1);
+  border: solid var(--edit-border-width-standard) var(--edit-color-border-light);
+  box-shadow: 0 0 0 4px transparent;
+  transition-property: border-color, background-color, color, box-shadow;
+  transition-duration: var(--edit-transition-duration-standard);
 }
 
-.row.row-hovered .select,
-.select:hover {
-  box-shadow: 0 0 0 3px rgba(74, 145, 255, 0.3);
+.checkbox:checked::before {
+  background-color: var(--edit-color-positive);
+}
+
+.row.row-hovered .checkbox::before,
+.checkbox:hover::before,
+.checkbox:focus::before {
+  border-color: var(--edit-color-border-dark);
+}
+
+.row.row-hovered .checkbox::before,
+.checkbox:hover::before {
+  box-shadow: 0 0 0 4px var(--edit-color-highlight-1);
+}
+
+/* Checkmark. */
+.checkbox::after {
+  --checkmark-thickness: 2px;
+
+  display: block;
+  position: absolute;
+  content: ' ';
+  opacity: 0;
+  left: 4px;
+  top: 1px;
+  width: 6px;
+  height: 10px;
+  border: solid var(--edit-color-text-inverse-1);
+  border-width: 0 var(--checkmark-thickness) var(--checkmark-thickness) 0;
+  transform: rotate(45deg);
+  transition: opacity var(--edit-transition-duration-standard);
+}
+
+.checkbox:checked::after {
+  opacity: 1;
 }

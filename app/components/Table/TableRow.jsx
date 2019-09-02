@@ -117,7 +117,7 @@ export default class TableRow extends React.Component {
           <TableRowCell select={true}>
             <input
               checked={selected}
-              className={styles.select}
+              className={styles.checkbox}
               disabled={selectableMode === 'multiDisabled'}
               readOnly={true}
               type={selectableMode === 'single' ? 'radio' : 'checkbox'}

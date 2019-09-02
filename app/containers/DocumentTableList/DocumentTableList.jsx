@@ -1,9 +1,11 @@
 import * as fieldComponents from 'lib/field-components'
 import {connectRedux} from 'lib/redux'
 import {getFieldType} from 'lib/fields'
-import {Link} from 'react-router-dom'
+import IconArrow from 'components/IconArrow/IconArrow'
 import proptypes from 'prop-types'
 import React from 'react'
+import Style from 'lib/Style'
+import styles from './DocumentTableList.css'
 import SyncTable from 'components/SyncTable/SyncTable'
 
 /**
@@ -58,6 +60,12 @@ class DocumentTableList extends React.Component {
     sort: proptypes.string
   }
 
+  constructor(props) {
+    super(props)
+
+    this.renderColumnHeader = this.renderColumnHeader.bind(this)
+  }
+
   getSelectedRows() {
     const {documents, selectedDocuments} = this.props
     const selectedRows = documents.reduce((selectedRows, item, index) => {
@@ -100,15 +108,32 @@ class DocumentTableList extends React.Component {
     return renderedValue
   }
 
-  handleTableSort(value, sortBy, sortOrder) {
+  renderColumnHeader(column) {
+    const {sort: sortBy, order: sortOrder} = this.props
+    const isSorted = sortBy === column.id
+    const newOrder = isSorted && sortOrder === 'asc' ? 'desc' : 'asc'
+    const headerStyle = new Style(styles, 'column-header').addIf(
+      'sorted',
+      isSorted
+    )
+
     return (
       <a
+        className={headerStyle.getClasses()}
         data-column={sortBy}
         data-name="column-header"
-        data-sort-order={sortOrder}
-        onClick={() => this.props.onSort({sortBy, sortOrder})}
+        data-sort-order={newOrder}
+        onClick={() =>
+          this.props.onSort({sortBy: column.id, sortOrder: newOrder})
+        }
       >
-        {value}
+        {column.label}
+        <IconArrow
+          className={styles.arrow}
+          width={8}
+          height={5}
+          direction={isSorted && sortOrder === 'desc' ? 'up' : 'down'}
+        />
       </a>
     )
   }
@@ -121,7 +146,8 @@ class DocumentTableList extends React.Component {
       onSelect,
       order,
       selectedDocuments,
-      sort
+      sort,
+      title
     } = this.props
     const collectionFields = (collection && collection.fields) || {}
     const listableFields = Object.keys(collectionFields).reduce(
@@ -144,18 +170,24 @@ class DocumentTableList extends React.Component {
     })
 
     return (
-      <SyncTable
-        columns={tableColumns}
-        data={documents}
-        onRender={this.handleRowRender.bind(this, listableFields)}
-        onSelect={onSelect}
-        onSort={this.handleTableSort.bind(this)}
-        selectedRows={selectedDocuments}
-        selectLimit={Infinity}
-        sortable={true}
-        sortBy={sort}
-        sortOrder={order}
-      />
+      <>
+        <h1 className={styles.title}>{title}</h1>
+        <div className={styles['table-wrapper']}>
+          <SyncTable
+            columns={tableColumns}
+            data={documents}
+            onRender={this.handleRowRender.bind(this, listableFields)}
+            onSelect={onSelect}
+            renderColumnHeader={this.renderColumnHeader}
+            selectedRows={selectedDocuments}
+            selectLimit={Infinity}
+            sortable={true}
+            sortBy={sort}
+            sortOrder={order}
+          />
+          <div className={styles.after} />
+        </div>
+      </>
     )
   }
 

@@ -64,7 +64,7 @@ export default class TableHead extends React.Component {
           {selectable && (
             <TableHeadCell select={true}>
               <input
-                className={styles.select}
+                className={styles.checkbox}
                 indeterminate={(!allSelected && hasSelected).toString()}
                 onChange={this.handleSelectClick.bind(this)}
                 style={allowBulkSelection ? null : {display: 'none'}}

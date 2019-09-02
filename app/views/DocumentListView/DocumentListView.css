@@ -1,5 +1,5 @@
 .list-container {
-  margin-bottom: 50px;
+  padding-bottom: calc(var(--edit-margin-xxl) + var(--editif-toolbar-height));
 }
 
 .toolbar {

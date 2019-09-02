@@ -1,0 +1,52 @@
+.title {
+  font-size: var(--edit-font-size-heading-2);
+  color: var(--edit-color-heading);
+  margin: var(--edit-margin-md) var(--edit-margin-xxl);
+}
+
+.table-wrapper {
+  overflow-x: auto;
+  padding-left: var(--edit-margin-xxl);
+  display: flex;
+}
+
+.table-wrapper .after {
+  flex: 0 0 var(--edit-margin-xxl);
+  width: var(--edit-margin-xxl);
+}
+
+.column-header {
+  --cell-y-padding: var(--edit-margin-md);
+  --cell-x-padding: calc(var(--cell-y-padding) / 2);
+  --cell-padding: var(--cell-y-padding) var(--cell-x-padding);
+
+  display: block;
+  cursor: pointer;
+  color: var(--edit-color-heading);
+  font-weight: 700;
+  padding: var(--cell-padding);
+}
+
+th:last-child .column-header {
+  padding-right: calc(2 * var(--cell-x-padding));
+}
+
+.column-header.sorted {
+  color: var(--edit-color-positive-opacity);
+}
+
+.column-header .arrow {
+  margin-left: var(--edit-margin-xxs);
+  color: var(--edit-color-text-3);
+  opacity: 0;
+  transition: opacity var(--edit-transition-duration-standard);
+}
+
+.column-header:not(.sorted):hover .arrow {
+  opacity: 1;
+}
+
+.column-header.sorted .arrow {
+  color: var(--edit-color-positive);
+  opacity: 1;
+}

@@ -199,6 +199,8 @@ class ReferenceSelectView extends React.Component {
   }
 
   renderList({documents, onSelect, referencedCollection, selectedDocuments}) {
+    const {referenceFieldSchema} = this.props
+
     if (referencedCollection.IS_MEDIA_BUCKET) {
       return (
         <DocumentGridList
@@ -249,6 +251,7 @@ class ReferenceSelectView extends React.Component {
         order={sortOrder}
         selectedDocuments={selectedDocuments}
         sort={sortBy}
+        title={referenceFieldSchema.label + ' – select documents to link'}
       />
     )
   }
