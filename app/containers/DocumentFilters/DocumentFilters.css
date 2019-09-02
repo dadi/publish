@@ -1,6 +1,5 @@
 .wrapper {
   align-items: center;
-  color: var(--theme-colour-primary, #000000);
   display: flex;
   justify-content: space-between;
   position: relative;
@@ -210,19 +209,16 @@
   background-repeat: no-repeat;
   background-position: 12px 50%;
   padding: 7px 10px 7px 40px;
-  color: #fff;
+  color: var(--edit-color-text-2);
   box-sizing: border-box;
   position: relative;
   z-index: 2;
   transition: all 0.3s;
 }
-.input:hover {
-  border-color: rgba(255, 255, 255, 0.4);
-}
+
 .input:focus {
-  color: #000;
+  color: var(--edit-color-text-1);
   background-image: url(/_public/images/icon-search-dark.svg);
-  background-color: #fff;
 }
 
 .suggestions {

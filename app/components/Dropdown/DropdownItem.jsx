@@ -37,10 +37,7 @@ export default class DropdownItem extends React.Component {
 
   render() {
     const {active, children, href, onClick} = this.props
-    const itemStyle = new Style(styles, 'dropdown-item').addIf(
-      'dropdown-item-active',
-      active
-    )
+    const itemStyle = new Style(styles, 'dropdown-item').addIf('active', active)
 
     // If the `href` prop is set, we render a link.
     if (href) {

@@ -3,7 +3,6 @@ import DropdownItem from 'components/Dropdown/DropdownItem'
 import NavItem from 'components/NavItem/NavItem'
 import proptypes from 'prop-types'
 import React from 'react'
-import styles from './Nav.css'
 
 /**
  * The main navigation component.
@@ -42,7 +41,7 @@ export default class Nav extends React.Component {
     if (!items.length) return null
 
     return (
-      <nav className={styles.nav}>
+      <nav>
         <ul>
           {items.map(item => {
             let subItems = null
@@ -72,7 +71,7 @@ export default class Nav extends React.Component {
               })
 
               subItems = mobile ? (
-                <ul className={styles.children}>{children}</ul>
+                <ul>{children}</ul>
               ) : (
                 <Dropdown>{children}</Dropdown>
               )

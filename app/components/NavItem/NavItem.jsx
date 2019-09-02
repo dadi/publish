@@ -51,9 +51,9 @@ export default class NavItem extends React.Component {
     const {active, children, href, mobile, text} = this.props
     const containerStyle = new Style(styles, 'container')
       .addIf('container-desktop', !mobile)
-      .addIf('container-expanded', this.state.expanded)
+      .addIf('expanded', this.state.expanded)
     const navItemStyle = new Style(styles, 'nav-item')
-      .addIf('nav-item-active', active)
+      .addIf('active', active)
       .addIf('nav-item-text', !href)
 
     if (!text) return null
@@ -63,7 +63,6 @@ export default class NavItem extends React.Component {
         className={containerStyle.getClasses()}
         onMouseEnter={this.toggleExpanded.bind(this, true)}
         onMouseLeave={this.toggleExpanded.bind(this, false)}
-        onClick={this.toggleExpanded.bind(this, false)}
       >
         {href && (
           <Link className={navItemStyle.getClasses()} to={href}>
