@@ -37,16 +37,13 @@ th:last-child .column-header {
 
 .column-header .arrow {
   margin-left: var(--edit-margin-xxs);
-  color: var(--edit-color-text-3);
-  opacity: 0;
-  transition: opacity var(--edit-transition-duration-standard);
+  transition: all var(--edit-transition-duration-standard);
+}
+
+.column-header:not(.sorted) .arrow {
+  color: var(--edit-color-opacity-80);
 }
 
 .column-header:not(.sorted):hover .arrow {
-  opacity: 1;
-}
-
-.column-header.sorted .arrow {
-  color: var(--edit-color-positive);
-  opacity: 1;
+  color: var(--edit-color-opacity-60);
 }

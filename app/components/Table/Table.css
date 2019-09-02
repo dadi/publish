@@ -29,6 +29,10 @@
   background-color: var(--edit-color-background-4);
 }
 
+.head .cell.head-cell-sorted {
+  background-color: var(--edit-color-highlight-2);
+}
+
 .head .cell:not(.select-cell) {
   position: relative;
   padding: 0;
