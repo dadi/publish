@@ -78,6 +78,7 @@
   --edit-radius-standard: 2px;
   --edit-border-width-standard: 1px;
 
+  --edit-transition-duration-short: 0.06s;
   --edit-transition-duration-standard: 0.1s;
   --edit-transition-duration-long: 0.18s;
 

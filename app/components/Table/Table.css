@@ -41,7 +41,7 @@
 .row {
   background-color: var(--edit-color-background-1);
   color: var(--edit-color-text-2);
-  transition: all var(--edit-transition-duration-long);
+  transition: all var(--edit-transition-duration-short);
   position: relative;
 }
 
