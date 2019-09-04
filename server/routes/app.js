@@ -14,6 +14,7 @@ const template = ({client, config, error, version}) => `
       <link rel="stylesheet" type="text/css" href="/_dist/main.css?v=${version}">
       <link rel="stylesheet" type="text/css" href="/_public/custom.css">
       <link rel="icon" type="image/png" href="/_public/images/favicon.png">
+      <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     </head>
     <body>
       <div id="app-fullscreen"></div>
