@@ -117,6 +117,9 @@ class DocumentTableList extends React.Component {
       isSorted
     )
 
+    const iconName =
+      isSorted && sortOrder === 'desc' ? 'expand_less' : 'expand_more'
+
     return (
       <a
         className={headerStyle.getClasses()}
@@ -128,12 +131,9 @@ class DocumentTableList extends React.Component {
         }
       >
         {column.label}
-        <IconArrow
-          className={styles.arrow}
-          width={8}
-          height={5}
-          direction={isSorted && sortOrder === 'desc' ? 'up' : 'down'}
-        />
+        <i id={styles.arrow} className="material-icons">
+          {iconName}
+        </i>
       </a>
     )
   }

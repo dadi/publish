@@ -1,9 +1,9 @@
 import * as userActions from 'actions/userActions'
 import CollectionNav from 'containers/CollectionNav/CollectionNav'
 import {connectRedux} from 'lib/redux'
-import IconArrow from 'components/IconArrow/IconArrow'
 import {Link} from 'react-router-dom'
 import React from 'react'
+import Style from 'lib/Style'
 import styles from './Header.css'
 
 class Header extends React.Component {
@@ -11,12 +11,12 @@ class Header extends React.Component {
     super(props)
 
     this.state = {
-      expanded: false
+      isUserMenuOpen: false
     }
 
-    this.closeUserMenu = () => this.setState({expanded: false})
+    this.closeUserMenu = () => this.setState({isUserMenuOpen: false})
     this.toggleUserMenu = () =>
-      this.setState(({expanded}) => ({expanded: !expanded}))
+      this.setState(({isUserMenuOpen}) => ({isUserMenuOpen: !isUserMenuOpen}))
   }
 
   render() {
@@ -32,13 +32,18 @@ class Header extends React.Component {
         remote: {clientId, data}
       }
     } = this.props
-    const {expanded} = this.state
+    const {isUserMenuOpen} = this.state
 
     if (!isSignedIn) {
       return null
     }
 
     const displayName = (data && data.publishFirstName) || clientId
+
+    const userMenuStyle = new Style(styles, 'user-menu-wrapper').addIf(
+      'open',
+      isUserMenuOpen
+    )
 
     return (
       <header className={styles.header}>
@@ -48,19 +53,17 @@ class Header extends React.Component {
         <div className={styles.collections}>
           <CollectionNav />
         </div>
-        <div className={styles['user-menu-wrapper']}>
+        <div className={userMenuStyle.getClasses()}>
           <button
             className={styles['user-menu-toggle']}
             onClick={this.toggleUserMenu}
           >
             <div className={styles.username}>{displayName}</div>
-            <IconArrow
-              width={8}
-              height={5}
-              direction={expanded ? 'up' : 'down'}
-            />{' '}
+            <i id={styles['expand-icon']} className="material-icons">
+              expand_more
+            </i>
           </button>
-          {expanded && (
+          {isUserMenuOpen && (
             <>
               <div className={styles.overlay} onClick={this.closeUserMenu} />
               <div className={styles['user-menu']}>

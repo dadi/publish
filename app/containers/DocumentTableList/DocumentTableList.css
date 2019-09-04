@@ -20,7 +20,8 @@
   --cell-x-padding: calc(var(--cell-y-padding) / 2);
   --cell-padding: var(--cell-y-padding) var(--cell-x-padding);
 
-  display: block;
+  display: flex;
+  align-items: center;
   cursor: pointer;
   color: var(--edit-color-heading);
   font-weight: 700;
@@ -35,15 +36,15 @@ th:last-child .column-header {
   color: var(--edit-color-positive-opacity);
 }
 
-.column-header .arrow {
-  margin-left: var(--edit-margin-xxs);
+.column-header #arrow {
+  font-size: var(--edit-icon-size-sm);
   transition: all var(--edit-transition-duration-standard);
 }
 
-.column-header:not(.sorted) .arrow {
+.column-header:not(.sorted) #arrow {
   color: var(--edit-color-opacity-80);
 }
 
-.column-header:not(.sorted):hover .arrow {
+.column-header:not(.sorted):hover #arrow {
   color: var(--edit-color-opacity-60);
 }

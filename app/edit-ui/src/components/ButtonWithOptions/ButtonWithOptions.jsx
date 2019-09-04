@@ -14,8 +14,8 @@ export default function ButtonWithOptions({
   style,
   ...props
 }) {
-  const accent = 'positive' // Possibility of supporting other accents later
-  const top = true // Possibility of supporting dropdown opening at the bottom later
+  const accent = 'positive' // Possibility of supporting other accents later.
+  const dir = 'up' // Possibility of supporting dropdown opening at the bottom later.
 
   const [isDropdownOpen, showDropdown] = useState(false)
   const toggleDropdown = () =>
@@ -52,6 +52,8 @@ export default function ButtonWithOptions({
       className={classnames(
         styles.container,
         styles['accent--' + accent],
+        styles['dir--' + dir],
+        {[styles.open]: isDropdownOpen},
         className
       )}
       style={style}
@@ -76,10 +78,12 @@ export default function ButtonWithOptions({
           onClick={toggleDropdown}
           {...props}
         >
-          {(isDropdownOpen && !top) || (!isDropdownOpen && top) ? '▲' : '▼'}
+          <i id={styles['expand-icon']} className="material-icons">
+            expand_more
+          </i>
         </Button>
         {isDropdownOpen && (
-          <div className={classnames(styles.dropdown, {[styles.top]: top})}>
+          <div className={styles.dropdown}>
             {modifiedOptions.map(({text, onClick}, index) => (
               <div
                 className={styles.dropdownItem}
@@ -89,7 +93,6 @@ export default function ButtonWithOptions({
                 {text}
               </div>
             ))}
-            <div className={styles.filler} />
           </div>
         )}
       </div>

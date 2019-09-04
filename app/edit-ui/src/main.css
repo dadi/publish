@@ -94,6 +94,11 @@
   --edit-font-size-medium: 14px;
   --edit-font-size-small: 13px;
 
+  --edit-icon-size-sm: 18px;
+  --edit-icon-size-md: 24px;
+  --edit-icon-size-lg: 36px;
+  --edit-icon-size-xl: 48px;
+
   --edit-line-height-standard: 1.4;
 
   --edit-z-index-standard: 1;
