@@ -75,7 +75,9 @@
   --edit-margin-xs: 8px;
   --edit-margin-xxs: 4px;
 
-  --edit-radius-standard: 2px;
+  --edit-radius-button: 2px;
+  --edit-radius-input: 2px;
+
   --edit-border-width-standard: 1px;
 
   --edit-transition-duration-short: 0.06s;

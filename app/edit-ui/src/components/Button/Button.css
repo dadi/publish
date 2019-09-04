@@ -14,7 +14,7 @@
 
   border: solid var(--edit-border-width-standard);
 
-  border-radius: var(--edit-radius-standard);
+  border-radius: var(--edit-radius-button);
   height: var(--edit-elem-height-medium);
   padding: 0 30px;
   font-weight: 700;

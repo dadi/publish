@@ -49,7 +49,7 @@
   width: 100%;
   box-sizing: border-box;
   border: solid var(--edit-border-width-standard) var(--edit-color-positive);
-  border-radius: var(--edit-radius-standard);
+  border-radius: var(--edit-radius-button);
   background-color: var(--edit-color-background-1);
 }
 

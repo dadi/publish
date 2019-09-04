@@ -9,7 +9,7 @@
   background-position-x: right;
   background-position-y: 50%;
   border: solid var(--edit-border-width-standard) var(--edit-color-border-light);
-  border-radius: var(--edit-radius-standard);
+  border-radius: var(--edit-radius-input);
   padding: 4px 24px 4px 10px;
   position: relative;
   outline: none;

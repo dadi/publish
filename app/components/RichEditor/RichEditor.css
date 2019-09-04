@@ -7,6 +7,7 @@
 .editor {
   overflow-y: auto;
   border: solid var(--edit-border-width-standard) var(--edit-color-border-light);
+  border-radius: var(--edit-radius-input);
   background-color: var(--edit-color-background-2);
   padding: var(--edit-elem-padding-standard);
   transition-property: border-color, background-color, color;

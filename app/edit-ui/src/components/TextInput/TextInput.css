@@ -1,8 +1,8 @@
 @import '../../main.css';
 
 .input {
-  border-radius: 0;
   border: solid var(--edit-border-width-standard) var(--edit-color-border-light);
+  border-radius: var(--edit-radius-input);
   color: var(--edit-color-grayscale-20);
   background-color: var(--edit-color-background-2);
   padding: var(--edit-elem-padding-standard);
