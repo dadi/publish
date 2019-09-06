@@ -1,0 +1,97 @@
+.container {
+  --icon-margin-left: 4px;
+  --icon-margin-right: -6px;
+  --icon-size: var(--edit-icon-size-md);
+  --select-padding: var(--edit-margin-sm);
+
+  position: relative;
+}
+
+.select {
+  height: var(--edit-elem-height-medium);
+  transition: all var(--edit-transition-duration-standard);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 var(--select-padding);
+  cursor: pointer;
+  border: solid var(--edit-border-width-standard) var(--edit-color-border-light);
+  background-color: var(--edit-color-background-2);
+  border-radius: var(--edit-radius-input);
+  color: var(--edit-color-text-2);
+}
+
+.select:hover,
+.container.open .select {
+  color: var(--edit-color-text-1);
+}
+
+.container.open .select {
+  border-color: var(--edit-color-border-dark);
+  background-color: var(--edit-color-background-1);
+}
+
+.container.open.dir--up .select {
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+}
+
+.container.open.dir--down .select {
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+#arrowIcon {
+  margin-left: var(--icon-margin-left);
+  margin-right: var(--icon-margin-right);
+  transition: all var(--edit-transition-duration-long);
+  font-size: var(--icon-size);
+}
+
+.container.dir--up:not(.open) #arrowIcon,
+.container.dir--down.open #arrowIcon {
+  transform: rotate(180deg);
+}
+
+.options {
+  position: absolute;
+  border-radius: var(--edit-radius-input);
+  border: solid var(--edit-border-width-standard) var(--edit-color-border-dark);
+  width: 100%;
+  z-index: var(--edit-z-index-dropdown);
+}
+
+.shadowOptions {
+  height: 0px;
+  overflow: hidden;
+}
+
+.container.dir--up .options {
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+  bottom: 100%;
+  border-bottom: none;
+}
+
+.container.dir--down .options {
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+  top: 100%;
+  border-top: none;
+}
+
+.option {
+  transition: all var(--edit-transition-duration-standard);
+  background-color: var(--edit-color-background-1);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  height: var(--edit-elem-height-medium);
+  padding: 0 calc((var(--select-padding) + var(--icon-size) / 2));
+  white-space: nowrap;
+}
+
+.option:hover {
+  background-color: var(--edit-color-background-3);
+}
