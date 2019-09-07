@@ -34,24 +34,15 @@
 }
 
 .buttons {
-  margin-top: 10px;
-}
-@media (min-width: 600px) {
-  .buttons {
-    margin-top: 0;
-  }
+  display: flex;
 }
 
 .button {
-  display: inline-block;
-  margin-right: 5px;
-  margin-left: 0;
+  margin-right: var(--edit-margin-sm);
 }
-@media (min-width: 600px) {
-  .button {
-    margin-left: 10px;
-    margin-right: 0;
-  }
+
+.button:last-child {
+  margin-right: 0;
 }
 
 .language-dropdown {

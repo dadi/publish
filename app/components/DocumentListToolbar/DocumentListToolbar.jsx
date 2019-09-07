@@ -1,17 +1,20 @@
-import {connectRouter} from 'lib/router'
-import DropdownNative from 'components/DropdownNative/DropdownNative'
-import Paginator from 'components/Paginator/Paginator'
+import {Select, TextInput} from '@dadi/edit-ui'
 import proptypes from 'prop-types'
 import React from 'react'
 import Style from 'lib/Style'
 import styles from './DocumentListToolbar.css'
 import Toolbar from 'components/Toolbar/Toolbar'
-import ToolbarTextInput from 'components/Toolbar/ToolbarTextInput'
+
+function range(from, to) {
+  return Array(to - from + 1)
+    .fill(0)
+    .map((el, i) => from + i)
+}
 
 /**
  * A toolbar used in a document list view.
  */
-class DocumentListToolbar extends React.Component {
+export default class DocumentListToolbar extends React.Component {
   static propTypes = {
     /**
      * The elements to render on the actions part of the toolbar.
@@ -24,14 +27,10 @@ class DocumentListToolbar extends React.Component {
     metadata: proptypes.object,
 
     /**
-     * A callback used to determine what should happen when the user attempts
-     * to select a specific page. This function will be called with a single
-     * argument, which is the number of the page to navigate to. It can return
-     * either a string, which is infered as an `href` property for a `<a>` tag,
-     * or it can return a function, which will be attached to the `onClick`
-     * event of a `<button>` tag.
+     * A callback which will be called with the new page number when
+     * the user navigates to a new page.
      */
-    pageChangeHandler: proptypes.func,
+    onPageChange: proptypes.func,
 
     /**
      * The list of selected documents.
@@ -47,89 +46,122 @@ class DocumentListToolbar extends React.Component {
   constructor(props) {
     super(props)
 
+    this.goToPrev = this.goToPrev.bind(this)
+    this.goToPage = this.goToPage.bind(this)
+    this.goToNext = this.goToNext.bind(this)
+    this.handleInputChange = this.handleInputChange.bind(this)
+    this.handleInputKeyDown = this.handleInputKeyDown.bind(this)
+
     this.state = {
       goToPageValue: ''
     }
   }
 
+  goToNext() {
+    this.goToPage(this.props.metadata.page + 1)
+  }
+
   goToPage(value) {
-    const {metadata, pageChangeHandler, route} = this.props
-    const parsedValue = Number.parseInt(value)
+    const {metadata, onPageChange} = this.props
+    const parsedValue = parseInt(value)
 
-    if (!metadata || typeof pageChangeHandler !== 'function') {
-      return null
-    }
-
-    // If the input is not a valid positive integer number, we return.
-    if (parsedValue.toString() !== value || parsedValue <= 0) return
-
-    // If the number inserted is outside the range of the pages available,
-    // we return.
-    if (parsedValue > metadata.totalPages) return
-
-    const action = pageChangeHandler(parsedValue)
-
-    // If the result of `pageChangeHandler` is a link, we redirect to it.
-    // If it is a function, we call it.
-    if (typeof action === 'string') {
-      route.history.push(action)
-    } else if (typeof action === 'function') {
-      action(parsedValue)
+    if (
+      metadata &&
+      typeof onPageChange === 'function' &&
+      parsedValue <= metadata.totalPages
+    ) {
+      this.setState({goToPageValue: ''})
+      onPageChange(parsedValue)
     }
   }
 
-  handleGoToPage(event) {
-    const {goToPageValue} = this.state
+  goToPrev() {
+    this.goToPage(this.props.metadata.page - 1)
+  }
 
-    event.preventDefault()
+  handleInputChange({target: {value}}) {
+    const parsedValue = parseInt(value)
 
-    this.goToPage(goToPageValue)
+    if (value === '' || (parsedValue.toString() === value && parsedValue > 0)) {
+      this.setState({goToPageValue: value})
+    }
+  }
+
+  handleInputKeyDown({key, target: {value}}) {
+    if (key === 'Enter') {
+      this.goToPage(value)
+    }
   }
 
   render() {
     const {
       children,
       metadata,
-      pageChangeHandler,
       selectedDocuments = [],
       showSelectedDocuments
     } = this.props
-    const {goToPageValue} = this.state
 
     if (!metadata) return null
 
-    const pagesObject = Array.apply(null, {
-      length: metadata.totalPages
-    }).reduce((result, _, index) => {
-      const page = index + 1
+    const {limit, offset, page, totalCount, totalPages} = metadata
+    const {goToPageValue} = this.state
 
-      result[page] = `Page ${page}`
+    const currentPageMin = (offset + 1).toLocaleString()
+    const currentPageMax = Math.min(offset + limit, totalCount).toLocaleString()
+    const numTotalDocuments = totalCount.toLocaleString()
+    const numSelectedDocuments = selectedDocuments.length.toLocaleString()
 
-      return result
-    }, {})
-    const selectionCounter = new Style(styles, 'selection-counter').addIf(
-      'selection-counter-visible',
-      selectedDocuments.length > 0
+    const pagesAroundCurrent = 2 // In each direction.
+    const ellipsisBefore = page > 2 + pagesAroundCurrent
+    const ellipsisAfter = page < totalPages - pagesAroundCurrent - 1
+    const displayedPages = range(
+      Math.max(
+        2,
+        Math.min(page, totalPages - pagesAroundCurrent) - pagesAroundCurrent
+      ),
+      Math.min(
+        totalPages - 1,
+        Math.max(page, pagesAroundCurrent + 1) + pagesAroundCurrent
+      )
     )
+
+    const pageNumElement = num => (
+      <button
+        className={new Style(styles, 'page-number')
+          .addIf('current', page === num)
+          .getClasses()}
+        onClick={() => this.goToPage(num)}
+      >
+        {num}
+      </button>
+    )
+
+    const selectPageOptions = []
+
+    for (let page = 1; page <= metadata.totalPages; page++) {
+      selectPageOptions.push({
+        label: `Page ${page}`,
+        onClick: () => this.goToPage(page)
+      })
+    }
 
     return (
       <Toolbar>
-        {metadata.totalCount > 0 && (
+        {totalCount > 0 && (
           <div className={styles.section}>
-            <span className={styles['count-label']}>
-              <strong>{`${(metadata.offset + 1).toLocaleString()}-${Math.min(
-                metadata.offset + metadata.limit,
-                metadata.totalCount
-              ).toLocaleString()} `}</strong>
-              of <strong>{metadata.totalCount.toLocaleString()}</strong>
-              {showSelectedDocuments && (
-                <span className={selectionCounter.getClasses()}>
+            <span className={styles.count}>
+              <strong>
+                {currentPageMin}–{currentPageMax}
+              </strong>{' '}
+              of <strong>{numTotalDocuments}</strong>{' '}
+              {showSelectedDocuments && selectedDocuments.length > 0 && (
+                <span>
                   (
                   <a
-                    className={styles['selection-counter-button']}
+                    className={styles['selected-count']}
                     onClick={showSelectedDocuments}
                   >
-                    {selectedDocuments.length.toLocaleString()} selected
+                    {numSelectedDocuments} selected
                   </a>
                   )
                 </span>
@@ -138,56 +170,58 @@ class DocumentListToolbar extends React.Component {
           </div>
         )}
 
-        {metadata.totalCount > metadata.limit && (
-          <div className={`${styles.section} ${styles['section-pagination']}`}>
-            <Paginator
-              currentPage={metadata.page}
-              maxPages={8}
-              pageChangeHandler={pageChangeHandler}
-              totalPages={metadata.totalPages}
-            />
+        {totalCount > limit && (
+          <div className={styles.section}>
+            <div className={styles['page-numbers']}>
+              {totalPages > 9 ? (
+                <>
+                  {pageNumElement(1)}
+                  {ellipsisBefore && <div className={styles.ellipsis}>…</div>}
+                  {displayedPages.map(pageNumElement)}
+                  {ellipsisAfter && <div className={styles.ellipsis}>…</div>}
+                  {pageNumElement(totalPages)}
+                </>
+              ) : (
+                range(1, totalPages).map(pageNumElement)
+              )}
+            </div>
 
-            <div className={styles.information}>
-              <div>
-                <span
-                  className={`${styles['page-input']} ${
-                    styles['page-input-simple']
-                  }`}
-                >
-                  <form onSubmit={this.handleGoToPage.bind(this)}>
-                    <ToolbarTextInput
-                      onChange={event => {
-                        const {value} = event.target
-                        const parsedValue = Number.parseInt(value)
+            <button
+              className={styles['page-button']}
+              disabled={page === 1}
+              onClick={this.goToPrev}
+            >
+              <i className="material-icons" id={styles['prev-icon']}>
+                expand_more
+              </i>
+            </button>
 
-                        if (
-                          value === '' ||
-                          (parsedValue.toString() === value && value > 0)
-                        ) {
-                          this.setState({
-                            goToPageValue: value
-                          })
-                        }
-                      }}
-                      size="small"
-                      placeholder="Go to page"
-                      value={goToPageValue}
-                    />
-                  </form>
-                </span>
+            <div className={styles['page-select']}>
+              <Select
+                dir="up"
+                options={selectPageOptions}
+                label={`Page ${page}`}
+              />
+            </div>
 
-                <span
-                  className={`${styles['page-input']} ${
-                    styles['page-input-extended']
-                  }`}
-                >
-                  <DropdownNative
-                    onChange={this.goToPage.bind(this)}
-                    options={pagesObject}
-                    value={metadata.page}
-                  />
-                </span>
-              </div>
+            <button
+              className={styles['page-button']}
+              disabled={page === totalPages}
+              onClick={this.goToNext}
+            >
+              <i className="material-icons" id={styles['next-icon']}>
+                expand_more
+              </i>
+            </button>
+
+            <div className={styles['page-input']}>
+              <TextInput
+                onChange={this.handleInputChange}
+                onKeyDown={this.handleInputKeyDown}
+                placeholder="Go to page…"
+                simple
+                value={goToPageValue}
+              />
             </div>
           </div>
         )}
@@ -197,5 +231,3 @@ class DocumentListToolbar extends React.Component {
     )
   }
 }
-
-export default connectRouter(DocumentListToolbar)

@@ -181,7 +181,7 @@ class ReferenceSelectView extends React.Component {
         <div className={styles.toolbar}>
           <DocumentListToolbar
             metadata={metadata}
-            pageChangeHandler={() => page => this.setState({page})}
+            onPageChange={page => this.setState({page})}
             selectedDocuments={this.state.selection}
             showSelectedDocuments={showSelectedDocuments}
           >

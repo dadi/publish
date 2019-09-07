@@ -44,8 +44,15 @@
 #arrowIcon {
   margin-left: var(--icon-margin-left);
   margin-right: var(--icon-margin-right);
-  transition: all var(--edit-transition-duration-long);
+  transition: color var(--edit-transition-duration-standard),
+    transform var(--edit-transition-duration-long);
   font-size: var(--icon-size);
+  color: var(--edit-color-text-2);
+}
+
+.select:hover #arrowIcon,
+.container.open .select #arrowIcon {
+  color: var(--edit-color-text-1);
 }
 
 .container.dir--up:not(.open) #arrowIcon,

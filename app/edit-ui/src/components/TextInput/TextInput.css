@@ -40,3 +40,9 @@
   border: none;
   background-color: var(--edit-color-background-1);
 }
+
+.input.simple,
+.input.simple:focus {
+  border: none;
+  background-color: var(--edit-color-background-1);
+}

@@ -744,10 +744,11 @@ export default class RichEditor extends React.Component {
             <div className={styles['media-select-toolbar']}>
               <DocumentListToolbar
                 metadata={metadata}
-                pageChangeHandler={() => page =>
+                onPageChange={page =>
                   this.setState({
                     mediaPage: page
-                  })}
+                  })
+                }
               >
                 <Button
                   accent="save"

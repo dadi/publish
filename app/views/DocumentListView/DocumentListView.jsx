@@ -2,8 +2,8 @@ import * as appActions from 'actions/appActions'
 import * as Constants from 'lib/constants'
 import * as documentActions from 'actions/documentActions'
 import * as selectionActions from 'actions/selectionActions'
-import BulkActionSelector from 'components/BulkActionSelector/BulkActionSelector'
 import Button from 'components/Button/Button'
+import ButtonWithPrompt from 'components/ButtonWithPrompt/ButtonWithPrompt'
 import {connectRedux} from 'lib/redux'
 import DocumentEditView from 'views/DocumentEditView/DocumentEditView'
 import DocumentGridList from 'components/DocumentGridList/DocumentGridList'
@@ -23,13 +23,17 @@ import React from 'react'
 import {Redirect} from 'react-router-dom'
 import {setPageTitle} from 'lib/util'
 import SpinningWheel from 'components/SpinningWheel/SpinningWheel'
+import Style from 'lib/Style'
 import styles from './DocumentListView.css'
 
-const BULK_ACTIONS = {
-  DELETE: 'BULK_ACTIONS_DELETE'
-}
-
 class DocumentListView extends React.Component {
+  constructor(props) {
+    super(props)
+
+    this.deleteSelected = this.deleteSelected.bind(this)
+    this.handlePageChange = this.handlePageChange.bind(this)
+  }
+
   componentDidUpdate(oldProps) {
     const {actions, contentKey, state} = this.props
     const data = state.documents[contentKey] || {}
@@ -51,31 +55,23 @@ class DocumentListView extends React.Component {
     }
   }
 
-  handleBulkActionApply(collection, actionType) {
-    const {actions, contentKey, selectionKey, state} = this.props
+  deleteSelected() {
+    const {actions, collection, contentKey, selectionKey, state} = this.props
     const selection = state.selection[selectionKey] || []
 
-    switch (actionType) {
-      case BULK_ACTIONS.DELETE:
-        if (selection.length > 0) {
-          const ids = selection.map(({_id}) => _id).filter(Boolean)
+    if (selection.length > 0) {
+      const ids = selection.map(({_id}) => _id).filter(Boolean)
 
-          actions.deleteDocuments({
-            collection,
-            contentKey,
-            ids
-          })
+      actions.deleteDocuments({
+        collection,
+        contentKey,
+        ids
+      })
 
-          actions.setDocumentSelection({
-            key: selectionKey,
-            selection: []
-          })
-        }
-
-        break
-
-      default:
-        return
+      actions.setDocumentSelection({
+        key: selectionKey,
+        selection: []
+      })
     }
   }
 
@@ -157,6 +153,15 @@ class DocumentListView extends React.Component {
         type={Constants.STATUS_FAILED}
       />
     )
+  }
+
+  handlePageChange(page) {
+    const {
+      onBuildBaseUrl,
+      route: {history, search}
+    } = this.props
+
+    history.push(onBuildBaseUrl.call(this, {search: {...search, page}}))
   }
 
   handleFiltersUpdate(newFilters) {
@@ -274,18 +279,6 @@ class DocumentListView extends React.Component {
     // Getting the IDs of the selected documents.
     const selection = state.selection[selectionKey] || []
 
-    // Computing bulk action options.
-    const actions = {
-      [BULK_ACTIONS.DELETE]: {
-        confirmationMessage: `Are you sure you want to delete the selected ${
-          selection.length > 1 ? 'documents' : 'document'
-        }?`,
-        ctaMessage: `Yes, delete ${selection.length > 1 ? 'them' : 'it'}.`,
-        disabled: !selection.length,
-        label: `Delete ${selection.length ? ' (' + selection.length + ')' : ''}`
-      }
-    }
-
     // Are we showing only selected documents?
     const isFilteringSelection =
       search.filter && search.filter.$selected === true
@@ -317,6 +310,11 @@ class DocumentListView extends React.Component {
           search: null
         })
 
+    const buttonWrapperStyle = new Style(styles, 'button-wrapper').addIf(
+      'hidden',
+      selection.length === 0
+    )
+
     return (
       <Page>
         <Header />
@@ -343,17 +341,25 @@ class DocumentListView extends React.Component {
         <div className={styles.toolbar}>
           <DocumentListToolbar
             metadata={metadata}
-            pageChangeHandler={page =>
-              onBuildBaseUrl.call(this, {search: {...search, page}})
-            }
+            onPageChange={this.handlePageChange}
             selectedDocuments={selection}
             showSelectedDocuments={showSelectedDocuments}
           >
-            <BulkActionSelector
-              actions={actions}
-              onChange={this.handleBulkActionApply.bind(this, collection)}
-              selection={selection}
-            />
+            <div className={buttonWrapperStyle.getClasses()}>
+              <ButtonWithPrompt
+                accent="negative"
+                disabled={selection.length === 0}
+                onClick={this.deleteSelected}
+                promptCallToAction={`Yes, delete ${
+                  selection.length > 1 ? 'them' : 'it'
+                }.`}
+                promptMessage={`Are you sure you want to delete the selected ${
+                  selection.length > 1 ? 'documents' : 'document'
+                }?`}
+              >
+                Delete ({selection.length})
+              </ButtonWithPrompt>
+            </div>
           </DocumentListToolbar>
         </div>
       </Page>

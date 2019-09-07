@@ -239,8 +239,8 @@ class DocumentEditToolbar extends React.Component {
             <div className={styles.button}>
               <ButtonWithPrompt
                 accent="negative"
-                className={styles.button}
                 disabled={Boolean(hasConnectionIssues)}
+                filled
                 onClick={this.handleDelete.bind(this)}
                 promptCallToAction="Yes, delete it."
                 position="left"

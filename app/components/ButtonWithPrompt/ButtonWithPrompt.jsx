@@ -71,7 +71,7 @@ export default class ButtonWithPrompt extends React.Component {
 
     return (
       <div className={styles.container} ref={this.containerEl}>
-        <Button filled {...props} onClick={this.togglePrompt}>
+        <Button {...props} onClick={this.togglePrompt}>
           {children}
         </Button>
 

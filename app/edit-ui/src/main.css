@@ -114,6 +114,7 @@
   --edit-shadow-4px: 0 0 4px 0 var(--edit-color-shadow);
   --edit-shadow-8px: 0 0 8px 0 var(--edit-color-shadow);
   --edit-shadow-4px-bottom: 0 4px 4px -4px var(--edit-color-shadow);
+  --edit-shadow-4px-top: 0 -4px 4px -4px var(--edit-color-shadow);
 
   --edit-color-background-1: var(--edit-color-grayscale-100);
   --edit-color-background-2: var(--edit-color-grayscale-98);
@@ -135,9 +136,12 @@
   --edit-color-border-light: var(--edit-color-opacity-85);
   --edit-color-border-dark: var(--edit-color-opacity-70);
 
-  --edit-color-off: var(--edit-color-grayscale-70);
+  --edit-color-off: var(--edit-color-opacity-80);
+}
 
-  --editif-toolbar-height: 78px;
+/* Edit Interface specific */
+:root {
+  --editif-toolbar-height: 80px;
 }
 
 body,
