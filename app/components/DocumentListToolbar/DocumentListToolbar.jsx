@@ -6,9 +6,11 @@ import styles from './DocumentListToolbar.css'
 import Toolbar from 'components/Toolbar/Toolbar'
 
 function range(from, to) {
-  return Array(to - from + 1)
-    .fill(0)
-    .map((el, i) => from + i)
+  return from >= to
+    ? []
+    : Array(to - from + 1)
+        .fill(0)
+        .map((el, i) => from + i)
 }
 
 /**
@@ -125,11 +127,12 @@ export default class DocumentListToolbar extends React.Component {
       )
     )
 
-    const pageNumElement = num => (
+    const pageNumberElement = num => (
       <button
         className={new Style(styles, 'page-number')
           .addIf('current', page === num)
           .getClasses()}
+        key={num}
         onClick={() => this.goToPage(num)}
       >
         {num}
@@ -175,14 +178,14 @@ export default class DocumentListToolbar extends React.Component {
             <div className={styles['page-numbers']}>
               {totalPages > 9 ? (
                 <>
-                  {pageNumElement(1)}
+                  {pageNumberElement(1)}
                   {ellipsisBefore && <div className={styles.ellipsis}>…</div>}
-                  {displayedPages.map(pageNumElement)}
+                  {displayedPages.map(pageNumberElement)}
                   {ellipsisAfter && <div className={styles.ellipsis}>…</div>}
-                  {pageNumElement(totalPages)}
+                  {pageNumberElement(totalPages)}
                 </>
               ) : (
-                range(1, totalPages).map(pageNumElement)
+                range(1, totalPages).map(pageNumberElement)
               )}
             </div>
 
