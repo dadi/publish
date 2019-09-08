@@ -9,9 +9,7 @@ import DocumentListController from 'components/DocumentListController/DocumentLi
 import DocumentListToolbar from 'components/DocumentListToolbar/DocumentListToolbar'
 import DocumentTableList from 'containers/DocumentTableList/DocumentTableList'
 import HeroMessage from 'components/HeroMessage/HeroMessage'
-import Main from 'components/Main/Main'
 import MediaGridCard from 'containers/MediaGridCard/MediaGridCard'
-import Page from 'components/Page/Page'
 import React from 'react'
 import ReferenceSelectHeader from 'components/ReferenceSelectHeader/ReferenceSelectHeader'
 import styles from './ReferenceSelectView.css'
@@ -138,7 +136,7 @@ class ReferenceSelectView extends React.Component {
     }
 
     return (
-      <Page>
+      <>
         <ReferenceSelectHeader
           onCancel={this.props.onCancel}
           referenceField={referenceFieldSchema}
@@ -152,7 +150,7 @@ class ReferenceSelectView extends React.Component {
           referenceFieldName={referenceFieldName}
         />
 
-        <Main>
+        <main>
           <DocumentList
             collection={referencedCollection}
             contentKey={contentKey}
@@ -176,7 +174,7 @@ class ReferenceSelectView extends React.Component {
             selection={this.state.selection}
             sort={sortBy}
           />
-        </Main>
+        </main>
 
         <div className={styles.toolbar}>
           <DocumentListToolbar
@@ -194,7 +192,7 @@ class ReferenceSelectView extends React.Component {
             </Button>
           </DocumentListToolbar>
         </div>
-      </Page>
+      </>
     )
   }
 

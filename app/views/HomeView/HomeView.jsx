@@ -1,9 +1,6 @@
 import * as userActions from 'actions/userActions'
 import {connectRedux} from 'lib/redux'
-import Header from 'containers/Header/Header'
 import HeroMessage from 'components/HeroMessage/HeroMessage'
-import Main from 'components/Main/Main'
-import Page from 'components/Page/Page'
 import React from 'react'
 import {setPageTitle} from 'lib/util'
 import SpinningWheel from 'components/SpinningWheel/SpinningWheel'
@@ -27,20 +24,13 @@ class HomeView extends React.Component {
     setPageTitle()
 
     return (
-      <Page>
-        <Header />
+      <main>
+        {api.isLoading && <SpinningWheel />}
 
-        <Main>
-          {api.isLoading && <SpinningWheel />}
-
-          {!api.isLoading && (
-            <HeroMessage
-              title={`Welcome, ${displayName}.`}
-              subtitle={message}
-            />
-          )}
-        </Main>
-      </Page>
+        {!api.isLoading && (
+          <HeroMessage title={`Welcome, ${displayName}.`} subtitle={message} />
+        )}
+      </main>
     )
   }
 }

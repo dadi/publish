@@ -13,12 +13,9 @@ import DocumentListToolbar from 'components/DocumentListToolbar/DocumentListTool
 import DocumentTableList from 'containers/DocumentTableList/DocumentTableList'
 import ErrorMessage from 'components/ErrorMessage/ErrorMessage'
 import {getVisibleFields} from 'lib/fields'
-import Header from 'containers/Header/Header'
 import HeroMessage from 'components/HeroMessage/HeroMessage'
-import Main from 'components/Main/Main'
 import MediaGridCard from 'containers/MediaGridCard/MediaGridCard'
 import MediaListController from 'components/MediaListController/MediaListController'
-import Page from 'components/Page/Page'
 import React from 'react'
 import {Redirect} from 'react-router-dom'
 import {setPageTitle} from 'lib/util'
@@ -222,13 +219,9 @@ class DocumentListView extends React.Component {
 
     if (!collection) {
       return (
-        <Page>
-          <Header />
-
-          <Main>
-            <ErrorMessage type={Constants.ERROR_ROUTE_NOT_FOUND} />
-          </Main>
-        </Page>
+        <main>
+          <ErrorMessage type={Constants.ERROR_ROUTE_NOT_FOUND} />
+        </main>
       )
     }
 
@@ -241,13 +234,9 @@ class DocumentListView extends React.Component {
             <DocumentEditView {...this.props} isSingleDocument />
           )}
           onLoading={() => (
-            <Page>
-              <Header />
-
-              <Main>
-                <SpinningWheel />
-              </Main>
-            </Page>
+            <main>
+              <SpinningWheel />
+            </main>
           )}
           onNetworkError={this.handleNetworkError.bind(this)}
           onRender={({documents}) => (
@@ -316,9 +305,7 @@ class DocumentListView extends React.Component {
     )
 
     return (
-      <Page>
-        <Header />
-
+      <>
         <DocumentListController
           collection={collection}
           createNewHref={createNewHref}
@@ -327,7 +314,7 @@ class DocumentListView extends React.Component {
           onUpdateFilters={this.handleFiltersUpdate.bind(this)}
         />
 
-        <Main>
+        <main>
           <div className={styles['list-container']}>
             {this.renderMain({
               collection,
@@ -336,7 +323,7 @@ class DocumentListView extends React.Component {
               selection
             })}
           </div>
-        </Main>
+        </main>
 
         <div className={styles.toolbar}>
           <DocumentListToolbar
@@ -362,7 +349,7 @@ class DocumentListView extends React.Component {
             </div>
           </DocumentListToolbar>
         </div>
-      </Page>
+      </>
     )
   }
 
