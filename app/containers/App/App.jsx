@@ -122,7 +122,7 @@ class App extends React.Component {
       <Router>
         <LoadingBar />
         <NotificationCentre />
-        <Header />
+        {this.props.user.isSignedIn && <Header />}
         <Switch>
           <AuthenticatedRoute path="/" exact component={HomeView} />
           <AuthenticatedRoute

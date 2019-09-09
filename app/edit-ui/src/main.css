@@ -104,17 +104,22 @@
   --edit-line-height-standard: 1.4;
 
   --edit-z-index-standard: 1;
-  --edit-z-index-drawer: 2;
+  --edit-z-index-toolbar: 2;
   --edit-z-index-dropdown: 3;
-  --edit-z-index-modal: 4;
-  --edit-z-index-overlay: 5;
+  --edit-z-index-drawer: 4;
+  --edit-z-index-modal: 5;
+  --edit-z-index-dropdown-overlay: 6;
+  --edit-z-index-drawer-overlay: 7;
 
   --edit-color-shadow: var(--edit-color-opacity-80);
+  --edit-color-shadow-dark: var(--edit-color-opacity-40);
 
   --edit-shadow-4px: 0 0 4px 0 var(--edit-color-shadow);
-  --edit-shadow-8px: 0 0 8px 0 var(--edit-color-shadow);
   --edit-shadow-4px-bottom: 0 4px 4px -4px var(--edit-color-shadow);
   --edit-shadow-4px-top: 0 -4px 4px -4px var(--edit-color-shadow);
+
+  --edit-shadow-8px: 0 0 8px 0 var(--edit-color-shadow);
+  --edit-shadow-8px-right-dark: 8px 0 8px -8px var(--edit-color-shadow-dark);
 
   --edit-color-background-1: var(--edit-color-grayscale-100);
   --edit-color-background-2: var(--edit-color-grayscale-98);
