@@ -3,12 +3,13 @@
   --icon-margin-right: -6px;
   --icon-size: var(--edit-icon-size-md);
   --select-padding: var(--edit-margin-sm);
+  --height: var(--edit-elem-height-medium);
 
   position: relative;
 }
 
 .select {
-  height: var(--edit-elem-height-medium);
+  height: var(--height);
   transition: all var(--edit-transition-duration-standard);
   display: flex;
   justify-content: space-between;
@@ -19,6 +20,8 @@
   background-color: var(--edit-color-background-2);
   border-radius: var(--edit-radius-input);
   color: var(--edit-color-text-2);
+  outline: 0;
+  appearance: none;
 }
 
 .select:hover,
@@ -41,22 +44,23 @@
   border-bottom-right-radius: 0;
 }
 
-#arrowIcon {
+.arrowIcon {
   margin-left: var(--icon-margin-left);
   margin-right: var(--icon-margin-right);
   transition: color var(--edit-transition-duration-standard),
     transform var(--edit-transition-duration-long);
   font-size: var(--icon-size);
   color: var(--edit-color-text-2);
+  pointer-events: none;
 }
 
-.select:hover #arrowIcon,
-.container.open .select #arrowIcon {
+.container:hover .arrowIcon,
+.container.open .select .arrowIcon {
   color: var(--edit-color-text-1);
 }
 
-.container.dir--up:not(.open) #arrowIcon,
-.container.dir--down.open #arrowIcon {
+.container.dir--up:not(.open) .arrowIcon,
+.container.dir--down.open .arrowIcon {
   transform: rotate(180deg);
 }
 
@@ -101,4 +105,17 @@
 
 .option:hover {
   background-color: var(--edit-color-background-3);
+}
+
+.container.native .select {
+  padding-right: calc(
+    var(--select-padding) + var(--icon-size) + var(--icon-margin-left) +
+      var(--icon-margin-right)
+  );
+}
+
+.container.native .arrowIcon {
+  position: absolute;
+  right: var(--select-padding);
+  top: calc((var(--height) - var(--icon-size)) / 2);
 }

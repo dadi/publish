@@ -8,10 +8,44 @@ import styles from './Select.css'
 export default function Select({
   className,
   dir = 'down',
-  label,
+  native,
+  onChange,
   options,
-  style
+  style,
+  value
 }) {
+  const modifiedOnChange = useCallback(e => onChange(e.target.value), [
+    onChange
+  ])
+
+  if (native) {
+    return (
+      <div
+        className={classnames(
+          styles.container,
+          styles['dir--' + dir],
+          {[styles.open]: isOpen},
+          className,
+          styles.native
+        )}
+        style={style}
+      >
+        <select
+          className={styles.select}
+          onChange={modifiedOnChange}
+          value={value}
+        >
+          {options.map(({label, value}) => (
+            <option value={value}>{label}</option>
+          ))}
+        </select>
+        <i className={classnames('material-icons', styles.arrowIcon)}>
+          expand_more
+        </i>
+      </div>
+    )
+  }
+
   const [isOpen, setIsOpen] = useState(false)
   const toggleOptions = useCallback(() => setIsOpen(!isOpen), [isOpen])
 
@@ -27,13 +61,13 @@ export default function Select({
     return () => window.removeEventListener('click', handleClickOut)
   }, [isOpen])
 
-  const modifiedOptions = useMemo(
+  const mappedOptions = useMemo(
     () =>
-      options.map(({label, onClick}) => ({
+      options.map(({label, value}) => ({
         label,
         onClick: () => {
           setIsOpen(false)
-          onClick()
+          onChange(value)
         }
       })),
     [options]
@@ -41,20 +75,20 @@ export default function Select({
 
   const containerRef = useRef()
 
-  const optionsHtml = modifiedOptions.map(({label, onClick}, index) => (
+  const optionsHtml = mappedOptions.map(({label, onClick}, index) => (
     <div className={styles.option} key={label + index} onClick={onClick}>
       {label}
     </div>
   ))
+
+  const {label} = options.find(option => option.value === value) || options[0]
 
   return (
     <div
       className={classnames(
         styles.container,
         styles['dir--' + dir],
-        {
-          [styles.open]: isOpen
-        },
+        {[styles.open]: isOpen},
         className
       )}
       ref={containerRef}
@@ -62,7 +96,7 @@ export default function Select({
     >
       <div className={styles.select} onClick={toggleOptions}>
         {label}
-        <i id={styles.arrowIcon} className="material-icons">
+        <i className={classnames('material-icons', styles.arrowIcon)}>
           expand_more
         </i>
       </div>

@@ -146,10 +146,7 @@ export default class DocumentListToolbar extends React.Component {
     const selectPageOptions = []
 
     for (let page = 1; page <= metadata.totalPages; page++) {
-      selectPageOptions.push({
-        label: `Page ${page}`,
-        onClick: () => this.goToPage(page)
-      })
+      selectPageOptions.push({label: `Page ${page}`, value: page})
     }
 
     return (
@@ -210,8 +207,9 @@ export default class DocumentListToolbar extends React.Component {
             <div className={styles['page-select']}>
               <Select
                 dir="up"
+                onChange={this.goToPage}
                 options={selectPageOptions}
-                label={`Page ${page}`}
+                value={page}
               />
             </div>
 
