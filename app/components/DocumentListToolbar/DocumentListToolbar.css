@@ -43,7 +43,7 @@
   align-items: center;
   flex-flow: row nowrap;
   font-size: var(--edit-font-size-large);
-  margin: 0 var(--edit-margin-md);
+  margin: 0 var(--edit-margin-xxs);
 }
 
 @media (min-width: 1024px) {
@@ -52,8 +52,8 @@
   }
 }
 
-.page-number,
 .page-button {
+  --page-button-size: 32px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -62,26 +62,24 @@
   border: none;
   outline: none;
   transition: all var(--edit-transition-duration-standard);
-  color: var(--edit-color-text-2);
-  font-size: var(--edit-font-size-large);
-}
-
-.page-number {
-  --page-num-size: 32px;
-
-  padding: var(--edit-margin-xs);
   border-radius: 50%;
-  height: var(--page-num-size);
-  width: var(--page-num-size);
+  height: var(--page-button-size);
+  width: var(--page-button-size);
   line-height: 1;
 }
 
-.page-number:not(.current):hover {
+.page-button.page-number {
+  color: var(--edit-color-text-2);
+  font-size: var(--edit-font-size-large);
+  padding: var(--edit-margin-xs);
+}
+
+.page-button.page-number:not(.current):hover {
   color: var(--edit-color-text-1);
   background-color: var(--edit-color-background-3);
 }
 
-.page-number.current {
+.page-button.page-number.current {
   font-weight: 700;
   color: var(--edit-color-primary);
 }
@@ -90,32 +88,32 @@
   color: var(--edit-color-text-2);
 }
 
-.page-button {
+.page-button.page-icon {
   color: var(--edit-color-text-3);
   margin: var(--edit-margin-xs);
   padding: 0;
 }
 
-.page-button:disabled {
+.page-button.page-icon i {
+  font-size: var(--edit-icon-size-lg);
+  margin: -4px;
+}
+
+.page-button.page-icon:disabled {
   color: var(--edit-color-opacity-90);
   cursor: not-allowed;
 }
 
-.page-button:hover:not(:disabled) {
+.page-button.page-icon:hover:not(:disabled) {
   color: var(--edit-color-text-2);
+  background-color: var(--edit-color-background-3);
 }
 
-#prev-icon,
-#next-icon {
-  font-size: var(--edit-icon-size-xl);
-  margin: -4px;
-}
-
-#prev-icon {
+.prev-icon i {
   transform: rotate(90deg);
 }
 
-#next-icon {
+.next-icon i {
   transform: rotate(-90deg);
 }
 

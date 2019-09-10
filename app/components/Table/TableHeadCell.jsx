@@ -11,7 +11,7 @@ export default class TableHeadCell extends React.Component {
     /**
      * Whether the table is sorted by this column.
      */
-    sorted: proptypes.oneOf(['asc', 'desc']),
+    sorted: proptypes.oneOf(['asc', 'desc', false]),
 
     /**
      * Whether the row is used to hold a selection checkbox.

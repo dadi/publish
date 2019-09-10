@@ -38,6 +38,10 @@
   padding: 0;
 }
 
+.cell.select-cell {
+  width: 47px;
+}
+
 .row {
   background-color: var(--edit-color-background-1);
   color: var(--edit-color-text-2);

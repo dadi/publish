@@ -44,3 +44,9 @@
 .list-link:hover {
   border-bottom-color: var(--edit-color-underline-hover);
 }
+
+.with-ellipsis {
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+}

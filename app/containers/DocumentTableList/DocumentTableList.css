@@ -6,8 +6,14 @@
 
 .table-wrapper {
   overflow-x: auto;
-  padding-left: var(--edit-margin-xxl);
+  padding-left: var(--edit-margin-lg);
   display: flex;
+}
+
+@media (min-width: 1024px) {
+  .table-wrapper {
+    padding-left: var(--edit-margin-xxl);
+  }
 }
 
 .table-wrapper .after {
@@ -36,15 +42,19 @@ th:last-child .column-header {
   color: var(--edit-color-positive-opacity);
 }
 
-.column-header #arrow {
+.column-header .arrow {
   font-size: var(--edit-icon-size-sm);
   transition: all var(--edit-transition-duration-standard);
 }
 
-.column-header:not(.sorted) #arrow {
+.column-header:not(.sorted) .arrow {
   color: var(--edit-color-opacity-80);
 }
 
-.column-header:not(.sorted):hover #arrow {
+.column-header:not(.sorted):hover .arrow {
   color: var(--edit-color-opacity-60);
+}
+
+.arrow.up {
+  transform: rotate(180deg);
 }

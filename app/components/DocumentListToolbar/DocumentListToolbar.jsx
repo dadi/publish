@@ -13,6 +13,11 @@ function range(from, to) {
         .map((el, i) => from + i)
 }
 
+// If there are more pages than this, ellipses will be shown.
+const MAX_VISIBLE_PAGES = 9
+// Number of pages around the current one (in each direction) that will be visible.
+const PAGES_AROUND_CURRENT = 2
+
 /**
  * A toolbar used in a document list view.
  */
@@ -113,23 +118,22 @@ export default class DocumentListToolbar extends React.Component {
     const numTotalDocuments = totalCount.toLocaleString()
     const numSelectedDocuments = selectedDocuments.length.toLocaleString()
 
-    const pagesAroundCurrent = 2 // In each direction.
-    const ellipsisBefore = page > 2 + pagesAroundCurrent
-    const ellipsisAfter = page < totalPages - pagesAroundCurrent - 1
+    const showEllipsisBefore = page > 2 + PAGES_AROUND_CURRENT
+    const showEllipsisAfter = page < totalPages - PAGES_AROUND_CURRENT - 1
     const displayedPages = range(
       Math.max(
         2,
-        Math.min(page, totalPages - pagesAroundCurrent) - pagesAroundCurrent
+        Math.min(page, totalPages - PAGES_AROUND_CURRENT) - PAGES_AROUND_CURRENT
       ),
       Math.min(
         totalPages - 1,
-        Math.max(page, pagesAroundCurrent + 1) + pagesAroundCurrent
+        Math.max(page, PAGES_AROUND_CURRENT + 1) + PAGES_AROUND_CURRENT
       )
     )
 
     const pageNumberElement = num => (
       <button
-        className={new Style(styles, 'page-number')
+        className={new Style(styles, 'page-number', 'page-button')
           .addIf('current', page === num)
           .getClasses()}
         key={num}
@@ -175,29 +179,33 @@ export default class DocumentListToolbar extends React.Component {
 
         {totalCount > limit && (
           <div className={styles.section}>
+            <button
+              className={`${styles['page-button']} ${styles['page-icon']} ${
+                styles['prev-icon']
+              }`}
+              disabled={page === 1}
+              onClick={this.goToPrev}
+            >
+              <i className="material-icons">expand_more</i>
+            </button>
+
             <div className={styles['page-numbers']}>
-              {totalPages > 9 ? (
+              {totalPages > MAX_VISIBLE_PAGES ? (
                 <>
                   {pageNumberElement(1)}
-                  {ellipsisBefore && <div className={styles.ellipsis}>…</div>}
+                  {showEllipsisBefore && (
+                    <div className={styles.ellipsis}>…</div>
+                  )}
                   {displayedPages.map(pageNumberElement)}
-                  {ellipsisAfter && <div className={styles.ellipsis}>…</div>}
+                  {showEllipsisAfter && (
+                    <div className={styles.ellipsis}>…</div>
+                  )}
                   {pageNumberElement(totalPages)}
                 </>
               ) : (
                 range(1, totalPages).map(pageNumberElement)
               )}
             </div>
-
-            <button
-              className={styles['page-button']}
-              disabled={page === 1}
-              onClick={this.goToPrev}
-            >
-              <i className="material-icons" id={styles['prev-icon']}>
-                expand_more
-              </i>
-            </button>
 
             <div className={styles['page-select']}>
               <Select
@@ -208,13 +216,13 @@ export default class DocumentListToolbar extends React.Component {
             </div>
 
             <button
-              className={styles['page-button']}
+              className={`${styles['page-button']} ${styles['page-icon']} ${
+                styles['next-icon']
+              }`}
               disabled={page === totalPages}
               onClick={this.goToNext}
             >
-              <i className="material-icons" id={styles['next-icon']}>
-                expand_more
-              </i>
+              <i className="material-icons">expand_more</i>
             </button>
 
             <div className={styles['page-input']}>

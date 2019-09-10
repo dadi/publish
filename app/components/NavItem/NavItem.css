@@ -39,7 +39,7 @@
   margin: -4px 0;
 }
 
-.container.open #expand-icon {
+.container.in-drawer.open #expand-icon {
   transform: rotate(180deg);
 }
 
