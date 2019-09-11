@@ -226,10 +226,9 @@ export default class FieldReferenceEdit extends React.Component {
           <div className={styles.placeholder}>
             <Button
               accent="positive"
-              className={styles.placeholderButton}
+              className={styles['placeholder-button']}
               data-name="select-existing-reference-button"
               onClick={onEditReference}
-              size="small"
             >
               Select existing {displayName.toLowerCase()}
             </Button>
