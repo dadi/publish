@@ -148,39 +148,52 @@ export default class FieldStringEdit extends React.Component {
   }
 
   render() {
-    const {schema, value} = this.props
-    const publishBlock = schema.publish
-
-    if (publishBlock && publishBlock.options) {
-      return this.renderAsDropdown()
-    }
-
-    if ((publishBlock && publishBlock.list) || Array.isArray(value)) {
-      return this.renderAsList()
-    }
-
-    if (schema.format) {
-      return this.renderAsRichEditor(schema.format)
-    }
-
-    return this.renderAsFreeInput()
-  }
-
-  renderAsDropdown() {
     const {
       comment,
       displayName,
       error,
-      name,
       readOnly,
       required,
       schema,
       value
     } = this.props
+    const publishBlock = schema.publish
+
+    let content
+
+    if (publishBlock && publishBlock.options) {
+      content = this.renderAsDropdown()
+    } else if ((publishBlock && publishBlock.list) || Array.isArray(value)) {
+      content = this.renderAsList()
+    } else if (schema.format) {
+      content = this.renderAsRichEditor(schema.format)
+    } else {
+      content = this.renderAsFreeInput()
+    }
+
+    return (
+      <Label
+        comment={
+          comment ||
+          (required && 'Required') ||
+          (readOnly && 'Read only') ||
+          null
+        }
+        error={Boolean(error)}
+        errorMessage={typeof error === 'string' ? error : null}
+        label={displayName}
+      >
+        {content}
+      </Label>
+    )
+  }
+
+  renderAsDropdown() {
+    const {error, name, readOnly, schema, value} = this.props
     const publishBlock = schema.publish || {}
-    const options = publishBlock.options
+    const {multiple, options} = publishBlock
     const selectLabel = `Please select${schema.label ? ` ${schema.label}` : ''}`
-    const multiple = publishBlock.multiple === true
+
     const dropdownStyle = new Style(styles, 'dropdown')
       .addIf('dropdown-error', error)
       .addIf('dropdown-multiple', multiple)
@@ -192,78 +205,45 @@ export default class FieldStringEdit extends React.Component {
     }
 
     return (
-      <Label
-        error={Boolean(error)}
-        errorMessage={typeof error === 'string' ? error : null}
-        label={displayName}
-        comment={
-          comment ||
-          (required && 'Required') ||
-          (readOnly && 'Read only') ||
-          null
-        }
+      <select
+        className={dropdownStyle.getClasses()}
+        disabled={readOnly}
+        onChange={this.handleSelectionChangeEvent}
+        multiple={multiple}
+        name={name}
+        ref={this.selectDropdownOptions.bind(this, multiple)}
+        value={selectedValue}
       >
-        <select
-          className={dropdownStyle.getClasses()}
-          disabled={readOnly}
-          onChange={this.handleSelectionChangeEvent}
-          multiple={multiple}
-          name={name}
-          ref={this.selectDropdownOptions.bind(this, multiple)}
-          value={selectedValue}
-        >
-          {!multiple && (
-            <option className={styles['dropdown-option']} disabled value="">
-              {selectLabel}
-            </option>
-          )}
+        {!multiple && (
+          <option className={styles['dropdown-option']} disabled value="">
+            {selectLabel}
+          </option>
+        )}
 
-          {options.map(option => {
-            return (
-              <option
-                className={styles['dropdown-option']}
-                key={option.value}
-                value={option.value}
-              >
-                {option.label}
-              </option>
-            )
-          })}
-        </select>
-      </Label>
+        {options.map(option => {
+          return (
+            <option
+              className={styles['dropdown-option']}
+              key={option.value}
+              value={option.value}
+            >
+              {option.label}
+            </option>
+          )
+        })}
+      </select>
     )
   }
 
   renderAsFreeInput() {
-    const {
-      comment,
-      displayName,
-      error,
-      name,
-      placeholder,
-      required,
-      schema,
-      value
-    } = this.props
-    const {hasFocus} = this.state
+    const {error, name, placeholder, schema, value} = this.props
     const publishBlock = schema.publish || {}
     const {display = {}, multiline, readonly, resizable, rows} = publishBlock
 
     const link = formatLink(value, display.link)
 
     return (
-      <Label
-        error={Boolean(error)}
-        errorMessage={typeof error === 'string' ? error : null}
-        hasFocus={hasFocus}
-        label={displayName}
-        comment={
-          comment ||
-          (required && 'Required') ||
-          (readonly && 'Read only') ||
-          null
-        }
-      >
+      <>
         <TextInput
           accent={error ? 'error' : undefined}
           autoresize={multiline}
@@ -291,85 +271,54 @@ export default class FieldStringEdit extends React.Component {
             Open in new window
           </Button>
         )}
-      </Label>
+      </>
     )
   }
 
   renderAsList() {
     const {
-      comment,
-      displayName,
-      error,
       name,
       placeholder,
-      required,
       schema: {publish: publishSettings = {}},
       value
     } = this.props
-    const {hasFocus} = this.state
-    const readOnly = publishSettings.readonly === true
 
     return (
-      <Label
-        comment={
-          comment ||
-          (required && 'Required') ||
-          (readOnly && 'Read only') ||
-          null
-        }
-        error={Boolean(error)}
-        errorMessage={typeof error === 'string' ? error : null}
-        hasFocus={hasFocus}
-        label={displayName}
-      >
-        <SortableList
-          name={name}
-          onBlur={this.handleBlur}
-          onChange={this.handleInputChange}
-          onFocus={this.handleBlur}
-          placeholder={placeholder}
-          publishSettings={publishSettings}
-          valuesArray={value}
-        />
-      </Label>
+      <SortableList
+        name={name}
+        onBlur={this.handleBlur}
+        onChange={this.handleInputChange}
+        onFocus={this.handleBlur}
+        placeholder={placeholder}
+        publishSettings={publishSettings}
+        valuesArray={value}
+      />
     )
   }
 
   renderAsRichEditor(format) {
     const {
       contentKey,
-      displayName,
-      error,
       name,
       onSaveRegister,
       onValidateRegister,
-      required,
       value
     } = this.props
-    const {hasFocus} = this.state
     const fieldContentKey = JSON.stringify({
       fieldName: name
     })
 
     return (
-      <Label
-        comment={(required && 'Required') || null}
-        error={Boolean(error)}
-        errorMessage={typeof error === 'string' ? error : null}
-        hasFocus={hasFocus}
-        label={displayName}
-      >
-        <RichEditor
-          contentKey={contentKey + fieldContentKey}
-          format={format}
-          onBlur={this.handleBlur}
-          onChange={this.handleInputChange}
-          onFocus={this.handleFocus}
-          onSaveRegister={onSaveRegister}
-          onValidateRegister={onValidateRegister}
-          value={value}
-        />
-      </Label>
+      <RichEditor
+        contentKey={contentKey + fieldContentKey}
+        format={format}
+        onBlur={this.handleBlur}
+        onChange={this.handleInputChange}
+        onFocus={this.handleFocus}
+        onSaveRegister={onSaveRegister}
+        onValidateRegister={onValidateRegister}
+        value={value}
+      />
     )
   }
 
