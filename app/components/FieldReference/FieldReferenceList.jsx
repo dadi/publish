@@ -86,10 +86,10 @@ export default class FieldReferenceList extends React.Component {
                   onMouseLeave={this.hoverOff}
                   to={editLink}
                 >
-                  <div className={styles['list-value']}>
+                  <span className={styles.value}>
                     {(displayField && val[displayField]) ||
                       `Referenced ${collection}`}
-                  </div>
+                  </span>
                 </Link>
               )
             })}

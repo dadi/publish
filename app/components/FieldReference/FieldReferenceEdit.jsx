@@ -178,10 +178,10 @@ export default class FieldReferenceEdit extends React.Component {
                       href={`${referencedCollection._publishLink}/${value._id}`}
                       key={value._id}
                     >
-                      <div className={styles.value}>
+                      <span className={styles.value}>
                         {(displayField && value[displayField]) ||
                           `Referenced ${displayName}`}
-                      </div>
+                      </span>
                     </a>
                   )
                 }
