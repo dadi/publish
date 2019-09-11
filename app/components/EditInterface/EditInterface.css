@@ -24,10 +24,17 @@
 
 .main,
 .sidebar {
-  padding: 40px;
+  padding: var(--edit-margin-lg);
 }
 
-@media (min-width: 600px) {
+@media (min-width: 1024px) {
+  .main,
+  .sidebar {
+    padding: var(--edit-margin-xxl);
+  }
+}
+
+@media (min-width: 768px) {
   .main:not(.main-full) {
     width: 66.6666%;
     margin-left: auto;
@@ -42,7 +49,7 @@
   background-color: white;
 }
 
-@media (min-width: 600px) {
+@media (min-width: 768px) {
   .sidebar {
     width: 33.3333%;
     width: calc(100% / 3);

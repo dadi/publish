@@ -1,6 +1,12 @@
 .edit-value-container {
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
+  margin: -10px 0 0 -10px;
+}
+
+.edit-value-container > div {
+  margin: 10px 0 0 10px;
 }
 
 .list-value-container {
@@ -8,11 +14,16 @@
 }
 
 .values {
-  flex: 1;
+  /*
+  The .buttons div needs flex 1 when it's wrapped over to the next line, but the
+  ratio between .values and .buttons should be effectively 1/0 when on the same
+  line, hence 10000/1 as an approximation of 1/0.
+  */
+  flex: 10000;
   display: flex;
   flex-flow: column nowrap;
   align-items: flex-start;
-  min-width: 0;
+  min-width: 160px;
 }
 
 .edit-value-container .values {
@@ -24,10 +35,12 @@
 
 .buttons {
   display: flex;
+  flex: 1;
 }
 
 .value,
-.value-link {
+.value-link,
+.with-ellipsis {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -47,6 +60,10 @@
 }
 
 .button {
+  flex: 1 !important;
+}
+
+.button:not(:first-child) {
   margin-left: 10px !important;
 }
 

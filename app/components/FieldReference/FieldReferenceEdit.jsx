@@ -228,9 +228,12 @@ export default class FieldReferenceEdit extends React.Component {
               accent="positive"
               className={styles['placeholder-button']}
               data-name="select-existing-reference-button"
+              narrow
               onClick={onEditReference}
             >
-              Select existing {displayName.toLowerCase()}
+              <span className={styles['with-ellipsis']}>
+                Select existing {displayName.toLowerCase()}
+              </span>
             </Button>
           </div>
         )}

@@ -68,8 +68,8 @@
   --edit-color-highlight-2: #eaf5f2;
 
   --edit-margin-xxl: 40px;
-  --edit-margin-xl: 32px;
-  --edit-margin-lg: 24px;
+  --edit-margin-xl: 30px;
+  --edit-margin-lg: 20px;
   --edit-margin-md: 16px;
   --edit-margin-sm: 12px;
   --edit-margin-xs: 8px;
@@ -104,12 +104,13 @@
   --edit-line-height-standard: 1.4;
 
   --edit-z-index-standard: 1;
-  --edit-z-index-toolbar: 2;
-  --edit-z-index-dropdown: 3;
-  --edit-z-index-drawer: 4;
-  --edit-z-index-modal: 5;
-  --edit-z-index-dropdown-overlay: 6;
-  --edit-z-index-drawer-overlay: 7;
+  --edit-z-index-rich-editor-toolbar: 2;
+  --edit-z-index-toolbar: 3;
+  --edit-z-index-dropdown: 4;
+  --edit-z-index-modal: 6;
+  --edit-z-index-dropdown-overlay: 7;
+  --edit-z-index-drawer-overlay: 8;
+  --edit-z-index-drawer: 9;
 
   --edit-color-shadow: var(--edit-color-opacity-80);
   --edit-color-shadow-dark: var(--edit-color-opacity-40);

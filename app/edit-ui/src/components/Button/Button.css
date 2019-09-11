@@ -11,9 +11,7 @@
   transition-property: background-color, border-color, color;
   transition-duration: var(--edit-transition-duration-standard);
   outline: none;
-
   border: solid var(--edit-border-width-standard);
-
   border-radius: var(--edit-radius-button);
   height: var(--edit-elem-height-medium);
   padding: 0 30px;
