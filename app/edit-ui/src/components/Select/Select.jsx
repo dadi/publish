@@ -8,7 +8,7 @@ import styles from './Select.css'
 export default function Select({
   className,
   dir = 'down',
-  native,
+  useNativeOnMobile = true,
   onChange,
   options,
   style,
@@ -18,7 +18,9 @@ export default function Select({
     onChange
   ])
 
-  if (native) {
+  const mobile = false
+
+  if (mobile && useNativeOnMobile) {
     return (
       <div
         className={classnames(
