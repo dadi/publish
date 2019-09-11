@@ -89,14 +89,14 @@ class DocumentEditToolbar extends React.Component {
     const secondary = [
       {
         text: 'Save & create new',
-        action: this.handleSave.bind(
+        onClick: this.handleSave.bind(
           this,
           Constants.SAVE_ACTION_SAVE_AND_CREATE_NEW
         )
       },
       {
         text: 'Save & go back',
-        action: this.handleSave.bind(
+        onClick: this.handleSave.bind(
           this,
           Constants.SAVE_ACTION_SAVE_AND_GO_BACK
         )
@@ -106,7 +106,7 @@ class DocumentEditToolbar extends React.Component {
     if (documentId) {
       secondary.push({
         text: 'Save as duplicate',
-        action: this.handleSave.bind(
+        onClick: this.handleSave.bind(
           this,
           Constants.SAVE_ACTION_SAVE_AS_DUPLICATE
         )
