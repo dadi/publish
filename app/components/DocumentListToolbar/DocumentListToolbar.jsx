@@ -58,6 +58,7 @@ export default class DocumentListToolbar extends React.Component {
     this.goToNext = this.goToNext.bind(this)
     this.handleInputChange = this.handleInputChange.bind(this)
     this.handleInputKeyDown = this.handleInputKeyDown.bind(this)
+    this.handleSelectChange = e => this.goToPage(e.target.value)
 
     this.state = {
       goToPageValue: ''
@@ -207,7 +208,7 @@ export default class DocumentListToolbar extends React.Component {
             <div className={styles['page-select']}>
               <Select
                 dir="up"
-                onChange={this.goToPage}
+                onChange={this.handleSelectChange}
                 options={selectPageOptions}
                 value={page}
               />

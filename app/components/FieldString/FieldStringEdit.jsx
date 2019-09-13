@@ -1,3 +1,4 @@
+import {Select, TextInput} from '@dadi/edit-ui'
 import Button from 'components/Button/Button'
 import formatLink from 'lib/util/formatLink'
 import Label from 'components/Label/Label'
@@ -7,7 +8,6 @@ import RichEditor from 'components/RichEditor/RichEditor'
 import SortableList from 'components/SortableList/SortableList'
 import Style from 'lib/Style'
 import styles from './FieldString.css'
-import {TextInput} from '@dadi/edit-ui'
 
 function getValueOfDropdown(element) {
   const selectedOptions = Array.from(
@@ -192,11 +192,6 @@ export default class FieldStringEdit extends React.Component {
     const {error, name, readOnly, schema, value} = this.props
     const publishBlock = schema.publish || {}
     const {multiple, options} = publishBlock
-    const selectLabel = `Please select${schema.label ? ` ${schema.label}` : ''}`
-
-    const dropdownStyle = new Style(styles, 'dropdown')
-      .addIf('dropdown-error', error)
-      .addIf('dropdown-multiple', multiple)
 
     let selectedValue = value || schema.default || ''
 
@@ -204,34 +199,22 @@ export default class FieldStringEdit extends React.Component {
       selectedValue = [selectedValue]
     }
 
-    return (
-      <select
-        className={dropdownStyle.getClasses()}
-        disabled={readOnly}
-        onChange={this.handleSelectionChangeEvent}
-        multiple={multiple}
-        name={name}
-        ref={this.selectDropdownOptions.bind(this, multiple)}
-        value={selectedValue}
-      >
-        {!multiple && (
-          <option className={styles['dropdown-option']} disabled value="">
-            {selectLabel}
-          </option>
-        )}
+    const placeholder = {
+      disabled: true,
+      label: ('Please select ' + (schema.label || '')).trim(),
+      value: ''
+    }
 
-        {options.map(option => {
-          return (
-            <option
-              className={styles['dropdown-option']}
-              key={option.value}
-              value={option.value}
-            >
-              {option.label}
-            </option>
-          )
-        })}
-      </select>
+    return (
+      <Select
+        inFieldComponent
+        name={name}
+        options={multiple ? options : [placeholder, ...options]}
+        value={selectedValue}
+        multiple={multiple}
+        onChange={this.handleSelectionChangeEvent}
+        readOnly={readOnly}
+      />
     )
   }
 
@@ -320,17 +303,5 @@ export default class FieldStringEdit extends React.Component {
         value={value}
       />
     )
-  }
-
-  selectDropdownOptions(isMultiple, input) {
-    const {value} = this.props
-
-    if (!input || !input.options || !isMultiple) return
-
-    for (let i = 0; i < input.options.length; i++) {
-      if (value.includes(input.options[i].value)) {
-        input.options[i].selected = true
-      }
-    }
   }
 }

@@ -2,26 +2,52 @@
   --icon-margin-left: 4px;
   --icon-margin-right: -6px;
   --icon-size: var(--edit-icon-size-md);
-  --select-padding: var(--edit-margin-sm);
+  --select-padding: var(--edit-margin-md);
   --height: var(--edit-elem-height-medium);
 
   position: relative;
 }
 
+.container.multiple:not(.native) {
+  padding-left: var(--select-padding);
+}
+
+.container.multiple {
+  padding-top: var(--edit-margin-xs);
+}
+
 .select {
-  height: var(--height);
   transition: all var(--edit-transition-duration-standard);
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0 var(--select-padding);
   cursor: pointer;
   border: solid var(--edit-border-width-standard) var(--edit-color-border-light);
   background-color: var(--edit-color-background-2);
   border-radius: var(--edit-radius-input);
-  color: var(--edit-color-text-2);
   outline: 0;
   appearance: none;
+  width: 100%;
+}
+
+.container:not(.inFieldComponent):not(.open) .select:not(:hover) {
+  color: var(--edit-color-text-2);
+}
+
+.container.multiple .select {
+  padding: var(--edit-margin-xxs) var(--select-padding);
+}
+
+.container:not(.multiple) .select {
+  height: var(--height);
+  padding: 0 var(--select-padding);
+}
+
+.container.native:not(.multiple) .select {
+  padding-right: calc(
+    var(--select-padding) + var(--icon-size) + var(--icon-margin-left) +
+      var(--icon-margin-right)
+  );
 }
 
 .select:hover,
@@ -44,6 +70,17 @@
   border-bottom-right-radius: 0;
 }
 
+.container.readOnly .select {
+  background-color: var(--edit-color-background-1);
+  border: none;
+  cursor: default;
+}
+
+.container.disabled .select {
+  color: var(--edit-color-text-3);
+  cursor: default;
+}
+
 .arrowIcon {
   margin-left: var(--icon-margin-left);
   margin-right: var(--icon-margin-right);
@@ -54,7 +91,21 @@
   pointer-events: none;
 }
 
-.container:hover .arrowIcon,
+.container.native .arrowIcon {
+  position: absolute;
+  right: var(--select-padding);
+  top: calc((var(--height) - var(--icon-size)) / 2);
+}
+
+.container.readOnly .arrowIcon {
+  display: none;
+}
+
+.container.disabled .arrowIcon {
+  color: var(--edit-color-text-3);
+}
+
+.container:not(.disabled):hover .arrowIcon,
 .container.open .select .arrowIcon {
   color: var(--edit-color-text-1);
 }
@@ -103,19 +154,35 @@
   white-space: nowrap;
 }
 
-.option:hover {
+.container.inFieldComponent .option {
+  justify-content: flex-start;
+  padding: 0 var(--select-padding);
+}
+
+.container.disabled.multiple.native option {
+  color: var(--edit-color-text-3);
+}
+
+.option:not(.disabledOption):hover {
   background-color: var(--edit-color-background-3);
 }
 
-.container.native .select {
-  padding-right: calc(
-    var(--select-padding) + var(--icon-size) + var(--icon-margin-left) +
-      var(--icon-margin-right)
-  );
+.option.disabledOption {
+  color: var(--edit-color-text-3);
+  cursor: default;
 }
 
-.container.native .arrowIcon {
-  position: absolute;
-  right: var(--select-padding);
-  top: calc((var(--height) - var(--icon-size)) / 2);
+.checkboxWrapper {
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: center;
+  margin-bottom: var(--edit-margin-xxs);
+}
+
+.checkboxWrapper .label {
+  margin-left: var(--edit-margin-xxs);
+}
+
+.checkboxWrapper.disabled {
+  color: var(--edit-color-text-3);
 }
