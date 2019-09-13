@@ -20,7 +20,8 @@
     "tokenCollection": "token-store",
     "datastore": "@dadi/api-filestore",
     "database": "dadicloud",
-    "hashSecrets": false
+    "hashSecrets": false,
+    "tokenKey": "hello-world"
   },
   "caching": {
     "ttl": 1200,
