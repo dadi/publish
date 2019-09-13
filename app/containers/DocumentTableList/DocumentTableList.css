@@ -11,6 +11,7 @@
   overflow-x: auto;
   padding-left: var(--padding-small);
   display: flex;
+  -webkit-overflow-scrolling: touch;
 }
 
 .table-wrapper .after {
