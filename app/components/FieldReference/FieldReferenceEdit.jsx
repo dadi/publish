@@ -231,9 +231,7 @@ export default class FieldReferenceEdit extends React.Component {
               narrow
               onClick={onEditReference}
             >
-              <span className={styles['with-ellipsis']}>
-                Select existing {displayName.toLowerCase()}
-              </span>
+              Select
             </Button>
           </div>
         )}

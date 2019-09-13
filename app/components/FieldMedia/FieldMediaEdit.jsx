@@ -216,10 +216,6 @@ export default class FieldMediaEdit extends React.Component {
     } = this.props
     const {isInvalidMimeType} = this.state
     const acceptedMimeTypes = schema.validation && schema.validation.mimeTypes
-    const fieldLocalType =
-      schema.publish && schema.publish.subType
-        ? schema.publish.subType
-        : schema.type
     const singleFile = schema.settings && schema.settings.limit === 1
     const values = value && !Array.isArray(value) ? [value] : value
     const isReadOnly = schema.publish && schema.publish.readonly === true
@@ -292,7 +288,7 @@ export default class FieldMediaEdit extends React.Component {
                 onClick={onEditReference}
                 size="small"
               >
-                Select existing {fieldLocalType.toLowerCase()}
+                Select
               </Button>
             </div>
 
