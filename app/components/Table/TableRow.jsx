@@ -1,9 +1,8 @@
+import {Checkbox} from '@dadi/edit-ui'
 import proptypes from 'prop-types'
 import React from 'react'
-
 import Style from 'lib/Style'
 import styles from './Table.css'
-
 import TableRowCell from 'components/Table/TableRowCell'
 
 /**
@@ -115,12 +114,11 @@ export default class TableRow extends React.Component {
       >
         {selectable && (
           <TableRowCell select={true}>
-            <input
+            <Checkbox
               checked={selected}
               className={styles.checkbox}
               disabled={selectableMode === 'multiDisabled'}
               readOnly={true}
-              type={selectableMode === 'single' ? 'radio' : 'checkbox'}
             />
           </TableRowCell>
         )}

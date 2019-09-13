@@ -34,13 +34,12 @@ export default class TableRowCell extends React.Component {
 
     return (
       <td className={cellStyle.getClasses()}>
-        {React.Children.map(this.renderChildren(), child =>
-          // If the child is a HTMLElement (type is a string), don't do anything.
-          // Otherwise the child is a React Component; pass the onHover callback.
-          typeof child.type === 'string'
-            ? child
-            : React.cloneElement(child, {onHover})
-        )}
+        {React.Children.map(this.renderChildren(), child => {
+          // Only pass onHover to field components.
+          return child.type.name.startsWith('Field')
+            ? React.cloneElement(child, {onHover})
+            : child
+        })}
       </td>
     )
   }
