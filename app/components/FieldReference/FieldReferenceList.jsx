@@ -66,42 +66,38 @@ export default class FieldReferenceList extends React.Component {
     const firstStringField = this.findFirstStringField(displayableFields)
     const values = value && !(value instanceof Array) ? [value] : value
 
-    if (values) {
-      return (
-        <div className={styles['list-value-container']}>
-          <div className={styles.values}>
-            {values.map(val => {
-              const collection = schema.settings.collection
-              const editLink = `${referencedCollection._publishLink}/${val._id}`
-              const displayField =
-                (optionsBlock && optionsBlock.displayField) || firstStringField
-                  ? firstStringField.key
-                  : null
-
-              return (
-                <Link
-                  className={styles['value-link']}
-                  key={editLink}
-                  onMouseEnter={this.hoverOn}
-                  onMouseLeave={this.hoverOff}
-                  to={editLink}
-                >
-                  <span className={styles.value}>
-                    {(displayField && val[displayField]) ||
-                      `Referenced ${collection}`}
-                  </span>
-                </Link>
-              )
-            })}
-          </div>
-          <div />
-        </div>
-      )
+    if (!values) {
+      return null
     }
 
     return (
-      <div className={styles.values}>
-        <div className={styles.empty}>None</div>
+      <div className={styles['list-value-container']}>
+        <div className={styles.values}>
+          {values.map(val => {
+            const collection = schema.settings.collection
+            const editLink = `${referencedCollection._publishLink}/${val._id}`
+            const displayField =
+              (optionsBlock && optionsBlock.displayField) || firstStringField
+                ? firstStringField.key
+                : null
+
+            return (
+              <Link
+                className={styles['value-link']}
+                key={editLink}
+                onMouseEnter={this.hoverOn}
+                onMouseLeave={this.hoverOff}
+                to={editLink}
+              >
+                <span className={styles.value}>
+                  {(displayField && val[displayField]) ||
+                    `Referenced ${collection}`}
+                </span>
+              </Link>
+            )
+          })}
+        </div>
+        <div />
       </div>
     )
   }
