@@ -1,5 +1,4 @@
-import {Select, TextInput} from '@dadi/edit-ui'
-import Button from 'components/Button/Button'
+import {Button, Select, TextInput} from '@dadi/edit-ui'
 import formatLink from 'lib/util/formatLink'
 import Label from 'components/Label/Label'
 import proptypes from 'prop-types'
@@ -18,6 +17,10 @@ function getValueOfDropdown(element) {
   // If this isn't a multiple value select, we want to return the selected
   // value as a single element and not wrapped in a one-element array.
   return element.attributes.multiple ? selectedOptions : selectedOptions[0]
+}
+
+function openLink(href) {
+  window.open(/^\w+:\/\//.exec(href) ? href : 'http://' + href, '_blank')
 }
 
 /**
@@ -226,7 +229,7 @@ export default class FieldStringEdit extends React.Component {
     const link = formatLink(value, display.link)
 
     return (
-      <>
+      <div className={styles['free-input-wrapper']}>
         <TextInput
           accent={error ? 'error' : undefined}
           autoresize={multiline}
@@ -244,17 +247,14 @@ export default class FieldStringEdit extends React.Component {
         />
 
         {link && (
-          <Button
-            accent="neutral"
-            className={styles['link-preview']}
-            href={link}
-            openInNewWindow={true}
-            size="small"
-          >
-            Open in new window
+          <Button accent="positive" narrow onClick={() => openLink(value)}>
+            <span>Open </span>
+            <i className="material-icons" id={styles['open-icon']}>
+              open_in_new
+            </i>
           </Button>
         )}
-      </>
+      </div>
     )
   }
 

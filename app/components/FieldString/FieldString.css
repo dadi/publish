@@ -20,3 +20,21 @@
   overflow: hidden;
   white-space: nowrap;
 }
+
+.free-input-wrapper {
+  display: flex;
+  margin: -10px 0 0 -10px;
+}
+
+.free-input-wrapper > * {
+  margin: 10px 0 0 10px;
+}
+
+.free-input-wrapper input {
+  flex: 1;
+}
+
+#open-icon {
+  font-size: var(--edit-icon-size-sm);
+  margin-left: var(--edit-margin-xxs);
+}
