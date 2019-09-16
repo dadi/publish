@@ -215,7 +215,7 @@ export default class FieldReferenceEdit extends React.Component {
                   narrow
                   onClick={this.handleRemove}
                 >
-                  Remove
+                  Clear
                 </Button>
               )}
             </div>

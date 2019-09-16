@@ -1,3 +1,4 @@
+import {Select} from '@dadi/edit-ui'
 import DateTime from 'lib/datetime'
 import proptypes from 'prop-types'
 import React from 'react'
@@ -49,8 +50,7 @@ export default class DateTimePicker extends React.Component {
 
     this.state = {
       displayDate,
-      monthOffset: 0,
-      pickingTime: false
+      monthOffset: 0
     }
   }
 
@@ -77,34 +77,6 @@ export default class DateTimePicker extends React.Component {
 
     if (newState) {
       this.setState(newState)
-    }
-  }
-
-  componentDidUpdate(_, prevState) {
-    const {date} = this.props
-    const {pickingTime} = this.state
-
-    // Let's find the closest hour to the one currently selected, so we can
-    // adjust the scroll position accordingly.
-    if (date && !prevState.pickingTime && pickingTime) {
-      let closestDate
-
-      this.hoursRefs.some(hourRef => {
-        if (hourRef.date.getTime() > date.getTime()) {
-          return true
-        }
-
-        closestDate = hourRef
-
-        return false
-      })
-
-      const offset = closestDate && closestDate.element.offsetTop
-
-      if (this.hoursContainerRef) {
-        this.hoursContainerRef.scrollTop =
-          offset - this.hoursContainerRef.clientHeight / 2
-      }
     }
   }
 
@@ -137,11 +109,17 @@ export default class DateTimePicker extends React.Component {
       newDate.setUTCMinutes(overrides.minutes)
     }
 
+    if (overrides.seconds !== undefined) {
+      newDate.setUTCSeconds(overrides.seconds)
+    }
+
     return newDate
   }
 
   handleDatePick(date) {
     const {onChange} = this.props
+
+    console.log('!!!', date)
 
     if (typeof onChange === 'function') {
       onChange.call(this, date)
@@ -159,17 +137,9 @@ export default class DateTimePicker extends React.Component {
     })
   }
 
-  handleTimeToggle() {
-    const {pickingTime} = this.state
-
-    this.setState({
-      pickingTime: !pickingTime
-    })
-  }
-
   render() {
     const {className, showTimePicker} = this.props
-    const {displayDate, pickingTime} = this.state
+    const {displayDate} = this.state
     const containerStyle = new Style(styles, 'container').addResolved(className)
     const firstDayOfMonth = new Date(
       Date.UTC(displayDate.getUTCFullYear(), displayDate.getUTCMonth(), 1)
@@ -186,7 +156,6 @@ export default class DateTimePicker extends React.Component {
         7
     )
     const displayDateTime = new DateTime(displayDate)
-
     const rows = []
 
     for (let week = 0; week < numWeeks; week++) {
@@ -203,11 +172,10 @@ export default class DateTimePicker extends React.Component {
       <div className={containerStyle.getClasses()}>
         <div className={styles.head}>
           <button
-            className={styles.arrow}
+            className={`${styles['page-icon']} ${styles['page-icon-prev']}`}
             onClick={this.handleMonthChange.bind(this, -1)}
-            type="button"
           >
-            ←
+            <i className="material-icons">expand_more</i>
           </button>
 
           <p className={styles['current-date']}>
@@ -215,11 +183,10 @@ export default class DateTimePicker extends React.Component {
           </p>
 
           <button
-            className={styles.arrow}
-            onClick={this.handleMonthChange.bind(this, 1)}
-            type="button"
+            className={`${styles['page-icon']} ${styles['page-icon-next']}`}
+            onClick={this.handleMonthChange.bind(this, -1)}
           >
-            →
+            <i className="material-icons">expand_more</i>
           </button>
         </div>
 
@@ -238,19 +205,7 @@ export default class DateTimePicker extends React.Component {
           <tbody>{rows}</tbody>
         </table>
 
-        {showTimePicker && (
-          <>
-            <button
-              className={styles['hours-launcher']}
-              onClick={this.handleTimeToggle.bind(this)}
-              type="button"
-            >
-              {displayDateTime.format('HH:mm')}
-            </button>
-
-            {pickingTime && this.renderHours()}
-          </>
-        )}
+        {showTimePicker && this.renderHours(displayDateTime)}
       </div>
     )
   }
@@ -284,45 +239,53 @@ export default class DateTimePicker extends React.Component {
     )
   }
 
-  renderHours() {
-    const hours = []
+  renderHours(displayDateTime) {
+    const selectOptions = []
+    const selectValues = []
+    const currentTimeLabel = displayDateTime.format('HH:mm')
+
+    let valueIndex = -1
 
     for (let i = 0; i < 24 * this.TIME_PICKER_HOUR_SUBDIVISIONS; i++) {
       const date = this.getInternalDate({
         hours: 0,
-        minutes: i * 30
+        minutes: i * 30,
+        seconds: 0
+      })
+      const label = new DateTime(date).format('HH:mm')
+
+      selectOptions.push({
+        label,
+        value: i
       })
 
-      hours.push(
-        <li key={date.getTime()}>
-          <button
-            className={styles.hour}
-            onClick={this.handleDatePick.bind(this, date)}
-            ref={element => {
-              this.hoursRefs[i] = {
-                date,
-                element
-              }
-            }}
-            type="button"
-          >
-            {new DateTime(date).format('HH:mm')}
-          </button>
-        </li>
-      )
+      if (label === currentTimeLabel) {
+        valueIndex = i
+      }
+
+      // `Select` can only hold string values, so we need to store the actual
+      // Date objects in a separate array and then retrieve them by index.
+      selectValues.push(date)
+    }
+
+    // If `valueIndex` is -1, it means the current time isn't one of the set
+    // intervals (e.g. 19:43). In this case, we add that value as an option
+    // to <Select>, and make it both selected and disabled.
+    if (valueIndex === -1) {
+      selectOptions.unshift({
+        disabled: true,
+        label: currentTimeLabel,
+        value: valueIndex
+      })
     }
 
     return (
-      <div className={styles['hours-container']}>
-        <ul
-          className={styles.hours}
-          ref={element => {
-            this.hoursContainerRef = element
-          }}
-        >
-          {hours}
-        </ul>
-      </div>
+      <Select
+        dir="up"
+        onChange={e => this.handleDatePick(selectValues[e.target.value])}
+        options={selectOptions}
+        value={valueIndex}
+      />
     )
   }
 }

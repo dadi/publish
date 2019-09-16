@@ -1,8 +1,6 @@
 .container {
   display: inline-block;
-  padding: 10px;
   background-color: var(--theme-colour-background, #ffffff);
-  box-shadow: 7px 6px 25px rgba(0, 0, 0, 0.3);
   border: 1px solid #dddddd;
   border-radius: 4px;
   z-index: 2000;
@@ -12,111 +10,67 @@
   font-size: var(--theme-font-size-normal, 16px);
 }
 
-.arrow {
-  font-family: system-ui;
-  font-size: 12px;
+.page-icon {
+  color: var(--edit-color-text-3);
+  margin: var(--edit-margin-xs);
   padding: 0;
+}
+
+.page-icon i {
+  font-size: var(--edit-icon-size-md);
+  margin: -4px;
+  vertical-align: middle;
+}
+
+.page-icon-prev i {
+  transform: rotate(90deg);
+}
+
+.page-icon-next i {
+  transform: rotate(-90deg);
 }
 
 .head {
   display: flex;
   align-items: center;
+  color: var(--edit-color-grayscale-20);
   justify-content: space-between;
-}
-
-.current-date {
-  font-weight: bold;
+  background-color: var(--edit-color-background-2);
+  min-width: 200px;
 }
 
 .calendar {
-  margin-top: 10px;
+  margin: 10px 6px;
 }
 
 .calendar-head {
+  color: var(--edit-color-grayscale-40);
+  font-size: var(--edit-font-size-small);
   padding-bottom: 5px;
 }
 
 .calendar-day {
   border: 1px solid transparent;
   border-radius: 3px;
+  color: var(--edit-color-grayscale-60);
   cursor: pointer;
-  padding: 2px 4px;
+  padding: 4px 6px;
   text-align: center;
   width: 100%;
 }
 
 .calendar-day:hover {
-  background-color: var(--theme-colour-background-shade-2, #aaaaaa);
-  color: var(--theme-colour-secondary, #ffffff);
+  background-color: var(--edit-color-grayscale-90);
 }
 
 .calendar-day-current {
-  border-color: var(--theme-colour-data, #4a91ff);
+  border-color: var(--edit-color-positive-hint);
 }
 
 .calendar-day-faded {
-  color: #cccccc;
+  color: var(--edit-color-grayscale-85);
 }
 
 .calendar-day-active {
-  background-color: var(--theme-colour-data, #4a91ff);
-  color: var(--theme-colour-secondary, #ffffff);
-}
-
-.hours-launcher {
-  border-radius: 3px;
-  background-color: var(--theme-colour-data, #4a91ff);
-  color: var(--theme-colour-secondary, #ffffff);
-  cursor: pointer;
-  margin-top: 10px;
-  padding: 5px;
-  width: 100%;
-}
-
-.hours-container {
-  position: relative;
-}
-
-.hours {
-  background-color: var(--theme-colour-background-shade-4, #e4e4e4);
-  border-radius: 4px;
-  color: var(--theme-colour-primary, #000000);
-  margin-top: 10px;
-  max-height: 160px;
-  overflow: scroll;
-  text-align: center;
-  -webkit-overflow-scrolling: touch;
-}
-
-.hours:before,
-.hours:after {
-  border-radius: 4px;
-  position: absolute;
-  right: 0;
-  left: 0;
-  pointer-events: none;
-  height: 40px;
-  content: ' ';
-  display: block;
-  z-index: 1;
-}
-
-.hours:before {
-  background: linear-gradient(to bottom, #aaaaaa, rgba(255, 255, 255, 0));
-  top: 0;
-}
-
-.hours:after {
-  background: linear-gradient(to top, #aaaaaa, rgba(255, 255, 255, 0));
-  bottom: 0;
-}
-
-.hour {
-  padding: 5px;
-  width: 100%;
-}
-
-.hour:hover {
-  background-color: var(--theme-colour-data, #4a91ff);
-  color: var(--theme-colour-secondary, #ffffff);
+  background-color: var(--edit-color-positive-hint);
 }

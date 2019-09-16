@@ -182,6 +182,7 @@ export default class TextInputWithDatePicker extends React.Component {
 
     setTimeout(() => {
       this.setState({
+        internalValue: null,
         pickerVisible: false
       })
     }, 200)
@@ -235,17 +236,23 @@ export default class TextInputWithDatePicker extends React.Component {
         ref={el => (this.rootEl = el)}
       >
         <TextInput
-          className={inputClassName}
           autoComplete="off"
+          className={inputClassName + (readOnly ? ` ${styles.input}` : '')}
           onBlur={null && this.handleFocus.bind(this, false)}
           onChange={this.handleInputChange.bind(this)}
-          onKeyDown={this.hotKeys.capture(true)}
           onFocus={this.handleFocus.bind(this, true)}
+          onKeyDown={this.hotKeys.capture(true)}
           placeholder={placeholder}
           readOnly={readOnly}
           type="text"
           value={internalValue || (dateObj && dateObj.format(format))}
         />
+
+        {!readOnly && (
+          <i className={`material-icons ${styles['calendar-icon']}`}>
+            calendar_today
+          </i>
+        )}
 
         {pickerVisible && (
           <DateTimePicker
