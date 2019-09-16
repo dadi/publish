@@ -1,61 +1,23 @@
-/* karla-regular - latin */
 @font-face {
-  font-family: 'Karla';
+  font-family: 'HelveticaNow';
+  font-weight: normal;
   font-style: normal;
-  font-weight: 400;
-  src: local('Karla'), local('Karla-Regular'),
-    url('/_public/fonts/karla-v5-latin-regular.woff2') format('woff2'),
-    /* Chrome 26+, Opera 23+, Firefox 39+ */
-      url('/_public/fonts/karla-v5-latin-regular.woff') format('woff'); /* Chrome 6+, Firefox 3.6+, IE 9+, Safari 5.1+ */
+  src: url('/_public/fonts/3A1A43_0_0.eot');
+  src: url('/_public/fonts/3A1A43_0_0.eot?#iefix') format('embedded-opentype'),
+    url('/_public/fonts/3A1A43_0_0.woff2') format('woff2'),
+    url('/_public/fonts/3A1A43_0_0.woff') format('woff'),
+    url('/_public/fonts/3A1A43_0_0.ttf') format('truetype');
 }
-/* karla-italic - latin */
+
 @font-face {
-  font-family: 'Karla';
-  font-style: italic;
-  font-weight: 400;
-  src: local('Karla Italic'), local('Karla-Italic'),
-    url('/_public/fonts/karla-v5-latin-italic.woff2') format('woff2'),
-    /* Chrome 26+, Opera 23+, Firefox 39+ */
-      url('/_public/fonts/karla-v5-latin-italic.woff') format('woff'); /* Chrome 6+, Firefox 3.6+, IE 9+, Safari 5.1+ */
-}
-/* karla-700 - latin */
-@font-face {
-  font-family: 'Karla';
+  font-family: 'HelveticaNow';
+  font-weight: bold;
   font-style: normal;
-  font-weight: 700;
-  src: local('Karla Bold'), local('Karla-Bold'),
-    url('/_public/fonts/karla-v5-latin-700.woff2') format('woff2'),
-    /* Chrome 26+, Opera 23+, Firefox 39+ */
-      url('/_public/fonts/karla-v5-latin-700.woff') format('woff'); /* Chrome 6+, Firefox 3.6+, IE 9+, Safari 5.1+ */
-}
-/* karla-700 (explicit) - latin */
-@font-face {
-  font-family: 'Karla Bold';
-  src: local('Karla Bold'), local('Karla-Bold'),
-    url('/_public/fonts/karla-v5-latin-700.woff2') format('woff2'),
-    /* Chrome 26+, Opera 23+, Firefox 39+ */
-      url('/_public/fonts/karla-v5-latin-700.woff') format('woff'); /* Chrome 6+, Firefox 3.6+, IE 9+, Safari 5.1+ */
-}
-/* karla-700italic - latin */
-@font-face {
-  font-family: 'Karla';
-  font-style: italic;
-  font-weight: 700;
-  src: local('Karla Bold Italic'), local('Karla-BoldItalic'),
-    url('/_public/fonts/karla-v5-latin-700italic.woff2') format('woff2'),
-    /* Chrome 26+, Opera 23+, Firefox 39+ */
-      url('/_public/fonts/karla-v5-latin-700italic.woff') format('woff'); /* Chrome 6+, Firefox 3.6+, IE 9+, Safari 5.1+ */
-}
-/* roboto-mono-regular - latin */
-/* roboto-mono-regular - latin */
-@font-face {
-  font-family: 'Roboto Mono';
-  font-style: normal;
-  font-weight: 400;
-  src: local('Roboto Mono'), local('RobotoMono-Regular'),
-    url('/_public/fonts/roboto-mono-v5-latin-regular.woff2') format('woff2'),
-    /* Chrome 26+, Opera 23+, Firefox 39+ */
-      url('/_public/fonts/roboto-mono-v5-latin-regular.woff') format('woff'); /* Chrome 6+, Firefox 3.6+, IE 9+, Safari 5.1+ */
+  src: url('/_public/fonts/3A1A43_1_0.eot');
+  src: url('/_public/fonts/3A1A43_1_0.eot?#iefix') format('embedded-opentype'),
+    url('/_public/fonts/3A1A43_1_0.woff2') format('woff2'),
+    url('/_public/fonts/3A1A43_1_0.woff') format('woff'),
+    url('/_public/fonts/3A1A43_1_0.ttf') format('truetype');
 }
 
 :root strong {
@@ -96,8 +58,7 @@ select {
   --theme-colour-system: #ffbf0d;
   --theme-colour-system-invert: #040609;
   --theme-colour-highlight-1: #f3f8ff;
-  --theme-font-family: 'Karla', 'Helvetica Neue', Arial, Helvetica, Geneva,
-    sans-serif;
+  --theme-font-family: 'HelveticaNow', Helvetica, Geneva, sans-serif;
   --theme-font-size-small: 13px;
   --theme-font-size-normal: 16px;
   --theme-font-size-large: 20px;
