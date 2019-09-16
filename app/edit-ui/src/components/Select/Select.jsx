@@ -23,8 +23,9 @@ export default function Select({
   value
 }) {
   const mobile = false
-  const native = mobile && useNativeOnMobile
-  const [isOpen, setIsOpen] = useState(false)
+
+  // Always use native for single-option selection.
+  const native = !multiple || (mobile && useNativeOnMobile)
   const containerClasses = classnames(
     styles.container,
     styles['dir--' + dir],
@@ -33,14 +34,13 @@ export default function Select({
       [styles.inFieldComponent]: inFieldComponent,
       [styles.multiple]: multiple,
       [styles.native]: native,
-      [styles.open]: isOpen,
       [styles.readOnly]: readOnly
     },
     className
   )
 
   // Native, both single- and multiple-choice.
-  if (mobile && useNativeOnMobile) {
+  if (native) {
     return (
       <div className={containerClasses} style={style}>
         <select
@@ -94,100 +94,26 @@ export default function Select({
     [onChange, value]
   )
 
-  if (multiple) {
-    return (
-      <div className={containerClasses} style={style}>
-        {options.map(option => {
-          return (
-            <label
-              className={classnames(styles.checkboxWrapper, {
-                [styles.disabled]: disabled || option.disabled
-              })}
-              key={option.value}
-            >
-              <Checkbox
-                checked={value.includes(option.value)}
-                disabled={disabled || readOnly || option.disabled}
-                id={option.value}
-                onChange={handleCheck}
-              />
-              <div className={styles.label}>{option.label}</div>
-            </label>
-          )
-        })}
-      </div>
-    )
-  }
-
-  // Non-native, single-choice.
-  const toggleOptions = useCallback(
-    () => !disabled && !readOnly && setIsOpen(!isOpen),
-    [disabled, isOpen]
-  )
-
-  const handleClickOut = useCallback(e => {
-    if (!containerRef.current.contains(e.target)) {
-      setIsOpen(false)
-    }
-  }, [])
-
-  useEffect(() => {
-    if (isOpen) window.addEventListener('click', handleClickOut)
-
-    return () => window.removeEventListener('click', handleClickOut)
-  }, [isOpen])
-
-  const mappedOptions = useMemo(
-    () =>
-      options.map(option => ({
-        ...option,
-        onClick: option.disabled
-          ? undefined
-          : () => {
-              setIsOpen(false)
-              // This object imitates the relevant parts of the Event object to
-              // keep the interface consistent with the native <select>.
-              onChange({
-                target: {
-                  attributes: {multiple: false},
-                  selectedOptions: [{value: option.value}],
-                  value: option.value
-                }
-              })
-            }
-      })),
-    [options]
-  )
-
-  const containerRef = useRef()
-
-  const optionsHtml = mappedOptions.map(({disabled, label, onClick, value}) => (
-    <div
-      className={classnames(styles.option, {
-        [styles.disabledOption]: disabled
-      })}
-      key={value}
-      onClick={onClick}
-    >
-      {label}
-    </div>
-  ))
-
-  const {label} = options.find(option => option.value === value) || options[0]
-
   return (
-    <div className={containerClasses} ref={containerRef} style={style}>
-      <div className={styles.select} onClick={toggleOptions}>
-        {label}
-        <i className={classnames('material-icons', styles.arrowIcon)}>
-          expand_more
-        </i>
-      </div>
-      {/* The (invisible) `shadowOptions` element helps maintain width;
-      without it, the width of the `select` element changes depending
-      on the width of the selected label. */}
-      <div className={styles.shadowOptions}>{optionsHtml}</div>
-      {isOpen && <div className={styles.options}>{optionsHtml}</div>}
+    <div className={containerClasses} style={style}>
+      {options.map(option => {
+        return (
+          <label
+            className={classnames(styles.checkboxWrapper, {
+              [styles.disabled]: disabled || option.disabled
+            })}
+            key={option.value}
+          >
+            <Checkbox
+              checked={value.includes(option.value)}
+              disabled={disabled || readOnly || option.disabled}
+              id={option.value}
+              onChange={handleCheck}
+            />
+            <div className={styles.label}>{option.label}</div>
+          </label>
+        )
+      })}
     </div>
   )
 }
