@@ -22,10 +22,19 @@ export default function Select({
   useNativeOnMobile = true,
   value
 }) {
-  const mobile = false
+  // This isn't a bulletproof method for detecting devices with a touch screen,
+  // because there isn't one. Given that misidentifying a touch screen isn't a
+  // serious problem here – i.e. the user will get a non-optimal but still
+  // useable element – this should be good enough for us.
+  //
+  // Reference: http://www.stucox.com/blog/you-cant-detect-a-touchscreen/
+  const isTouchDevice = useMemo(
+    () => window.matchMedia('(pointer: coarse)').matches,
+    []
+  )
 
   // Always use native for single-option selection.
-  const native = !multiple || (mobile && useNativeOnMobile)
+  const native = !multiple || (isTouchDevice && useNativeOnMobile)
   const containerClasses = classnames(
     styles.container,
     styles['dir--' + dir],
