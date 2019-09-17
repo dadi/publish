@@ -84,7 +84,10 @@ export default function user(state = initialState, action = {}) {
       if (
         !action.error ||
         !action.error.code ||
-        action.error.code !== Constants.API_UNAUTHORISED_ERROR
+        ![
+          Constants.API_CONNECTION_ERROR,
+          Constants.API_UNAUTHORISED_ERROR
+        ].includes(action.error.code)
       ) {
         return state
       }
