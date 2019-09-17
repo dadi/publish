@@ -1,23 +1,19 @@
 @font-face {
-  font-family: 'HelveticaNow';
-  font-weight: normal;
-  font-style: normal;
-  src: url('/_public/fonts/3A1A43_0_0.eot');
-  src: url('/_public/fonts/3A1A43_0_0.eot?#iefix') format('embedded-opentype'),
-    url('/_public/fonts/3A1A43_0_0.woff2') format('woff2'),
-    url('/_public/fonts/3A1A43_0_0.woff') format('woff'),
-    url('/_public/fonts/3A1A43_0_0.ttf') format('truetype');
+  font-family: 'HelveticaNowText-Regular';
+  src: url('/_public/fonts/3A1BC5_0_0.eot');
+  src: url('/_public/fonts/3A1BC5_0_0.eot?#iefix') format('embedded-opentype'),
+    url('/_public/fonts/3A1BC5_0_0.woff2') format('woff2'),
+    url('/_public/fonts/3A1BC5_0_0.woff') format('woff'),
+    url('/_public/fonts/3A1BC5_0_0.ttf') format('truetype');
 }
 
 @font-face {
-  font-family: 'HelveticaNow';
-  font-weight: bold;
-  font-style: normal;
-  src: url('/_public/fonts/3A1A43_1_0.eot');
-  src: url('/_public/fonts/3A1A43_1_0.eot?#iefix') format('embedded-opentype'),
-    url('/_public/fonts/3A1A43_1_0.woff2') format('woff2'),
-    url('/_public/fonts/3A1A43_1_0.woff') format('woff'),
-    url('/_public/fonts/3A1A43_1_0.ttf') format('truetype');
+  font-family: 'HelveticaNowText-Bold';
+  src: url('/_public/fonts/3A1BC5_1_0.eot');
+  src: url('/_public/fonts/3A1BC5_1_0.eot?#iefix') format('embedded-opentype'),
+    url('/_public/fonts/3A1BC5_1_0.woff2') format('woff2'),
+    url('/_public/fonts/3A1BC5_1_0.woff') format('woff'),
+    url('/_public/fonts/3A1BC5_1_0.ttf') format('truetype');
 }
 
 :root strong {

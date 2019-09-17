@@ -237,7 +237,7 @@ export default class TextInputWithDatePicker extends React.Component {
       >
         <TextInput
           autoComplete="off"
-          className={inputClassName + (readOnly ? ` ${styles.input}` : '')}
+          className={inputClassName + (readOnly ? '' : ` ${styles.input}`)}
           onBlur={null && this.handleFocus.bind(this, false)}
           onChange={this.handleInputChange.bind(this)}
           onFocus={this.handleFocus.bind(this, true)}
