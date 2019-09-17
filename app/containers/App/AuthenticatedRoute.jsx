@@ -32,7 +32,7 @@ class AuthenticatedRoute extends React.Component {
     const apiError = window.__error__
 
     if (apiError) {
-      if (apiError.statusCode === 404) {
+      if (apiError.statusCode === 401 || apiError.statusCode === 404) {
         window.__error__ = null
 
         return <Redirect to="/sign-in" />
