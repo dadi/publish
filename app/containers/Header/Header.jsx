@@ -57,7 +57,7 @@ class Header extends React.Component {
       app: {
         config: {
           api,
-          whitelabel: {displayVersionNumber, logo}
+          whitelabel: {displayVersionNumber, logoLight}
         },
         version
       },
@@ -148,7 +148,7 @@ class Header extends React.Component {
         </ul>
 
         <div className={styles.logo}>
-          <img src={`/_public/${logo}`} />
+          <img src={`/_public/${logoLight}`} />
         </div>
 
         <div className={userMenuWrapperStyle.getClasses()}>
