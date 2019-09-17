@@ -4,9 +4,6 @@
   position: relative;
   cursor: pointer;
   box-sizing: border-box;
-  display: flex;
-  justify-content: center;
-  align-items: center;
   white-space: nowrap;
   transition-property: background-color, border-color, color;
   transition-duration: var(--edit-transition-duration-standard);

@@ -6,6 +6,14 @@ import styles from './Select.css'
 
 // Select.propTypes = {}
 
+// This isn't a bulletproof method for detecting devices with a touch screen,
+// because there isn't one. Given that misidentifying a touch screen isn't a
+// serious problem here – i.e. the user will get a non-optimal but still
+// useable element – this should be good enough for us.
+//
+// Reference: http://www.stucox.com/blog/you-cant-detect-a-touchscreen/
+const isTouchDevice = window.matchMedia('(pointer: coarse)').matches
+
 const MAX_SELECT_ROWS = 8
 
 export default function Select({
@@ -22,17 +30,6 @@ export default function Select({
   useNativeOnMobile = true,
   value
 }) {
-  // This isn't a bulletproof method for detecting devices with a touch screen,
-  // because there isn't one. Given that misidentifying a touch screen isn't a
-  // serious problem here – i.e. the user will get a non-optimal but still
-  // useable element – this should be good enough for us.
-  //
-  // Reference: http://www.stucox.com/blog/you-cant-detect-a-touchscreen/
-  const isTouchDevice = useMemo(
-    () => window.matchMedia('(pointer: coarse)').matches,
-    []
-  )
-
   // Always use native for single-option selection.
   const native = !multiple || (isTouchDevice && useNativeOnMobile)
   const containerClasses = classnames(
