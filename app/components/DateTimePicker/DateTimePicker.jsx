@@ -184,7 +184,7 @@ export default class DateTimePicker extends React.Component {
 
           <button
             className={`${styles['page-icon']} ${styles['page-icon-next']}`}
-            onClick={this.handleMonthChange.bind(this, -1)}
+            onClick={this.handleMonthChange.bind(this, +1)}
           >
             <i className="material-icons">expand_more</i>
           </button>
@@ -281,6 +281,7 @@ export default class DateTimePicker extends React.Component {
 
     return (
       <Select
+        className={styles['time-picker']}
         dir="up"
         onChange={e => this.handleDatePick(selectValues[e.target.value])}
         options={selectOptions}
