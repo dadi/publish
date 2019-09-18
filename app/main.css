@@ -60,3 +60,13 @@ select {
   --theme-font-size-large: 20px;
   --theme-toolbar-height: 63px;
 }
+
+:global #app {
+  height: 100%;
+  display: flex;
+  flex-flow: column nowrap;
+}
+
+:global #app > main {
+  flex: 1;
+}
