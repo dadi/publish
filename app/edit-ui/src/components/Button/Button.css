@@ -25,12 +25,19 @@
   height: var(--edit-elem-height-small);
 }
 
+.button.flat:not(.filled) {
+  border-color: transparent;
+}
+
 /* accent--positive */
 
 .button.accent--positive {
   background-color: var(--edit-color-background-1);
-  border-color: var(--edit-color-positive);
   color: var(--edit-color-positive);
+}
+
+.button.accent--positive:not(.flat) {
+  border-color: var(--edit-color-positive);
 }
 
 .button.accent--positive.filled {
@@ -52,8 +59,11 @@
 
 .button.accent--negative {
   background-color: var(--edit-color-background-1);
-  border-color: var(--edit-color-negative);
   color: var(--edit-color-negative);
+}
+
+.button.accent--negative:not(.flat) {
+  border-color: var(--edit-color-negative);
 }
 
 .button.accent--negative.filled {

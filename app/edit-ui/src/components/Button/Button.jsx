@@ -13,6 +13,7 @@ export default React.forwardRef(function Button(
     compact,
     disabled,
     filled,
+    flat,
     isLoading, // To be implemented.
     narrow,
     ...props
@@ -27,6 +28,7 @@ export default React.forwardRef(function Button(
           [styles['accent--' + accent]]: !disabled,
           // [styles['size--' + size]]: size,
           [styles.filled]: filled,
+          [styles.flat]: flat,
           [styles.narrow]: narrow,
           [styles.compact]: compact
         },
