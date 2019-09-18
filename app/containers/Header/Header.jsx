@@ -13,20 +13,16 @@ class Header extends React.Component {
 
     this.state = {
       collectionsInDrawer: true,
-      isDrawerOpen: false,
-      isUserMenuOpen: false
+      isDrawerOpen: false
     }
 
     this.outerRef = React.createRef()
     this.shadowRef = React.createRef()
 
     this.closeDrawer = () => this.setState({isDrawerOpen: false})
-    this.closeUserMenu = () => this.setState({isUserMenuOpen: false})
 
     this.toggleDrawer = () =>
       this.setState(({isDrawerOpen}) => ({isDrawerOpen: !isDrawerOpen}))
-    this.toggleUserMenu = () =>
-      this.setState(({isUserMenuOpen}) => ({isUserMenuOpen: !isUserMenuOpen}))
   }
 
   componentDidMount() {
@@ -152,32 +148,27 @@ class Header extends React.Component {
               expand_more
             </i>
           </button>
-          {isUserMenuOpen && (
-            <>
-              <div className={styles.overlay} onClick={this.closeUserMenu} />
-              <div className={styles['user-menu']}>
-                <Link
-                  className={`${styles['menu-item']} ${styles['link']}`}
-                  onClick={this.closeUserMenu}
-                  to="/profile"
-                >
-                  Profile
-                </Link>
+          <div className={styles['user-menu']}>
+            <Link
+              className={`${styles['menu-item']} ${styles['link']}`}
+              onClick={this.closeUserMenu}
+              to="/profile"
+            >
+              Profile
+            </Link>
 
-                <Link
-                  className={`${styles['menu-item']} ${styles['link']}`}
-                  onClick={this.closeUserMenu}
-                  to="/sign-out"
-                >
-                  Sign out
-                </Link>
+            <Link
+              className={`${styles['menu-item']} ${styles['link']}`}
+              onClick={this.closeUserMenu}
+              to="/sign-out"
+            >
+              Sign out
+            </Link>
 
-                {displayVersionNumber && (
-                  <span className={styles['menu-item']}>v{version}</span>
-                )}
-              </div>
-            </>
-          )}
+            {displayVersionNumber && (
+              <span className={styles['menu-item']}>v{version}</span>
+            )}
+          </div>
         </div>
       </header>
     )
