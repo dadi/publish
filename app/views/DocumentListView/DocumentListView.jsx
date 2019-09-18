@@ -153,10 +153,8 @@ class DocumentListView extends React.Component {
   }
 
   handlePageChange(page) {
-    const {
-      onBuildBaseUrl,
-      route: {history, search}
-    } = this.props
+    const {onBuildBaseUrl, route} = this.props
+    const {history, search} = route
 
     history.push(onBuildBaseUrl.call(this, {search: {...search, page}}))
   }
@@ -212,10 +210,11 @@ class DocumentListView extends React.Component {
       contentKey,
       isSingleDocument,
       onBuildBaseUrl,
-      route: {history, search},
+      route,
       selectionKey,
       state
     } = this.props
+    const {history, search} = route
 
     if (!collection) {
       return (

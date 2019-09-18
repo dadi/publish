@@ -1,7 +1,7 @@
-import {Select} from '@dadi/edit-ui'
 import DateTime from 'lib/datetime'
 import proptypes from 'prop-types'
 import React from 'react'
+import {Select} from '@dadi/edit-ui'
 import Style from 'lib/Style'
 import styles from './DateTimePicker.css'
 

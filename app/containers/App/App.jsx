@@ -82,11 +82,9 @@ class App extends React.Component {
   }
 
   componentDidUpdate(prevProps) {
-    const {
-      api,
-      user: {isSignedIn}
-    } = this.props
     const {isSignedIn: wasSignedIn} = prevProps.user
+    const {api, user} = this.props
+    const {isSignedIn} = user
 
     if (!wasSignedIn && isSignedIn) {
       this.setState({routes: buildRoutes(api)})

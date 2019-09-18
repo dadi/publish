@@ -53,21 +53,12 @@ class Header extends React.Component {
   }
 
   render() {
-    const {
-      app: {
-        config: {
-          api,
-          whitelabel: {displayVersionNumber, logoLight}
-        },
-        version
-      },
-      route: {
-        params: {collection: collectionName}
-      },
-      user: {
-        remote: {clientId, data}
-      }
-    } = this.props
+    const {app, route, user} = this.props
+    const {config, version} = app
+    const {api, whitelabel} = config
+    const {displayVersionNumber, logoLight} = whitelabel
+    const {collection: collectionName} = route.params
+    const {clientId, data} = user.remote
     const {collectionsInDrawer, isDrawerOpen, isUserMenuOpen} = this.state
     const menuItems = buildGroupedMenuItems(api, collectionName)
     const displayName = (data && data.publishFirstName) || clientId

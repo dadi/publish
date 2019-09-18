@@ -7,18 +7,10 @@ import React from 'react'
 
 class AuthenticatedRoute extends React.Component {
   // Side effects in SCU—not ideal; feel free to rewrite if you have a better idea.
-  shouldComponentUpdate({
-    state: {
-      user: {isSignedIn}
-    }
-  }) {
-    const {
-      state: {
-        user: {isSignedIn: wasSignedIn}
-      },
-      location: {search}
-    } = this.props
-
+  shouldComponentUpdate(newProps) {
+    const {isSignedIn} = newProps.state.user
+    const {isSignedIn: wasSignedIn} = this.props.state.user
+    const {search} = this.props.location
     const {redirect} = decodeSearch(search)
 
     this.redirectUrl = !wasSignedIn && isSignedIn ? redirect || '/' : null
@@ -41,15 +33,8 @@ class AuthenticatedRoute extends React.Component {
       return <ErrorView data={apiError} type={Constants.API_CONNECTION_ERROR} />
     }
 
-    const {
-      component: Component,
-      isPublic,
-      render,
-      state: {
-        user: {isSignedIn}
-      },
-      ...props
-    } = this.props
+    const {component: Component, isPublic, render, state, ...props} = this.props
+    const {isSignedIn} = state.user
 
     if (!isPublic && !isSignedIn) {
       const {pathname} = props.location

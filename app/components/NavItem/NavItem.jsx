@@ -18,11 +18,8 @@ export default class NavItem extends React.Component {
   }
 
   render() {
-    const {
-      closeMenu,
-      inDrawer,
-      item: {href, isSelected, label, subItems}
-    } = this.props
+    const {closeMenu, inDrawer, item} = this.props
+    const {href, isSelected, label, subItems} = item
     const {isOpen} = this.state
 
     const containerStyle = new Style(styles, 'container')

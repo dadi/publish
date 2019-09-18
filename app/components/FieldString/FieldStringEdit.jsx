@@ -259,12 +259,8 @@ export default class FieldStringEdit extends React.Component {
   }
 
   renderAsList() {
-    const {
-      name,
-      placeholder,
-      schema: {publish: publishSettings = {}},
-      value
-    } = this.props
+    const {name, placeholder, schema, value} = this.props
+    const {publish: publishSettings = {}} = schema
 
     return (
       <SortableList
