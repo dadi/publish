@@ -4,7 +4,7 @@
   justify-content: space-between;
   background-color: var(--edit-color-primary);
   color: var(--edit-color-text-inverse-2);
-  height: 68px;
+  flex: 0 0 68px;
 }
 
 .collections-wrapper,
