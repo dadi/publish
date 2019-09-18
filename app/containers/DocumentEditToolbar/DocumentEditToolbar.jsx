@@ -3,12 +3,13 @@ import * as Constants from 'lib/constants'
 import * as documentActions from 'actions/documentActions'
 import * as userActions from 'actions/userActions'
 import {Button, ButtonWithOptions} from '@dadi/edit-ui'
-import ButtonWithPrompt from 'components/ButtonWithPrompt/ButtonWithPrompt'
 import {connectRedux} from 'lib/redux'
 import {connectRouter} from 'lib/router'
 import DateTime from 'components/DateTime/DateTime'
 import DropdownNative from 'components/DropdownNative/DropdownNative'
 import HotKeys from 'lib/hot-keys'
+import Modal from 'components/Modal/Modal'
+import Prompt from 'components/Prompt/Prompt'
 import proptypes from 'prop-types'
 import React from 'react'
 import styles from './DocumentEditToolbar.css'
@@ -64,10 +65,18 @@ class DocumentEditToolbar extends React.Component {
   constructor(props) {
     super(props)
 
+    this.handleDelete = this.handleDelete.bind(this)
     this.hotkeys = new HotKeys({
       'mod+s': this.handleSave.bind(this, null)
     })
     this.onSave = null
+
+    this.showDeletePrompt = () => this.setState({isShowingDeletePrompt: true})
+    this.hideDeletePrompt = () => this.setState({isShowingDeletePrompt: false})
+
+    this.state = {
+      isShowingDeletePrompt: false
+    }
   }
 
   componentDidMount() {
@@ -237,18 +246,28 @@ class DocumentEditToolbar extends React.Component {
         <div className={styles.buttons}>
           {remote && !isSingleDocument && (
             <div className={styles.button}>
-              <ButtonWithPrompt
+              <Button
                 accent="negative"
                 disabled={Boolean(hasConnectionIssues)}
                 filled
-                onClick={this.handleDelete.bind(this)}
-                promptCallToAction="Yes, delete it."
-                position="left"
-                promptMessage="Are you sure you want to delete this document?"
+                onClick={this.showDeletePrompt}
               >
                 Delete
-              </ButtonWithPrompt>
+              </Button>
             </div>
+          )}
+
+          {this.state.isShowingDeletePrompt && (
+            <Modal onRequestClose={this.hideDeletePrompt}>
+              <Prompt
+                accent="negative"
+                action={'Yes, delete it'}
+                onCancel={this.hideDeletePrompt}
+                onConfirm={this.handleDelete}
+              >
+                Are you sure you want to delete this document?
+              </Prompt>
+            </Modal>
           )}
 
           <div className={styles.button}>

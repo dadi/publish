@@ -36,6 +36,8 @@ export default class DateTimePicker extends React.Component {
 
     this.TIME_PICKER_HOUR_SUBDIVISIONS = 2
 
+    this.goToPreviousMonth = this.handleMonthChange.bind(this, -1)
+    this.goToNextMonth = this.handleMonthChange.bind(this, 1)
     this.hoursContainerRef = null
     this.hoursRefs = []
 
@@ -171,7 +173,7 @@ export default class DateTimePicker extends React.Component {
         <div className={styles.head}>
           <button
             className={`${styles['page-icon']} ${styles['page-icon-prev']}`}
-            onClick={this.handleMonthChange.bind(this, -1)}
+            onClick={this.goToPreviousMonth}
           >
             <i className="material-icons">expand_more</i>
           </button>
@@ -182,7 +184,7 @@ export default class DateTimePicker extends React.Component {
 
           <button
             className={`${styles['page-icon']} ${styles['page-icon-next']}`}
-            onClick={this.handleMonthChange.bind(this, +1)}
+            onClick={this.goToNextMonth}
           >
             <i className="material-icons">expand_more</i>
           </button>

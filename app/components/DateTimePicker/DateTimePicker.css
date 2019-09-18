@@ -61,7 +61,7 @@
 }
 
 .calendar-day-current {
-  border-color: var(--edit-color-positive-hint);
+  border-color: var(--edit-color-positive);
 }
 
 .calendar-day-faded {
@@ -70,9 +70,12 @@
 
 .calendar-day-active {
   background-color: var(--edit-color-positive-hint);
+  color: var(--edit-color-grayscale-40);
 }
 
 .time-picker select {
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
   border-color: var(--edit-color-opacity-70);
   border-width: 1px 0 0 0 !important;
 }

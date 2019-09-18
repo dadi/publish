@@ -3,7 +3,6 @@ import * as Constants from 'lib/constants'
 import * as documentActions from 'actions/documentActions'
 import * as selectionActions from 'actions/selectionActions'
 import Button from 'components/Button/Button'
-import ButtonWithPrompt from 'components/ButtonWithPrompt/ButtonWithPrompt'
 import {connectRedux} from 'lib/redux'
 import DocumentEditView from 'views/DocumentEditView/DocumentEditView'
 import DocumentGridList from 'components/DocumentGridList/DocumentGridList'
@@ -16,6 +15,8 @@ import {getVisibleFields} from 'lib/fields'
 import HeroMessage from 'components/HeroMessage/HeroMessage'
 import MediaGridCard from 'containers/MediaGridCard/MediaGridCard'
 import MediaListController from 'components/MediaListController/MediaListController'
+import Modal from 'components/Modal/Modal'
+import Prompt from 'components/Prompt/Prompt'
 import React from 'react'
 import {Redirect} from 'react-router-dom'
 import {setPageTitle} from 'lib/util'
@@ -29,6 +30,13 @@ class DocumentListView extends React.Component {
 
     this.deleteSelected = this.deleteSelected.bind(this)
     this.handlePageChange = this.handlePageChange.bind(this)
+
+    this.showDeletePrompt = () => this.setState({isShowingDeletePrompt: true})
+    this.hideDeletePrompt = () => this.setState({isShowingDeletePrompt: false})
+
+    this.state = {
+      isShowingDeletePrompt: false
+    }
   }
 
   componentDidUpdate(oldProps) {
@@ -70,6 +78,8 @@ class DocumentListView extends React.Component {
         selection: []
       })
     }
+
+    this.hideDeletePrompt()
   }
 
   handleEmptyDocumentList({selection}) {
@@ -305,6 +315,20 @@ class DocumentListView extends React.Component {
 
     return (
       <>
+        {this.state.isShowingDeletePrompt && (
+          <Modal onRequestClose={this.hideDeletePrompt}>
+            <Prompt
+              accent="negative"
+              action={`Yes, delete ${selection.length === 1 ? 'it' : 'them'}`}
+              onCancel={this.hideDeletePrompt}
+              onConfirm={this.deleteSelected}
+            >
+              Are you sure you want to delete the selected{' '}
+              {selection.length === 1 ? 'document' : 'documents'}?
+            </Prompt>
+          </Modal>
+        )}
+
         <DocumentListController
           collection={collection}
           createNewHref={createNewHref}
@@ -332,19 +356,13 @@ class DocumentListView extends React.Component {
             showSelectedDocuments={showSelectedDocuments}
           >
             <div className={buttonWrapperStyle.getClasses()}>
-              <ButtonWithPrompt
-                accent="negative"
+              <Button
+                accent="destruct"
                 disabled={selection.length === 0}
-                onClick={this.deleteSelected}
-                promptCallToAction={`Yes, delete ${
-                  selection.length > 1 ? 'them' : 'it'
-                }.`}
-                promptMessage={`Are you sure you want to delete the selected ${
-                  selection.length > 1 ? 'documents' : 'document'
-                }?`}
+                onClick={this.showDeletePrompt}
               >
                 Delete ({selection.length})
-              </ButtonWithPrompt>
+              </Button>
             </div>
           </DocumentListToolbar>
         </div>

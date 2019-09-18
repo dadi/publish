@@ -38,7 +38,6 @@ export default function Select({
     {
       [styles.disabled]: disabled,
       [styles.inFieldComponent]: inFieldComponent,
-      [styles.multiple]: multiple,
       [styles.native]: native,
       [styles.readOnly]: readOnly
     },
