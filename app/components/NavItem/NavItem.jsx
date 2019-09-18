@@ -18,7 +18,7 @@ export default class NavItem extends React.Component {
   }
 
   render() {
-    const {closeMenu, inDrawer, item} = this.props
+    const {closeMenu, inDrawer, item, labelRef} = this.props
     const {href, isSelected, label, subItems} = item
     const {isOpen} = this.state
 
@@ -29,11 +29,16 @@ export default class NavItem extends React.Component {
       .addIf('group', subItems)
 
     const labelJsx = href ? (
-      <Link className={styles.label} onClick={closeMenu} to={href}>
+      <Link
+        className={styles.label}
+        onClick={closeMenu}
+        innerRef={labelRef}
+        to={href}
+      >
         {label}
       </Link>
     ) : (
-      <span className={styles.label}>
+      <span className={styles.label} ref={labelRef}>
         {label}{' '}
         <i className="material-icons" id={styles['expand-icon']}>
           expand_more

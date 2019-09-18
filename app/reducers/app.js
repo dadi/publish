@@ -15,13 +15,13 @@ const NETWORK_DEBOUNCE = 200
 // The initial state
 const initialState = {
   breakpoint: getActiveBreakpoint(window.innerWidth),
-  windowWidth: window.innerWidth,
   config: window.__config__,
   isLoading: false,
   networkStatus: Constants.NETWORK_OK,
   notification: null,
   status: Constants.STATUS_IDLE,
-  version: window.__version__
+  version: window.__version__,
+  windowWidth: window.innerWidth
 }
 
 let debouncedNetworkCall = null

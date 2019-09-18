@@ -119,8 +119,6 @@ export default class DateTimePicker extends React.Component {
   handleDatePick(date) {
     const {onChange} = this.props
 
-    console.log('!!!', date)
-
     if (typeof onChange === 'function') {
       onChange.call(this, date)
     }

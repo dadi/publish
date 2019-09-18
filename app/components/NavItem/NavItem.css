@@ -31,12 +31,17 @@
 }
 
 .container.in-drawer .label {
+  display: inline-block;
   margin: var(--edit-margin-sm) var(--edit-margin-md);
 }
 
 #expand-icon {
+  font-size: var(--edit-icon-size-md);
+  width: var(--edit-icon-size-md);
+  height: var(--edit-icon-size-md);
   transition: transform var(--edit-transition-duration-long);
   margin: -4px 0;
+  vertical-align: middle;
 }
 
 .container.in-drawer.open #expand-icon {

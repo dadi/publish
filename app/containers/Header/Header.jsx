@@ -7,6 +7,9 @@ import React from 'react'
 import Style from 'lib/Style'
 import styles from './Header.css'
 
+const HEADER_RESERVED_WIDTH = 250
+const HEADER_ITEM_MARGIN = 24
+
 class Header extends React.Component {
   constructor(props) {
     super(props)
@@ -23,26 +26,33 @@ class Header extends React.Component {
 
     this.toggleDrawer = () =>
       this.setState(({isDrawerOpen}) => ({isDrawerOpen: !isDrawerOpen}))
+
+    this.items = []
   }
 
   componentDidMount() {
-    this.setDrawer()
+    this.positionNav()
   }
 
   componentDidUpdate() {
-    this.setDrawer()
+    this.positionNav()
   }
 
-  setDrawer() {
-    if (!this.outerRef.current || !this.shadowRef.current) return
+  handleItemRef(index, el) {
+    this.items[index] = el
+  }
 
-    const shouldBeInDrawer =
-      this.outerRef.current.clientWidth <= this.shadowRef.current.clientWidth
+  positionNav() {
+    const totalWidth = this.items.reduce(
+      (sum, item) => sum + item.offsetWidth + HEADER_ITEM_MARGIN,
+      0
+    )
+    const availableWidth = this.props.app.windowWidth - HEADER_RESERVED_WIDTH
+    const shouldBeInDrawer = totalWidth > availableWidth
 
     if (!shouldBeInDrawer && this.state.isDrawerOpen) {
       this.setState({isDrawerOpen: false})
     }
-
     if (shouldBeInDrawer !== this.state.collectionsInDrawer) {
       this.setState({collectionsInDrawer: shouldBeInDrawer})
     }
@@ -77,62 +87,54 @@ class Header extends React.Component {
                   menu
                 </i>
               </button>
-              {isDrawerOpen && (
-                <>
-                  <div
-                    className={`${styles.overlay} ${styles.dark}`}
-                    onClick={this.closeDrawer}
-                  />
-                  <div className={styles['collections-drawer']}>
-                    <button
-                      className={styles['drawer-toggle']}
-                      onClick={this.closeDrawer}
-                    >
-                      <i className="material-icons" id={styles['close-icon']}>
-                        close
-                      </i>
-                    </button>
-                    <nav>
-                      <ul className={styles['drawer-nav-list']}>
-                        {menuItems.map(item => (
-                          <li key={item.id || item.label}>
-                            <NavItem
-                              closeMenu={this.closeDrawer}
-                              inDrawer
-                              item={item}
-                            />
-                          </li>
-                        ))}
-                      </ul>
-                    </nav>
-                  </div>
-                </>
-              )}
+              <div
+                aria-hidden={isDrawerOpen ? null : true}
+                className={`${styles.overlay} ${styles.dark}`}
+                onClick={this.closeDrawer}
+              />
+              <div
+                aria-hidden={isDrawerOpen ? null : true}
+                className={styles['collections-drawer']}
+              >
+                <button
+                  className={styles['drawer-toggle']}
+                  onClick={this.closeDrawer}
+                >
+                  <i className="material-icons" id={styles['close-icon']}>
+                    close
+                  </i>
+                </button>
+                <nav>
+                  <ul className={styles['drawer-nav-list']}>
+                    {menuItems.map((item, index) => (
+                      <li key={item.id || item.label}>
+                        <NavItem
+                          closeMenu={this.closeDrawer}
+                          inDrawer
+                          item={item}
+                          labelRef={this.handleItemRef.bind(this, index)}
+                        />
+                      </li>
+                    ))}
+                  </ul>
+                </nav>
+              </div>
             </div>
           ) : (
             <nav>
               <ul className={styles['header-nav-list']}>
-                {menuItems.map(item => (
+                {menuItems.map((item, index) => (
                   <li key={item.id || item.label}>
-                    <NavItem item={item} />
+                    <NavItem
+                      item={item}
+                      labelRef={this.handleItemRef.bind(this, index)}
+                    />
                   </li>
                 ))}
               </ul>
             </nav>
           )}
         </div>
-
-        {/* Invisible copy of the header nav list to grab width from. */}
-        <ul
-          className={`${styles['header-nav-list']} ${styles['shadow-list']}`}
-          ref={this.shadowRef}
-        >
-          {menuItems.map(item => (
-            <li key={item.id || item.label}>
-              <NavItem item={item} />
-            </li>
-          ))}
-        </ul>
 
         <div className={styles.logo}>
           <img src={`/_public/${logoLight}`} />

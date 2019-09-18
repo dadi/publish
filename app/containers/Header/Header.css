@@ -61,6 +61,10 @@
   box-shadow: var(--edit-shadow-8px-right-dark);
 }
 
+.collections-drawer[aria-hidden] {
+  transform: translateY(-100%);
+}
+
 @media (min-width: 480px) {
   .collections-drawer {
     right: unset;
@@ -140,6 +144,10 @@
 
 .overlay.dark {
   background-color: var(--edit-color-opacity-70);
+}
+
+.overlay[aria-hidden] {
+  transform: translateY(-100%);
 }
 
 .drawer-wrapper .overlay {
