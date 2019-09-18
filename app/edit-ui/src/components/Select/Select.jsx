@@ -18,9 +18,7 @@ const MAX_SELECT_ROWS = 8
 
 export default function Select({
   className,
-  dir = 'down',
   disabled,
-  inFieldComponent,
   multiple,
   name,
   onChange,
@@ -34,11 +32,9 @@ export default function Select({
   const native = !multiple || (isTouchDevice && useNativeOnMobile)
   const containerClasses = classnames(
     styles.container,
-    styles['dir--' + dir],
     {
       [styles.disabled]: disabled,
-      [styles.inFieldComponent]: inFieldComponent,
-      [styles.native]: native,
+      [styles.multiple]: multiple,
       [styles.readOnly]: readOnly
     },
     className
