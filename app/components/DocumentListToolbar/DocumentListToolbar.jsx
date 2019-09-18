@@ -15,6 +15,7 @@ function range(from, to) {
 
 // If there are more pages than this, ellipses will be shown.
 const MAX_VISIBLE_PAGES = 9
+
 // Number of pages around the current one (in each direction) that will be visible.
 const PAGES_AROUND_CURRENT = 2
 

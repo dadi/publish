@@ -371,15 +371,21 @@ class DocumentListView extends React.Component {
             filters={search.filter}
             onEmptyList={this.handleEmptyDocumentList.bind(this)}
             onNetworkError={this.handleNetworkError.bind(this)}
-            onRender={({documents, onSelect, selectedDocuments}) => (
+            onRender={({
+              documents,
+              hasSelection,
+              onSelect,
+              selectedDocuments
+            }) => (
               <DocumentGridList
                 documents={documents}
                 onRenderCard={({item, isSelected, onSelect}) => (
                   <MediaGridCard
                     href={`/media/${item._id}`}
-                    key={item._id}
                     isSelected={isSelected}
+                    isSelectMode={hasSelection}
                     item={item}
+                    key={item._id}
                     onSelect={onSelect}
                   />
                 )}
