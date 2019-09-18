@@ -13,6 +13,7 @@ export default React.forwardRef(function Button(
     compact,
     disabled,
     filled,
+    isLoading, // To be implemented.
     narrow,
     ...props
   },
