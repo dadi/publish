@@ -6,6 +6,7 @@
   position: sticky;
   top: 0;
   z-index: var(--edit-z-index-rich-editor-toolbar);
+  background-color: var(--edit-color-background-1);
 }
 
 .container:not(.fullscreen) {
