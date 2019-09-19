@@ -1,7 +1,7 @@
 import Label from 'components/Label/Label'
 import proptypes from 'prop-types'
 import React from 'react'
-import TextInput from 'components/TextInput/TextInput'
+import {TextInput} from '@dadi/edit-ui'
 
 /**
  * Component for API fields of type Number.
