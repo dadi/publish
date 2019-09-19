@@ -1,7 +1,8 @@
 import * as Constants from 'lib/constants'
 import * as fieldComponents from 'lib/field-components'
 import {getFieldType, getVisibleFields} from 'lib/fields'
-import Button from 'components/Button/Button'
+import {ArrowBack} from '@material-ui/icons'
+import {Button} from '@dadi/edit-ui'
 import {connectRedux} from 'lib/redux'
 import DocumentGridList from 'components/DocumentGridList/DocumentGridList'
 import DocumentList from 'containers/DocumentList/DocumentList'
@@ -11,13 +12,14 @@ import DocumentTableList from 'containers/DocumentTableList/DocumentTableList'
 import HeroMessage from 'components/HeroMessage/HeroMessage'
 import MediaGridCard from 'containers/MediaGridCard/MediaGridCard'
 import React from 'react'
-import ReferenceSelectHeader from 'components/ReferenceSelectHeader/ReferenceSelectHeader'
 import styles from './ReferenceSelectView.css'
 
 class ReferenceSelectView extends React.Component {
   constructor(props) {
     super(props)
 
+    this.changePage = page => this.setState({page})
+    this.clearFilters = () => this.setState({filter: undefined})
     this.handleEmptyDocumentList = this.handleEmptyDocumentList.bind(this)
     this.handleFiltersUpdate = this.handleFiltersUpdate.bind(this)
     this.handleSelectionUpdate = this.handleSelectionUpdate.bind(this)
@@ -40,10 +42,7 @@ class ReferenceSelectView extends React.Component {
           title="No documents found."
           subtitle="We can't find anything matching those filters."
         >
-          <Button
-            accent="system"
-            onClick={() => this.setState({filter: undefined})}
-          >
+          <Button accent="positive" onClick={this.clearFilters}>
             Clear filters
           </Button>
         </HeroMessage>
@@ -82,6 +81,8 @@ class ReferenceSelectView extends React.Component {
     const {
       buildUrl,
       collection,
+      onCancel,
+      onSave,
       referenceFieldName,
       referenceFieldSchema,
       state
@@ -114,7 +115,7 @@ class ReferenceSelectView extends React.Component {
       return null
     }
 
-    const {filter, page, sortBy, sortOrder} = this.state
+    const {filter, page, selection, sortBy, sortOrder} = this.state
 
     const contentKey = JSON.stringify({
       collection: collection.slug,
@@ -136,11 +137,18 @@ class ReferenceSelectView extends React.Component {
     }
 
     return (
-      <>
-        <ReferenceSelectHeader
-          onCancel={this.props.onCancel}
-          referenceField={referenceFieldSchema}
-        />
+      <div className={styles.container}>
+        <div className={styles.header}>
+          <Button
+            accent="negative"
+            className={styles['back-button']}
+            flat
+            onClick={onCancel}
+          >
+            <ArrowBack />
+            <span>Cancel</span>
+          </Button>
+        </div>
 
         <DocumentListController
           collection={referencedCollection}
@@ -170,8 +178,8 @@ class ReferenceSelectView extends React.Component {
             }}
             onSelect={this.handleSelectionUpdate}
             order={sortOrder}
-            page={this.state.page}
-            selection={this.state.selection}
+            page={page}
+            selection={selection}
             sort={sortBy}
           />
         </main>
@@ -179,20 +187,21 @@ class ReferenceSelectView extends React.Component {
         <div className={styles.toolbar}>
           <DocumentListToolbar
             metadata={metadata}
-            onPageChange={page => this.setState({page})}
-            selectedDocuments={this.state.selection}
+            onPageChange={this.changePage}
+            selectedDocuments={selection}
             showSelectedDocuments={showSelectedDocuments}
           >
             <Button
-              accent="save"
+              accent="positive"
+              filled
               data-name="save-reference-selection-button"
-              onClick={() => this.props.onSave(this.state.selection)}
+              onClick={() => onSave(selection)}
             >
               Save selection
             </Button>
           </DocumentListToolbar>
         </div>
-      </>
+      </div>
     )
   }
 
@@ -249,7 +258,7 @@ class ReferenceSelectView extends React.Component {
         order={sortOrder}
         selectedDocuments={selectedDocuments}
         sort={sortBy}
-        title={referenceFieldSchema.label + ' – select documents to link'}
+        title={referenceFieldSchema.label + ' – select documents to reference'}
       />
     )
   }
