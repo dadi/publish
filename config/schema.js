@@ -18,7 +18,7 @@ const SCHEMA = {
   },
   app: {
     name: {
-      default: 'DADI Publish',
+      default: 'Edit Interface',
       doc: 'The applicaton name',
       format: String
     }
