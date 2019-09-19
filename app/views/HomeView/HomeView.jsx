@@ -1,9 +1,9 @@
 import * as userActions from 'actions/userActions'
 import {connectRedux} from 'lib/redux'
-import HeroMessage from 'components/HeroMessage/HeroMessage'
 import React from 'react'
 import {setPageTitle} from 'lib/util'
 import SpinningWheel from 'components/SpinningWheel/SpinningWheel'
+import styles from './HomeView.css'
 
 class HomeView extends React.Component {
   render() {
@@ -24,11 +24,14 @@ class HomeView extends React.Component {
     setPageTitle()
 
     return (
-      <main>
+      <main className={styles.main}>
         {api.isLoading && <SpinningWheel />}
 
         {!api.isLoading && (
-          <HeroMessage title={`Welcome, ${displayName}.`} subtitle={message} />
+          <div className={styles.container}>
+            <h1>Welcome, {displayName}.</h1>
+            <p>{message}</p>
+          </div>
         )}
       </main>
     )

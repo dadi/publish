@@ -50,6 +50,8 @@
   --edit-color-inverse-opacity-98: rgba(255, 255, 255, 0.98);
   --edit-color-inverse-opacity-100: rgba(255, 255, 255, 1);
 
+  --edit-color-brand: #ff5666;
+
   --edit-color-primary: #00182f;
   --edit-color-primary-lighter: #003262;
 
@@ -92,6 +94,7 @@
 
   --edit-font-family: sans-serif;
 
+  --edit-font-size-heading-1: 32px;
   --edit-font-size-heading-2: 24px;
   --edit-font-size-large: 16px;
   --edit-font-size-medium: 14px;
