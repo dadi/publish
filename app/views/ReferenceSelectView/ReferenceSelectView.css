@@ -1,3 +1,35 @@
+.container {
+  position: fixed;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+}
+
+.header {
+  background-color: var(--edit-color-background-1);
+  padding: var(--edit-margin-md) var(--edit-margin-lg);
+  border-bottom: 2px solid var(--edit-color-background-3);
+}
+
+@media (min-width: 1024px) {
+  .header {
+    padding: var(--edit-margin-md) var(--edit-margin-xxl);
+  }
+}
+
+.back-button > * {
+  vertical-align: middle;
+}
+
+.back-button > svg {
+  margin-left: -4px;
+}
+
+.back-button > span {
+  margin-left: var(--edit-margin-xxs);
+}
+
 .toolbar {
   bottom: 0;
   left: 0;
