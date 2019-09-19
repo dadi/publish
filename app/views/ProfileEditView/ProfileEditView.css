@@ -1,7 +1,66 @@
+.main {
+  text-align: center;
+}
+
+.container {
+  display: inline-block;
+  text-align: left;
+  width: 100%;
+  margin: 0 auto;
+  max-width: 916px;
+  padding: var(--edit-margin-md);
+}
+
+.title {
+  font-size: var(--edit-font-size-heading-1);
+  color: var(--edit-color-heading);
+  margin: var(--edit-margin-xxl) 0 var(--edit-margin-md) 0;
+}
+
+.fields {
+  background-color: var(--edit-color-grayscale-100);
+  border: var(--edit-border-width-standard) solid var(--edit-color-border-light);
+  display: flex;
+  flex-direction: column;
+  padding: var(--edit-margin-md);
+}
+
+.column {
+  width: 100%;
+}
+
+.input {
+  margin-top: 25px;
+}
+
 .toolbar {
   bottom: 0;
   left: 0;
   position: fixed;
   width: 100%;
   z-index: var(--edit-z-index-toolbar);
+}
+
+.toolbar-container {
+  text-align: right;
+  width: 100%;
+}
+
+@media (min-width: 600px) {
+  .column {
+    width: 50%;
+  }
+
+  .fields {
+    flex-direction: row;
+    padding: var(--edit-margin-md) 32px 40px 32px;
+  }
+
+  .column:nth-child(even) {
+    padding-left: var(--edit-margin-md);
+  }
+
+  .column:nth-child(odd) {
+    padding-right: var(--edit-margin-md);
+  }
 }

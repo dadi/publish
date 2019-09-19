@@ -66,11 +66,10 @@ class Header extends React.Component {
     const {api, whitelabel} = config
     const {displayVersionNumber, logoLight} = whitelabel
     const {collection: collectionName} = route.params
-    const {clientId, data} = user.remote
     const {collectionsInDrawer, isDrawerOpen, isUserMenuOpen} = this.state
     const menuItems = buildGroupedMenuItems(api, collectionName)
-    const displayName = (data && data.publishFirstName) || clientId
-
+    const displayName =
+      user.remote['data.publishFirstName'] || user.remote.clientId
     const userMenuWrapperStyle = new Style(styles, 'user-menu-wrapper').addIf(
       'open',
       isUserMenuOpen
@@ -135,7 +134,9 @@ class Header extends React.Component {
         </div>
 
         <div className={styles.logo}>
-          <img src={`/_public/${logoLight}`} />
+          <Link to="/">
+            <img src={`/_public/${logoLight}`} />
+          </Link>
         </div>
 
         <div className={userMenuWrapperStyle.getClasses()}>
