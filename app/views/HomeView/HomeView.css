@@ -1,0 +1,33 @@
+.main {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.container {
+  position: relative;
+}
+
+@media (min-width: 700px) {
+  .container {
+    padding-left: 110px;
+  }
+
+  .container:before {
+    content: ' ';
+    position: absolute;
+    top: 20px;
+    left: 0;
+    width: 90px;
+    border-top: 1px solid var(--edit-color-brand);
+  }
+}
+
+.container h1 {
+  font-size: var(--edit-font-size-heading-1);
+  margin-bottom: var(--edit-margin-sm);
+}
+
+.container p {
+  font-size: var(--edit-font-size-large);
+}
