@@ -134,7 +134,9 @@ class Header extends React.Component {
         </div>
 
         <div className={styles.logo}>
-          <img src={`/_public/${logoLight}`} />
+          <Link to="/">
+            <img src={`/_public/${logoLight}`} />
+          </Link>
         </div>
 
         <div className={userMenuWrapperStyle.getClasses()}>
