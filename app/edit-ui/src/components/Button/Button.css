@@ -46,8 +46,12 @@
   color: var(--edit-color-text-inverse-1);
 }
 
-.button.accent--positive:not(.filled):hover {
+.button.accent--positive:not(.filled):not(.flat):hover {
   background-color: var(--edit-color-positive-hint);
+}
+
+.button.accent--positive.flat:hover {
+  color: var(--edit-color-positive-darker-1);
 }
 
 .button.accent--positive.filled:hover {
@@ -72,8 +76,12 @@
   color: var(--edit-color-text-inverse-1);
 }
 
-.button.accent--negative:not(.filled):hover {
+.button.accent--negative:not(.filled):not(.flat):hover {
   background-color: var(--edit-color-negative-hint);
+}
+
+.button.accent--negative.flat:hover {
+  color: var(--edit-color-negative-darker-1);
 }
 
 .button.accent--negative.filled:hover {

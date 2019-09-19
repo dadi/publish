@@ -18,6 +18,11 @@
   }
 }
 
+.back-button {
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+}
+
 .back-button > * {
   vertical-align: middle;
 }
