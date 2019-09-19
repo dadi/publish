@@ -94,8 +94,7 @@
   padding: 0;
 }
 
-.page-button.page-icon i {
-  font-size: var(--edit-icon-size-lg);
+.page-icon svg {
   margin: -4px;
 }
 
@@ -109,11 +108,11 @@
   background-color: var(--edit-color-background-3);
 }
 
-.prev-icon i {
+.prev-icon svg {
   transform: rotate(90deg);
 }
 
-.next-icon i {
+.next-icon svg {
   transform: rotate(-90deg);
 }
 

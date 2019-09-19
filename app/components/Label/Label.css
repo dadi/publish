@@ -36,8 +36,7 @@
 }
 
 .error-message-icon {
-  margin-right: 5px !important;
-  font-size: 20px !important;
+  margin-right: var(--edit-margin-xxs) !important;
   vertical-align: middle !important;
 }
 

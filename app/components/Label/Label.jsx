@@ -1,3 +1,4 @@
+import {Error} from '@material-ui/icons'
 import {getUniqueId} from 'lib/util'
 import proptypes from 'prop-types'
 import React from 'react'
@@ -114,9 +115,7 @@ export default class Label extends React.Component {
     const hint =
       error && errorMessage ? (
         <div className={styles['error-message-container']}>
-          <i className={`material-icons ${styles['error-message-icon']}`}>
-            error
-          </i>
+          <Error className={styles['error-message-icon']} fontSize="small" />
           <span className={styles['error-message-text']}>{errorMessage}</span>
         </div>
       ) : comment ? (

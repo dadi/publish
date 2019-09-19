@@ -2,11 +2,11 @@ import * as Constants from 'lib/constants'
 import * as userActions from 'actions/userActions'
 import {Button, TextInput} from '@dadi/edit-ui'
 import {connectRedux} from 'lib/redux'
+import {Error} from '@material-ui/icons'
 import Label from 'components/Label/Label'
 import proptypes from 'prop-types'
 import React from 'react'
 import {Redirect} from 'react-router-dom'
-import Style from 'lib/Style'
 import styles from './SignIn.css'
 
 class SignIn extends React.Component {
@@ -70,7 +70,7 @@ class SignIn extends React.Component {
 
     return (
       <div className={styles['error-container']}>
-        <i className={`material-icons`}>error</i>
+        <Error />
         <p className={styles['error-text']}>{message}</p>
       </div>
     )

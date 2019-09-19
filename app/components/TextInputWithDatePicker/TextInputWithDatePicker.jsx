@@ -1,3 +1,4 @@
+import {CalendarToday} from '@material-ui/icons'
 import DateTime from 'lib/datetime'
 import DateTimePicker from 'components/DateTimePicker/DateTimePicker'
 import HotKeys from 'lib/hot-keys'
@@ -248,11 +249,7 @@ export default class TextInputWithDatePicker extends React.Component {
           value={internalValue || (dateObj && dateObj.format(format))}
         />
 
-        {!readOnly && (
-          <i className={`material-icons ${styles['calendar-icon']}`}>
-            calendar_today
-          </i>
-        )}
+        {!readOnly && <CalendarToday className={styles['calendar-icon']} />}
 
         {pickerVisible && (
           <DateTimePicker

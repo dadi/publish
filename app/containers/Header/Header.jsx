@@ -1,3 +1,4 @@
+import {Close, ExpandMore, Menu} from '@material-ui/icons'
 import buildGroupedMenuItems from './buildGroupedMenuItems'
 import {connectRedux} from 'lib/redux'
 import {connectRouter} from 'lib/router'
@@ -53,6 +54,7 @@ class Header extends React.Component {
     if (!shouldBeInDrawer && this.state.isDrawerOpen) {
       this.setState({isDrawerOpen: false})
     }
+
     if (shouldBeInDrawer !== this.state.collectionsInDrawer) {
       this.setState({collectionsInDrawer: shouldBeInDrawer})
     }
@@ -83,9 +85,7 @@ class Header extends React.Component {
                 className={styles['drawer-toggle']}
                 onClick={this.toggleDrawer}
               >
-                <i className="material-icons" id={styles['menu-icon']}>
-                  menu
-                </i>
+                <Menu />
               </button>
               <div
                 aria-hidden={isDrawerOpen ? null : true}
@@ -100,9 +100,7 @@ class Header extends React.Component {
                   className={styles['drawer-toggle']}
                   onClick={this.closeDrawer}
                 >
-                  <i className="material-icons" id={styles['close-icon']}>
-                    close
-                  </i>
+                  <Close />
                 </button>
                 <nav>
                   <ul className={styles['drawer-nav-list']}>
@@ -146,9 +144,7 @@ class Header extends React.Component {
             onClick={this.toggleUserMenu}
           >
             <div className={styles.username}>{displayName}</div>
-            <i className="material-icons" id={styles['expand-icon']}>
-              expand_more
-            </i>
+            <ExpandMore />
           </button>
           <div className={styles['user-menu']}>
             <Link

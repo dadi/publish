@@ -165,7 +165,3 @@ input::placeholder,
 textarea::placeholder {
   color: var(--edit-color-text-3);
 }
-
-:global(.material-icons) {
-  user-select: none;
-}

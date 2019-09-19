@@ -1,7 +1,7 @@
 import * as fieldComponents from 'lib/field-components'
 import {connectRedux} from 'lib/redux'
+import {ExpandMore} from '@material-ui/icons'
 import {getFieldType} from 'lib/fields'
-import IconArrow from 'components/IconArrow/IconArrow'
 import proptypes from 'prop-types'
 import React from 'react'
 import Style from 'lib/Style'
@@ -117,9 +117,10 @@ class DocumentTableList extends React.Component {
       isSorted
     )
 
-    const iconStyle = new Style(styles, 'arrow')
-      .addIf('up', isSorted && sortOrder === 'desc')
-      .addResolved('material-icons')
+    const iconStyle = new Style(styles, 'arrow').addIf(
+      'up',
+      isSorted && sortOrder === 'desc'
+    )
 
     return (
       <a
@@ -132,7 +133,7 @@ class DocumentTableList extends React.Component {
         }
       >
         {column.label}
-        <i className={iconStyle.getClasses()}>expand_more</i>
+        <ExpandMore className={iconStyle.getClasses()} />
       </a>
     )
   }

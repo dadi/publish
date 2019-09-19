@@ -1,4 +1,5 @@
 import DateTime from 'lib/datetime'
+import {ExpandMore} from '@material-ui/icons'
 import proptypes from 'prop-types'
 import React from 'react'
 import {Select} from '@dadi/edit-ui'
@@ -175,7 +176,7 @@ export default class DateTimePicker extends React.Component {
             className={`${styles['page-icon']} ${styles['page-icon-prev']}`}
             onClick={this.goToPreviousMonth}
           >
-            <i className="material-icons">expand_more</i>
+            <ExpandMore />
           </button>
 
           <p className={styles['current-date']}>
@@ -186,7 +187,7 @@ export default class DateTimePicker extends React.Component {
             className={`${styles['page-icon']} ${styles['page-icon-next']}`}
             onClick={this.goToNextMonth}
           >
-            <i className="material-icons">expand_more</i>
+            <ExpandMore />
           </button>
         </div>
 

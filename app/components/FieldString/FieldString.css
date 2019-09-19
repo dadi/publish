@@ -34,7 +34,10 @@
   flex: 1;
 }
 
-#open-icon {
-  font-size: var(--edit-icon-size-sm);
-  margin-left: var(--edit-margin-xxs);
+.open-icon {
+  margin-left: var(--edit-margin-xxs) !important;
+}
+
+.open-button > * {
+  vertical-align: middle !important;
 }

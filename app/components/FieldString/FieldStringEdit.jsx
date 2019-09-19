@@ -1,11 +1,11 @@
 import {Button, Select, TextInput} from '@dadi/edit-ui'
 import formatLink from 'lib/util/formatLink'
 import Label from 'components/Label/Label'
+import {OpenInNew} from '@material-ui/icons'
 import proptypes from 'prop-types'
 import React from 'react'
 import RichEditor from 'components/RichEditor/RichEditor'
 import SortableList from 'components/SortableList/SortableList'
-import Style from 'lib/Style'
 import styles from './FieldString.css'
 
 function getValueOfDropdown(element) {
@@ -247,11 +247,14 @@ export default class FieldStringEdit extends React.Component {
         />
 
         {link && (
-          <Button accent="positive" narrow onClick={() => openLink(value)}>
+          <Button
+            accent="positive"
+            className={styles['open-button']}
+            narrow
+            onClick={() => openLink(value)}
+          >
             <span>Open </span>
-            <i className="material-icons" id={styles['open-icon']}>
-              open_in_new
-            </i>
+            <OpenInNew className={styles['open-icon']} fontSize="small" />
           </Button>
         )}
       </div>

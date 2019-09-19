@@ -12,17 +12,16 @@
   padding: 0;
 }
 
-.page-icon i {
-  font-size: var(--edit-icon-size-md);
+.page-icon svg {
   margin: -4px;
   vertical-align: middle;
 }
 
-.page-icon-prev i {
+.page-icon-prev svg {
   transform: rotate(90deg);
 }
 
-.page-icon-next i {
+.page-icon-next svg {
   transform: rotate(-90deg);
 }
 

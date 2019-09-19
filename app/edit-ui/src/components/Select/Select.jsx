@@ -1,6 +1,7 @@
-import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react'
+import React, {useCallback} from 'react'
 import {Checkbox} from '../..'
 import classnames from '../../util/classnames'
+import {ExpandMore} from '@material-ui/icons'
 // import PropTypes from 'prop-types'
 import styles from './Select.css'
 
@@ -66,11 +67,7 @@ export default function Select({
             </option>
           ))}
         </select>
-        {!multiple && (
-          <i className={classnames('material-icons', styles.arrowIcon)}>
-            expand_more
-          </i>
-        )}
+        {!multiple && <ExpandMore className={styles.arrowIcon} />}
       </div>
     )
   }

@@ -1,3 +1,4 @@
+import {ExpandMore} from '@material-ui/icons'
 import {Link} from 'react-router-dom'
 import React from 'react'
 import Style from 'lib/Style'
@@ -39,10 +40,7 @@ export default class NavItem extends React.Component {
       </Link>
     ) : (
       <span className={styles.label} ref={labelRef}>
-        {label}{' '}
-        <i className="material-icons" id={styles['expand-icon']}>
-          expand_more
-        </i>
+        {label} <ExpandMore className={styles['expand-icon']} />
       </span>
     )
 

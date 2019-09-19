@@ -89,11 +89,12 @@
   background-color: var(--edit-color-positive-hint);
 }
 
-#expand-icon {
-  transition: all var(--edit-transition-duration-long);
+.expand-icon {
+  transition: all var(--edit-transition-duration-long) !important;
+  vertical-align: middle !important;
 }
 
-.open.dir--down #expand-icon,
-:not(.open).dir--up #expand-icon {
+.open.dir--down .expand-icon,
+:not(.open).dir--up .expand-icon {
   transform: rotate(180deg);
 }

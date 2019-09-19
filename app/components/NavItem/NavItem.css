@@ -35,16 +35,15 @@
   margin: var(--edit-margin-sm) var(--edit-margin-md);
 }
 
-#expand-icon {
-  font-size: var(--edit-icon-size-md);
+.expand-icon {
   width: var(--edit-icon-size-md);
   height: var(--edit-icon-size-md);
-  transition: transform var(--edit-transition-duration-long);
+  transition: transform var(--edit-transition-duration-long) !important;
   margin: -4px 0;
   vertical-align: middle;
 }
 
-.container.in-drawer.open #expand-icon {
+.container.in-drawer.open .expand-icon {
   transform: rotate(180deg);
 }
 

@@ -1,4 +1,5 @@
 import {Select, TextInput} from '@dadi/edit-ui'
+import {ExpandMore} from '@material-ui/icons'
 import proptypes from 'prop-types'
 import React from 'react'
 import Style from 'lib/Style'
@@ -185,7 +186,7 @@ export default class DocumentListToolbar extends React.Component {
               disabled={page === 1}
               onClick={this.goToPrev}
             >
-              <i className="material-icons">expand_more</i>
+              <ExpandMore fontSize="large" />
             </button>
 
             <div className={styles['page-numbers']}>
@@ -222,7 +223,7 @@ export default class DocumentListToolbar extends React.Component {
               disabled={page === totalPages}
               onClick={this.goToNext}
             >
-              <i className="material-icons">expand_more</i>
+              <ExpandMore fontSize="large" />
             </button>
 
             <div className={styles['page-input']}>

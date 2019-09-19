@@ -1,6 +1,7 @@
 import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react'
 import Button from '../Button/Button'
 import classnames from '../../util/classnames'
+import {ExpandMore} from '@material-ui/icons'
 // import PropTypes from 'prop-types'
 import styles from './ButtonWithOptions.css'
 
@@ -78,9 +79,7 @@ export default function ButtonWithOptions({
           onClick={toggleDropdown}
           {...props}
         >
-          <i id={styles['expand-icon']} className="material-icons">
-            expand_more
-          </i>
+          <ExpandMore className={styles['expand-icon']} />
         </Button>
         {isDropdownOpen && (
           <div className={styles.dropdown}>
