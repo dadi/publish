@@ -6,14 +6,14 @@ const template = ({client, config, error, version}) => `
   <html>
     <head>
       <meta charset="utf-8">
-      <title>DADI Publish</title>
+      <title>Edit</title>
       <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
       <meta name="mobile-web-app-capable" content="yes">
       <meta name="apple-mobile-web-app-capable" content="yes">
       <meta name="format-detection" content="telephone=no">
       <link rel="stylesheet" type="text/css" href="/_dist/main.css?v=${version}">
       <link rel="stylesheet" type="text/css" href="/_public/custom.css">
-      <link rel="icon" type="image/png" href="/_public/images/favicon.png">
+      <link rel="icon" type="image/png" href="/_public/images/favicon/favicon-96x96.png">
     </head>
     <body>
       <div id="app-fullscreen"></div>

@@ -106,5 +106,5 @@ export function setPageTitle(title) {
   const isValidTitle =
     title && (typeof title === 'string' || typeof title === 'number')
 
-  document.title = `${isValidTitle ? title + ' / ' : ''}DADI Publish`
+  document.title = `${isValidTitle ? title + ' | ' : ''}Edit`
 }
