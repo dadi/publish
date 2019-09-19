@@ -5,6 +5,10 @@
   flex-wrap: wrap;
 }
 
+.container {
+  display: block;
+}
+
 .container-compact .header {
   margin: -4px 0 0 2px; /* -8px for gutter + 10px actual margin */
   flex: 1;

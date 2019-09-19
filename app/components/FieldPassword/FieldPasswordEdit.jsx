@@ -1,9 +1,9 @@
 import * as Constants from 'lib/constants'
+import {TextInput} from '@dadi/edit-ui'
 import Label from 'components/Label/Label'
 import proptypes from 'prop-types'
 import React from 'react'
 import styles from './FieldPassword.css'
-import TextInput from 'components/TextInput/TextInput'
 
 /**
  * Component for API fields of type Password
@@ -98,6 +98,8 @@ export default class FieldPasswordEdit extends React.Component {
   }
 
   render() {
+    // (1) https://developer.mozilla.org/en-US/docs/Web/Security/Securing_your_site/Turning_off_form_autocompletion#The_autocomplete_attribute_and_login_fields
+
     const {displayName, error, name, schema} = this.props
     const {value, valueConfirm} = this.state
     const {requireConfirmation} = schema.publish || {}
@@ -113,6 +115,8 @@ export default class FieldPasswordEdit extends React.Component {
           label={displayName}
         >
           <TextInput
+            accent={hasCustomError ? 'error' : undefined}
+            autoComplete="new-password" // (1)
             name={name}
             onChange={this.handleOnChange.bind(this, 'value')}
             placeholder={schema.placeholder}
@@ -132,6 +136,8 @@ export default class FieldPasswordEdit extends React.Component {
             label={`${displayName} (confirm)`}
           >
             <TextInput
+              accent={hasPasswordMismatch ? 'error' : undefined}
+              autoComplete="new-password" // (1)
               name={`${name}-confirm`}
               onChange={this.handleOnChange.bind(this, 'valueConfirm')}
               placeholder={schema.placeholder}

@@ -136,10 +136,7 @@ class App extends React.Component {
               return <Redirect to="/sign-in" />
             }}
           />
-          <AuthenticatedRoute
-            path="/profile/:section?"
-            component={ProfileEditView}
-          />
+          <AuthenticatedRoute path="/profile" component={ProfileEditView} />
           <AuthenticatedRoute
             path="/media/:documentId/:section?"
             render={props => {
