@@ -1,9 +1,11 @@
 import * as fieldComponents from 'lib/field-components'
 import {connectRedux} from 'lib/redux'
+import {ExpandMore} from '@material-ui/icons'
 import {getFieldType} from 'lib/fields'
-import {Link} from 'react-router-dom'
 import proptypes from 'prop-types'
 import React from 'react'
+import Style from 'lib/Style'
+import styles from './DocumentTableList.css'
 import SyncTable from 'components/SyncTable/SyncTable'
 
 /**
@@ -58,6 +60,12 @@ class DocumentTableList extends React.Component {
     sort: proptypes.string
   }
 
+  constructor(props) {
+    super(props)
+
+    this.renderColumnHeader = this.renderColumnHeader.bind(this)
+  }
+
   getSelectedRows() {
     const {documents, selectedDocuments} = this.props
     const selectedRows = documents.reduce((selectedRows, item, index) => {
@@ -86,29 +94,46 @@ class DocumentTableList extends React.Component {
     })
     const fieldSchema = collection.fields[column.id]
     const renderedValue = this.renderField(fieldSchema, value)
-    const firstStringField = Object.keys(listableFields).filter(field => {
+    const firstStringField = Object.keys(listableFields).find(field => {
       return listableFields[field].type === 'String'
-    })[0]
+    })
 
     if (
       (firstStringField && firstStringField === column.id) ||
       (!firstStringField && index === 0)
     ) {
-      return <Link to={editLink}>{renderedValue}</Link>
+      return React.cloneElement(renderedValue, {internalLink: editLink})
     }
 
     return renderedValue
   }
 
-  handleTableSort(value, sortBy, sortOrder) {
+  renderColumnHeader(column) {
+    const {sort: sortBy, order: sortOrder} = this.props
+    const isSorted = sortBy === column.id
+    const newOrder = isSorted && sortOrder === 'asc' ? 'desc' : 'asc'
+    const headerStyle = new Style(styles, 'column-header').addIf(
+      'sorted',
+      isSorted
+    )
+
+    const iconStyle = new Style(styles, 'arrow').addIf(
+      'up',
+      isSorted && sortOrder === 'desc'
+    )
+
     return (
       <a
+        className={headerStyle.getClasses()}
         data-column={sortBy}
         data-name="column-header"
-        data-sort-order={sortOrder}
-        onClick={() => this.props.onSort({sortBy, sortOrder})}
+        data-sort-order={newOrder}
+        onClick={() =>
+          this.props.onSort({sortBy: column.id, sortOrder: newOrder})
+        }
       >
-        {value}
+        {column.label}
+        <ExpandMore className={iconStyle.getClasses()} />
       </a>
     )
   }
@@ -121,7 +146,8 @@ class DocumentTableList extends React.Component {
       onSelect,
       order,
       selectedDocuments,
-      sort
+      sort,
+      title
     } = this.props
     const collectionFields = (collection && collection.fields) || {}
     const listableFields = Object.keys(collectionFields).reduce(
@@ -138,38 +164,31 @@ class DocumentTableList extends React.Component {
       if (!collection.fields[field]) return undefined
 
       return {
-        annotation: this.renderAnnotation(collection.fields[field]),
         id: field,
         label: collection.fields[field].label || field
       }
     })
 
     return (
-      <SyncTable
-        columns={tableColumns}
-        data={documents}
-        onRender={this.handleRowRender.bind(this, listableFields)}
-        onSelect={onSelect}
-        onSort={this.handleTableSort.bind(this)}
-        selectedRows={selectedDocuments}
-        selectLimit={Infinity}
-        sortable={true}
-        sortBy={sort}
-        sortOrder={order}
-      />
+      <>
+        <h1 className={styles.title}>{title}</h1>
+        <div className={styles['table-wrapper']}>
+          <SyncTable
+            columns={tableColumns}
+            data={documents}
+            onRender={this.handleRowRender.bind(this, listableFields)}
+            onSelect={onSelect}
+            renderColumnHeader={this.renderColumnHeader}
+            selectedRows={selectedDocuments}
+            selectLimit={Infinity}
+            sortable={true}
+            sortBy={sort}
+            sortOrder={order}
+          />
+          <div className={styles.after} />
+        </div>
+      </>
     )
-  }
-
-  renderAnnotation(schema) {
-    const fieldType = getFieldType(schema)
-    const fieldComponentName = `Field${fieldType}`
-    const FieldComponentListHeadAnnotation =
-      fieldComponents[fieldComponentName] &&
-      fieldComponents[fieldComponentName].listHeadAnnotation
-
-    if (FieldComponentListHeadAnnotation) {
-      return <FieldComponentListHeadAnnotation />
-    }
   }
 
   renderField(schema, value) {

@@ -45,34 +45,6 @@ export default class DocumentGridList extends React.Component {
     selectLimit: Infinity
   }
 
-  constructor(props) {
-    super(props)
-
-    this.debouncedResizeHandler = debounce(() => {
-      this.forceUpdate()
-    }, 500)
-  }
-
-  componentDidMount() {
-    window.addEventListener('resize', this.debouncedResizeHandler)
-  }
-
-  componentWillUnmount() {
-    window.removeEventListener('resize', this.debouncedResizeHandler)
-  }
-
-  getNumberOfColumns() {
-    const windowWidth = window.innerWidth
-
-    if (windowWidth > 800) {
-      return 5
-    } else if (windowWidth > 550) {
-      return 3
-    }
-
-    return 1
-  }
-
   handleItemSelect(index) {
     const {onSelect, selectedDocuments, selectLimit} = this.props
     const isSelected = !selectedDocuments[index]
@@ -106,31 +78,17 @@ export default class DocumentGridList extends React.Component {
       return null
     }
 
-    const numberOfColumns = this.getNumberOfColumns()
-
-    const columns = Array.apply(null, {length: numberOfColumns}).map(i => [])
-
-    documents.forEach((document, index) => {
-      columns[index % numberOfColumns][index] = document
-    })
-
     return (
-      <div className={styles.columns}>
-        {columns.map((column, index) => (
-          <div
-            className={styles.column}
-            key={index}
-            style={{width: `${100 / numberOfColumns}%`}}
-          >
-            {column.map((item, index) => {
-              const onSelect = this.handleItemSelect.bind(this, index)
-
-              return onRenderCard({
+      <div className={styles.grid}>
+        {documents.map((item, index) => (
+          <div className={styles.card} key={item._id}>
+            <div className={styles['content-wrapper']}>
+              {onRenderCard({
                 item,
                 isSelected: Boolean(selectedDocuments[index]),
-                onSelect
-              })
-            })}
+                onSelect: this.handleItemSelect.bind(this, index)
+              })}
+            </div>
           </div>
         ))}
       </div>

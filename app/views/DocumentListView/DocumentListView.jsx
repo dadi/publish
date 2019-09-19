@@ -2,7 +2,6 @@ import * as appActions from 'actions/appActions'
 import * as Constants from 'lib/constants'
 import * as documentActions from 'actions/documentActions'
 import * as selectionActions from 'actions/selectionActions'
-import BulkActionSelector from 'components/BulkActionSelector/BulkActionSelector'
 import Button from 'components/Button/Button'
 import {connectRedux} from 'lib/redux'
 import DocumentEditView from 'views/DocumentEditView/DocumentEditView'
@@ -13,23 +12,33 @@ import DocumentListToolbar from 'components/DocumentListToolbar/DocumentListTool
 import DocumentTableList from 'containers/DocumentTableList/DocumentTableList'
 import ErrorMessage from 'components/ErrorMessage/ErrorMessage'
 import {getVisibleFields} from 'lib/fields'
-import Header from 'containers/Header/Header'
 import HeroMessage from 'components/HeroMessage/HeroMessage'
-import Main from 'components/Main/Main'
 import MediaGridCard from 'containers/MediaGridCard/MediaGridCard'
 import MediaListController from 'components/MediaListController/MediaListController'
-import Page from 'components/Page/Page'
+import Modal from 'components/Modal/Modal'
+import Prompt from 'components/Prompt/Prompt'
 import React from 'react'
 import {Redirect} from 'react-router-dom'
 import {setPageTitle} from 'lib/util'
 import SpinningWheel from 'components/SpinningWheel/SpinningWheel'
+import Style from 'lib/Style'
 import styles from './DocumentListView.css'
 
-const BULK_ACTIONS = {
-  DELETE: 'BULK_ACTIONS_DELETE'
-}
-
 class DocumentListView extends React.Component {
+  constructor(props) {
+    super(props)
+
+    this.deleteSelected = this.deleteSelected.bind(this)
+    this.handlePageChange = this.handlePageChange.bind(this)
+
+    this.showDeletePrompt = () => this.setState({isShowingDeletePrompt: true})
+    this.hideDeletePrompt = () => this.setState({isShowingDeletePrompt: false})
+
+    this.state = {
+      isShowingDeletePrompt: false
+    }
+  }
+
   componentDidUpdate(oldProps) {
     const {actions, contentKey, state} = this.props
     const data = state.documents[contentKey] || {}
@@ -51,32 +60,26 @@ class DocumentListView extends React.Component {
     }
   }
 
-  handleBulkActionApply(collection, actionType) {
-    const {actions, contentKey, selectionKey, state} = this.props
+  deleteSelected() {
+    const {actions, collection, contentKey, selectionKey, state} = this.props
     const selection = state.selection[selectionKey] || []
 
-    switch (actionType) {
-      case BULK_ACTIONS.DELETE:
-        if (selection.length > 0) {
-          const ids = selection.map(({_id}) => _id).filter(Boolean)
+    if (selection.length > 0) {
+      const ids = selection.map(({_id}) => _id).filter(Boolean)
 
-          actions.deleteDocuments({
-            collection,
-            contentKey,
-            ids
-          })
+      actions.deleteDocuments({
+        collection,
+        contentKey,
+        ids
+      })
 
-          actions.setDocumentSelection({
-            key: selectionKey,
-            selection: []
-          })
-        }
-
-        break
-
-      default:
-        return
+      actions.setDocumentSelection({
+        key: selectionKey,
+        selection: []
+      })
     }
+
+    this.hideDeletePrompt()
   }
 
   handleEmptyDocumentList({selection}) {
@@ -159,6 +162,13 @@ class DocumentListView extends React.Component {
     )
   }
 
+  handlePageChange(page) {
+    const {onBuildBaseUrl, route} = this.props
+    const {history, search} = route
+
+    history.push(onBuildBaseUrl.call(this, {search: {...search, page}}))
+  }
+
   handleFiltersUpdate(newFilters) {
     const {onBuildBaseUrl, route} = this.props
     const newFilterValue =
@@ -210,20 +220,17 @@ class DocumentListView extends React.Component {
       contentKey,
       isSingleDocument,
       onBuildBaseUrl,
-      route: {history, search},
+      route,
       selectionKey,
       state
     } = this.props
+    const {history, search} = route
 
     if (!collection) {
       return (
-        <Page>
-          <Header />
-
-          <Main>
-            <ErrorMessage type={Constants.ERROR_ROUTE_NOT_FOUND} />
-          </Main>
-        </Page>
+        <main>
+          <ErrorMessage type={Constants.ERROR_ROUTE_NOT_FOUND} />
+        </main>
       )
     }
 
@@ -236,13 +243,9 @@ class DocumentListView extends React.Component {
             <DocumentEditView {...this.props} isSingleDocument />
           )}
           onLoading={() => (
-            <Page>
-              <Header />
-
-              <Main>
-                <SpinningWheel />
-              </Main>
-            </Page>
+            <main>
+              <SpinningWheel />
+            </main>
           )}
           onNetworkError={this.handleNetworkError.bind(this)}
           onRender={({documents}) => (
@@ -274,18 +277,6 @@ class DocumentListView extends React.Component {
     // Getting the IDs of the selected documents.
     const selection = state.selection[selectionKey] || []
 
-    // Computing bulk action options.
-    const actions = {
-      [BULK_ACTIONS.DELETE]: {
-        confirmationMessage: `Are you sure you want to delete the selected ${
-          selection.length > 1 ? 'documents' : 'document'
-        }?`,
-        ctaMessage: `Yes, delete ${selection.length > 1 ? 'them' : 'it'}.`,
-        disabled: !selection.length,
-        label: `Delete ${selection.length ? ' (' + selection.length + ')' : ''}`
-      }
-    }
-
     // Are we showing only selected documents?
     const isFilteringSelection =
       search.filter && search.filter.$selected === true
@@ -308,47 +299,6 @@ class DocumentListView extends React.Component {
     // Setting the page title.
     setPageTitle(collection.name)
 
-    return (
-      <Page>
-        <Header currentCllection={collection}>
-          {this.renderController({collection})}
-        </Header>
-
-        <Main>
-          <div className={styles['list-container']}>
-            {this.renderMain({
-              collection,
-              contentKey,
-              isFilteringSelection,
-              selection
-            })}
-          </div>
-        </Main>
-
-        <div className={styles.toolbar}>
-          <DocumentListToolbar
-            metadata={metadata}
-            pageChangeHandler={page =>
-              onBuildBaseUrl.call(this, {search: {...search, page}})
-            }
-            selectedDocuments={selection}
-            showSelectedDocuments={showSelectedDocuments}
-          >
-            <BulkActionSelector
-              actions={actions}
-              onChange={this.handleBulkActionApply.bind(this, collection)}
-              selection={selection}
-            />
-          </DocumentListToolbar>
-        </div>
-      </Page>
-    )
-  }
-
-  renderController({collection}) {
-    const {onBuildBaseUrl, route} = this.props
-    const {search} = route
-
     // If we're on a media collection, we don't want to render a "Create new"
     // button.
     const createNewHref = collection.IS_MEDIA_BUCKET
@@ -358,14 +308,65 @@ class DocumentListView extends React.Component {
           search: null
         })
 
+    const buttonWrapperStyle = new Style(styles, 'button-wrapper').addIf(
+      'hidden',
+      selection.length === 0
+    )
+
     return (
-      <DocumentListController
-        collection={collection}
-        createNewHref={createNewHref}
-        enableFilters={true}
-        filters={search.filter}
-        onUpdateFilters={this.handleFiltersUpdate.bind(this)}
-      />
+      <>
+        {this.state.isShowingDeletePrompt && (
+          <Modal onRequestClose={this.hideDeletePrompt}>
+            <Prompt
+              accent="negative"
+              action={`Yes, delete ${selection.length === 1 ? 'it' : 'them'}`}
+              onCancel={this.hideDeletePrompt}
+              onConfirm={this.deleteSelected}
+            >
+              Are you sure you want to delete the selected{' '}
+              {selection.length === 1 ? 'document' : 'documents'}?
+            </Prompt>
+          </Modal>
+        )}
+
+        <DocumentListController
+          collection={collection}
+          createNewHref={createNewHref}
+          enableFilters={true}
+          filters={search.filter}
+          onUpdateFilters={this.handleFiltersUpdate.bind(this)}
+        />
+
+        <main>
+          <div className={styles['list-container']}>
+            {this.renderMain({
+              collection,
+              contentKey,
+              isFilteringSelection,
+              selection
+            })}
+          </div>
+        </main>
+
+        <div className={styles.toolbar}>
+          <DocumentListToolbar
+            metadata={metadata}
+            onPageChange={this.handlePageChange}
+            selectedDocuments={selection}
+            showSelectedDocuments={showSelectedDocuments}
+          >
+            <div className={buttonWrapperStyle.getClasses()}>
+              <Button
+                accent="destruct"
+                disabled={selection.length === 0}
+                onClick={this.showDeletePrompt}
+              >
+                Delete ({selection.length})
+              </Button>
+            </div>
+          </DocumentListToolbar>
+        </div>
+      </>
     )
   }
 
@@ -387,15 +388,21 @@ class DocumentListView extends React.Component {
             filters={search.filter}
             onEmptyList={this.handleEmptyDocumentList.bind(this)}
             onNetworkError={this.handleNetworkError.bind(this)}
-            onRender={({documents, onSelect, selectedDocuments}) => (
+            onRender={({
+              documents,
+              hasSelection,
+              onSelect,
+              selectedDocuments
+            }) => (
               <DocumentGridList
                 documents={documents}
                 onRenderCard={({item, isSelected, onSelect}) => (
                   <MediaGridCard
                     href={`/media/${item._id}`}
-                    key={item._id}
                     isSelected={isSelected}
+                    isSelectMode={hasSelection}
                     item={item}
+                    key={item._id}
                     onSelect={onSelect}
                   />
                 )}
@@ -443,6 +450,7 @@ class DocumentListView extends React.Component {
             order={search.order}
             selectedDocuments={selectedDocuments}
             sort={search.sort}
+            title={collection.name}
           />
         )}
         onSelect={this.handleSelect.bind(this)}

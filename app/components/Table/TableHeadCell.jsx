@@ -1,4 +1,3 @@
-import IconArrow from 'components/IconArrow/IconArrow'
 import proptypes from 'prop-types'
 import React from 'react'
 import Style from 'lib/Style'
@@ -10,20 +9,9 @@ import styles from './Table.css'
 export default class TableHeadCell extends React.Component {
   static propTypes = {
     /**
-     * Whether to include a sorting arrow next to the table head cell label.
-     * If present, it should be a string containing the direction of the arrow.
+     * Whether the table is sorted by this column.
      */
-    arrow: proptypes.oneOf(['down', 'up']),
-
-    /**
-     * The text content of the table head cell.
-     */
-    annotation: proptypes.node,
-
-    /**
-     * The text content of the table head cell.
-     */
-    children: proptypes.node,
+    sorted: proptypes.oneOf(['asc', 'desc', false]),
 
     /**
      * Whether the row is used to hold a selection checkbox.
@@ -32,30 +20,15 @@ export default class TableHeadCell extends React.Component {
   }
 
   static defaultProps = {
-    arrow: null
+    sorted: false
   }
 
   render() {
-    const {arrow, annotation, children, select} = this.props
-    const cellStyle = new Style(styles, 'cell', 'head-cell')
-      .addIf('head-cell-selected', arrow)
+    const {sorted, children, select} = this.props
+    const cellStyle = new Style(styles, 'cell')
+      .addIf('head-cell-sorted', sorted)
       .addIf('select-cell', select)
 
-    return (
-      <th className={cellStyle.getClasses()}>
-        {arrow && (
-          <IconArrow
-            className={styles['head-cell-arrow']}
-            width={8}
-            height={5}
-            direction={arrow}
-          />
-        )}
-
-        <span className={styles['head-cell-label']}>{children}</span>
-
-        {annotation}
-      </th>
-    )
+    return <th className={cellStyle.getClasses()}>{children}</th>
   }
 }

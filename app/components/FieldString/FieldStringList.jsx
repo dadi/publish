@@ -1,5 +1,7 @@
+import {Link} from 'react-router-dom'
 import proptypes from 'prop-types'
 import React from 'react'
+import styles from './FieldString.css'
 
 /**
  * Component for rendering API fields of type String on a list view.
@@ -22,8 +24,15 @@ export default class FieldStringList extends React.Component {
     maxOptions: 1
   }
 
+  constructor(props) {
+    super(props)
+
+    this.hoverOn = () => props.onHover(true)
+    this.hoverOff = () => props.onHover(false)
+  }
+
   render() {
-    const {schema, value} = this.props
+    const {internalLink, schema, value} = this.props
 
     // If there's no value, we return `null`.
     if (!value) return null
@@ -40,6 +49,19 @@ export default class FieldStringList extends React.Component {
       schema.publish.display.link
     ) {
       return this.renderLinkValue(value, schema.publish.display.link)
+    }
+
+    if (internalLink) {
+      return (
+        <Link
+          className={styles['list-link']}
+          onMouseEnter={this.hoverOn}
+          onMouseLeave={this.hoverOff}
+          to={internalLink}
+        >
+          {value}
+        </Link>
+      )
     }
 
     // If there's an options block, we render the label of the given option.
@@ -82,23 +104,8 @@ export default class FieldStringList extends React.Component {
     return optionsString
   }
 
-  renderTrimmedValue(value, maxLength) {
-    maxLength = Math.floor(maxLength) || this.props.maxLength
-
-    if (value.length > maxLength) {
-      // https://stackoverflow.com/a/25575009/8583207
-      const punctuation = /[\u2000-\u206F\u2E00-\u2E7F\\'!"#$%&()*+,\-./:;<=>?@[\]^_`{|}~]+$/
-
-      return (
-        value
-          .slice(0, maxLength - 1)
-          .trim()
-          .replace(punctuation, '')
-          .trim() + '…'
-      )
-    }
-
-    return value
+  renderTrimmedValue(value) {
+    return <span className={styles['with-ellipsis']}>{value}</span>
   }
 
   renderLinkValue(value, template) {
@@ -109,7 +116,7 @@ export default class FieldStringList extends React.Component {
     }
 
     return (
-      <a href={value} target="_blank">
+      <a className={styles['list-link']} href={value} target="_blank">
         {valueFormatted}
       </a>
     )

@@ -1,4 +1,4 @@
-import Button from 'components/Button/Button'
+import {Button} from '@dadi/edit-ui'
 import HotKeys from 'lib/hot-keys'
 import proptypes from 'prop-types'
 import React from 'react'
@@ -13,14 +13,7 @@ export default class Prompt extends React.Component {
     /**
      * Colour accent.
      */
-    accent: proptypes.oneOf([
-      'data',
-      'destruct',
-      'inherit',
-      'neutral',
-      'save',
-      'system'
-    ]),
+    accent: proptypes.oneOf(['negative', 'positive']),
 
     /**
      * The text to be displayed on the action button
@@ -43,20 +36,19 @@ export default class Prompt extends React.Component {
     className: proptypes.string,
 
     /**
-     * Callback to be executed when the button is clicked.
+     * Callback to be executed when the cancel button is clicked.
      */
-    onClick: proptypes.func,
+    onCancel: proptypes.func,
 
     /**
-     * The position of the prompt tooltip.
+     * Callback to be executed when the confirmation button is clicked.
      */
-    position: proptypes.oneOf(['left', 'right'])
+    onConfirm: proptypes.func
   }
 
   static defaultProps = {
-    accent: 'destruct',
-    confirmOnEnterKey: true,
-    position: 'left'
+    accent: 'negative',
+    confirmOnEnterKey: true
   }
 
   constructor(props) {
@@ -64,8 +56,8 @@ export default class Prompt extends React.Component {
 
     this.hotkeys = new HotKeys({})
 
-    if (props.confirmOnEnterKey && typeof props.onClick === 'function') {
-      this.hotkeys.on('enter', props.onClick)
+    if (props.confirmOnEnterKey && typeof props.onConfirm === 'function') {
+      this.hotkeys.on('enter', props.onConfirm)
     }
   }
 
@@ -78,18 +70,26 @@ export default class Prompt extends React.Component {
   }
 
   render() {
-    const {accent, action, children, className, onClick, position} = this.props
-    const promptStyle = new Style(styles, 'container')
-      .add(`container-${accent}`)
-      .add(`container-${position}`)
-      .addResolved(className)
+    const {
+      accent,
+      action,
+      children,
+      className,
+      onCancel,
+      onConfirm
+    } = this.props
+    const promptStyle = new Style(styles, 'container').addResolved(className)
 
     return (
       <div className={promptStyle.getClasses()}>
-        {children}
+        <div className={styles.message}>{children}</div>
 
         <div className={styles.action}>
-          <Button accent="destruct" onClick={onClick} size="small">
+          <Button accent="negative" onClick={onCancel}>
+            Cancel
+          </Button>
+
+          <Button accent={accent} filled onClick={onConfirm}>
             {action}
           </Button>
         </div>

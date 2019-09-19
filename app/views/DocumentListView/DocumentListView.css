@@ -1,5 +1,5 @@
 .list-container {
-  margin-bottom: 50px;
+  padding-bottom: calc(var(--edit-margin-xxl) + var(--editif-toolbar-height));
 }
 
 .toolbar {
@@ -7,5 +7,9 @@
   left: 0;
   position: fixed;
   width: 100%;
-  z-index: 1000;
+  z-index: var(--edit-z-index-toolbar);
+}
+
+.button-wrapper.hidden {
+  visibility: hidden;
 }

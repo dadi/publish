@@ -1,7 +1,4 @@
-import proptypes from 'prop-types'
 import React from 'react'
-
-import Style from 'lib/Style'
 import styles from './Toolbar.css'
 
 /**
@@ -10,33 +7,13 @@ import styles from './Toolbar.css'
  * the width of the page.
  */
 export default class Toolbar extends React.Component {
-  static propTypes = {
-    /**
-     * The elements to be rendered inside the bar.
-     */
-    children: proptypes.node,
-
-    /**
-     * Whether the toolbar should have the default padding applied.
-     */
-    padded: proptypes.bool
-  }
-
-  static defaultProps = {
-    padded: true
-  }
-
   render() {
-    const {children, padded} = this.props
-    const toolbarStyle = new Style(styles, 'container').addIf(
-      'container-padded',
-      padded
+    const {children} = this.props
+
+    return (
+      React.Children.count(children) !== 0 && (
+        <footer className={styles.container}>{children}</footer>
+      )
     )
-
-    if (React.Children.count(children) === 0) {
-      return null
-    }
-
-    return <footer className={toolbarStyle.getClasses()}>{children}</footer>
   }
 }

@@ -18,7 +18,7 @@ const SCHEMA = {
   },
   app: {
     name: {
-      default: 'DADI Publish',
+      default: 'Edit Interface',
       doc: 'The applicaton name',
       format: String
     }
@@ -202,9 +202,15 @@ const SCHEMA = {
       format: Boolean,
       showToUnauthenticatedUsers: true
     },
-    logo: {
-      default: 'logo.png',
-      doc: 'The logo URL',
+    logoDark: {
+      default: 'images/logo-dark.svg',
+      doc: 'The URL of the logo to be used on light backgrounds',
+      format: String,
+      showToUnauthenticatedUsers: true
+    },
+    logoLight: {
+      default: 'images/logo-light.svg',
+      doc: 'The URL of the logo to be used on dark backgrounds',
       format: String,
       showToUnauthenticatedUsers: true
     },

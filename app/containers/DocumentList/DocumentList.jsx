@@ -276,6 +276,7 @@ class DocumentList extends React.Component {
     const renderData = {
       documents: results,
       metadata,
+      hasSelection: Boolean(selection.length),
       onSelect: documentListOnSelect,
       selectedDocuments: selectedDocumentsInView
     }

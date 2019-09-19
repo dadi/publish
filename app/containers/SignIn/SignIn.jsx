@@ -1,14 +1,13 @@
 import * as Constants from 'lib/constants'
 import * as userActions from 'actions/userActions'
-import Banner from 'components/Banner/Banner'
-import Button from 'components/Button/Button'
+import {Button, TextInput} from '@dadi/edit-ui'
 import {connectRedux} from 'lib/redux'
+import {Error} from '@material-ui/icons'
 import Label from 'components/Label/Label'
 import proptypes from 'prop-types'
 import React from 'react'
 import {Redirect} from 'react-router-dom'
 import styles from './SignIn.css'
-import TextInput from 'components/TextInput/TextInput'
 
 class SignIn extends React.Component {
   static propTypes = {
@@ -39,7 +38,7 @@ class SignIn extends React.Component {
 
     if (noAPIConfigured) {
       message =
-        'This installation of Publish has not been configured. Please contact your administrator.'
+        'This installation of Edit has not been configured. Please contact your administrator.'
     } else if (sessionHasExpired) {
       message = 'Your session has expired. Please sign in again.'
     } else if (remoteError) {
@@ -51,7 +50,7 @@ class SignIn extends React.Component {
 
         case 501:
           message =
-            'The API is running an earlier version than that required by this version of Publish'
+            'The API is running an earlier version than that required by this version of Edit'
 
           break
 
@@ -67,11 +66,14 @@ class SignIn extends React.Component {
       }
     }
 
-    if (message) {
-      return <Banner>{message}</Banner>
-    }
+    if (!message) return null
 
-    return null
+    return (
+      <div className={styles['error-container']}>
+        <Error />
+        <p className={styles['error-text']}>{message}</p>
+      </div>
+    )
   }
 
   handleInputChange(name, event) {
@@ -102,7 +104,7 @@ class SignIn extends React.Component {
     const {email, password, userHasInteracted} = this.state
     const {config, networkStatus} = state.app
     const {api, whitelabel} = config
-    const {logo, poweredBy, backgroundImage} = whitelabel
+    const {logoDark, poweredBy, backgroundImage} = whitelabel
     const hasConnectionIssues = networkStatus !== Constants.NETWORK_OK
 
     if (state.user.isSignedIn) {
@@ -121,7 +123,8 @@ class SignIn extends React.Component {
         <div className={styles.overlay}>
           <div className={styles.container}>
             <form method="POST" onSubmit={this.handleSignIn.bind(this)}>
-              <img className={styles.logo} src={`/_public/${logo}`} />
+              <img className={styles.logo} src={`/_public/${logoDark}`} />
+
               {this.getErrorBanner({
                 noAPIConfigured: !api,
                 remoteError: state.user.remoteError,
@@ -157,12 +160,13 @@ class SignIn extends React.Component {
               </div>
 
               <Button
-                accent="system"
+                accent="positive"
                 disabled={
                   hasConnectionIssues ||
                   (userHasInteracted && !formDataIsValid) ||
                   !api
                 }
+                filled
                 isLoading={state.user.isAuthenticating}
                 type="submit"
               >

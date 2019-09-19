@@ -1,13 +1,27 @@
-import Button from 'components/Button/Button'
+import {Button, Select, TextInput} from '@dadi/edit-ui'
 import formatLink from 'lib/util/formatLink'
 import Label from 'components/Label/Label'
+import {OpenInNew} from '@material-ui/icons'
 import proptypes from 'prop-types'
 import React from 'react'
 import RichEditor from 'components/RichEditor/RichEditor'
 import SortableList from 'components/SortableList/SortableList'
-import Style from 'lib/Style'
 import styles from './FieldString.css'
-import TextInput from 'components/TextInput/TextInput'
+
+function getValueOfDropdown(element) {
+  const selectedOptions = Array.from(
+    element.selectedOptions,
+    item => item.value
+  )
+
+  // If this isn't a multiple value select, we want to return the selected
+  // value as a single element and not wrapped in a one-element array.
+  return element.attributes.multiple ? selectedOptions : selectedOptions[0]
+}
+
+function openLink(href) {
+  window.open(/^\w+:\/\//.exec(href) ? href : 'http://' + href, '_blank')
+}
 
 /**
  * Component for API fields of type String
@@ -115,33 +129,16 @@ export default class FieldStringEdit extends React.Component {
   constructor(props) {
     super(props)
 
-    this.cursor = null
-    this.inputRefs = []
+    this.handleBlur = () => this.setState({hasFocus: false})
+    this.handleFocus = () => this.setState({hasFocus: true})
+    this.handleInputChange = this.handleInputChange.bind(this)
+    this.handleInputChangeEvent = e => this.handleInputChange(e.target.value)
+    this.handleSelectionChangeEvent = e =>
+      this.handleInputChange(getValueOfDropdown(e.target))
 
     this.state = {
       hasFocus: false
     }
-  }
-
-  getValueOfDropdown(element) {
-    const selectedOptions = Array.from(
-      element.selectedOptions,
-      item => item.value
-    )
-
-    // If this isn't a multiple value select, we want to return the selected
-    // value as a single element and not wrapped in a one-element array.
-    if (element.attributes.multiple) {
-      return selectedOptions
-    }
-
-    return selectedOptions[0]
-  }
-
-  handleFocusChange(hasFocus) {
-    this.setState({
-      hasFocus
-    })
   }
 
   handleInputChange(value, options) {
@@ -154,42 +151,50 @@ export default class FieldStringEdit extends React.Component {
   }
 
   render() {
-    const {schema, value} = this.props
-    const publishBlock = schema.publish
-
-    if (publishBlock && publishBlock.options) {
-      return this.renderAsDropdown()
-    }
-
-    if ((publishBlock && publishBlock.list) || Array.isArray(value)) {
-      return this.renderAsList()
-    }
-
-    if (schema.format) {
-      return this.renderAsRichEditor(schema.format)
-    }
-
-    return this.renderAsFreeInput()
-  }
-
-  renderAsDropdown() {
     const {
       comment,
       displayName,
       error,
-      name,
       readOnly,
       required,
       schema,
       value
     } = this.props
+    const publishBlock = schema.publish
+
+    let content
+
+    if (publishBlock && publishBlock.options) {
+      content = this.renderAsDropdown()
+    } else if ((publishBlock && publishBlock.list) || Array.isArray(value)) {
+      content = this.renderAsList()
+    } else if (schema.format) {
+      content = this.renderAsRichEditor(schema.format)
+    } else {
+      content = this.renderAsFreeInput()
+    }
+
+    return (
+      <Label
+        comment={
+          comment ||
+          (required && 'Required') ||
+          (readOnly && 'Read only') ||
+          null
+        }
+        error={Boolean(error)}
+        errorMessage={typeof error === 'string' ? error : null}
+        label={displayName}
+      >
+        {content}
+      </Label>
+    )
+  }
+
+  renderAsDropdown() {
+    const {error, name, readOnly, schema, value} = this.props
     const publishBlock = schema.publish || {}
-    const options = publishBlock.options
-    const selectLabel = `Please select${schema.label ? ` ${schema.label}` : ''}`
-    const multiple = publishBlock.multiple === true
-    const dropdownStyle = new Style(styles, 'dropdown')
-      .addIf('dropdown-error', error)
-      .addIf('dropdown-multiple', multiple)
+    const {multiple, options} = publishBlock
 
     let selectedValue = value || schema.default || ''
 
@@ -197,208 +202,105 @@ export default class FieldStringEdit extends React.Component {
       selectedValue = [selectedValue]
     }
 
-    return (
-      <Label
-        error={Boolean(error)}
-        errorMessage={typeof error === 'string' ? error : null}
-        label={displayName}
-        comment={
-          comment ||
-          (required && 'Required') ||
-          (readOnly && 'Read only') ||
-          null
-        }
-      >
-        <select
-          className={dropdownStyle.getClasses()}
-          disabled={readOnly}
-          onChange={el =>
-            this.handleInputChange(this.getValueOfDropdown(el.target))
-          }
-          multiple={multiple}
-          name={name}
-          ref={this.selectDropdownOptions.bind(this, multiple)}
-          value={selectedValue}
-        >
-          {!multiple && (
-            <option className={styles['dropdown-option']} disabled value="">
-              {selectLabel}
-            </option>
-          )}
+    const placeholder = {
+      disabled: true,
+      label: ('Please select ' + (schema.label || '')).trim(),
+      value: ''
+    }
 
-          {options.map(option => {
-            return (
-              <option
-                className={styles['dropdown-option']}
-                key={option.value}
-                value={option.value}
-              >
-                {option.label}
-              </option>
-            )
-          })}
-        </select>
-      </Label>
+    return (
+      <Select
+        inFieldComponent
+        name={name}
+        options={multiple ? options : [placeholder, ...options]}
+        value={selectedValue}
+        multiple={multiple}
+        onChange={this.handleSelectionChangeEvent}
+        readOnly={readOnly}
+      />
     )
   }
 
   renderAsFreeInput() {
-    const {
-      comment,
-      displayName,
-      error,
-      name,
-      placeholder,
-      required,
-      schema,
-      value
-    } = this.props
-    const {hasFocus} = this.state
+    const {error, name, placeholder, schema, value} = this.props
     const publishBlock = schema.publish || {}
-    const {
-      display = {},
-      heightType,
-      multiline,
-      readonly,
-      resizable,
-      rows
-    } = publishBlock
-    const type = multiline ? 'multiline' : 'text'
-    const readOnly = readonly === true
+    const {display = {}, multiline, readonly, resizable, rows} = publishBlock
 
     const link = formatLink(value, display.link)
 
     return (
-      <Label
-        error={Boolean(error)}
-        errorMessage={typeof error === 'string' ? error : null}
-        hasFocus={hasFocus}
-        label={displayName}
-        comment={
-          comment ||
-          (required && 'Required') ||
-          (readOnly && 'Read only') ||
-          null
-        }
-      >
+      <div className={styles['free-input-wrapper']}>
         <TextInput
-          heightType={heightType}
-          inputRef={ref => {
-            this.inputRefs[0] = ref
-          }}
+          accent={error ? 'error' : undefined}
+          autoresize={multiline}
+          multiline={multiline}
           name={name}
-          onBlur={this.handleFocusChange.bind(this, false)}
-          onFocus={this.handleFocusChange.bind(this, true)}
-          onInput={el => this.handleInputChange(el.target.value)}
+          onBlur={this.handleBlur}
+          onFocus={this.handleFocus}
+          onChange={this.handleInputChangeEvent}
           placeholder={placeholder}
-          readOnly={readOnly}
+          readOnly={readonly}
           resizable={resizable}
           rows={rows}
-          type={type}
+          type="text"
           value={value}
         />
 
         {link && (
           <Button
-            accent="neutral"
-            className={styles['link-preview']}
-            href={link}
-            openInNewWindow={true}
-            size="small"
+            accent="positive"
+            className={styles['open-button']}
+            narrow
+            onClick={() => openLink(value)}
           >
-            Open in new window
+            <span>Open </span>
+            <OpenInNew className={styles['open-icon']} fontSize="small" />
           </Button>
         )}
-      </Label>
+      </div>
     )
   }
 
   renderAsList() {
-    const {
-      comment,
-      displayName,
-      error,
-      name,
-      placeholder,
-      required,
-      schema: {publish: publishSettings = {}},
-      value
-    } = this.props
-    const {hasFocus} = this.state
-    const readOnly = publishSettings.readonly === true
+    const {name, placeholder, schema, value} = this.props
+    const {publish: publishSettings = {}} = schema
 
     return (
-      <Label
-        comment={
-          comment ||
-          (required && 'Required') ||
-          (readOnly && 'Read only') ||
-          null
-        }
-        error={Boolean(error)}
-        errorMessage={typeof error === 'string' ? error : null}
-        hasFocus={hasFocus}
-        label={displayName}
-      >
-        <SortableList
-          name={name}
-          onChange={this.handleInputChange.bind(this)}
-          onFocus={this.handleFocusChange.bind(this)}
-          placeholder={placeholder}
-          publishSettings={publishSettings}
-          valuesArray={value}
-        />
-      </Label>
+      <SortableList
+        name={name}
+        onBlur={this.handleBlur}
+        onChange={this.handleInputChange}
+        onFocus={this.handleBlur}
+        placeholder={placeholder}
+        publishSettings={publishSettings}
+        valuesArray={value}
+      />
     )
   }
 
   renderAsRichEditor(format) {
     const {
       contentKey,
-      displayName,
-      error,
       name,
       onSaveRegister,
       onValidateRegister,
-      required,
       value
     } = this.props
-    const {hasFocus} = this.state
     const fieldContentKey = JSON.stringify({
       fieldName: name
     })
 
     return (
-      <Label
-        comment={(required && 'Required') || null}
-        error={Boolean(error)}
-        errorMessage={typeof error === 'string' ? error : null}
-        hasFocus={hasFocus}
-        label={displayName}
-      >
-        <RichEditor
-          contentKey={contentKey + fieldContentKey}
-          format={format}
-          onBlur={this.handleFocusChange.bind(this, false)}
-          onChange={this.handleInputChange.bind(this)}
-          onFocus={this.handleFocusChange.bind(this, true)}
-          onSaveRegister={onSaveRegister}
-          onValidateRegister={onValidateRegister}
-          value={value}
-        />
-      </Label>
+      <RichEditor
+        contentKey={contentKey + fieldContentKey}
+        format={format}
+        onBlur={this.handleBlur}
+        onChange={this.handleInputChange}
+        onFocus={this.handleFocus}
+        onSaveRegister={onSaveRegister}
+        onValidateRegister={onValidateRegister}
+        value={value}
+      />
     )
-  }
-
-  selectDropdownOptions(isMultiple, input) {
-    const {value} = this.props
-
-    if (!input || !input.options || !isMultiple) return
-
-    for (let i = 0; i < input.options.length; i++) {
-      if (value.includes(input.options[i].value)) {
-        input.options[i].selected = true
-      }
-    }
   }
 }

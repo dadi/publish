@@ -1,0 +1,72 @@
+@font-face {
+  font-family: 'HelveticaNowText-Regular';
+  src: url('/_public/fonts/3A1BC5_0_0.eot');
+  src: url('/_public/fonts/3A1BC5_0_0.eot?#iefix') format('embedded-opentype'),
+    url('/_public/fonts/3A1BC5_0_0.woff2') format('woff2'),
+    url('/_public/fonts/3A1BC5_0_0.woff') format('woff'),
+    url('/_public/fonts/3A1BC5_0_0.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'HelveticaNowText-Bold';
+  src: url('/_public/fonts/3A1BC5_1_0.eot');
+  src: url('/_public/fonts/3A1BC5_1_0.eot?#iefix') format('embedded-opentype'),
+    url('/_public/fonts/3A1BC5_1_0.woff2') format('woff2'),
+    url('/_public/fonts/3A1BC5_1_0.woff') format('woff'),
+    url('/_public/fonts/3A1BC5_1_0.ttf') format('truetype');
+}
+
+:root strong {
+  font-weight: bold;
+}
+
+body {
+  min-height: 100vh;
+  background-color: var(--edit-color-background-3);
+  line-height: var(--edit-line-height-standard);
+}
+
+body,
+button,
+input,
+textarea,
+select {
+  font-family: var(--theme-font-family);
+}
+
+:global :root {
+  --theme-colour-background: #ffffff;
+  --theme-colour-background-shade-1: #f2f2f2;
+  --theme-colour-background-shade-2: #aaaaaa;
+  --theme-colour-background-shade-3: #eeeeee;
+  --theme-colour-background-shade-4: #e4e4e4;
+  --theme-colour-background-shade-5: #cbcbcb;
+  --theme-colour-secondary-background: #17273f;
+  --theme-colour-data: #3585f9;
+  --theme-colour-data-shade-1: #1772ff;
+  --theme-colour-error: #e5462c;
+  --theme-colour-error-shade-1: #982613;
+  --theme-colour-error-shade-2: #fef8f8;
+  --theme-colour-primary: #000000;
+  --theme-colour-primary-shade-1: #777777;
+  --theme-colour-save: #88c24c;
+  --theme-colour-secondary: #ffffff;
+  --theme-colour-system: #ffbf0d;
+  --theme-colour-system-invert: #040609;
+  --theme-colour-highlight-1: #f3f8ff;
+  --theme-font-family: 'HelveticaNow', Helvetica, Geneva, sans-serif;
+  --theme-font-size-small: 13px;
+  --theme-font-size-normal: 16px;
+  --theme-font-size-large: 20px;
+  --theme-toolbar-height: 63px;
+}
+
+:global #app {
+  height: 100%;
+  display: flex;
+  flex-flow: column nowrap;
+}
+
+:global #app > main {
+  flex: 1;
+}

@@ -12,9 +12,7 @@
       "waitForNavigation": "domcontentloaded",
       "windowSize": "1425x710",
       "chrome": {
-        "args": [
-          "--no-sandbox"
-        ]
+        "args": ["--no-sandbox"]
       }
     },
     "Assertions": {
@@ -58,16 +56,11 @@
   "hooks": [],
   "multiple": {
     "basic": {
-      "browsers": [
-        "chrome",
-        "firefox"
-      ]
+      "browsers": ["chrome", "firefox"]
     },
     "parallel": {
       "chunks": 2,
-      "browsers": [
-        "chrome"
-      ]
+      "browsers": ["chrome"]
     }
   },
   "plugins": {

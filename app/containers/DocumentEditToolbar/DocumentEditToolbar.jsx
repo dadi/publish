@@ -2,14 +2,14 @@ import * as appActions from 'actions/appActions'
 import * as Constants from 'lib/constants'
 import * as documentActions from 'actions/documentActions'
 import * as userActions from 'actions/userActions'
-import Button from 'components/Button/Button'
-import ButtonWithOptions from 'components/ButtonWithOptions/ButtonWithOptions'
-import ButtonWithPrompt from 'components/ButtonWithPrompt/ButtonWithPrompt'
+import {Button, ButtonWithOptions} from '@dadi/edit-ui'
 import {connectRedux} from 'lib/redux'
 import {connectRouter} from 'lib/router'
 import DateTime from 'components/DateTime/DateTime'
 import DropdownNative from 'components/DropdownNative/DropdownNative'
 import HotKeys from 'lib/hot-keys'
+import Modal from 'components/Modal/Modal'
+import Prompt from 'components/Prompt/Prompt'
 import proptypes from 'prop-types'
 import React from 'react'
 import styles from './DocumentEditToolbar.css'
@@ -65,10 +65,18 @@ class DocumentEditToolbar extends React.Component {
   constructor(props) {
     super(props)
 
+    this.handleDelete = this.handleDelete.bind(this)
     this.hotkeys = new HotKeys({
       'mod+s': this.handleSave.bind(this, null)
     })
     this.onSave = null
+
+    this.showDeletePrompt = () => this.setState({isShowingDeletePrompt: true})
+    this.hideDeletePrompt = () => this.setState({isShowingDeletePrompt: false})
+
+    this.state = {
+      isShowingDeletePrompt: false
+    }
   }
 
   componentDidMount() {
@@ -85,24 +93,33 @@ class DocumentEditToolbar extends React.Component {
         this,
         Constants.SAVE_ACTION_SAVE_AND_CONTINUE
       ),
-      label: 'Save and continue'
+      label: 'Save & continue'
     }
-    const secondary = {
-      'Save and create new': this.handleSave.bind(
-        this,
-        Constants.SAVE_ACTION_SAVE_AND_CREATE_NEW
-      ),
-      'Save and go back': this.handleSave.bind(
-        this,
-        Constants.SAVE_ACTION_SAVE_AND_GO_BACK
-      )
-    }
+    const secondary = [
+      {
+        text: 'Save & create new',
+        onClick: this.handleSave.bind(
+          this,
+          Constants.SAVE_ACTION_SAVE_AND_CREATE_NEW
+        )
+      },
+      {
+        text: 'Save & go back',
+        onClick: this.handleSave.bind(
+          this,
+          Constants.SAVE_ACTION_SAVE_AND_GO_BACK
+        )
+      }
+    ]
 
     if (documentId) {
-      secondary['Save as duplicate'] = this.handleSave.bind(
-        this,
-        Constants.SAVE_ACTION_SAVE_AS_DUPLICATE
-      )
+      secondary.push({
+        text: 'Save as duplicate',
+        onClick: this.handleSave.bind(
+          this,
+          Constants.SAVE_ACTION_SAVE_AS_DUPLICATE
+        )
+      })
     }
 
     return {
@@ -212,7 +229,7 @@ class DocumentEditToolbar extends React.Component {
           )}
 
           {remote && remote._lastModifiedAt && (
-            <p className={styles['metadata-emphasis']}>
+            <p>
               <span>Last updated </span>
 
               {remote._lastModifiedBy && (
@@ -229,24 +246,34 @@ class DocumentEditToolbar extends React.Component {
         <div className={styles.buttons}>
           {remote && !isSingleDocument && (
             <div className={styles.button}>
-              <ButtonWithPrompt
-                accent="destruct"
-                className={styles.button}
+              <Button
+                accent="negative"
                 disabled={Boolean(hasConnectionIssues)}
-                onClick={this.handleDelete.bind(this)}
-                promptCallToAction="Yes, delete it."
-                position="left"
-                promptMessage="Are you sure you want to delete this document?"
+                filled
+                onClick={this.showDeletePrompt}
               >
                 Delete
-              </ButtonWithPrompt>
+              </Button>
             </div>
+          )}
+
+          {this.state.isShowingDeletePrompt && (
+            <Modal onRequestClose={this.hideDeletePrompt}>
+              <Prompt
+                accent="negative"
+                action={'Yes, delete it'}
+                onCancel={this.hideDeletePrompt}
+                onConfirm={this.handleDelete}
+              >
+                Are you sure you want to delete this document?
+              </Prompt>
+            </Modal>
           )}
 
           <div className={styles.button}>
             {isSingleDocument ? (
               <Button
-                accent="save"
+                accent="positive"
                 disabled={Boolean(
                   hasConnectionIssues || hasValidationErrors || isSaving
                 )}
@@ -257,7 +284,7 @@ class DocumentEditToolbar extends React.Component {
               </Button>
             ) : (
               <ButtonWithOptions
-                accent="save"
+                accent="positive"
                 disabled={Boolean(
                   hasConnectionIssues || hasValidationErrors || isSaving
                 )}

@@ -1,30 +1,17 @@
 .container {
-  background: #fff;
-  color: var(--theme-colour-primary, #000000);
   display: flex;
   font-size: 15px;
   justify-content: space-between;
-  margin: 0 -13px 10px;
-  padding: 10px 9px 5px;
+  padding: 10px 0;
   position: sticky;
   top: 0;
-  z-index: 20;
+  z-index: var(--edit-z-index-rich-editor-toolbar);
+  background-color: var(--edit-color-background-1);
 }
 
-.container:after {
-  background: linear-gradient(
-    to top,
-    rgba(255, 255, 255, 0),
-    rgba(0, 0, 0, 0.03)
-  );
-  content: ' ';
-  display: block;
-  left: 0;
-  height: 5px;
-  position: absolute;
-  right: 0;
-  top: 100%;
-  width: 100%;
+.container:not(.fullscreen) {
+  border-top: solid var(--edit-border-width-standard)
+    var(--edit-color-border-light);
 }
 
 .button {

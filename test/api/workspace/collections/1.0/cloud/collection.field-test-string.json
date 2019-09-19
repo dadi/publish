@@ -46,7 +46,7 @@
         "placement": "main",
         "list": true
       }
-    },    
+    },
     "stringHeightTypeContent": {
       "type": "String",
       "label": "String with heightType content",

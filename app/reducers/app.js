@@ -20,7 +20,8 @@ const initialState = {
   networkStatus: Constants.NETWORK_OK,
   notification: null,
   status: Constants.STATUS_IDLE,
-  version: window.__version__
+  version: window.__version__,
+  windowWidth: window.innerWidth
 }
 
 let debouncedNetworkCall = null
@@ -132,13 +133,10 @@ export default function app(state = initialState, action = {}) {
     case Types.SET_SCREEN_WIDTH: {
       const breakpoint = getActiveBreakpoint(action.width)
 
-      if (breakpoint === state.breakpoint) {
-        return state
-      }
-
       return {
         ...state,
-        breakpoint
+        breakpoint,
+        windowWidth: action.width
       }
     }
 

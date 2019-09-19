@@ -3,9 +3,6 @@ import * as userActions from 'actions/userActions'
 import {connectRedux} from 'lib/redux'
 import EditInterface from 'components/EditInterface/EditInterface'
 import EditInterfaceSection from 'components/EditInterface/EditInterfaceSection'
-import Header from 'containers/Header/Header'
-import Main from 'components/Main/Main'
-import Page from 'components/Page/Page'
 import ProfileEditToolbar from 'containers/ProfileEditToolbar/ProfileEditToolbar'
 import ProfileField from 'containers/ProfileField/ProfileField'
 import React from 'react'
@@ -201,15 +198,13 @@ class ProfileEditView extends React.Component {
     setPageTitle('Profile')
 
     return (
-      <Page>
-        <Header />
-
+      <>
         <div className={styles.toolbar}>
           <ProfileEditToolbar />
         </div>
 
-        <Main>{this.renderFields({sections})}</Main>
-      </Page>
+        <main>{this.renderFields({sections})}</main>
+      </>
     )
   }
 

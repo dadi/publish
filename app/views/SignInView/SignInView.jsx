@@ -1,6 +1,4 @@
 import {connectRedux} from 'lib/redux'
-import Main from 'components/Main/Main'
-import Page from 'components/Page/Page'
 import React from 'react'
 import {Redirect} from 'react-router-dom'
 import {setPageTitle} from 'lib/util'
@@ -16,11 +14,9 @@ class SignInView extends React.Component {
     }
 
     return (
-      <Page>
-        <Main>
-          <SignIn setPageTitle={this.handlePageTitleChange} token={token} />
-        </Main>
-      </Page>
+      <main>
+        <SignIn setPageTitle={this.handlePageTitleChange} token={token} />
+      </main>
     )
   }
 

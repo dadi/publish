@@ -1,5 +1,5 @@
+import {ExpandMore} from '@material-ui/icons'
 import {Link} from 'react-router-dom'
-import proptypes from 'prop-types'
 import React from 'react'
 import Style from 'lib/Style'
 import styles from './NavItem.css'
@@ -8,79 +8,80 @@ import styles from './NavItem.css'
  * An item of the main navigation component.
  */
 export default class NavItem extends React.Component {
-  static propTypes = {
-    /**
-     * Whether the component corresponds to the currently active page.
-     */
-    active: proptypes.bool,
-
-    /**
-     * The link to be followed when the navigation item is clicked.
-     */
-    href: proptypes.string,
-
-    /**
-     * Whether the navigation item is part of a navigation component in mobile mode.
-     */
-    mobile: proptypes.bool,
-
-    /**
-     * Text content for navigation anchor.
-     */
-    text: proptypes.string
-  }
-
-  static defaultProps = {
-    active: false,
-    mobile: false
-  }
-
   constructor(props) {
     super(props)
 
-    this.state = {
-      expanded: false
-    }
-  }
+    this.state = {isOpen: false}
 
-  static defaultProps = {
-    mobile: false
+    this.closeDropdown = () => this.setState({isOpen: false})
+    this.openDropdown = () => this.setState({isOpen: true})
+    this.toggleDropdown = () => this.setState(({isOpen}) => ({isOpen: !isOpen}))
   }
 
   render() {
-    const {active, children, href, mobile, text} = this.props
+    const {closeMenu, inDrawer, item, labelRef} = this.props
+    const {href, isSelected, label, subItems} = item
+    const {isOpen} = this.state
+
     const containerStyle = new Style(styles, 'container')
-      .addIf('container-desktop', !mobile)
-      .addIf('container-expanded', this.state.expanded)
-    const navItemStyle = new Style(styles, 'nav-item')
-      .addIf('nav-item-active', active)
-      .addIf('nav-item-text', !href)
+      .addIf('in-drawer', inDrawer)
+      .addIf('open', isOpen)
+      .addIf('active', isSelected)
+      .addIf('group', subItems)
 
-    if (!text) return null
-
-    return (
-      <li
-        className={containerStyle.getClasses()}
-        onMouseEnter={this.toggleExpanded.bind(this, true)}
-        onMouseLeave={this.toggleExpanded.bind(this, false)}
-        onClick={this.toggleExpanded.bind(this, false)}
+    const labelJsx = href ? (
+      <Link
+        className={styles.label}
+        onClick={closeMenu}
+        innerRef={labelRef}
+        to={href}
       >
-        {href && (
-          <Link className={navItemStyle.getClasses()} to={href}>
-            <span className={styles['nav-item-text']}>{text}</span>
-          </Link>
-        )}
-
-        {!href && <span className={navItemStyle.getClasses()}>{text}</span>}
-
-        {children && <div className={styles.children}>{children}</div>}
-      </li>
+        {label}
+      </Link>
+    ) : (
+      <span className={styles.label} ref={labelRef}>
+        {label} <ExpandMore className={styles['expand-icon']} />
+      </span>
     )
-  }
 
-  toggleExpanded(expanded, event) {
-    this.setState({
-      expanded
-    })
+    const subItemsJsx =
+      subItems &&
+      subItems.map(subItem => {
+        const subItemStyle = new Style(styles, 'dropdown-item').addIf(
+          'active',
+          subItem.isSelected
+        )
+
+        return (
+          <Link
+            className={subItemStyle.getClasses()}
+            onClick={closeMenu}
+            key={subItem.id}
+            to={subItem.href}
+          >
+            {subItem.label}
+          </Link>
+        )
+      })
+
+    return inDrawer ? (
+      <div className={containerStyle.getClasses()}>
+        <div onClick={this.toggleDropdown}>{labelJsx}</div>
+        {subItems && isOpen && (
+          <div className={styles['sub-items']}>{subItemsJsx}</div>
+        )}
+      </div>
+    ) : (
+      <div
+        className={containerStyle.getClasses()}
+        onMouseEnter={this.openDropdown}
+        onMouseLeave={this.closeDropdown}
+      >
+        {labelJsx}
+        {subItems && isOpen && (
+          <div className={styles.dropdown}>{subItemsJsx}</div>
+        )}
+      </div>
+    )
   }
 }

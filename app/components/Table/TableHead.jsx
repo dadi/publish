@@ -1,3 +1,4 @@
+import {Checkbox} from '@dadi/edit-ui'
 import proptypes from 'prop-types'
 import React from 'react'
 import styles from './Table.css'
@@ -63,12 +64,11 @@ export default class TableHead extends React.Component {
         <tr>
           {selectable && (
             <TableHeadCell select={true}>
-              <input
-                className={styles.select}
+              <Checkbox
+                className={styles.checkbox}
                 indeterminate={(!allSelected && hasSelected).toString()}
                 onChange={this.handleSelectClick.bind(this)}
                 style={allowBulkSelection ? null : {display: 'none'}}
-                type="checkbox"
                 value={allSelected}
               />
             </TableHeadCell>

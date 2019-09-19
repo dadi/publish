@@ -1,0 +1,116 @@
+@import '../../main.css';
+
+.button {
+  position: relative;
+  cursor: pointer;
+  box-sizing: border-box;
+  white-space: nowrap;
+  transition-property: background-color, border-color, color;
+  transition-duration: var(--edit-transition-duration-standard);
+  outline: none;
+  border: solid var(--edit-border-width-standard);
+  border-radius: var(--edit-radius-button);
+  height: var(--edit-elem-height-medium);
+  padding: 0 30px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.button.narrow,
+.button.compact {
+  padding: 0 15px;
+}
+
+.button.compact {
+  height: var(--edit-elem-height-small);
+}
+
+.button.flat:not(.filled) {
+  border-color: transparent;
+}
+
+/* accent--positive */
+
+.button.accent--positive {
+  background-color: var(--edit-color-background-1);
+  color: var(--edit-color-positive);
+}
+
+.button.accent--positive:not(.flat) {
+  border-color: var(--edit-color-positive);
+}
+
+.button.accent--positive.filled {
+  background-color: var(--edit-color-positive);
+  border-color: var(--edit-color-positive);
+  color: var(--edit-color-text-inverse-1);
+}
+
+.button.accent--positive:not(.filled):hover {
+  background-color: var(--edit-color-positive-hint);
+}
+
+.button.accent--positive.filled:hover {
+  background-color: var(--edit-color-positive-darker-1);
+  border-color: var(--edit-color-positive-darker-1);
+}
+
+/* accent--negative */
+
+.button.accent--negative {
+  background-color: var(--edit-color-background-1);
+  color: var(--edit-color-negative);
+}
+
+.button.accent--negative:not(.flat) {
+  border-color: var(--edit-color-negative);
+}
+
+.button.accent--negative.filled {
+  background-color: var(--edit-color-negative);
+  border-color: var(--edit-color-negative);
+  color: var(--edit-color-text-inverse-1);
+}
+
+.button.accent--negative:not(.filled):hover {
+  background-color: var(--edit-color-negative-hint);
+}
+
+.button.accent--negative.filled:hover {
+  background-color: var(--edit-color-negative-darker-1);
+  border-color: var(--edit-color-negative-darker-1);
+}
+
+/* accent--info */
+
+.button.accent--info {
+  background-color: var(--edit-color-info);
+  border-color: var(--edit-color-background-1);
+  color: var(--edit-color-text-inverse-1);
+}
+
+.button.accent--info:hover {
+  background-color: var(--edit-color-background-1);
+  color: var(--edit-color-info);
+}
+
+/* disabled */
+
+.button:disabled {
+  background-color: transparent;
+  border-color: var(--edit-color-off);
+  color: var(--edit-color-off);
+  cursor: not-allowed;
+}
+
+.button.filled:disabled {
+  background-color: var(--edit-color-off);
+  border-color: transparent;
+  color: var(--edit-color-text-inverse-1);
+}
+
+/* ----- */
+
+.button:active {
+  top: 1px;
+}

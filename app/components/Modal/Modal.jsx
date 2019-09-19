@@ -19,6 +19,12 @@ export default class Modal extends React.Component {
     children: proptypes.node,
 
     /**
+     * Whether to make the modal take the full width and height of the screen,
+     * minus the padding.
+     */
+    fullScreen: proptypes.bool,
+
+    /**
      * A callback to be fired when the user attempts to close the modal.
      */
     onRequestClose: proptypes.func,
@@ -31,6 +37,7 @@ export default class Modal extends React.Component {
   }
 
   static defaultProps = {
+    fullScreen: false,
     scrollContent: true
   }
 
@@ -49,10 +56,14 @@ export default class Modal extends React.Component {
   }
 
   render() {
-    const {children, onRequestClose, scrollContent} = this.props
+    const {children, fullScreen, onRequestClose, scrollContent} = this.props
     const {isOpen} = this.state
+    const overlayStyle = new Style(styles, 'overlay').addIf(
+      'fullscreen',
+      fullScreen
+    )
     const contentStyle = new Style(styles, 'content').addIf(
-      'content-scrollable',
+      'scrollable',
       scrollContent
     )
 
@@ -63,7 +74,7 @@ export default class Modal extends React.Component {
         contentRef={el => (this.contentRef = el)}
         isOpen={isOpen}
         onRequestClose={onRequestClose}
-        overlayClassName={styles.overlay}
+        overlayClassName={overlayStyle.getClasses()}
         overlayRef={el => (this.overlayRef = el)}
         shouldCloseOnOverlayClick={true}
         shouldCloseOnEsc={true}

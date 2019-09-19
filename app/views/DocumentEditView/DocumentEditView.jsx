@@ -9,10 +9,7 @@ import EditInterface from 'components/EditInterface/EditInterface'
 import EditInterfaceSection from 'components/EditInterface/EditInterfaceSection'
 import ErrorMessage from 'components/ErrorMessage/ErrorMessage'
 import {getVisibleFields} from 'lib/fields'
-import Header from 'containers/Header/Header'
-import Main from 'components/Main/Main'
 import MediaViewer from 'components/MediaViewer/MediaViewer'
-import Page from 'components/Page/Page'
 import React from 'react'
 import {Redirect} from 'react-router-dom'
 import ReferenceSelectView from 'views/ReferenceSelectView/ReferenceSelectView'
@@ -311,13 +308,9 @@ class DocumentEditView extends React.Component {
 
     if (!collection) {
       return (
-        <Page>
-          <Header />
-
-          <Main>
-            <ErrorMessage type={Constants.ERROR_ROUTE_NOT_FOUND} />
-          </Main>
-        </Page>
+        <main>
+          <ErrorMessage type={Constants.ERROR_ROUTE_NOT_FOUND} />
+        </main>
       )
     }
 
@@ -380,9 +373,7 @@ class DocumentEditView extends React.Component {
     }
 
     return (
-      <Page>
-        <Header />
-
+      <>
         <div className={styles.toolbar}>
           <DocumentEditToolbar
             collection={collection}
@@ -395,7 +386,7 @@ class DocumentEditView extends React.Component {
           />
         </div>
 
-        <Main>
+        <main>
           <Document
             collection={collection}
             contentKey={contentKey}
@@ -412,8 +403,8 @@ class DocumentEditView extends React.Component {
             }
             section={section}
           />
-        </Main>
-      </Page>
+        </main>
+      </>
     )
   }
 

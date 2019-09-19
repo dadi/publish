@@ -21,7 +21,6 @@ export default class SyncTable extends React.Component {
      *     {
      *        id: 'first_name',
      *        label: 'First name',
-     *        annotation: 'String'
      *     }
      *   ]
      *   ```
@@ -121,7 +120,7 @@ export default class SyncTable extends React.Component {
     const {
       columns,
       onSelect,
-      onSort,
+      renderColumnHeader,
       selectable,
       selectedRows,
       selectLimit,
@@ -134,33 +133,14 @@ export default class SyncTable extends React.Component {
         head={
           <TableHead>
             {columns.map((column, index) => {
-              let content = column.label
-              let arrow = null
-              let linkSortOrder = 'asc'
-
-              if (typeof onSort === 'function') {
-                if (sortBy === column.id) {
-                  if (sortOrder === 'desc') {
-                    arrow = 'down'
-                    linkSortOrder = 'asc'
-                  } else {
-                    arrow = 'up'
-                    linkSortOrder = 'desc'
-                  }
-
-                  arrow = sortOrder === 'desc' ? 'down' : 'up'
-                }
-
-                content = onSort(content, column.id, linkSortOrder)
-              }
-
               return (
                 <TableHeadCell
-                  annotation={column.annotation}
-                  arrow={arrow}
+                  sorted={sortBy === column.id && sortOrder}
                   key={column.label + index}
                 >
-                  {content}
+                  {renderColumnHeader
+                    ? renderColumnHeader(column)
+                    : column.label}
                 </TableHeadCell>
               )
             })}

@@ -28,12 +28,20 @@ export default class TableRowCell extends React.Component {
   }
 
   render() {
-    const cellStyle = new Style(styles, 'cell').addIf(
-      'select-cell',
-      this.props.select
-    )
+    const {onHover, select} = this.props
 
-    return <td className={cellStyle.getClasses()}>{this.renderChildren()}</td>
+    const cellStyle = new Style(styles, 'cell').addIf('select-cell', select)
+
+    return (
+      <td className={cellStyle.getClasses()}>
+        {React.Children.map(this.renderChildren(), child => {
+          // Only pass onHover to field components.
+          return child.type.name.startsWith('Field')
+            ? React.cloneElement(child, {onHover})
+            : child
+        })}
+      </td>
+    )
   }
 
   renderChildren() {

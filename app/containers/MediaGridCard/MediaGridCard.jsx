@@ -1,4 +1,5 @@
 import * as documentActions from 'actions/documentActions'
+import {Checkbox} from '@dadi/edit-ui'
 import {connectRedux} from 'lib/redux'
 import proptypes from 'prop-types'
 import React from 'react'
@@ -53,12 +54,18 @@ class MediaGridCard extends React.Component {
     selectLimit: Infinity
   }
 
-  handleCardClick(event) {
-    const {href, onSelect} = this.props
+  constructor(props) {
+    super(props)
 
-    if (typeof href !== 'string' && typeof onSelect === 'function') {
-      onSelect(event)
-    }
+    this.handleCardClick = this.handleCardClick.bind(this)
+    this.handleSelectClick = this.handleSelectClick.bind(this)
+  }
+
+  handleCardClick(event) {
+    // Deselecting the last item by clicking on the card causes navigation
+    // to that item. This prevents that. Alternative solutions more than welcome.
+    event.preventDefault()
+    this.handleSelectClick(event)
   }
 
   handleSelectClick(event) {
@@ -70,10 +77,10 @@ class MediaGridCard extends React.Component {
   }
 
   render() {
-    const {href, item, isSelected, selectLimit} = this.props
-    const itemStyle = new Style(styles, 'wrapper').addIf(
-      'wrapper-selected',
-      isSelected
+    const {href, item, isSelected, isSelectMode, selectLimit} = this.props
+    const cardStyle = new Style(styles, 'card').addIf(
+      'select-mode',
+      isSelectMode
     )
 
     // For backwards compatibility.
@@ -99,36 +106,30 @@ class MediaGridCard extends React.Component {
     // change the selected state.
     const selectProps =
       typeof href === 'string'
-        ? {onChange: this.handleSelectClick.bind(this)}
+        ? {onChange: this.handleSelectClick}
         : {readOnly: true}
 
+    const wrapperProps =
+      href && !isSelectMode ? {href} : {onClick: this.handleCardClick}
+
     return (
-      <div
-        className={itemStyle.getClasses()}
-        onClick={this.handleCardClick.bind(this)}
-      >
-        <input
-          checked={isSelected}
-          className={styles.select}
-          type={selectLimit === 1 ? 'radio' : 'checkbox'}
-          {...selectProps}
-        />
-
-        {this.renderHead({isImage})}
-
+      <div className={cardStyle.getClasses()}>
+        <label className={styles.select}>
+          <Checkbox checked={isSelected} {...selectProps} />
+        </label>
+        <a className={styles['body-wrapper']} {...wrapperProps}>
+          {this.renderHead({isImage})}
+        </a>
         <div className={styles.metadata}>
-          <p className={styles.filename}>{item.fileName}</p>
-          <div>
-            <span className={styles.size}>{humanFileSize}</span>
-
+          <div className={styles.filename}>{item.fileName}</div>
+          <div className={styles.info}>
+            <div className={styles.size}>{humanFileSize}</div>
             {isImage && (
-              <span className={styles.dimensions}>
-                {`, ${item.width}x${item.height}`}
-              </span>
+              <div className={styles.dimensions}>
+                {item.width}×{item.height}
+              </div>
             )}
-          </div>
-          <div>
-            <span className={styles.mimetype}>{mimeType}</span>
+            <div className={styles.mimetype}>{mimeType} </div>
           </div>
         </div>
       </div>
@@ -136,40 +137,19 @@ class MediaGridCard extends React.Component {
   }
 
   renderHead({isImage}) {
-    const {href, item, state} = this.props
+    const {item, state} = this.props
     const {config} = state.app
-    const aspectRatio = isImage ? (item.height / item.width) * 100 : 100
     const canonicalPath =
       item.path && (item.path.indexOf('/') === 0 ? item.path : `/${item.path}`)
     const url =
       config.cdn && config.cdn.publicUrl
-        ? `${config.cdn.publicUrl}${canonicalPath}?width=350`
+        ? `${config.cdn.publicUrl}${canonicalPath}?width=600`
         : item.url || canonicalPath
-    const headElement = isImage ? (
+
+    return isImage ? (
       <img className={styles.image} src={url} />
     ) : (
       <div className={styles['generic-thumbnail']} />
-    )
-
-    if (typeof href === 'string') {
-      return (
-        <a
-          className={styles['image-holder']}
-          href={href}
-          style={{paddingBottom: `${aspectRatio}%`}}
-        >
-          {headElement}
-        </a>
-      )
-    }
-
-    return (
-      <div
-        className={styles['image-holder']}
-        style={{paddingBottom: `${aspectRatio}%`}}
-      >
-        {headElement}
-      </div>
     )
   }
 }

@@ -86,6 +86,7 @@ module.exports = {
   ],
   resolve: {
     alias: {
+      '@dadi/edit-ui': path.resolve(__dirname, 'app/edit-ui'),
       actions: path.resolve(__dirname, 'app/actions'),
       components: path.resolve(__dirname, 'app/components'),
       containers: path.resolve(__dirname, 'app/containers'),

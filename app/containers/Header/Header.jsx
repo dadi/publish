@@ -1,131 +1,178 @@
-import * as userActions from 'actions/userActions'
-import CollectionNav from 'containers/CollectionNav/CollectionNav'
+import {Close, ExpandMore, Menu} from '@material-ui/icons'
+import buildGroupedMenuItems from './buildGroupedMenuItems'
 import {connectRedux} from 'lib/redux'
+import {connectRouter} from 'lib/router'
 import {Link} from 'react-router-dom'
-import proptypes from 'prop-types'
+import NavItem from 'components/NavItem/NavItem'
 import React from 'react'
 import Style from 'lib/Style'
 import styles from './Header.css'
 
-/**
- * The application masthead.
- */
+const HEADER_RESERVED_WIDTH = 250
+const HEADER_ITEM_MARGIN = 24
+
 class Header extends React.Component {
-  static propTypes = {
-    /**
-     * The global actions object.
-     */
-    actions: proptypes.object,
-
-    /**
-     * The text/elements to be rendered inside the header.
-     */
-    children: proptypes.node,
-
-    /**
-     * The global state object.
-     */
-    state: proptypes.object
-  }
-
   constructor(props) {
     super(props)
 
     this.state = {
-      expanded: false
+      collectionsInDrawer: true,
+      isDrawerOpen: false
+    }
+
+    this.outerRef = React.createRef()
+    this.shadowRef = React.createRef()
+
+    this.closeDrawer = () => this.setState({isDrawerOpen: false})
+
+    this.toggleDrawer = () =>
+      this.setState(({isDrawerOpen}) => ({isDrawerOpen: !isDrawerOpen}))
+
+    this.items = []
+  }
+
+  componentDidMount() {
+    this.positionNav()
+  }
+
+  componentDidUpdate() {
+    this.positionNav()
+  }
+
+  handleItemRef(index, el) {
+    this.items[index] = el
+  }
+
+  positionNav() {
+    const totalWidth = this.items.reduce(
+      (sum, item) => sum + item.offsetWidth + HEADER_ITEM_MARGIN,
+      0
+    )
+    const availableWidth = this.props.app.windowWidth - HEADER_RESERVED_WIDTH
+    const shouldBeInDrawer = totalWidth > availableWidth
+
+    if (!shouldBeInDrawer && this.state.isDrawerOpen) {
+      this.setState({isDrawerOpen: false})
+    }
+
+    if (shouldBeInDrawer !== this.state.collectionsInDrawer) {
+      this.setState({collectionsInDrawer: shouldBeInDrawer})
     }
   }
 
   render() {
-    const {children, state} = this.props
-    const compact = state.app.breakpoint === null
+    const {app, route, user} = this.props
+    const {config, version} = app
+    const {api, whitelabel} = config
+    const {displayVersionNumber, logoLight} = whitelabel
+    const {collection: collectionName} = route.params
+    const {clientId, data} = user.remote
+    const {collectionsInDrawer, isDrawerOpen, isUserMenuOpen} = this.state
+    const menuItems = buildGroupedMenuItems(api, collectionName)
+    const displayName = (data && data.publishFirstName) || clientId
 
-    const {whitelabel} = state.app.config
-    const {displayVersionNumber, logo} = whitelabel
-
-    if (!state.user.isSignedIn) {
-      return null
-    }
-
-    const contentStyle = new Style(styles, 'content')
-    const innerStyle = new Style(styles)
-
-    contentStyle.addIf('content-compact', compact)
-    contentStyle.addIf('content-expanded', this.state.expanded)
-    innerStyle.addIf('inner-content-compact', compact)
-
-    const displayName =
-      [
-        state.user.remote.data && state.user.remote.data.publishFirstName,
-        state.user.remote.data && state.user.remote.data.publishLastName
-      ]
-        .filter(Boolean)
-        .join(' ') || 'Profile'
+    const userMenuWrapperStyle = new Style(styles, 'user-menu-wrapper').addIf(
+      'open',
+      isUserMenuOpen
+    )
 
     return (
       <header className={styles.header}>
-        <div className={contentStyle.getClasses()}>
-          <div className={styles.account}>
-            <div className={styles.logo}>
-              <img src={`/_public/${logo}`} />
-            </div>
-
-            <div
-              className={styles['toggle-icon']}
-              onClick={this.toggleCollapsed.bind(this, undefined)}
-            >
-              {this.state.expanded ? (
-                <span className={styles['icon-close']}>Close</span>
-              ) : (
-                <span className={styles['icon-open']}>Open</span>
-              )}
-            </div>
-
-            {state.user.accessToken && this.state.expanded && (
-              <div className={styles.controls}>
-                <Link
-                  className={`${styles.control} ${styles['control-action']}`}
-                  to="/profile"
+        <div className={styles['collections-wrapper']} ref={this.outerRef}>
+          {collectionsInDrawer ? (
+            <div className={styles['drawer-wrapper']}>
+              <button
+                className={styles['drawer-toggle']}
+                onClick={this.toggleDrawer}
+              >
+                <Menu />
+              </button>
+              <div
+                aria-hidden={isDrawerOpen ? null : true}
+                className={`${styles.overlay} ${styles.dark}`}
+                onClick={this.closeDrawer}
+              />
+              <div
+                aria-hidden={isDrawerOpen ? null : true}
+                className={styles['collections-drawer']}
+              >
+                <button
+                  className={styles['drawer-toggle']}
+                  onClick={this.closeDrawer}
                 >
-                  {displayName}
-                </Link>
-
-                <Link
-                  className={`${styles.control} ${styles['control-action']}`}
-                  to="/sign-out"
-                >
-                  Sign out
-                </Link>
-
-                {displayVersionNumber && (
-                  <span className={styles.control}>v{state.app.version}</span>
-                )}
+                  <Close />
+                </button>
+                <nav>
+                  <ul className={styles['drawer-nav-list']}>
+                    {menuItems.map((item, index) => (
+                      <li key={item.id || item.label}>
+                        <NavItem
+                          closeMenu={this.closeDrawer}
+                          inDrawer
+                          item={item}
+                          labelRef={this.handleItemRef.bind(this, index)}
+                        />
+                      </li>
+                    ))}
+                  </ul>
+                </nav>
               </div>
-            )}
-          </div>
-
-          <div
-            className={innerStyle.getClasses()}
-            onClick={this.toggleCollapsed.bind(this, false)}
-          >
-            <CollectionNav />
-          </div>
+            </div>
+          ) : (
+            <nav>
+              <ul className={styles['header-nav-list']}>
+                {menuItems.map((item, index) => (
+                  <li key={item.id || item.label}>
+                    <NavItem
+                      item={item}
+                      labelRef={this.handleItemRef.bind(this, index)}
+                    />
+                  </li>
+                ))}
+              </ul>
+            </nav>
+          )}
         </div>
 
-        {children}
+        <div className={styles.logo}>
+          <img src={`/_public/${logoLight}`} />
+        </div>
+
+        <div className={userMenuWrapperStyle.getClasses()}>
+          <button
+            className={styles['user-menu-toggle']}
+            onClick={this.toggleUserMenu}
+          >
+            <div className={styles.username}>{displayName}</div>
+            <ExpandMore />
+          </button>
+          <div className={styles['user-menu']}>
+            <Link
+              className={`${styles['menu-item']} ${styles['link']}`}
+              onClick={this.closeUserMenu}
+              to="/profile"
+            >
+              Profile
+            </Link>
+
+            <Link
+              className={`${styles['menu-item']} ${styles['link']}`}
+              onClick={this.closeUserMenu}
+              to="/sign-out"
+            >
+              Sign out
+            </Link>
+
+            {displayVersionNumber && (
+              <span className={styles['menu-item']}>v{version}</span>
+            )}
+          </div>
+        </div>
       </header>
     )
   }
-
-  toggleCollapsed(expanded, event) {
-    if (expanded === undefined) {
-      expanded = !this.state.expanded
-    }
-
-    this.setState({
-      expanded
-    })
-  }
 }
 
-export default connectRedux(userActions)(Header)
+const mapState = state => ({user: state.user, app: state.app})
+
+export default connectRouter(connectRedux(mapState)(Header))

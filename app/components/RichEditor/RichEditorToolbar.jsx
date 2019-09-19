@@ -12,9 +12,13 @@ export class RichEditorToolbar extends React.Component {
   }
 
   render() {
-    const {children} = this.props
+    const {children, isFullscreen} = this.props
+    const containerStyle = new Style(styles, 'container').addIf(
+      'fullscreen',
+      isFullscreen
+    )
 
-    return <div className={styles.container}>{children}</div>
+    return <div className={containerStyle.getClasses()}>{children}</div>
   }
 }
 

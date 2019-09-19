@@ -1,3 +1,4 @@
+import {Error} from '@material-ui/icons'
 import {getUniqueId} from 'lib/util'
 import proptypes from 'prop-types'
 import React from 'react'
@@ -98,21 +99,9 @@ export default class Label extends React.Component {
   }
 
   render() {
-    const {
-      className,
-      comment,
-      compact,
-      label,
-      error,
-      errorMessage,
-      hasFocus
-    } = this.props
+    const {className, comment, compact, label, error, errorMessage} = this.props
     const labelStyle = new Style(styles, 'container')
       .addIf('container-compact', compact)
-      .addIf('container-error', error)
-      .addIf('container-error-message', errorMessage)
-      .addIf('container-focus', hasFocus)
-      .addIf('container-with-comment', comment)
       .addResolved(className)
 
     if (
@@ -123,18 +112,26 @@ export default class Label extends React.Component {
       return null
     }
 
+    const hint =
+      error && errorMessage ? (
+        <div className={styles['error-message-container']}>
+          <Error className={styles['error-message-icon']} fontSize="small" />
+          <span className={styles['error-message-text']}>{errorMessage}</span>
+        </div>
+      ) : comment ? (
+        <div className={styles.comment}>{comment}</div>
+      ) : null
+
     return (
       <label htmlFor={this.id} className={labelStyle.getClasses()}>
         {(label || comment) && (
           <div className={styles.header}>
             <div className={styles.label}>{label || ''}</div>
-            {comment && <div className={styles.comment}>{comment}</div>}
+
+            {hint}
           </div>
         )}
         <div>{this.renderChildren()}</div>
-        {errorMessage && (
-          <p className={styles['error-message']}>{errorMessage}</p>
-        )}
       </label>
     )
   }

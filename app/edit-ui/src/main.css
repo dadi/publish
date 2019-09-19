@@ -1,0 +1,167 @@
+:root {
+  --edit-color-grayscale-0: hsl(0, 0%, 0%); /* #000000 */
+  --edit-color-grayscale-10: hsl(0, 0%, 10%); /* #1a1a1a */
+  --edit-color-grayscale-20: hsl(0, 0%, 20%); /* #333333 */
+  --edit-color-grayscale-30: hsl(0, 0%, 30%); /* #4d4d4d */
+  --edit-color-grayscale-40: hsl(0, 0%, 40%); /* #666666 */
+  --edit-color-grayscale-50: hsl(0, 0%, 50%); /* #808080 */
+  --edit-color-grayscale-60: hsl(0, 0%, 60%); /* #999999 */
+  --edit-color-grayscale-70: hsl(0, 0%, 70%); /* #b3b3b3 */
+  --edit-color-grayscale-80: hsl(0, 0%, 80%); /* #cccccc */
+  --edit-color-grayscale-85: hsl(0, 0%, 85%); /* #d9d9d9 */
+  --edit-color-grayscale-90: hsl(0, 0%, 90%); /* #e6e6e6 */
+  --edit-color-grayscale-95: hsl(0, 0%, 95%); /* #f2f2f2 */
+  --edit-color-grayscale-96: hsl(0, 0%, 96%); /* #f5f5f5 */
+  --edit-color-grayscale-97: hsl(0, 0%, 97%); /* #f7f7f7 */
+  --edit-color-grayscale-98: hsl(0, 0%, 98%); /* #fafafa */
+  --edit-color-grayscale-100: hsl(0, 0%, 100%); /* #ffffff */
+
+  --edit-color-opacity-0: rgba(0, 0, 0, calc(1 - 0));
+  --edit-color-opacity-10: rgba(0, 0, 0, calc(1 - 0.1));
+  --edit-color-opacity-20: rgba(0, 0, 0, calc(1 - 0.2));
+  --edit-color-opacity-30: rgba(0, 0, 0, calc(1 - 0.3));
+  --edit-color-opacity-40: rgba(0, 0, 0, calc(1 - 0.4));
+  --edit-color-opacity-50: rgba(0, 0, 0, calc(1 - 0.5));
+  --edit-color-opacity-60: rgba(0, 0, 0, calc(1 - 0.6));
+  --edit-color-opacity-70: rgba(0, 0, 0, calc(1 - 0.7));
+  --edit-color-opacity-80: rgba(0, 0, 0, calc(1 - 0.8));
+  --edit-color-opacity-85: rgba(0, 0, 0, calc(1 - 0.85));
+  --edit-color-opacity-90: rgba(0, 0, 0, calc(1 - 0.9));
+  --edit-color-opacity-95: rgba(0, 0, 0, calc(1 - 0.95));
+  --edit-color-opacity-96: rgba(0, 0, 0, calc(1 - 0.96));
+  --edit-color-opacity-97: rgba(0, 0, 0, calc(1 - 0.97));
+  --edit-color-opacity-98: rgba(0, 0, 0, calc(1 - 0.98));
+  --edit-color-opacity-100: rgba(0, 0, 0, calc(1 - 1));
+
+  --edit-color-inverse-opacity-0: rgba(255, 255, 255, 0);
+  --edit-color-inverse-opacity-10: rgba(255, 255, 255, 0.1);
+  --edit-color-inverse-opacity-20: rgba(255, 255, 255, 0.2);
+  --edit-color-inverse-opacity-30: rgba(255, 255, 255, 0.3);
+  --edit-color-inverse-opacity-40: rgba(255, 255, 255, 0.4);
+  --edit-color-inverse-opacity-50: rgba(255, 255, 255, 0.5);
+  --edit-color-inverse-opacity-60: rgba(255, 255, 255, 0.6);
+  --edit-color-inverse-opacity-70: rgba(255, 255, 255, 0.7);
+  --edit-color-inverse-opacity-80: rgba(255, 255, 255, 0.8);
+  --edit-color-inverse-opacity-85: rgba(255, 255, 255, 0.85);
+  --edit-color-inverse-opacity-90: rgba(255, 255, 255, 0.9);
+  --edit-color-inverse-opacity-95: rgba(255, 255, 255, 0.95);
+  --edit-color-inverse-opacity-96: rgba(255, 255, 255, 0.96);
+  --edit-color-inverse-opacity-97: rgba(255, 255, 255, 0.97);
+  --edit-color-inverse-opacity-98: rgba(255, 255, 255, 0.98);
+  --edit-color-inverse-opacity-100: rgba(255, 255, 255, 1);
+
+  --edit-color-primary: #00182f;
+  --edit-color-primary-lighter: #003262;
+
+  --edit-color-positive: #3dc496;
+  --edit-color-positive-opacity: rgba(13, 181, 124, 0.8);
+  --edit-color-positive-hint: #e2f6ef;
+  --edit-color-positive-darker-1: #37b087;
+
+  --edit-color-negative: #ff5666;
+  --edit-color-negative-hint: #ffe6e8;
+  --edit-color-negative-darker-1: #e54d5c;
+
+  --edit-color-info: #7882fd;
+
+  --edit-color-highlight-1: #bfe8db;
+  --edit-color-highlight-2: #eaf5f2;
+
+  --edit-margin-xxl: 40px;
+  --edit-margin-xl: 30px;
+  --edit-margin-lg: 20px;
+  --edit-margin-md: 16px;
+  --edit-margin-sm: 12px;
+  --edit-margin-xs: 8px;
+  --edit-margin-xxs: 4px;
+
+  --edit-radius-button: 2px;
+  --edit-radius-input: 2px;
+  --edit-radius-elem: 2px;
+
+  --edit-border-width-standard: 1px;
+
+  --edit-transition-duration-short: 0.06s;
+  --edit-transition-duration-standard: 0.1s;
+  --edit-transition-duration-long: 0.18s;
+
+  --edit-elem-height-small: 28px;
+  --edit-elem-height-medium: 40px;
+
+  --edit-elem-padding-standard: 9px var(--edit-margin-md);
+
+  --edit-font-family: sans-serif;
+
+  --edit-font-size-heading-2: 24px;
+  --edit-font-size-large: 16px;
+  --edit-font-size-medium: 14px;
+  --edit-font-size-small: 13px;
+
+  --edit-icon-size-sm: 18px;
+  --edit-icon-size-md: 24px;
+  --edit-icon-size-lg: 36px;
+  --edit-icon-size-xl: 48px;
+
+  --edit-line-height-standard: 1.4;
+
+  --edit-z-index-standard: 1;
+  --edit-z-index-rich-editor-toolbar: 2;
+  --edit-z-index-toolbar: 3;
+  --edit-z-index-dropdown: 4;
+  --edit-z-index-modal: 6;
+  --edit-z-index-dropdown-overlay: 7;
+  --edit-z-index-drawer-overlay: 8;
+  --edit-z-index-drawer: 9;
+
+  --edit-color-shadow: var(--edit-color-opacity-80);
+  --edit-color-shadow-dark: var(--edit-color-opacity-40);
+
+  --edit-shadow-4px: 0 0 4px 0 var(--edit-color-shadow);
+  --edit-shadow-4px-bottom: 0 4px 4px -4px var(--edit-color-shadow);
+  --edit-shadow-4px-top: 0 -4px 4px -4px var(--edit-color-shadow);
+
+  --edit-shadow-8px: 0 0 8px 0 var(--edit-color-shadow);
+  --edit-shadow-8px-right-dark: 8px 0 8px -8px var(--edit-color-shadow-dark);
+
+  --edit-color-background-1: var(--edit-color-grayscale-100);
+  --edit-color-background-2: var(--edit-color-grayscale-98);
+  --edit-color-background-3: var(--edit-color-grayscale-95);
+  --edit-color-background-4: var(--edit-color-grayscale-90);
+
+  --edit-color-text-1: var(--edit-color-opacity-20);
+  --edit-color-text-2: var(--edit-color-opacity-40);
+  --edit-color-text-3: var(--edit-color-opacity-60);
+  --edit-color-heading: var(--edit-color-primary);
+  --edit-color-heading-2: var(--edit-color-primary-lighter);
+
+  --edit-color-text-inverse-1: var(--edit-color-inverse-opacity-100);
+  --edit-color-text-inverse-2: var(--edit-color-inverse-opacity-80);
+
+  --edit-color-underline: var(--edit-color-opacity-95);
+  --edit-color-underline-hover: var(--edit-color-positive);
+
+  --edit-color-border-light: var(--edit-color-opacity-85);
+  --edit-color-border-dark: var(--edit-color-opacity-70);
+
+  --edit-color-off: var(--edit-color-opacity-80);
+}
+
+/* Edit Interface specific */
+:root {
+  --editif-toolbar-height: 80px;
+}
+
+body,
+button,
+input,
+textarea,
+select {
+  color: var(--edit-color-text-1);
+  font-size: var(--edit-font-size-medium);
+  /* font-family: var(--edit-font-family); */
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: var(--edit-color-text-3);
+}

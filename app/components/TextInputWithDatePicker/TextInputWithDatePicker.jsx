@@ -1,3 +1,4 @@
+import {CalendarToday} from '@material-ui/icons'
 import DateTime from 'lib/datetime'
 import DateTimePicker from 'components/DateTimePicker/DateTimePicker'
 import HotKeys from 'lib/hot-keys'
@@ -5,7 +6,7 @@ import proptypes from 'prop-types'
 import React from 'react'
 import Style from 'lib/Style'
 import styles from './TextInputWithDatePicker.css'
-import TextInput from 'components/TextInput/TextInput'
+import {TextInput} from '@dadi/edit-ui'
 
 /**
  * Component for API fields of type DateTime
@@ -182,6 +183,7 @@ export default class TextInputWithDatePicker extends React.Component {
 
     setTimeout(() => {
       this.setState({
+        internalValue: null,
         pickerVisible: false
       })
     }, 200)
@@ -235,17 +237,19 @@ export default class TextInputWithDatePicker extends React.Component {
         ref={el => (this.rootEl = el)}
       >
         <TextInput
-          className={inputClassName}
-          noAutoComplete
+          autoComplete="off"
+          className={inputClassName + (readOnly ? '' : ` ${styles.input}`)}
           onBlur={null && this.handleFocus.bind(this, false)}
           onChange={this.handleInputChange.bind(this)}
-          onKeyDown={this.hotKeys.capture(true)}
           onFocus={this.handleFocus.bind(this, true)}
+          onKeyDown={this.hotKeys.capture(true)}
           placeholder={placeholder}
           readOnly={readOnly}
           type="text"
           value={internalValue || (dateObj && dateObj.format(format))}
         />
+
+        {!readOnly && <CalendarToday className={styles['calendar-icon']} />}
 
         {pickerVisible && (
           <DateTimePicker
