@@ -79,10 +79,10 @@
   justify-content: center;
   align-items: center;
   transition: background-color var(--edit-transition-duration-standard);
-  height: var(--edit-elem-height-medium);
   color: var(--edit-color-positive);
   font-weight: 700;
   text-transform: uppercase;
+  padding: var(--edit-margin-sm) var(--edit-margin-md);
 }
 
 .dropdownItem:hover {
