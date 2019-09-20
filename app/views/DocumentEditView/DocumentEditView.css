@@ -1,3 +1,7 @@
+.main {
+  padding-bottom: calc(var(--editif-toolbar-height) + var(--edit-margin-md));
+}
+
 .toolbar {
   bottom: 0;
   left: 0;

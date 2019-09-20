@@ -386,7 +386,7 @@ class DocumentEditView extends React.Component {
           />
         </div>
 
-        <main>
+        <main className={styles.main}>
           <Document
             collection={collection}
             contentKey={contentKey}
