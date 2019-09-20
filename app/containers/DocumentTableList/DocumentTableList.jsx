@@ -57,7 +57,17 @@ class DocumentTableList extends React.Component {
     /**
      * The name of the field currently being used to sort the documents.
      */
-    sort: proptypes.string
+    sort: proptypes.string,
+
+    /**
+     * The text to show as the table's subtitle.
+     */
+    subtitle: proptypes.string,
+
+    /**
+     * The text to show as the table's title.
+     */
+    title: proptypes.string
   }
 
   constructor(props) {
@@ -147,6 +157,7 @@ class DocumentTableList extends React.Component {
       order,
       selectedDocuments,
       sort,
+      subtitle,
       title
     } = this.props
     const collectionFields = (collection && collection.fields) || {}
@@ -172,6 +183,9 @@ class DocumentTableList extends React.Component {
     return (
       <>
         <h1 className={styles.title}>{title}</h1>
+
+        {subtitle && <p className={styles.subtitle}>{subtitle}</p>}
+
         <div className={styles['table-wrapper']}>
           <SyncTable
             columns={tableColumns}
