@@ -5,12 +5,13 @@
 }
 
 .container {
+  padding: 30px;
   position: relative;
 }
 
 @media (min-width: 700px) {
   .container {
-    padding-left: 110px;
+    padding: 0 0 0 110px;
   }
 
   .container:before {
