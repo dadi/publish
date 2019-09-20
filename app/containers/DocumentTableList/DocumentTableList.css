@@ -4,6 +4,11 @@
   margin: var(--edit-margin-md) var(--edit-margin-xxl);
 }
 
+.subtitle {
+  color: var(--edit-color-grayscale-40);
+  margin: -14px 0 var(--edit-margin-md) var(--edit-margin-xxl);
+}
+
 .table-wrapper {
   --padding-small: var(--edit-margin-lg);
   --padding-large: var(--edit-margin-xxl);
