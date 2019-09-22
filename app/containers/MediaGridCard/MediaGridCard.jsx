@@ -1,5 +1,4 @@
 import * as documentActions from 'actions/documentActions'
-import {Checkbox} from '@dadi/edit-ui'
 import {connectRedux} from 'lib/redux'
 import proptypes from 'prop-types'
 import React from 'react'
@@ -54,18 +53,12 @@ class MediaGridCard extends React.Component {
     selectLimit: Infinity
   }
 
-  constructor(props) {
-    super(props)
-
-    this.handleCardClick = this.handleCardClick.bind(this)
-    this.handleSelectClick = this.handleSelectClick.bind(this)
-  }
-
   handleCardClick(event) {
-    // Deselecting the last item by clicking on the card causes navigation
-    // to that item. This prevents that. Alternative solutions more than welcome.
-    event.preventDefault()
-    this.handleSelectClick(event)
+    const {href, onSelect} = this.props
+
+    if (typeof href !== 'string' && typeof onSelect === 'function') {
+      onSelect(event)
+    }
   }
 
   handleSelectClick(event) {
@@ -77,15 +70,25 @@ class MediaGridCard extends React.Component {
   }
 
   render() {
-    const {href, item, isSelected, isSelectMode} = this.props
-    const cardStyle = new Style(styles, 'card').addIf(
-      'select-mode',
-      isSelectMode
+    const {href, item, isSelected, selectLimit} = this.props
+    const itemStyle = new Style(styles, 'wrapper').addIf(
+      'wrapper-selected',
+      isSelected
     )
 
     // For backwards compatibility.
     const mimeType = item.mimeType || item.mimetype
-    const isImage = mimeType && mimeType.includes('image/')
+
+    // If we're dealing with an image that has a width and a height,
+    // we set the aspect ratio of the card accordingly. If not, we
+    // make it a square.
+    const isImage =
+      mimeType &&
+      mimeType.includes('image/') &&
+      typeof item.width === 'number' &&
+      typeof item.height === 'number'
+
+    // Human-friendly file size.
     const humanFileSize = fileSize(item.contentLength, {
       fixed: item.contentLength > 1e6 ? 2 : 0
     }).human('si')
@@ -96,30 +99,36 @@ class MediaGridCard extends React.Component {
     // change the selected state.
     const selectProps =
       typeof href === 'string'
-        ? {onChange: this.handleSelectClick}
+        ? {onChange: this.handleSelectClick.bind(this)}
         : {readOnly: true}
 
-    const wrapperProps =
-      href && !isSelectMode ? {href} : {onClick: this.handleCardClick}
-
     return (
-      <div className={cardStyle.getClasses()}>
-        <label className={styles.select}>
-          <Checkbox checked={isSelected} {...selectProps} />
-        </label>
-        <a className={styles['body-wrapper']} {...wrapperProps}>
-          {this.renderHead({isImage})}
-        </a>
+      <div
+        className={itemStyle.getClasses()}
+        onClick={this.handleCardClick.bind(this)}
+      >
+        <input
+          checked={isSelected}
+          className={styles.select}
+          type={selectLimit === 1 ? 'radio' : 'checkbox'}
+          {...selectProps}
+        />
+
+        {this.renderHead({isImage})}
+
         <div className={styles.metadata}>
-          <div className={styles.filename}>{item.fileName}</div>
-          <div className={styles.info}>
-            <div className={styles.size}>{humanFileSize}</div>
-            {Boolean(item.width && item.height) && (
-              <div className={styles.dimensions}>
-                {item.width}×{item.height}
-              </div>
+          <p className={styles.filename}>{item.fileName}</p>
+          <div>
+            <span className={styles.size}>{humanFileSize}</span>
+
+            {isImage && (
+              <span className={styles.dimensions}>
+                {`, ${item.width}x${item.height}`}
+              </span>
             )}
-            <div className={styles.mimetype}>{mimeType} </div>
+          </div>
+          <div>
+            <span className={styles.mimetype}>{mimeType}</span>
           </div>
         </div>
       </div>
@@ -127,19 +136,40 @@ class MediaGridCard extends React.Component {
   }
 
   renderHead({isImage}) {
-    const {item, state} = this.props
+    const {href, item, state} = this.props
     const {config} = state.app
+    const aspectRatio = isImage ? (item.height / item.width) * 100 : 100
     const canonicalPath =
       item.path && (item.path.indexOf('/') === 0 ? item.path : `/${item.path}`)
     const url =
       config.cdn && config.cdn.publicUrl
-        ? `${config.cdn.publicUrl}${canonicalPath}?width=600`
+        ? `${config.cdn.publicUrl}${canonicalPath}?width=350`
         : item.url || canonicalPath
-
-    return isImage ? (
+    const headElement = isImage ? (
       <img className={styles.image} src={url} />
     ) : (
       <div className={styles['generic-thumbnail']} />
+    )
+
+    if (typeof href === 'string') {
+      return (
+        <a
+          className={styles['image-holder']}
+          href={href}
+          style={{paddingBottom: `${aspectRatio}%`}}
+        >
+          {headElement}
+        </a>
+      )
+    }
+
+    return (
+      <div
+        className={styles['image-holder']}
+        style={{paddingBottom: `${aspectRatio}%`}}
+      >
+        {headElement}
+      </div>
     )
   }
 }
