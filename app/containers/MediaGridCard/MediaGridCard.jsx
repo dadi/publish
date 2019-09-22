@@ -78,17 +78,7 @@ class MediaGridCard extends React.Component {
 
     // For backwards compatibility.
     const mimeType = item.mimeType || item.mimetype
-
-    // If we're dealing with an image that has a width and a height,
-    // we set the aspect ratio of the card accordingly. If not, we
-    // make it a square.
-    const isImage =
-      mimeType &&
-      mimeType.includes('image/') &&
-      typeof item.width === 'number' &&
-      typeof item.height === 'number'
-
-    // Human-friendly file size.
+    const isImage = mimeType && mimeType.includes('image/')
     const humanFileSize = fileSize(item.contentLength, {
       fixed: item.contentLength > 1e6 ? 2 : 0
     }).human('si')
@@ -117,18 +107,15 @@ class MediaGridCard extends React.Component {
         {this.renderHead({isImage})}
 
         <div className={styles.metadata}>
-          <p className={styles.filename}>{item.fileName}</p>
-          <div>
-            <span className={styles.size}>{humanFileSize}</span>
-
-            {isImage && (
-              <span className={styles.dimensions}>
-                {`, ${item.width}x${item.height}`}
-              </span>
+          <div className={styles.filename}>{item.fileName}</div>
+          <div className={styles.info}>
+            <div className={styles.size}>{humanFileSize}</div>
+            {Boolean(item.width && item.height) && (
+              <div className={styles.dimensions}>
+                {item.width}×{item.height}
+              </div>
             )}
-          </div>
-          <div>
-            <span className={styles.mimetype}>{mimeType}</span>
+            <div className={styles.mimetype}>{mimeType} </div>
           </div>
         </div>
       </div>

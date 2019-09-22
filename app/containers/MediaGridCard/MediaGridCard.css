@@ -1,11 +1,11 @@
 .wrapper {
   position: relative;
-  box-shadow: 2px 2px 10px 0 rgba(0, 0, 0, 0.05);
   margin: 0 0 20px;
   line-height: 1.1em;
   overflow: hidden;
-  font-family: var(--theme-font-family, sans-serif);
-  border-radius: 4px;
+  background-color: var(--edit-color-background-1);
+  border: var(--edit-border-width-standard) solid var(--edit-color-border-light);
+  border-radius: var(--edit-radius-elem);
   z-index: 1; /* http://stackoverflow.com/a/24056662 */
 }
 
@@ -52,35 +52,24 @@
   left: 10px;
 }
 
+.metadata {
+  padding: var(--edit-margin-lg);
+}
+
 .filename {
-  width: 100%;
+  border-bottom: solid var(--edit-border-width-standard)
+    var(--edit-color-border-light);
+  font-weight: 700;
+  color: var(--edit-color-primary);
   white-space: nowrap;
   text-overflow: ellipsis;
   overflow: hidden;
-  border-bottom: 1px solid #eaeaea;
-  padding-bottom: 5px;
-  margin-bottom: 5px;
+  padding-bottom: var(--edit-margin-xs);
+  margin-bottom: var(--edit-margin-xs);
 }
 
-.metadata {
-  background: #fff;
+.info {
   display: flex;
-  align-items: center;
   justify-content: space-between;
-  font-size: 13px;
-  padding: 11px 15px;
-  flex-wrap: wrap;
-}
-
-.wrapper-selected .metadata {
-  background-color: #475160;
-  color: var(--theme-colour-secondary, #ffffff);
-}
-
-.size {
-  font-weight: bold;
-}
-
-.mimetype {
-  color: var(--theme-colour-background-shade-2, #aaaaaa);
+  color: var(--edit-color-text-2);
 }

@@ -64,10 +64,24 @@ export default class DocumentGridList extends React.Component {
   getNumberOfColumns() {
     const windowWidth = window.innerWidth
 
-    if (windowWidth > 800) {
+    if (windowWidth > 3000) {
+      return 10
+    } else if (windowWidth > 2700) {
+      return 9
+    } else if (windowWidth > 2400) {
+      return 8
+    } else if (windowWidth > 2100) {
+      return 7
+    } else if (windowWidth > 1800) {
+      return 6
+    } else if (windowWidth > 1500) {
       return 5
-    } else if (windowWidth > 550) {
+    } else if (windowWidth > 1200) {
+      return 4
+    } else if (windowWidth > 900) {
       return 3
+    } else if (windowWidth > 600) {
+      return 2
     }
 
     return 1
