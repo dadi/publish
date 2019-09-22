@@ -51,7 +51,7 @@
 }
 
 .metadata {
-  font-size: var(--edit-font-size-small);
+  font-size: var(--edit-font-size-sm);
   color: var(--edit-color-text-2);
   flex: 1;
   display: none;
@@ -96,10 +96,15 @@
   display: flex;
 }
 
-.button {
-  margin-right: var(--edit-margin-sm);
+.delete-button {
+  margin-right: var(--edit-margin-sm) !important;
 }
 
-.button:last-child {
-  margin-right: 0;
+@media (max-width: 1023px) {
+  .delete-button,
+  .save-button,
+  .save-button-options > button {
+    padding-left: 25px !important;
+    padding-right: 25px !important;
+  }
 }

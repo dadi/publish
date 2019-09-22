@@ -12,6 +12,8 @@
   transition-duration: var(--edit-transition-duration-standard);
   background-color: var(--edit-color-background-3);
   color: var(--edit-color-heading);
+  font-size: var(--edit-font-size-nav);
+  letter-spacing: var(--edit-spacing-nav);
 }
 
 .sub-nav-item.active {

@@ -8,6 +8,11 @@
   position: relative;
 }
 
+.container,
+.select {
+  font-size: var(--edit-font-size-sm);
+}
+
 .container.multiple {
   padding-top: var(--edit-margin-xs);
 }

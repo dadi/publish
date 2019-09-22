@@ -23,6 +23,6 @@
 }
 
 .dropdown-text-small {
-  font-size: var(--edit-font-size-small);
+  font-size: var(--edit-font-size-sm);
   padding-left: 5px;
 }
