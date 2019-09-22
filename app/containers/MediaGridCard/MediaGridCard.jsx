@@ -77,7 +77,7 @@ class MediaGridCard extends React.Component {
   }
 
   render() {
-    const {href, item, isSelected, isSelectMode, selectLimit} = this.props
+    const {href, item, isSelected, isSelectMode} = this.props
     const cardStyle = new Style(styles, 'card').addIf(
       'select-mode',
       isSelectMode
@@ -85,17 +85,7 @@ class MediaGridCard extends React.Component {
 
     // For backwards compatibility.
     const mimeType = item.mimeType || item.mimetype
-
-    // If we're dealing with an image that has a width and a height,
-    // we set the aspect ratio of the card accordingly. If not, we
-    // make it a square.
-    const isImage =
-      mimeType &&
-      mimeType.includes('image/') &&
-      typeof item.width === 'number' &&
-      typeof item.height === 'number'
-
-    // Human-friendly file size.
+    const isImage = mimeType && mimeType.includes('image/')
     const humanFileSize = fileSize(item.contentLength, {
       fixed: item.contentLength > 1e6 ? 2 : 0
     }).human('si')
@@ -124,7 +114,7 @@ class MediaGridCard extends React.Component {
           <div className={styles.filename}>{item.fileName}</div>
           <div className={styles.info}>
             <div className={styles.size}>{humanFileSize}</div>
-            {isImage && (
+            {Boolean(item.width && item.height) && (
               <div className={styles.dimensions}>
                 {item.width}×{item.height}
               </div>
