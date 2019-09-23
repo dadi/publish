@@ -1,5 +1,5 @@
 .main {
-  padding-bottom: calc(var(--editif-toolbar-height) + var(--edit-margin-md));
+  padding-bottom: var(--editif-toolbar-height);
 }
 
 .toolbar {
