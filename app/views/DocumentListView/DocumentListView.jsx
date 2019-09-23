@@ -11,6 +11,7 @@ import DocumentListController from 'components/DocumentListController/DocumentLi
 import DocumentListToolbar from 'components/DocumentListToolbar/DocumentListToolbar'
 import DocumentTableList from 'containers/DocumentTableList/DocumentTableList'
 import ErrorMessage from 'components/ErrorMessage/ErrorMessage'
+import {getMediaUrl} from 'lib/util/url'
 import {getVisibleFields} from 'lib/fields'
 import HeroMessage from 'components/HeroMessage/HeroMessage'
 import MediaGridCard from 'containers/MediaGridCard/MediaGridCard'
@@ -24,6 +25,9 @@ import SpinningWheel from 'components/SpinningWheel/SpinningWheel'
 import Style from 'lib/Style'
 import styles from './DocumentListView.css'
 
+const LIST_MODE_GRID = 1
+const LIST_MODE_TABLE = 2
+
 class DocumentListView extends React.Component {
   constructor(props) {
     super(props)
@@ -35,7 +39,8 @@ class DocumentListView extends React.Component {
     this.hideDeletePrompt = () => this.setState({isShowingDeletePrompt: false})
 
     this.state = {
-      isShowingDeletePrompt: false
+      isShowingDeletePrompt: false,
+      mediaListMode: LIST_MODE_GRID
     }
   }
 
@@ -372,10 +377,22 @@ class DocumentListView extends React.Component {
 
   renderMain({collection, contentKey, isFilteringSelection, selection}) {
     const {onBuildBaseUrl, route} = this.props
+    const {mediaListMode} = this.state
     const {search} = route
     const pageNumber = search.page
 
     if (collection.IS_MEDIA_BUCKET) {
+      const schema = {
+        ...Constants.MEDIA_COLLECTION_SCHEMA,
+        fields: {
+          ...Constants.MEDIA_COLLECTION_SCHEMA.fields,
+          url: {
+            label: 'Thumbnail',
+            type: 'Media'
+          }
+        }
+      }
+
       return (
         <>
           {!isFilteringSelection && (
@@ -393,23 +410,49 @@ class DocumentListView extends React.Component {
               hasSelection,
               onSelect,
               selectedDocuments
-            }) => (
-              <DocumentGridList
-                documents={documents}
-                onRenderCard={({item, isSelected, onSelect}) => (
-                  <MediaGridCard
-                    href={`/media/${item._id}`}
-                    isSelected={isSelected}
-                    isSelectMode={hasSelection}
-                    item={item}
-                    key={item._id}
+            }) => {
+              if (mediaListMode === LIST_MODE_GRID) {
+                return (
+                  <DocumentGridList
+                    documents={documents}
+                    onRenderCard={({item, isSelected, onSelect}) => (
+                      <MediaGridCard
+                        href={`/media/${item._id}`}
+                        isSelected={isSelected}
+                        isSelectMode={hasSelection}
+                        item={item}
+                        key={item._id}
+                        onSelect={onSelect}
+                      />
+                    )}
                     onSelect={onSelect}
+                    selectedDocuments={selectedDocuments}
                   />
-                )}
-                onSelect={onSelect}
-                selectedDocuments={selectedDocuments}
-              />
-            )}
+                )
+              }
+
+              const mediaFieldsForTable = [
+                'url',
+                'fileName',
+                'mimeType',
+                'width',
+                'height'
+              ]
+
+              return (
+                <DocumentTableList
+                  collection={schema}
+                  documents={documents}
+                  fields={mediaFieldsForTable}
+                  onBuildBaseUrl={onBuildBaseUrl.bind(this)}
+                  onSelect={onSelect}
+                  onSort={this.handleSort.bind(this)}
+                  order={search.order}
+                  selectedDocuments={selectedDocuments}
+                  sort={search.sort}
+                />
+              )
+            }}
             onSelect={this.handleSelect.bind(this)}
             order={search.order}
             page={pageNumber}
@@ -460,6 +503,22 @@ class DocumentListView extends React.Component {
         sort={search.sort}
       />
     )
+  }
+
+  renderMediaThumbnail({document}) {
+    const {state} = this.props
+    const mimeType = document.mimeType || document.mimetype || ''
+    const imageUrl = getMediaUrl({
+      config: state.app.config,
+      document,
+      width: 80
+    })
+
+    if (mimeType.indexOf('image/') === 0) {
+      return <img src={imageUrl} />
+    }
+
+    return null
   }
 }
 

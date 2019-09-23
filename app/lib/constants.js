@@ -28,7 +28,7 @@ export const MEDIA_COLLECTION_SCHEMA = {
       type: 'String'
     },
     mimeType: {
-      label: 'MIME type',
+      label: 'Type',
       publish: {
         readonly: true,
         section: 'Details'

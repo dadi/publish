@@ -103,7 +103,11 @@ class DocumentTableList extends React.Component {
       search: null
     })
     const fieldSchema = collection.fields[column.id]
-    const renderedValue = this.renderField(fieldSchema, value)
+    const renderedValue = this.renderField({
+      document: data,
+      fieldName: column.id,
+      schema: fieldSchema
+    })
     const firstStringField = Object.keys(listableFields).find(field => {
       return listableFields[field].type === 'String'
     })
@@ -161,16 +165,13 @@ class DocumentTableList extends React.Component {
       title
     } = this.props
     const collectionFields = (collection && collection.fields) || {}
-    const listableFields = Object.keys(collectionFields).reduce(
-      (fields, fieldName) => {
-        if (fieldsToDisplay.includes(fieldName)) {
-          fields[fieldName] = collectionFields[fieldName]
-        }
+    const listableFields = fieldsToDisplay.reduce((fields, fieldName) => {
+      if (collectionFields[fieldName]) {
+        fields[fieldName] = collectionFields[fieldName]
+      }
 
-        return fields
-      },
-      {}
-    )
+      return fields
+    }, {})
     const tableColumns = Object.keys(listableFields).map(field => {
       if (!collection.fields[field]) return undefined
 
@@ -205,9 +206,10 @@ class DocumentTableList extends React.Component {
     )
   }
 
-  renderField(schema, value) {
+  renderField({document, fieldName, schema}) {
     if (!schema) return
 
+    const value = document[fieldName]
     const {collection, state} = this.props
     const {config} = state.app
     const {api} = config
@@ -223,6 +225,8 @@ class DocumentTableList extends React.Component {
           api={api}
           config={config}
           collection={collection}
+          document={document}
+          fieldName={fieldName}
           schema={schema}
           value={value}
         />

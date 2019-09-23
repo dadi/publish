@@ -459,7 +459,7 @@ class DocumentEditView extends React.Component {
   }
 
   renderMediaDocument({contentKey, document, sections}) {
-    const {onBuildBaseUrl} = this.props
+    const {onBuildBaseUrl, state} = this.props
     const collection = Constants.MEDIA_COLLECTION_SCHEMA
     const [mainSection] = sections
     const mainSectionFields = mainSection.fields.main.concat(
@@ -488,7 +488,12 @@ class DocumentEditView extends React.Component {
           key={mainSection.href}
           isActive={mainSection.isActive}
           label={mainSection.name}
-          main={<MediaViewer document={document._merged} />}
+          main={
+            <MediaViewer
+              config={state.app.config}
+              document={document._merged}
+            />
+          }
           sidebar={mainSectionFields.map(getFieldComponent)}
           slug={mainSection.slug}
         />
