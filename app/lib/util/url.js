@@ -73,3 +73,24 @@ export function buildUrl({
 
   return '/' + urlNodes.filter(Boolean).join('/') + encodeSearch(search)
 }
+
+export function getMediaUrl({config, document, width}) {
+  if (!document) return null
+
+  const {_previewData, path, url} = document
+
+  if (_previewData) return _previewData
+
+  const normalisedPath =
+    path && (path.indexOf('/') === 0 ? path.slice(1) : path)
+  const cdnPublicUrl = config && config.cdn && config.cdn.publicUrl
+  const search = typeof width === 'number' ? `?width=${width}` : ''
+
+  if (cdnPublicUrl && normalisedPath) {
+    return `${cdnPublicUrl}/${normalisedPath}${search}`
+  } else if (url) {
+    return url
+  }
+
+  return null
+}

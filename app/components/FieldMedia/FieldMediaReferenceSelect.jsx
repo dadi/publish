@@ -1,3 +1,4 @@
+import {getMediaUrl} from 'lib/util/url'
 import DocumentGridList from 'components/DocumentGridList/DocumentGridList'
 import MediaGridCard from 'containers/MediaGridCard/MediaGridCard'
 import proptypes from 'prop-types'
@@ -50,35 +51,15 @@ export default class FieldMediaReferenceSelect extends React.Component {
     sortOrder: proptypes.oneOf(['asc', 'desc'])
   }
 
-  getImageSrc(value) {
-    const {config} = this.props
-    const cdn = config ? config.cdn : null
-
-    // If the value is null, there's nothing to render.
-    if (!value) return null
-
-    // If the value contains raw image data, let's render
-    // that.
-    if (value._previewData) return value._previewData
-
-    // If there is an instance of CDN configured, we take
-    // the `path` property and append it to the CDN URL.
-    if (cdn && cdn.publicUrl && value.path) {
-      return `${cdn.publicUrl}${value.path}?width=500`
-    }
-
-    return value.url || null
-  }
-
   render() {
-    const {data, onSelect, selectedRows, selectLimit} = this.props
+    const {config, data, onSelect, selectedRows, selectLimit} = this.props
 
     return (
       <DocumentGridList
         documents={data}
         onRenderCard={(item, onSelect, isSelected) => {
           const itemWithSrc = Object.assign({}, item, {
-            url: this.getImageSrc(item)
+            url: getMediaUrl({config, document: item})
           })
 
           return (

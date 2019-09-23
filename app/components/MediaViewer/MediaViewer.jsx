@@ -1,3 +1,4 @@
+import {getMediaUrl} from 'lib/util/url'
 import proptypes from 'prop-types'
 import React from 'react'
 import styles from './MediaViewer.css'
@@ -8,9 +9,9 @@ import styles from './MediaViewer.css'
 export default class MediaViewer extends React.Component {
   static propTypes = {
     /**
-     * The CDN configuration object.
+     * The API config object.
      */
-    cdn: proptypes.object,
+    config: proptypes.object,
 
     /**
      * The media document.
@@ -19,15 +20,12 @@ export default class MediaViewer extends React.Component {
   }
 
   render() {
-    const {cdn, document} = this.props
+    const {config, document} = this.props
     const {mimeType = ''} = document
-    const canonicalPath =
-      document.path &&
-      (document.path.indexOf('/') === 0 ? document.path : `/${document.path}`)
-    const url =
-      cdn && cdn.publicUrl
-        ? `${cdn.publicUrl}${canonicalPath}`
-        : document.url || canonicalPath
+    const url = getMediaUrl({
+      config,
+      document
+    })
 
     if (mimeType.indexOf('image/') === 0) {
       return <img className={styles.image} src={url} />

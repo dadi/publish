@@ -1,5 +1,6 @@
 import * as documentActions from 'actions/documentActions'
 import {connectRedux} from 'lib/redux'
+import {getMediaUrl} from 'lib/util/url'
 import proptypes from 'prop-types'
 import React from 'react'
 import Style from 'lib/Style'
@@ -126,12 +127,11 @@ class MediaGridCard extends React.Component {
     const {href, item, state} = this.props
     const {config} = state.app
     const aspectRatio = isImage ? (item.height / item.width) * 100 : 100
-    const canonicalPath =
-      item.path && (item.path.indexOf('/') === 0 ? item.path : `/${item.path}`)
-    const url =
-      config.cdn && config.cdn.publicUrl
-        ? `${config.cdn.publicUrl}${canonicalPath}?width=350`
-        : item.url || canonicalPath
+    const url = getMediaUrl({
+      config,
+      document: item,
+      width: 350
+    })
     const headElement = isImage ? (
       <img className={styles.image} src={url} />
     ) : (
