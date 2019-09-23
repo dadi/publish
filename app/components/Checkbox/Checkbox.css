@@ -16,6 +16,8 @@
   height: var(--checkbox-height);
   border-radius: var(--checkbox-radius);
   appearance: none;
+  background: none;
+  border: none;
 }
 
 .checkbox:before {

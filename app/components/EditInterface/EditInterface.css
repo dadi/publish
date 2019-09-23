@@ -1,8 +1,3 @@
-.container {
-  padding-bottom: calc(2px + var(--editif-toolbar-height));
-  height: 100%;
-}
-
 .section {
   display: none;
   flex-wrap: wrap;
