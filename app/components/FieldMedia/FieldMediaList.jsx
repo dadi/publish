@@ -31,21 +31,15 @@ export default class FieldMediaList extends React.Component {
   }
 
   render() {
-    const {config, document, value} = this.props
+    const {config, value} = this.props
     const values = value && !Array.isArray(value) ? [value] : value
     const hasMultiple = values && values.length > 1
 
     if (!values) return null
 
-    // If the value is a string, we infer that it's the URL of the media asset
-    // and that `document` contains the rest of the properties expected by
-    // `FieldMediaItem`.
-    const previewValue =
-      typeof values[0] === 'string' ? {...document, url: values[0]} : values[0]
-
     return (
       <div>
-        <FieldMediaItem config={config} isList={true} value={previewValue} />
+        <FieldMediaItem config={config} isList={true} value={values[0]} />
 
         {hasMultiple && (
           <span className={styles.more}>and {values.length - 1} more</span>

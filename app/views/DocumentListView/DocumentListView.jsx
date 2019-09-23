@@ -11,7 +11,7 @@ import DocumentListController from 'components/DocumentListController/DocumentLi
 import DocumentListToolbar from 'components/DocumentListToolbar/DocumentListToolbar'
 import DocumentTableList from 'containers/DocumentTableList/DocumentTableList'
 import ErrorMessage from 'components/ErrorMessage/ErrorMessage'
-import {getMediaUrl} from 'lib/util/url'
+import FieldMediaItem from 'components/FieldMedia/FieldMediaItem'
 import {getVisibleFields} from 'lib/fields'
 import HeroMessage from 'components/HeroMessage/HeroMessage'
 import MediaGridCard from 'containers/MediaGridCard/MediaGridCard'
@@ -388,7 +388,7 @@ class DocumentListView extends React.Component {
           ...Constants.MEDIA_COLLECTION_SCHEMA.fields,
           url: {
             label: 'Thumbnail',
-            type: 'Media'
+            FieldComponentList: this.renderMediaThumbnail.bind(this)
           }
         }
       }
@@ -507,18 +507,14 @@ class DocumentListView extends React.Component {
 
   renderMediaThumbnail({document}) {
     const {state} = this.props
-    const mimeType = document.mimeType || document.mimetype || ''
-    const imageUrl = getMediaUrl({
-      config: state.app.config,
-      document,
-      width: 80
-    })
 
-    if (mimeType.indexOf('image/') === 0) {
-      return <img src={imageUrl} />
-    }
-
-    return null
+    return (
+      <FieldMediaItem
+        config={state.app.config}
+        isList={true}
+        value={document}
+      />
+    )
   }
 }
 

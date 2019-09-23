@@ -199,11 +199,23 @@ class DocumentTableList extends React.Component {
     const {collection, state} = this.props
     const {config} = state.app
     const {api} = config
-    const fieldType = getFieldType(schema)
-    const fieldComponentName = `Field${fieldType}`
-    const FieldComponentList =
-      fieldComponents[fieldComponentName] &&
-      fieldComponents[fieldComponentName].list
+
+    let FieldComponentList
+
+    // In some cases, we might want to tap into the collection schema and add
+    // a custom `FieldComponentList` function to a given field, which will
+    // override whatever component is set to render the list view of the
+    // field's type.
+    if (typeof schema.FieldComponentList === 'function') {
+      FieldComponentList = schema.FieldComponentList
+    } else {
+      const fieldType = getFieldType(schema)
+      const fieldComponentName = `Field${fieldType}`
+
+      FieldComponentList =
+        fieldComponents[fieldComponentName] &&
+        fieldComponents[fieldComponentName].list
+    }
 
     if (FieldComponentList) {
       return (
