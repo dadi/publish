@@ -1,12 +1,13 @@
 .title {
   font-size: var(--edit-font-size-heading-2);
   color: var(--edit-color-heading);
-  margin: var(--edit-margin-md) var(--edit-margin-lg) 0 var(--edit-margin-lg);
+  margin: var(--edit-margin-md) var(--edit-margin-lg);
 }
 
 .subtitle {
   color: var(--edit-color-grayscale-40);
-  margin: 0 var(--edit-margin-lg) var(--edit-margin-md) var(--edit-margin-lg);
+  margin: calc(-1 * var(--edit-margin-md)) var(--edit-margin-lg)
+    var(--edit-margin-md) var(--edit-margin-lg);
 }
 
 @media (min-width: 1024px) {
