@@ -11,14 +11,16 @@
   border: solid var(--edit-border-width-standard);
   border-radius: var(--edit-radius-button);
   height: var(--edit-elem-height-medium);
-  padding: 0 30px;
+  padding: 0 50px;
+  font-size: var(--edit-font-size-button);
+  letter-spacing: var(--edit-spacing-button);
   font-weight: 700;
   text-transform: uppercase;
 }
 
 .button.narrow,
 .button.compact {
-  padding: 0 15px;
+  padding: 0 25px;
 }
 
 .button.compact {

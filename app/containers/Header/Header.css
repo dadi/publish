@@ -79,6 +79,7 @@
 
 .user-menu-wrapper {
   position: relative;
+  font-size: var(--edit-font-size-sm);
 }
 
 .user-menu-toggle {
@@ -89,6 +90,7 @@
   color: inherit;
   transition: all var(--edit-transition-duration-standard);
   padding-right: 0;
+  font-size: var(--edit-font-size-sm);
 }
 
 .user-menu-toggle:active {

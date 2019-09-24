@@ -16,6 +16,8 @@
   white-space: nowrap;
   font-weight: 700;
   transition: all var(--edit-transition-duration-standard);
+  font-size: var(--edit-font-size-nav);
+  letter-spacing: var(--edit-spacing-nav);
 }
 
 .label:not(a) {
@@ -59,6 +61,7 @@
   background-color: var(--edit-color-background-1);
   color: var(--edit-color-text-3);
   box-shadow: var(--edit-shadow-8px);
+  font-size: var(--edit-font-size-sm);
 }
 
 .dropdown-item {

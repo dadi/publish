@@ -14,5 +14,5 @@
 }
 
 .message {
-  font-size: var(--edit-font-size-large);
+  font-size: var(--edit-font-size-lg);
 }

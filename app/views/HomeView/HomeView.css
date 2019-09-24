@@ -7,6 +7,7 @@
 .container {
   padding: 30px;
   position: relative;
+  padding: 0 var(--edit-margin-md);
 }
 
 @media (min-width: 700px) {
@@ -17,7 +18,7 @@
   .container:before {
     content: ' ';
     position: absolute;
-    top: 20px;
+    top: 25px;
     left: 0;
     width: 90px;
     border-top: 1px solid var(--edit-color-brand);
@@ -27,8 +28,10 @@
 .container h1 {
   font-size: var(--edit-font-size-heading-1);
   margin-bottom: var(--edit-margin-sm);
+  color: var(--edit-color-primary);
 }
 
 .container p {
-  font-size: var(--edit-font-size-large);
+  font-size: var(--edit-font-size-lg);
+  color: var(--edit-color-text-2);
 }

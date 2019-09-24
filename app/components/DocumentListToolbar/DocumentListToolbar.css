@@ -13,9 +13,8 @@
   margin-right: 0;
 }
 
-.page-input input,
-.count {
-  font-size: var(--edit-font-size-large);
+.page-input input {
+  font-size: var(--edit-font-size-sm);
 }
 
 .count {
@@ -42,7 +41,6 @@
   justify-content: center;
   align-items: center;
   flex-flow: row nowrap;
-  font-size: var(--edit-font-size-large);
   margin: 0 var(--edit-margin-xxs);
 }
 
@@ -70,7 +68,6 @@
 
 .page-button.page-number {
   color: var(--edit-color-text-2);
-  font-size: var(--edit-font-size-large);
   padding: var(--edit-margin-xs);
 }
 

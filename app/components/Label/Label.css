@@ -1,5 +1,5 @@
 .header {
-  margin: -4px 0 var(--edit-font-size-medium) -8px;
+  margin: -4px 0 var(--edit-margin-md) -8px;
   display: flex;
   justify-content: space-between;
   flex-wrap: wrap;
@@ -32,7 +32,11 @@
 
 .comment {
   color: var(--edit-color-text-2);
-  font-size: var(--edit-font-size-small);
+}
+
+.comment,
+.error-message-text {
+  font-size: var(--edit-font-size-sm);
 }
 
 .error-message-container {
