@@ -340,7 +340,7 @@ class DocumentListController extends React.Component {
                         <button
                           className={suggestionStyle.getClasses()}
                           key={fieldName + searchValue}
-                          onClick={this.submitSearch.bind(this, fieldName)}
+                          onMouseDown={this.submitSearch.bind(this, fieldName)}
                           onMouseEnter={() =>
                             this.setState({selectedSuggestionIndex: index})
                           }
