@@ -2,6 +2,10 @@
   width: 100%;
 }
 
+.filter-input {
+  font-size: var(--edit-font-size-sm) !important;
+}
+
 .picker {
   position: absolute;
   left: 0;

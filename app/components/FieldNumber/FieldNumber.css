@@ -1,7 +1,4 @@
 .filter-input {
-  border: 1px solid var(--theme-colour-background-shade-4, #e4e4e4) !important;
-  border-radius: 4px !important;
-  font-family: var(--theme-font-family, sans-serif);
-  font-size: var(--theme-font-size-small, 13px) !important;
-  padding: 8px !important;
+  font-size: var(--edit-font-size-sm);
+  width: 100%;
 }

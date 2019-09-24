@@ -332,7 +332,7 @@ class DocumentListView extends React.Component {
         <DocumentListController
           collection={collection}
           createNewHref={createNewHref}
-          enableFilters={true}
+          enableFilters
           filters={search.filter}
           onUpdateFilters={this.handleFiltersUpdate.bind(this)}
         />

@@ -35,9 +35,11 @@ export default class FieldDateTimeFilter extends React.Component {
     const dateTime = new DateTime(value)
 
     return (
-      <span>
-        {nodeField} {nodeOperator} {dateTime.format(date.short)}
-      </span>
+      <>
+        {nodeField}
+        {nodeOperator}
+        {dateTime.format(date.short)}
+      </>
     )
   }
 }

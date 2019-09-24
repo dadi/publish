@@ -1,9 +1,9 @@
 import * as Constants from 'lib/constants'
 import {RichEditorToolbar, RichEditorToolbarButton} from './RichEditorToolbar'
 import Button from 'components/Button/Button'
-import DocumentFilters from 'containers/DocumentFilters/DocumentFilters'
 import DocumentGridList from 'components/DocumentGridList/DocumentGridList'
 import DocumentList from 'containers/DocumentList/DocumentList'
+import DocumentListController from 'components/DocumentListController/DocumentListController'
 import DocumentListToolbar from 'components/DocumentListToolbar/DocumentListToolbar'
 import {Editor} from 'slate-react'
 import Fullscreen from 'components/Fullscreen/Fullscreen'
@@ -714,7 +714,7 @@ export default class RichEditor extends React.Component {
         onRender={({documents, metadata, onSelect, selectedDocuments}) => (
           <>
             <div className={styles['media-select-filters']}>
-              <DocumentFilters
+              <DocumentListController
                 collection={collection}
                 filters={mediaFilters}
                 onUpdateFilters={newFilters =>
