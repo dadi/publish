@@ -125,3 +125,13 @@
   width: 100%;
   z-index: 10;
 }
+
+.word-counter {
+  opacity: 0.65;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  white-space: nowrap;
+  font-family: var(--theme-font-family);
+  font-size: var(--theme-font-size-small);
+}

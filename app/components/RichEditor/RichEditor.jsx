@@ -20,7 +20,9 @@ import IconLink from './icons/link.svg'
 import IconMedia from './icons/image.svg'
 import IconNumberedList from './icons/numbered-list.svg'
 import IconQuote from './icons/quote.svg'
+import IconRedo from './icons/redo.svg'
 import IconText from './icons/text.svg'
+import IconUndo from './icons/undo.svg'
 import MarkdownSerializer from '@edithq/slate-md-serializer'
 import MediaGridCard from 'containers/MediaGridCard/MediaGridCard'
 import Modal from 'components/Modal/Modal'
@@ -515,6 +517,19 @@ export default class RichEditor extends React.Component {
     const valueIsCodeMark = this.hasMark(NODE_CODE)
     const valueIsLink = this.hasInline(NODE_LINK)
 
+    const {
+      data,
+      document: {nodes, text}
+    } = this.value
+
+    const undos = data.get('undos')
+    const redos = data.get('redos')
+
+    const words = nodes
+      .map(({text}) => text.split(/\s/).filter(Boolean).length)
+      .reduce((total, item) => total + item)
+    const chars = text.length
+
     return (
       <div className={containerStyle.getClasses()}>
         {isSelectingMedia && (
@@ -528,6 +543,18 @@ export default class RichEditor extends React.Component {
 
         <RichEditorToolbar isFullscreen={isFullscreen}>
           <div>
+            <RichEditorToolbarButton
+              action={() => this.editor.undo()}
+              disabled={!undos || !undos.size}
+              icon={IconUndo}
+              text="Undo"
+            />
+            <RichEditorToolbarButton
+              action={() => this.editor.redo()}
+              disabled={!redos || !redos.size}
+              icon={IconRedo}
+              text="Redo"
+            />
             <RichEditorToolbarButton
               action={this.handleToggleMark.bind(this, NODE_BOLD)}
               active={this.hasMark(NODE_BOLD)}
@@ -600,6 +627,14 @@ export default class RichEditor extends React.Component {
               icon={IconMedia}
               text="Media"
             />
+          </div>
+
+          <div className={styles['word-counter']}>
+            <div>Words: {words} /</div>
+            <div>
+              <pre> </pre>
+            </div>
+            <div>Chars: {chars}</div>
           </div>
 
           <div>
