@@ -57,6 +57,40 @@ class DocumentListController extends React.Component {
     this.state = {...this.defaultState}
   }
 
+  addOrUpdateFilter(field, defaultOperator, event) {
+    const {
+      selectedFilterIndex: index,
+      selectedFilterOperator: operator,
+      selectedFilterValue: value
+    } = this.state
+
+    event.preventDefault()
+
+    if (typeof index !== 'number') {
+      return
+    }
+
+    // Are we updating an existing filter or creating a new one?
+    if (index === -1) {
+      this.filtersArray.push({
+        field,
+        operator: operator || defaultOperator,
+        value
+      })
+    } else {
+      if (!this.filtersArray[index]) {
+        return
+      }
+
+      this.filtersArray[index].field = field
+      this.filtersArray[index].operator = operator
+      this.filtersArray[index].value = value
+    }
+
+    this.setState({...this.defaultState})
+    this.propagateFilters()
+  }
+
   buildFiltersArray(filtersObject = {}) {
     const filtersArray = Object.keys(filtersObject).map(field => {
       if (field === '$selected') {
@@ -137,34 +171,6 @@ class DocumentListController extends React.Component {
     return filterableFields
   }
 
-  selectFilterToEdit(index) {
-    const {field, operator, value} = this.filtersArray[index]
-
-    this.setState({
-      selectedFilterField: field,
-      selectedFilterIndex: index,
-      selectedFilterOperator: operator,
-      selectedFilterValue: value
-    })
-  }
-
-  submitSearch(field, event) {
-    const {search: searchValue} = this.state
-
-    event.preventDefault()
-
-    if (searchValue) {
-      this.filtersArray.push({
-        field,
-        operator: '$regex',
-        value: searchValue
-      })
-
-      this.propagateFilters()
-      this.setState({...this.defaultState})
-    }
-  }
-
   handleSearchKeydown(fields, event) {
     const {selectedSuggestionIndex} = this.state
 
@@ -182,59 +188,6 @@ class DocumentListController extends React.Component {
     } else if (event.key === 'Escape') {
       this.setState({...this.defaultState})
     }
-  }
-
-  selectField(event) {
-    const {value: newField} = event.target
-    const {selectedFilterOperator} = this.state
-    const fieldComponent = this.getFieldComponent(newField) || {}
-    const fieldOperators = fieldComponent.filterOperators || {}
-
-    // If the new selected field supports the currently selected operator, we
-    // keep it. Otherwise, we use the first operator defined by the new field
-    // component.
-    const newOperator = fieldOperators[selectedFilterOperator]
-      ? selectedFilterOperator
-      : Object.keys(fieldOperators)[0]
-
-    this.setState({
-      selectedFilterField: newField,
-      selectedFilterOperator: newOperator
-    })
-  }
-
-  addOrUpdateFilter(field, defaultOperator, event) {
-    const {
-      selectedFilterIndex: index,
-      selectedFilterOperator: operator,
-      selectedFilterValue: value
-    } = this.state
-
-    event.preventDefault()
-
-    if (typeof index !== 'number') {
-      return
-    }
-
-    // Are we updating an existing filter or creating a new one?
-    if (index === -1) {
-      this.filtersArray.push({
-        field,
-        operator: operator || defaultOperator,
-        value
-      })
-    } else {
-      if (!this.filtersArray[index]) {
-        return
-      }
-
-      this.filtersArray[index].field = field
-      this.filtersArray[index].operator = operator
-      this.filtersArray[index].value = value
-    }
-
-    this.setState({...this.defaultState})
-    this.propagateFilters()
   }
 
   propagateFilters() {
@@ -575,6 +528,53 @@ class DocumentListController extends React.Component {
     const message = `is ${value === false ? 'not ' : ''} selected`
 
     return <span>{message}</span>
+  }
+
+  selectField(event) {
+    const {value: newField} = event.target
+    const {selectedFilterOperator} = this.state
+    const fieldComponent = this.getFieldComponent(newField) || {}
+    const fieldOperators = fieldComponent.filterOperators || {}
+
+    // If the new selected field supports the currently selected operator, we
+    // keep it. Otherwise, we use the first operator defined by the new field
+    // component.
+    const newOperator = fieldOperators[selectedFilterOperator]
+      ? selectedFilterOperator
+      : Object.keys(fieldOperators)[0]
+
+    this.setState({
+      selectedFilterField: newField,
+      selectedFilterOperator: newOperator
+    })
+  }
+
+  selectFilterToEdit(index) {
+    const {field, operator, value} = this.filtersArray[index]
+
+    this.setState({
+      selectedFilterField: field,
+      selectedFilterIndex: index,
+      selectedFilterOperator: operator,
+      selectedFilterValue: value
+    })
+  }
+
+  submitSearch(field, event) {
+    const {search: searchValue} = this.state
+
+    event.preventDefault()
+
+    if (searchValue) {
+      this.filtersArray.push({
+        field,
+        operator: '$regex',
+        value: searchValue
+      })
+
+      this.propagateFilters()
+      this.setState({...this.defaultState})
+    }
   }
 }
 
