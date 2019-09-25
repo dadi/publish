@@ -117,7 +117,7 @@
 .filter-editor {
   display: flex;
   margin: calc(-1 * var(--margin)) 0 0 calc(-1 * var(--margin));
-  width: 100%;
+  flex: 1;
 }
 
 .filter-editor-row {
