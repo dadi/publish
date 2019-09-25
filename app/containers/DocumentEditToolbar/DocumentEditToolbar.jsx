@@ -255,16 +255,15 @@ class DocumentEditToolbar extends React.Component {
 
           <div className={styles.buttons}>
             {remote && !isSingleDocument && (
-              <div className={styles.button}>
-                <Button
-                  accent="negative"
-                  disabled={Boolean(hasConnectionIssues)}
-                  filled
-                  onClick={this.showDeletePrompt}
-                >
-                  Delete
-                </Button>
-              </div>
+              <Button
+                accent="negative"
+                className={styles['delete-button']}
+                disabled={Boolean(hasConnectionIssues)}
+                filled
+                onClick={this.showDeletePrompt}
+              >
+                Delete
+              </Button>
             )}
 
             {this.state.isShowingDeletePrompt && (
@@ -280,32 +279,32 @@ class DocumentEditToolbar extends React.Component {
               </Modal>
             )}
 
-            <div className={styles.button}>
-              {isSingleDocument ? (
-                <Button
-                  accent="positive"
-                  disabled={Boolean(
-                    hasConnectionIssues || hasValidationErrors || isSaving
-                  )}
-                  isLoading={isSaving}
-                  onClick={saveOptions.primary.action}
-                >
-                  Save document
-                </Button>
-              ) : (
-                <ButtonWithOptions
-                  accent="positive"
-                  disabled={Boolean(
-                    hasConnectionIssues || hasValidationErrors || isSaving
-                  )}
-                  isLoading={isSaving}
-                  onClick={saveOptions.primary.action}
-                  options={saveOptions.secondary}
-                >
-                  {saveOptions.primary.label}
-                </ButtonWithOptions>
-              )}
-            </div>
+            {isSingleDocument ? (
+              <Button
+                accent="positive"
+                className={styles['save-button']}
+                disabled={Boolean(
+                  hasConnectionIssues || hasValidationErrors || isSaving
+                )}
+                isLoading={isSaving}
+                onClick={saveOptions.primary.action}
+              >
+                Save document
+              </Button>
+            ) : (
+              <ButtonWithOptions
+                accent="positive"
+                className={styles['save-button-options']}
+                disabled={Boolean(
+                  hasConnectionIssues || hasValidationErrors || isSaving
+                )}
+                isLoading={isSaving}
+                onClick={saveOptions.primary.action}
+                options={saveOptions.secondary}
+              >
+                {saveOptions.primary.label}
+              </ButtonWithOptions>
+            )}
           </div>
         </div>
       </footer>

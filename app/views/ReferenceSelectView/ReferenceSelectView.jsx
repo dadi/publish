@@ -152,10 +152,9 @@ class ReferenceSelectView extends React.Component {
 
         <DocumentListController
           collection={referencedCollection}
-          enableFilters={true}
+          enableFilters
           filters={filter}
           onUpdateFilters={this.handleFiltersUpdate}
-          referenceFieldName={referenceFieldName}
         />
 
         <main>
@@ -258,7 +257,8 @@ class ReferenceSelectView extends React.Component {
         order={sortOrder}
         selectedDocuments={selectedDocuments}
         sort={sortBy}
-        title={referenceFieldSchema.label + ' – select documents to reference'}
+        title={referenceFieldSchema.label}
+        subtitle="Select documents to reference"
       />
     )
   }

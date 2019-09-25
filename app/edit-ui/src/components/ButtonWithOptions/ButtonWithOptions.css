@@ -82,6 +82,8 @@
   color: var(--edit-color-positive);
   font-weight: 700;
   text-transform: uppercase;
+  font-size: var(--edit-font-size-button);
+  letter-spacing: var(--edit-spacing-button);
   padding: var(--edit-margin-sm) var(--edit-margin-md);
 }
 

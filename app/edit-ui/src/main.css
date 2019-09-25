@@ -92,13 +92,19 @@
 
   --edit-elem-padding-standard: 9px var(--edit-margin-md);
 
-  --edit-font-family: sans-serif;
+  /* --edit-font-family: sans-serif; */
 
-  --edit-font-size-heading-1: 32px;
+  --edit-font-size-heading-1: 36px;
   --edit-font-size-heading-2: 24px;
-  --edit-font-size-large: 16px;
-  --edit-font-size-medium: 14px;
-  --edit-font-size-small: 13px;
+  --edit-font-size-lg: 16px;
+  --edit-font-size-md: 14px;
+  --edit-font-size-sm: 13px;
+  --edit-font-size-xs: 12px;
+  --edit-font-size-nav: 12px;
+  --edit-font-size-button: 11px;
+
+  --edit-spacing-nav: 1.2px;
+  --edit-spacing-button: 1.1px;
 
   --edit-icon-size-sm: 18px;
   --edit-icon-size-md: 24px;
@@ -160,7 +166,7 @@ input,
 textarea,
 select {
   color: var(--edit-color-text-1);
-  font-size: var(--edit-font-size-medium);
+  font-size: var(--edit-font-size-md);
   /* font-family: var(--edit-font-family); */
 }
 

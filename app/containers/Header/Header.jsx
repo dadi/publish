@@ -140,17 +140,14 @@ class Header extends React.Component {
         </div>
 
         <div className={userMenuWrapperStyle.getClasses()}>
-          <button
-            className={styles['user-menu-toggle']}
-            onClick={this.toggleUserMenu}
-          >
+          <button className={styles['user-menu-toggle']}>
             <div className={styles.username}>{displayName}</div>
             <ExpandMore />
           </button>
+
           <div className={styles['user-menu']}>
             <Link
               className={`${styles['menu-item']} ${styles['link']}`}
-              onClick={this.closeUserMenu}
               to="/profile"
             >
               Profile
@@ -158,7 +155,6 @@ class Header extends React.Component {
 
             <Link
               className={`${styles['menu-item']} ${styles['link']}`}
-              onClick={this.closeUserMenu}
               to="/sign-out"
             >
               Sign out

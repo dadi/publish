@@ -1,3 +1,7 @@
+.main {
+  padding-bottom: var(--editif-toolbar-height);
+}
+
 .toolbar {
   bottom: 0;
   left: 0;

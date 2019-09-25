@@ -1,6 +1,6 @@
-import DropdownNative from 'components/DropdownNative/DropdownNative'
 import proptypes from 'prop-types'
 import React from 'react'
+import {Select} from '@dadi/edit-ui'
 
 /**
  * Component for rendering API fields of type Boolean in a filter.
@@ -42,13 +42,9 @@ export default class FieldBooleanFilter extends React.Component {
     const {onUpdate, value} = this.props
 
     return (
-      <DropdownNative
-        onChange={value => onUpdate(this.coerceToBoolean(value))}
-        options={{
-          true: 'Yes',
-          false: 'No'
-        }}
-        textSize="small"
+      <Select
+        onChange={e => onUpdate(this.coerceToBoolean(e.target.value))}
+        options={[{value: true, label: 'Yes'}, {value: false, label: 'No'}]}
         value={this.coerceToBoolean(value)}
       />
     )
