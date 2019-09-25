@@ -1,7 +1,7 @@
 import proptypes from 'prop-types'
 import React from 'react'
 import styles from './FieldString.css'
-import TextInput from 'components/TextInput/TextInput'
+import {TextInput} from '@dadi/edit-ui'
 
 /**
  * Component for rendering API fields of type String in a filter.
@@ -37,7 +37,7 @@ export default class FieldStringFilter extends React.Component {
     return (
       <TextInput
         className={styles['filter-input']}
-        onInput={event => onUpdate(event.target.value)}
+        onChange={event => onUpdate(event.target.value)}
         placeholder="Search value"
         value={value}
       />

@@ -152,10 +152,9 @@ class ReferenceSelectView extends React.Component {
 
         <DocumentListController
           collection={referencedCollection}
-          enableFilters={true}
+          enableFilters
           filters={filter}
           onUpdateFilters={this.handleFiltersUpdate}
-          referenceFieldName={referenceFieldName}
         />
 
         <main>

@@ -1,13 +1,12 @@
 import proptypes from 'prop-types'
 import React from 'react'
-import Style from 'lib/Style'
 import styles from './FieldNumber.css'
-import TextInput from 'components/TextInput/TextInput'
+import {TextInput} from '@dadi/edit-ui'
 
 /**
- * Component for rendering API fields of type String in a filter.
+ * Component for rendering API fields of type Number in a filter.
  */
-export default class FieldStringFilter extends React.Component {
+export default class FieldNumberFilter extends React.Component {
   static propTypes = {
     /**
      * Callback to fire every time the value changes. The function is called
@@ -44,13 +43,14 @@ export default class FieldStringFilter extends React.Component {
   }
 
   render() {
-    const {onUpdate, stylesTextInput, value} = this.props
+    const {value} = this.props
 
     return (
       <TextInput
         className={styles['filter-input']}
-        onInput={this.handleChange.bind(this)}
+        onChange={this.handleChange.bind(this)}
         placeholder="Search value"
+        type="number"
         value={value}
       />
     )

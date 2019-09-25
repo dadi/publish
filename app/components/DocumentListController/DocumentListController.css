@@ -1,45 +1,220 @@
-.wrapper {
+.container {
+  --margin: 10px;
+}
+
+.top-bar {
+  display: flex;
   background-color: var(--edit-color-background-1);
   box-shadow: var(--edit-shadow-4px-bottom);
-  display: flex;
-  padding: 15px 20px;
+  align-items: center;
 }
 
-@media (min-width: 600px) {
-  .wrapper {
-    align-items: center;
-  }
+.top-bar,
+.filters {
+  padding: var(--edit-margin-md) var(--edit-margin-lg);
 }
 
-.actions {
-  margin-left: 10px;
-}
-
-@media (min-width: 600px) {
-  .actions {
-    margin-left: 0;
-    padding-left: 10px;
-  }
-
-  .wrapper {
-    display: flex;
-  }
-
+@media (min-width: 1024px) {
+  .top-bar,
   .filters {
-    flex-grow: 1;
+    padding: var(--edit-margin-md) var(--edit-margin-xxl);
   }
 }
 
-.new-button-large {
+.form {
+  display: flex;
+  align-items: center;
+  flex: 1;
+  position: relative;
+}
+
+.search-icon {
+  /* I want to display the icon before the input, but put it after the input in
+  the markup so that I can do `.input:focus + .search-icon` below. */
+  order: -1;
+  color: var(--edit-color-text-3);
+  transition: all var(--edit-transition-duration-standard) !important;
+}
+
+.input:focus + .search-icon {
+  color: var(--edit-color-text-1);
+}
+
+.input {
+  max-width: 500px !important;
+}
+
+.suggestions {
+  position: absolute;
+  top: calc(100% + var(--edit-margin-xxs));
+  left: 24px;
+  max-width: 500px;
+  background-color: var(--edit-color-background-1);
+  box-shadow: var(--edit-shadow-4px);
+  z-index: var(--edit-z-index-dropdown);
+  border-radius: 0;
+}
+
+.input:not(:focus) ~ .suggestions {
   display: none;
 }
 
-@media (min-width: 600px) {
-  .new-button-large {
-    display: block;
-  }
+.suggestion {
+  cursor: pointer;
+  outline: none;
+  padding: var(--edit-margin-sm) var(--edit-margin-md);
+  text-align: left;
+  font-size: var(--edit-font-size-sm);
+  width: 100%;
+}
 
-  .new-button-small {
-    display: none;
+.suggestion > *,
+.suggestion-hint > * {
+  vertical-align: middle;
+}
+
+.suggestion.selected {
+  background-color: var(--edit-color-background-3);
+}
+
+.suggestion-prefix {
+  color: var(--edit-color-text-3);
+}
+
+.suggestion-hint {
+  display: none;
+  float: right;
+  font-size: var(--edit-font-size-xs);
+  color: var(--edit-color-text-3);
+}
+
+.suggestion-hint svg {
+  margin: -4px 0;
+}
+
+.suggestion.selected .suggestion-hint {
+  display: block;
+}
+
+.operator-selector,
+.add-filter-button,
+.create-new-button,
+.remove-filter-button,
+.filter-editor-close.bottom {
+  margin-left: var(--margin);
+}
+
+@media (max-width: 1023px) {
+  .add-filter-button,
+  .create-new-button,
+  .update-filter-button,
+  .remove-filter-button {
+    padding-left: 25px !important;
+    padding-right: 25px !important;
   }
+}
+
+.filter-editor {
+  display: flex;
+  margin: calc(-1 * var(--margin)) 0 0 calc(-1 * var(--margin));
+  width: 100%;
+}
+
+.filter-editor-row {
+  display: flex;
+  margin: var(--margin) 0 0 var(--margin);
+}
+
+.filter-editor-row:last-child {
+  flex: 1;
+}
+
+/* .filter-editor-heading {
+  color: var(--edit-color-primary);
+  font-size: var(--edit-font-size-nav);
+  font-weight: 700;
+  letter-spacing: var(--edit-spacing-nav);
+  margin: 0;
+} */
+
+.filter-editor-close {
+  padding: 0;
+  margin-left: var(--edit-margin-xxs);
+  color: var(--edit-color-text-2);
+  transition: color var(--edit-transition-duration-standard);
+  cursor: pointer;
+  outline: 0;
+}
+
+.filter-editor-close:hover {
+  color: var(--edit-color-text-1);
+}
+
+.filter-editor-close > svg {
+  vertical-align: middle;
+}
+
+.filter-editor.mobile .filter-editor-close.bottom {
+  display: none;
+}
+
+.filter-editor:not(.mobile) .filter-editor-close.top {
+  display: none;
+}
+
+.filler {
+  flex: 1;
+}
+
+.filters {
+  margin: calc(-1 * var(--margin)) 0 0 calc(-1 * var(--margin));
+}
+
+.filter {
+  margin: var(--margin) 0 0 var(--margin);
+  display: inline-flex;
+  align-items: center;
+  background-color: var(--edit-color-background-2);
+  border-radius: var(--edit-radius-elem);
+  font-size: var(--edit-font-size-sm);
+  color: var(--edit-color-text-2);
+  padding: var(--edit-margin-sm) var(--edit-margin-md);
+  cursor: pointer;
+  border: var(--edit-border-width-standard) solid var(--edit-color-border-light);
+  transition: all var(--edit-transition-duration-standard);
+}
+
+.filter:hover:not(.selected) {
+  background-color: var(--edit-color-background-1);
+}
+
+.filter.selected {
+  background-color: var(--edit-color-highlight-2);
+}
+
+.filter-field {
+  font-weight: 700;
+}
+
+.filter-operator {
+  margin: 0 var(--edit-margin-xxs);
+}
+
+.filter-close {
+  color: var(--edit-text-color-2);
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0;
+  outline: 0;
+  margin: -6px -10px -6px var(--edit-margin-xxs);
+  transition: all var(--edit-transition-duration-standard);
+}
+
+.filter-close:hover {
+  color: var(--edit-text-color-1);
+  background-color: rgba(0, 0, 0, 0.05);
 }
