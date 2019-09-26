@@ -65,6 +65,11 @@
   padding-top: var(--margin-y-drawer);
   border-top: var(--edit-border-width-standard) solid
     var(--edit-color-border-light);
+  display: flex;
+}
+
+.drawer-buttons > * {
+  flex: 1;
 }
 
 .form {
@@ -148,6 +153,7 @@
 
 .operator-selector,
 .top-bar .add-filter-button,
+.clear-filters-button,
 .create-new-button,
 .remove-filter-button,
 .container:not(.small-window) .close-filter-editor {
@@ -156,6 +162,7 @@
 
 @media (max-width: 1023px) {
   .add-filter-button,
+  .clear-filters-button,
   .create-new-button,
   .update-filter-button,
   .remove-filter-button {

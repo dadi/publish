@@ -54,6 +54,12 @@ class DocumentListController extends React.Component {
         areFiltersOpen: this.props.isSmallWindow && this.filtersArray.length > 0
       })
 
+    this.clearFilters = () => {
+      this.filtersArray = []
+      this.propagateFilters()
+      this.setState({...this.defaultState})
+    }
+
     // For small-window version only.
     this.toggleSearch = () =>
       this.setState(({isSearchOpen}) =>
@@ -292,6 +298,17 @@ class DocumentListController extends React.Component {
       </Button>
     )
 
+    const clearFiltersButton = this.filtersArray.length > 0 && (
+      <Button
+        accent="negative"
+        className={styles['clear-filters-button']}
+        data-name="clear-filters-button"
+        onClick={this.clearFilters}
+      >
+        Clear filters
+      </Button>
+    )
+
     const createNewButton = createNewHref && (
       <Button
         accent="positive"
@@ -337,6 +354,8 @@ class DocumentListController extends React.Component {
 
               {addFilterButton}
 
+              {clearFiltersButton}
+
               {createNewButton}
             </>
           ) : (
@@ -381,6 +400,8 @@ class DocumentListController extends React.Component {
 
                 <div className={styles['drawer-buttons']}>
                   {addFilterButton}
+
+                  {clearFiltersButton}
                 </div>
               </>
             ) : (
