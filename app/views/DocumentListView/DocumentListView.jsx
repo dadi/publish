@@ -2,7 +2,7 @@ import * as appActions from 'actions/appActions'
 import * as Constants from 'lib/constants'
 import * as documentActions from 'actions/documentActions'
 import * as selectionActions from 'actions/selectionActions'
-import Button from 'components/Button/Button'
+import {Button} from '@dadi/edit-ui'
 import {connectRedux} from 'lib/redux'
 import DocumentEditView from 'views/DocumentEditView/DocumentEditView'
 import DocumentGridList from 'components/DocumentGridList/DocumentGridList'
@@ -364,7 +364,7 @@ class DocumentListView extends React.Component {
           >
             <div className={buttonWrapperStyle.getClasses()}>
               <Button
-                accent="destruct"
+                accent="negative"
                 disabled={selection.length === 0}
                 onClick={this.showDeletePrompt}
               >
