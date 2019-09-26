@@ -103,6 +103,7 @@ export default class MediaListController extends React.Component {
           >
             <Checkbox
               checked={hasAllDocumentsSelected}
+              large
               onChange={this.handleSelectAll}
             />
             <span>Select all</span>
