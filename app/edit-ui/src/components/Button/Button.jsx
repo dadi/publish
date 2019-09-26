@@ -15,30 +15,34 @@ export default React.forwardRef(function Button(
     filled,
     flat,
     isLoading, // To be implemented.
+    mock,
     narrow,
     ...props
   },
   ref
 ) {
-  return (
-    <button
-      className={classnames(
-        styles.button,
-        {
-          [styles['accent--' + accent]]: !disabled,
-          // [styles['size--' + size]]: size,
-          [styles.filled]: filled,
-          [styles.flat]: flat,
-          [styles.narrow]: narrow,
-          [styles.compact]: compact
-        },
-        className
-      )}
-      disabled={disabled}
-      ref={ref}
-      {...props}
-    >
-      {children}
-    </button>
-  )
+  const elementProps = {
+    className: classnames(
+      styles.button,
+      {
+        [styles['accent--' + accent]]: !disabled,
+        // [styles['size--' + size]]: size,
+        [styles.filled]: filled,
+        [styles.flat]: flat,
+        [styles.narrow]: narrow,
+        [styles.compact]: compact,
+        [styles.mock]: mock
+      },
+      className
+    ),
+    disabled,
+    ref,
+    ...props
+  }
+
+  if (mock) {
+    return <span {...elementProps}>{children}</span>
+  }
+
+  return <button {...elementProps}>{children}</button>
 })

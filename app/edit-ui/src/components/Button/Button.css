@@ -18,6 +18,11 @@
   text-transform: uppercase;
 }
 
+.button.mock {
+  display: flex;
+  align-items: center;
+}
+
 .button.narrow,
 .button.compact {
   padding: 0 25px;

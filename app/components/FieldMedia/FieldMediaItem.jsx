@@ -34,7 +34,7 @@ export default class FieldMediaItem extends React.Component {
         .split('.')
         .slice(0, -1)
         .join('.')
-    const extension = value.fileName && value.fileName.slice(-1)[0]
+    const extension = value.fileName && value.fileName.split('.').slice(-1)[0]
 
     let icon = (
       <div className={styles.file}>

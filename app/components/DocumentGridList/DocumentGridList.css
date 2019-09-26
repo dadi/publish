@@ -1,8 +1,21 @@
 .columns {
-  margin: 15px;
+  --padding-card: 10px;
+  --padding-small: calc(var(--edit-margin-lg) - var(--padding-card));
+  --padding-large: calc(var(--edit-margin-xxl) - var(--padding-card));
+
+  margin: calc(var(--padding-card) * -1) var(--padding-small) 0
+    var(--padding-small);
 }
+
+@media (min-width: 1024px) {
+  .columns {
+    margin-left: var(--padding-large);
+    margin-right: var(--padding-large);
+  }
+}
+
 .column {
   display: inline-block;
   vertical-align: top;
-  padding: 10px;
+  padding: var(--padding-card);
 }

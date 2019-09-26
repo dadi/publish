@@ -12,24 +12,14 @@ export default class FileUpload extends React.Component {
     children: proptypes.node,
 
     /**
-     * Classes to append to the button element.
+     * Classes to append to the container element.
      */
     className: proptypes.string,
-
-    /**
-     * The text to be displayed when a file is being dragged.
-     */
-    draggingText: proptypes.string,
 
     /**
      * Callback to be executed when files are dropped.
      */
     onDrop: proptypes.func
-  }
-
-  static defaultProps = {
-    className: '',
-    draggingText: 'Drop files here'
   }
 
   constructor(props) {
@@ -38,10 +28,12 @@ export default class FileUpload extends React.Component {
     this.state = {
       isDragging: false
     }
+
+    this.dragCount = 0
   }
 
   render() {
-    const {children, className, draggingText} = this.props
+    const {children, className, onRenderDrag} = this.props
     const {isDragging} = this.state
     const dropStyles = new Style(styles, 'droparea')
       .addIf('droparea-active', isDragging)
@@ -50,11 +42,15 @@ export default class FileUpload extends React.Component {
     return (
       <div
         className={dropStyles.getClasses()}
-        data-dragtext={draggingText}
         onDrop={this.handleDrop.bind(this)}
         onDragEnter={this.handleDrag.bind(this, true)}
         onDragLeave={this.handleDrag.bind(this, false)}
+        ref={el => (this.container = el)}
       >
+        {isDragging && Boolean(onRenderDrag) && (
+          <div className={styles.information}>{onRenderDrag}</div>
+        )}
+
         <div className={styles.contents}>{children}</div>
       </div>
     )
@@ -67,6 +63,8 @@ export default class FileUpload extends React.Component {
       isDragging: false
     })
 
+    this.dragCount = 0
+
     if (typeof onDrop === 'function') {
       onDrop(event.dataTransfer.files)
     }
@@ -74,11 +72,17 @@ export default class FileUpload extends React.Component {
     event.preventDefault()
   }
 
-  handleDrag(isDragging, event) {
-    this.setState({
-      isDragging
-    })
+  handleDrag(isDragging) {
+    const previousDragCount = this.dragCount
 
-    event.preventDefault()
+    // This variable will contain a value greater than zero if there is a
+    // file being dragged, or equal to zero if not.
+    this.dragCount += isDragging ? 1 : -1
+
+    if (previousDragCount === 0 && this.dragCount > 0) {
+      this.setState({isDragging: true})
+    } else if (previousDragCount > 0 && this.dragCount === 0) {
+      this.setState({isDragging: false})
+    }
   }
 }

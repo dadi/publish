@@ -1,5 +1,7 @@
 import * as documentActions from 'actions/documentActions'
+import {Checkbox} from '@dadi/edit-ui'
 import {connectRedux} from 'lib/redux'
+import {InsertDriveFile, Videocam} from '@material-ui/icons'
 import {getMediaUrl} from 'lib/util/url'
 import proptypes from 'prop-types'
 import React from 'react'
@@ -71,7 +73,7 @@ class MediaGridCard extends React.Component {
   }
 
   render() {
-    const {href, item, isSelected, selectLimit} = this.props
+    const {href, item, isSelected} = this.props
     const itemStyle = new Style(styles, 'wrapper').addIf(
       'wrapper-selected',
       isSelected
@@ -79,7 +81,6 @@ class MediaGridCard extends React.Component {
 
     // For backwards compatibility.
     const mimeType = item.mimeType || item.mimetype
-    const isImage = mimeType && mimeType.includes('image/')
     const humanFileSize = fileSize(item.contentLength, {
       fixed: item.contentLength > 1e6 ? 2 : 0
     }).human('si')
@@ -98,14 +99,11 @@ class MediaGridCard extends React.Component {
         className={itemStyle.getClasses()}
         onClick={this.handleCardClick.bind(this)}
       >
-        <input
-          checked={isSelected}
-          className={styles.select}
-          type={selectLimit === 1 ? 'radio' : 'checkbox'}
-          {...selectProps}
-        />
+        <label className={styles.select}>
+          <Checkbox checked={isSelected} large {...selectProps} />
+        </label>
 
-        {this.renderHead({isImage})}
+        {this.renderHead()}
 
         <div className={styles.metadata}>
           <div className={styles.filename}>{item.fileName}</div>
@@ -123,20 +121,25 @@ class MediaGridCard extends React.Component {
     )
   }
 
-  renderHead({isImage}) {
+  renderHead() {
     const {href, item, state} = this.props
+    const mimeType = item.mimeType || item.mimetype || ''
     const {config} = state.app
+    const isImage = mimeType.indexOf('image/') === 0
     const aspectRatio = isImage ? (item.height / item.width) * 100 : 100
     const url = getMediaUrl({
       config,
       document: item,
       width: 350
     })
-    const headElement = isImage ? (
-      <img className={styles.image} src={url} />
-    ) : (
-      <div className={styles['generic-thumbnail']} />
-    )
+
+    let headElement = this.renderHeadIcon(InsertDriveFile)
+
+    if (isImage) {
+      headElement = <img className={styles.image} src={url} />
+    } else if (mimeType.indexOf('video/') === 0) {
+      headElement = this.renderHeadIcon(Videocam)
+    }
 
     if (typeof href === 'string') {
       return (
@@ -156,6 +159,14 @@ class MediaGridCard extends React.Component {
         style={{paddingBottom: `${aspectRatio}%`}}
       >
         {headElement}
+      </div>
+    )
+  }
+
+  renderHeadIcon(Icon) {
+    return (
+      <div className={styles['icon-container']}>
+        <Icon className={styles.icon} />
       </div>
     )
   }

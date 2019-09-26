@@ -1,20 +1,85 @@
-.wrapper {
-  align-items: center;
+.container {
   display: flex;
-  font-family: var(--theme-font-family, sans-serif);
-  justify-content: center;
-  margin: 30px 0;
+  align-items: center;
+  justify-content: space-between;
+  flex-direction: column;
+  padding: var(--edit-margin-md) var(--edit-margin-lg);
 }
 
-.wrapper > * + * {
+.container > * + * {
+  margin-top: var(--edit-margin-lg);
+}
+
+@media (min-width: 1024px) {
+  .container {
+    flex-direction: row;
+    padding: var(--edit-margin-md) var(--edit-margin-xxl);
+  }
+
+  .container > * + * {
+    margin-top: 0;
+  }
+}
+
+.list-mode-button {
+  margin-left: 10px;
+  outline: 0;
+  padding: 0;
+}
+
+.list-mode-icon {
+  color: var(--edit-color-grayscale-60);
+  width: 30px !important;
+  height: 30px !important;
+}
+
+.list-mode-button:not([disabled]):hover .list-mode-icon {
+  color: var(--edit-color-grayscale-10);
+}
+
+.list-mode-icon.active {
+  color: var(--edit-color-grayscale-30);
+}
+
+.select-all-label {
+  align-items: center;
+  display: flex;
+  color: var(--edit-color-grayscale-40);
+}
+
+.select-all-label[aria-hidden] {
+  visibility: hidden;
+}
+
+.select-all-label span {
+  margin-left: 6px;
+}
+
+.upload-area {
+  align-items: center;
+  display: flex;
+}
+
+.upload-area > * + * {
   margin-left: 10px;
 }
 
-.separator {
-  color: var(--theme-colour-primary-shade-1, #777777);
+.upload-button {
+  background-color: var(--edit-color-positive-opacity);
+  color: white;
+  display: inline-block;
+  padding: 4px 6px;
+  border-radius: 4px;
 }
 
-.droparea {
-  border-radius: 0;
-  border-bottom: 1px solid #eaeaea;
+.upload-button:hover {
+  background-color: var(--edit-color-positive-darker-1);
+}
+
+.upload-button > * {
+  vertical-align: middle;
+}
+
+.upload-button span {
+  margin-right: 4px;
 }

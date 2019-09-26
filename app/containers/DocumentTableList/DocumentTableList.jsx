@@ -183,7 +183,7 @@ class DocumentTableList extends React.Component {
 
     return (
       <>
-        <h1 className={styles.title}>{title}</h1>
+        {title && <h1 className={styles.title}>{title}</h1>}
 
         {subtitle && <p className={styles.subtitle}>{subtitle}</p>}
 
