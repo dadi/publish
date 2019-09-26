@@ -1,24 +1,70 @@
 .container {
   --margin: 10px;
+  --margin-y-editor-rows: var(--edit-margin-md);
+  --margin-y-drawer: var(--edit-margin-lg);
+
+  position: relative;
 }
 
-.top-bar {
+.top-bar,
+.drawer {
   display: flex;
   background-color: var(--edit-color-background-1);
   box-shadow: var(--edit-shadow-4px-bottom);
   align-items: center;
 }
 
+.top-bar {
+  justify-content: space-between;
+}
+
+.container.filters-open .drawer {
+  height: calc(100vh - 68px - 73px);
+  justify-content: flex-start;
+  align-items: flex-start;
+}
+
+.container.drawer-open .top-bar {
+  box-shadow: none;
+  border-bottom: var(--edit-border-width-standard) solid
+    var(--edit-color-border-light);
+  margin-bottom: -1px;
+}
+
 .top-bar,
-.filters {
+.container:not(.small-window) .filters {
   padding: var(--edit-margin-md) var(--edit-margin-lg);
+}
+
+.drawer {
+  padding: var(--margin-y-drawer) var(--edit-margin-lg);
+  position: absolute;
+  top: calc(100% + 1px);
+  z-index: var(--edit-z-index-dropdown);
+  width: 100%;
 }
 
 @media (min-width: 1024px) {
   .top-bar,
-  .filters {
+  .container:not(.small-window) .filters {
     padding: var(--edit-margin-md) var(--edit-margin-xxl);
   }
+
+  .drawer {
+    padding: var(--margin-y-drawer) var(--edit-margin-xxl);
+  }
+}
+
+.container.filters-open .drawer {
+  flex-direction: column;
+  align-items: stretch;
+}
+
+.drawer-buttons {
+  margin-top: var(--margin-y-drawer);
+  padding-top: var(--margin-y-drawer);
+  border-top: var(--edit-border-width-standard) solid
+    var(--edit-color-border-light);
 }
 
 .form {
@@ -53,6 +99,10 @@
   box-shadow: var(--edit-shadow-4px);
   z-index: var(--edit-z-index-dropdown);
   border-radius: 0;
+}
+
+.container.small-window .suggestions {
+  left: 0;
 }
 
 .input:not(:focus) ~ .suggestions {
@@ -97,10 +147,10 @@
 }
 
 .operator-selector,
-.add-filter-button,
+.top-bar .add-filter-button,
 .create-new-button,
 .remove-filter-button,
-.filter-editor-close.bottom {
+.container:not(.small-window) .close-filter-editor {
   margin-left: var(--margin);
 }
 
@@ -116,50 +166,89 @@
 
 .filter-editor {
   display: flex;
-  margin: calc(-1 * var(--margin)) 0 0 calc(-1 * var(--margin));
+  margin: calc(-1 * var(--margin-y-editor-rows)) 0 0 calc(-1 * var(--margin));
   flex: 1;
+}
+
+.container.small-window .filter-editor {
+  flex-direction: column;
 }
 
 .filter-editor-row {
   display: flex;
-  margin: var(--margin) 0 0 var(--margin);
+  margin: var(--margin-y-editor-rows) 0 0 var(--margin);
+  align-items: center;
+}
+
+.drawer .field-selector,
+.drawer .operator-selector {
+  flex: 1;
+}
+
+.heading-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0;
 }
 
 .filter-editor-row:last-child {
   flex: 1;
 }
 
-/* .filter-editor-heading {
+.drawer .filter-editor-row:last-child {
+  align-items: flex-start;
+}
+
+.filter-editor-heading {
   color: var(--edit-color-primary);
   font-size: var(--edit-font-size-nav);
   font-weight: 700;
   letter-spacing: var(--edit-spacing-nav);
+  text-transform: uppercase;
   margin: 0;
-} */
+}
 
-.filter-editor-close {
+.open-search,
+.open-filters,
+.close-search,
+.close-filter-editor {
   padding: 0;
-  margin-left: var(--edit-margin-xxs);
-  color: var(--edit-color-text-2);
+  color: var(--edit-color-text-3);
   transition: color var(--edit-transition-duration-standard);
   cursor: pointer;
   outline: 0;
 }
 
-.filter-editor-close:hover {
+.open-filters {
+  margin-left: var(--edit-margin-xs);
+}
+
+.close-search,
+.close-filter-editor {
+  margin-left: var(--edit-margin-xxs);
+}
+
+.open-search:hover,
+.container.search-open .open-search,
+.open-filters:hover,
+.container.filters-open .open-filters,
+.close-search:hover,
+.close-filter-editor:hover {
   color: var(--edit-color-text-1);
 }
 
-.filter-editor-close > svg {
+.open-search > svg,
+.open-filters > svg,
+.close-search > svg,
+.close-filter-editor > svg {
   vertical-align: middle;
 }
 
-.filter-editor.mobile .filter-editor-close.bottom {
-  display: none;
-}
-
-.filter-editor:not(.mobile) .filter-editor-close.top {
-  display: none;
+.filter-count {
+  font-size: var(--edit-font-size-xs);
+  font-weight: 700;
+  color: var(--edit-color-positive);
 }
 
 .filler {
@@ -170,6 +259,10 @@
   margin: calc(-1 * var(--margin)) 0 0 calc(-1 * var(--margin));
 }
 
+.drawer .filters {
+  margin-top: calc(var(--margin-y-editor-rows) - var(--margin));
+}
+
 .filter {
   margin: var(--margin) 0 0 var(--margin);
   display: inline-flex;
@@ -178,7 +271,8 @@
   border-radius: var(--edit-radius-elem);
   font-size: var(--edit-font-size-sm);
   color: var(--edit-color-text-2);
-  padding: var(--edit-margin-sm) var(--edit-margin-md);
+  padding: 0 var(--edit-margin-md);
+  height: var(--edit-elem-height-medium);
   cursor: pointer;
   border: var(--edit-border-width-standard) solid var(--edit-color-border-light);
   transition: all var(--edit-transition-duration-standard);
