@@ -118,7 +118,7 @@ export default class RichEditor extends React.Component {
 
     this.handleMediaInsert = this.handleMediaInsert.bind(this)
     this.startSelectingMedia = () => this.setState({isSelectingMedia: true})
-    this.stopelectingMedia = () => this.setState({isSelectingMedia: false})
+    this.stopSelectingMedia = () => this.setState({isSelectingMedia: false})
 
     this.hotKeys = new HotKeys({
       escape: this.handleToggleFullscreen.bind(this, false),
