@@ -110,12 +110,17 @@ export default class MediaListController extends React.Component {
           </label>
         </div>
         <div className={styles['upload-area']}>
-          <FileUpload multiple={true} onChange={onUpload}>
-            <Button accent="positive" filled>
-              Select files
-            </Button>
-          </FileUpload>
-          {!isTouchDevice && <span> or drag and drop to upload</span>}
+          {typeof onUpload === 'function' && (
+            <>
+              <FileUpload multiple={true} onChange={onUpload}>
+                <Button accent="positive" filled>
+                  Select files
+                </Button>
+              </FileUpload>
+
+              {!isTouchDevice && <span> or drag and drop to upload</span>}
+            </>
+          )}
         </div>
         <div>
           <button
