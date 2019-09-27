@@ -16,6 +16,8 @@
 
 .top-bar {
   justify-content: space-between;
+  border-bottom: var(--edit-border-width-standard) solid
+    var(--edit-color-background-1);
 }
 
 .container.filters-open .drawer {
@@ -26,9 +28,7 @@
 
 .container.drawer-open .top-bar {
   box-shadow: none;
-  border-bottom: var(--edit-border-width-standard) solid
-    var(--edit-color-border-light);
-  margin-bottom: -1px;
+  border-bottom-color: var(--edit-color-border-light);
 }
 
 .top-bar,
@@ -39,7 +39,7 @@
 .drawer {
   padding: var(--margin-y-drawer) var(--edit-margin-lg);
   position: absolute;
-  top: calc(100% + 1px);
+  top: 100%;
   z-index: var(--edit-z-index-dropdown);
   width: 100%;
 }
