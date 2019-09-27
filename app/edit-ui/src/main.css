@@ -151,6 +151,7 @@
 
   --edit-color-border-light: var(--edit-color-opacity-85);
   --edit-color-border-dark: var(--edit-color-opacity-70);
+  --edit-color-border-dark-2: var(--edit-color-opacity-50);
 
   --edit-color-off: var(--edit-color-opacity-80);
 }

@@ -35,9 +35,8 @@
 }
 
 .checkbox:not(:disabled).hovered::before,
-.checkbox:not(:disabled):hover::before,
-.checkbox:not(:disabled):focus::before {
-  border-color: var(--edit-color-border-dark);
+.checkbox:not(:disabled):hover::before {
+  border-color: var(--edit-color-border-dark-2);
 }
 
 /* Checkmark. */

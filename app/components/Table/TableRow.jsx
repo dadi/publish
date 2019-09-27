@@ -66,21 +66,7 @@ export default class TableRow extends React.Component {
     }
   }
 
-  handleSelectClick(event) {
-    const {onSelect, tableIndex} = this.props
-
-    if (typeof onSelect === 'function') {
-      onSelect.call(this, tableIndex, event)
-    }
-  }
-
-  handleSelectRow(event) {
-    // If the click event happened on a link, we don't want to proceed
-    // with selecting the row.
-    if (event.target.tagName === 'A') {
-      return
-    }
-
+  selectRow(event) {
     const {onSelect, tableIndex} = this.props
 
     if (typeof onSelect === 'function') {
@@ -100,7 +86,7 @@ export default class TableRow extends React.Component {
   }
 
   render() {
-    const {selectable, selectableMode, selected} = this.props
+    const {onClick, selectable, selectableMode, selected} = this.props
     const rowStyle = new Style(styles, 'row')
       .addIf('row-selected', selected)
       .addIf('row-hovered', this.state.isHovered)
@@ -108,18 +94,25 @@ export default class TableRow extends React.Component {
     return (
       <tr
         className={rowStyle.getClasses()}
-        onClick={this.handleSelectRow.bind(this)}
+        onClick={onClick}
         onMouseEnter={this.hoverOn}
         onMouseLeave={this.hoverOff}
       >
         {selectable && (
           <TableRowCell select={true}>
-            <Checkbox
-              checked={selected}
-              className={styles.checkbox}
-              disabled={selectableMode === 'multiDisabled'}
-              readOnly={true}
-            />
+            <label
+              className={styles['select-label']}
+              onClick={e => e.stopPropagation()}
+              onMouseEnter={this.hoverOff}
+              onMouseLeave={this.hoverOn}
+            >
+              <Checkbox
+                checked={selected}
+                className={styles.checkbox}
+                disabled={selectableMode === 'multiDisabled'}
+                onChange={this.selectRow.bind(this)}
+              />
+            </label>
           </TableRowCell>
         )}
         {this.renderChildren()}
