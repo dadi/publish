@@ -89,8 +89,8 @@ class DocumentTableList extends React.Component {
     return selectedRows
   }
 
-  handleRowRender(listableFields, value, data, column, index) {
-    const {collection, documentId, onBuildBaseUrl, referencedField} = this.props
+  handleRowRender(listableFields, value, data, column) {
+    const {collection, referencedField} = this.props
 
     // If we're on a nested document view, we don't want to add links to
     // documents (for now).
@@ -98,28 +98,9 @@ class DocumentTableList extends React.Component {
       return value
     }
 
-    const editLink = onBuildBaseUrl({
-      documentId: documentId || data._id,
-      search: null
-    })
     const fieldSchema = collection.fields[column.id]
-    const renderedValue = this.renderField({
-      document: data,
-      fieldName: column.id,
-      schema: fieldSchema
-    })
-    const firstStringField = Object.keys(listableFields).find(field => {
-      return listableFields[field].type === 'String'
-    })
 
-    if (
-      (firstStringField && firstStringField === column.id) ||
-      (!firstStringField && index === 0)
-    ) {
-      return React.cloneElement(renderedValue, {internalLink: editLink})
-    }
-
-    return renderedValue
+    return this.renderField(fieldSchema, value)
   }
 
   renderColumnHeader(column) {
@@ -157,6 +138,7 @@ class DocumentTableList extends React.Component {
       collection,
       documents,
       fields: fieldsToDisplay = [],
+      onBuildBaseUrl,
       onSelect,
       order,
       selectedDocuments,
@@ -191,6 +173,7 @@ class DocumentTableList extends React.Component {
           <SyncTable
             columns={tableColumns}
             data={documents}
+            onBuildBaseUrl={onBuildBaseUrl}
             onRender={this.handleRowRender.bind(this, listableFields)}
             onSelect={onSelect}
             renderColumnHeader={this.renderColumnHeader}

@@ -1,6 +1,6 @@
+import {connectRouter} from 'lib/router'
 import proptypes from 'prop-types'
 import React from 'react'
-
 import Table from 'components/Table/Table'
 import TableHead from 'components/Table/TableHead'
 import TableHeadCell from 'components/Table/TableHeadCell'
@@ -11,7 +11,7 @@ import TableRowCell from 'components/Table/TableRowCell'
  * An advanced table that controls which properties of an object are displayed
  * and ensures that table headings and row cells stay in sync.
  */
-export default class SyncTable extends React.Component {
+class SyncTable extends React.Component {
   static propTypes = {
     /**
      * An array of objects containing the id, label and type of the columns to be displayed in the table.
@@ -116,6 +116,19 @@ export default class SyncTable extends React.Component {
     sortOrder: null
   }
 
+  goToDocument(id, event) {
+    if (event.__innerClick) return
+
+    const {onBuildBaseUrl, route} = this.props
+
+    route.history.push(
+      onBuildBaseUrl({
+        documentId: id,
+        search: null
+      })
+    )
+  }
+
   render() {
     const {
       columns,
@@ -159,9 +172,13 @@ export default class SyncTable extends React.Component {
   renderRows() {
     const {columns, data, onSelect, onRender} = this.props
 
-    return data.map((row, index) => {
+    return data.map(row => {
       return (
-        <TableRow key={index} onSelect={onSelect}>
+        <TableRow
+          key={row._id}
+          onClick={this.goToDocument.bind(this, row._id)}
+          onSelect={onSelect}
+        >
           {columns.map((column, index) => {
             let value = row[column.id]
 
@@ -177,3 +194,5 @@ export default class SyncTable extends React.Component {
     })
   }
 }
+
+export default connectRouter(SyncTable)
