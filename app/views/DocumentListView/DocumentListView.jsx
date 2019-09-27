@@ -13,6 +13,7 @@ import DocumentTableList from 'containers/DocumentTableList/DocumentTableList'
 import DropArea from 'components/DropArea/DropArea'
 import ErrorMessage from 'components/ErrorMessage/ErrorMessage'
 import FieldMediaItem from 'components/FieldMedia/FieldMediaItem'
+import FileUpload from 'components/FileUpload/FileUpload'
 import {getVisibleFields} from 'lib/fields'
 import HeroMessage from 'components/HeroMessage/HeroMessage'
 import MediaGridCard from 'containers/MediaGridCard/MediaGridCard'
@@ -33,6 +34,7 @@ class DocumentListView extends React.Component {
     super(props)
 
     this.deleteSelected = this.deleteSelected.bind(this)
+    this.handleEmptyDocumentList = this.handleEmptyDocumentList.bind(this)
     this.handleFiltersUpdate = this.handleFiltersUpdate.bind(this)
     this.handleMediaUpload = this.handleMediaUpload.bind(this)
     this.handlePageChange = this.handlePageChange.bind(this)
@@ -133,10 +135,21 @@ class DocumentListView extends React.Component {
     // there's no route for creating a new document.
     if (route.params.collection === Constants.MEDIA_COLLECTION_SCHEMA.slug) {
       return (
-        <HeroMessage
-          title="No media yet"
-          subtitle="Once you upload media files, they will appear here."
-        />
+        <DropArea
+          className={styles['empty-view-droparea']}
+          onDrop={this.handleMediaUpload}
+        >
+          <HeroMessage
+            title="No media yet"
+            subtitle="To start adding files, drag and drop them here or use the button below."
+          >
+            <FileUpload multiple={true} onChange={this.handleMediaUpload}>
+              <Button accent="positive" filled>
+                Select files
+              </Button>
+            </FileUpload>
+          </HeroMessage>
+        </DropArea>
       )
     }
 
@@ -407,7 +420,7 @@ class DocumentListView extends React.Component {
           collection={Constants.MEDIA_COLLECTION_SCHEMA}
           contentKey={contentKey}
           filters={search.filter}
-          onEmptyList={this.handleEmptyDocumentList.bind(this)}
+          onEmptyList={this.handleEmptyDocumentList}
           onNetworkError={this.handleNetworkError.bind(this)}
           onRender={({
             documents,
@@ -482,7 +495,7 @@ class DocumentListView extends React.Component {
         contentKey={contentKey}
         fields={visibleFields}
         filters={search.filter}
-        onEmptyList={this.handleEmptyDocumentList.bind(this)}
+        onEmptyList={this.handleEmptyDocumentList}
         onNetworkError={this.handleNetworkError.bind(this)}
         onRender={({documents, onSelect, selectedDocuments}) => (
           <DocumentTableList

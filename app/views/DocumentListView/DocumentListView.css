@@ -13,3 +13,11 @@
 .button-wrapper.hidden {
   visibility: hidden;
 }
+
+.empty-view-droparea {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
