@@ -39,9 +39,12 @@
 }
 
 .cell.select-cell {
-  width: 47px;
   padding: 0;
   position: relative;
+}
+
+.select-spacer {
+  width: 47px;
 }
 
 .select-label {
