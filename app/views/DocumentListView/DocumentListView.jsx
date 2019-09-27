@@ -362,7 +362,7 @@ class DocumentListView extends React.Component {
           />
         )}
 
-        <main>
+        <main className={styles.main}>
           <div className={styles['list-container']}>
             {this.renderMain({
               collection,

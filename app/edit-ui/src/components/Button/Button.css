@@ -18,13 +18,14 @@
   text-transform: uppercase;
 }
 
-.button.narrow,
-.button.compact {
-  padding: 6px 25px;
+.button.narrow {
+  padding-left: 25px;
+  padding-right: 25px;
 }
 
 .button.compact {
-  height: var(--edit-elem-height-small);
+  padding-top: 6px;
+  padding-bottom: 6px;
 }
 
 .button.flat:not(.filled) {
