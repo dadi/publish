@@ -41,6 +41,7 @@
 .cell.select-cell {
   width: 47px;
   padding: 0;
+  position: relative;
 }
 
 .select-label {
@@ -49,6 +50,9 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  position: absolute;
+  top: 0;
+  left: 0;
 }
 
 .row {
