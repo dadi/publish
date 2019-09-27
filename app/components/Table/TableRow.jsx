@@ -60,6 +60,9 @@ export default class TableRow extends React.Component {
       this.setState({isHovered: !isChildHovered})
     this.hoverOn = () => this.setState({isHovered: true})
     this.hoverOff = () => this.setState({isHovered: false})
+    this.markEvent = e => {
+      e.__innerClick = true
+    }
 
     this.state = {
       isHovered: false
@@ -102,7 +105,7 @@ export default class TableRow extends React.Component {
           <TableRowCell select={true}>
             <label
               className={styles['select-label']}
-              onClick={e => e.stopPropagation()}
+              onClick={this.markEvent}
               onMouseEnter={this.hoverOff}
               onMouseLeave={this.hoverOn}
             >

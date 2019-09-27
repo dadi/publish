@@ -43,6 +43,14 @@ export default class TableHead extends React.Component {
     selectable: false
   }
 
+  constructor(props) {
+    super(props)
+
+    this.markEvent = e => {
+      e.__innerClick = true
+    }
+  }
+
   handleSelectClick(event) {
     const {onSelect} = this.props
 
@@ -66,7 +74,7 @@ export default class TableHead extends React.Component {
             <TableHeadCell select={true}>
               <label
                 className={styles['select-label']}
-                onClick={e => e.stopPropagation()}
+                onClick={this.markEvent}
                 onMouseEnter={this.hoverOff}
                 onMouseLeave={this.hoverOn}
               >

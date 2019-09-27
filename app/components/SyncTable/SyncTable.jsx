@@ -116,7 +116,9 @@ class SyncTable extends React.Component {
     sortOrder: null
   }
 
-  goToDocument(id) {
+  goToDocument(id, event) {
+    if (event.__innerClick) return
+
     const {onBuildBaseUrl, route} = this.props
 
     route.history.push(
