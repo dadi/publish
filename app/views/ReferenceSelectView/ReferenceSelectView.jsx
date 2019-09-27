@@ -137,7 +137,7 @@ class ReferenceSelectView extends React.Component {
     }
 
     return (
-      <div className={styles.container}>
+      <>
         <div className={styles.header}>
           <Button
             accent="negative"
@@ -200,7 +200,7 @@ class ReferenceSelectView extends React.Component {
             </Button>
           </DocumentListToolbar>
         </div>
-      </div>
+      </>
     )
   }
 

@@ -36,6 +36,7 @@ export default class FieldStringFilter extends React.Component {
 
     return (
       <TextInput
+        autoFocus
         className={styles['filter-input']}
         onChange={event => onUpdate(event.target.value)}
         placeholder="Search value"

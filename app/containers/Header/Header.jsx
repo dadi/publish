@@ -44,6 +44,10 @@ class Header extends React.Component {
   }
 
   positionNav() {
+    const {user} = this.props
+
+    if (!user.isSignedIn) return
+
     const totalWidth = this.items.reduce(
       (sum, item) => sum + item.offsetWidth + HEADER_ITEM_MARGIN,
       0
@@ -74,6 +78,8 @@ class Header extends React.Component {
       'open',
       isUserMenuOpen
     )
+
+    if (!user.isSignedIn) return null
 
     return (
       <header className={styles.header}>

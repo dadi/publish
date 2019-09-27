@@ -10,14 +10,13 @@
 }
 
 .title {
-  color: var(--theme-colour-primary, #000000);
-  font-weight: bold;
-  font-size: 32px;
+  color: var(--edit-color-primary);
+  font-size: var(--edit-font-size-heading-2);
 }
 
 .subtitle {
-  color: var(--theme-colour-primary-shade-1, #777777);
-  margin-top: 15px;
+  color: var(--edit-color-grayscale-30);
+  margin-top: 10px;
 }
 
 .children {
