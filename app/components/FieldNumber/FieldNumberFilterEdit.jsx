@@ -47,6 +47,7 @@ export default class FieldNumberFilter extends React.Component {
 
     return (
       <TextInput
+        autoFocus
         className={styles['filter-input']}
         onChange={this.handleChange.bind(this)}
         placeholder="Search value"

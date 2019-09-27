@@ -204,6 +204,7 @@ export default class TextInputWithDatePicker extends React.Component {
 
   render() {
     const {
+      autoFocus,
       containerClassName,
       defaultFormat,
       format,
@@ -237,6 +238,7 @@ export default class TextInputWithDatePicker extends React.Component {
         ref={el => (this.rootEl = el)}
       >
         <TextInput
+          autoFocus={autoFocus}
           autoComplete="off"
           className={inputClassName + (readOnly ? '' : ` ${styles.input}`)}
           onBlur={null && this.handleFocus.bind(this, false)}
