@@ -117,7 +117,11 @@ class SyncTable extends React.Component {
   }
 
   goToDocument(id, event) {
-    if (event.__innerClick) return
+    if (event.__innerClick) {
+      event.__innerClick = undefined
+
+      return
+    }
 
     const {onBuildBaseUrl, route} = this.props
 
