@@ -3,6 +3,7 @@ import {Checkbox} from '@dadi/edit-ui'
 import {connectRedux} from 'lib/redux'
 import {InsertDriveFile, Videocam} from '@material-ui/icons'
 import {getMediaUrl} from 'lib/util/url'
+import {Link} from 'react-router-dom'
 import proptypes from 'prop-types'
 import React from 'react'
 import Style from 'lib/Style'
@@ -143,13 +144,13 @@ class MediaGridCard extends React.Component {
 
     if (typeof href === 'string') {
       return (
-        <a
+        <Link
           className={styles['image-holder']}
-          href={href}
           style={{paddingBottom: `${aspectRatio}%`}}
+          to={href}
         >
           {headElement}
-        </a>
+        </Link>
       )
     }
 
