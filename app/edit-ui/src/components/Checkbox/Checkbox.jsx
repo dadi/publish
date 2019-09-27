@@ -5,12 +5,15 @@ import styles from './Checkbox.css'
 
 // Checkbox.propTypes = {}
 
-export default function Checkbox({className, hovered, ...props}) {
+export default function Checkbox({className, hovered, large, ...props}) {
   return (
     <input
       className={classnames(
         styles.checkbox,
-        {[styles.hovered]: hovered},
+        {
+          [styles.hovered]: hovered,
+          [styles.large]: large
+        },
         className
       )}
       {...props}

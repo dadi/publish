@@ -14,31 +14,40 @@ export default React.forwardRef(function Button(
     disabled,
     filled,
     flat,
+    href,
     isLoading, // To be implemented.
     narrow,
     ...props
   },
   ref
 ) {
-  return (
-    <button
-      className={classnames(
-        styles.button,
-        {
-          [styles['accent--' + accent]]: !disabled,
-          // [styles['size--' + size]]: size,
-          [styles.filled]: filled,
-          [styles.flat]: flat,
-          [styles.narrow]: narrow,
-          [styles.compact]: compact
-        },
-        className
-      )}
-      disabled={disabled}
-      ref={ref}
-      {...props}
-    >
-      {children}
-    </button>
-  )
+  const elementProps = {
+    className: classnames(
+      styles.button,
+      {
+        [styles['accent--' + accent]]: !disabled,
+        // [styles['size--' + size]]: size,
+        [styles.filled]: filled,
+        [styles.flat]: flat,
+        [styles.narrow]: narrow,
+        [styles.compact]: compact
+      },
+      className
+    ),
+    disabled,
+    ref,
+    ...props
+  }
+
+  if (href) {
+    return (
+      <a href={href} {...elementProps}>
+        {children}
+      </a>
+    )
+  } else if (props.onClick) {
+    return <button {...elementProps}>{children}</button>
+  } else {
+    return <span {...elementProps}>{children}</span>
+  }
 })

@@ -1,9 +1,9 @@
 {
   "api": {
-    "_host": "http://api-develop.publish.dadi.technology",
-    "_port": 80,
-    "host": "http://localhost",
-    "port": 8081,
+    "host": "http://api-develop.publish.dadi.technology",
+    "port": 80,
+    "_host": "http://localhost",
+    "_port": 8081,
     "menu": [
       {
         "collections": ["pages", "team"],

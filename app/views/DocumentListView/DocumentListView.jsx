@@ -2,7 +2,7 @@ import * as appActions from 'actions/appActions'
 import * as Constants from 'lib/constants'
 import * as documentActions from 'actions/documentActions'
 import * as selectionActions from 'actions/selectionActions'
-import Button from 'components/Button/Button'
+import {Button} from '@dadi/edit-ui'
 import {connectRedux} from 'lib/redux'
 import DocumentEditView from 'views/DocumentEditView/DocumentEditView'
 import DocumentGridList from 'components/DocumentGridList/DocumentGridList'
@@ -10,7 +10,9 @@ import DocumentList from 'containers/DocumentList/DocumentList'
 import DocumentListController from 'components/DocumentListController/DocumentListController'
 import DocumentListToolbar from 'components/DocumentListToolbar/DocumentListToolbar'
 import DocumentTableList from 'containers/DocumentTableList/DocumentTableList'
+import DropArea from 'components/DropArea/DropArea'
 import ErrorMessage from 'components/ErrorMessage/ErrorMessage'
+import FieldMediaItem from 'components/FieldMedia/FieldMediaItem'
 import {getVisibleFields} from 'lib/fields'
 import HeroMessage from 'components/HeroMessage/HeroMessage'
 import MediaGridCard from 'containers/MediaGridCard/MediaGridCard'
@@ -24,18 +26,24 @@ import SpinningWheel from 'components/SpinningWheel/SpinningWheel'
 import Style from 'lib/Style'
 import styles from './DocumentListView.css'
 
+const MEDIA_TABLE_FIELDS = ['url', 'fileName', 'mimeType', 'width', 'height']
+
 class DocumentListView extends React.Component {
   constructor(props) {
     super(props)
 
     this.deleteSelected = this.deleteSelected.bind(this)
+    this.handleFiltersUpdate = this.handleFiltersUpdate.bind(this)
+    this.handleMediaUpload = this.handleMediaUpload.bind(this)
     this.handlePageChange = this.handlePageChange.bind(this)
+    this.updateMediaListMode = this.updateMediaListMode.bind(this)
 
     this.showDeletePrompt = () => this.setState({isShowingDeletePrompt: true})
     this.hideDeletePrompt = () => this.setState({isShowingDeletePrompt: false})
 
     this.state = {
-      isShowingDeletePrompt: false
+      isShowingDeletePrompt: false,
+      mediaListMode: 'grid'
     }
   }
 
@@ -126,7 +134,7 @@ class DocumentListView extends React.Component {
     if (route.params.collection === Constants.MEDIA_COLLECTION_SCHEMA.slug) {
       return (
         <HeroMessage
-          title="No media yet."
+          title="No media yet"
           subtitle="Once you upload media files, they will appear here."
         />
       )
@@ -134,11 +142,12 @@ class DocumentListView extends React.Component {
 
     return (
       <HeroMessage
-        title="No documents yet."
+        title="No documents yet"
         subtitle="Once created, they will appear here."
       >
         <Button
-          accent="save"
+          accent="positive"
+          filled
           href={onBuildBaseUrl.call(this, {
             createNew: true
           })}
@@ -262,7 +271,8 @@ class DocumentListView extends React.Component {
     // Getting documents from store.
     const data = state.documents[contentKey] || {}
     const {metadata} = data
-    const {page, totalPages} = metadata || {}
+    const {page, totalCount, totalPages} = metadata || {}
+    const hasDocuments = totalCount > 0
 
     // If the page parameter is higher than the number of pages available for
     // the current document set, we redirect to the last valid page.
@@ -329,13 +339,15 @@ class DocumentListView extends React.Component {
           </Modal>
         )}
 
-        <DocumentListController
-          collection={collection}
-          createNewHref={createNewHref}
-          enableFilters
-          filters={search.filter}
-          onUpdateFilters={this.handleFiltersUpdate.bind(this)}
-        />
+        {hasDocuments && (
+          <DocumentListController
+            collection={collection}
+            createNewHref={createNewHref}
+            enableFilters
+            filters={search.filter}
+            onUpdateFilters={this.handleFiltersUpdate}
+          />
+        )}
 
         <main>
           <div className={styles['list-container']}>
@@ -348,76 +360,109 @@ class DocumentListView extends React.Component {
           </div>
         </main>
 
-        <div className={styles.toolbar}>
-          <DocumentListToolbar
-            metadata={metadata}
-            onPageChange={this.handlePageChange}
-            selectedDocuments={selection}
-            showSelectedDocuments={showSelectedDocuments}
-          >
-            <div className={buttonWrapperStyle.getClasses()}>
-              <Button
-                accent="destruct"
-                disabled={selection.length === 0}
-                onClick={this.showDeletePrompt}
-              >
-                Delete ({selection.length})
-              </Button>
-            </div>
-          </DocumentListToolbar>
-        </div>
+        {hasDocuments && (
+          <div className={styles.toolbar}>
+            <DocumentListToolbar
+              metadata={metadata}
+              onPageChange={this.handlePageChange}
+              selectedDocuments={selection}
+              showSelectedDocuments={showSelectedDocuments}
+            >
+              <div className={buttonWrapperStyle.getClasses()}>
+                <Button
+                  accent="negative"
+                  disabled={selection.length === 0}
+                  onClick={this.showDeletePrompt}
+                >
+                  Delete ({selection.length})
+                </Button>
+              </div>
+            </DocumentListToolbar>
+          </div>
+        )}
       </>
     )
   }
 
   renderMain({collection, contentKey, isFilteringSelection, selection}) {
     const {onBuildBaseUrl, route} = this.props
+    const {mediaListMode} = this.state
     const {search} = route
     const pageNumber = search.page
 
     if (collection.IS_MEDIA_BUCKET) {
-      return (
-        <>
-          {!isFilteringSelection && (
-            <MediaListController onUpload={this.handleMediaUpload.bind(this)} />
-          )}
+      const schema = {
+        ...Constants.MEDIA_COLLECTION_SCHEMA,
+        fields: {
+          ...Constants.MEDIA_COLLECTION_SCHEMA.fields,
+          url: {
+            label: 'Thumbnail',
+            FieldComponentList: this.renderMediaThumbnail.bind(this)
+          }
+        }
+      }
 
-          <DocumentList
-            collection={Constants.MEDIA_COLLECTION_SCHEMA}
-            contentKey={contentKey}
-            filters={search.filter}
-            onEmptyList={this.handleEmptyDocumentList.bind(this)}
-            onNetworkError={this.handleNetworkError.bind(this)}
-            onRender={({
-              documents,
-              hasSelection,
-              onSelect,
-              selectedDocuments
-            }) => (
-              <DocumentGridList
-                documents={documents}
-                onRenderCard={({item, isSelected, onSelect}) => (
-                  <MediaGridCard
-                    href={`/media/${item._id}`}
-                    isSelected={isSelected}
-                    isSelectMode={hasSelection}
-                    item={item}
-                    key={item._id}
-                    onSelect={onSelect}
-                  />
-                )}
-                onSelect={onSelect}
-                selectedDocuments={selectedDocuments}
-              />
-            )}
-            onSelect={this.handleSelect.bind(this)}
-            order={search.order}
-            page={pageNumber}
-            selectAllHotKey="mod+a"
-            selection={selection}
-            sort={search.sort}
-          />
-        </>
+      return (
+        <DocumentList
+          collection={Constants.MEDIA_COLLECTION_SCHEMA}
+          contentKey={contentKey}
+          filters={search.filter}
+          onEmptyList={this.handleEmptyDocumentList.bind(this)}
+          onNetworkError={this.handleNetworkError.bind(this)}
+          onRender={({
+            documents,
+            hasSelection,
+            onSelect,
+            selectedDocuments
+          }) => (
+            <DropArea onDrop={this.handleMediaUpload}>
+              {!isFilteringSelection &&
+                this.renderMediaListController({
+                  documents,
+                  onSelect,
+                  selectedDocuments
+                })}
+
+              {mediaListMode === 'grid' && (
+                <DocumentGridList
+                  documents={documents}
+                  onRenderCard={({item, isSelected, onSelect}) => (
+                    <MediaGridCard
+                      href={`/media/${item._id}`}
+                      isSelected={isSelected}
+                      isSelectMode={hasSelection}
+                      item={item}
+                      key={item._id}
+                      onSelect={onSelect}
+                    />
+                  )}
+                  onSelect={onSelect}
+                  selectedDocuments={selectedDocuments}
+                />
+              )}
+
+              {mediaListMode === 'table' && (
+                <DocumentTableList
+                  collection={schema}
+                  documents={documents}
+                  fields={MEDIA_TABLE_FIELDS}
+                  onBuildBaseUrl={onBuildBaseUrl.bind(this)}
+                  onSelect={onSelect}
+                  onSort={this.handleSort.bind(this)}
+                  order={search.order}
+                  selectedDocuments={selectedDocuments}
+                  sort={search.sort}
+                />
+              )}
+            </DropArea>
+          )}
+          onSelect={this.handleSelect.bind(this)}
+          order={search.order}
+          page={pageNumber}
+          selectAllHotKey="mod+a"
+          selection={selection}
+          sort={search.sort}
+        />
       )
     }
 
@@ -460,6 +505,39 @@ class DocumentListView extends React.Component {
         sort={search.sort}
       />
     )
+  }
+
+  renderMediaListController({documents, onSelect, selectedDocuments}) {
+    const {mediaListMode} = this.state
+
+    return (
+      <MediaListController
+        documents={documents}
+        mode={mediaListMode}
+        onListModeUpdate={this.updateMediaListMode}
+        onSelect={onSelect}
+        onUpload={this.handleMediaUpload}
+        selectedDocuments={selectedDocuments}
+      />
+    )
+  }
+
+  renderMediaThumbnail({document}) {
+    const {state} = this.props
+
+    return (
+      <FieldMediaItem
+        config={state.app.config}
+        isList={true}
+        value={document}
+      />
+    )
+  }
+
+  updateMediaListMode(mediaListMode) {
+    this.setState({
+      mediaListMode
+    })
   }
 }
 

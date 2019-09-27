@@ -1,14 +1,20 @@
 .checkbox {
-  --checkbox-size: 14px;
+  --checkbox-size-regular: 14px;
+  --checkbox-size-large: 20px;
 
   display: block;
   position: relative;
-  width: var(--checkbox-size);
-  height: var(--checkbox-size);
+  width: var(--checkbox-size-regular);
+  height: var(--checkbox-size-regular);
   margin: 4px;
   border-radius: 0;
   appearance: none;
   outline: none;
+}
+
+.checkbox.large {
+  width: var(--checkbox-size-large);
+  height: var(--checkbox-size-large);
 }
 
 .checkbox::before {
@@ -48,10 +54,10 @@
   position: absolute;
   content: ' ';
   opacity: 0;
-  left: 4px;
-  top: 1px;
-  width: 6px;
-  height: 10px;
+  left: 30%;
+  top: 7%;
+  width: 42%;
+  height: 71%;
   border: solid var(--edit-color-text-inverse-1);
   border-width: 0 var(--checkmark-thickness) var(--checkmark-thickness) 0;
   transform: rotate(45deg);

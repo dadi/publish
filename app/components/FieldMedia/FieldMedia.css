@@ -45,8 +45,6 @@
 .image {
   display: inline-flex;
   vertical-align: middle;
-  width: 35px;
-  height: 35px;
   overflow: hidden;
   margin: -7px 0;
   min-width: 35px;
@@ -54,7 +52,7 @@
 
 .image img {
   max-width: 100%;
-  max-height: 100%;
+  max-height: 35px;
   margin: auto;
   display: block;
 }

@@ -103,7 +103,11 @@ class DocumentTableList extends React.Component {
       search: null
     })
     const fieldSchema = collection.fields[column.id]
-    const renderedValue = this.renderField(fieldSchema, value)
+    const renderedValue = this.renderField({
+      document: data,
+      fieldName: column.id,
+      schema: fieldSchema
+    })
     const firstStringField = Object.keys(listableFields).find(field => {
       return listableFields[field].type === 'String'
     })
@@ -161,16 +165,13 @@ class DocumentTableList extends React.Component {
       title
     } = this.props
     const collectionFields = (collection && collection.fields) || {}
-    const listableFields = Object.keys(collectionFields).reduce(
-      (fields, fieldName) => {
-        if (fieldsToDisplay.includes(fieldName)) {
-          fields[fieldName] = collectionFields[fieldName]
-        }
+    const listableFields = fieldsToDisplay.reduce((fields, fieldName) => {
+      if (collectionFields[fieldName]) {
+        fields[fieldName] = collectionFields[fieldName]
+      }
 
-        return fields
-      },
-      {}
-    )
+      return fields
+    }, {})
     const tableColumns = Object.keys(listableFields).map(field => {
       if (!collection.fields[field]) return undefined
 
@@ -182,7 +183,7 @@ class DocumentTableList extends React.Component {
 
     return (
       <>
-        <h1 className={styles.title}>{title}</h1>
+        {title && <h1 className={styles.title}>{title}</h1>}
 
         {subtitle && <p className={styles.subtitle}>{subtitle}</p>}
 
@@ -205,17 +206,30 @@ class DocumentTableList extends React.Component {
     )
   }
 
-  renderField(schema, value) {
+  renderField({document, fieldName, schema}) {
     if (!schema) return
 
+    const value = document[fieldName]
     const {collection, state} = this.props
     const {config} = state.app
     const {api} = config
-    const fieldType = getFieldType(schema)
-    const fieldComponentName = `Field${fieldType}`
-    const FieldComponentList =
-      fieldComponents[fieldComponentName] &&
-      fieldComponents[fieldComponentName].list
+
+    let FieldComponentList
+
+    // In some cases, we might want to tap into the collection schema and add
+    // a custom `FieldComponentList` function to a given field, which will
+    // override whatever component is set to render the list view of the
+    // field's type.
+    if (typeof schema.FieldComponentList === 'function') {
+      FieldComponentList = schema.FieldComponentList
+    } else {
+      const fieldType = getFieldType(schema)
+      const fieldComponentName = `Field${fieldType}`
+
+      FieldComponentList =
+        fieldComponents[fieldComponentName] &&
+        fieldComponents[fieldComponentName].list
+    }
 
     if (FieldComponentList) {
       return (
@@ -223,6 +237,8 @@ class DocumentTableList extends React.Component {
           api={api}
           config={config}
           collection={collection}
+          document={document}
+          fieldName={fieldName}
           schema={schema}
           value={value}
         />
