@@ -2,6 +2,7 @@
   --cell-y-padding: var(--edit-margin-md);
   --cell-x-padding: calc(var(--cell-y-padding) / 2);
   --cell-padding: var(--cell-y-padding) var(--cell-x-padding);
+  --select-cell-width: 47px;
 
   border: solid var(--edit-border-width-standard) var(--edit-color-border-light);
   text-align: left;
@@ -41,10 +42,11 @@
 .cell.select-cell {
   padding: 0;
   position: relative;
+  width: var(--select-cell-width);
 }
 
 .select-spacer {
-  width: 47px;
+  width: var(--select-cell-width);
 }
 
 .select-label {
