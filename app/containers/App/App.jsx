@@ -17,7 +17,6 @@ import {debounce} from 'lib/util'
 import DocumentEditView from 'views/DocumentEditView/DocumentEditView'
 import DocumentListView from 'views/DocumentListView/DocumentListView'
 import ErrorView from 'views/ErrorView/ErrorView'
-import Header from 'containers/Header/Header'
 import HomeView from 'views/HomeView/HomeView'
 import LoadingBar from 'containers/LoadingBar/LoadingBar'
 import NotificationCentre from 'containers/NotificationCentre/NotificationCentre'
@@ -120,7 +119,6 @@ class App extends React.Component {
       <Router>
         <LoadingBar />
         <NotificationCentre />
-        {this.props.user.isSignedIn && <Header />}
         <Switch>
           <AuthenticatedRoute path="/" exact component={HomeView} />
           <AuthenticatedRoute

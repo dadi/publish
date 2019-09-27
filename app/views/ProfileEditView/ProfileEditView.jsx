@@ -1,7 +1,8 @@
 import * as appActions from 'actions/appActions'
 import * as userActions from 'actions/userActions'
-import {Button, TextInput} from '@dadi/edit-ui'
+import {Button} from '@dadi/edit-ui'
 import {connectRedux} from 'lib/redux'
+import Header from 'containers/Header/Header'
 import ProfileField from 'containers/ProfileField/ProfileField'
 import React from 'react'
 import {setPageTitle} from 'lib/util'
@@ -107,6 +108,8 @@ class ProfileEditView extends React.Component {
 
     return (
       <>
+        <Header />
+
         {this.renderToolbar()}
 
         <main className={styles.main}>
