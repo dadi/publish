@@ -33,6 +33,7 @@ class DocumentListView extends React.Component {
     super(props)
 
     this.deleteSelected = this.deleteSelected.bind(this)
+    this.handleFiltersUpdate = this.handleFiltersUpdate.bind(this)
     this.handleMediaUpload = this.handleMediaUpload.bind(this)
     this.handlePageChange = this.handlePageChange.bind(this)
     this.updateMediaListMode = this.updateMediaListMode.bind(this)
@@ -133,7 +134,7 @@ class DocumentListView extends React.Component {
     if (route.params.collection === Constants.MEDIA_COLLECTION_SCHEMA.slug) {
       return (
         <HeroMessage
-          title="No media yet."
+          title="No media yet"
           subtitle="Once you upload media files, they will appear here."
         />
       )
@@ -141,11 +142,12 @@ class DocumentListView extends React.Component {
 
     return (
       <HeroMessage
-        title="No documents yet."
+        title="No documents yet"
         subtitle="Once created, they will appear here."
       >
         <Button
-          accent="save"
+          accent="positive"
+          filled
           href={onBuildBaseUrl.call(this, {
             createNew: true
           })}
@@ -269,7 +271,8 @@ class DocumentListView extends React.Component {
     // Getting documents from store.
     const data = state.documents[contentKey] || {}
     const {metadata} = data
-    const {page, totalPages} = metadata || {}
+    const {page, totalCount, totalPages} = metadata || {}
+    const hasDocuments = totalCount > 0
 
     // If the page parameter is higher than the number of pages available for
     // the current document set, we redirect to the last valid page.
@@ -336,13 +339,15 @@ class DocumentListView extends React.Component {
           </Modal>
         )}
 
-        <DocumentListController
-          collection={collection}
-          createNewHref={createNewHref}
-          enableFilters
-          filters={search.filter}
-          onUpdateFilters={this.handleFiltersUpdate.bind(this)}
-        />
+        {hasDocuments && (
+          <DocumentListController
+            collection={collection}
+            createNewHref={createNewHref}
+            enableFilters
+            filters={search.filter}
+            onUpdateFilters={this.handleFiltersUpdate}
+          />
+        )}
 
         <main>
           <div className={styles['list-container']}>
@@ -355,24 +360,26 @@ class DocumentListView extends React.Component {
           </div>
         </main>
 
-        <div className={styles.toolbar}>
-          <DocumentListToolbar
-            metadata={metadata}
-            onPageChange={this.handlePageChange}
-            selectedDocuments={selection}
-            showSelectedDocuments={showSelectedDocuments}
-          >
-            <div className={buttonWrapperStyle.getClasses()}>
-              <Button
-                accent="negative"
-                disabled={selection.length === 0}
-                onClick={this.showDeletePrompt}
-              >
-                Delete ({selection.length})
-              </Button>
-            </div>
-          </DocumentListToolbar>
-        </div>
+        {hasDocuments && (
+          <div className={styles.toolbar}>
+            <DocumentListToolbar
+              metadata={metadata}
+              onPageChange={this.handlePageChange}
+              selectedDocuments={selection}
+              showSelectedDocuments={showSelectedDocuments}
+            >
+              <div className={buttonWrapperStyle.getClasses()}>
+                <Button
+                  accent="negative"
+                  disabled={selection.length === 0}
+                  onClick={this.showDeletePrompt}
+                >
+                  Delete ({selection.length})
+                </Button>
+              </div>
+            </DocumentListToolbar>
+          </div>
+        )}
       </>
     )
   }

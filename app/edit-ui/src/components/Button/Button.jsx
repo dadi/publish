@@ -14,8 +14,8 @@ export default React.forwardRef(function Button(
     disabled,
     filled,
     flat,
+    href,
     isLoading, // To be implemented.
-    mock,
     narrow,
     ...props
   },
@@ -30,8 +30,7 @@ export default React.forwardRef(function Button(
         [styles.filled]: filled,
         [styles.flat]: flat,
         [styles.narrow]: narrow,
-        [styles.compact]: compact,
-        [styles.mock]: mock
+        [styles.compact]: compact
       },
       className
     ),
@@ -40,9 +39,15 @@ export default React.forwardRef(function Button(
     ...props
   }
 
-  if (mock) {
+  if (href) {
+    return (
+      <a href={href} {...elementProps}>
+        {children}
+      </a>
+    )
+  } else if (props.onClick) {
+    return <button {...elementProps}>{children}</button>
+  } else {
     return <span {...elementProps}>{children}</span>
   }
-
-  return <button {...elementProps}>{children}</button>
 })

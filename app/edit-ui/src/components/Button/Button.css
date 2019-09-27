@@ -1,6 +1,7 @@
 @import '../../main.css';
 
 .button {
+  display: inline-block;
   position: relative;
   cursor: pointer;
   box-sizing: border-box;
@@ -10,22 +11,16 @@
   outline: none;
   border: solid var(--edit-border-width-standard);
   border-radius: var(--edit-radius-button);
-  height: var(--edit-elem-height-medium);
-  padding: 0 50px;
+  padding: 12px 50px;
   font-size: var(--edit-font-size-button);
   letter-spacing: var(--edit-spacing-button);
   font-weight: 700;
   text-transform: uppercase;
 }
 
-.button.mock {
-  display: flex;
-  align-items: center;
-}
-
 .button.narrow,
 .button.compact {
-  padding: 0 25px;
+  padding: 6px 25px;
 }
 
 .button.compact {
