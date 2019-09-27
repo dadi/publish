@@ -73,6 +73,7 @@ class DocumentTableList extends React.Component {
   constructor(props) {
     super(props)
 
+    this.handleRowRender = this.handleRowRender.bind(this)
     this.renderColumnHeader = this.renderColumnHeader.bind(this)
   }
 
@@ -89,7 +90,7 @@ class DocumentTableList extends React.Component {
     return selectedRows
   }
 
-  handleRowRender(listableFields, value, data, column) {
+  handleRowRender(value, data, column) {
     const {collection, referencedField} = this.props
 
     // If we're on a nested document view, we don't want to add links to
@@ -100,7 +101,11 @@ class DocumentTableList extends React.Component {
 
     const fieldSchema = collection.fields[column.id]
 
-    return this.renderField(fieldSchema, value)
+    return this.renderField({
+      document: data,
+      fieldName: column.id,
+      schema: fieldSchema
+    })
   }
 
   renderColumnHeader(column) {
@@ -174,7 +179,7 @@ class DocumentTableList extends React.Component {
             columns={tableColumns}
             data={documents}
             onBuildBaseUrl={onBuildBaseUrl}
-            onRender={this.handleRowRender.bind(this, listableFields)}
+            onRender={this.handleRowRender}
             onSelect={onSelect}
             renderColumnHeader={this.renderColumnHeader}
             selectedRows={selectedDocuments}
