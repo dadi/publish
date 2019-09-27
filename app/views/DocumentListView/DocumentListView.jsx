@@ -15,6 +15,7 @@ import ErrorMessage from 'components/ErrorMessage/ErrorMessage'
 import FieldMediaItem from 'components/FieldMedia/FieldMediaItem'
 import FileUpload from 'components/FileUpload/FileUpload'
 import {getVisibleFields} from 'lib/fields'
+import Header from 'containers/Header/Header'
 import HeroMessage from 'components/HeroMessage/HeroMessage'
 import MediaGridCard from 'containers/MediaGridCard/MediaGridCard'
 import MediaListController from 'components/MediaListController/MediaListController'
@@ -28,6 +29,13 @@ import Style from 'lib/Style'
 import styles from './DocumentListView.css'
 
 const MEDIA_TABLE_FIELDS = ['url', 'fileName', 'mimeType', 'width', 'height']
+
+const MainWithHeader = ({children}) => (
+  <>
+    <Header />
+    <main className={styles.main}>{children}</main>
+  </>
+)
 
 class DocumentListView extends React.Component {
   constructor(props) {
@@ -184,13 +192,6 @@ class DocumentListView extends React.Component {
     )
   }
 
-  handlePageChange(page) {
-    const {onBuildBaseUrl, route} = this.props
-    const {history, search} = route
-
-    history.push(onBuildBaseUrl.call(this, {search: {...search, page}}))
-  }
-
   handleFiltersUpdate(newFilters) {
     const {onBuildBaseUrl, route} = this.props
     const newFilterValue =
@@ -212,6 +213,13 @@ class DocumentListView extends React.Component {
       contentKey,
       files: Array.from(files)
     })
+  }
+
+  handlePageChange(page) {
+    const {onBuildBaseUrl, route} = this.props
+    const {history, search} = route
+
+    history.push(onBuildBaseUrl.call(this, {search: {...search, page}}))
   }
 
   handleSelect(selection) {
@@ -250,9 +258,9 @@ class DocumentListView extends React.Component {
 
     if (!collection) {
       return (
-        <main>
+        <MainWithHeader>
           <ErrorMessage type={Constants.ERROR_ROUTE_NOT_FOUND} />
-        </main>
+        </MainWithHeader>
       )
     }
 
@@ -265,9 +273,9 @@ class DocumentListView extends React.Component {
             <DocumentEditView {...this.props} isSingleDocument />
           )}
           onLoading={() => (
-            <main>
+            <MainWithHeader>
               <SpinningWheel />
-            </main>
+            </MainWithHeader>
           )}
           onNetworkError={this.handleNetworkError.bind(this)}
           onRender={({documents}) => (
@@ -352,17 +360,16 @@ class DocumentListView extends React.Component {
           </Modal>
         )}
 
-        {hasDocuments && (
-          <DocumentListController
-            collection={collection}
-            createNewHref={createNewHref}
-            enableFilters
-            filters={search.filter}
-            onUpdateFilters={this.handleFiltersUpdate}
-          />
-        )}
-
-        <main className={styles.main}>
+        <MainWithHeader>
+          {hasDocuments && (
+            <DocumentListController
+              collection={collection}
+              createNewHref={createNewHref}
+              enableFilters
+              filters={search.filter}
+              onUpdateFilters={this.handleFiltersUpdate}
+            />
+          )}
           <div className={styles['list-container']}>
             {this.renderMain({
               collection,
@@ -371,7 +378,7 @@ class DocumentListView extends React.Component {
               selection
             })}
           </div>
-        </main>
+        </MainWithHeader>
 
         {hasDocuments && (
           <div className={styles.toolbar}>
@@ -567,20 +574,24 @@ function mapState(state, ownProps) {
         })
 
   const isSingleDocument =
+    collection &&
     collection.settings &&
     collection.settings.publish &&
     collection.settings.publish.isSingleDocument
 
   const {group} = params
   const contentKey = isSingleDocument
-    ? JSON.stringify({collection: collection.slug})
+    ? JSON.stringify({collection: collection && collection.slug})
     : JSON.stringify({
-        collection: collection.slug,
+        collection: collection && collection.slug,
         group,
         page: search.page || 1,
         searchString
       })
-  const selectionKey = JSON.stringify({collection: collection.slug, group})
+  const selectionKey = JSON.stringify({
+    collection: collection && collection.slug,
+    group
+  })
 
   return {
     collection,

@@ -45,7 +45,7 @@ export default React.forwardRef(function Button(
         {children}
       </a>
     )
-  } else if (props.onClick) {
+  } else if (props.onClick || props.type) {
     return <button {...elementProps}>{children}</button>
   } else {
     return <span {...elementProps}>{children}</span>
