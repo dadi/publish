@@ -111,7 +111,7 @@ export default class MediaListController extends React.Component {
         </div>
         <div className={styles['upload-area']}>
           <FileUpload multiple={true} onChange={onUpload}>
-            <Button accent="positive" filled mock>
+            <Button accent="positive" filled>
               Select files
             </Button>
           </FileUpload>
