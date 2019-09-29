@@ -21,7 +21,7 @@
 }
 
 .container.filters-open .drawer {
-  height: calc(100vh - 68px - 73px);
+  padding-bottom: var(--edit-margin-xl);
   justify-content: flex-start;
   align-items: flex-start;
 }
