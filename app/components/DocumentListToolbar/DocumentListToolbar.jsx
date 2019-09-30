@@ -177,66 +177,68 @@ export default class DocumentListToolbar extends React.Component {
           </div>
         )}
 
-        {totalCount > limit && (
-          <div className={styles.section}>
-            <button
-              className={`${styles['page-button']} ${styles['page-icon']} ${
-                styles['prev-icon']
-              }`}
-              disabled={page === 1}
-              onClick={this.goToPrev}
-            >
-              <ExpandMore fontSize="large" />
-            </button>
+        <div className={styles.section}>
+          {totalCount > limit && (
+            <>
+              <button
+                className={`${styles['page-button']} ${styles['page-icon']} ${
+                  styles['prev-icon']
+                }`}
+                disabled={page === 1}
+                onClick={this.goToPrev}
+              >
+                <ExpandMore fontSize="large" />
+              </button>
 
-            <div className={styles['page-numbers']}>
-              {totalPages > MAX_VISIBLE_PAGES ? (
-                <>
-                  {pageNumberElement(1)}
-                  {showEllipsisBefore && (
-                    <div className={styles.ellipsis}>…</div>
-                  )}
-                  {displayedPages.map(pageNumberElement)}
-                  {showEllipsisAfter && (
-                    <div className={styles.ellipsis}>…</div>
-                  )}
-                  {pageNumberElement(totalPages)}
-                </>
-              ) : (
-                range(1, totalPages).map(pageNumberElement)
-              )}
-            </div>
+              <div className={styles['page-numbers']}>
+                {totalPages > MAX_VISIBLE_PAGES ? (
+                  <>
+                    {pageNumberElement(1)}
+                    {showEllipsisBefore && (
+                      <div className={styles.ellipsis}>…</div>
+                    )}
+                    {displayedPages.map(pageNumberElement)}
+                    {showEllipsisAfter && (
+                      <div className={styles.ellipsis}>…</div>
+                    )}
+                    {pageNumberElement(totalPages)}
+                  </>
+                ) : (
+                  range(1, totalPages).map(pageNumberElement)
+                )}
+              </div>
 
-            <div className={styles['page-select']}>
-              <Select
-                dir="up"
-                onChange={this.handleSelectChange}
-                options={selectPageOptions}
-                value={page}
-              />
-            </div>
+              <div className={styles['page-select']}>
+                <Select
+                  dir="up"
+                  onChange={this.handleSelectChange}
+                  options={selectPageOptions}
+                  value={page}
+                />
+              </div>
 
-            <button
-              className={`${styles['page-button']} ${styles['page-icon']} ${
-                styles['next-icon']
-              }`}
-              disabled={page === totalPages}
-              onClick={this.goToNext}
-            >
-              <ExpandMore fontSize="large" />
-            </button>
+              <button
+                className={`${styles['page-button']} ${styles['page-icon']} ${
+                  styles['next-icon']
+                }`}
+                disabled={page === totalPages}
+                onClick={this.goToNext}
+              >
+                <ExpandMore fontSize="large" />
+              </button>
 
-            <div className={styles['page-input']}>
-              <TextInput
-                onChange={this.handleInputChange}
-                onKeyDown={this.handleInputKeyDown}
-                placeholder="Go to page…"
-                simple
-                value={goToPageValue}
-              />
-            </div>
-          </div>
-        )}
+              <div className={styles['page-input']}>
+                <TextInput
+                  onChange={this.handleInputChange}
+                  onKeyDown={this.handleInputKeyDown}
+                  placeholder="Go to page…"
+                  simple
+                  value={goToPageValue}
+                />
+              </div>
+            </>
+          )}
+        </div>
 
         <div className={styles.section}>{children}</div>
       </Toolbar>

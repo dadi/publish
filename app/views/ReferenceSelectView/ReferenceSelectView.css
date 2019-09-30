@@ -1,3 +1,11 @@
+.main {
+  padding-bottom: calc(var(--edit-margin-xxl) + var(--editif-toolbar-height));
+}
+
+.main.is-media {
+  padding-top: var(--edit-margin-xxl);
+}
+
 .container {
   position: absolute;
   top: 0;
