@@ -155,8 +155,8 @@ export default class DocumentListToolbar extends React.Component {
     return (
       <Toolbar>
         {totalCount > 0 && (
-          <div className={styles.section}>
-            <span className={styles.count}>
+          <div className={`${styles.section} ${styles.count}`}>
+            <span>
               <strong>
                 {currentPageMin}–{currentPageMax}
               </strong>{' '}

@@ -391,6 +391,8 @@ class DocumentListView extends React.Component {
               <div className={buttonWrapperStyle.getClasses()}>
                 <Button
                   accent="negative"
+                  className={styles['delete-button']}
+                  data-name="delete-button"
                   disabled={selection.length === 0}
                   onClick={this.showDeletePrompt}
                 >
