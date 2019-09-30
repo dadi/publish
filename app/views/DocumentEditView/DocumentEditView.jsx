@@ -157,7 +157,7 @@ class DocumentEditView extends React.Component {
 
       actions.setNotification({
         message,
-        type: 'positive'
+        type: newDocument.remoteError ? 'negative' : 'positive'
       })
     }
   }
