@@ -1,9 +1,11 @@
 import classnames from '../../util/classnames'
-// import PropTypes from 'prop-types'
+//import PropTypes from 'prop-types'
 import React from 'react'
 import styles from './Button.css'
 
-// Button.propTypes = {}
+// Button.propTypes = {
+//   fillStyle: PropTypes.oneOf(['filled', 'hollow', 'inverted'])
+// }
 
 export default React.forwardRef(function Button(
   {
@@ -12,7 +14,7 @@ export default React.forwardRef(function Button(
     className,
     compact,
     disabled,
-    filled,
+    fillStyle = 'hollow',
     flat,
     href,
     isLoading, // To be implemented.
@@ -26,12 +28,11 @@ export default React.forwardRef(function Button(
       styles.button,
       {
         [styles['accent--' + accent]]: !disabled,
-        // [styles['size--' + size]]: size,
-        [styles.filled]: filled,
         [styles.flat]: flat,
         [styles.narrow]: narrow,
         [styles.compact]: compact
       },
+      styles[fillStyle],
       className
     ),
     disabled,

@@ -113,7 +113,7 @@ export default class MediaListController extends React.Component {
           {typeof onUpload === 'function' && (
             <>
               <FileUpload multiple={true} onChange={onUpload}>
-                <Button accent="positive" filled>
+                <Button accent="positive" fillStyle="filled">
                   Select files
                 </Button>
               </FileUpload>
