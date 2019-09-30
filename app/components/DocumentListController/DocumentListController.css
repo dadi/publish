@@ -2,8 +2,6 @@
   --margin: 10px;
   --margin-y-editor-rows: var(--edit-margin-md);
   --margin-y-drawer: var(--edit-margin-lg);
-
-  position: relative;
 }
 
 .top-bar,
@@ -21,7 +19,7 @@
 }
 
 .container.filters-open .drawer {
-  height: calc(100vh - 68px - 73px);
+  padding-bottom: var(--edit-margin-xl);
   justify-content: flex-start;
   align-items: flex-start;
 }
@@ -38,10 +36,6 @@
 
 .drawer {
   padding: var(--margin-y-drawer) var(--edit-margin-lg);
-  position: absolute;
-  top: 100%;
-  z-index: var(--edit-z-index-dropdown);
-  width: 100%;
 }
 
 @media (min-width: 1024px) {
