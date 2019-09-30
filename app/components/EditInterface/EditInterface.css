@@ -8,10 +8,6 @@
   display: flex;
 }
 
-.mobile-navigation {
-  position: relative;
-}
-
 .select {
   display: flex;
   align-items: center;
@@ -43,13 +39,10 @@
 .dropdown {
   display: flex;
   flex-flow: column nowrap;
-  position: absolute;
-  top: 100%;
-  width: 100%;
-  z-index: var(--edit-z-index-dropdown);
   padding-bottom: var(--edit-margin-xxs);
-  box-shadow: var(--edit-shadow-4px-bottom);
   background-color: var(--edit-color-background-1);
+  border-bottom: var(--edit-border-width-standard) solid
+    var(--edit-color-border-light);
 }
 
 .navigation {
