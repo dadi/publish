@@ -1,5 +1,6 @@
 import 'unfetch/polyfill'
-import Button from 'components/Button/Button'
+import {Button} from '@dadi/edit-ui'
+import {Close} from '@material-ui/icons'
 import DropArea from 'components/DropArea/DropArea'
 import FieldMediaItem from './FieldMediaItem'
 import FileUpload from 'components/FileUpload/FileUpload'
@@ -9,6 +10,9 @@ import React from 'react'
 import styles from './FieldMedia.css'
 
 const fileSize = require('file-size')
+
+// http://www.stucox.com/blog/you-cant-detect-a-touchscreen/
+const isTouchDevice = window.matchMedia('(pointer: coarse)').matches
 
 export default class FieldMediaEdit extends React.Component {
   static propTypes = {
@@ -254,12 +258,16 @@ export default class FieldMediaEdit extends React.Component {
                   <span className={styles['file-ext']}>{displayName}</span>
 
                   <Button
-                    accent="destruct"
-                    className={styles['remove-existing']}
+                    accent="negative"
+                    className={styles['remove-asset-button']}
+                    compact
+                    data-name="remove-asset-button"
                     onClick={this.handleRemoveFile.bind(this, id)}
-                    size="small"
                   >
-                    <span>×</span>
+                    <span className={styles['remove-label-long']}>Remove</span>
+                    <span className={styles['remove-label-short']}>
+                      <Close fontSize="small" />
+                    </span>
                   </Button>
                 </div>
               )
@@ -268,47 +276,57 @@ export default class FieldMediaEdit extends React.Component {
         )}
 
         {!isReadOnly && (
-          <div className={styles.upload}>
-            <div className={styles['upload-options']}>
-              <DropArea
-                accept={acceptedMimeTypes}
-                draggingText={`Drop file${singleFile ? '' : 's'} here`}
-                onDrop={this.handleFileChange.bind(this)}
-              >
-                <div className={styles['upload-drop']}>
-                  Drop file{singleFile ? '' : 's'} to upload
-                </div>
-              </DropArea>
-            </div>
+          <>
+            {isTouchDevice ? (
+              <div className={styles.placeholder}>
+                <FileUpload
+                  accept={acceptedMimeTypes}
+                  multiple={!singleFile}
+                  onChange={this.handleFileChange.bind(this)}
+                >
+                  <Button accent="positive" data-name="upload-files-button">
+                    Upload files
+                  </Button>
+                </FileUpload>
+              </div>
+            ) : (
+              <div className={styles['upload-options']}>
+                <DropArea
+                  accept={acceptedMimeTypes}
+                  contentClassname={styles['drop-area']}
+                  draggingText={`Drop file${singleFile ? '' : 's'} here`}
+                  onDrop={this.handleFileChange.bind(this)}
+                >
+                  <FileUpload
+                    accept={acceptedMimeTypes}
+                    multiple={!singleFile}
+                    onChange={this.handleFileChange.bind(this)}
+                  >
+                    <Button
+                      accent="positive"
+                      className={styles['upload-button']}
+                      data-name="upload-files-button"
+                    >
+                      Upload files
+                    </Button>
+                  </FileUpload>
+                  <span className={styles['drag-instruction']}>
+                    or drag and drop here to upload
+                  </span>
+                </DropArea>
+              </div>
+            )}
 
             <div className={styles.placeholder}>
               <Button
-                accent="neutral"
+                accent="positive"
                 data-name="select-existing-media-button"
                 onClick={onEditReference}
-                size="small"
               >
-                Select
+                Select existing
               </Button>
             </div>
-
-            <div className={styles.placeholder}>
-              <FileUpload
-                accept={acceptedMimeTypes}
-                multiple={!singleFile}
-                onChange={this.handleFileChange.bind(this)}
-              >
-                <Button
-                  accent="neutral"
-                  className={styles['upload-select']}
-                  size="small"
-                  type="mock-stateful"
-                >
-                  Select from device
-                </Button>
-              </FileUpload>
-            </div>
-          </div>
+          </>
         )}
       </Label>
     )

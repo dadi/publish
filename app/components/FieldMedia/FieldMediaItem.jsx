@@ -36,8 +36,8 @@ export default class FieldMediaItem extends React.Component {
         .join('.')
     const extension = value.fileName && value.fileName.split('.').slice(-1)[0]
 
-    let icon = (
-      <div className={styles.file}>
+    let thumbnail = (
+      <div className={styles['thumbnail-file']}>
         <img src="/_public/images/icon-file.svg" width="25" />
         {extension && <span className={styles.ext}>{extension}</span>}
       </div>
@@ -53,8 +53,8 @@ export default class FieldMediaItem extends React.Component {
         width: 80
       })
 
-      icon = (
-        <div className={styles.image}>
+      thumbnail = (
+        <div className={styles['thumbnail-image']}>
           <img src={imageUrl} />
         </div>
       )
@@ -66,8 +66,8 @@ export default class FieldMediaItem extends React.Component {
     })
 
     return (
-      <div className={styles.icon}>
-        {icon}
+      <div className={styles['file-wrapper']}>
+        {thumbnail}
 
         {!isList && (
           <a

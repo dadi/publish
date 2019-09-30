@@ -1,7 +1,9 @@
 @import '../../main.css';
 
 .button {
-  display: inline-block;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
   position: relative;
   cursor: pointer;
   box-sizing: border-box;
@@ -24,8 +26,7 @@
 }
 
 .button.compact {
-  padding-top: 6px;
-  padding-bottom: 6px;
+  padding: 6px 25px;
 }
 
 .button.flat:not(.filled) {
