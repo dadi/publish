@@ -105,6 +105,7 @@ export default class FieldDateTimeEdit extends React.Component {
       config,
       displayName,
       error,
+      hasUnsavedChanges,
       readOnly,
       required,
       schema,
@@ -116,12 +117,14 @@ export default class FieldDateTimeEdit extends React.Component {
 
     return (
       <Label
+        accent={hasUnsavedChanges ? 'info' : null}
         comment={commentString}
         error={Boolean(error)}
         errorMessage={typeof error === 'string' ? error : null}
         label={displayName}
       >
         <TextInputWithDatePicker
+          accent={hasUnsavedChanges ? 'info' : null}
           defaultFormat={config.formats.date.long}
           format={format}
           onChange={this.handleChange.bind(this)}

@@ -213,6 +213,7 @@ export default class FieldMediaEdit extends React.Component {
       config = {},
       displayName,
       error,
+      hasUnsavedChanges,
       onEditReference,
       required,
       schema,
@@ -231,6 +232,7 @@ export default class FieldMediaEdit extends React.Component {
 
     return (
       <Label
+        accent={hasUnsavedChanges ? 'info' : null}
         className={styles.label}
         comment={comment || null}
         error={error || isInvalidMimeType}

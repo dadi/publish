@@ -141,7 +141,12 @@ class DocumentField extends React.Component {
     } = this.props
     const {app} = state
     const {api} = app.config
-    const {local, remote, validationErrors} = document
+    const {
+      local,
+      remote,
+      validationErrors,
+      wasLoadedFromLocalStorage
+    } = document
     const documentData = Object.assign({}, remote, local)
     const documentMetadata = document.localMeta || {}
     const defaultApiLanguage =
@@ -187,6 +192,9 @@ class DocumentField extends React.Component {
       validationErrors && validationErrors[field._id]
         ? `This field ${validationErrors[field._id]}`
         : null
+    const hasUnsavedChanges = Boolean(
+      wasLoadedFromLocalStorage && local[fieldName] !== undefined
+    )
     const FieldComponent = this.fieldComponent && this.fieldComponent.edit
     const fieldComment = field.comment || field.example
 
@@ -206,6 +214,7 @@ class DocumentField extends React.Component {
           displayName={displayName}
           documentId={documentData._id}
           error={error}
+          hasUnsavedChanges={hasUnsavedChanges}
           meta={documentMetadata[fieldName]}
           name={fieldName}
           onBuildBaseUrl={onBuildBaseUrl}

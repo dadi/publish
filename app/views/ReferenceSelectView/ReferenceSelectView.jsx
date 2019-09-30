@@ -205,7 +205,7 @@ class ReferenceSelectView extends React.Component {
             <Button
               accent="positive"
               disabled={!hasDocuments}
-              filled
+              fillStyle="filled"
               data-name="save-reference-selection-button"
               onClick={() => onSave(selection)}
             >

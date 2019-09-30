@@ -259,7 +259,7 @@ class DocumentEditToolbar extends React.Component {
                 accent="negative"
                 className={styles['delete-button']}
                 disabled={Boolean(hasConnectionIssues)}
-                filled
+                fillStyle="filled"
                 onClick={this.showDeletePrompt}
               >
                 Delete

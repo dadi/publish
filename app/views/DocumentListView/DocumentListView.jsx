@@ -20,6 +20,7 @@ import HeroMessage from 'components/HeroMessage/HeroMessage'
 import MediaGridCard from 'containers/MediaGridCard/MediaGridCard'
 import MediaListController from 'components/MediaListController/MediaListController'
 import Modal from 'components/Modal/Modal'
+import NotificationCentre from 'containers/NotificationCentre/NotificationCentre'
 import Prompt from 'components/Prompt/Prompt'
 import React from 'react'
 import {Redirect} from 'react-router-dom'
@@ -73,7 +74,8 @@ class DocumentListView extends React.Component {
         : 'The document has been deleted'
 
       actions.setNotification({
-        message
+        message,
+        type: error ? 'negative' : 'positive'
       })
     }
   }
@@ -152,7 +154,7 @@ class DocumentListView extends React.Component {
             subtitle="To start adding files, drag and drop them here or use the button below."
           >
             <FileUpload multiple={true} onChange={this.handleMediaUpload}>
-              <Button accent="positive" filled>
+              <Button accent="positive" fillStyle="filled">
                 Select files
               </Button>
             </FileUpload>
@@ -168,7 +170,7 @@ class DocumentListView extends React.Component {
       >
         <Button
           accent="positive"
-          filled
+          fillStyle="filled"
           href={onBuildBaseUrl.call(this, {
             createNew: true
           })}
@@ -380,8 +382,10 @@ class DocumentListView extends React.Component {
           </div>
         </MainWithHeader>
 
-        {hasDocuments && (
-          <div className={styles.toolbar}>
+        <div className={styles.toolbar}>
+          <NotificationCentre />
+
+          {hasDocuments && (
             <DocumentListToolbar
               metadata={metadata}
               onPageChange={this.handlePageChange}
@@ -400,8 +404,8 @@ class DocumentListView extends React.Component {
                 </Button>
               </div>
             </DocumentListToolbar>
-          </div>
-        )}
+          )}
+        </div>
       </>
     )
   }

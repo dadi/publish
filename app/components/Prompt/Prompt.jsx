@@ -89,7 +89,7 @@ export default class Prompt extends React.Component {
             Cancel
           </Button>
 
-          <Button accent={accent} filled onClick={onConfirm}>
+          <Button accent={accent} fillStyle="filled" onClick={onConfirm}>
             {action}
           </Button>
         </div>

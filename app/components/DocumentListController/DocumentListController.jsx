@@ -314,7 +314,7 @@ class DocumentListController extends React.Component {
         accent="positive"
         className={styles['create-new-button']}
         data-name="create-new-button"
-        filled
+        fillStyle="filled"
         onClick={() => route.history.push(createNewHref)}
       >
         Create new

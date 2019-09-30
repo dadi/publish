@@ -220,7 +220,8 @@ export default function document(state = initialState, action = {}) {
           validationErrors: {
             ...(state[action.key] && state[action.key].validationErrors),
             ...errorUpdate
-          }
+          },
+          wasLoadedFromLocalStorage: false
         }
       }
     }

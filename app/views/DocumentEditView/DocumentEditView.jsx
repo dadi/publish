@@ -12,6 +12,7 @@ import ErrorView from 'views/ErrorView/ErrorView'
 import {getVisibleFields} from 'lib/fields'
 import Header from 'containers/Header/Header'
 import MediaViewer from 'components/MediaViewer/MediaViewer'
+import NotificationCentre from 'containers/NotificationCentre/NotificationCentre'
 import React from 'react'
 import {Redirect} from 'react-router-dom'
 import ReferenceSelectView from 'views/ReferenceSelectView/ReferenceSelectView'
@@ -58,18 +59,29 @@ class DocumentEditView extends React.Component {
     ) {
       const notification = {
         dismissAfterSeconds: false,
-        fadeAfterSeconds: 5,
-        message: 'You have unsaved changes',
+        message: 'You have unsaved changes.',
         options: {
-          'Discard them?': actions.discardUnsavedChanges.bind(this, {
+          'Discard changes': actions.discardUnsavedChanges.bind(this, {
             contentKey
           })
-        }
+        },
+        type: 'info'
       }
 
       actions.setNotification(notification)
 
       this.shownUnsavedChangesNotification = true
+    }
+
+    // If `wasLoadedFromLocalStorage` changed from false to true, it means the
+    // user has started editing the document on top of the changes saved in
+    // local storage, which effectively means accepting the changes. When that
+    // happens, we can dismiss the notification.
+    if (
+      oldDocument.wasLoadedFromLocalStorage &&
+      !document.wasLoadedFromLocalStorage
+    ) {
+      actions.dismissNotification()
     }
 
     // If the user has attempted to save the document, we must fire the
@@ -144,7 +156,8 @@ class DocumentEditView extends React.Component {
         : `The document has been ${operation} successfully`
 
       actions.setNotification({
-        message
+        message,
+        type: newDocument.remoteError ? 'negative' : 'positive'
       })
     }
   }
@@ -375,6 +388,8 @@ class DocumentEditView extends React.Component {
         <Header />
 
         <div className={styles.toolbar}>
+          <NotificationCentre />
+
           <DocumentEditToolbar
             collection={collection}
             contentKey={contentKey}

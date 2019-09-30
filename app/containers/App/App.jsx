@@ -19,7 +19,6 @@ import DocumentListView from 'views/DocumentListView/DocumentListView'
 import ErrorView from 'views/ErrorView/ErrorView'
 import HomeView from 'views/HomeView/HomeView'
 import LoadingBar from 'containers/LoadingBar/LoadingBar'
-import NotificationCentre from 'containers/NotificationCentre/NotificationCentre'
 import ProfileEditView from 'views/ProfileEditView/ProfileEditView'
 import React from 'react'
 import SignInView from 'views/SignInView/SignInView'
@@ -118,7 +117,7 @@ class App extends React.Component {
     return (
       <Router>
         <LoadingBar />
-        <NotificationCentre />
+
         <Switch>
           <AuthenticatedRoute path="/" exact component={HomeView} />
           <AuthenticatedRoute

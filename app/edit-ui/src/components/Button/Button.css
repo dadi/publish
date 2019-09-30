@@ -95,15 +95,42 @@
 
 /* accent--info */
 
-.button.accent--info {
+.button.accent--info,
+.button.accent--info.inverted:not(.filled):not(.flat):hover {
+  background-color: var(--edit-color-background-1);
+  color: var(--edit-color-info);
+}
+
+.button.accent--info.inverted {
   background-color: var(--edit-color-info);
-  border-color: var(--edit-color-background-1);
   color: var(--edit-color-text-inverse-1);
 }
 
-.button.accent--info:hover {
-  background-color: var(--edit-color-background-1);
-  color: var(--edit-color-info);
+.button.accent--info.inverted:not(.flat) {
+  border-color: var(--edit-color-background-1);
+}
+
+.button.accent--info:not(.flat) {
+  border-color: var(--edit-color-info);
+}
+
+.button.accent--info.filled {
+  background-color: var(--edit-color-info);
+  border-color: var(--edit-color-info);
+  color: var(--edit-color-text-inverse-1);
+}
+
+.button.accent--info:not(.filled):not(.flat):hover {
+  background-color: var(--edit-color-info-hint);
+}
+
+.button.accent--info.flat:hover {
+  color: var(--edit-color-info-darker-1);
+}
+
+.button.accent--info.filled:hover {
+  background-color: var(--edit-color-info-darker-1);
+  border-color: var(--edit-color-info-darker-1);
 }
 
 /* disabled */

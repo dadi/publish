@@ -3,6 +3,7 @@ import {getVisibleFields} from 'lib/fields'
 import Label from 'components/Label/Label'
 import proptypes from 'prop-types'
 import React from 'react'
+import Style from 'lib/Style'
 import styles from './FieldReference.css'
 
 /**
@@ -135,6 +136,7 @@ export default class FieldReferenceEdit extends React.Component {
       config,
       displayName,
       error,
+      hasUnsavedChanges,
       onEditReference,
       required,
       schema,
@@ -164,12 +166,21 @@ export default class FieldReferenceEdit extends React.Component {
     const isReadOnly = publishBlock.readonly === true
     const comment =
       schema.comment || (required && 'Required') || (isReadOnly && 'Read only')
+    const valuesStyles = new Style(styles, 'values').addIf(
+      'with-unsaved-changes',
+      hasUnsavedChanges
+    )
 
     return (
-      <Label comment={comment || null} error={error} label={displayName}>
+      <Label
+        accent={hasUnsavedChanges ? 'info' : null}
+        comment={comment || null}
+        error={error}
+        label={displayName}
+      >
         {value && (
           <div className={styles['edit-value-container']}>
-            <div className={styles.values}>
+            <div className={valuesStyles.getClasses()}>
               {values.map((value, index) => {
                 if (value._id) {
                   return (

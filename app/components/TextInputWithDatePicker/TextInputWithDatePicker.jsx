@@ -204,6 +204,7 @@ export default class TextInputWithDatePicker extends React.Component {
 
   render() {
     const {
+      accent,
       autoFocus,
       containerClassName,
       defaultFormat,
@@ -238,6 +239,7 @@ export default class TextInputWithDatePicker extends React.Component {
         ref={el => (this.rootEl = el)}
       >
         <TextInput
+          accent={accent}
           autoFocus={autoFocus}
           autoComplete="off"
           className={inputClassName + (readOnly ? '' : ` ${styles.input}`)}
