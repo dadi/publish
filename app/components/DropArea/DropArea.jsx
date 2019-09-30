@@ -33,11 +33,14 @@ export default class FileUpload extends React.Component {
   }
 
   render() {
-    const {children, className, onRenderDrag} = this.props
+    const {children, className, contentClassname, onRenderDrag} = this.props
     const {isDragging} = this.state
     const dropStyles = new Style(styles, 'droparea')
       .addIf('droparea-active', isDragging)
       .addResolved(className)
+    const contentStyle = new Style(styles, 'contents').addResolved(
+      contentClassname
+    )
 
     return (
       <div
@@ -51,7 +54,7 @@ export default class FileUpload extends React.Component {
           <div className={styles.information}>{onRenderDrag}</div>
         )}
 
-        <div className={styles.contents}>{children}</div>
+        <div className={contentStyle.getClasses()}>{children}</div>
       </div>
     )
   }

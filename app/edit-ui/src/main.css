@@ -147,7 +147,7 @@
   --edit-color-text-inverse-2: var(--edit-color-inverse-opacity-80);
 
   --edit-color-underline: var(--edit-color-opacity-95);
-  --edit-color-underline-hover: var(--edit-color-positive);
+  --edit-color-underline-hover: var(--edit-color-positive-opacity);
 
   --edit-color-border-light: var(--edit-color-opacity-85);
   --edit-color-border-dark: var(--edit-color-opacity-70);

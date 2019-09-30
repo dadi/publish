@@ -38,7 +38,7 @@ export default class FieldMediaList extends React.Component {
     if (!values) return null
 
     return (
-      <div>
+      <div className={styles['list-item']}>
         <FieldMediaItem config={config} isList={true} value={values[0]} />
 
         {hasMultiple && (
