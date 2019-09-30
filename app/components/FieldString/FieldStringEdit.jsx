@@ -155,6 +155,7 @@ export default class FieldStringEdit extends React.Component {
       comment,
       displayName,
       error,
+      hasUnsavedChanges,
       readOnly,
       required,
       schema,
@@ -176,6 +177,7 @@ export default class FieldStringEdit extends React.Component {
 
     return (
       <Label
+        accent={hasUnsavedChanges ? 'info' : null}
         comment={
           comment ||
           (required && 'Required') ||
@@ -192,7 +194,7 @@ export default class FieldStringEdit extends React.Component {
   }
 
   renderAsDropdown() {
-    const {error, name, readOnly, schema, value} = this.props
+    const {name, readOnly, schema, value} = this.props
     const publishBlock = schema.publish || {}
     const {multiple, options} = publishBlock
 
@@ -222,16 +224,30 @@ export default class FieldStringEdit extends React.Component {
   }
 
   renderAsFreeInput() {
-    const {error, name, placeholder, schema, value} = this.props
+    const {
+      error,
+      hasUnsavedChanges,
+      name,
+      placeholder,
+      schema,
+      value
+    } = this.props
     const publishBlock = schema.publish || {}
     const {display = {}, multiline, readonly, resizable, rows} = publishBlock
-
     const link = formatLink(value, display.link)
+
+    let accent
+
+    if (error) {
+      accent = 'error'
+    } else if (hasUnsavedChanges) {
+      accent = 'info'
+    }
 
     return (
       <div className={styles['free-input-wrapper']}>
         <TextInput
-          accent={error ? 'error' : undefined}
+          accent={accent}
           autoresize={multiline}
           multiline={multiline}
           name={name}

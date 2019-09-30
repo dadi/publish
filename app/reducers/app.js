@@ -49,6 +49,12 @@ export default function app(state = initialState, action = {}) {
         config: action.config
       }
 
+    case Types.DISMISS_NOTIFICATION:
+      return {
+        ...state,
+        notification: null
+      }
+
     // App action: register network call
     case Types.REGISTER_NETWORK_CALL:
       switch (action.status) {

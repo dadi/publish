@@ -11,6 +11,11 @@ import styles from './Label.css'
 export default class Label extends React.Component {
   static propTypes = {
     /**
+     * The accent of the label. The `error` prop takes precedence, if defined.
+     */
+    accent: proptypes.oneOf(['info']),
+
+    /**
      * The input element to be rendered inside the label.
      */
     children: proptypes.node,
@@ -68,39 +73,18 @@ export default class Label extends React.Component {
     this.id = getUniqueId()
   }
 
-  // This will render all children and inject an `id` prop
-  // with the generated unique id in the first child.
-  renderChildren() {
-    const {children, error, required} = this.props
-
-    return React.Children.map(children, (child, index) => {
-      if (!child || typeof child.type === 'string') {
-        return child
-      }
-
-      const childProps = {
-        inLabel: true
-      }
-
-      if (error) {
-        childProps.error = true
-      }
-
-      if (index === 0) {
-        childProps.id = this.id
-      }
-
-      if (required) {
-        childProps.required = true
-      }
-
-      return React.cloneElement(child, childProps)
-    })
-  }
-
   render() {
-    const {className, comment, compact, label, error, errorMessage} = this.props
+    const {
+      accent,
+      className,
+      comment,
+      compact,
+      label,
+      error,
+      errorMessage
+    } = this.props
     const labelStyle = new Style(styles, 'container')
+      .add(`accent-${accent}`)
       .addIf('container-compact', compact)
       .addResolved(className)
 
@@ -134,5 +118,35 @@ export default class Label extends React.Component {
         <div>{this.renderChildren()}</div>
       </label>
     )
+  }
+
+  // This will render all children and inject an `id` prop
+  // with the generated unique id in the first child.
+  renderChildren() {
+    const {children, error, required} = this.props
+
+    return React.Children.map(children, (child, index) => {
+      if (!child || typeof child.type === 'string') {
+        return child
+      }
+
+      const childProps = {
+        inLabel: true
+      }
+
+      if (error) {
+        childProps.error = true
+      }
+
+      if (index === 0) {
+        childProps.id = this.id
+      }
+
+      if (required) {
+        childProps.required = true
+      }
+
+      return React.cloneElement(child, childProps)
+    })
   }
 }

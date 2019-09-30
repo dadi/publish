@@ -30,6 +30,10 @@
   color: var(--edit-color-heading);
 }
 
+.container.accent-info .label {
+  color: var(--edit-color-info);
+}
+
 .comment {
   color: var(--edit-color-text-2);
 }
