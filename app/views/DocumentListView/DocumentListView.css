@@ -25,3 +25,10 @@
   width: 100%;
   height: 100%;
 }
+
+@media (max-width: 1023px) {
+  .delete-button {
+    padding-left: 25px !important;
+    padding-right: 25px !important;
+  }
+}
