@@ -19,6 +19,7 @@ export default React.forwardRef(function Button(
     href,
     isLoading, // To be implemented.
     narrow,
+    openInNew,
     ...props
   },
   ref
@@ -42,13 +43,17 @@ export default React.forwardRef(function Button(
 
   if (href) {
     return (
-      <a href={href} {...elementProps}>
+      <a
+        href={href}
+        target={openInNew ? '_blank' : undefined}
+        {...elementProps}
+      >
         {children}
       </a>
     )
   } else if (props.onClick || props.type) {
     return <button {...elementProps}>{children}</button>
-  } else {
-    return <span {...elementProps}>{children}</span>
   }
+
+  return <span {...elementProps}>{children}</span>
 })
