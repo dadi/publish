@@ -131,6 +131,7 @@ class ReferenceSelectView extends React.Component {
 
     // Getting documents from store.
     const {metadata} = state.documents[contentKey] || {}
+    const hasDocuments = metadata && metadata.totalCount > 0
 
     // Are we showing only selected documents?
     const isFilteringSelection = filter && filter.$selected === true
@@ -203,6 +204,7 @@ class ReferenceSelectView extends React.Component {
           >
             <Button
               accent="positive"
+              disabled={!hasDocuments}
               filled
               data-name="save-reference-selection-button"
               onClick={() => onSave(selection)}
