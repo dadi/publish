@@ -86,22 +86,22 @@ class MediaGridCard extends React.Component {
       fixed: item.contentLength > 1e6 ? 2 : 0
     }).human('si')
 
-    // If the `href` prop is present, we make the select element responsible
-    // for changing the selected state. If not, it becomes a purely decorative
-    // element with a read-only value, as the card as a whole will be used to
-    // change the selected state.
-    const selectProps =
-      typeof href === 'string'
-        ? {onChange: this.handleSelectClick.bind(this)}
-        : {readOnly: true}
+    // If the `href` prop is present, the label around the checkbox takes up
+    // a larger hit area, to make selection easier. When clicking outside of
+    // that hit area, the link defined in `href` will be followed.
+    const selectStyle = new Style(styles, 'select').addIf('large', href)
 
     return (
       <div
         className={itemStyle.getClasses()}
         onClick={this.handleCardClick.bind(this)}
       >
-        <label className={styles.select}>
-          <Checkbox checked={isSelected} large {...selectProps} />
+        <label className={selectStyle.getClasses()}>
+          <Checkbox
+            checked={isSelected}
+            large
+            onChange={href ? this.handleSelectClick.bind(this) : null}
+          />
         </label>
 
         {this.renderHead()}
