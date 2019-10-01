@@ -1,9 +1,11 @@
 .container {
+  opacity: 0;
   transform: translateY(100%);
-  transition: all 0.2s ease-out;
+  transition: opacity 0.3s ease-in-out 0.05s, transform 0.3s ease-in-out;
 }
 
 .container-visible {
+  opacity: 1;
   transform: none;
 }
 
