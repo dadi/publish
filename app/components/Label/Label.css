@@ -50,6 +50,8 @@
 .error-message-icon {
   margin-right: var(--edit-margin-xxs) !important;
   vertical-align: middle !important;
+  margin-top: -2px;
+  margin-bottom: -2px;
 }
 
 .error-message-text {

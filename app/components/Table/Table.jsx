@@ -68,15 +68,9 @@ export default class Table extends React.Component {
   }
 
   handleHeadSelect(event) {
-    const {selectLimit, selectedRows} = this.props
-    const countSelectedRows = Object.keys(selectedRows).length
-    const indeterminate =
-      countSelectedRows < selectLimit && countSelectedRows > 0
-    const selected = event.target.checked && !indeterminate
-
-    if (selected) {
+    if (event.target.checked) {
       this.selectAll()
-    } else if (indeterminate) {
+    } else {
       this.deselectAll()
     }
   }
