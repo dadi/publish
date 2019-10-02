@@ -244,15 +244,16 @@ class DocumentListController extends React.Component {
   removeFilter(index, event) {
     event.stopPropagation()
 
-    const {onUpdateFilters} = this.props
     const newFilters = this.filtersArray.reduce(
       (result, filter, arrayIndex) => {
         if (index !== arrayIndex) {
           const {field, operator, value} = filter
 
-          result[field] = {
-            [operator]: value
-          }
+          result[field] = operator
+            ? {
+                [operator]: value
+              }
+            : value
         }
 
         return result
@@ -261,7 +262,7 @@ class DocumentListController extends React.Component {
     )
 
     this.setState({...this.defaultState})
-    onUpdateFilters(newFilters)
+    this.props.onUpdateFilters(newFilters)
   }
 
   render() {
