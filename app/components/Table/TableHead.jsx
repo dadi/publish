@@ -51,19 +51,12 @@ export default class TableHead extends React.Component {
     }
   }
 
-  handleSelectClick(event) {
-    const {onSelect} = this.props
-
-    if (typeof onSelect === 'function') {
-      onSelect(event)
-    }
-  }
-
   render() {
     const {
       allowBulkSelection,
       allSelected,
       hasSelected,
+      onSelect,
       selectable
     } = this.props
 
@@ -81,7 +74,7 @@ export default class TableHead extends React.Component {
                 <Checkbox
                   className={styles.checkbox}
                   indeterminate={(!allSelected && hasSelected).toString()}
-                  onChange={this.handleSelectClick.bind(this)}
+                  onChange={onSelect}
                   style={allowBulkSelection ? null : {display: 'none'}}
                   value={allSelected}
                 />
