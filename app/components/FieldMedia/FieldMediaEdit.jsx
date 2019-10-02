@@ -235,20 +235,21 @@ export default class FieldMediaEdit extends React.Component {
         accent={hasUnsavedChanges ? 'info' : null}
         className={styles.label}
         comment={comment || null}
-        error={error || isInvalidMimeType}
+        error={Boolean(error) || isInvalidMimeType}
         errorMessage={errorMessage || null}
         label={displayName}
       >
         {values && (
           <div className={styles.values}>
-            {values.map(value => {
+            {values.map((value, index) => {
               const id = value._id || value
               const displayName = value.fileName
                 ? value.fileName.split('.').pop()
                 : 'Document not found'
+              const key = typeof id === 'string' ? id : value.fileName || index
 
               return (
-                <div className={styles.value} key={id} title={id}>
+                <div className={styles.value} key={key} title={key}>
                   <FieldMediaItem config={config} value={value} />
 
                   {value.contentLength && (
