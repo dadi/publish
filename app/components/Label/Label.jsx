@@ -103,7 +103,9 @@ export default class Label extends React.Component {
           <span className={styles['error-message-text']}>{errorMessage}</span>
         </div>
       ) : comment ? (
-        <div className={styles.comment}>{comment}</div>
+        <div>
+          <span className={styles.comment}>{comment}</span>
+        </div>
       ) : null
 
     return (
