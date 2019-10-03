@@ -40,28 +40,10 @@ export default React.forwardRef(function TextInput(
 
   useEffect(maybeResize, [value])
 
-  // Cursor maintaining section.
-  const cursor = useRef()
-
-  useEffect(() => {
-    if (ref.current && cursor.current) {
-      try {
-        ref.current.setSelectionRange(...cursor.current)
-      } catch {
-        // `setSelectionRange` not supported for this type of input.
-      }
-    }
-  }, [value])
-
   // onChange handling section.
   const onChange = useCallback(
     e => {
       maybeResize()
-
-      const {selectionStart, selectionEnd} = ref.current || {}
-
-      cursor.current = [selectionStart, selectionEnd]
-
       props.onChange(e)
     },
     [props.onChange]
