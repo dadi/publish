@@ -85,25 +85,33 @@ class DocumentField extends React.Component {
   // Handles the callback that fires whenever a field changes and the new value
   // is ready to be sent to the store.
   handleFieldChange(name, value) {
-    const {actions, contentKey} = this.props
+    const {actions, contentKey, document} = this.props
+
+    const data = {
+      contentKey,
+      update: {[name]: value},
+      error: {}
+    }
+
+    actions.updateLocalDocument(data)
 
     // Validating the field. If validation fails, `error` will be set. If it
     // passes, `error` will be `undefined`.
     this.validate(value)
       .catch(error => error)
       .then(error => {
-        const data = {
-          contentKey,
-          update: {
-            [name]: value
+        const prevError =
+          document.validationErrors && document.validationErrors[name]
+
+        if (error !== prevError) {
+          const data = {
+            contentKey,
+            update: {},
+            error: {[name]: error && error.message}
           }
-        }
 
-        data.error = {
-          [name]: error && error.message
+          actions.updateLocalDocument(data)
         }
-
-        actions.updateLocalDocument(data)
       })
   }
 
