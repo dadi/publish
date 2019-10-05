@@ -8,13 +8,24 @@ export function decodeSearch(searchString) {
     .replace(/"/g, '\\"')
     .replace(/&/g, '","')
     .replace(/=/g, '":"')
-  const parameters = JSON.parse(`{"${decodeURI(sanitisedString)}"}`)
 
-  Object.keys(parameters).forEach(key => {
-    parameters[key] = JSON.parse(parameters[key].replace('\\', '\\\\'))
-  })
+  try {
+    const parameters = JSON.parse(`{"${decodeURI(sanitisedString)}"}`)
 
-  return parameters
+    Object.keys(parameters).forEach(key => {
+      if (parameters[key][0] !== '{' || parameters[key][0] !== '[') {
+        parameters[key] = '"' + parameters[key] + '"'
+      }
+
+      parameters[key] = JSON.parse(parameters[key].replace('\\', '\\\\'))
+    })
+
+    return parameters
+  } catch (e) {
+    console.error(e)
+
+    return {}
+  }
 }
 
 export function encodeSearch(searchObject) {
