@@ -1,19 +1,22 @@
+import {
+  Code,
+  FormatBold,
+  FormatIndentDecrease,
+  FormatIndentIncrease,
+  FormatItalic,
+  FormatListBulleted,
+  FormatListNumbered,
+  FormatQuote,
+  Fullscreen,
+  FullscreenExit,
+  ImageSearch,
+  InsertLink
+} from '@material-ui/icons'
 import {RichEditorToolbar, RichEditorToolbarButton} from './RichEditorToolbar'
 import {Editor} from 'slate-react'
-import Fullscreen from 'components/Fullscreen/Fullscreen'
+import FullscreenComp from 'components/Fullscreen/Fullscreen'
 import HotKeys from 'lib/hot-keys'
-import IconBold from './icons/bold.svg'
-import IconBulletedList from './icons/bulleted-list.svg'
-import IconCode from './icons/code.svg'
-import IconFullscreen from './icons/fullscreen.svg'
-import IconH1 from './icons/header1.svg'
-import IconH2 from './icons/header2.svg'
-import IconItalic from './icons/italic.svg'
-import IconLink from './icons/link.svg'
-import IconMedia from './icons/image.svg'
-import IconNumberedList from './icons/numbered-list.svg'
-import IconQuote from './icons/quote.svg'
-import IconText from './icons/text.svg'
+import {Markdown} from 'mdi-material-ui'
 import MarkdownSerializer from '@edithq/slate-md-serializer'
 import PlainSerializer from 'slate-plain-serializer'
 import proptypes from 'prop-types'
@@ -47,6 +50,7 @@ const NODE_BOLD = 'bold'
 const NODE_CODE = 'code'
 const NODE_HEADING1 = 'heading1'
 const NODE_HEADING2 = 'heading2'
+const NODE_HEADING3 = 'heading3'
 const NODE_ITALIC = 'italic'
 const NODE_IMAGE = 'image'
 const NODE_LINK = 'link'
@@ -424,7 +428,7 @@ export default class RichEditor extends React.Component {
       }
 
       return (
-        <Fullscreen>
+        <FullscreenComp>
           <ReferenceSelectView
             buildUrl={() => '/media'}
             collection={collection}
@@ -433,12 +437,12 @@ export default class RichEditor extends React.Component {
             referenceFieldName="mediaSelect"
             saveText="Insert items"
           />
-        </Fullscreen>
+        </FullscreenComp>
       )
     }
 
     if (isFullscreen) {
-      return <Fullscreen>{this.renderEditor()}</Fullscreen>
+      return <FullscreenComp>{this.renderEditor()}</FullscreenComp>
     }
 
     return this.renderEditor()
@@ -473,6 +477,13 @@ export default class RichEditor extends React.Component {
           <h2 {...attributes} className={styles.heading}>
             {children}
           </h2>
+        )
+
+      case NODE_HEADING3:
+        return (
+          <h3 {...attributes} className={styles.heading}>
+            {children}
+          </h3>
         )
 
       case NODE_IMAGE: {
@@ -536,58 +547,84 @@ export default class RichEditor extends React.Component {
               action={this.handleToggleMark.bind(this, NODE_BOLD)}
               active={this.hasMark(NODE_BOLD)}
               disabled={isRawMode}
-              icon={IconBold}
-              text="Bold"
-            />
+              title="Bold (Ctrl+B)"
+            >
+              <FormatBold />
+            </RichEditorToolbarButton>
             <RichEditorToolbarButton
               action={this.handleToggleMark.bind(this, NODE_ITALIC)}
               active={this.hasMark(NODE_ITALIC)}
               disabled={isRawMode}
-              icon={IconItalic}
-              text="Italic"
-            />
-            <RichEditorToolbarButton
-              action={this.handleToggleLink.bind(this, valueIsLink)}
-              active={valueIsLink}
-              disabled={isRawMode}
-              icon={IconLink}
-              text="Link"
-            />
+              title="Italic (Ctrl+I)"
+            >
+              <FormatItalic />
+            </RichEditorToolbarButton>
             <RichEditorToolbarButton
               action={this.handleToggleBlock.bind(this, NODE_HEADING1)}
               active={this.hasBlock(NODE_HEADING1)}
               disabled={isRawMode}
-              icon={IconH1}
-              text="Heading 1"
-            />
+              title="Heading 1 (Ctrl+Alt+1)"
+            >
+              <span className={styles['toolbar-heading-icon']}>H1</span>
+            </RichEditorToolbarButton>
             <RichEditorToolbarButton
               action={this.handleToggleBlock.bind(this, NODE_HEADING2)}
               active={this.hasBlock(NODE_HEADING2)}
               disabled={isRawMode}
-              icon={IconH2}
-              text="Heading 2"
-            />
+              title="Heading 2 (Ctrl+Alt+2)"
+            >
+              <span className={styles['toolbar-heading-icon']}>H2</span>
+            </RichEditorToolbarButton>
             <RichEditorToolbarButton
-              action={this.handleToggleBlock.bind(this, NODE_BLOCKQUOTE)}
-              active={this.hasBlock(NODE_BLOCKQUOTE)}
+              action={this.handleToggleBlock.bind(this, NODE_HEADING3)}
+              active={this.hasBlock(NODE_HEADING3)}
               disabled={isRawMode}
-              icon={IconQuote}
-              text="Quote"
-            />
+              title="Heading 3 (Ctrl+Alt+3)"
+            >
+              <span className={styles['toolbar-heading-icon']}>H3</span>
+            </RichEditorToolbarButton>
             <RichEditorToolbarButton
               action={this.handleToggleBlock.bind(this, NODE_NUMBERED_LIST)}
               active={this.isListOfType(NODE_NUMBERED_LIST)}
               disabled={isRawMode}
-              icon={IconNumberedList}
-              text="Numbered list"
-            />
+              title="Numbered list (Ctrl+Shift+7)"
+            >
+              <FormatListNumbered />
+            </RichEditorToolbarButton>
             <RichEditorToolbarButton
               action={this.handleToggleBlock.bind(this, NODE_BULLETED_LIST)}
               active={this.isListOfType(NODE_BULLETED_LIST)}
               disabled={isRawMode}
-              icon={IconBulletedList}
-              text="Bulleted list"
-            />
+              title="Bulleted list (Ctrl+Shift+8)"
+            >
+              <FormatListBulleted />
+            </RichEditorToolbarButton>
+            <RichEditorToolbarButton
+              action={() => {
+                /* TODO */
+              }}
+              disabled={isRawMode}
+              title="Decrease indent (Ctrl+[)"
+            >
+              <FormatIndentDecrease />
+            </RichEditorToolbarButton>
+            <RichEditorToolbarButton
+              action={() => {
+                /* TODO */
+              }}
+              disabled={isRawMode}
+              title="Increase indent (Ctrl+])"
+            >
+              <FormatIndentIncrease />
+            </RichEditorToolbarButton>
+            <RichEditorToolbarButton
+              action={this.handleToggleBlock.bind(this, NODE_BLOCKQUOTE)}
+              active={this.hasBlock(NODE_BLOCKQUOTE)}
+              disabled={isRawMode}
+              title="Blockquote (Ctrl+Q)"
+            >
+              <FormatQuote />
+            </RichEditorToolbarButton>
             <RichEditorToolbarButton
               action={this.handleToggleCode.bind(
                 this,
@@ -596,29 +633,40 @@ export default class RichEditor extends React.Component {
               )}
               active={valueIsCodeBlock || valueIsCodeMark}
               disabled={isRawMode}
-              icon={IconCode}
-              text="Code block"
-            />
+              title="Preformatted (Ctrl+`)"
+            >
+              <Code />
+            </RichEditorToolbarButton>
+            <RichEditorToolbarButton
+              action={this.handleToggleLink.bind(this, valueIsLink)}
+              active={valueIsLink}
+              disabled={isRawMode}
+              title="Insert link (Ctrl+K)"
+            >
+              <InsertLink />
+            </RichEditorToolbarButton>
             <RichEditorToolbarButton
               action={this.startSelectingMedia}
-              icon={IconMedia}
-              text="Media"
-            />
+              title="Insert asset from library"
+            >
+              <ImageSearch />
+            </RichEditorToolbarButton>
           </div>
 
           <div>
             <RichEditorToolbarButton
               action={this.handleToggleRawMode.bind(this)}
               active={isRawMode}
-              icon={IconText}
-              text="Raw mode"
-            />
+              title="Markdown mode"
+            >
+              <Markdown />
+            </RichEditorToolbarButton>
             <RichEditorToolbarButton
               action={this.handleToggleFullscreen.bind(this)}
-              active={isFullscreen}
-              icon={IconFullscreen}
-              text="Full-screen"
-            />
+              title="Fullscreen"
+            >
+              {isFullscreen ? <FullscreenExit /> : <Fullscreen />}
+            </RichEditorToolbarButton>
           </div>
         </RichEditorToolbar>
 

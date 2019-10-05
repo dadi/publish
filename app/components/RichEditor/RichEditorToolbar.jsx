@@ -59,21 +59,18 @@ export class RichEditorToolbarButton extends React.Component {
   }
 
   render() {
-    const {active, disabled, icon, text} = this.props
-    const buttonStyle = new Style(styles, 'button')
-      .addIf('button-active', active)
-      .addIf('button-icon', icon)
-    const inlineStyle = icon ? {backgroundImage: `url(${icon})`} : null
+    const {active, children, disabled, title} = this.props
+    const buttonStyle = new Style(styles, 'button').addIf('active', active)
 
     return (
       <button
         className={buttonStyle.getClasses()}
         disabled={disabled}
         onMouseDown={this.handleClick.bind(this)}
-        style={inlineStyle}
         type="button"
+        title={title}
       >
-        {text}
+        {children}
       </button>
     )
   }

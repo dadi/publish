@@ -125,3 +125,9 @@
   width: 100%;
   z-index: 10;
 }
+
+.toolbar-heading-icon {
+  font-weight: 700;
+  letter-spacing: -1px;
+  font-size: var(--edit-font-size-lg);
+}
