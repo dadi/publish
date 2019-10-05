@@ -51,6 +51,9 @@ const NODE_CODE = 'code'
 const NODE_HEADING1 = 'heading1'
 const NODE_HEADING2 = 'heading2'
 const NODE_HEADING3 = 'heading3'
+const NODE_HEADING4 = 'heading4'
+const NODE_HEADING5 = 'heading5'
+const NODE_HEADING6 = 'heading6'
 const NODE_ITALIC = 'italic'
 const NODE_IMAGE = 'image'
 const NODE_LINK = 'link'
@@ -453,11 +456,7 @@ export default class RichEditor extends React.Component {
 
     switch (node.type) {
       case NODE_CODE:
-        return (
-          <code {...attributes} className={styles['code-block']}>
-            {children}
-          </code>
-        )
+        return <pre {...attributes}>{children}</pre>
 
       case NODE_BLOCKQUOTE:
         return <blockquote {...attributes}>{children}</blockquote>
@@ -486,18 +485,37 @@ export default class RichEditor extends React.Component {
           </h3>
         )
 
+      case NODE_HEADING4:
+        return (
+          <h4 {...attributes} className={styles.heading}>
+            {children}
+          </h4>
+        )
+
+      case NODE_HEADING5:
+        return (
+          <h5 {...attributes} className={styles.heading}>
+            {children}
+          </h5>
+        )
+
+      case NODE_HEADING6:
+        return (
+          <h6 {...attributes} className={styles.heading}>
+            {children}
+          </h6>
+        )
+
       case NODE_IMAGE: {
-        const imageStyle = new Style(styles, 'image').addIf(
-          'image-focused',
+        const imageWrapperStyle = new Style(styles, 'image-wrapper').addIf(
+          'focused',
           isFocused
         )
 
         return (
-          <img
-            {...attributes}
-            className={imageStyle.getClasses()}
-            src={node.data.get('src')}
-          />
+          <div className={imageWrapperStyle.getClasses()}>
+            <img {...attributes} src={node.data.get('src')} />
+          </div>
         )
       }
 
