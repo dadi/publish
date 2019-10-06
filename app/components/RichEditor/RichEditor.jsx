@@ -68,6 +68,9 @@ const SCHEMA = {
   }
 }
 
+// http://www.stucox.com/blog/you-cant-detect-a-touchscreen/
+const isTouchDevice = window.matchMedia('(pointer: coarse)').matches
+
 /**
  * A rich text editor.
  */
@@ -340,7 +343,7 @@ export default class RichEditor extends React.Component {
     }
 
     if (this.value.selection.isExpanded) {
-      if (this.isNarrowViewport) {
+      if (isTouchDevice) {
         const href = this.openLinkPrompt()
 
         if (href !== '') {
@@ -545,10 +548,6 @@ export default class RichEditor extends React.Component {
       this.state.isFocused
     )
 
-    // This will be used by certain elements (e.g. links) to adjust their
-    // behaviour based on the viewport size.
-    this.isNarrowViewport = window.innerWidth < 1000
-
     // Deserialising the value and caching the result, so that other methods
     // can use it.
     this.value = this.deserialise(this.props.value)
@@ -712,7 +711,7 @@ export default class RichEditor extends React.Component {
       case NODE_LINK: {
         const href = node.data.get('href')
 
-        if (this.isNarrowViewport) {
+        if (isTouchDevice) {
           return (
             <a
               href={href}

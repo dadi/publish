@@ -1,3 +1,4 @@
+import {Button, TextInput} from '@dadi/edit-ui'
 import proptypes from 'prop-types'
 import React from 'react'
 import styles from './RichEditorLink.css'
@@ -44,7 +45,6 @@ export default class RichEditorLink extends React.Component {
 
   componentDidMount() {
     document.body.addEventListener('mousedown', this.clickHandler)
-    this.offsetPopup()
   }
 
   componentWillUnmount() {
@@ -81,25 +81,23 @@ export default class RichEditorLink extends React.Component {
     })
   }
 
-  offsetPopup() {
-    const {bounds} = this.props
-    const {popupElement, container} = this
+  // getPopupOffset() {
+  //   const {bounds} = this.props
+  //   const {popupElement, container} = this
 
-    if (!bounds || !popupElement || !container) {
-      return
-    }
+  //   if (!bounds || !popupElement || !container) {
+  //     return {}
+  //   }
 
-    const {right} = popupElement.getBoundingClientRect()
-    const {top: linkTop} = this.container.getBoundingClientRect()
+  //   const {right} = popupElement.getBoundingClientRect()
+  //   const {top: linkTop} = this.container.getBoundingClientRect()
 
-    const leftOffset = Math.min(bounds.right - right, 0)
-    const verticalOffset = -popupElement.clientHeight * 1.5
-    const topOrBottom = bounds.top > linkTop + verticalOffset ? 'bottom' : 'top'
+  //   const leftOffset = Math.min(bounds.right - right, 0)
+  //   const verticalOffset = -popupElement.clientHeight * 1.5
+  //   const topOrBottom = bounds.top > linkTop + verticalOffset ? 'bottom' : 'top'
 
-    this.setState({
-      popupStyle: {left: leftOffset, [topOrBottom]: verticalOffset}
-    })
-  }
+  //   return {left: leftOffset, [topOrBottom]: verticalOffset}
+  // }
 
   handleSave(event) {
     event.preventDefault()
@@ -118,7 +116,8 @@ export default class RichEditorLink extends React.Component {
 
   render() {
     const {children} = this.props
-    const {editing, href, popupStyle} = this.state
+    const {editing, href} = this.state
+    // const popupStyle = this.getPopupOffset()
 
     return (
       <span
@@ -138,20 +137,24 @@ export default class RichEditorLink extends React.Component {
             ref={el => {
               this.popupElement = el
             }}
-            style={popupStyle}
+            // style={popupStyle}
           >
             <form className={styles.form} onSubmit={this.handleSave.bind(this)}>
-              <input
+              <TextInput
                 autoFocus
                 className={styles.input}
                 onChange={this.handleLinkUpdate.bind(this)}
-                type="text"
                 value={href}
               />
 
-              <button className={styles.button} type="submit">
+              <Button
+                accent="positive"
+                className={styles.button}
+                compact
+                type="submit"
+              >
                 Save
-              </button>
+              </Button>
             </form>
           </div>
         )}
