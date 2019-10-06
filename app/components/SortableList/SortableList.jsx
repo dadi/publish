@@ -325,7 +325,7 @@ export default class StringArray extends React.Component {
             />
 
             <TextInput
-              autocomplete="off"
+              autoComplete="off"
               autoresize
               name={name}
               onBlur={onBlur}
@@ -397,7 +397,7 @@ export default class StringArray extends React.Component {
           <Add className={styles['icon-add']} />
 
           <TextInput
-            autocomplete="off"
+            autoComplete="off"
             autoresize
             name={name}
             onBlur={onBlur}
