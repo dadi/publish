@@ -321,7 +321,7 @@ export default class RichEditor extends React.Component {
     }
 
     if (isBlock) {
-      this.editor.wrapBlock(NODE_CODE)
+      this.editor.setBlocks(NODE_CODE)
     } else {
       this.editor.toggleMark(NODE_CODE)
     }
