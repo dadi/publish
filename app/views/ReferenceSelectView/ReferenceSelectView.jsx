@@ -12,6 +12,7 @@ import DocumentTableList from 'containers/DocumentTableList/DocumentTableList'
 import HeroMessage from 'components/HeroMessage/HeroMessage'
 import MediaGridCard from 'containers/MediaGridCard/MediaGridCard'
 import React from 'react'
+import Style from 'lib/Style'
 import styles from './ReferenceSelectView.css'
 
 class ReferenceSelectView extends React.Component {
@@ -31,6 +32,10 @@ class ReferenceSelectView extends React.Component {
       sortOrder: undefined,
       selection: props.initialSelection
     }
+  }
+
+  static defaultProps = {
+    saveText: 'Save selection'
   }
 
   handleEmptyDocumentList() {
@@ -85,6 +90,7 @@ class ReferenceSelectView extends React.Component {
       onSave,
       referenceFieldName,
       referenceFieldSchema,
+      saveText,
       state
     } = this.props
 
@@ -125,6 +131,7 @@ class ReferenceSelectView extends React.Component {
 
     // Getting documents from store.
     const {metadata} = state.documents[contentKey] || {}
+    const hasDocuments = metadata && metadata.totalCount > 0
 
     // Are we showing only selected documents?
     const isFilteringSelection = filter && filter.$selected === true
@@ -136,8 +143,13 @@ class ReferenceSelectView extends React.Component {
         }))
     }
 
+    const mainStyle = new Style(styles, 'main').addIf(
+      'is-media',
+      referencedCollection.IS_MEDIA_BUCKET
+    )
+
     return (
-      <div className={styles.container}>
+      <>
         <div className={styles.header}>
           <Button
             accent="negative"
@@ -157,7 +169,7 @@ class ReferenceSelectView extends React.Component {
           onUpdateFilters={this.handleFiltersUpdate}
         />
 
-        <main>
+        <main className={mainStyle.getClasses()}>
           <DocumentList
             collection={referencedCollection}
             contentKey={contentKey}
@@ -192,15 +204,16 @@ class ReferenceSelectView extends React.Component {
           >
             <Button
               accent="positive"
-              filled
+              disabled={!hasDocuments}
+              fillStyle="filled"
               data-name="save-reference-selection-button"
               onClick={() => onSave(selection)}
             >
-              Save selection
+              {saveText}
             </Button>
           </DocumentListToolbar>
         </div>
-      </div>
+      </>
     )
   }
 

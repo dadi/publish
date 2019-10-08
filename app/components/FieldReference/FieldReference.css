@@ -33,6 +33,10 @@
   padding: var(--edit-elem-padding-standard);
 }
 
+.edit-value-container .values.with-unsaved-changes {
+  border-color: var(--edit-color-info);
+}
+
 .buttons {
   display: flex;
   flex: 1;

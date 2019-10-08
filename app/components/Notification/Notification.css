@@ -1,41 +1,58 @@
 .container {
-  position: fixed;
-  left: 50%;
-  top: 0;
-  text-align: center;
-  opacity: 0;
-  transform: translate3d(-50%, -100%, 0);
+  transform: translateY(100%);
   transition: all 0.2s ease-out;
-  z-index: 1002;
 }
 
 .container-visible {
-  opacity: 1;
-  transform: translate3d(-50%, 0, 0);
+  transform: none;
 }
 
 .notification {
-  display: inline-block;
-  line-height: 1.25;
+  display: flex;
+  flex-direction: column;
+  color: white;
+  justify-content: space-between;
+  align-items: center;
   font-family: var(--theme-font-family, sans-serif);
-  padding: 10px 50px;
-  border-bottom-left-radius: 3px;
-  border-bottom-right-radius: 3px;
-  transition: all 0.2s ease-out;
+  padding: var(--edit-margin-lg) var(--edit-margin-xxl);
 }
 
-.notification-visible {
-  color: red !important;
+@media (min-width: 640px) {
+  .notification {
+    flex-direction: row;
+  }
 }
 
-/* Accent: system */
-.notification-system {
-  background-color: var(--theme-colour-system, #ffbf0d);
-  color: var(--theme-colour-primary, #000000);
+.notification-info {
+  background-color: var(--edit-color-info);
 }
 
-.notification-system.notification-faded {
-  background-color: #b3870b;
+.notification-negative {
+  background-color: var(--edit-color-negative);
+}
+
+.notification-positive {
+  background-color: var(--edit-color-positive);
+}
+
+.message > * {
+  vertical-align: middle;
+}
+
+.message svg {
+  width: 30px;
+  height: 30px;
+  margin-right: 20px;
+}
+
+.actions {
+  margin-top: 20px;
+}
+
+@media (min-width: 640px) {
+  .actions {
+    margin-top: 0;
+  }
 }
 
 .option {

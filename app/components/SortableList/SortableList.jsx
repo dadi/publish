@@ -1,9 +1,9 @@
-import Button from 'components/Button/Button'
+import {Add, DragIndicator, OpenInNew} from '@material-ui/icons'
+import {Button, TextInput} from '@dadi/edit-ui'
 import formatLink from 'lib/util/formatLink'
 import React from 'react'
 import Style from 'lib/Style'
 import styles from './SortableList.css'
-import TextInput from 'components/TextInput/TextInput'
 
 export default class StringArray extends React.Component {
   constructor(props) {
@@ -319,48 +319,49 @@ export default class StringArray extends React.Component {
             }}
             style={dragOriginalIndex === index ? draggedStyle : {}}
           >
-            <span
+            <DragIndicator
               className={styles['icon-drag']}
               onMouseDown={this.handleDragStart.bind(this, index)}
-            >
-              Drag
-            </span>
+            />
 
             <TextInput
-              heightType="content"
-              inputRef={ref => {
-                this.inputRefs[index] = ref
-              }}
+              autocomplete="off"
+              autoresize
               name={name}
               onBlur={onBlur}
               onFocus={onFocus}
-              onInput={this.handleInputChange.bind(this, index)}
+              onChange={this.handleInputChange.bind(this, index)}
               onKeyDown={this.handleKeyDown.bind(this, index)}
               placeholder={placeholder}
               readOnly={readOnly}
+              ref={ref => {
+                this.inputRefs[index] = ref
+              }}
               resizable={resizable}
               rows={rows}
+              simple
               type={type}
               value={value}
             />
 
             {link && (
               <Button
-                accent="neutral"
-                className={styles['link-preview']}
+                accent="positive"
+                className={styles['open-button']}
+                compact
                 href={link}
-                openInNewWindow={true}
-                size="small"
+                openInNew
               >
-                Open in new window
+                <span>Open </span>
+                <OpenInNew className={styles['open-icon']} fontSize="small" />
               </Button>
             )}
 
             <Button
-              accent="destruct"
+              accent="negative"
               className={styles['remove-button']}
+              compact
               onClick={this.handleDeleteRow.bind(this, index)}
-              size="small"
             >
               Remove
             </Button>
@@ -393,21 +394,24 @@ export default class StringArray extends React.Component {
           </div>
         )}
         <div className={styles['list-item']}>
-          <span className={styles['icon-add']}>Add</span>
+          <Add className={styles['icon-add']} />
+
           <TextInput
-            heightType="content"
-            inputRef={ref => {
-              this.inputRefs[valuesArray.length] = ref
-            }}
+            autocomplete="off"
+            autoresize
             name={name}
             onBlur={onBlur}
             onFocus={onFocus}
-            onInput={this.handleInputChange.bind(this, valuesArray.length)}
+            onChange={this.handleInputChange.bind(this, valuesArray.length)}
             onKeyDown={this.handleKeyDown.bind(this, valuesArray.length)}
             placeholder={placeholder}
             readOnly={readOnly}
+            ref={ref => {
+              this.inputRefs[valuesArray.length] = ref
+            }}
             resizable={resizable}
             rows={rows}
+            simple
             type={type}
             value={null}
           />

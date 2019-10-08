@@ -6,8 +6,13 @@ const NOTIFICATION_DEFAULTS = {
   dismissAfterRouteChange: true,
   dismissAfterSeconds: 3,
   dismissOnHover: true,
-  options: {},
-  type: Constants.NOTIFICATION_TYPE_WARNING
+  options: {}
+}
+
+export function dismissNotification() {
+  return {
+    type: Types.DISMISS_NOTIFICATION
+  }
 }
 
 export function registerNetworkCall(status, onComplete) {

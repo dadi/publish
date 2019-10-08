@@ -11,6 +11,11 @@ import styles from './Label.css'
 export default class Label extends React.Component {
   static propTypes = {
     /**
+     * The accent of the label. The `error` prop takes precedence, if defined.
+     */
+    accent: proptypes.oneOf(['info']),
+
+    /**
      * The input element to be rendered inside the label.
      */
     children: proptypes.node,
@@ -68,6 +73,55 @@ export default class Label extends React.Component {
     this.id = getUniqueId()
   }
 
+  render() {
+    const {
+      accent,
+      className,
+      comment,
+      compact,
+      label,
+      error,
+      errorMessage
+    } = this.props
+    const labelStyle = new Style(styles, 'container')
+      .add(`accent-${accent}`)
+      .addIf('container-compact', compact)
+      .addResolved(className)
+
+    if (
+      (label && typeof label !== 'string') ||
+      (comment && typeof comment !== 'string') ||
+      (errorMessage && typeof errorMessage !== 'string')
+    ) {
+      return null
+    }
+
+    const hint =
+      error && errorMessage ? (
+        <div className={styles['error-message-container']}>
+          <Error className={styles['error-message-icon']} fontSize="small" />
+          <span className={styles['error-message-text']}>{errorMessage}</span>
+        </div>
+      ) : comment ? (
+        <div>
+          <span className={styles.comment}>{comment}</span>
+        </div>
+      ) : null
+
+    return (
+      <label htmlFor={this.id} className={labelStyle.getClasses()}>
+        {(label || comment) && (
+          <div className={styles.header}>
+            <div className={styles.label}>{label || ''}</div>
+
+            {hint}
+          </div>
+        )}
+        <div>{this.renderChildren()}</div>
+      </label>
+    )
+  }
+
   // This will render all children and inject an `id` prop
   // with the generated unique id in the first child.
   renderChildren() {
@@ -96,43 +150,5 @@ export default class Label extends React.Component {
 
       return React.cloneElement(child, childProps)
     })
-  }
-
-  render() {
-    const {className, comment, compact, label, error, errorMessage} = this.props
-    const labelStyle = new Style(styles, 'container')
-      .addIf('container-compact', compact)
-      .addResolved(className)
-
-    if (
-      (label && typeof label !== 'string') ||
-      (comment && typeof comment !== 'string') ||
-      (errorMessage && typeof errorMessage !== 'string')
-    ) {
-      return null
-    }
-
-    const hint =
-      error && errorMessage ? (
-        <div className={styles['error-message-container']}>
-          <Error className={styles['error-message-icon']} fontSize="small" />
-          <span className={styles['error-message-text']}>{errorMessage}</span>
-        </div>
-      ) : comment ? (
-        <div className={styles.comment}>{comment}</div>
-      ) : null
-
-    return (
-      <label htmlFor={this.id} className={labelStyle.getClasses()}>
-        {(label || comment) && (
-          <div className={styles.header}>
-            <div className={styles.label}>{label || ''}</div>
-
-            {hint}
-          </div>
-        )}
-        <div>{this.renderChildren()}</div>
-      </label>
-    )
   }
 }

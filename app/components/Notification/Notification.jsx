@@ -1,8 +1,9 @@
+import {Button} from '@dadi/edit-ui'
 import proptypes from 'prop-types'
 import React from 'react'
-
 import Style from 'lib/Style'
 import styles from './Notification.css'
+import {Done, Error, Warning} from '@material-ui/icons'
 
 /**
  * A notification strip, anchored to the bottom of the screen.
@@ -12,7 +13,7 @@ export default class Notification extends React.Component {
     /**
      * Colour accent.
      */
-    accent: proptypes.oneOf(['destruct', 'save', 'system']),
+    accent: proptypes.oneOf(['info', 'negative', 'positive']),
 
     /**
      * The notification message.
@@ -51,20 +52,26 @@ export default class Notification extends React.Component {
   }
 
   static defaultProps = {
-    accent: 'system',
+    accent: 'info',
     visible: true
   }
 
+  constructor(props) {
+    super(props)
+
+    this.handleOnHover = this.handleOnHover.bind(this)
+  }
+
+  handleOnHover() {
+    const {onHover, options} = this.props
+
+    if (typeof onHover === 'function' && !Object.keys(options).length) {
+      onHover()
+    }
+  }
+
   render() {
-    const {
-      accent,
-      faded,
-      message,
-      onHover,
-      onOptionClick,
-      options,
-      visible
-    } = this.props
+    const {accent, faded, message, onOptionClick, options, visible} = this.props
     const containerStyle = new Style(styles, 'container').addIf(
       'container-visible',
       visible
@@ -84,45 +91,50 @@ export default class Notification extends React.Component {
       <div className={containerStyle.getClasses()}>
         <div
           className={notificationStyle.getClasses()}
-          onMouseEnter={this.handleOnHover.bind(this)}
+          onMouseEnter={this.handleOnHover}
         >
-          <span>{message}</span>
+          <div className={styles.message}>
+            {this.renderIcon()}
 
-          {options &&
-            Object.keys(options).map(label => {
-              if (typeof options[label] === 'string') {
-                return (
-                  <a
-                    className={styles.option}
-                    href={options[label]}
-                    key={label}
-                    onClick={onOptionClick.bind(this, options[label])}
-                  >
-                    {label}
-                  </a>
-                )
-              }
+            <span>{message}</span>
+          </div>
 
-              return (
-                <button
-                  className={styles.option}
+          <div className={styles.actions}>
+            {options &&
+              Object.keys(options).map(label => (
+                <Button
+                  accent="info"
+                  fillStyle="inverted"
+                  href={
+                    typeof options[label] === 'string' ? options[label] : null
+                  }
                   key={label}
+                  narrow
                   onClick={onOptionClick.bind(this, options[label])}
                 >
                   {label}
-                </button>
-              )
-            })}
+                </Button>
+              ))}
+          </div>
         </div>
       </div>
     )
   }
 
-  handleOnHover() {
-    const {onHover, options} = this.props
+  renderIcon() {
+    const {accent} = this.props
 
-    if (typeof onHover === 'function' && !Object.keys(options).length) {
-      onHover()
+    switch (accent) {
+      case 'info':
+        return <Warning />
+
+      case 'negative':
+        return <Error />
+
+      case 'positive':
+        return <Done />
     }
+
+    return null
   }
 }

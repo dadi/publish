@@ -85,25 +85,33 @@ class DocumentField extends React.Component {
   // Handles the callback that fires whenever a field changes and the new value
   // is ready to be sent to the store.
   handleFieldChange(name, value) {
-    const {actions, contentKey} = this.props
+    const {actions, contentKey, document} = this.props
+
+    const data = {
+      contentKey,
+      update: {[name]: value},
+      error: {}
+    }
+
+    actions.updateLocalDocument(data)
 
     // Validating the field. If validation fails, `error` will be set. If it
     // passes, `error` will be `undefined`.
     this.validate(value)
       .catch(error => error)
       .then(error => {
-        const data = {
-          contentKey,
-          update: {
-            [name]: value
+        const prevError =
+          document.validationErrors && document.validationErrors[name]
+
+        if (error !== prevError) {
+          const data = {
+            contentKey,
+            update: {},
+            error: {[name]: error && error.message}
           }
-        }
 
-        data.error = {
-          [name]: error && error.message
+          actions.updateLocalDocument(data)
         }
-
-        actions.updateLocalDocument(data)
       })
   }
 
@@ -141,7 +149,12 @@ class DocumentField extends React.Component {
     } = this.props
     const {app} = state
     const {api} = app.config
-    const {local, remote, validationErrors} = document
+    const {
+      local,
+      remote,
+      validationErrors,
+      wasLoadedFromLocalStorage
+    } = document
     const documentData = Object.assign({}, remote, local)
     const documentMetadata = document.localMeta || {}
     const defaultApiLanguage =
@@ -187,6 +200,9 @@ class DocumentField extends React.Component {
       validationErrors && validationErrors[field._id]
         ? `This field ${validationErrors[field._id]}`
         : null
+    const hasUnsavedChanges = Boolean(
+      wasLoadedFromLocalStorage && local[fieldName] !== undefined
+    )
     const FieldComponent = this.fieldComponent && this.fieldComponent.edit
     const fieldComment = field.comment || field.example
 
@@ -206,6 +222,7 @@ class DocumentField extends React.Component {
           displayName={displayName}
           documentId={documentData._id}
           error={error}
+          hasUnsavedChanges={hasUnsavedChanges}
           meta={documentMetadata[fieldName]}
           name={fieldName}
           onBuildBaseUrl={onBuildBaseUrl}

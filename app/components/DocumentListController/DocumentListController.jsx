@@ -39,14 +39,51 @@ class DocumentListController extends React.Component {
   constructor(props) {
     super(props)
 
+    this.searchInputRef = React.createRef()
+
     this.selectField = this.selectField.bind(this)
     this.selectOperator = event =>
       this.setState({selectedFilterOperator: event.target.value})
     this.setFilterValue = value => this.setState({selectedFilterValue: value})
+
     this.openNewFilterEditor = () => this.setState({selectedFilterIndex: -1})
-    this.closeFilterEditor = () => this.setState({...this.defaultState})
+
+    this.closeFilterEditor = () =>
+      this.setState({
+        ...this.defaultState,
+        areFiltersOpen: this.props.isSmallWindow && this.filtersArray.length > 0
+      })
+
+    this.clearFilters = () => {
+      this.filtersArray = []
+      this.propagateFilters()
+      this.setState({...this.defaultState})
+    }
+
+    // For small-window version only.
+    this.toggleSearch = () =>
+      this.setState(({isSearchOpen}) =>
+        isSearchOpen
+          ? {...this.defaultState}
+          : {...this.defaultState, isSearchOpen: true}
+      )
+
+    // For small-window version only.
+    this.toggleFilters = () =>
+      this.setState(({areFiltersOpen}) =>
+        areFiltersOpen
+          ? {...this.defaultState}
+          : {
+              ...this.defaultState,
+              areFiltersOpen: true,
+              // If there are no filters, open filter editor right away.
+              selectedFilterIndex: this.filtersArray.length ? null : -1
+            }
+      )
 
     this.defaultState = {
+      areFiltersOpen: false,
+      isSearchOpen: false,
       search: null,
       selectedFilterField: null,
       selectedFilterIndex: null,
@@ -57,8 +94,42 @@ class DocumentListController extends React.Component {
     this.state = {...this.defaultState}
   }
 
+  addOrUpdateFilter(field, defaultOperator, event) {
+    const {
+      selectedFilterIndex: index,
+      selectedFilterOperator: operator,
+      selectedFilterValue: value
+    } = this.state
+
+    event.preventDefault()
+
+    if (typeof index !== 'number') {
+      return
+    }
+
+    // Are we updating an existing filter or creating a new one?
+    if (index === -1) {
+      this.filtersArray.push({
+        field,
+        operator: operator || defaultOperator,
+        value
+      })
+    } else {
+      if (!this.filtersArray[index]) {
+        return
+      }
+
+      this.filtersArray[index].field = field
+      this.filtersArray[index].operator = operator
+      this.filtersArray[index].value = value
+    }
+
+    this.setState({...this.defaultState})
+    this.propagateFilters()
+  }
+
   buildFiltersArray(filtersObject = {}) {
-    const filtersArray = Object.keys(filtersObject).map(field => {
+    return Object.keys(filtersObject).map(field => {
       if (field === '$selected') {
         return {
           FilterList: () => this.renderSelectedFilter(filtersObject[field])
@@ -88,8 +159,6 @@ class DocumentListController extends React.Component {
         value
       }
     })
-
-    return filtersArray
   }
 
   componentDidUpdate(oldProps) {
@@ -137,34 +206,6 @@ class DocumentListController extends React.Component {
     return filterableFields
   }
 
-  selectFilterToEdit(index) {
-    const {field, operator, value} = this.filtersArray[index]
-
-    this.setState({
-      selectedFilterField: field,
-      selectedFilterIndex: index,
-      selectedFilterOperator: operator,
-      selectedFilterValue: value
-    })
-  }
-
-  submitSearch(field, event) {
-    const {search: searchValue} = this.state
-
-    event.preventDefault()
-
-    if (searchValue) {
-      this.filtersArray.push({
-        field,
-        operator: '$regex',
-        value: searchValue
-      })
-
-      this.propagateFilters()
-      this.setState({...this.defaultState})
-    }
-  }
-
   handleSearchKeydown(fields, event) {
     const {selectedSuggestionIndex} = this.state
 
@@ -182,59 +223,6 @@ class DocumentListController extends React.Component {
     } else if (event.key === 'Escape') {
       this.setState({...this.defaultState})
     }
-  }
-
-  selectField(event) {
-    const {value: newField} = event.target
-    const {selectedFilterOperator} = this.state
-    const fieldComponent = this.getFieldComponent(newField) || {}
-    const fieldOperators = fieldComponent.filterOperators || {}
-
-    // If the new selected field supports the currently selected operator, we
-    // keep it. Otherwise, we use the first operator defined by the new field
-    // component.
-    const newOperator = fieldOperators[selectedFilterOperator]
-      ? selectedFilterOperator
-      : Object.keys(fieldOperators)[0]
-
-    this.setState({
-      selectedFilterField: newField,
-      selectedFilterOperator: newOperator
-    })
-  }
-
-  addOrUpdateFilter(field, defaultOperator, event) {
-    const {
-      selectedFilterIndex: index,
-      selectedFilterOperator: operator,
-      selectedFilterValue: value
-    } = this.state
-
-    event.preventDefault()
-
-    if (typeof index !== 'number') {
-      return
-    }
-
-    // Are we updating an existing filter or creating a new one?
-    if (index === -1) {
-      this.filtersArray.push({
-        field,
-        operator: operator || defaultOperator,
-        value
-      })
-    } else {
-      if (!this.filtersArray[index]) {
-        return
-      }
-
-      this.filtersArray[index].field = field
-      this.filtersArray[index].operator = operator
-      this.filtersArray[index].value = value
-    }
-
-    this.setState({...this.defaultState})
-    this.propagateFilters()
   }
 
   propagateFilters() {
@@ -256,15 +244,16 @@ class DocumentListController extends React.Component {
   removeFilter(index, event) {
     event.stopPropagation()
 
-    const {onUpdateFilters} = this.props
     const newFilters = this.filtersArray.reduce(
       (result, filter, arrayIndex) => {
         if (index !== arrayIndex) {
           const {field, operator, value} = filter
 
-          result[field] = {
-            [operator]: value
-          }
+          result[field] = operator
+            ? {
+                [operator]: value
+              }
+            : value
         }
 
         return result
@@ -273,7 +262,7 @@ class DocumentListController extends React.Component {
     )
 
     this.setState({...this.defaultState})
-    onUpdateFilters(newFilters)
+    this.props.onUpdateFilters(newFilters)
   }
 
   render() {
@@ -281,123 +270,148 @@ class DocumentListController extends React.Component {
       collection,
       createNewHref,
       filters,
-      route,
-      searchableFields
+      isSmallWindow,
+      route
     } = this.props
-    const {
-      search: searchValue,
-      selectedFilterField,
-      selectedFilterIndex,
-      selectedFilterOperator,
-      selectedFilterValue,
-      selectedSuggestionIndex
-    } = this.state
+    const {isSearchOpen, areFiltersOpen, selectedFilterIndex} = this.state
 
     if (!collection) return null
 
     this.filtersArray = this.buildFiltersArray(filters)
 
+    // Rather than having the breakpoint specified *both* in JS and in CSS media queries,
+    // let's use this `small-window` class in place of the CSS media query.
+    const containerStyle = new Style(styles, 'container')
+      .addIf('small-window', isSmallWindow)
+      .addIf('drawer-open', isSmallWindow && (isSearchOpen || areFiltersOpen))
+      .addIf('search-open', isSmallWindow && isSearchOpen)
+      .addIf('filters-open', isSmallWindow && areFiltersOpen)
+
+    const addFilterButton = (
+      <Button
+        accent="positive"
+        className={styles['add-filter-button']}
+        data-name="add-filter-button"
+        disabled={this.getFilterableFields().length === 0}
+        onClick={this.openNewFilterEditor}
+      >
+        Add filter
+      </Button>
+    )
+
+    const clearFiltersButton = this.filtersArray.length > 0 && (
+      <Button
+        accent="negative"
+        className={styles['clear-filters-button']}
+        data-name="clear-filters-button"
+        onClick={this.clearFilters}
+      >
+        Clear filters
+      </Button>
+    )
+
+    const createNewButton = createNewHref && (
+      <Button
+        accent="positive"
+        className={styles['create-new-button']}
+        data-name="create-new-button"
+        fillStyle="filled"
+        onClick={() => route.history.push(createNewHref)}
+      >
+        Create new
+      </Button>
+    )
+
     return (
-      <div className={styles.container}>
+      <div className={containerStyle.getClasses()}>
         <div className={styles['top-bar']}>
-          {selectedFilterIndex === null ? (
+          {isSmallWindow ? (
             <>
-              <form
-                className={styles.form}
-                onSubmit={this.submitSearch.bind(
-                  this,
-                  searchableFields[selectedSuggestionIndex]
-                )}
-              >
-                <TextInput
-                  className={styles.input}
-                  onChange={event =>
-                    this.setState({
-                      search: event.target.value
-                    })
-                  }
-                  onKeyDown={this.handleSearchKeydown.bind(
-                    this,
-                    searchableFields
-                  )}
-                  placeholder={`Search ${collection.name}`}
-                  simple
-                  value={searchValue}
-                  tabIndex="1"
-                />
-
-                <Search className={styles['search-icon']} />
-
-                {searchValue && (
-                  <div className={styles.suggestions}>
-                    {searchableFields.map((fieldName, index) => {
-                      const suggestionStyle = new Style(
-                        styles,
-                        'suggestion'
-                      ).addIf('selected', selectedSuggestionIndex === index)
-
-                      return (
-                        <button
-                          className={suggestionStyle.getClasses()}
-                          key={fieldName + searchValue}
-                          onMouseDown={this.submitSearch.bind(this, fieldName)}
-                          onMouseEnter={() =>
-                            this.setState({selectedSuggestionIndex: index})
-                          }
-                          type="button"
-                        >
-                          <span className={styles['suggestion-prefix']}>
-                            {this.getFieldName(fieldName)} contains
-                          </span>
-                          <span className={styles['suggestion-value']}>
-                            {' '}
-                            ‘{searchValue}’
-                          </span>
-                          {!isTouchDevice && (
-                            <span className={styles['suggestion-hint']}>
-                              Search <KeyboardReturn fontSize="small" />
-                            </span>
-                          )}
-                        </button>
-                      )
-                    })}
-                  </div>
-                )}
-              </form>
-
-              <Button
-                accent="positive"
-                className={styles['add-filter-button']}
-                data-name="add-filter-button"
-                disabled={this.getFilterableFields().length === 0}
-                onClick={this.openNewFilterEditor}
-              >
-                Add filter
-              </Button>
-
-              {createNewHref && (
-                <Button
-                  accent="positive"
-                  className={styles['create-new-button']}
-                  data-name="create-new-button"
-                  filled
-                  onClick={() => route.history.push(createNewHref)}
+              <div className={styles['mobile-icons']}>
+                <button
+                  className={styles['open-search']}
+                  onClick={this.toggleSearch}
                 >
-                  Create new
-                </Button>
-              )}
+                  <Search fontSize="large" />
+                </button>
+                <button
+                  className={styles['open-filters']}
+                  onClick={this.toggleFilters}
+                >
+                  <FilterList fontSize="large" />
+                  {this.filtersArray.length > 0 && (
+                    <span className={styles['filter-count']}>
+                      ({this.filtersArray.length})
+                    </span>
+                  )}
+                </button>
+              </div>
+
+              {createNewButton}
+            </>
+          ) : selectedFilterIndex === null ? (
+            <>
+              {this.renderSearchInput()}
+
+              {addFilterButton}
+
+              {clearFiltersButton}
+
+              {createNewButton}
             </>
           ) : (
-            this.renderFilterEditor({
-              field: selectedFilterField,
-              isUpdate: selectedFilterIndex !== -1,
-              operator: selectedFilterOperator,
-              value: selectedFilterValue
-            })
+            this.renderFilterEditor()
           )}
         </div>
 
-        {filters && (
+        {isSmallWindow && isSearchOpen && (
+          <div className={styles.drawer}>
+            {this.renderSearchInput()}
+
+            <button
+              className={styles['close-search']}
+              onClick={this.toggleSearch}
+            >
+              <Close />
+            </button>
+          </div>
+        )}
+
+        {isSmallWindow && areFiltersOpen && (
+          <div className={styles.drawer}>
+            {selectedFilterIndex === null ? (
+              <>
+                <div className={styles['heading-row']}>
+                  <h1 className={styles['filter-editor-heading']}>
+                    Active filters
+                  </h1>
+
+                  <button
+                    className={styles['close-filter-editor']}
+                    onClick={this.toggleFilters}
+                    type="button"
+                  >
+                    <Close />
+                  </button>
+                </div>
+
+                <div className={styles.filters}>
+                  {this.filtersArray.map(this.renderFilter.bind(this))}
+                </div>
+
+                <div className={styles['drawer-buttons']}>
+                  {addFilterButton}
+
+                  {clearFiltersButton}
+                </div>
+              </>
+            ) : (
+              this.renderFilterEditor()
+            )}
+          </div>
+        )}
+
+        {!isSmallWindow && this.filtersArray.length > 0 && (
           <div className={styles.filters}>
             {this.filtersArray.map(this.renderFilter.bind(this))}
           </div>
@@ -454,9 +468,15 @@ class DocumentListController extends React.Component {
     )
   }
 
-  renderFilterEditor({field, isUpdate, operator, value, mobile} = {}) {
-    const {filters, config} = this.props
-    const {selectedFilterIndex} = this.state
+  renderFilterEditor() {
+    const {filters, config, isSmallWindow} = this.props
+    const {
+      selectedFilterField: field,
+      selectedFilterIndex: index,
+      selectedFilterOperator: operator,
+      selectedFilterValue: value
+    } = this.state
+    const isUpdate = index !== -1
 
     // Finding fields that are filterable and don't already have a filter applied.
     // The result is an object mapping filterable field slugs to their human-
@@ -467,14 +487,16 @@ class DocumentListController extends React.Component {
       .map(slug => ({value: slug, label: this.getFieldName(slug)}))
 
     // Applying defaults.
-    field = field || (availableFields[0] && availableFields[0].value)
+    const modifiedField =
+      field || (availableFields[0] && availableFields[0].value)
 
     const valueIsEmpty = value === null || value === undefined || value === ''
     const {filterEdit: FilterEditComponent, filterOperators: operators = {}} =
-      this.getFieldComponent(field) || {}
+      this.getFieldComponent(modifiedField) || {}
 
     const selectedOperator =
       operator || Object.keys(operators)[0] || DEFAULT_OPERATOR_KEYWORD
+
     const operatorOptions = Object.entries(operators).map(([value, label]) => ({
       value,
       label
@@ -485,35 +507,40 @@ class DocumentListController extends React.Component {
       label: DEFAULT_OPERATOR_NAME
     })
 
-    const filterEditorStyle = new Style(styles, 'filter-editor').addIf(
-      'mobile',
-      mobile
-    )
-
     return (
       <form
-        className={filterEditorStyle.getClasses()}
-        onSubmit={this.addOrUpdateFilter.bind(this, field, selectedOperator)}
+        className={styles['filter-editor']}
+        onSubmit={this.addOrUpdateFilter.bind(
+          this,
+          modifiedField,
+          selectedOperator
+        )}
       >
-        {/* <div className={styles['filter-editor-row']}>
-          <h1 className={styles['filter-editor-heading']}>
-            {isUpdate ? 'Edit' : 'Add'} filter
-          </h1>
-
-          <button
-            className={`${styles['filter-editor-close']} ${styles.top}`}
-            onClick={this.closeFilterEditor}
-            type="button"
+        {isSmallWindow && (
+          <div
+            className={`${styles['filter-editor-row']} ${
+              styles['heading-row']
+            }`}
           >
-            <Close />
-          </button>
-        </div> */}
+            <h1 className={styles['filter-editor-heading']}>
+              {isUpdate ? 'Edit' : 'Add'} filter
+            </h1>
+
+            <button
+              className={styles['close-filter-editor']}
+              onClick={this.closeFilterEditor}
+              type="button"
+            >
+              <Close />
+            </button>
+          </div>
+        )}
         <div className={styles['filter-editor-row']}>
           <Select
             className={styles['field-selector']}
             onChange={this.selectField}
             options={availableFields}
-            value={field || Object.keys(filterableFields)[0]}
+            value={modifiedField || Object.keys(filterableFields)[0]}
           />
 
           {operators && (
@@ -526,9 +553,7 @@ class DocumentListController extends React.Component {
           )}
         </div>
 
-        <div
-          className={`${styles['filter-editor-row']} ${styles['value-row']}`}
-        >
+        <div className={styles['filter-editor-row']}>
           <FilterEditComponent
             config={config}
             onUpdate={this.setFilterValue}
@@ -550,7 +575,7 @@ class DocumentListController extends React.Component {
             <Button
               accent="negative"
               className={styles['remove-filter-button']}
-              onClick={this.removeFilter.bind(this, selectedFilterIndex)}
+              onClick={this.removeFilter.bind(this, index)}
               type="button"
             >
               Remove
@@ -559,14 +584,85 @@ class DocumentListController extends React.Component {
 
           <div className={styles.filler} />
 
-          <button
-            className={`${styles['filter-editor-close']} ${styles.bottom}`}
-            onClick={this.closeFilterEditor}
-            type="button"
-          >
-            <Close />
-          </button>
+          {!isSmallWindow && (
+            <button
+              className={styles['close-filter-editor']}
+              onClick={this.closeFilterEditor}
+              type="button"
+            >
+              <Close />
+            </button>
+          )}
         </div>
+      </form>
+    )
+  }
+
+  renderSearchInput() {
+    const {collection, isSmallWindow, searchableFields} = this.props
+    const {search: searchValue, selectedSuggestionIndex} = this.state
+
+    return (
+      <form
+        className={styles.form}
+        onSubmit={this.submitSearch.bind(
+          this,
+          searchableFields[selectedSuggestionIndex]
+        )}
+      >
+        <TextInput
+          autoFocus={isSmallWindow}
+          className={styles.input}
+          onChange={event =>
+            this.setState({
+              search: event.target.value
+            })
+          }
+          onKeyDown={this.handleSearchKeydown.bind(this, searchableFields)}
+          placeholder={`Search ${collection.name}`}
+          ref={this.searchInputRef}
+          simple
+          value={searchValue}
+          tabIndex="1"
+        />
+
+        {!isSmallWindow && <Search className={styles['search-icon']} />}
+
+        {searchValue && (
+          <div className={styles.suggestions}>
+            {searchableFields.map((fieldName, index) => {
+              const suggestionStyle = new Style(styles, 'suggestion').addIf(
+                'selected',
+                selectedSuggestionIndex === index
+              )
+
+              return (
+                <button
+                  className={suggestionStyle.getClasses()}
+                  key={fieldName + searchValue}
+                  onMouseDown={this.submitSearch.bind(this, fieldName)}
+                  onMouseEnter={() =>
+                    this.setState({selectedSuggestionIndex: index})
+                  }
+                  type="button"
+                >
+                  <span className={styles['suggestion-prefix']}>
+                    {this.getFieldName(fieldName)} contains
+                  </span>
+                  <span className={styles['suggestion-value']}>
+                    {' '}
+                    ‘{searchValue}’
+                  </span>
+                  {!isTouchDevice && (
+                    <span className={styles['suggestion-hint']}>
+                      Search <KeyboardReturn fontSize="small" />
+                    </span>
+                  )}
+                </button>
+              )
+            })}
+          </div>
+        )}
       </form>
     )
   }
@@ -576,10 +672,58 @@ class DocumentListController extends React.Component {
 
     return <span>{message}</span>
   }
+
+  selectField(event) {
+    const {value: newField} = event.target
+    const {selectedFilterOperator} = this.state
+    const fieldComponent = this.getFieldComponent(newField) || {}
+    const fieldOperators = fieldComponent.filterOperators || {}
+
+    // If the new selected field supports the currently selected operator, we
+    // keep it. Otherwise, we use the first operator defined by the new field
+    // component.
+    const newOperator = fieldOperators[selectedFilterOperator]
+      ? selectedFilterOperator
+      : Object.keys(fieldOperators)[0]
+
+    this.setState({
+      selectedFilterField: newField,
+      selectedFilterOperator: newOperator
+    })
+  }
+
+  selectFilterToEdit(index) {
+    const {field, operator, value} = this.filtersArray[index]
+
+    this.setState({
+      selectedFilterField: field,
+      selectedFilterIndex: index,
+      selectedFilterOperator: operator,
+      selectedFilterValue: value
+    })
+  }
+
+  submitSearch(field, event) {
+    const {search: searchValue} = this.state
+
+    event.preventDefault()
+
+    if (searchValue) {
+      this.filtersArray.push({
+        field,
+        operator: '$regex',
+        value: searchValue
+      })
+
+      this.propagateFilters()
+      this.setState({...this.defaultState})
+    }
+  }
 }
 
 const mapState = (state, ownProps) => {
   const {collection, filters} = ownProps
+  const {config, windowWidth} = state.app
 
   // Finding String fields that don't already have filters applied.
   const searchableFields = Object.keys(collection.fields).filter(
@@ -589,7 +733,8 @@ const mapState = (state, ownProps) => {
   )
 
   return {
-    config: state.app.config,
+    config,
+    isSmallWindow: windowWidth < 768,
     searchableFields
   }
 }

@@ -3,6 +3,7 @@
   background-color: var(--edit-color-background-1);
   font-family: var(--theme-font-family);
   display: flex;
+  position: relative;
   justify-content: space-between;
   min-height: var(--editif-toolbar-height);
   padding: var(--edit-margin-md) var(--edit-margin-lg);

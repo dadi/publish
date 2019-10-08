@@ -29,6 +29,12 @@ export default class TableHeadCell extends React.Component {
       .addIf('head-cell-sorted', sorted)
       .addIf('select-cell', select)
 
-    return <th className={cellStyle.getClasses()}>{children}</th>
+    return (
+      <th className={cellStyle.getClasses()}>
+        {select && <div className={styles['select-spacer']} />}
+
+        {children}
+      </th>
+    )
   }
 }

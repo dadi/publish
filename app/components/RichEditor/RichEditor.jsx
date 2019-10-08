@@ -1,13 +1,6 @@
-import * as Constants from 'lib/constants'
 import {RichEditorToolbar, RichEditorToolbarButton} from './RichEditorToolbar'
-import Button from 'components/Button/Button'
-import DocumentGridList from 'components/DocumentGridList/DocumentGridList'
-import DocumentList from 'containers/DocumentList/DocumentList'
-import DocumentListController from 'components/DocumentListController/DocumentListController'
-import DocumentListToolbar from 'components/DocumentListToolbar/DocumentListToolbar'
 import {Editor} from 'slate-react'
 import Fullscreen from 'components/Fullscreen/Fullscreen'
-import HeroMessage from 'components/HeroMessage/HeroMessage'
 import HotKeys from 'lib/hot-keys'
 import IconBold from './icons/bold.svg'
 import IconBulletedList from './icons/bulleted-list.svg'
@@ -22,11 +15,10 @@ import IconNumberedList from './icons/numbered-list.svg'
 import IconQuote from './icons/quote.svg'
 import IconText from './icons/text.svg'
 import MarkdownSerializer from '@edithq/slate-md-serializer'
-import MediaGridCard from 'containers/MediaGridCard/MediaGridCard'
-import Modal from 'components/Modal/Modal'
 import PlainSerializer from 'slate-plain-serializer'
 import proptypes from 'prop-types'
 import React from 'react'
+import ReferenceSelectView from 'views/ReferenceSelectView/ReferenceSelectView'
 import RichEditorLink from './RichEditorLink'
 import Style from 'lib/Style'
 import styles from './RichEditor.css'
@@ -123,6 +115,10 @@ export default class RichEditor extends React.Component {
 
   constructor(props) {
     super(props)
+
+    this.handleMediaInsert = this.handleMediaInsert.bind(this)
+    this.startSelectingMedia = () => this.setState({isSelectingMedia: true})
+    this.stopSelectingMedia = () => this.setState({isSelectingMedia: false})
 
     this.hotKeys = new HotKeys({
       escape: this.handleToggleFullscreen.bind(this, false),
@@ -221,8 +217,8 @@ export default class RichEditor extends React.Component {
     })
   }
 
-  handleMediaInsert() {
-    const {isRawMode, mediaSelection} = this.state
+  handleMediaInsert(mediaSelection) {
+    const {isRawMode} = this.state
 
     this.setState({...this.initialMediaState}, () => {
       mediaSelection.forEach(mediaObject => {
@@ -369,12 +365,6 @@ export default class RichEditor extends React.Component {
     this.editor.toggleMark(type)
   }
 
-  handleToggleMediaSelect(isSelectingMedia) {
-    this.setState({
-      isSelectingMedia
-    })
-  }
-
   handleToggleRawMode() {
     const {onChange} = this.props
     const {isRawMode} = this.state
@@ -422,7 +412,30 @@ export default class RichEditor extends React.Component {
   }
 
   render() {
-    const {isFullscreen} = this.state
+    const {isFullscreen, isSelectingMedia} = this.state
+
+    if (isSelectingMedia) {
+      const collection = {
+        fields: {
+          mediaSelect: {
+            type: 'Media'
+          }
+        }
+      }
+
+      return (
+        <Fullscreen>
+          <ReferenceSelectView
+            buildUrl={() => '/media'}
+            collection={collection}
+            onCancel={this.stopSelectingMedia}
+            onSave={this.handleMediaInsert}
+            referenceFieldName="mediaSelect"
+            saveText="Insert items"
+          />
+        </Fullscreen>
+      )
+    }
 
     if (isFullscreen) {
       return <Fullscreen>{this.renderEditor()}</Fullscreen>
@@ -489,7 +502,7 @@ export default class RichEditor extends React.Component {
   }
 
   renderEditor() {
-    const {isFullscreen, isRawMode, isSelectingMedia} = this.state
+    const {isFullscreen, isRawMode} = this.state
     const containerStyle = new Style(styles).addIf(
       'container-fullscreen',
       isFullscreen
@@ -517,15 +530,6 @@ export default class RichEditor extends React.Component {
 
     return (
       <div className={containerStyle.getClasses()}>
-        {isSelectingMedia && (
-          <Modal
-            onRequestClose={this.handleToggleMediaSelect.bind(this, false)}
-            scrollContent={false}
-          >
-            {this.renderMediaSelect()}
-          </Modal>
-        )}
-
         <RichEditorToolbar isFullscreen={isFullscreen}>
           <div>
             <RichEditorToolbarButton
@@ -596,7 +600,7 @@ export default class RichEditor extends React.Component {
               text="Code block"
             />
             <RichEditorToolbarButton
-              action={this.handleToggleMediaSelect.bind(this, true)}
+              action={this.startSelectingMedia}
               icon={IconMedia}
               text="Media"
             />
@@ -683,93 +687,6 @@ export default class RichEditor extends React.Component {
       default:
         return next()
     }
-  }
-
-  renderMediaSelect() {
-    const {contentKey} = this.props
-    const {mediaFilters, mediaPage, mediaSelection} = this.state
-    const compoundContentKey =
-      contentKey +
-      JSON.stringify({
-        filters: mediaFilters,
-        page: mediaPage
-      })
-    const collection = Constants.MEDIA_COLLECTION_SCHEMA
-
-    return (
-      <DocumentList
-        collection={collection}
-        contentKey={compoundContentKey}
-        filters={mediaFilters}
-        onEmptyList={() => (
-          <HeroMessage
-            title="No media yet."
-            subtitle="There are no items in the media library."
-          >
-            <Button accent="save" href="/media">
-              Upload some
-            </Button>
-          </HeroMessage>
-        )}
-        onRender={({documents, metadata, onSelect, selectedDocuments}) => (
-          <>
-            <div className={styles['media-select-filters']}>
-              <DocumentListController
-                collection={collection}
-                filters={mediaFilters}
-                onUpdateFilters={newFilters =>
-                  this.setState({
-                    mediaFilters: newFilters
-                  })
-                }
-              />
-            </div>
-
-            <div className={styles['media-select-documents']}>
-              <DocumentGridList
-                documents={documents}
-                onRenderCard={({item, isSelected, onSelect}) => (
-                  <MediaGridCard
-                    key={item._id}
-                    isSelected={isSelected}
-                    item={item}
-                    onSelect={onSelect}
-                  />
-                )}
-                onSelect={onSelect}
-                selectedDocuments={selectedDocuments}
-              />
-            </div>
-
-            <div className={styles['media-select-toolbar']}>
-              <DocumentListToolbar
-                metadata={metadata}
-                onPageChange={page =>
-                  this.setState({
-                    mediaPage: page
-                  })
-                }
-              >
-                <Button
-                  accent="save"
-                  disabled={mediaSelection.length === 0}
-                  onClick={this.handleMediaInsert.bind(this)}
-                >
-                  Insert items
-                </Button>
-              </DocumentListToolbar>
-            </div>
-          </>
-        )}
-        onSelect={newSelection =>
-          this.setState({
-            mediaSelection: newSelection
-          })
-        }
-        page={mediaPage}
-        selection={mediaSelection}
-      />
-    )
   }
 
   serialise(value) {

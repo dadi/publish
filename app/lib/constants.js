@@ -28,7 +28,7 @@ export const MEDIA_COLLECTION_SCHEMA = {
       type: 'String'
     },
     mimeType: {
-      label: 'MIME type',
+      label: 'Type',
       publish: {
         readonly: true,
         section: 'Details'
@@ -87,9 +87,6 @@ export const MEDIA_COLLECTION_SCHEMA = {
 export const NETWORK_OK = 'NETWORK_OK'
 export const NETWORK_NO_INTERNET_CONNECTION = 'NETWORK_NO_INTERNET_CONNECTION'
 export const NETWORK_SERVER_UNRESPONSIVE = 'NETWORK_SERVER_UNRESPONSIVE'
-export const NOTIFICATION_TYPE_SUCCESS = 'NOTIFICATION_TYPE_SUCCESS'
-export const NOTIFICATION_TYPE_ERROR = 'NOTIFICATION_TYPE_ERROR'
-export const NOTIFICATION_TYPE_WARNING = 'NOTIFICATION_TYPE_WARNING'
 export const PASSWORD_MISMATCH = 'PASSWORD_MISMATCH'
 export const SAVE_ACTION_SAVE_AND_GO_BACK = 'SAVE_ACTION_SAVE_AND_GO_BACK'
 export const SAVE_ACTION_SAVE_AND_CONTINUE = 'SAVE_ACTION_SAVE_AND_CONTINUE'

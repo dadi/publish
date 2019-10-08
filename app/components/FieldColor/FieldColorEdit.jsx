@@ -3,7 +3,7 @@ import Label from 'components/Label/Label'
 import proptypes from 'prop-types'
 import React from 'react'
 import styles from './FieldColor.css'
-import TextInput from 'components/TextInput/TextInput'
+import {TextInput} from '@dadi/edit-ui'
 
 /**
  * Component for API fields of type Color
@@ -80,7 +80,7 @@ export default class FieldColorEdit extends React.Component {
     this.pickerOutsideEventHandler = this.handlePickerClick.bind(this, false)
     this.state = {
       hasFocus: false,
-      pickerVisible: false
+      isPickerVisible: false
     }
   }
 
@@ -105,7 +105,7 @@ export default class FieldColorEdit extends React.Component {
   }
 
   handleFocus(hasFocus) {
-    const {pickerVisible} = this.state
+    const {isPickerVisible} = this.state
     const {schema} = this.props
     const publishBlock = schema.publish || {}
 
@@ -120,9 +120,9 @@ export default class FieldColorEdit extends React.Component {
       hasFocus
     })
 
-    if (!pickerVisible) {
+    if (!isPickerVisible) {
       this.setState({
-        pickerVisible: true
+        isPickerVisible: true
       })
     }
   }
@@ -136,14 +136,14 @@ export default class FieldColorEdit extends React.Component {
   }
 
   handlePickerClick(insidePicker, event) {
-    const {pickerVisible} = this.state
+    const {isPickerVisible} = this.state
 
     if (insidePicker) {
       event.stopPropagation()
     } else {
-      if (pickerVisible && !this.hasFocus) {
+      if (isPickerVisible && !this.hasFocus) {
         this.setState({
-          pickerVisible: false
+          isPickerVisible: false
         })
       }
     }
@@ -163,53 +163,55 @@ export default class FieldColorEdit extends React.Component {
       config,
       displayName,
       error,
+      hasUnsavedChanges,
       name,
       required,
       schema,
       value
     } = this.props
-    const {hasFocus} = this.state
-    const {pickerVisible} = this.state
+    const {isPickerVisible} = this.state
     const publishBlock = schema.publish || {}
 
     return (
       <Label
+        accent={hasUnsavedChanges ? 'info' : null}
         className={styles.label}
-        error={error}
-        errorMessage={typeof error === 'string' ? error : null}
-        hasFocus={hasFocus}
-        label={displayName}
         comment={
           comment ||
           (required && 'Required') ||
           (publishBlock.readonly && 'Read only')
         }
+        error={error}
+        errorMessage={typeof error === 'string' ? error : null}
+        label={displayName}
       >
-        <TextInput
-          name={name}
-          onBlur={this.handleFocus.bind(this, false)}
-          onInput={this.handleChange.bind(this)}
-          onFocus={this.handleFocus.bind(this, true)}
-          readonly={publishBlock.readonly === true}
-          type="text"
-          value={value}
-        />
+        <div className={styles.container}>
+          <div
+            className={styles.swatch}
+            style={value ? {backgroundColor: `#${value}`} : null}
+          />
 
-        <div
-          className={styles.swatch}
-          style={value ? {backgroundColor: `#${value}`} : null}
-        />
+          <TextInput
+            accent={hasUnsavedChanges ? 'info' : null}
+            name={name}
+            onBlur={this.handleFocus.bind(this, false)}
+            onChange={this.handleChange.bind(this)}
+            onFocus={this.handleFocus.bind(this, true)}
+            readonly={publishBlock.readonly === true}
+            value={value}
+          />
 
-        {pickerVisible && (
-          <div ref={this.handlePickerRef.bind(this)}>
-            <ColorPicker
-              className={styles.picker}
-              format={publishBlock.format || 'hex'}
-              onChange={this.handlePickerChange.bind(this)}
-              value={value}
-            />
-          </div>
-        )}
+          {isPickerVisible && (
+            <div ref={this.handlePickerRef.bind(this)}>
+              <ColorPicker
+                className={styles.picker}
+                format={publishBlock.format || 'hex'}
+                onChange={this.handlePickerChange.bind(this)}
+                value={value}
+              />
+            </div>
+          )}
+        </div>
       </Label>
     )
   }

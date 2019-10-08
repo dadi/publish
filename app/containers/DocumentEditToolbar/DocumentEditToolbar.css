@@ -3,6 +3,7 @@
   background-color: var(--edit-color-background-1);
   display: flex;
   padding: var(--edit-margin-md) var(--edit-margin-lg);
+  position: relative;
   box-shadow: var(--edit-shadow-4px-top);
   min-height: var(--editif-toolbar-height);
   z-index: var(--edit-z-index-toolbar);

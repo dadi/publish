@@ -29,6 +29,9 @@ export default class FieldStringList extends React.Component {
 
     this.hoverOn = () => props.onHover(true)
     this.hoverOff = () => props.onHover(false)
+    this.markEvent = e => {
+      e.__innerClick = true
+    }
   }
 
   render() {
@@ -55,6 +58,7 @@ export default class FieldStringList extends React.Component {
       return (
         <Link
           className={styles['list-link']}
+          onClick={this.markEvent}
           onMouseEnter={this.hoverOn}
           onMouseLeave={this.hoverOff}
           to={internalLink}
@@ -116,7 +120,14 @@ export default class FieldStringList extends React.Component {
     }
 
     return (
-      <a className={styles['list-link']} href={value} target="_blank">
+      <a
+        className={styles['list-link']}
+        href={value}
+        onClick={this.markEvent}
+        onMouseEnter={this.hoverOn}
+        onMouseLeave={this.hoverOff}
+        target="_blank"
+      >
         {valueFormatted}
       </a>
     )

@@ -65,6 +65,8 @@
   --edit-color-negative-darker-1: #e54d5c;
 
   --edit-color-info: #7882fd;
+  --edit-color-info-hint: #e7e9ff;
+  --edit-color-info-darker-1: #5d65c7;
 
   --edit-color-highlight-1: #bfe8db;
   --edit-color-highlight-2: #eaf5f2;
@@ -147,10 +149,11 @@
   --edit-color-text-inverse-2: var(--edit-color-inverse-opacity-80);
 
   --edit-color-underline: var(--edit-color-opacity-95);
-  --edit-color-underline-hover: var(--edit-color-positive);
+  --edit-color-underline-hover: var(--edit-color-positive-opacity);
 
   --edit-color-border-light: var(--edit-color-opacity-85);
   --edit-color-border-dark: var(--edit-color-opacity-70);
+  --edit-color-border-dark-2: var(--edit-color-opacity-50);
 
   --edit-color-off: var(--edit-color-opacity-80);
 }

@@ -1,5 +1,6 @@
 import {connectRedux} from 'lib/redux'
 import ErrorMessage from 'components/ErrorMessage/ErrorMessage'
+import Header from 'containers/Header/Header'
 import React from 'react'
 
 class ErrorView extends React.Component {
@@ -11,9 +12,13 @@ class ErrorView extends React.Component {
     // message, if the config has already been loaded. This prevents us from
     // showing a flashing 404 page whilst routes are still being loaded.
     return (
-      <main>
-        {(hasConfig || data) && <ErrorMessage type={type} data={data} />}
-      </main>
+      <>
+        <Header />
+
+        <main>
+          {(hasConfig || data) && <ErrorMessage type={type} data={data} />}
+        </main>
+      </>
     )
   }
 }

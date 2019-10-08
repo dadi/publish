@@ -2,6 +2,7 @@
   --cell-y-padding: var(--edit-margin-md);
   --cell-x-padding: calc(var(--cell-y-padding) / 2);
   --cell-padding: var(--cell-y-padding) var(--cell-x-padding);
+  --select-cell-width: 47px;
 
   border: solid var(--edit-border-width-standard) var(--edit-color-border-light);
   text-align: left;
@@ -17,11 +18,11 @@
   white-space: nowrap;
 }
 
-.cell:first-child {
+.cell:first-child:not(.select-cell) {
   padding-left: calc(2 * var(--cell-x-padding));
 }
 
-.cell:last-child {
+.cell:last-child:not(.select-cell) {
   padding-right: calc(2 * var(--cell-x-padding));
 }
 
@@ -33,13 +34,30 @@
   background-color: var(--edit-color-highlight-2);
 }
 
-.head .cell:not(.select-cell) {
+.head .cell {
   position: relative;
   padding: 0;
 }
 
 .cell.select-cell {
-  width: 47px;
+  padding: 0;
+  position: relative;
+  width: var(--select-cell-width);
+}
+
+.select-spacer {
+  width: var(--select-cell-width);
+}
+
+.select-label {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  top: 0;
+  left: 0;
 }
 
 .row {
@@ -47,6 +65,7 @@
   color: var(--edit-color-text-2);
   transition: all var(--edit-transition-duration-short);
   position: relative;
+  cursor: pointer;
 }
 
 .row:nth-child(even) {
@@ -78,13 +97,4 @@
   100% {
     transform: scale(1);
   }
-}
-
-.checkbox::before {
-  box-shadow: 0 0 0 4px transparent !important;
-}
-
-.row.row-hovered .checkbox::before,
-.checkbox:hover::before {
-  box-shadow: 0 0 0 4px var(--edit-color-highlight-1) !important;
 }

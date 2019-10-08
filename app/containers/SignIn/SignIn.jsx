@@ -166,7 +166,7 @@ class SignIn extends React.Component {
                   (userHasInteracted && !formDataIsValid) ||
                   !api
                 }
-                filled
+                fillStyle="filled"
                 isLoading={state.user.isAuthenticating}
                 type="submit"
               >

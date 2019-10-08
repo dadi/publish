@@ -1,6 +1,9 @@
 import * as documentActions from 'actions/documentActions'
 import {Checkbox} from '@dadi/edit-ui'
 import {connectRedux} from 'lib/redux'
+import {InsertDriveFile, Videocam} from '@material-ui/icons'
+import {getMediaUrl} from 'lib/util/url'
+import {Link} from 'react-router-dom'
 import proptypes from 'prop-types'
 import React from 'react'
 import Style from 'lib/Style'
@@ -54,18 +57,12 @@ class MediaGridCard extends React.Component {
     selectLimit: Infinity
   }
 
-  constructor(props) {
-    super(props)
-
-    this.handleCardClick = this.handleCardClick.bind(this)
-    this.handleSelectClick = this.handleSelectClick.bind(this)
-  }
-
   handleCardClick(event) {
-    // Deselecting the last item by clicking on the card causes navigation
-    // to that item. This prevents that. Alternative solutions more than welcome.
-    event.preventDefault()
-    this.handleSelectClick(event)
+    const {href, onSelect} = this.props
+
+    if (typeof href !== 'string' && typeof onSelect === 'function') {
+      onSelect(event)
+    }
   }
 
   handleSelectClick(event) {
@@ -77,39 +74,38 @@ class MediaGridCard extends React.Component {
   }
 
   render() {
-    const {href, item, isSelected, isSelectMode} = this.props
-    const cardStyle = new Style(styles, 'card').addIf(
-      'select-mode',
-      isSelectMode
+    const {href, item, isSelected} = this.props
+    const itemStyle = new Style(styles, 'wrapper').addIf(
+      'wrapper-selected',
+      isSelected
     )
 
     // For backwards compatibility.
     const mimeType = item.mimeType || item.mimetype
-    const isImage = mimeType && mimeType.includes('image/')
     const humanFileSize = fileSize(item.contentLength, {
       fixed: item.contentLength > 1e6 ? 2 : 0
     }).human('si')
 
-    // If the `href` prop is present, we make the select element responsible
-    // for changing the selected state. If not, it becomes a purely decorative
-    // element with a read-only value, as the card as a whole will be used to
-    // change the selected state.
-    const selectProps =
-      typeof href === 'string'
-        ? {onChange: this.handleSelectClick}
-        : {readOnly: true}
-
-    const wrapperProps =
-      href && !isSelectMode ? {href} : {onClick: this.handleCardClick}
+    // If the `href` prop is present, the label around the checkbox takes up
+    // a larger hit area, to make selection easier. When clicking outside of
+    // that hit area, the link defined in `href` will be followed.
+    const selectStyle = new Style(styles, 'select').addIf('large', href)
 
     return (
-      <div className={cardStyle.getClasses()}>
-        <label className={styles.select}>
-          <Checkbox checked={isSelected} {...selectProps} />
+      <div
+        className={itemStyle.getClasses()}
+        onClick={this.handleCardClick.bind(this)}
+      >
+        <label className={selectStyle.getClasses()}>
+          <Checkbox
+            checked={isSelected}
+            large
+            onChange={href ? this.handleSelectClick.bind(this) : null}
+          />
         </label>
-        <a className={styles['body-wrapper']} {...wrapperProps}>
-          {this.renderHead({isImage})}
-        </a>
+
+        {this.renderHead()}
+
         <div className={styles.metadata}>
           <div className={styles.filename}>{item.fileName}</div>
           <div className={styles.info}>
@@ -126,20 +122,53 @@ class MediaGridCard extends React.Component {
     )
   }
 
-  renderHead({isImage}) {
-    const {item, state} = this.props
+  renderHead() {
+    const {href, item, state} = this.props
+    const mimeType = item.mimeType || item.mimetype || ''
     const {config} = state.app
-    const canonicalPath =
-      item.path && (item.path.indexOf('/') === 0 ? item.path : `/${item.path}`)
-    const url =
-      config.cdn && config.cdn.publicUrl
-        ? `${config.cdn.publicUrl}${canonicalPath}?width=600`
-        : item.url || canonicalPath
+    const isImage = mimeType.indexOf('image/') === 0
+    const aspectRatio = isImage ? (item.height / item.width) * 100 : 100
+    const url = getMediaUrl({
+      config,
+      document: item,
+      width: 350
+    })
 
-    return isImage ? (
-      <img className={styles.image} src={url} />
-    ) : (
-      <div className={styles['generic-thumbnail']} />
+    let headElement = this.renderHeadIcon(InsertDriveFile)
+
+    if (isImage) {
+      headElement = <img className={styles.image} src={url} />
+    } else if (mimeType.indexOf('video/') === 0) {
+      headElement = this.renderHeadIcon(Videocam)
+    }
+
+    if (typeof href === 'string') {
+      return (
+        <Link
+          className={styles['image-holder']}
+          style={{paddingBottom: `${aspectRatio}%`}}
+          to={href}
+        >
+          {headElement}
+        </Link>
+      )
+    }
+
+    return (
+      <div
+        className={styles['image-holder']}
+        style={{paddingBottom: `${aspectRatio}%`}}
+      >
+        {headElement}
+      </div>
+    )
+  }
+
+  renderHeadIcon(Icon) {
+    return (
+      <div className={styles['icon-container']}>
+        <Icon className={styles.icon} />
+      </div>
     )
   }
 }
