@@ -127,9 +127,18 @@ export default class RichEditor extends React.Component {
   constructor(props) {
     super(props)
 
+    this.handleChange = this.handleChange.bind(this)
+    this.handleKeyDown = this.handleKeyDown.bind(this)
     this.handleMediaInsert = this.handleMediaInsert.bind(this)
+    this.handleSave = this.handleSave.bind(this)
+    this.handleToggleFullscreen = this.handleToggleFullscreen.bind(this)
+    this.handleToggleRawMode = this.handleToggleRawMode.bind(this)
+    this.renderBlock = this.renderBlock.bind(this)
+    this.renderInline = this.renderInline.bind(this)
+    this.renderMark = this.renderMark.bind(this)
     this.startSelectingMedia = () => this.setState({isSelectingMedia: true})
     this.stopSelectingMedia = () => this.setState({isSelectingMedia: false})
+    this.validate = this.validate.bind(this)
 
     this.hotKeys = new HotKeys({
       escape: this.handleToggleFullscreen.bind(this, false),
@@ -162,11 +171,11 @@ export default class RichEditor extends React.Component {
     this.hotKeys.addListener()
 
     if (typeof onSaveRegister === 'function') {
-      onSaveRegister(this.handleSave.bind(this))
+      onSaveRegister(this.handleSave)
     }
 
     if (typeof onValidateRegister === 'function') {
-      onValidateRegister(this.validate.bind(this))
+      onValidateRegister(this.validate)
     }
   }
 
@@ -685,14 +694,14 @@ export default class RichEditor extends React.Component {
 
           <div>
             <RichEditorToolbarButton
-              action={this.handleToggleRawMode.bind(this)}
+              action={this.handleToggleRawMode}
               active={isRawMode}
               title="Markdown mode"
             >
               <Markdown />
             </RichEditorToolbarButton>
             <RichEditorToolbarButton
-              action={this.handleToggleFullscreen.bind(this)}
+              action={this.handleToggleFullscreen}
               title="Fullscreen"
             >
               {isFullscreen ? <FullscreenExit /> : <Fullscreen />}
@@ -706,10 +715,11 @@ export default class RichEditor extends React.Component {
         >
           <Editor
             className={editorStyle.getClasses()}
-            onChange={this.handleChange.bind(this)}
-            renderBlock={this.renderBlock.bind(this)}
-            renderInline={this.renderInline.bind(this)}
-            renderMark={this.renderMark.bind(this)}
+            onChange={this.handleChange}
+            onKeyDown={this.handleKeyDown}
+            renderBlock={this.renderBlock}
+            renderInline={this.renderInline}
+            renderMark={this.renderMark}
             ref={el => (this.editor = el)}
             schema={SCHEMA}
             value={this.value}
