@@ -459,8 +459,17 @@ export default class RichEditor extends React.Component {
     const {attributes, children, isFocused, node} = props
 
     switch (node.type) {
-      case NODE_CODE:
-        return <pre {...attributes}>{children}</pre>
+      case NODE_CODE: {
+        const language = node.data.get('language')
+
+        return (
+          <pre {...attributes}>
+            <code className={language && `language-${language}`}>
+              {children}
+            </code>
+          </pre>
+        )
+      }
 
       case NODE_BLOCKQUOTE:
         return <blockquote {...attributes}>{children}</blockquote>

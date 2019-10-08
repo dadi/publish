@@ -50,7 +50,6 @@
   text-decoration: underline;
 }
 
-.editor pre,
 .editor code {
   font-family: var(--font-mono);
   font-size: var(--edit-font-size-sm);
@@ -61,7 +60,7 @@
   padding: var(--edit-margin-xs);
 }
 
-.editor code {
+.editor :not(pre) > code {
   color: var(--edit-color-positive-darker-2);
   background-color: var(--edit-color-positive-hint);
   padding: 0 2px;
