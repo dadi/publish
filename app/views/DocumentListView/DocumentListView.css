@@ -1,3 +1,7 @@
+.main {
+  position: relative;
+}
+
 .list-container {
   padding-bottom: calc(var(--edit-margin-xxl) + var(--editif-toolbar-height));
 }

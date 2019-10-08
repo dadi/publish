@@ -243,7 +243,7 @@ class DocumentListView extends React.Component {
             <DocumentEditView {...this.props} isSingleDocument />
           )}
           onLoading={() => (
-            <main>
+            <main className={styles.main}>
               <SpinningWheel />
             </main>
           )}
@@ -329,15 +329,15 @@ class DocumentListView extends React.Component {
           </Modal>
         )}
 
-        <DocumentListController
-          collection={collection}
-          createNewHref={createNewHref}
-          enableFilters
-          filters={search.filter}
-          onUpdateFilters={this.handleFiltersUpdate.bind(this)}
-        />
+        <main className={styles.main}>
+          <DocumentListController
+            collection={collection}
+            createNewHref={createNewHref}
+            enableFilters
+            filters={search.filter}
+            onUpdateFilters={this.handleFiltersUpdate.bind(this)}
+          />
 
-        <main>
           <div className={styles['list-container']}>
             {this.renderMain({
               collection,
