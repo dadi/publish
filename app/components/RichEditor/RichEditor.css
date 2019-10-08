@@ -79,6 +79,10 @@
   font-size: 1.25em;
 }
 
+.editor hr {
+  margin: var(--edit-margin-md) 0;
+}
+
 .editor .image-wrapper {
   background-color: var(--edit-color-background-2);
   display: flex;

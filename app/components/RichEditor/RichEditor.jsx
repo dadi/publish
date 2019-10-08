@@ -47,6 +47,7 @@ const EMPTY_VALUE = {
 const FORMAT_MARKDOWN = 'markdown'
 const NODE_BLOCKQUOTE = 'block-quote'
 const NODE_BOLD = 'bold'
+const NODE_BULLETED_LIST = 'bulleted-list'
 const NODE_CODE = 'code'
 const NODE_HEADING1 = 'heading1'
 const NODE_HEADING2 = 'heading2'
@@ -54,12 +55,12 @@ const NODE_HEADING3 = 'heading3'
 const NODE_HEADING4 = 'heading4'
 const NODE_HEADING5 = 'heading5'
 const NODE_HEADING6 = 'heading6'
-const NODE_ITALIC = 'italic'
+const NODE_HR = 'horizontal-rule'
 const NODE_IMAGE = 'image'
+const NODE_ITALIC = 'italic'
 const NODE_LINK = 'link'
-const NODE_BULLETED_LIST = 'bulleted-list'
-const NODE_NUMBERED_LIST = 'ordered-list'
 const NODE_LIST_ITEM = 'list-item'
+const NODE_NUMBERED_LIST = 'ordered-list'
 const SCHEMA = {
   blocks: {
     image: {
@@ -508,6 +509,9 @@ export default class RichEditor extends React.Component {
             {children}
           </h6>
         )
+
+      case NODE_HR:
+        return <hr />
 
       case NODE_IMAGE: {
         const imageWrapperStyle = new Style(styles, 'image-wrapper').addIf(
