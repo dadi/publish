@@ -33,18 +33,16 @@ export default class FieldMediaList extends React.Component {
   render() {
     const {config, value} = this.props
     const values = value && !Array.isArray(value) ? [value] : value
-    const multiple = values && values.length > 1
+    const hasMultiple = values && values.length > 1
+
+    if (!values) return null
 
     return (
-      <div>
-        {values && (
-          <div>
-            <FieldMediaItem config={config} isList={true} value={values[0]} />
+      <div className={styles['list-item']}>
+        <FieldMediaItem config={config} isList={true} value={values[0]} />
 
-            {multiple && (
-              <span className={styles.more}>and {values.length - 1} more</span>
-            )}
-          </div>
+        {hasMultiple && (
+          <span className={styles.more}>and {values.length - 1} more</span>
         )}
       </div>
     )

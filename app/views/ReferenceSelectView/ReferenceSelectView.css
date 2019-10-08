@@ -1,3 +1,11 @@
+.main {
+  padding-bottom: calc(var(--edit-margin-xxl) + var(--editif-toolbar-height));
+}
+
+.main.is-media {
+  padding-top: var(--edit-margin-xxl);
+}
+
 .container {
   position: absolute;
   top: 0;
@@ -6,13 +14,13 @@
 
 .header {
   background-color: var(--edit-color-background-1);
-  padding: var(--edit-margin-md) var(--edit-margin-lg);
+  padding: 8px var(--edit-margin-lg);
   border-bottom: 2px solid var(--edit-color-background-3);
 }
 
 @media (min-width: 1024px) {
   .header {
-    padding: var(--edit-margin-md) var(--edit-margin-xxl);
+    padding: 8px var(--edit-margin-xxl);
   }
 }
 

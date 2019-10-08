@@ -11,12 +11,7 @@ export function decodeSearch(searchString) {
   const parameters = JSON.parse(`{"${decodeURI(sanitisedString)}"}`)
 
   Object.keys(parameters).forEach(key => {
-    try {
-      // Trying to parse valid JSON parameters.
-      parameters[key] = JSON.parse(parameters[key])
-    } catch (err) {
-      // noop
-    }
+    parameters[key] = JSON.parse(parameters[key].replace('\\', '\\\\'))
   })
 
   return parameters
@@ -72,4 +67,25 @@ export function buildUrl({
   const urlNodes = [property, group, collection, documentId, section]
 
   return '/' + urlNodes.filter(Boolean).join('/') + encodeSearch(search)
+}
+
+export function getMediaUrl({config, document, width}) {
+  if (!document) return null
+
+  const {_previewData, path, url} = document
+
+  if (_previewData) return _previewData
+
+  const normalisedPath =
+    path && (path.indexOf('/') === 0 ? path.slice(1) : path)
+  const cdnPublicUrl = config && config.cdn && config.cdn.publicUrl
+  const search = typeof width === 'number' ? `?width=${width}` : ''
+
+  if (cdnPublicUrl && normalisedPath) {
+    return `${cdnPublicUrl}/${normalisedPath}${search}`
+  } else if (url) {
+    return url
+  }
+
+  return null
 }

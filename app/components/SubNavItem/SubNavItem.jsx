@@ -40,14 +40,14 @@ export default class SubNavItem extends React.Component {
   }
 
   render() {
-    const {active, children, error, href} = this.props
+    const {active, children, error, href, inDropdown, onClick} = this.props
     const itemStyle = new Style(styles, 'sub-nav-item')
-
-    itemStyle.addIf('active', active)
-    itemStyle.addIf('error', error)
+      .addIf('active', active)
+      .addIf('error', error)
+      .addIf('in-dropdown', inDropdown)
 
     return (
-      <Link className={itemStyle.getClasses()} to={href}>
+      <Link className={itemStyle.getClasses()} onClick={onClick} to={href}>
         {children}
       </Link>
     )

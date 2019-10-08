@@ -1,6 +1,9 @@
 @import '../../main.css';
 
 .button {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
   position: relative;
   cursor: pointer;
   box-sizing: border-box;
@@ -10,21 +13,20 @@
   outline: none;
   border: solid var(--edit-border-width-standard);
   border-radius: var(--edit-radius-button);
-  height: var(--edit-elem-height-medium);
-  padding: 0 50px;
+  padding: 12px 50px;
   font-size: var(--edit-font-size-button);
   letter-spacing: var(--edit-spacing-button);
   font-weight: 700;
   text-transform: uppercase;
 }
 
-.button.narrow,
-.button.compact {
-  padding: 0 25px;
+.button.narrow {
+  padding-left: 25px;
+  padding-right: 25px;
 }
 
 .button.compact {
-  height: var(--edit-elem-height-small);
+  padding: 6px 25px;
 }
 
 .button.flat:not(.filled) {
@@ -93,15 +95,42 @@
 
 /* accent--info */
 
-.button.accent--info {
+.button.accent--info,
+.button.accent--info.inverted:not(.filled):not(.flat):hover {
+  background-color: var(--edit-color-background-1);
+  color: var(--edit-color-info);
+}
+
+.button.accent--info.inverted {
   background-color: var(--edit-color-info);
-  border-color: var(--edit-color-background-1);
   color: var(--edit-color-text-inverse-1);
 }
 
-.button.accent--info:hover {
-  background-color: var(--edit-color-background-1);
-  color: var(--edit-color-info);
+.button.accent--info.inverted:not(.flat) {
+  border-color: var(--edit-color-background-1);
+}
+
+.button.accent--info:not(.flat) {
+  border-color: var(--edit-color-info);
+}
+
+.button.accent--info.filled {
+  background-color: var(--edit-color-info);
+  border-color: var(--edit-color-info);
+  color: var(--edit-color-text-inverse-1);
+}
+
+.button.accent--info:not(.filled):not(.flat):hover {
+  background-color: var(--edit-color-info-hint);
+}
+
+.button.accent--info.flat:hover {
+  color: var(--edit-color-info-darker-1);
+}
+
+.button.accent--info.filled:hover {
+  background-color: var(--edit-color-info-darker-1);
+  border-color: var(--edit-color-info-darker-1);
 }
 
 /* disabled */

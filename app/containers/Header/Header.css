@@ -62,7 +62,7 @@
 }
 
 .collections-drawer[aria-hidden] {
-  transform: translateY(-100%);
+  transform: translateY(-100%) translateX(-100%);
 }
 
 @media (min-width: 480px) {
@@ -149,7 +149,7 @@
 }
 
 .overlay[aria-hidden] {
-  transform: translateY(-100%);
+  transform: translateY(-100%) translateX(-100%);
 }
 
 .drawer-wrapper .overlay {

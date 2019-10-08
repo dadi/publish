@@ -50,6 +50,12 @@ export default function app(state = initialState, action = {}) {
         isLoading: false
       }
 
+    case Types.DISMISS_NOTIFICATION:
+      return {
+        ...state,
+        notification: null
+      }
+
     // App action: register network call
     case Types.REGISTER_NETWORK_CALL:
       switch (action.status) {

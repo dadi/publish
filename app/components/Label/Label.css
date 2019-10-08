@@ -30,6 +30,10 @@
   color: var(--edit-color-heading);
 }
 
+.container.accent-info .label {
+  color: var(--edit-color-info);
+}
+
 .comment {
   color: var(--edit-color-text-2);
 }
@@ -46,6 +50,8 @@
 .error-message-icon {
   margin-right: var(--edit-margin-xxs) !important;
   vertical-align: middle !important;
+  margin-top: -2px;
+  margin-bottom: -2px;
 }
 
 .error-message-text {

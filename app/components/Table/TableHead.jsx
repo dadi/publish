@@ -43,11 +43,11 @@ export default class TableHead extends React.Component {
     selectable: false
   }
 
-  handleSelectClick(event) {
-    const {onSelect} = this.props
+  constructor(props) {
+    super(props)
 
-    if (typeof onSelect === 'function') {
-      onSelect(event)
+    this.markEvent = e => {
+      e.__innerClick = true
     }
   }
 
@@ -56,6 +56,7 @@ export default class TableHead extends React.Component {
       allowBulkSelection,
       allSelected,
       hasSelected,
+      onSelect,
       selectable
     } = this.props
 
@@ -64,13 +65,20 @@ export default class TableHead extends React.Component {
         <tr>
           {selectable && (
             <TableHeadCell select={true}>
-              <Checkbox
-                className={styles.checkbox}
-                indeterminate={(!allSelected && hasSelected).toString()}
-                onChange={this.handleSelectClick.bind(this)}
-                style={allowBulkSelection ? null : {display: 'none'}}
-                value={allSelected}
-              />
+              <label
+                className={styles['select-label']}
+                onClick={this.markEvent}
+                onMouseEnter={this.hoverOff}
+                onMouseLeave={this.hoverOn}
+              >
+                <Checkbox
+                  className={styles.checkbox}
+                  indeterminate={(!allSelected && hasSelected).toString()}
+                  onChange={onSelect}
+                  style={allowBulkSelection ? null : {display: 'none'}}
+                  value={allSelected}
+                />
+              </label>
             </TableHeadCell>
           )}
           {this.props.children}

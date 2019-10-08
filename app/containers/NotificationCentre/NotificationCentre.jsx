@@ -123,6 +123,7 @@ class NotificationCentre extends React.Component {
 
     return (
       <Notification
+        accent={notification.type}
         faded={faded}
         message={message}
         onHover={this.handleOnHover.bind(this)}
@@ -158,16 +159,12 @@ class NotificationCentre extends React.Component {
 
   start() {
     const notification = this.props.state.app.notification
-    const {dismissAfterSeconds, fadeAfterSeconds} = notification
+    const {dismissAfterSeconds} = notification
 
     clearTimeout(this.timeout)
 
     if (dismissAfterSeconds) {
       setTimeout(this.dismiss.bind(this), dismissAfterSeconds * 1000)
-    }
-
-    if (fadeAfterSeconds) {
-      setTimeout(this.fade.bind(this), fadeAfterSeconds * 1000)
     }
 
     setTimeout(() => {

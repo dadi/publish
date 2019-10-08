@@ -121,6 +121,7 @@ export default class FieldNumberEdit extends React.Component {
       comment,
       displayName,
       error,
+      hasUnsavedChanges,
       name,
       readOnly,
       required,
@@ -134,6 +135,7 @@ export default class FieldNumberEdit extends React.Component {
 
     return (
       <Label
+        accent={hasUnsavedChanges ? 'info' : null}
         comment={commentString}
         error={Boolean(error)}
         errorMessage={typeof error === 'string' ? error : null}

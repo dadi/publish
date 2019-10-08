@@ -1,3 +1,4 @@
+import {getMediaUrl} from 'lib/util/url'
 import proptypes from 'prop-types'
 import React from 'react'
 import styles from './FieldMedia.css'
@@ -22,14 +23,10 @@ export default class FieldMediaItem extends React.Component {
 
   render() {
     const {config, isList, value} = this.props
-    const cdn = config ? config.cdn : null
 
     if (!value) {
       return null
     }
-
-    // File location url
-    let src = value._previewData ? value._previewData : value.url || value.path
 
     const fileName =
       value.fileName &&
@@ -37,10 +34,10 @@ export default class FieldMediaItem extends React.Component {
         .split('.')
         .slice(0, -1)
         .join('.')
-    const extension = value.fileName && value.fileName.slice(-1)[0]
+    const extension = value.fileName && value.fileName.split('.').slice(-1)[0]
 
-    let icon = (
-      <div className={styles.file}>
+    let thumbnail = (
+      <div className={styles['thumbnail-file']}>
         <img src="/_public/images/icon-file.svg" width="25" />
         {extension && <span className={styles.ext}>{extension}</span>}
       </div>
@@ -49,33 +46,39 @@ export default class FieldMediaItem extends React.Component {
     // For backwards compatibility.
     const mimeType = value.mimeType || value.mimetype
 
-    // Render an image document.
-    let cdnThumb = false
-
     if (mimeType && mimeType.indexOf('image/') === 0) {
-      if (value.path && cdn && cdn.publicUrl) {
-        src = `${cdn.publicUrl}/${value.path}`
-        cdnThumb = src + '?width=80'
-      }
+      const imageUrl = getMediaUrl({
+        config,
+        document: value,
+        width: 80
+      })
 
-      icon = (
-        <div className={styles.image}>
-          <img src={cdnThumb || src} />
+      thumbnail = (
+        <div className={styles['thumbnail-image']}>
+          <img src={imageUrl} />
         </div>
       )
     }
 
+    const assetUrl = getMediaUrl({
+      config,
+      document: value
+    })
+
     return (
-      <div className={styles.icon}>
-        {icon}
-        <a
-          href={src}
-          target="_blank"
-          className={styles['file-name']}
-          title={value.fileName}
-        >
-          {fileName}
-        </a>
+      <div className={styles['file-wrapper']}>
+        {thumbnail}
+
+        {!isList && (
+          <a
+            href={assetUrl}
+            target="_blank"
+            className={styles['file-name']}
+            title={value.fileName}
+          >
+            {fileName}
+          </a>
+        )}
       </div>
     )
   }

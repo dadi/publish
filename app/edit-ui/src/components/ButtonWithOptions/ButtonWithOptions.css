@@ -23,6 +23,7 @@
   border-bottom-left-radius: 0 !important;
   padding: 0 !important;
   width: 40px !important;
+  height: 100%;
 }
 
 .open.dir--up .sideButton {

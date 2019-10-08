@@ -47,7 +47,7 @@ export default class FileUpload extends React.Component {
     const {accept, children, multiple} = this.props
 
     return (
-      <div>
+      <>
         <input
           accept={accept}
           className={styles['file-input']}
@@ -59,7 +59,7 @@ export default class FileUpload extends React.Component {
         <label className={styles['label-file']} htmlFor={this.fileInputId}>
           {children}
         </label>
-      </div>
+      </>
     )
   }
 

@@ -64,7 +64,7 @@ export default function ButtonWithOptions({
         className={classnames(styles.mainButton, {
           [styles.lift]: isDropdownOpen
         })}
-        filled
+        fillStyle="filled"
         onClick={onClick}
         {...props}
       >
@@ -75,7 +75,7 @@ export default function ButtonWithOptions({
           className={classnames(styles.sideButton, {
             [styles.lift]: isDropdownOpen
           })}
-          filled
+          fillStyle="filled"
           onClick={toggleDropdown}
           {...props}
         >

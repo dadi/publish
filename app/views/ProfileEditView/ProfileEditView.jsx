@@ -1,7 +1,9 @@
 import * as appActions from 'actions/appActions'
 import * as userActions from 'actions/userActions'
-import {Button, TextInput} from '@dadi/edit-ui'
+import {Button} from '@dadi/edit-ui'
 import {connectRedux} from 'lib/redux'
+import Header from 'containers/Header/Header'
+import NotificationCentre from 'containers/NotificationCentre/NotificationCentre'
 import ProfileField from 'containers/ProfileField/ProfileField'
 import React from 'react'
 import {setPageTitle} from 'lib/util'
@@ -76,7 +78,8 @@ class ProfileEditView extends React.Component {
         : 'Your settings have been updated'
 
       return actions.setNotification({
-        message
+        message,
+        type: user.remoteError ? 'negative' : 'positive'
       })
     }
   }
@@ -107,6 +110,8 @@ class ProfileEditView extends React.Component {
 
     return (
       <>
+        <Header />
+
         {this.renderToolbar()}
 
         <main className={styles.main}>
@@ -167,12 +172,14 @@ class ProfileEditView extends React.Component {
 
     return (
       <div className={styles.toolbar}>
+        <NotificationCentre />
+
         <Toolbar>
           <div className={styles['toolbar-container']}>
             <Button
               accent="positive"
               disabled={hasValidationErrors}
-              filled
+              fillStyle="filled"
               onClick={this.handleSave}
             >
               Save settings

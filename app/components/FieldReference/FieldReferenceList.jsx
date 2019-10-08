@@ -35,6 +35,9 @@ export default class FieldReferenceList extends React.Component {
 
     this.hoverOn = () => props.onHover(true)
     this.hoverOff = () => props.onHover(false)
+    this.markEvent = e => {
+      e.__innerClick = true
+    }
   }
 
   findFirstStringField(fields) {
@@ -85,6 +88,7 @@ export default class FieldReferenceList extends React.Component {
               <Link
                 className={styles['value-link']}
                 key={editLink}
+                onClick={this.markEvent}
                 onMouseEnter={this.hoverOn}
                 onMouseLeave={this.hoverOff}
                 to={editLink}
