@@ -7,6 +7,7 @@ import Label from 'components/Label/Label'
 import proptypes from 'prop-types'
 import React from 'react'
 import {Redirect} from 'react-router-dom'
+import SpinningWheel from 'components/SpinningWheel/SpinningWheel'
 import styles from './SignIn.css'
 
 class SignIn extends React.Component {
@@ -102,7 +103,7 @@ class SignIn extends React.Component {
   render() {
     const {setPageTitle, state} = this.props
     const {email, password, userHasInteracted} = this.state
-    const {config, networkStatus} = state.app
+    const {config, isLoading, networkStatus} = state.app
     const {api, whitelabel} = config
     const {logoDark, poweredBy, backgroundImage} = whitelabel
     const hasConnectionIssues = networkStatus !== Constants.NETWORK_OK
@@ -122,6 +123,8 @@ class SignIn extends React.Component {
       >
         <div className={styles.overlay}>
           <div className={styles.container}>
+            {isLoading && <SpinningWheel />}
+
             <form method="POST" onSubmit={this.handleSignIn.bind(this)}>
               <img className={styles.logo} src={`/_public/${logoDark}`} />
 

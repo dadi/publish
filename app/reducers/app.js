@@ -46,7 +46,8 @@ export default function app(state = initialState, action = {}) {
     case Types.AUTHENTICATE:
       return {
         ...state,
-        config: action.config
+        config: action.config,
+        isLoading: false
       }
 
     // App action: register network call
@@ -143,6 +144,24 @@ export default function app(state = initialState, action = {}) {
     // User action: user signed out
     case Types.SIGN_OUT:
       return initialState
+
+    case Types.SET_USER_STATUS:
+      switch (action.status) {
+        case Constants.STATUS_FAILED:
+          return {
+            ...state,
+            isLoading: false
+          }
+
+        case Constants.STATUS_LOADING:
+          return {
+            ...state,
+            isLoading: true
+          }
+
+        default:
+          return state
+      }
 
     default:
       return state
