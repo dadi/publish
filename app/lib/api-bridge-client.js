@@ -76,7 +76,7 @@ const apiBridgeFactory = function({
 
   const serveQuery = query => {
     if (typeof onUpdate === 'function') {
-      onUpdate.call(this, Constants.STATUS_LOADING)
+      onUpdate(Constants.STATUS_LOADING)
     }
 
     return apiBridgeFetch(query)
@@ -84,14 +84,14 @@ const apiBridgeFactory = function({
         if (typeof onUpdate === 'function') {
           const onComplete = onUpdate.bind(this, Constants.STATUS_COMPLETE)
 
-          onUpdate.call(this, Constants.STATUS_IDLE, onComplete)
+          onUpdate(Constants.STATUS_IDLE, onComplete)
         }
 
         return response
       })
       .catch(err => {
         if (typeof onUpdate === 'function') {
-          onUpdate.call(this, Constants.STATUS_FAILED)
+          onUpdate(Constants.STATUS_FAILED)
         }
 
         return Promise.reject(err)

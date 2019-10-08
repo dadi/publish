@@ -92,10 +92,10 @@ class LoadingBar extends React.Component {
   }
 
   componentDidUpdate(prevProps, prevState) {
-    const {percentage, visible} = this.state
+    const {visible} = this.state
     const {state} = this.props
-    const isLoading = Boolean(state.isLoading)
-    const wasLoading = Boolean(prevProps.state.isLoading)
+    const isLoading = state.app.isLoading
+    const wasLoading = prevProps.state.app.isLoading
 
     if (prevState.visible && !visible) {
       this.setState({
