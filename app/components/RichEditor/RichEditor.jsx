@@ -297,6 +297,7 @@ export default class RichEditor extends React.Component {
         this.editor.insertBlock({
           type: 'image',
           data: {
+            alt: mediaObject.altText,
             src: mediaObject.url
           }
         })
@@ -587,7 +588,11 @@ export default class RichEditor extends React.Component {
 
         return (
           <div className={imageWrapperStyle.getClasses()}>
-            <img {...attributes} src={node.data.get('src')} />
+            <img
+              {...attributes}
+              alt={node.data.get('alt')}
+              src={node.data.get('src')}
+            />
           </div>
         )
       }
