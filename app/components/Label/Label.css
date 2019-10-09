@@ -22,6 +22,7 @@
 
 .label {
   color: var(--edit-color-heading);
+  padding-right: 5px;
 }
 
 .children {
