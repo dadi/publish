@@ -73,7 +73,6 @@ class DocumentListView extends React.Component {
         : 'The document has been deleted'
 
       actions.setNotification({
-        dismissOnHover: false,
         message,
         type: error ? 'negative' : 'positive'
       })

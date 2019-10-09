@@ -35,8 +35,9 @@
   background-color: var(--edit-color-positive);
 }
 
-.message > * {
-  vertical-align: middle;
+.message {
+  display: flex;
+  align-items: center;
 }
 
 .message svg {
