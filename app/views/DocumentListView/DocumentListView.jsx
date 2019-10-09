@@ -372,6 +372,7 @@ class DocumentListView extends React.Component {
               onUpdateFilters={this.handleFiltersUpdate}
             />
           )}
+
           <div className={styles['list-container']}>
             {this.renderMain({
               collection,
