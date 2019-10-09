@@ -27,8 +27,8 @@ export default class FieldStringList extends React.Component {
   constructor(props) {
     super(props)
 
-    this.hoverOn = () => props.onHover(true)
-    this.hoverOff = () => props.onHover(false)
+    this.hoverOn = () => this.props.onHover(true)
+    this.hoverOff = () => this.props.onHover(false)
     this.markEvent = e => {
       e.__innerClick = true
     }

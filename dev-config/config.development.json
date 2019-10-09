@@ -6,7 +6,13 @@
     "_port": 8081,
     "menu": [
       {
-        "collections": ["pages", "team"],
+        "collections": [
+          "pages",
+          "team",
+          "web-services",
+          "network-services",
+          "from-second-property"
+        ],
         "title": "Content"
       },
       {
@@ -22,7 +28,8 @@
           "field-test-number",
           "field-test-reference",
           "field-test-string",
-          "no-filterable-fields"
+          "no-filterable-fields",
+          "field-test"
         ],
         "title": "Field Testing"
       }
