@@ -5,7 +5,6 @@
   background-color: var(--edit-color-primary);
   color: var(--edit-color-text-inverse-2);
   flex: 0 0 68px;
-  padding-right: var(--edit-margin-sm);
 }
 
 .collections-wrapper,
@@ -161,8 +160,13 @@
     flex: 1;
   }
 
+  .header {
+    padding: 0 var(--edit-margin-sm);
+  }
+
   .logo {
     border-left: 1px solid var(--edit-color-grayscale-40);
+    margin-right: var(--edit-margin-xl);
     padding-left: var(--edit-margin-md);
   }
 
