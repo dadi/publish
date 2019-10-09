@@ -314,21 +314,6 @@ class DocumentListView extends React.Component {
     const isFilteringSelection =
       search.filter && search.filter.$selected === true
 
-    // Computing URL for the "show only selected documents" button.
-    const showSelectedDocumentsUrl = onBuildBaseUrl.call(this, {
-      search: {
-        ...search,
-        filter: {
-          ...search.filter,
-          $selected: true
-        }
-      }
-    })
-
-    const showSelectedDocuments = () => {
-      if (!isFilteringSelection) history.push(showSelectedDocumentsUrl)
-    }
-
     // Setting the page title.
     setPageTitle(collection.name)
 
@@ -340,11 +325,6 @@ class DocumentListView extends React.Component {
           createNew: true,
           search: null
         })
-
-    const buttonWrapperStyle = new Style(styles, 'button-wrapper').addIf(
-      'hidden',
-      selection.length === 0
-    )
 
     return (
       <>
@@ -390,19 +370,16 @@ class DocumentListView extends React.Component {
               metadata={metadata}
               onPageChange={this.handlePageChange}
               selectedDocuments={selection}
-              showSelectedDocuments={showSelectedDocuments}
             >
-              <div className={buttonWrapperStyle.getClasses()}>
-                <Button
-                  accent="negative"
-                  className={styles['delete-button']}
-                  data-name="delete-button"
-                  disabled={selection.length === 0}
-                  onClick={this.showDeletePrompt}
-                >
-                  Delete ({selection.length})
-                </Button>
-              </div>
+              <Button
+                accent="negative"
+                className={styles['delete-button']}
+                data-name="delete-button"
+                disabled={selection.length === 0}
+                onClick={this.showDeletePrompt}
+              >
+                Delete{selection.length > 0 ? ` (${selection.length})` : ''}
+              </Button>
             </DocumentListToolbar>
           )}
         </div>

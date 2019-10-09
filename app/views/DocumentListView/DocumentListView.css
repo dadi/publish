@@ -14,10 +14,6 @@
   z-index: var(--edit-z-index-toolbar);
 }
 
-.button-wrapper.hidden {
-  visibility: hidden;
-}
-
 .empty-view-droparea {
   position: absolute;
   top: 0;
