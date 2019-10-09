@@ -5,6 +5,7 @@
   background-color: var(--edit-color-primary);
   color: var(--edit-color-text-inverse-2);
   flex: 0 0 68px;
+  padding-right: var(--edit-margin-sm);
 }
 
 .collections-wrapper,
@@ -168,11 +169,5 @@
   .user-menu-wrapper {
     order: initial;
     padding-right: 0;
-  }
-}
-
-@media (min-width: 1024px) {
-  .logo {
-    margin-right: var(--edit-margin-xxl);
   }
 }
