@@ -8,7 +8,7 @@ import React from 'react'
 import Style from 'lib/Style'
 import styles from './Header.css'
 
-const HEADER_RESERVED_WIDTH = 175
+const HEADER_RESERVED_WIDTH = 210
 const HEADER_ITEM_MARGIN = 24
 
 class Header extends React.Component {
