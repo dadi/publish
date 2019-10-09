@@ -22,12 +22,19 @@
 
 .label {
   color: var(--edit-color-heading);
-  margin-bottom: var(--edit-margin-md);
+}
+
+.children {
+  margin-top: var(--edit-margin-md);
 }
 
 .container-compact .label {
   margin-bottom: 2px;
   margin-left: var(--edit-margin-sm);
+}
+
+.container-compact .children {
+  margin-top: 0;
 }
 
 .container.accent-info .label {
