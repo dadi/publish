@@ -283,7 +283,15 @@ export default class RichEditor extends React.Component {
         if (!mediaObject.url) return
 
         if (isRawMode) {
-          return this.editor.insertText(`![](${mediaObject.url})`)
+          return this.editor.insertBlock({
+            type: 'line',
+            nodes: [
+              {
+                object: 'text',
+                text: `![${mediaObject.altText || ''}](${mediaObject.url})`
+              }
+            ]
+          })
         }
 
         this.editor.insertBlock({
