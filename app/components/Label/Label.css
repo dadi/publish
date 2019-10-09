@@ -1,5 +1,4 @@
 .header {
-  margin: -4px 0 var(--edit-margin-md) -8px;
   display: flex;
   justify-content: space-between;
   flex-wrap: wrap;
@@ -10,13 +9,8 @@
 }
 
 .container-compact .header {
-  margin: -4px 0 0 2px; /* -8px for gutter + 10px actual margin */
   flex: 1;
   align-items: center;
-}
-
-.header > div {
-  margin: 4px 0 0 8px;
 }
 
 .container-compact {
@@ -28,6 +22,7 @@
 
 .label {
   color: var(--edit-color-heading);
+  margin-bottom: var(--edit-margin-md);
 }
 
 .container.accent-info .label {
