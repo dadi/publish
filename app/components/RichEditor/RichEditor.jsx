@@ -62,6 +62,15 @@ const BLOCK_IMAGE = 'image'
 const BLOCK_LIST_ITEM = 'list-item'
 const BLOCK_NUMBERED_LIST = 'ordered-list'
 
+const HEADINGS = [
+  BLOCK_HEADING1,
+  BLOCK_HEADING2,
+  BLOCK_HEADING3,
+  BLOCK_HEADING4,
+  BLOCK_HEADING5,
+  BLOCK_HEADING6
+]
+
 const INLINE_LINK = 'link'
 
 const MARK_BOLD = 'bold'
@@ -96,6 +105,31 @@ const SCHEMA_RICH = {
 
 const isModB = isHotkey('mod+b')
 const isModI = isHotkey('mod+i')
+const isEnter = isHotkey('enter')
+
+const headingsPlugin = {
+  commands: {
+    splitHeading(editor) {
+      editor.splitBlock().setBlocks(DEFAULT_NODE)
+    }
+  },
+  queries: {
+    isInHeading(editor) {
+      return editor.value.blocks.every(block => HEADINGS.includes(block.type))
+    }
+  },
+  onKeyDown(e, editor, next) {
+    if (isEnter(e) && editor.isInHeading()) {
+      e.preventDefault()
+
+      return editor.splitHeading()
+    }
+
+    next()
+  }
+}
+
+const plugins = [headingsPlugin]
 
 // http://www.stucox.com/blog/you-cant-detect-a-touchscreen/
 const isTouchDevice = window.matchMedia('(pointer: coarse)').matches
@@ -779,6 +813,7 @@ export default class RichEditor extends React.Component {
               className={editorStyle.getClasses()}
               onChange={this.handleChange}
               onKeyDown={this.handleKeyDown}
+              plugins={plugins}
               renderBlock={this.renderBlock}
               renderInline={this.renderInline}
               renderMark={this.renderMark}
