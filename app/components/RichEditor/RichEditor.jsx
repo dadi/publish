@@ -16,6 +16,7 @@ import {RichEditorToolbar, RichEditorToolbarButton} from './RichEditorToolbar'
 import {Editor} from 'slate-react'
 import FullscreenComp from 'components/Fullscreen/Fullscreen'
 import HotKeys from 'lib/hot-keys'
+import isHotkey from 'is-hotkey'
 import {Markdown} from 'mdi-material-ui'
 import MarkdownSerializer from '@edithq/slate-md-serializer'
 import PlainSerializer from 'slate-plain-serializer'
@@ -93,6 +94,9 @@ const SCHEMA_RICH = {
   }
 }
 
+const isModB = isHotkey('mod+b')
+const isModI = isHotkey('mod+i')
+
 // http://www.stucox.com/blog/you-cant-detect-a-touchscreen/
 const isTouchDevice = window.matchMedia('(pointer: coarse)').matches
 
@@ -165,9 +169,7 @@ export default class RichEditor extends React.Component {
     this.validate = this.validate.bind(this)
 
     this.hotKeys = new HotKeys({
-      escape: this.handleToggleFullscreen.bind(this, false),
-      'mod+b': this.handleToggleMark.bind(this, 'bold'),
-      'mod+i': this.handleToggleMark.bind(this, 'italic')
+      escape: this.handleToggleFullscreen.bind(this, false)
     })
 
     this.initialMediaState = {
@@ -241,6 +243,18 @@ export default class RichEditor extends React.Component {
     }
 
     onChange.call(this, value)
+  }
+
+  handleKeyDown(e, editor, next) {
+    if (isModB(e)) {
+      return editor.toggleMark(MARK_BOLD)
+    }
+
+    if (isModI(e)) {
+      return editor.toggleMark(MARK_ITALIC)
+    }
+
+    next()
   }
 
   handleLinkClick(node, currentHref, event) {
@@ -739,17 +753,27 @@ export default class RichEditor extends React.Component {
           className={editorWrapperStyle.getClasses()}
           ref={el => (this.container = el)}
         >
-          <Editor
-            className={editorStyle.getClasses()}
-            onChange={this.handleChange}
-            onKeyDown={this.handleKeyDown}
-            renderBlock={this.renderBlock}
-            renderInline={this.renderInline}
-            renderMark={this.renderMark}
-            ref={el => (this.editor = el)}
-            schema={isRawMode ? SCHEMA_RAW : SCHEMA_RICH}
-            value={this.value}
-          />
+          {isRawMode ? (
+            <Editor
+              className={editorStyle.getClasses()}
+              onChange={this.handleChange}
+              ref={el => (this.editor = el)}
+              schema={SCHEMA_RAW}
+              value={this.value}
+            />
+          ) : (
+            <Editor
+              className={editorStyle.getClasses()}
+              onChange={this.handleChange}
+              onKeyDown={this.handleKeyDown}
+              renderBlock={this.renderBlock}
+              renderInline={this.renderInline}
+              renderMark={this.renderMark}
+              ref={el => (this.editor = el)}
+              schema={SCHEMA_RICH}
+              value={this.value}
+            />
+          )}
         </div>
       </div>
     )
