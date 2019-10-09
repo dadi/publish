@@ -1,16 +1,14 @@
-import {ExpandMore} from '@material-ui/icons'
+import {connectRouter} from 'lib/router'
 import proptypes from 'prop-types'
 import React from 'react'
-
-import Style from 'lib/Style'
+import {Select} from '@dadi/edit-ui'
 import styles from './EditInterface.css'
-
 import SubNavItem from 'components/SubNavItem/SubNavItem'
 
 /**
  * An interface for editing documents.
  */
-export default class EditInterface extends React.Component {
+class EditInterface extends React.Component {
   static propTypes = {
     /**
      * The text to be rendered.
@@ -21,11 +19,15 @@ export default class EditInterface extends React.Component {
   constructor(props) {
     super(props)
 
-    this.toggleDropdown = () =>
-      this.setState(({isNavOpen}) => ({isNavOpen: !isNavOpen}))
+    this.handleMobileTabSelect = this.handleMobileTabSelect.bind(this)
+  }
 
-    this.state = {
-      isNavOpen: false
+  handleMobileTabSelect(event) {
+    const {route} = this.props
+    const {value} = event.target
+
+    if (value) {
+      route.history.push(value)
     }
   }
 
@@ -36,41 +38,21 @@ export default class EditInterface extends React.Component {
 
       return {hasErrors, href, isActive, label}
     })
-    const {label: activeLabel} = sections.find(({isActive}) => isActive)
-    const {isNavOpen} = this.state
-    const mobileNavStyle = new Style(styles, 'mobile-navigation').addIf(
-      'is-open',
-      isNavOpen
-    )
+    const mobileNavigationOptions = sections.map(({href, isActive, label}) => ({
+      label,
+      selected: isActive,
+      value: href
+    }))
 
     return (
       <div className={styles.container}>
         {children.length > 1 && (
           <>
-            <div className={mobileNavStyle.getClasses()}>
-              <div className={styles.select} onClick={this.toggleDropdown}>
-                <div className={styles.label}>{activeLabel}</div>
-                <div className={styles.icon}>
-                  <ExpandMore />
-                </div>
-              </div>
-
-              {isNavOpen && (
-                <div className={styles.dropdown}>
-                  {sections.map(({hasErrors, href, isActive, label}) => (
-                    <SubNavItem
-                      active={Boolean(isActive)}
-                      error={Boolean(hasErrors)}
-                      href={href}
-                      inDropdown
-                      key={href}
-                      onClick={this.toggleDropdown}
-                    >
-                      {label}
-                    </SubNavItem>
-                  ))}
-                </div>
-              )}
+            <div className={styles['mobile-navigation']}>
+              <Select
+                onChange={this.handleMobileTabSelect}
+                options={mobileNavigationOptions}
+              />
             </div>
 
             <div className={styles.navigation}>
@@ -93,3 +75,5 @@ export default class EditInterface extends React.Component {
     )
   }
 }
+
+export default connectRouter(EditInterface)
