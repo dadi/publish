@@ -5,9 +5,19 @@
 }
 
 .container {
+  max-width: 500px;
   padding: 30px;
   position: relative;
   padding: 0 var(--edit-margin-md);
+}
+
+.container:before {
+  content: ' ';
+  position: absolute;
+  top: -20px;
+  left: var(--edit-margin-md);
+  width: 90px;
+  border-top: 1px solid var(--edit-color-brand);
 }
 
 @media (min-width: 700px) {
@@ -16,12 +26,8 @@
   }
 
   .container:before {
-    content: ' ';
-    position: absolute;
     top: 25px;
     left: 0;
-    width: 90px;
-    border-top: 1px solid var(--edit-color-brand);
   }
 }
 

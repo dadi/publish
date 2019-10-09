@@ -1,6 +1,7 @@
 .container {
   font-family: var(--theme-font-family, sans-serif);
   text-align: center;
+  padding: 0 var(--edit-margin-md);
   position: absolute;
   top: 50%;
   top: 50vh;

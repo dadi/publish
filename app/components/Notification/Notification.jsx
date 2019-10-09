@@ -87,6 +87,8 @@ export default class Notification extends React.Component {
       return null
     }
 
+    const hasOptions = Boolean(options && Object.keys(options).length > 0)
+
     return (
       <div className={containerStyle.getClasses()}>
         <div
@@ -99,9 +101,9 @@ export default class Notification extends React.Component {
             <span>{message}</span>
           </div>
 
-          <div className={styles.actions}>
-            {options &&
-              Object.keys(options).map(label => (
+          {hasOptions && (
+            <div className={styles.actions}>
+              {Object.keys(options).map(label => (
                 <Button
                   accent="info"
                   fillStyle="inverted"
@@ -115,7 +117,8 @@ export default class Notification extends React.Component {
                   {label}
                 </Button>
               ))}
-          </div>
+            </div>
+          )}
         </div>
       </div>
     )

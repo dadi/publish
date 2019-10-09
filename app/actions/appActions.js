@@ -1,5 +1,4 @@
 import 'unfetch/polyfill'
-import * as Constants from 'lib/constants'
 import * as Types from 'actions/actionTypes'
 
 const NOTIFICATION_DEFAULTS = {

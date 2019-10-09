@@ -4,7 +4,6 @@
   display: inline-flex;
   justify-content: center;
   align-items: center;
-  position: relative;
   cursor: pointer;
   box-sizing: border-box;
   white-space: nowrap;
@@ -149,7 +148,3 @@
 }
 
 /* ----- */
-
-.button:active {
-  top: 1px;
-}

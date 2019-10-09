@@ -43,10 +43,13 @@ export default function Select({
 
   // Native, both single- and multiple-choice.
   if (native) {
+    const selectedValue = options.find(option => option.selected)
+
     return (
       <div className={containerClasses} style={style}>
         <select
           className={styles.select}
+          defaultValue={selectedValue && selectedValue.value}
           disabled={disabled || readOnly}
           multiple={multiple}
           name={name}
@@ -56,13 +59,8 @@ export default function Select({
           }
           value={value}
         >
-          {options.map(({disabled, label, selected, value}) => (
-            <option
-              disabled={disabled}
-              key={value}
-              selected={selected}
-              value={value}
-            >
+          {options.map(({disabled, label, value}) => (
+            <option disabled={disabled} key={value} value={value}>
               {label}
             </option>
           ))}
