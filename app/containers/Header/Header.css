@@ -100,6 +100,7 @@
   display: none;
   position: absolute;
   top: 100%;
+  right: -5px;
   z-index: calc(var(--edit-z-index-dropdown-overlay) + 1);
   background-color: var(--edit-color-background-1);
   color: var(--edit-color-text-3);
