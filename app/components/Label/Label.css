@@ -25,6 +25,11 @@
   margin-bottom: var(--edit-margin-md);
 }
 
+.container-compact .label {
+  margin-bottom: 2px;
+  margin-left: var(--edit-margin-sm);
+}
+
 .container.accent-info .label {
   color: var(--edit-color-info);
 }
