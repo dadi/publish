@@ -169,3 +169,9 @@
     padding-right: 0;
   }
 }
+
+@media (min-width: 1024px) {
+  .logo {
+    margin-right: var(--edit-margin-xxl);
+  }
+}
