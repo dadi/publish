@@ -1,4 +1,4 @@
-import {Close, ExpandMore, Menu} from '@material-ui/icons'
+import {Close, Menu, Person} from '@material-ui/icons'
 import buildGroupedMenuItems from './buildGroupedMenuItems'
 import {connectRedux} from 'lib/redux'
 import {connectRouter} from 'lib/router'
@@ -8,7 +8,7 @@ import React from 'react'
 import Style from 'lib/Style'
 import styles from './Header.css'
 
-const HEADER_RESERVED_WIDTH = 250
+const HEADER_RESERVED_WIDTH = 175
 const HEADER_ITEM_MARGIN = 24
 
 class Header extends React.Component {
@@ -139,16 +139,9 @@ class Header extends React.Component {
           )}
         </div>
 
-        <div className={styles.logo}>
-          <Link to="/">
-            <img src={`/_public/${logoLight}`} />
-          </Link>
-        </div>
-
         <div className={userMenuWrapperStyle.getClasses()}>
           <button className={styles['user-menu-toggle']}>
-            <div className={styles.username}>{displayName}</div>
-            <ExpandMore />
+            <Person />
           </button>
 
           <div className={styles['user-menu']}>
@@ -170,6 +163,12 @@ class Header extends React.Component {
               <span className={styles['menu-item']}>v{version}</span>
             )}
           </div>
+        </div>
+
+        <div className={styles.logo}>
+          <Link to="/">
+            <img src={`/_public/${logoLight}`} />
+          </Link>
         </div>
       </header>
     )
