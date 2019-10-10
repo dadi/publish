@@ -1,6 +1,5 @@
 import * as fieldComponents from 'lib/field-components'
 import {connectRedux} from 'lib/redux'
-import {ExpandMore} from '@material-ui/icons'
 import {getFieldType} from 'lib/fields'
 import proptypes from 'prop-types'
 import React from 'react'
@@ -108,36 +107,6 @@ class DocumentTableList extends React.Component {
     })
   }
 
-  renderColumnHeader(column) {
-    const {sort: sortBy, order: sortOrder} = this.props
-    const isSorted = sortBy === column.id
-    const newOrder = isSorted && sortOrder === 'asc' ? 'desc' : 'asc'
-    const headerStyle = new Style(styles, 'column-header').addIf(
-      'sorted',
-      isSorted
-    )
-
-    const iconStyle = new Style(styles, 'arrow').addIf(
-      'up',
-      isSorted && sortOrder === 'desc'
-    )
-
-    return (
-      <a
-        className={headerStyle.getClasses()}
-        data-column={sortBy}
-        data-name="column-header"
-        data-sort-order={newOrder}
-        onClick={() =>
-          this.props.onSort({sortBy: column.id, sortOrder: newOrder})
-        }
-      >
-        {column.label}
-        <ExpandMore className={iconStyle.getClasses()} />
-      </a>
-    )
-  }
-
   render() {
     const {
       collection,
@@ -191,6 +160,35 @@ class DocumentTableList extends React.Component {
           <div className={styles.after} />
         </div>
       </>
+    )
+  }
+
+  renderColumnHeader(column) {
+    const {sort: sortBy, order: sortOrder} = this.props
+    const isSorted = sortBy === column.id
+    const newOrder = isSorted && sortOrder === 'asc' ? 'desc' : 'asc'
+    const iconStyle = new Style(styles, 'arrow')
+      .addIf('up', isSorted && sortOrder === 'desc')
+      .addIf('down', isSorted && sortOrder === 'asc')
+
+    return (
+      <a
+        className={styles['column-header']}
+        data-column={sortBy}
+        data-name="column-header"
+        data-sort-order={newOrder}
+        onClick={() =>
+          this.props.onSort({sortBy: column.id, sortOrder: newOrder})
+        }
+      >
+        {column.label}
+
+        <i
+          aria-hidden="true"
+          className={iconStyle.getClasses()}
+          role="presentation"
+        />
+      </a>
     )
   }
 

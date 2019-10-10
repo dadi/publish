@@ -117,7 +117,7 @@ export default class Label extends React.Component {
             {hint}
           </div>
         )}
-        <div>{this.renderChildren()}</div>
+        <div className={styles.children}>{this.renderChildren()}</div>
       </label>
     )
   }

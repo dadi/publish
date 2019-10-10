@@ -568,7 +568,7 @@ class DocumentListController extends React.Component {
             disabled={valueIsEmpty}
             type="submit"
           >
-            {isUpdate ? 'Update' : 'Add filter'}
+            {isUpdate ? 'Update' : 'Apply'}
           </Button>
 
           {isUpdate && (

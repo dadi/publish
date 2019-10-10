@@ -1,7 +1,4 @@
-import proptypes from 'prop-types'
 import React from 'react'
-
-import Style from 'lib/Style'
 import styles from './SpinningWheel.css'
 
 /**
@@ -9,6 +6,12 @@ import styles from './SpinningWheel.css'
  */
 export default class SpinningWheel extends React.Component {
   render() {
-    return <div className={styles.wrapper} />
+    return (
+      <div aria-hidden={true} className={styles.wrapper}>
+        <i className={styles.square} />
+        <i className={styles.square} />
+        <i className={styles.square} />
+      </div>
+    )
   }
 }

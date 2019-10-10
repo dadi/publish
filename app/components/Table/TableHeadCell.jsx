@@ -25,9 +25,7 @@ export default class TableHeadCell extends React.Component {
 
   render() {
     const {sorted, children, select} = this.props
-    const cellStyle = new Style(styles, 'cell')
-      .addIf('head-cell-sorted', sorted)
-      .addIf('select-cell', select)
+    const cellStyle = new Style(styles, 'cell').addIf('select-cell', select)
 
     return (
       <th className={cellStyle.getClasses()}>

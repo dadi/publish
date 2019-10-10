@@ -26,7 +26,6 @@ import React from 'react'
 import {Redirect} from 'react-router-dom'
 import {setPageTitle} from 'lib/util'
 import SpinningWheel from 'components/SpinningWheel/SpinningWheel'
-import Style from 'lib/Style'
 import styles from './DocumentListView.css'
 
 const MEDIA_TABLE_FIELDS = ['url', 'fileName', 'mimeType', 'width', 'height']
@@ -127,17 +126,8 @@ class DocumentListView extends React.Component {
       return (
         <HeroMessage
           title="No documents found."
-          subtitle="We can't find anything matching those filters."
-        >
-          <Button
-            accent="system"
-            href={onBuildBaseUrl.call(this, {
-              search: {}
-            })}
-          >
-            Clear filters
-          </Button>
-        </HeroMessage>
+          subtitle="We can't find anything matching the filters applied."
+        />
       )
     }
 
@@ -314,21 +304,6 @@ class DocumentListView extends React.Component {
     const isFilteringSelection =
       search.filter && search.filter.$selected === true
 
-    // Computing URL for the "show only selected documents" button.
-    const showSelectedDocumentsUrl = onBuildBaseUrl.call(this, {
-      search: {
-        ...search,
-        filter: {
-          ...search.filter,
-          $selected: true
-        }
-      }
-    })
-
-    const showSelectedDocuments = () => {
-      if (!isFilteringSelection) history.push(showSelectedDocumentsUrl)
-    }
-
     // Setting the page title.
     setPageTitle(collection.name)
 
@@ -340,11 +315,6 @@ class DocumentListView extends React.Component {
           createNew: true,
           search: null
         })
-
-    const buttonWrapperStyle = new Style(styles, 'button-wrapper').addIf(
-      'hidden',
-      selection.length === 0
-    )
 
     return (
       <>
@@ -363,7 +333,7 @@ class DocumentListView extends React.Component {
         )}
 
         <MainWithHeader>
-          {hasDocuments && (
+          {Boolean(hasDocuments || search.filter) && (
             <DocumentListController
               collection={collection}
               createNewHref={createNewHref}
@@ -372,6 +342,7 @@ class DocumentListView extends React.Component {
               onUpdateFilters={this.handleFiltersUpdate}
             />
           )}
+
           <div className={styles['list-container']}>
             {this.renderMain({
               collection,
@@ -390,19 +361,16 @@ class DocumentListView extends React.Component {
               metadata={metadata}
               onPageChange={this.handlePageChange}
               selectedDocuments={selection}
-              showSelectedDocuments={showSelectedDocuments}
             >
-              <div className={buttonWrapperStyle.getClasses()}>
-                <Button
-                  accent="negative"
-                  className={styles['delete-button']}
-                  data-name="delete-button"
-                  disabled={selection.length === 0}
-                  onClick={this.showDeletePrompt}
-                >
-                  Delete ({selection.length})
-                </Button>
-              </div>
+              <Button
+                accent="negative"
+                className={styles['delete-button']}
+                data-name="delete-button"
+                disabled={selection.length === 0}
+                onClick={this.showDeletePrompt}
+              >
+                Delete{selection.length > 0 ? ` (${selection.length})` : ''}
+              </Button>
             </DocumentListToolbar>
           )}
         </div>

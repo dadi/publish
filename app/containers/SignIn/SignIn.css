@@ -22,6 +22,7 @@
 .container {
   background-color: var(--theme-colour-background);
   padding: 20px;
+  position: relative;
   text-align: right;
   max-width: 500px;
   width: 100%;

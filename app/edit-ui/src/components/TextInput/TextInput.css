@@ -16,6 +16,12 @@
   transition-duration: var(--edit-transition-duration-standard);
 }
 
+.input:read-only {
+  color: var(--edit-color-grayscale-50);
+  min-height: 0;
+  padding: 0;
+}
+
 .input.resizable {
   resize: vertical;
 }

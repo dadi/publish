@@ -13,11 +13,12 @@ export function decodeSearch(searchString) {
     const parameters = JSON.parse(`{"${decodeURI(sanitisedString)}"}`)
 
     Object.keys(parameters).forEach(key => {
-      if (parameters[key][0] !== '{' || parameters[key][0] !== '[') {
-        parameters[key] = '"' + parameters[key] + '"'
+      try {
+        // Trying to parse valid JSON parameters.
+        parameters[key] = JSON.parse(parameters[key])
+      } catch (err) {
+        // noop
       }
-
-      parameters[key] = JSON.parse(parameters[key].replace('\\', '\\\\'))
     })
 
     return parameters
