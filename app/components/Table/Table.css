@@ -30,10 +30,6 @@
   background-color: var(--edit-color-background-4);
 }
 
-.head .cell.head-cell-sorted {
-  background-color: var(--edit-color-highlight-2);
-}
-
 .head .cell {
   position: relative;
   padding: 0;
@@ -79,22 +75,9 @@
 .row.row-selected {
   background-color: var(--edit-color-highlight-1);
   color: var(--edit-color-text-1);
-  animation: bounce var(--edit-transition-duration-long);
 }
 
 .row .row-cell-blank,
 .row.row-selected .row-cell-blank {
   color: var(--edit-color-text-3);
-}
-
-@keyframes bounce {
-  0% {
-    transform: scale(1);
-  }
-  50% {
-    transform: scale(1.01);
-  }
-  100% {
-    transform: scale(1);
-  }
 }
