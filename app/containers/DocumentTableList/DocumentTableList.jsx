@@ -138,28 +138,21 @@ class DocumentTableList extends React.Component {
     })
 
     return (
-      <>
-        {title && <h1 className={styles.title}>{title}</h1>}
-
-        {subtitle && <p className={styles.subtitle}>{subtitle}</p>}
-
-        <div className={styles['table-wrapper']}>
-          <SyncTable
-            columns={tableColumns}
-            data={documents}
-            onBuildBaseUrl={onBuildBaseUrl}
-            onRender={this.handleRowRender}
-            onSelect={onSelect}
-            renderColumnHeader={this.renderColumnHeader}
-            selectedRows={selectedDocuments}
-            selectLimit={Infinity}
-            sortable={true}
-            sortBy={sort}
-            sortOrder={order}
-          />
-          <div className={styles.after} />
-        </div>
-      </>
+      <div className={styles['table-wrapper']}>
+        <SyncTable
+          columns={tableColumns}
+          data={documents}
+          onBuildBaseUrl={onBuildBaseUrl}
+          onRender={this.handleRowRender}
+          onSelect={onSelect}
+          renderColumnHeader={this.renderColumnHeader}
+          selectedRows={selectedDocuments}
+          selectLimit={Infinity}
+          sortable={true}
+          sortBy={sort}
+          sortOrder={order}
+        />
+      </div>
     )
   }
 

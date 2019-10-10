@@ -28,7 +28,6 @@
   --padding-large: var(--edit-margin-xxl);
 
   overflow-x: auto;
-  padding-left: var(--padding-small);
   display: flex;
   -webkit-overflow-scrolling: touch;
 }
@@ -39,10 +38,6 @@
 }
 
 @media (min-width: 1024px) {
-  .table-wrapper {
-    padding-left: var(--padding-large);
-  }
-
   .table-wrapper .after {
     flex: 0 0 var(--padding-large);
     width: var(--padding-large);

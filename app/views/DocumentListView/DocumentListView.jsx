@@ -362,7 +362,7 @@ class DocumentListView extends React.Component {
           </div>
         </MainWithHeader>
 
-        <div className={styles.toolbar}>
+        <div>
           <NotificationCentre />
 
           {hasDocuments && (

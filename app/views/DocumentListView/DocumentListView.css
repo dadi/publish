@@ -1,17 +1,9 @@
 .main {
+  display: flex;
+  flex-direction: column;
+  overflow: scroll;
   position: relative;
-}
-
-.list-container {
-  padding-bottom: calc(var(--edit-margin-xxl) + var(--editif-toolbar-height));
-}
-
-.toolbar {
-  bottom: 0;
-  left: 0;
-  position: fixed;
-  width: 100%;
-  z-index: var(--edit-z-index-toolbar);
+  -webkit-overflow-scrolling: touch;
 }
 
 .empty-view-droparea {
@@ -27,4 +19,12 @@
     padding-left: 25px !important;
     padding-right: 25px !important;
   }
+}
+
+.list-container {
+  flex: 1;
+}
+
+.list-container > * {
+  height: 100%;
 }
