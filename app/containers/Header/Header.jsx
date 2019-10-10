@@ -90,7 +90,7 @@ class Header extends React.Component {
                 className={styles['drawer-toggle']}
                 onClick={this.toggleDrawer}
               >
-                <Menu />
+                <Menu fontSize="large" />
               </button>
               <div
                 aria-hidden={isDrawerOpen ? null : true}
@@ -105,7 +105,7 @@ class Header extends React.Component {
                   className={styles['drawer-toggle']}
                   onClick={this.closeDrawer}
                 >
-                  <Close />
+                  <Close fontSize="large" />
                 </button>
                 <nav>
                   <ul className={styles['drawer-nav-list']}>
