@@ -673,7 +673,7 @@ export default class RichEditor extends React.Component {
               action={this.handleToggleMark.bind(this, MARK_BOLD)}
               active={this.hasMark(MARK_BOLD)}
               disabled={isRawMode}
-              title="Bold (Ctrl+B)"
+              title="Bold" // (Ctrl+B)"
             >
               <FormatBold />
             </RichEditorToolbarButton>
@@ -681,7 +681,7 @@ export default class RichEditor extends React.Component {
               action={this.handleToggleMark.bind(this, MARK_ITALIC)}
               active={this.hasMark(MARK_ITALIC)}
               disabled={isRawMode}
-              title="Italic (Ctrl+I)"
+              title="Italic" // (Ctrl+I)"
             >
               <FormatItalic />
             </RichEditorToolbarButton>
@@ -689,7 +689,7 @@ export default class RichEditor extends React.Component {
               action={this.handleToggleBlock.bind(this, BLOCK_HEADING1)}
               active={this.hasBlock(BLOCK_HEADING1)}
               disabled={isRawMode}
-              title="Heading 1 (Ctrl+Alt+1)"
+              title="Heading 1" // (Ctrl+Alt+1)"
             >
               <span className={styles['toolbar-heading-icon']}>H1</span>
             </RichEditorToolbarButton>
@@ -697,7 +697,7 @@ export default class RichEditor extends React.Component {
               action={this.handleToggleBlock.bind(this, BLOCK_HEADING2)}
               active={this.hasBlock(BLOCK_HEADING2)}
               disabled={isRawMode}
-              title="Heading 2 (Ctrl+Alt+2)"
+              title="Heading 2" // (Ctrl+Alt+2)"
             >
               <span className={styles['toolbar-heading-icon']}>H2</span>
             </RichEditorToolbarButton>
@@ -705,7 +705,7 @@ export default class RichEditor extends React.Component {
               action={this.handleToggleBlock.bind(this, BLOCK_HEADING3)}
               active={this.hasBlock(BLOCK_HEADING3)}
               disabled={isRawMode}
-              title="Heading 3 (Ctrl+Alt+3)"
+              title="Heading 3" // (Ctrl+Alt+3)"
             >
               <span className={styles['toolbar-heading-icon']}>H3</span>
             </RichEditorToolbarButton>
@@ -713,7 +713,7 @@ export default class RichEditor extends React.Component {
               action={this.handleToggleBlock.bind(this, BLOCK_NUMBERED_LIST)}
               active={this.isListOfType(BLOCK_NUMBERED_LIST)}
               disabled={isRawMode}
-              title="Numbered list (Ctrl+Shift+7)"
+              title="Numbered list" // (Ctrl+Shift+7)"
             >
               <FormatListNumbered />
             </RichEditorToolbarButton>
@@ -721,33 +721,29 @@ export default class RichEditor extends React.Component {
               action={this.handleToggleBlock.bind(this, BLOCK_BULLETED_LIST)}
               active={this.isListOfType(BLOCK_BULLETED_LIST)}
               disabled={isRawMode}
-              title="Bulleted list (Ctrl+Shift+8)"
+              title="Bulleted list" // (Ctrl+Shift+8)"
             >
               <FormatListBulleted />
             </RichEditorToolbarButton>
-            <RichEditorToolbarButton
-              action={() => {
-                /* TODO */
-              }}
+            {/* <RichEditorToolbarButton
+              action={() => {}}
               disabled={isRawMode}
               title="Decrease indent (Ctrl+[)"
             >
               <FormatIndentDecrease />
             </RichEditorToolbarButton>
             <RichEditorToolbarButton
-              action={() => {
-                /* TODO */
-              }}
+              action={() => {}}
               disabled={isRawMode}
               title="Increase indent (Ctrl+])"
             >
               <FormatIndentIncrease />
-            </RichEditorToolbarButton>
+            </RichEditorToolbarButton> */}
             <RichEditorToolbarButton
               action={this.handleToggleBlock.bind(this, BLOCK_BLOCKQUOTE)}
               active={this.hasBlock(BLOCK_BLOCKQUOTE)}
               disabled={isRawMode}
-              title="Blockquote (Ctrl+Q)"
+              title="Blockquote" // (Ctrl+Q)"
             >
               <FormatQuote />
             </RichEditorToolbarButton>
@@ -759,7 +755,7 @@ export default class RichEditor extends React.Component {
               )}
               active={valueIsCodeBlock || valueIsCodeMark}
               disabled={isRawMode}
-              title="Preformatted (Ctrl+`)"
+              title="Preformatted" // (Ctrl+`)"
             >
               <Code />
             </RichEditorToolbarButton>
@@ -767,7 +763,7 @@ export default class RichEditor extends React.Component {
               action={this.handleToggleLink.bind(this, valueIsLink)}
               active={valueIsLink}
               disabled={isRawMode}
-              title="Insert link (Ctrl+K)"
+              title="Insert link" // (Ctrl+K)"
             >
               <InsertLink />
             </RichEditorToolbarButton>
@@ -789,7 +785,7 @@ export default class RichEditor extends React.Component {
             </RichEditorToolbarButton>
             <RichEditorToolbarButton
               action={this.handleToggleFullscreen}
-              title="Fullscreen"
+              title={isFullscreen ? 'Exit fullscreen' : 'Fullscreen'}
             >
               {isFullscreen ? <FullscreenExit /> : <Fullscreen />}
             </RichEditorToolbarButton>
