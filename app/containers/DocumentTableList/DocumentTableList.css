@@ -66,23 +66,41 @@ th:last-child .column-header {
   padding-right: calc(2 * var(--cell-x-padding));
 }
 
-.column-header.sorted {
-  color: var(--edit-color-positive-opacity);
-}
-
 .column-header .arrow {
   font-size: var(--edit-icon-size-sm);
   transition: all var(--edit-transition-duration-standard);
 }
 
-.column-header:not(.sorted) .arrow {
-  color: var(--edit-color-opacity-80);
+.arrow {
+  margin-left: 10px;
+  position: relative;
+  width: 12px;
+  height: 12px;
 }
 
-.column-header:not(.sorted):hover .arrow {
-  color: var(--edit-color-opacity-60);
+.arrow:before,
+.arrow:after {
+  content: ' ';
+  position: absolute;
+  left: 3px;
+  width: 50%;
+  height: 50%;
+  border-width: 0 0 2px 2px;
+  border-style: solid;
+  border-color: var(--edit-color-grayscale-70);
 }
 
-.arrow.up {
-  transform: rotate(180deg);
+.arrow:before {
+  top: 0;
+  transform: rotate(135deg);
+}
+
+.arrow:after {
+  bottom: 0;
+  transform: rotate(-45deg);
+}
+
+.arrow.up:before,
+.arrow.down:after {
+  border-color: black;
 }
