@@ -20,6 +20,10 @@
   letter-spacing: var(--edit-spacing-nav);
 }
 
+.container.in-drawer .label {
+  font-size: var(--edit-font-size-lg);
+}
+
 .label:not(a) {
   cursor: default;
 }
@@ -61,7 +65,6 @@
   background-color: var(--edit-color-background-1);
   color: var(--edit-color-text-3);
   box-shadow: var(--edit-shadow-8px);
-  font-size: var(--edit-font-size-sm);
 }
 
 .dropdown-item {
@@ -69,7 +72,12 @@
   padding: var(--edit-margin-sm) var(--edit-margin-md);
   white-space: nowrap;
   transition: all var(--edit-transition-duration-short);
+  font-size: var(--edit-font-size-sm);
   color: var(--edit-color-text-2);
+}
+
+.container.in-drawer .dropdown-item {
+  font-size: var(--edit-font-size-lg);
 }
 
 .dropdown-item:hover {
