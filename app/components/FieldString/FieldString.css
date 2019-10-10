@@ -21,11 +21,6 @@
 
 .free-input-wrapper {
   display: flex;
-  margin: -10px 0 0 -10px;
-}
-
-.free-input-wrapper > * {
-  margin: 10px 0 0 10px;
 }
 
 .free-input-wrapper input {
