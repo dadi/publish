@@ -1,4 +1,4 @@
-import Checkbox from 'components/Checkbox/Checkbox'
+import Toggle from 'components/Toggle/Toggle'
 import Label from 'components/Label/Label'
 import proptypes from 'prop-types'
 import React from 'react'
@@ -93,7 +93,7 @@ export default class FieldBooleanEdit extends React.Component {
         compact={true}
         label={displayName}
       >
-        <Checkbox
+        <Toggle
           name={name}
           onChange={this.handleOnChange.bind(this)}
           value={value}

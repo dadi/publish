@@ -1,11 +1,11 @@
 import proptypes from 'prop-types'
 import React from 'react'
-import styles from './Checkbox.css'
+import styles from './Toggle.css'
 
 /**
- * A checkbox input element.
+ * A toggle input element.
  */
-export default class Checkbox extends React.Component {
+export default class Toggle extends React.Component {
   static propTypes = {
     /**
      * The ID of the input element.

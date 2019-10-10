@@ -1,5 +1,5 @@
 import * as Constants from 'lib/constants'
-import Button from 'components/Button/Button'
+import {Button} from '@dadi/edit-ui'
 import HeroMessage from 'components/HeroMessage/HeroMessage'
 import proptypes from 'prop-types'
 import React from 'react'

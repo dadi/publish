@@ -32,11 +32,12 @@
   border-color: var(--edit-color-off);
 }
 
-.checkbox:checked::before {
+.checkbox.checked::before,
+.checkbox[indeterminate]::before {
   background-color: var(--edit-color-positive);
 }
 
-.checkbox:checked:disabled::before {
+.checkbox.checked:disabled::before {
   background-color: var(--edit-color-off);
 }
 
@@ -63,6 +64,12 @@
   transition: opacity var(--edit-transition-duration-standard);
 }
 
-.checkbox:checked::after {
+.checkbox[indeterminate]::after {
+  border-width: 0 var(--checkmark-thickness) 0 0;
+  transform: rotate(90deg);
+}
+
+.checkbox.checked::after,
+.checkbox[indeterminate]::after {
   opacity: 1;
 }

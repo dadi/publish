@@ -59,6 +59,7 @@ export default class TableHead extends React.Component {
       onSelect,
       selectable
     } = this.props
+    const isIndeterminate = !allSelected && hasSelected
 
     return (
       <thead className={styles.head}>
@@ -72,11 +73,11 @@ export default class TableHead extends React.Component {
                 onMouseLeave={this.hoverOn}
               >
                 <Checkbox
+                  checked={isIndeterminate || allSelected}
                   className={styles.checkbox}
-                  indeterminate={(!allSelected && hasSelected).toString()}
+                  indeterminate={isIndeterminate ? 'true' : null}
                   onChange={onSelect}
                   style={allowBulkSelection ? null : {display: 'none'}}
-                  value={allSelected}
                 />
               </label>
             </TableHeadCell>

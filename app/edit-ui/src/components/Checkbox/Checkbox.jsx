@@ -11,6 +11,7 @@ export default function Checkbox({className, hovered, large, ...props}) {
       className={classnames(
         styles.checkbox,
         {
+          [styles.checked]: props.checked,
           [styles.hovered]: hovered,
           [styles.large]: large
         },
