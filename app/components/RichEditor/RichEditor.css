@@ -5,6 +5,8 @@
 }
 
 .editor {
+  --font-mono: 'Roboto Mono', monospace;
+
   overflow-y: auto;
   border: solid var(--edit-border-width-standard) var(--edit-color-border-light);
   border-radius: var(--edit-radius-input);
@@ -12,6 +14,7 @@
   padding: var(--edit-elem-padding-standard);
   transition-property: border-color, background-color, color;
   transition-duration: var(--edit-transition-duration-standard);
+  cursor: text;
 }
 
 .editor.editor-focused {
@@ -25,72 +28,83 @@
 }
 
 .editor-wrapper-raw .editor {
-  font-family: 'Roboto Mono', monospace;
+  font-family: var(--font-mono);
+}
+
+.editor strong,
+.editor h1,
+.editor h2,
+.editor h3,
+.editor h4,
+.editor h5,
+.editor h6 {
+  font-weight: 700;
+}
+
+.editor em {
+  font-style: italic;
 }
 
 .editor a {
   color: var(--edit-color-positive);
-  border-bottom: 1px solid;
-}
-
-.editor b,
-.editor strong {
-  font-weight: bold;
+  text-decoration: underline;
 }
 
 .editor code {
-  background: hsla(0, 0%, 4%, 0.05);
-  font-family: 'Roboto Mono', monospace;
-  font-size: 13px;
-  max-width: 100%;
-  overflow: scroll;
-  padding: 1px 3px;
-  -webkit-overflow-scrolling: touch;
+  font-family: var(--font-mono);
+  font-size: var(--edit-font-size-sm);
 }
 
-.editor .code-block {
-  display: block;
-  padding: 10px;
+.editor pre {
+  background-color: var(--edit-color-background-3);
+  padding: var(--edit-margin-xs);
 }
 
-.editor em,
-.editor i {
-  font-style: italic;
-}
-
-.editor .heading {
-  font-weight: bold;
-  margin-bottom: 10px;
-}
-
-.editor .heading:not(:first-child) {
-  margin-top: 40px;
+.editor :not(pre) > code {
+  color: var(--edit-color-positive-darker-2);
+  background-color: var(--edit-color-positive-hint);
+  padding: 0 2px;
 }
 
 .editor h1 {
-  font-size: 25px;
+  font-size: 1.875em;
 }
 
 .editor h2 {
-  font-size: 18px;
+  font-size: 1.5em;
 }
 
-.editor .image {
-  border: 2px dashed transparent;
+.editor h3 {
+  font-size: 1.25em;
+}
+
+.editor hr {
+  margin: var(--edit-margin-md) 0;
+}
+
+.editor .image-wrapper {
+  background-color: var(--edit-color-background-2);
+  display: flex;
+  justify-content: center;
+  padding: var(--edit-margin-xs);
+  border: var(--edit-border-width-standard) dashed transparent;
+  transition: border-color var(--edit-transition-duration-standard);
+}
+
+.editor .image-wrapper.focused {
+  border-color: var(--edit-color-positive-opacity);
+}
+
+.editor .image-wrapper img {
   display: block;
   max-height: 20em;
   max-width: 100%;
-  transition: border-color 0.15s;
-}
-
-.editor .image-focused {
-  border-color: var(--theme-colour-data, #4a91ff);
 }
 
 .editor blockquote {
-  border-left: 3px solid #aaaaaa;
-  color: #aaaaaa;
-  padding-left: 10px;
+  border-left: 2px solid var(--edit-color-border-light);
+  color: var(--edit-color-text-3);
+  padding-left: var(--edit-margin-sm);
 }
 
 .editor ol {
@@ -101,10 +115,6 @@
 .editor ul {
   list-style-type: disc;
   list-style-position: inside;
-}
-
-.editor li p {
-  display: inline;
 }
 
 .media-select-documents {
@@ -124,4 +134,10 @@
   position: absolute;
   width: 100%;
   z-index: 10;
+}
+
+.toolbar-heading-icon {
+  font-weight: 700;
+  letter-spacing: -1px;
+  font-size: var(--edit-font-size-lg);
 }

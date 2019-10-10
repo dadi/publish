@@ -1,19 +1,23 @@
+import {
+  Code,
+  FormatBold,
+  FormatIndentDecrease,
+  FormatIndentIncrease,
+  FormatItalic,
+  FormatListBulleted,
+  FormatListNumbered,
+  FormatQuote,
+  Fullscreen,
+  FullscreenExit,
+  ImageSearch,
+  InsertLink
+} from '@material-ui/icons'
 import {RichEditorToolbar, RichEditorToolbarButton} from './RichEditorToolbar'
 import {Editor} from 'slate-react'
-import Fullscreen from 'components/Fullscreen/Fullscreen'
+import FullscreenComp from 'components/Fullscreen/Fullscreen'
 import HotKeys from 'lib/hot-keys'
-import IconBold from './icons/bold.svg'
-import IconBulletedList from './icons/bulleted-list.svg'
-import IconCode from './icons/code.svg'
-import IconFullscreen from './icons/fullscreen.svg'
-import IconH1 from './icons/header1.svg'
-import IconH2 from './icons/header2.svg'
-import IconItalic from './icons/italic.svg'
-import IconLink from './icons/link.svg'
-import IconMedia from './icons/image.svg'
-import IconNumberedList from './icons/numbered-list.svg'
-import IconQuote from './icons/quote.svg'
-import IconText from './icons/text.svg'
+import isHotkey from 'is-hotkey'
+import {Markdown} from 'mdi-material-ui'
 import MarkdownSerializer from '@edithq/slate-md-serializer'
 import PlainSerializer from 'slate-plain-serializer'
 import proptypes from 'prop-types'
@@ -41,25 +45,94 @@ const EMPTY_VALUE = {
     ]
   }
 }
+
 const FORMAT_MARKDOWN = 'markdown'
-const NODE_BLOCKQUOTE = 'block-quote'
-const NODE_BOLD = 'bold'
-const NODE_CODE = 'code'
-const NODE_HEADING1 = 'heading1'
-const NODE_HEADING2 = 'heading2'
-const NODE_ITALIC = 'italic'
-const NODE_IMAGE = 'image'
-const NODE_LINK = 'link'
-const NODE_BULLETED_LIST = 'bulleted-list'
-const NODE_NUMBERED_LIST = 'ordered-list'
-const NODE_LIST_ITEM = 'list-item'
-const SCHEMA = {
+
+const BLOCK_BLOCKQUOTE = 'block-quote'
+const BLOCK_BULLETED_LIST = 'bulleted-list'
+const BLOCK_CODE = 'code'
+const BLOCK_HEADING1 = 'heading1'
+const BLOCK_HEADING2 = 'heading2'
+const BLOCK_HEADING3 = 'heading3'
+const BLOCK_HEADING4 = 'heading4'
+const BLOCK_HEADING5 = 'heading5'
+const BLOCK_HEADING6 = 'heading6'
+const BLOCK_HR = 'horizontal-rule'
+const BLOCK_IMAGE = 'image'
+const BLOCK_LIST_ITEM = 'list-item'
+const BLOCK_NUMBERED_LIST = 'ordered-list'
+
+const HEADINGS = [
+  BLOCK_HEADING1,
+  BLOCK_HEADING2,
+  BLOCK_HEADING3,
+  BLOCK_HEADING4,
+  BLOCK_HEADING5,
+  BLOCK_HEADING6
+]
+
+const INLINE_LINK = 'link'
+
+const MARK_BOLD = 'bold'
+const MARK_CODE = 'code'
+const MARK_ITALIC = 'italic'
+
+const SCHEMA_RAW = {
+  document: {
+    nodes: [
+      {
+        match: [{type: 'line'}]
+      }
+    ]
+  },
+  blocks: {
+    line: {
+      nodes: [
+        {
+          match: {object: 'text'}
+        }
+      ]
+    }
+  }
+}
+const SCHEMA_RICH = {
   blocks: {
     image: {
       isVoid: true
     }
   }
 }
+
+const isModB = isHotkey('mod+b')
+const isModI = isHotkey('mod+i')
+const isEnter = isHotkey('enter')
+
+const headingsPlugin = {
+  commands: {
+    splitHeading(editor) {
+      editor.splitBlock().setBlocks(DEFAULT_NODE)
+    }
+  },
+  queries: {
+    isInHeading(editor) {
+      return editor.value.blocks.every(block => HEADINGS.includes(block.type))
+    }
+  },
+  onKeyDown(e, editor, next) {
+    if (isEnter(e) && editor.isInHeading()) {
+      e.preventDefault()
+
+      return editor.splitHeading()
+    }
+
+    next()
+  }
+}
+
+const plugins = [headingsPlugin]
+
+// http://www.stucox.com/blog/you-cant-detect-a-touchscreen/
+const isTouchDevice = window.matchMedia('(pointer: coarse)').matches
 
 /**
  * A rich text editor.
@@ -116,14 +189,21 @@ export default class RichEditor extends React.Component {
   constructor(props) {
     super(props)
 
+    this.handleChange = this.handleChange.bind(this)
+    this.handleKeyDown = this.handleKeyDown.bind(this)
     this.handleMediaInsert = this.handleMediaInsert.bind(this)
+    this.handleSave = this.handleSave.bind(this)
+    this.handleToggleFullscreen = this.handleToggleFullscreen.bind(this)
+    this.handleToggleRawMode = this.handleToggleRawMode.bind(this)
+    this.renderBlock = this.renderBlock.bind(this)
+    this.renderInline = this.renderInline.bind(this)
+    this.renderMark = this.renderMark.bind(this)
     this.startSelectingMedia = () => this.setState({isSelectingMedia: true})
     this.stopSelectingMedia = () => this.setState({isSelectingMedia: false})
+    this.validate = this.validate.bind(this)
 
     this.hotKeys = new HotKeys({
-      escape: this.handleToggleFullscreen.bind(this, false),
-      'mod+b': this.handleToggleMark.bind(this, 'bold'),
-      'mod+i': this.handleToggleMark.bind(this, 'italic')
+      escape: this.handleToggleFullscreen.bind(this, false)
     })
 
     this.initialMediaState = {
@@ -151,11 +231,11 @@ export default class RichEditor extends React.Component {
     this.hotKeys.addListener()
 
     if (typeof onSaveRegister === 'function') {
-      onSaveRegister(this.handleSave.bind(this))
+      onSaveRegister(this.handleSave)
     }
 
     if (typeof onValidateRegister === 'function') {
-      onValidateRegister(this.validate.bind(this))
+      onValidateRegister(this.validate)
     }
   }
 
@@ -199,6 +279,18 @@ export default class RichEditor extends React.Component {
     onChange.call(this, value)
   }
 
+  handleKeyDown(e, editor, next) {
+    if (isModB(e)) {
+      return editor.toggleMark(MARK_BOLD)
+    }
+
+    if (isModI(e)) {
+      return editor.toggleMark(MARK_ITALIC)
+    }
+
+    next()
+  }
+
   handleLinkClick(node, currentHref, event) {
     event.preventDefault()
 
@@ -209,7 +301,7 @@ export default class RichEditor extends React.Component {
 
   handleLinkUpdate(node, href) {
     if (href === '') {
-      return this.editor.unwrapInlineByKey(node.key, NODE_LINK)
+      return this.editor.unwrapInlineByKey(node.key, INLINE_LINK)
     }
 
     this.editor.setNodeByKey(node.key, {
@@ -225,18 +317,27 @@ export default class RichEditor extends React.Component {
         if (!mediaObject.url) return
 
         if (isRawMode) {
-          return this.editor.insertText(`![](${mediaObject.url})`)
+          return this.editor.insertBlock({
+            type: 'line',
+            nodes: [
+              {
+                object: 'text',
+                text: `![${mediaObject.altText || ''}](${mediaObject.url})`
+              }
+            ]
+          })
         }
 
         this.editor.insertBlock({
           type: 'image',
           data: {
+            alt: mediaObject.altText,
             src: mediaObject.url
           }
         })
       })
 
-      this.editor.insertBlock('p')
+      this.editor.insertBlock('paragraph')
     })
   }
 
@@ -249,21 +350,21 @@ export default class RichEditor extends React.Component {
       return
     }
 
-    if (type !== NODE_BULLETED_LIST && type !== NODE_NUMBERED_LIST) {
+    if (type !== BLOCK_BULLETED_LIST && type !== BLOCK_NUMBERED_LIST) {
       const isActive = this.hasBlock(type)
-      const isList = this.hasBlock(NODE_LIST_ITEM)
+      const isList = this.hasBlock(BLOCK_LIST_ITEM)
 
       if (isList) {
         this.editor
           .setBlocks(isActive ? DEFAULT_NODE : type)
-          .unwrapBlock(NODE_BULLETED_LIST)
-          .unwrapBlock(NODE_NUMBERED_LIST)
+          .unwrapBlock(BLOCK_BULLETED_LIST)
+          .unwrapBlock(BLOCK_NUMBERED_LIST)
       } else {
         this.editor.setBlocks(isActive ? DEFAULT_NODE : type)
       }
     } else {
       const {document} = this.value
-      const isList = this.hasBlock(NODE_LIST_ITEM)
+      const isList = this.hasBlock(BLOCK_LIST_ITEM)
       const isType = this.value.blocks.some(block => {
         return Boolean(
           document.getClosest(block.key, parent => parent.type === type)
@@ -273,15 +374,17 @@ export default class RichEditor extends React.Component {
       if (isList && isType) {
         this.editor
           .setBlocks(DEFAULT_NODE)
-          .unwrapBlock(NODE_BULLETED_LIST)
-          .unwrapBlock(NODE_NUMBERED_LIST)
+          .unwrapBlock(BLOCK_BULLETED_LIST)
+          .unwrapBlock(BLOCK_NUMBERED_LIST)
       } else if (isList) {
         const oldListType =
-          type === NODE_BULLETED_LIST ? NODE_NUMBERED_LIST : NODE_BULLETED_LIST
+          type === BLOCK_BULLETED_LIST
+            ? BLOCK_NUMBERED_LIST
+            : BLOCK_BULLETED_LIST
 
         this.editor.unwrapBlock(oldListType).wrapBlock(type)
       } else {
-        this.editor.setBlocks(NODE_LIST_ITEM).wrapBlock(type)
+        this.editor.setBlocks(BLOCK_LIST_ITEM).wrapBlock(type)
       }
     }
   }
@@ -292,7 +395,7 @@ export default class RichEditor extends React.Component {
     }
 
     if (valueIsCodeMark) {
-      return this.editor.toggleMark(NODE_CODE)
+      return this.editor.toggleMark(MARK_CODE)
     }
 
     const {blocks, selection} = this.value
@@ -311,9 +414,9 @@ export default class RichEditor extends React.Component {
     }
 
     if (isBlock) {
-      this.editor.wrapBlock(NODE_CODE)
+      this.editor.setBlocks(BLOCK_CODE)
     } else {
-      this.editor.toggleMark(NODE_CODE)
+      this.editor.toggleMark(MARK_CODE)
     }
   }
 
@@ -329,16 +432,16 @@ export default class RichEditor extends React.Component {
 
   handleToggleLink(valueIsLink) {
     if (valueIsLink) {
-      return this.editor.unwrapInline(NODE_LINK)
+      return this.editor.unwrapInline(INLINE_LINK)
     }
 
     if (this.value.selection.isExpanded) {
-      if (this.isNarrowViewport) {
+      if (isTouchDevice) {
         const href = this.openLinkPrompt()
 
         if (href !== '') {
           this.editor.wrapInline({
-            type: NODE_LINK,
+            type: INLINE_LINK,
             data: {
               href
             }
@@ -349,7 +452,7 @@ export default class RichEditor extends React.Component {
       }
 
       this.editor.wrapInline({
-        type: NODE_LINK,
+        type: INLINE_LINK,
         data: {
           href: ''
         }
@@ -398,7 +501,7 @@ export default class RichEditor extends React.Component {
       const parent = document.getParent(blocks.first().key)
 
       valueIsInList =
-        this.hasBlock(NODE_LIST_ITEM) && parent && parent.type === type
+        this.hasBlock(BLOCK_LIST_ITEM) && parent && parent.type === type
     }
 
     return valueIsInList
@@ -424,7 +527,7 @@ export default class RichEditor extends React.Component {
       }
 
       return (
-        <Fullscreen>
+        <FullscreenComp>
           <ReferenceSelectView
             buildUrl={() => '/media'}
             collection={collection}
@@ -433,12 +536,12 @@ export default class RichEditor extends React.Component {
             referenceFieldName="mediaSelect"
             saveText="Insert items"
           />
-        </Fullscreen>
+        </FullscreenComp>
       )
     }
 
     if (isFullscreen) {
-      return <Fullscreen>{this.renderEditor()}</Fullscreen>
+      return <FullscreenComp>{this.renderEditor()}</FullscreenComp>
     }
 
     return this.renderEditor()
@@ -448,52 +551,90 @@ export default class RichEditor extends React.Component {
     const {attributes, children, isFocused, node} = props
 
     switch (node.type) {
-      case NODE_CODE:
-        return (
-          <code {...attributes} className={styles['code-block']}>
-            {children}
-          </code>
-        )
+      case BLOCK_CODE: {
+        const language = node.data.get('language')
 
-      case NODE_BLOCKQUOTE:
+        return (
+          <pre {...attributes}>
+            <code className={language && `language-${language}`}>
+              {children}
+            </code>
+          </pre>
+        )
+      }
+
+      case BLOCK_BLOCKQUOTE:
         return <blockquote {...attributes}>{children}</blockquote>
 
-      case NODE_BULLETED_LIST:
+      case BLOCK_BULLETED_LIST:
         return <ul {...attributes}>{children}</ul>
 
-      case NODE_HEADING1:
+      case BLOCK_HEADING1:
         return (
           <h1 {...attributes} className={styles.heading}>
             {children}
           </h1>
         )
 
-      case NODE_HEADING2:
+      case BLOCK_HEADING2:
         return (
           <h2 {...attributes} className={styles.heading}>
             {children}
           </h2>
         )
 
-      case NODE_IMAGE: {
-        const imageStyle = new Style(styles, 'image').addIf(
-          'image-focused',
+      case BLOCK_HEADING3:
+        return (
+          <h3 {...attributes} className={styles.heading}>
+            {children}
+          </h3>
+        )
+
+      case BLOCK_HEADING4:
+        return (
+          <h4 {...attributes} className={styles.heading}>
+            {children}
+          </h4>
+        )
+
+      case BLOCK_HEADING5:
+        return (
+          <h5 {...attributes} className={styles.heading}>
+            {children}
+          </h5>
+        )
+
+      case BLOCK_HEADING6:
+        return (
+          <h6 {...attributes} className={styles.heading}>
+            {children}
+          </h6>
+        )
+
+      case BLOCK_HR:
+        return <hr />
+
+      case BLOCK_IMAGE: {
+        const imageWrapperStyle = new Style(styles, 'image-wrapper').addIf(
+          'focused',
           isFocused
         )
 
         return (
-          <img
-            {...attributes}
-            className={imageStyle.getClasses()}
-            src={node.data.get('src')}
-          />
+          <div className={imageWrapperStyle.getClasses()}>
+            <img
+              {...attributes}
+              alt={node.data.get('alt')}
+              src={node.data.get('src')}
+            />
+          </div>
         )
       }
 
-      case NODE_LIST_ITEM:
+      case BLOCK_LIST_ITEM:
         return <li {...attributes}>{children}</li>
 
-      case NODE_NUMBERED_LIST:
+      case BLOCK_NUMBERED_LIST:
         return <ol {...attributes}>{children}</ol>
 
       default:
@@ -516,78 +657,96 @@ export default class RichEditor extends React.Component {
       this.state.isFocused
     )
 
-    // This will be used by certain elements (e.g. links) to adjust their
-    // behaviour based on the viewport size.
-    this.isNarrowViewport = window.innerWidth < 1000
-
     // Deserialising the value and caching the result, so that other methods
     // can use it.
     this.value = this.deserialise(this.props.value)
 
-    const valueIsCodeBlock = this.hasBlock(NODE_CODE)
-    const valueIsCodeMark = this.hasMark(NODE_CODE)
-    const valueIsLink = this.hasInline(NODE_LINK)
+    const valueIsCodeBlock = this.hasBlock(BLOCK_CODE)
+    const valueIsCodeMark = this.hasMark(MARK_CODE)
+    const valueIsLink = this.hasInline(INLINE_LINK)
 
     return (
       <div className={containerStyle.getClasses()}>
         <RichEditorToolbar isFullscreen={isFullscreen}>
           <div>
             <RichEditorToolbarButton
-              action={this.handleToggleMark.bind(this, NODE_BOLD)}
-              active={this.hasMark(NODE_BOLD)}
+              action={this.handleToggleMark.bind(this, MARK_BOLD)}
+              active={this.hasMark(MARK_BOLD)}
               disabled={isRawMode}
-              icon={IconBold}
-              text="Bold"
-            />
+              title="Bold" // (Ctrl+B)"
+            >
+              <FormatBold />
+            </RichEditorToolbarButton>
             <RichEditorToolbarButton
-              action={this.handleToggleMark.bind(this, NODE_ITALIC)}
-              active={this.hasMark(NODE_ITALIC)}
+              action={this.handleToggleMark.bind(this, MARK_ITALIC)}
+              active={this.hasMark(MARK_ITALIC)}
               disabled={isRawMode}
-              icon={IconItalic}
-              text="Italic"
-            />
+              title="Italic" // (Ctrl+I)"
+            >
+              <FormatItalic />
+            </RichEditorToolbarButton>
             <RichEditorToolbarButton
-              action={this.handleToggleLink.bind(this, valueIsLink)}
-              active={valueIsLink}
+              action={this.handleToggleBlock.bind(this, BLOCK_HEADING1)}
+              active={this.hasBlock(BLOCK_HEADING1)}
               disabled={isRawMode}
-              icon={IconLink}
-              text="Link"
-            />
+              title="Heading 1" // (Ctrl+Alt+1)"
+            >
+              <span className={styles['toolbar-heading-icon']}>H1</span>
+            </RichEditorToolbarButton>
             <RichEditorToolbarButton
-              action={this.handleToggleBlock.bind(this, NODE_HEADING1)}
-              active={this.hasBlock(NODE_HEADING1)}
+              action={this.handleToggleBlock.bind(this, BLOCK_HEADING2)}
+              active={this.hasBlock(BLOCK_HEADING2)}
               disabled={isRawMode}
-              icon={IconH1}
-              text="Heading 1"
-            />
+              title="Heading 2" // (Ctrl+Alt+2)"
+            >
+              <span className={styles['toolbar-heading-icon']}>H2</span>
+            </RichEditorToolbarButton>
             <RichEditorToolbarButton
-              action={this.handleToggleBlock.bind(this, NODE_HEADING2)}
-              active={this.hasBlock(NODE_HEADING2)}
+              action={this.handleToggleBlock.bind(this, BLOCK_HEADING3)}
+              active={this.hasBlock(BLOCK_HEADING3)}
               disabled={isRawMode}
-              icon={IconH2}
-              text="Heading 2"
-            />
+              title="Heading 3" // (Ctrl+Alt+3)"
+            >
+              <span className={styles['toolbar-heading-icon']}>H3</span>
+            </RichEditorToolbarButton>
             <RichEditorToolbarButton
-              action={this.handleToggleBlock.bind(this, NODE_BLOCKQUOTE)}
-              active={this.hasBlock(NODE_BLOCKQUOTE)}
+              action={this.handleToggleBlock.bind(this, BLOCK_NUMBERED_LIST)}
+              active={this.isListOfType(BLOCK_NUMBERED_LIST)}
               disabled={isRawMode}
-              icon={IconQuote}
-              text="Quote"
-            />
+              title="Numbered list" // (Ctrl+Shift+7)"
+            >
+              <FormatListNumbered />
+            </RichEditorToolbarButton>
             <RichEditorToolbarButton
-              action={this.handleToggleBlock.bind(this, NODE_NUMBERED_LIST)}
-              active={this.isListOfType(NODE_NUMBERED_LIST)}
+              action={this.handleToggleBlock.bind(this, BLOCK_BULLETED_LIST)}
+              active={this.isListOfType(BLOCK_BULLETED_LIST)}
               disabled={isRawMode}
-              icon={IconNumberedList}
-              text="Numbered list"
-            />
+              title="Bulleted list" // (Ctrl+Shift+8)"
+            >
+              <FormatListBulleted />
+            </RichEditorToolbarButton>
+            {/* <RichEditorToolbarButton
+              action={() => {}}
+              disabled={isRawMode}
+              title="Decrease indent (Ctrl+[)"
+            >
+              <FormatIndentDecrease />
+            </RichEditorToolbarButton>
             <RichEditorToolbarButton
-              action={this.handleToggleBlock.bind(this, NODE_BULLETED_LIST)}
-              active={this.isListOfType(NODE_BULLETED_LIST)}
+              action={() => {}}
               disabled={isRawMode}
-              icon={IconBulletedList}
-              text="Bulleted list"
-            />
+              title="Increase indent (Ctrl+])"
+            >
+              <FormatIndentIncrease />
+            </RichEditorToolbarButton> */}
+            <RichEditorToolbarButton
+              action={this.handleToggleBlock.bind(this, BLOCK_BLOCKQUOTE)}
+              active={this.hasBlock(BLOCK_BLOCKQUOTE)}
+              disabled={isRawMode}
+              title="Blockquote" // (Ctrl+Q)"
+            >
+              <FormatQuote />
+            </RichEditorToolbarButton>
             <RichEditorToolbarButton
               action={this.handleToggleCode.bind(
                 this,
@@ -596,29 +755,40 @@ export default class RichEditor extends React.Component {
               )}
               active={valueIsCodeBlock || valueIsCodeMark}
               disabled={isRawMode}
-              icon={IconCode}
-              text="Code block"
-            />
+              title="Preformatted" // (Ctrl+`)"
+            >
+              <Code />
+            </RichEditorToolbarButton>
+            <RichEditorToolbarButton
+              action={this.handleToggleLink.bind(this, valueIsLink)}
+              active={valueIsLink}
+              disabled={isRawMode}
+              title="Insert link" // (Ctrl+K)"
+            >
+              <InsertLink />
+            </RichEditorToolbarButton>
             <RichEditorToolbarButton
               action={this.startSelectingMedia}
-              icon={IconMedia}
-              text="Media"
-            />
+              title="Insert asset from library"
+            >
+              <ImageSearch />
+            </RichEditorToolbarButton>
           </div>
 
           <div>
             <RichEditorToolbarButton
-              action={this.handleToggleRawMode.bind(this)}
+              action={this.handleToggleRawMode}
               active={isRawMode}
-              icon={IconText}
-              text="Raw mode"
-            />
+              title="Markdown mode"
+            >
+              <Markdown />
+            </RichEditorToolbarButton>
             <RichEditorToolbarButton
-              action={this.handleToggleFullscreen.bind(this)}
-              active={isFullscreen}
-              icon={IconFullscreen}
-              text="Full-screen"
-            />
+              action={this.handleToggleFullscreen}
+              title={isFullscreen ? 'Exit fullscreen' : 'Fullscreen'}
+            >
+              {isFullscreen ? <FullscreenExit /> : <Fullscreen />}
+            </RichEditorToolbarButton>
           </div>
         </RichEditorToolbar>
 
@@ -626,16 +796,28 @@ export default class RichEditor extends React.Component {
           className={editorWrapperStyle.getClasses()}
           ref={el => (this.container = el)}
         >
-          <Editor
-            className={editorStyle.getClasses()}
-            onChange={this.handleChange.bind(this)}
-            renderBlock={this.renderBlock.bind(this)}
-            renderInline={this.renderInline.bind(this)}
-            renderMark={this.renderMark.bind(this)}
-            ref={el => (this.editor = el)}
-            schema={SCHEMA}
-            value={this.value}
-          />
+          {isRawMode ? (
+            <Editor
+              className={editorStyle.getClasses()}
+              onChange={this.handleChange}
+              ref={el => (this.editor = el)}
+              schema={SCHEMA_RAW}
+              value={this.value}
+            />
+          ) : (
+            <Editor
+              className={editorStyle.getClasses()}
+              onChange={this.handleChange}
+              onKeyDown={this.handleKeyDown}
+              plugins={plugins}
+              renderBlock={this.renderBlock}
+              renderInline={this.renderInline}
+              renderMark={this.renderMark}
+              ref={el => (this.editor = el)}
+              schema={SCHEMA_RICH}
+              value={this.value}
+            />
+          )}
         </div>
       </div>
     )
@@ -643,10 +825,10 @@ export default class RichEditor extends React.Component {
 
   renderInline({children, node}, _, next) {
     switch (node.type) {
-      case NODE_LINK: {
+      case INLINE_LINK: {
         const href = node.data.get('href')
 
-        if (this.isNarrowViewport) {
+        if (isTouchDevice) {
           return (
             <a
               href={href}
@@ -675,13 +857,13 @@ export default class RichEditor extends React.Component {
 
   renderMark({children, mark, attributes}, _, next) {
     switch (mark.type) {
-      case NODE_BOLD:
+      case MARK_BOLD:
         return <strong {...attributes}>{children}</strong>
 
-      case NODE_CODE:
+      case MARK_CODE:
         return <code {...attributes}>{children}</code>
 
-      case NODE_ITALIC:
+      case MARK_ITALIC:
         return <em {...attributes}>{children}</em>
 
       default:

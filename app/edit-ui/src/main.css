@@ -58,7 +58,8 @@
   --edit-color-positive: #3dc496;
   --edit-color-positive-opacity: rgba(13, 181, 124, 0.8);
   --edit-color-positive-hint: #e2f6ef;
-  --edit-color-positive-darker-1: #37b087;
+  --edit-color-positive-darker-1: #35b187;
+  --edit-color-positive-darker-2: #2f9d78;
 
   --edit-color-negative: #ff5666;
   --edit-color-negative-hint: #ffe6e8;

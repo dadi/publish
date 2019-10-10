@@ -1,6 +1,5 @@
 .container {
   display: flex;
-  font-size: 15px;
   justify-content: space-between;
   padding: 10px 0;
   position: sticky;
@@ -16,31 +15,29 @@
 
 .button {
   border: 0;
-  border-radius: 2px;
+  border-radius: var(--edit-radius-elem);
   cursor: pointer;
-  margin-right: 6px;
-  opacity: 0.65;
-  padding: 5px 10px;
-  position: relative;
+  margin-right: var(--edit-margin-xs);
+  padding: 0;
+  color: var(--edit-color-text-2);
+  transition: all var(--edit-transition-duration-standard);
+  height: 24px;
+  width: 24px;
 }
 
-.button[disabled] {
-  opacity: 0.2;
+.button > * {
+  vertical-align: middle;
 }
 
-.button:not([disabled]):hover {
-  background: #efefef;
-  opacity: 1;
+.button:disabled {
+  color: var(--edit-color-off);
 }
 
-.button-active {
-  background-color: #cccccc;
+.button:not(:disabled):not(.active):hover {
+  background-color: var(--edit-color-background-3);
 }
 
-.button-icon {
-  background-position: 50% 50%;
-  background-repeat: no-repeat;
-  background-size: auto 22px;
-  font-size: 0;
-  padding: 12px;
+.button.active {
+  color: var(--edit-color-positive-opacity);
+  background-color: var(--edit-color-positive-hint);
 }
