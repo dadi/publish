@@ -54,6 +54,12 @@ export default class Table extends React.Component {
     selectedRows: {}
   }
 
+  constructor(props) {
+    super(props)
+
+    this.handleHeadSelect = this.handleHeadSelect.bind(this)
+  }
+
   deselectAll() {
     const {onSelect, selectedRows} = this.props
     const selection = Object.keys(selectedRows).reduce((selection, index) => {
@@ -67,17 +73,21 @@ export default class Table extends React.Component {
     }
   }
 
-  handleHeadSelect(event) {
-    if (event.target.checked) {
-      this.selectAll()
-    } else {
+  handleHeadSelect() {
+    const {selectedRows} = this.props
+    const isAnySelected = Object.keys(selectedRows).find(
+      index => selectedRows[index]
+    )
+
+    if (isAnySelected) {
       this.deselectAll()
+    } else {
+      this.selectAll()
     }
   }
 
   handleRowSelect(index, selected, isRangeSelection) {
     const {onSelect, selectLimit, selectedRows} = this.props
-
     const selectedRowsIndices = Object.keys(selectedRows)
 
     let newSelectedRows = {}
@@ -149,11 +159,11 @@ export default class Table extends React.Component {
     )
     const numRows = React.Children.count(children)
     const newProps = {
-      allowBulkSelection: selectLimit > numRows - 1,
-      allSelected: selectedRowsIndices.length === numRows - 1,
+      allowBulkSelection: selectLimit > numRows,
+      allSelected: selectedRowsIndices.length === numRows,
       fillBlanks,
       hasSelected: selectedRowsIndices.length > 0,
-      onSelect: this.handleHeadSelect.bind(this),
+      onSelect: this.handleHeadSelect,
       selectable,
       selectLimit
     }
