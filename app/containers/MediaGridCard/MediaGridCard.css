@@ -2,11 +2,9 @@
   position: relative;
   margin: 0 0 20px;
   line-height: 1.1em;
-  overflow: hidden;
   background-color: var(--edit-color-background-1);
   border: var(--edit-border-width-standard) solid var(--edit-color-border-light);
   border-radius: var(--edit-radius-elem);
-  z-index: 1; /* http://stackoverflow.com/a/24056662 */
 }
 
 .image-holder {
@@ -28,10 +26,10 @@
   height: 100%;
   z-index: 1;
   opacity: 0;
-  transition: opacity 0.3s ease-in-out;
+  transition: opacity var(--edit-transition-duration-standard);
 }
 
-.wrapper:hover .image-holder:before {
+.wrapper:not(.checkbox-hovered):hover .image-holder:before {
   opacity: 0.4;
 }
 
@@ -46,9 +44,6 @@
   left: 0;
   width: 100%;
   height: 100%;
-  transition: transform 0.2s;
-  transform: scale(1);
-  z-index: 0; /* http://stackoverflow.com/a/24056662 */
 }
 
 .select {
@@ -75,7 +70,7 @@
 
 .metadata {
   padding: var(--edit-margin-lg);
-  transition: background-color 0.2s;
+  transition: background-color var(--edit-transition-duration-standard);
 }
 
 .wrapper:hover .metadata {
