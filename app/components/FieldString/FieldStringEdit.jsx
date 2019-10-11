@@ -156,7 +156,6 @@ export default class FieldStringEdit extends React.Component {
       displayName,
       error,
       hasUnsavedChanges,
-      readOnly,
       required,
       schema,
       value
@@ -178,12 +177,7 @@ export default class FieldStringEdit extends React.Component {
     return (
       <Label
         accent={hasUnsavedChanges ? 'info' : null}
-        comment={
-          comment ||
-          (required && 'Required') ||
-          (readOnly && 'Read only') ||
-          null
-        }
+        comment={comment || (required && 'Required') || null}
         error={Boolean(error)}
         errorMessage={typeof error === 'string' ? error : null}
         label={displayName}
