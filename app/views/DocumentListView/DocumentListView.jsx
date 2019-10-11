@@ -17,6 +17,7 @@ import FileUpload from 'components/FileUpload/FileUpload'
 import {getVisibleFields} from 'lib/fields'
 import Header from 'containers/Header/Header'
 import HeroMessage from 'components/HeroMessage/HeroMessage'
+import {Link} from 'react-router-dom'
 import MediaGridCard from 'containers/MediaGridCard/MediaGridCard'
 import MediaListController from 'components/MediaListController/MediaListController'
 import Modal from 'components/Modal/Modal'
@@ -153,20 +154,20 @@ class DocumentListView extends React.Component {
       )
     }
 
+    const createNewHref = onBuildBaseUrl.call(this, {
+      createNew: true
+    })
+
     return (
       <HeroMessage
         title="No documents yet"
         subtitle="Once created, they will appear here."
       >
-        <Button
-          accent="positive"
-          fillStyle="filled"
-          href={onBuildBaseUrl.call(this, {
-            createNew: true
-          })}
-        >
-          Create new document
-        </Button>
+        <Link to={createNewHref}>
+          <Button accent="positive" fillStyle="filled">
+            Create new document
+          </Button>
+        </Link>
       </HeroMessage>
     )
   }

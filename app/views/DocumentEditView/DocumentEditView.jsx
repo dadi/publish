@@ -424,7 +424,7 @@ class DocumentEditView extends React.Component {
   }
 
   renderDocument({collection, contentKey, document, sections}) {
-    const {onBuildBaseUrl} = this.props
+    const {onBuildBaseUrl, state} = this.props
     const validationErrors = document.validationErrors || {}
 
     if (collection.IS_MEDIA_BUCKET) {
@@ -448,6 +448,11 @@ class DocumentEditView extends React.Component {
         }
       />
     )
+    const fieldsWithUnsavedChanges = document.wasLoadedFromLocalStorage
+      ? Object.keys(document.local).filter(
+          fieldName => document.local[fieldName] !== undefined
+        )
+      : []
 
     return (
       <EditInterface>
@@ -455,10 +460,18 @@ class DocumentEditView extends React.Component {
           const hasErrors =
             item.fields.main.some(field => validationErrors[field._id]) ||
             item.fields.sidebar.some(field => validationErrors[field._id])
+          const hasUnsavedChanges =
+            item.fields.main.some(field =>
+              fieldsWithUnsavedChanges.includes(field._id)
+            ) ||
+            item.fields.sidebar.some(field =>
+              fieldsWithUnsavedChanges.includes(field._id)
+            )
 
           return (
             <EditInterfaceSection
               hasErrors={hasErrors}
+              hasUnsavedChanges={hasUnsavedChanges}
               href={item.href}
               key={item.href}
               isActive={item.isActive}

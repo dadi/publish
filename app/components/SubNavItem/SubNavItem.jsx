@@ -40,10 +40,19 @@ export default class SubNavItem extends React.Component {
   }
 
   render() {
-    const {active, children, error, href, inDropdown, onClick} = this.props
+    const {
+      active,
+      children,
+      error,
+      hasUnsavedChanges,
+      href,
+      inDropdown,
+      onClick
+    } = this.props
     const itemStyle = new Style(styles, 'sub-nav-item')
       .addIf('active', active)
       .addIf('error', error)
+      .addIf('unsaved-changes', hasUnsavedChanges)
       .addIf('in-dropdown', inDropdown)
 
     return (

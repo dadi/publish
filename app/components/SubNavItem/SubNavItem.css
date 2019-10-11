@@ -36,11 +36,16 @@
   color: var(--edit-color-heading);
 }
 
+.sub-nav-item.unsaved-changes {
+  color: var(--edit-color-info);
+}
+
 .sub-nav-item.error {
   color: var(--edit-color-negative);
 }
 
-.sub-nav-item.error::after {
+.sub-nav-item.error::after,
+.sub-nav-item.unsaved-changes::after {
   content: ' ';
   position: absolute;
   top: 8px;
@@ -48,7 +53,14 @@
   width: 6px;
   height: 6px;
   border-radius: 50%;
+}
+
+.sub-nav-item.error::after {
   background-color: var(--edit-color-negative);
+}
+
+.sub-nav-item.unsaved-changes::after {
+  background-color: var(--edit-color-info);
 }
 
 .sub-nav-item.in-dropdown.error::after {

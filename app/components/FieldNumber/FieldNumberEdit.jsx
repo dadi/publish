@@ -129,14 +129,11 @@ export default class FieldNumberEdit extends React.Component {
       value
     } = this.props
     const {hasFocus, internalValue} = this.state
-    const publishBlock = schema.publish || {}
-    const commentString =
-      comment || (required && 'Required') || (readOnly && 'Read only') || null
 
     return (
       <Label
         accent={hasUnsavedChanges ? 'info' : null}
-        comment={commentString}
+        comment={comment || (required && 'Required') || null}
         error={Boolean(error)}
         errorMessage={typeof error === 'string' ? error : null}
         hasFocus={hasFocus}
@@ -147,7 +144,7 @@ export default class FieldNumberEdit extends React.Component {
           onBlur={this.handleFocusChange.bind(this, false)}
           onInput={this.handleOnChange.bind(this)}
           onFocus={this.handleFocusChange.bind(this, true)}
-          readOnly={publishBlock.readonly === true}
+          readOnly={readOnly}
           type="number"
           value={(internalValue || value || '').toString()}
         />

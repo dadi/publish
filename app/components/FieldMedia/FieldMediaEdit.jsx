@@ -278,49 +278,23 @@ export default class FieldMediaEdit extends React.Component {
           </div>
         )}
 
-        {!isReadOnly && (
-          <>
-            {isTouchDevice ? (
-              <div className={styles.placeholder}>
-                <FileUpload
-                  accept={acceptedMimeTypes}
-                  multiple={!singleFile}
-                  onChange={this.handleFileChange.bind(this)}
+        {!isReadOnly &&
+          this.renderDropArea(
+            <div className={styles['upload-options']}>
+              <FileUpload
+                accept={acceptedMimeTypes}
+                multiple={!singleFile}
+                onChange={this.handleFileChange.bind(this)}
+              >
+                <Button
+                  accent="positive"
+                  className={styles['upload-button']}
+                  data-name="upload-files-button"
                 >
-                  <Button accent="positive" data-name="upload-files-button">
-                    Upload files
-                  </Button>
-                </FileUpload>
-              </div>
-            ) : (
-              <div className={styles['upload-options']}>
-                <DropArea
-                  accept={acceptedMimeTypes}
-                  contentClassname={styles['drop-area']}
-                  draggingText={`Drop file${singleFile ? '' : 's'} here`}
-                  onDrop={this.handleFileChange.bind(this)}
-                >
-                  <FileUpload
-                    accept={acceptedMimeTypes}
-                    multiple={!singleFile}
-                    onChange={this.handleFileChange.bind(this)}
-                  >
-                    <Button
-                      accent="positive"
-                      className={styles['upload-button']}
-                      data-name="upload-files-button"
-                    >
-                      Upload files
-                    </Button>
-                  </FileUpload>
-                  <span className={styles['drag-instruction']}>
-                    or drag and drop here to upload
-                  </span>
-                </DropArea>
-              </div>
-            )}
+                  Upload files
+                </Button>
+              </FileUpload>
 
-            <div className={styles.placeholder}>
               <Button
                 accent="positive"
                 data-name="select-existing-media-button"
@@ -329,9 +303,31 @@ export default class FieldMediaEdit extends React.Component {
                 Select existing
               </Button>
             </div>
-          </>
-        )}
+          )}
       </Label>
+    )
+  }
+
+  renderDropArea(children) {
+    const {schema} = this.props
+    const acceptedMimeTypes = schema.validation && schema.validation.mimeTypes
+    const isSingleFile = schema.settings && schema.settings.limit === 1
+
+    if (isTouchDevice) {
+      return children
+    }
+
+    return (
+      <div className={styles['drop-area-container']}>
+        <DropArea
+          accept={acceptedMimeTypes}
+          className={styles['drop-area']}
+          draggingText={`Drop file${isSingleFile ? '' : 's'} here`}
+          onDrop={this.handleFileChange.bind(this)}
+        >
+          {children}
+        </DropArea>
+      </div>
     )
   }
 
