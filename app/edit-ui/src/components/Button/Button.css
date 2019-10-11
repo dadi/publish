@@ -12,6 +12,7 @@
   outline: none;
   border: solid var(--edit-border-width-standard);
   border-radius: var(--edit-radius-button);
+  margin: 0;
   padding: 12px 50px;
   font-size: var(--edit-font-size-button);
   letter-spacing: var(--edit-spacing-button);
