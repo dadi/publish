@@ -47,6 +47,7 @@ class DocumentListView extends React.Component {
     this.handleFiltersUpdate = this.handleFiltersUpdate.bind(this)
     this.handleMediaUpload = this.handleMediaUpload.bind(this)
     this.handlePageChange = this.handlePageChange.bind(this)
+    this.handleSort = this.handleSort.bind(this)
     this.updateMediaListMode = this.updateMediaListMode.bind(this)
 
     this.showDeletePrompt = () => this.setState({isShowingDeletePrompt: true})
@@ -226,12 +227,19 @@ class DocumentListView extends React.Component {
 
   handleSort({sortBy, sortOrder}) {
     const {onBuildBaseUrl, route} = this.props
+    const newSearch = {
+      ...route.search,
+      sort: undefined,
+      order: undefined
+    }
+
+    if (sortBy) {
+      newSearch.sort = sortBy
+      newSearch.order = sortOrder
+    }
+
     const newUrl = onBuildBaseUrl.call(this, {
-      search: {
-        ...route.search,
-        sort: sortBy,
-        order: sortOrder
-      }
+      search: newSearch
     })
 
     route.history.push(newUrl)
@@ -443,7 +451,7 @@ class DocumentListView extends React.Component {
                   fields={MEDIA_TABLE_FIELDS}
                   onBuildBaseUrl={onBuildBaseUrl.bind(this)}
                   onSelect={onSelect}
-                  onSort={this.handleSort.bind(this)}
+                  onSort={this.handleSort}
                   order={search.order}
                   selectedDocuments={selectedDocuments}
                   sort={search.sort}
@@ -486,7 +494,7 @@ class DocumentListView extends React.Component {
             fields={visibleFields}
             onBuildBaseUrl={onBuildBaseUrl.bind(this)}
             onSelect={onSelect}
-            onSort={this.handleSort.bind(this)}
+            onSort={this.handleSort}
             order={search.order}
             selectedDocuments={selectedDocuments}
             sort={search.sort}

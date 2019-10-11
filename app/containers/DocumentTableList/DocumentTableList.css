@@ -100,7 +100,9 @@ th:last-child .column-header {
   transform: rotate(-45deg);
 }
 
-.arrow.up:before,
-.arrow.down:after {
+.column-header:not(:hover) .arrow.asc:after,
+.column-header:not(:hover) .arrow.desc:before,
+.column-header:hover .arrow:not(.asc):not(.desc):after,
+.column-header:hover .arrow.asc:before {
   border-color: black;
 }
