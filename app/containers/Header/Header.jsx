@@ -90,7 +90,11 @@ class Header extends React.Component {
                 className={styles['drawer-toggle']}
                 onClick={this.toggleDrawer}
               >
-                <Menu fontSize="large" />
+                {isDrawerOpen ? (
+                  <Close fontSize="large" />
+                ) : (
+                  <Menu fontSize="large" />
+                )}
               </button>
               <div
                 aria-hidden={isDrawerOpen ? null : true}

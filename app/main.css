@@ -28,6 +28,7 @@ body {
   min-height: 100vh;
   background-color: var(--edit-color-background-3);
   line-height: var(--edit-line-height-standard);
+  height: unset !important;
 }
 
 :global :root {
@@ -59,8 +60,10 @@ body {
 
 :global #app {
   height: 100%;
+  min-height: 100vh;
   display: flex;
   flex-flow: column nowrap;
+  position: relative;
 }
 
 :global #app > main {

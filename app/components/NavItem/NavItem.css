@@ -1,6 +1,8 @@
 .container {
   position: relative;
   display: inline-block;
+  /* Align menu items in drawer with the close icon. */
+  --drawer-side-padding: calc(var(--edit-margin-md) + 11px);
 }
 
 .container.in-drawer {
@@ -38,7 +40,7 @@
 
 .container.in-drawer .label {
   display: inline-block;
-  padding: var(--edit-margin-sm) var(--edit-margin-md);
+  padding: var(--edit-margin-sm) var(--drawer-side-padding);
 }
 
 .expand-icon {
@@ -74,6 +76,10 @@
   transition: all var(--edit-transition-duration-short);
   font-size: var(--edit-font-size-sm);
   color: var(--edit-color-text-2);
+}
+
+.container.in-drawer .dropdown-item {
+  padding: var(--edit-margin-sm) var(--drawer-side-padding);
 }
 
 .container.in-drawer .dropdown-item {
