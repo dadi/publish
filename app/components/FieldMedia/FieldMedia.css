@@ -1,5 +1,6 @@
 .values {
   background-color: var(--edit-color-background-2);
+  margin-bottom: var(--edit-margin-md);
 }
 
 .value {
@@ -147,45 +148,21 @@
   margin-left: var(--edit-margin-xs);
 }
 
-.placeholder,
-.upload-options {
-  margin-top: var(--edit-margin-sm);
-}
-
-.placeholder a,
-.placeholder button,
-.placeholder span {
-  width: 100%;
-}
-
-.upload-options {
-  display: flex;
-  flex-direction: column;
-  justify-content: stretch;
-  color: var(--edit-color-text-2);
-  border: var(--edit-border-width-standard) dashed
-    var(--edit-color-border-light);
-  border-radius: var(--edit-radius-elem);
+.drop-area-container {
+  background-color: var(--edit-color-background-2);
+  border: 1px dashed var(--edit-color-grayscale-70);
 }
 
 .drop-area {
-  padding: var(--edit-margin-md);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-@media (max-width: 1023px) {
-  .upload-button {
-    padding-left: 25px !important;
-    padding-right: 25px !important;
-  }
-}
-
-.upload-select {
   width: 100%;
 }
 
-.drag-instruction {
-  margin-left: var(--edit-margin-xs);
+.upload-options {
+  display: flex;
+  justify-content: center;
+  padding: var(--edit-margin-lg);
+}
+
+.upload-options > * + * {
+  margin-left: var(--edit-margin-md);
 }
