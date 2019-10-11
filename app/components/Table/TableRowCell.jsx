@@ -34,10 +34,8 @@ export default class TableRowCell extends React.Component {
     return (
       <td className={cellStyle.getClasses()}>
         {React.Children.map(this.renderChildren(), child => {
-          // Only pass onHover to field components.
-          return child.type &&
-            child.type.name &&
-            child.type.name.startsWith('Field')
+          // Only pass onHover to React components.
+          return typeof child.type === 'function'
             ? React.cloneElement(child, {onHover})
             : child
         })}
