@@ -6,6 +6,8 @@
 
 .editor {
   --font-mono: 'Roboto Mono', monospace;
+  --margin: 16px;
+  --margin-semi: 6px;
 
   overflow-y: auto;
   border: solid var(--edit-border-width-standard) var(--edit-color-border-light);
@@ -39,6 +41,19 @@
 .editor h5,
 .editor h6 {
   font-weight: 700;
+  margin: var(--margin) 0 var(--margin-semi) 0;
+}
+
+.editor h1 {
+  font-size: 1.875em;
+}
+
+.editor h2 {
+  font-size: 1.5em;
+}
+
+.editor h3 {
+  font-size: 1.25em;
 }
 
 .editor em {
@@ -66,20 +81,17 @@
   padding: 0 2px;
 }
 
-.editor h1 {
-  font-size: 1.875em;
+.editor .image-wrapper,
+.editor hr,
+.editor pre,
+.editor blockquote,
+.editor ul,
+.editor ol {
+  margin: var(--margin) 0;
 }
 
-.editor h2 {
-  font-size: 1.5em;
-}
-
-.editor h3 {
-  font-size: 1.25em;
-}
-
-.editor hr {
-  margin: var(--edit-margin-md) 0;
+.editor > *:first-child {
+  margin-top: 0;
 }
 
 .editor .image-wrapper {
