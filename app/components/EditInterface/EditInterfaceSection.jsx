@@ -15,6 +15,11 @@ export default class EditInterfaceSection extends React.Component {
     hasErrors: proptypes.bool,
 
     /**
+     * Whether the section has fields with unsaved changes.
+     */
+    hasUnsavedChanges: proptypes.bool,
+
+    /**
      * Whether the section is the one currently active.
      */
     isActive: proptypes.bool,

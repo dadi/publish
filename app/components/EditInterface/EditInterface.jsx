@@ -34,9 +34,15 @@ class EditInterface extends React.Component {
   render() {
     const {children} = this.props
     const sections = React.Children.map(children, section => {
-      const {hasErrors, href, isActive, label} = section.props
+      const {
+        hasUnsavedChanges,
+        hasErrors,
+        href,
+        isActive,
+        label
+      } = section.props
 
-      return {hasErrors, href, isActive, label}
+      return {hasUnsavedChanges, hasErrors, href, isActive, label}
     })
     const mobileNavigationOptions = sections.map(({href, isActive, label}) => ({
       label,
@@ -56,16 +62,19 @@ class EditInterface extends React.Component {
             </div>
 
             <div className={styles.navigation}>
-              {sections.map(({hasErrors, href, isActive, label}) => (
-                <SubNavItem
-                  active={Boolean(isActive)}
-                  error={Boolean(hasErrors)}
-                  href={href}
-                  key={href}
-                >
-                  {label}
-                </SubNavItem>
-              ))}
+              {sections.map(
+                ({hasErrors, hasUnsavedChanges, href, isActive, label}) => (
+                  <SubNavItem
+                    active={Boolean(isActive)}
+                    error={Boolean(hasErrors)}
+                    hasUnsavedChanges={hasUnsavedChanges}
+                    href={href}
+                    key={href}
+                  >
+                    {label}
+                  </SubNavItem>
+                )
+              )}
             </div>
           </>
         )}
