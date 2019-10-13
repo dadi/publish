@@ -8,18 +8,6 @@
   display: block;
 }
 
-.container-compact .header {
-  flex: 1;
-  align-items: center;
-}
-
-.container-compact {
-  display: flex;
-  flex-direction: row-reverse;
-  align-items: center;
-  cursor: pointer;
-}
-
 .label {
   color: var(--edit-color-heading);
   padding-right: 5px;
@@ -27,15 +15,6 @@
 
 .children {
   margin-top: var(--edit-margin-md);
-}
-
-.container-compact .label {
-  margin-bottom: 2px;
-  margin-left: var(--edit-margin-sm);
-}
-
-.container-compact .children {
-  margin-top: 0;
 }
 
 .container.accent-info .label {

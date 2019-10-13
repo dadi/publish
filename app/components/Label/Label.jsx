@@ -31,12 +31,6 @@ export default class Label extends React.Component {
     comment: proptypes.string,
 
     /**
-     * Whether the label is in compact mode, which will render the label text
-     * and the children on the same line.
-     */
-    compact: proptypes.bool,
-
-    /**
      * Whether there's an error in the label field.
      */
     error: proptypes.bool,
@@ -63,7 +57,6 @@ export default class Label extends React.Component {
   }
 
   static defaultProps = {
-    compact: false,
     error: false,
     errorMessage: null,
     required: false
@@ -74,18 +67,9 @@ export default class Label extends React.Component {
   }
 
   render() {
-    const {
-      accent,
-      className,
-      comment,
-      compact,
-      label,
-      error,
-      errorMessage
-    } = this.props
+    const {accent, className, comment, label, error, errorMessage} = this.props
     const labelStyle = new Style(styles, 'container')
       .add(`accent-${accent}`)
-      .addIf('container-compact', compact)
       .addResolved(className)
 
     if (

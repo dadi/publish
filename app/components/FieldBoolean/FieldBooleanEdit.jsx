@@ -83,14 +83,21 @@ export default class FieldBooleanEdit extends React.Component {
   }
 
   render() {
-    const {displayName, hasUnsavedChanges, name, schema, value} = this.props
+    const {
+      comment,
+      displayName,
+      hasUnsavedChanges,
+      name,
+      schema,
+      value
+    } = this.props
     const publishBlock = schema.publish || {}
     const readOnly = publishBlock.readonly === true
 
     return (
       <Label
         accent={hasUnsavedChanges ? 'info' : null}
-        compact={true}
+        comment={comment}
         label={displayName}
       >
         <Toggle
