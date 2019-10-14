@@ -11,6 +11,12 @@ import styles from './DocumentListController.css'
 
 const DEFAULT_OPERATOR_KEYWORD = '$eq'
 const DEFAULT_OPERATOR_NAME = 'is'
+const MIMETYPE_OPTIONS = [
+  {label: 'Show all', value: 'all'},
+  {label: 'Images', value: '^image/'},
+  {label: 'Video', value: '^video/'},
+  {label: 'Audio', value: '^audio/'}
+]
 
 // http://www.stucox.com/blog/you-cant-detect-a-touchscreen/
 const isTouchDevice = window.matchMedia('(pointer: coarse)').matches
@@ -45,6 +51,7 @@ class DocumentListController extends React.Component {
     this.selectOperator = event =>
       this.setState({selectedFilterOperator: event.target.value})
     this.setFilterValue = value => this.setState({selectedFilterValue: value})
+    this.setMimeTypeFilter = this.setMimeTypeFilter.bind(this)
 
     this.openNewFilterEditor = () => this.setState({selectedFilterIndex: -1})
 
@@ -200,7 +207,7 @@ class DocumentListController extends React.Component {
     const filterableFields = Object.keys(collection.fields).filter(slug => {
       const fieldComponent = this.getFieldComponent(slug)
 
-      return fieldComponent && fieldComponent.filterEdit
+      return slug !== 'mimeType' && fieldComponent && fieldComponent.filterEdit
     })
 
     return filterableFields
@@ -287,6 +294,18 @@ class DocumentListController extends React.Component {
       .addIf('search-open', isSmallWindow && isSearchOpen)
       .addIf('filters-open', isSmallWindow && areFiltersOpen)
 
+    const mimeTypeDropdown = collection.IS_MEDIA_BUCKET && (
+      <Select
+        className={styles['mimetype-dropdown']}
+        data-name="mimetype-dropdown"
+        onChange={this.setMimeTypeFilter}
+        options={MIMETYPE_OPTIONS}
+        value={
+          (filters && filters.mimeType && filters.mimeType.$regex) || 'all'
+        }
+      />
+    )
+
     const addFilterButton = (
       <Button
         accent="positive"
@@ -347,11 +366,15 @@ class DocumentListController extends React.Component {
                 </button>
               </div>
 
+              {mimeTypeDropdown}
+
               {createNewButton}
             </>
           ) : selectedFilterIndex === null ? (
             <>
               {this.renderSearchInput()}
+
+              {mimeTypeDropdown}
 
               {addFilterButton}
 
@@ -421,10 +444,19 @@ class DocumentListController extends React.Component {
   }
 
   renderFilter(filter, index) {
-    const {field, FilterList, operator, operatorFriendly, value} = filter
+    const {
+      field: fieldSlug,
+      FilterList,
+      operator,
+      operatorFriendly,
+      value
+    } = filter
+
+    if (fieldSlug === 'mimeType') return null
+
     const {config} = this.props
     const {selectedFilterIndex} = this.state
-    const fieldName = this.getFieldName(field)
+    const fieldName = this.getFieldName(fieldSlug)
     const fieldTypeHasFilterListComponent = typeof FilterList === 'function'
     const nodeField = fieldName && (
       <span className={styles['filter-field']}>{fieldName}</span>
@@ -450,7 +482,7 @@ class DocumentListController extends React.Component {
     return (
       <div
         className={filterStyle.getClasses()}
-        key={field + operator + value}
+        key={fieldSlug + operator + value}
         onClick={this.selectFilterToEdit.bind(this, index)}
       >
         {!fieldTypeHasFilterListComponent && nodeField}
@@ -631,6 +663,8 @@ class DocumentListController extends React.Component {
         {searchValue && (
           <div className={styles.suggestions}>
             {searchableFields.map((fieldName, index) => {
+              if (fieldName === 'mimeType') return null
+
               const suggestionStyle = new Style(styles, 'suggestion').addIf(
                 'selected',
                 selectedSuggestionIndex === index
@@ -701,6 +735,32 @@ class DocumentListController extends React.Component {
       selectedFilterOperator: operator,
       selectedFilterValue: value
     })
+  }
+
+  setMimeTypeFilter(e) {
+    const {value} = e.target
+    const mimeTypeFilterIndex = this.filtersArray.findIndex(
+      filter => filter.field === 'mimeType'
+    )
+
+    if (value === 'all') {
+      this.removeFilter(mimeTypeFilterIndex, e)
+    } else {
+      const newFilter = {
+        field: 'mimeType',
+        operator: '$regex',
+        value
+      }
+
+      if (mimeTypeFilterIndex === -1) {
+        this.filtersArray.push(newFilter)
+      } else {
+        this.filtersArray[mimeTypeFilterIndex] = newFilter
+      }
+
+      this.setState({...this.defaultState})
+      this.propagateFilters()
+    }
   }
 
   submitSearch(field, event) {
