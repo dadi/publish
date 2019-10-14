@@ -1,7 +1,7 @@
-import Toggle from 'components/Toggle/Toggle'
 import Label from 'components/Label/Label'
 import proptypes from 'prop-types'
 import React from 'react'
+import Toggle from 'components/Toggle/Toggle'
 
 /**
  * Component for API fields of type Boolean.
@@ -83,14 +83,21 @@ export default class FieldBooleanEdit extends React.Component {
   }
 
   render() {
-    const {displayName, hasUnsavedChanges, name, schema, value} = this.props
+    const {
+      comment,
+      displayName,
+      hasUnsavedChanges,
+      name,
+      schema,
+      value
+    } = this.props
     const publishBlock = schema.publish || {}
     const readOnly = publishBlock.readonly === true
 
     return (
       <Label
         accent={hasUnsavedChanges ? 'info' : null}
-        compact={true}
+        comment={comment}
         label={displayName}
       >
         <Toggle
