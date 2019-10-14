@@ -1,5 +1,5 @@
 .checkbox {
-  --checkbox-padding: var(--edit-margin-xxs);
+  --checkbox-padding: 0px;
   --checkbox-width: calc(40px + 2 * var(--checkbox-padding));
   --checkbox-height: calc(20px + 2 * var(--checkbox-padding));
   --checkbox-radius: calc(var(--checkbox-height) / 2);
