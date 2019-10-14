@@ -1,20 +1,19 @@
 .checkbox {
-  --checkbox-padding: 0px;
-  --checkbox-width: calc(40px + 2 * var(--checkbox-padding));
-  --checkbox-height: calc(20px + 2 * var(--checkbox-padding));
-  --checkbox-radius: calc(var(--checkbox-height) / 2);
-  --handle-gap: calc(4px + var(--checkbox-padding));
-  --handle-diameter: calc(var(--checkbox-height) - 2 * var(--handle-gap));
+  --toggle-width: 40px;
+  --toggle-height: 20px;
+  --toggle-radius: calc(var(--toggle-height) / 2);
+  --handle-gap: 4px;
+  --handle-diameter: calc(var(--toggle-height) - 2 * var(--handle-gap));
 
   display: block;
   outline: none;
   position: relative;
   cursor: pointer;
   margin: 0;
-  padding: var(--checkbox-padding);
-  width: var(--checkbox-width);
-  height: var(--checkbox-height);
-  border-radius: var(--checkbox-radius);
+  padding: 0;
+  width: var(--toggle-width);
+  height: var(--toggle-height);
+  border-radius: var(--toggle-radius);
   appearance: none;
   background: none;
   border: none;
@@ -27,7 +26,7 @@
   display: block;
   user-select: none;
   tap-highlight-color: transparent;
-  border-radius: var(--checkbox-radius);
+  border-radius: var(--toggle-radius);
   transition: background-color var(--edit-transition-duration-standard);
 }
 
