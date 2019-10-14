@@ -59,8 +59,6 @@ class Header extends React.Component {
     const {collection: collectionName} = route.params
     const {areCollectionsInDrawer, isDrawerOpen, isUserMenuOpen} = this.state
     const menuItems = buildGroupedMenuItems(api, collectionName)
-    const displayName =
-      user.remote['data.publishFirstName'] || user.remote.clientId
     const userMenuWrapperStyle = new Style(styles, 'user-menu-wrapper').addIf(
       'open',
       isUserMenuOpen
