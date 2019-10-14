@@ -28,7 +28,6 @@ body {
   min-height: 100vh;
   background-color: var(--edit-color-background-3);
   line-height: var(--edit-line-height-standard);
-  height: unset !important;
 }
 
 :global :root {
