@@ -8,15 +8,12 @@ import React from 'react'
 import Style from 'lib/Style'
 import styles from './Header.css'
 
-const HEADER_RESERVED_WIDTH = 210
-const HEADER_ITEM_MARGIN = 24
-
 class Header extends React.Component {
   constructor(props) {
     super(props)
 
     this.state = {
-      collectionsInDrawer: true,
+      areCollectionsInDrawer: true,
       isDrawerOpen: false
     }
 
@@ -39,28 +36,18 @@ class Header extends React.Component {
     this.positionNav()
   }
 
-  handleItemRef(index, el) {
-    this.items[index] = el
-  }
-
   positionNav() {
-    const {user} = this.props
+    const {areCollectionsInDrawer} = this.state
 
-    if (!user.isSignedIn) return
-
-    const totalWidth = this.items.reduce(
-      (sum, item) => sum + item.offsetWidth + HEADER_ITEM_MARGIN,
-      0
-    )
-    const availableWidth = this.props.app.windowWidth - HEADER_RESERVED_WIDTH
-    const shouldBeInDrawer = totalWidth > availableWidth
+    const shouldBeInDrawer =
+      this.outerRef.current.clientWidth < this.shadowRef.current.offsetWidth + 1
 
     if (!shouldBeInDrawer && this.state.isDrawerOpen) {
       this.setState({isDrawerOpen: false})
     }
 
-    if (shouldBeInDrawer !== this.state.collectionsInDrawer) {
-      this.setState({collectionsInDrawer: shouldBeInDrawer})
+    if (shouldBeInDrawer !== areCollectionsInDrawer) {
+      this.setState({areCollectionsInDrawer: shouldBeInDrawer})
     }
   }
 
@@ -70,7 +57,7 @@ class Header extends React.Component {
     const {api, whitelabel} = config
     const {displayVersionNumber, logoLight} = whitelabel
     const {collection: collectionName} = route.params
-    const {collectionsInDrawer, isDrawerOpen, isUserMenuOpen} = this.state
+    const {areCollectionsInDrawer, isDrawerOpen, isUserMenuOpen} = this.state
     const menuItems = buildGroupedMenuItems(api, collectionName)
     const displayName =
       user.remote['data.publishFirstName'] || user.remote.clientId
@@ -81,10 +68,31 @@ class Header extends React.Component {
 
     if (!user.isSignedIn) return null
 
+    const navList = (
+      <ul className={styles['header-nav-list']}>
+        {menuItems.map(item => (
+          <li key={item.id || item.label}>
+            <NavItem item={item} />
+          </li>
+        ))}
+      </ul>
+    )
+
     return (
       <header className={styles.header}>
         <div className={styles['collections-wrapper']} ref={this.outerRef}>
-          {collectionsInDrawer ? (
+          {/* An invisible nav element whose width we measure to determine
+          whether the nav would fit in the header and thus whether it should
+          be in the drawer or not. */}
+          <nav
+            aria-hidden
+            className={styles['shadow-nav']}
+            ref={this.shadowRef}
+          >
+            {navList}
+          </nav>
+
+          {areCollectionsInDrawer ? (
             <div className={styles['drawer-wrapper']}>
               <button
                 className={styles['drawer-toggle']}
@@ -113,13 +121,12 @@ class Header extends React.Component {
                 </button>
                 <nav>
                   <ul className={styles['drawer-nav-list']}>
-                    {menuItems.map((item, index) => (
+                    {menuItems.map(item => (
                       <li key={item.id || item.label}>
                         <NavItem
                           closeMenu={this.closeDrawer}
                           inDrawer
                           item={item}
-                          labelRef={this.handleItemRef.bind(this, index)}
                         />
                       </li>
                     ))}
@@ -128,18 +135,7 @@ class Header extends React.Component {
               </div>
             </div>
           ) : (
-            <nav>
-              <ul className={styles['header-nav-list']}>
-                {menuItems.map((item, index) => (
-                  <li key={item.id || item.label}>
-                    <NavItem
-                      item={item}
-                      labelRef={this.handleItemRef.bind(this, index)}
-                    />
-                  </li>
-                ))}
-              </ul>
-            </nav>
+            <nav>{navList}</nav>
           )}
         </div>
 

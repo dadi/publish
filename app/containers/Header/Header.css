@@ -15,6 +15,11 @@
   margin: var(--edit-margin-sm) var(--edit-margin-md);
 }
 
+.shadow-nav {
+  position: absolute;
+  visibility: hidden;
+}
+
 .user-menu-wrapper {
   order: 3;
   padding: var(--edit-margin-sm) var(--edit-margin-md);
