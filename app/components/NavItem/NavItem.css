@@ -26,6 +26,12 @@
   font-size: var(--edit-font-size-lg);
 }
 
+@media (min-width: 480px) {
+  .container.in-drawer .label {
+    font-size: var(--edit-font-size-nav);
+  }
+}
+
 .label:not(a) {
   cursor: default;
 }
@@ -84,6 +90,12 @@
 
 .container.in-drawer .dropdown-item {
   font-size: var(--edit-font-size-lg);
+}
+
+@media (min-width: 480px) {
+  .container.in-drawer .dropdown-item {
+    font-size: var(--edit-font-size-sm);
+  }
 }
 
 .dropdown-item:hover {
