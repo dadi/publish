@@ -2,7 +2,7 @@
   position: relative;
   display: inline-block;
   /* Align menu items in drawer with the close icon. */
-  --drawer-side-padding: calc(var(--edit-margin-md) + 11px);
+  --drawer-side-padding: calc(var(--edit-margin-md) + 7px);
 }
 
 .container.in-drawer {

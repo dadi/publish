@@ -1,5 +1,5 @@
 .header {
-  --header-height: 68px;
+  --header-height: 64px;
 
   display: flex;
   align-items: center;
@@ -38,8 +38,7 @@
 
 .drawer-toggle {
   color: inherit;
-  height: 43px;
-  width: 43px;
+  height: 40px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -78,6 +77,10 @@
   height: 24px;
 }
 
+.logo img {
+  margin-top: -2px; /* Optical alignment. */
+}
+
 .user-menu-wrapper {
   position: relative;
   font-size: var(--edit-font-size-sm);
@@ -94,8 +97,8 @@
   font-size: var(--edit-font-size-sm);
 }
 
-.user-menu-toggle:active {
-  top: 1px;
+.user-menu-toggle svg {
+  margin-right: -4px;
 }
 
 .user-menu-toggle:hover,
