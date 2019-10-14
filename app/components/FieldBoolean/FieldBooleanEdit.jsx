@@ -1,7 +1,8 @@
-import Toggle from 'components/Toggle/Toggle'
 import Label from 'components/Label/Label'
 import proptypes from 'prop-types'
 import React from 'react'
+import styles from './FieldBoolean.css'
+import Toggle from 'components/Toggle/Toggle'
 
 /**
  * Component for API fields of type Boolean.
@@ -97,6 +98,7 @@ export default class FieldBooleanEdit extends React.Component {
     return (
       <Label
         accent={hasUnsavedChanges ? 'info' : null}
+        className={styles.label}
         comment={comment}
         label={displayName}
       >

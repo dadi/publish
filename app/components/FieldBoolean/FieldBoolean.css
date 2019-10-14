@@ -14,3 +14,7 @@
   border-color: var(--edit-color-positive);
   background-color: var(--edit-color-positive);
 }
+
+.label {
+  display: inline-block;
+}
