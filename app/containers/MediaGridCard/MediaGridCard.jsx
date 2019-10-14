@@ -1,7 +1,7 @@
 import * as documentActions from 'actions/documentActions'
+import {InsertDriveFile, Videocam} from '@material-ui/icons'
 import {Checkbox} from '@dadi/edit-ui'
 import {connectRedux} from 'lib/redux'
-import {InsertDriveFile, Videocam} from '@material-ui/icons'
 import {getMediaUrl} from 'lib/util/url'
 import {Link} from 'react-router-dom'
 import proptypes from 'prop-types'
@@ -57,6 +57,17 @@ class MediaGridCard extends React.Component {
     selectLimit: Infinity
   }
 
+  constructor(props) {
+    super(props)
+
+    this.state = {
+      isCheckboxHovered: false
+    }
+
+    this.hoverCheckboxOn = () => this.setState({isCheckboxHovered: true})
+    this.hoverCheckboxOff = () => this.setState({isCheckboxHovered: false})
+  }
+
   handleCardClick(event) {
     const {href, onSelect} = this.props
 
@@ -75,10 +86,9 @@ class MediaGridCard extends React.Component {
 
   render() {
     const {href, item, isSelected} = this.props
-    const itemStyle = new Style(styles, 'wrapper').addIf(
-      'wrapper-selected',
-      isSelected
-    )
+    const itemStyle = new Style(styles, 'wrapper')
+      .addIf('wrapper-selected', isSelected)
+      .addIf('checkbox-hovered', this.state.isCheckboxHovered)
 
     // For backwards compatibility.
     const mimeType = item.mimeType || item.mimetype
@@ -96,7 +106,11 @@ class MediaGridCard extends React.Component {
         className={itemStyle.getClasses()}
         onClick={this.handleCardClick.bind(this)}
       >
-        <label className={selectStyle.getClasses()}>
+        <label
+          className={selectStyle.getClasses()}
+          onMouseEnter={this.hoverCheckboxOn}
+          onMouseLeave={this.hoverCheckboxOff}
+        >
           <Checkbox
             checked={isSelected}
             large
