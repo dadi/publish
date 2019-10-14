@@ -164,22 +164,32 @@ class DocumentTableList extends React.Component {
   }
 
   renderColumnHeader(column) {
-    const {sort: sortBy, order: sortOrder} = this.props
+    const {sort: sortBy, onSort, order: sortOrder} = this.props
     const isSorted = sortBy === column.id
     const newOrder = isSorted && sortOrder === 'asc' ? 'desc' : 'asc'
     const iconStyle = new Style(styles, 'arrow')
-      .addIf('up', isSorted && sortOrder === 'desc')
-      .addIf('down', isSorted && sortOrder === 'asc')
+      .addIf('asc', isSorted && sortOrder === 'asc')
+      .addIf('desc', isSorted && sortOrder === 'desc')
+
+    // The order of events when clicking on a column header is:
+    //
+    // Sort(ascending) -> Sort(descending) -> Unsort
+    //
+    // So if the sort order is descending and we're sorting the same
+    // column again, it's time to unsort, which is accomplished by
+    // sending an empty object to the `onSort` callback.
+    const newSort =
+      sortOrder === 'desc' && isSorted
+        ? {}
+        : {sortBy: column.id, sortOrder: newOrder}
 
     return (
       <a
         className={styles['column-header']}
         data-column={sortBy}
         data-name="column-header"
-        data-sort-order={newOrder}
-        onClick={() =>
-          this.props.onSort({sortBy: column.id, sortOrder: newOrder})
-        }
+        data-sort-order={newSort.sortOrder}
+        onClick={() => onSort(newSort)}
       >
         {column.label}
 

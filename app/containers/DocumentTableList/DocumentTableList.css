@@ -62,6 +62,10 @@
   padding: var(--cell-padding);
 }
 
+.column-header:hover {
+  background-color: var(--edit-color-grayscale-85);
+}
+
 th:last-child .column-header {
   padding-right: calc(2 * var(--cell-x-padding));
 }
@@ -100,7 +104,15 @@ th:last-child .column-header {
   transform: rotate(-45deg);
 }
 
-.arrow.up:before,
-.arrow.down:after {
+.arrow.desc:before,
+.arrow.asc:after {
   border-color: black;
+}
+
+.column-header:hover .arrow:before {
+  top: -1px;
+}
+
+.column-header:hover .arrow:after {
+  bottom: -1px;
 }
