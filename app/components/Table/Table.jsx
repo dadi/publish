@@ -44,7 +44,12 @@ export default class Table extends React.Component {
     /**
      * A hash map of the indices of the currently selected rows.
      */
-    selectedRows: proptypes.object
+    selectedRows: proptypes.object,
+
+    /**
+     * Whether to make the table header sticky.
+     */
+    sticky: proptypes.bool
   }
 
   static defaultProps = {
@@ -149,7 +154,8 @@ export default class Table extends React.Component {
       head,
       selectable,
       selectedRows,
-      selectLimit
+      selectLimit,
+      sticky
     } = this.props
 
     if (!head) return null
@@ -165,7 +171,8 @@ export default class Table extends React.Component {
       hasSelected: selectedRowsIndices.length > 0,
       onSelect: this.handleHeadSelect,
       selectable,
-      selectLimit
+      selectLimit,
+      sticky
     }
 
     return React.cloneElement(head, newProps)

@@ -1,6 +1,7 @@
 import {Checkbox} from '@dadi/edit-ui'
 import proptypes from 'prop-types'
 import React from 'react'
+import Style from 'lib/Style'
 import styles from './Table.css'
 import TableHeadCell from 'components/Table/TableHeadCell'
 
@@ -20,6 +21,11 @@ export default class TableHead extends React.Component {
     allSelected: proptypes.bool,
 
     /**
+     * The columns for the table head.
+     */
+    columns: proptypes.node,
+
+    /**
      * Whether there are any selected rows.
      */
     hasSelected: proptypes.bool,
@@ -31,9 +37,9 @@ export default class TableHead extends React.Component {
     selectable: proptypes.bool,
 
     /**
-     * The contents of the table head.
+     * Whether to make the table header sticky.
      */
-    children: proptypes.node
+    sticky: proptypes.bool
   }
 
   static defaultProps = {
@@ -55,14 +61,19 @@ export default class TableHead extends React.Component {
     const {
       allowBulkSelection,
       allSelected,
+      children,
+      columns,
       hasSelected,
       onSelect,
-      selectable
+      renderRow,
+      selectable,
+      sticky
     } = this.props
     const isIndeterminate = !allSelected && hasSelected
+    const headStyle = new Style(styles, 'head').addIf('sticky', sticky)
 
     return (
-      <thead className={styles.head}>
+      <thead className={headStyle.getClasses()}>
         <tr>
           {selectable && (
             <TableHeadCell select={true}>
@@ -82,8 +93,20 @@ export default class TableHead extends React.Component {
               </label>
             </TableHeadCell>
           )}
-          {this.props.children}
+          {columns}
         </tr>
+
+        {renderRow && (
+          <tr>
+            <th
+              className={styles['head-row']}
+              colSpan={columns.length + (selectable ? 1 : 0)}
+            >
+              {renderRow()}
+            </th>
+          </tr>
+        )}
+        {children}
       </thead>
     )
   }

@@ -138,6 +138,7 @@ class SyncTable extends React.Component {
       columns,
       onSelect,
       renderColumnHeader,
+      renderHeadRow = null,
       selectable,
       selectedRows,
       selectLimit,
@@ -148,25 +149,23 @@ class SyncTable extends React.Component {
     return (
       <Table
         head={
-          <TableHead>
-            {columns.map((column, index) => {
-              return (
-                <TableHeadCell
-                  sorted={sortBy === column.id && sortOrder}
-                  key={column.label + index}
-                >
-                  {renderColumnHeader
-                    ? renderColumnHeader(column)
-                    : column.label}
-                </TableHeadCell>
-              )
-            })}
-          </TableHead>
+          <TableHead
+            columns={columns.map((column, index) => (
+              <TableHeadCell
+                key={column.label + index}
+                sorted={sortBy === column.id && sortOrder}
+              >
+                {renderColumnHeader ? renderColumnHeader(column) : column.label}
+              </TableHeadCell>
+            ))}
+            renderRow={renderHeadRow}
+          />
         }
         onSelect={onSelect}
         selectable={selectable}
         selectLimit={selectLimit}
         selectedRows={selectedRows}
+        sticky
       >
         {this.renderRows()}
       </Table>
@@ -174,7 +173,7 @@ class SyncTable extends React.Component {
   }
 
   renderRows() {
-    const {columns, data, onSelect, onRender} = this.props
+    const {columns, data, onRender, onSelect} = this.props
 
     return data.map(row => {
       return (

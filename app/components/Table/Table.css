@@ -31,8 +31,23 @@
 }
 
 .head .cell {
+  background-color: var(--edit-color-background-4);
   position: relative;
-  padding: 0;
+  padding-top: 0;
+  padding-bottom: 0;
+  top: 0;
+}
+
+.head.sticky .cell {
+  position: sticky;
+  z-index: 1;
+}
+
+.head.sticky .head-row {
+  background-color: var(--edit-color-background-4);
+  position: sticky;
+  z-index: 1;
+  top: var(--editif-table-header-cell-height-collapsed);
 }
 
 .cell.select-cell {
