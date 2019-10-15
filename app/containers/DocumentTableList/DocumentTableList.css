@@ -44,7 +44,7 @@
 }
 
 .column-header {
-  height: var(--editif-table-header-cell-height-expanded);
+  height: 60px; /* --editif-table-header-cell-height-expanded */
   display: flex;
   align-items: center;
   cursor: pointer;
@@ -53,7 +53,7 @@
 }
 
 .column-header.with-selection {
-  height: var(--editif-table-header-cell-height-collapsed);
+  height: 34px; /* --editif-table-header-cell-height-expanded - --editif-table-header-row-height */
 }
 
 th:last-child .column-header {
@@ -112,5 +112,5 @@ th:last-child .column-header {
   align-items: center;
   padding: 0 var(--edit-margin-md);
   border-top: 1px solid white;
-  height: var(--editif-table-header-row-height);
+  height: 26px; /* --editif-table-header-row-height */
 }

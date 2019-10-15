@@ -47,7 +47,7 @@
   background-color: var(--edit-color-background-4);
   position: sticky;
   z-index: 1;
-  top: var(--editif-table-header-cell-height-collapsed);
+  top: 34px; /* --editif-table-header-cell-height-expanded - --editif-table-header-row-height */
 }
 
 .cell.select-cell {

@@ -162,12 +162,6 @@
 /* Edit Interface specific */
 :root {
   --editif-toolbar-height: 72px;
-  --editif-table-header-cell-height-expanded: 60px;
-  --editif-table-header-row-height: 26px;
-  --editif-table-header-cell-height-collapsed: calc(
-    var(--editif-table-header-cell-height-expanded) -
-      var(--editif-table-header-row-height)
-  );
 }
 
 body,
