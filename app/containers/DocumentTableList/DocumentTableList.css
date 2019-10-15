@@ -52,10 +52,6 @@
   font-weight: 700;
 }
 
-.column-header:hover {
-  background-color: var(--edit-color-grayscale-85);
-}
-
 .column-header.with-selection {
   height: var(--editif-table-header-cell-height-collapsed);
 }
@@ -112,8 +108,9 @@ th:last-child .column-header {
 }
 
 .head-row {
-  position: relative;
-  top: -6px;
-  height: var(--editif-table-header-row-height);
+  display: flex;
+  align-items: center;
   padding: 0 var(--edit-margin-md);
+  border-top: 1px solid white;
+  height: var(--editif-table-header-row-height);
 }
