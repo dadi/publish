@@ -30,14 +30,6 @@ body {
   line-height: var(--edit-line-height-standard);
 }
 
-body,
-button,
-input,
-textarea,
-select {
-  font-family: var(--theme-font-family);
-}
-
 :global :root {
   --theme-colour-background: #ffffff;
   --theme-colour-background-shade-1: #f2f2f2;
@@ -67,8 +59,10 @@ select {
 
 :global #app {
   height: 100%;
+  min-height: 100vh;
   display: flex;
   flex-flow: column nowrap;
+  position: relative;
 }
 
 :global #app > main {

@@ -95,7 +95,7 @@
 
   --edit-elem-padding-standard: 9px var(--edit-margin-md);
 
-  /* --edit-font-family: sans-serif; */
+  --edit-font-family: 'HelveticaNow', Helvetica, Geneva, sans-serif;
 
   --edit-font-size-heading-1: 36px;
   --edit-font-size-heading-2: 24px;
@@ -119,11 +119,11 @@
   --edit-z-index-standard: 1;
   --edit-z-index-rich-editor-toolbar: 2;
   --edit-z-index-toolbar: 3;
-  --edit-z-index-dropdown: 4;
-  --edit-z-index-modal: 6;
-  --edit-z-index-dropdown-overlay: 7;
-  --edit-z-index-drawer-overlay: 8;
-  --edit-z-index-drawer: 9;
+  --edit-z-index-dropdown-overlay: 4;
+  --edit-z-index-dropdown: 5;
+  --edit-z-index-drawer-overlay: 6;
+  --edit-z-index-drawer: 7;
+  --edit-z-index-usermenu-dropdown: 8;
 
   --edit-color-shadow: var(--edit-color-opacity-80);
   --edit-color-shadow-dark: var(--edit-color-opacity-40);
@@ -171,7 +171,7 @@ textarea,
 select {
   color: var(--edit-color-text-1);
   font-size: var(--edit-font-size-md);
-  /* font-family: var(--edit-font-family); */
+  font-family: var(--edit-font-family);
 }
 
 input::placeholder,
