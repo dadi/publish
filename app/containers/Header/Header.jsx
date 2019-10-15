@@ -82,14 +82,15 @@ class Header extends React.Component {
           {/* An invisible nav element whose width we measure to determine
           whether the nav would fit in the header and thus whether it should
           be in the drawer or not. */}
-          <nav
-            aria-hidden
-            className={styles['shadow-nav']}
-            ref={this.shadowRef}
-          >
-            {navList}
-          </nav>
-
+          <div className={styles['shadow-wrapper']}>
+            <div
+              aria-hidden
+              className={styles['shadow-nav']}
+              ref={this.shadowRef}
+            >
+              {navList}
+            </div>
+          </div>
           {areCollectionsInDrawer ? (
             <div className={styles['drawer-wrapper']}>
               <button

@@ -15,6 +15,12 @@
   margin: var(--edit-margin-sm) var(--edit-margin-md);
 }
 
+.shadow-wrapper {
+  overflow: hidden;
+  max-width: 100%;
+  position: relative;
+}
+
 .shadow-nav {
   position: absolute;
   visibility: hidden;
@@ -28,12 +34,6 @@
 .header-nav-list {
   display: flex;
   flex-wrap: nowrap;
-}
-
-.shadow-list {
-  position: absolute;
-  height: 0;
-  overflow: hidden;
 }
 
 .drawer-toggle {
