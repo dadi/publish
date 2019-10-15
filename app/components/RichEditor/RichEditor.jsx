@@ -106,10 +106,30 @@ const SCHEMA_RICH = {
 const isModB = isHotkey('mod+b')
 const isModI = isHotkey('mod+i')
 const isEnter = isHotkey('enter')
+const isModAlt1 = isHotkey('mod+alt+1')
+const isModAlt2 = isHotkey('mod+alt+2')
+const isModAlt3 = isHotkey('mod+alt+3')
 
-const headingsPlugin = {
+const plugin = {
   commands: {
+    toggleBlocks(editor, type) {
+      editor.setBlocks(editor.isInBlocks(type) ? DEFAULT_NODE : type)
+    },
     splitHeading(editor) {
+      const {start, end} = editor.value.selection
+      const firstBlock = editor.value.blocks.first()
+      const lastBlock = editor.value.blocks.last()
+
+      if (start.isAtStartOfNode(firstBlock)) {
+        editor.insertBlock(DEFAULT_NODE)
+
+        if (!end.isAtEndOfNode(lastBlock)) {
+          return editor.moveToStartOfNextBlock()
+        }
+
+        return
+      }
+
       editor.splitBlock().setBlocks(DEFAULT_NODE)
     }
   },
@@ -119,6 +139,26 @@ const headingsPlugin = {
     }
   },
   onKeyDown(e, editor, next) {
+    if (isModB(e)) {
+      return editor.toggleMark(MARK_BOLD)
+    }
+
+    if (isModI(e)) {
+      return editor.toggleMark(MARK_ITALIC)
+    }
+
+    if (isModAlt1(e)) {
+      return editor.toggleBlock(BLOCK_HEADING1)
+    }
+
+    if (isModAlt2(e)) {
+      return editor.toggleBlock(BLOCK_HEADING2)
+    }
+
+    if (isModAlt3(e)) {
+      return editor.toggleBlock(BLOCK_HEADING3)
+    }
+
     if (isEnter(e) && editor.isInHeading()) {
       e.preventDefault()
 
@@ -129,7 +169,7 @@ const headingsPlugin = {
   }
 }
 
-const plugins = [headingsPlugin]
+const plugins = [plugin]
 
 // http://www.stucox.com/blog/you-cant-detect-a-touchscreen/
 const isTouchDevice = window.matchMedia('(pointer: coarse)').matches
@@ -190,7 +230,6 @@ export default class RichEditor extends React.Component {
     super(props)
 
     this.handleChange = this.handleChange.bind(this)
-    this.handleKeyDown = this.handleKeyDown.bind(this)
     this.handleMediaInsert = this.handleMediaInsert.bind(this)
     this.handleSave = this.handleSave.bind(this)
     this.handleToggleFullscreen = this.handleToggleFullscreen.bind(this)
@@ -277,18 +316,6 @@ export default class RichEditor extends React.Component {
     }
 
     onChange.call(this, value)
-  }
-
-  handleKeyDown(e, editor, next) {
-    if (isModB(e)) {
-      return editor.toggleMark(MARK_BOLD)
-    }
-
-    if (isModI(e)) {
-      return editor.toggleMark(MARK_ITALIC)
-    }
-
-    next()
   }
 
   handleLinkClick(node, currentHref, event) {
@@ -808,7 +835,6 @@ export default class RichEditor extends React.Component {
             <Editor
               className={editorStyle.getClasses()}
               onChange={this.handleChange}
-              onKeyDown={this.handleKeyDown}
               plugins={plugins}
               renderBlock={this.renderBlock}
               renderInline={this.renderInline}
