@@ -235,6 +235,7 @@ export default class RichEditor extends React.Component {
     this.toggleFullscreen = this.toggleFullscreen.bind(this)
     this.toggleRawMode = this.toggleRawMode.bind(this)
     this.renderBlock = this.renderBlock.bind(this)
+    this.renderEditor = this.renderEditor.bind(this)
     this.renderInline = this.renderInline.bind(this)
     this.renderMark = this.renderMark.bind(this)
     this.startSelectingMedia = () => this.setState({isSelectingMedia: true})
@@ -541,7 +542,7 @@ export default class RichEditor extends React.Component {
   }
 
   render() {
-    const {isFullscreen, isSelectingMedia} = this.state
+    const {isFullscreen, isSelectingMedia, isRawMode} = this.state
 
     if (isSelectingMedia) {
       const collection = {
@@ -566,17 +567,43 @@ export default class RichEditor extends React.Component {
       )
     }
 
+    // Deserialising the value and caching the result, so that other methods
+    // can use it.
+    this.value = this.deserialise(this.props.value)
+
+    const editor = isRawMode ? (
+      <Editor
+        className={styles.editor}
+        onChange={this.handleChange}
+        ref={el => (this.editor = el)}
+        renderEditor={this.renderEditor}
+        schema={SCHEMA_RAW}
+        value={this.value}
+      />
+    ) : (
+      <Editor
+        className={styles.editor}
+        onChange={this.handleChange}
+        plugins={plugins}
+        ref={el => (this.editor = el)}
+        renderBlock={this.renderBlock}
+        renderEditor={this.renderEditor}
+        renderInline={this.renderInline}
+        renderMark={this.renderMark}
+        schema={SCHEMA_RICH}
+        value={this.value}
+      />
+    )
+
     if (isFullscreen) {
       return (
         <FullscreenComp>
-          <div className={styles['fullscreen-wrapper']}>
-            {this.renderEditor()}
-          </div>
+          <div className={styles['fullscreen-wrapper']}>{editor}</div>
         </FullscreenComp>
       )
     }
 
-    return this.renderEditor()
+    return editor
   }
 
   renderBlock(props, _, next) {
@@ -674,16 +701,12 @@ export default class RichEditor extends React.Component {
     }
   }
 
-  renderEditor() {
+  renderEditor(props, editor, next) {
     const {isFocused, isFullscreen, isRawMode} = this.state
     const containerStyle = new Style(styles, 'container')
       .addIf('fullscreen', isFullscreen)
       .addIf('raw-mode', isRawMode)
       .addIf('focused', isFocused)
-
-    // Deserialising the value and caching the result, so that other methods
-    // can use it.
-    this.value = this.deserialise(this.props.value)
 
     const valueIsCodeBlock = this.hasBlock(BLOCK_CODE)
     const valueIsCodeMark = this.hasMark(MARK_CODE)
@@ -816,29 +839,7 @@ export default class RichEditor extends React.Component {
           </div>
         </RichEditorToolbar>
 
-        <div ref={el => (this.container = el)}>
-          {isRawMode ? (
-            <Editor
-              className={styles.editor}
-              onChange={this.handleChange}
-              ref={el => (this.editor = el)}
-              schema={SCHEMA_RAW}
-              value={this.value}
-            />
-          ) : (
-            <Editor
-              className={styles.editor}
-              onChange={this.handleChange}
-              plugins={plugins}
-              renderBlock={this.renderBlock}
-              renderInline={this.renderInline}
-              renderMark={this.renderMark}
-              ref={el => (this.editor = el)}
-              schema={SCHEMA_RICH}
-              value={this.value}
-            />
-          )}
-        </div>
+        <div ref={el => (this.container = el)}>{next()}</div>
       </div>
     )
   }
