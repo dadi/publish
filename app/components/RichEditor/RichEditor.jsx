@@ -232,8 +232,8 @@ export default class RichEditor extends React.Component {
     this.handleChange = this.handleChange.bind(this)
     this.handleMediaInsert = this.handleMediaInsert.bind(this)
     this.handleSave = this.handleSave.bind(this)
-    this.handleToggleFullscreen = this.handleToggleFullscreen.bind(this)
-    this.handleToggleRawMode = this.handleToggleRawMode.bind(this)
+    this.toggleFullscreen = this.toggleFullscreen.bind(this)
+    this.toggleRawMode = this.toggleRawMode.bind(this)
     this.renderBlock = this.renderBlock.bind(this)
     this.renderInline = this.renderInline.bind(this)
     this.renderMark = this.renderMark.bind(this)
@@ -242,7 +242,7 @@ export default class RichEditor extends React.Component {
     this.validate = this.validate.bind(this)
 
     this.hotKeys = new HotKeys({
-      escape: this.handleToggleFullscreen.bind(this, false)
+      escape: this.toggleFullscreen.bind(this, false)
     })
 
     this.initialMediaState = {
@@ -372,7 +372,7 @@ export default class RichEditor extends React.Component {
     return this.serialise(value)
   }
 
-  handleToggleBlock(type) {
+  toggleBlocks(type) {
     if (this.state.isRawMode) {
       return
     }
@@ -416,7 +416,7 @@ export default class RichEditor extends React.Component {
     }
   }
 
-  handleToggleCode(valueIsCodeBlock, valueIsCodeMark) {
+  toggleCode(valueIsCodeBlock, valueIsCodeMark) {
     if (valueIsCodeBlock) {
       return this.editor.setBlocks(DEFAULT_NODE)
     }
@@ -447,7 +447,7 @@ export default class RichEditor extends React.Component {
     }
   }
 
-  handleToggleFullscreen(value) {
+  toggleFullscreen(value) {
     const {isFullscreen} = this.state
 
     if (isFullscreen !== value) {
@@ -457,7 +457,7 @@ export default class RichEditor extends React.Component {
     }
   }
 
-  handleToggleLink(valueIsLink) {
+  toggleLink(valueIsLink) {
     if (valueIsLink) {
       return this.editor.unwrapInline(INLINE_LINK)
     }
@@ -487,7 +487,11 @@ export default class RichEditor extends React.Component {
     }
   }
 
-  handleToggleMark(type) {
+  toggleList(type) {
+    this.toggleBlocks(type)
+  }
+
+  toggleMark(type) {
     if (this.state.isRawMode) {
       return
     }
@@ -495,7 +499,7 @@ export default class RichEditor extends React.Component {
     this.editor.toggleMark(type)
   }
 
-  handleToggleRawMode() {
+  toggleRawMode() {
     const {onChange} = this.props
     const {isRawMode} = this.state
     const serialisedValue = this.serialise(this.value)
@@ -692,7 +696,7 @@ export default class RichEditor extends React.Component {
         <RichEditorToolbar isFullscreen={isFullscreen}>
           <div>
             <RichEditorToolbarButton
-              action={this.handleToggleMark.bind(this, MARK_BOLD)}
+              action={this.toggleMark.bind(this, MARK_BOLD)}
               active={this.hasMark(MARK_BOLD)}
               disabled={isRawMode}
               title="Bold" // (Ctrl+B)"
@@ -700,7 +704,7 @@ export default class RichEditor extends React.Component {
               <FormatBold />
             </RichEditorToolbarButton>
             <RichEditorToolbarButton
-              action={this.handleToggleMark.bind(this, MARK_ITALIC)}
+              action={this.toggleMark.bind(this, MARK_ITALIC)}
               active={this.hasMark(MARK_ITALIC)}
               disabled={isRawMode}
               title="Italic" // (Ctrl+I)"
@@ -708,7 +712,7 @@ export default class RichEditor extends React.Component {
               <FormatItalic />
             </RichEditorToolbarButton>
             <RichEditorToolbarButton
-              action={this.handleToggleBlock.bind(this, BLOCK_HEADING1)}
+              action={this.toggleBlocks.bind(this, BLOCK_HEADING1)}
               active={this.hasBlock(BLOCK_HEADING1)}
               disabled={isRawMode}
               title="Heading 1" // (Ctrl+Alt+1)"
@@ -716,7 +720,7 @@ export default class RichEditor extends React.Component {
               <span className={styles['toolbar-heading-icon']}>H1</span>
             </RichEditorToolbarButton>
             <RichEditorToolbarButton
-              action={this.handleToggleBlock.bind(this, BLOCK_HEADING2)}
+              action={this.toggleBlocks.bind(this, BLOCK_HEADING2)}
               active={this.hasBlock(BLOCK_HEADING2)}
               disabled={isRawMode}
               title="Heading 2" // (Ctrl+Alt+2)"
@@ -724,7 +728,7 @@ export default class RichEditor extends React.Component {
               <span className={styles['toolbar-heading-icon']}>H2</span>
             </RichEditorToolbarButton>
             <RichEditorToolbarButton
-              action={this.handleToggleBlock.bind(this, BLOCK_HEADING3)}
+              action={this.toggleBlocks.bind(this, BLOCK_HEADING3)}
               active={this.hasBlock(BLOCK_HEADING3)}
               disabled={isRawMode}
               title="Heading 3" // (Ctrl+Alt+3)"
@@ -732,7 +736,7 @@ export default class RichEditor extends React.Component {
               <span className={styles['toolbar-heading-icon']}>H3</span>
             </RichEditorToolbarButton>
             <RichEditorToolbarButton
-              action={this.handleToggleBlock.bind(this, BLOCK_NUMBERED_LIST)}
+              action={this.toggleList.bind(this, BLOCK_NUMBERED_LIST)}
               active={this.isListOfType(BLOCK_NUMBERED_LIST)}
               disabled={isRawMode}
               title="Numbered list" // (Ctrl+Shift+7)"
@@ -740,7 +744,7 @@ export default class RichEditor extends React.Component {
               <FormatListNumbered />
             </RichEditorToolbarButton>
             <RichEditorToolbarButton
-              action={this.handleToggleBlock.bind(this, BLOCK_BULLETED_LIST)}
+              action={this.toggleList.bind(this, BLOCK_BULLETED_LIST)}
               active={this.isListOfType(BLOCK_BULLETED_LIST)}
               disabled={isRawMode}
               title="Bulleted list" // (Ctrl+Shift+8)"
@@ -762,7 +766,7 @@ export default class RichEditor extends React.Component {
               <FormatIndentIncrease />
             </RichEditorToolbarButton> */}
             <RichEditorToolbarButton
-              action={this.handleToggleBlock.bind(this, BLOCK_BLOCKQUOTE)}
+              action={this.toggleBlocks.bind(this, BLOCK_BLOCKQUOTE)}
               active={this.hasBlock(BLOCK_BLOCKQUOTE)}
               disabled={isRawMode}
               title="Blockquote" // (Ctrl+Q)"
@@ -770,7 +774,7 @@ export default class RichEditor extends React.Component {
               <FormatQuote />
             </RichEditorToolbarButton>
             <RichEditorToolbarButton
-              action={this.handleToggleCode.bind(
+              action={this.toggleCode.bind(
                 this,
                 valueIsCodeBlock,
                 valueIsCodeMark
@@ -782,7 +786,7 @@ export default class RichEditor extends React.Component {
               <Code />
             </RichEditorToolbarButton>
             <RichEditorToolbarButton
-              action={this.handleToggleLink.bind(this, valueIsLink)}
+              action={this.toggleLink.bind(this, valueIsLink)}
               active={valueIsLink}
               disabled={isRawMode}
               title="Insert link" // (Ctrl+K)"
@@ -799,14 +803,14 @@ export default class RichEditor extends React.Component {
 
           <div>
             <RichEditorToolbarButton
-              action={this.handleToggleRawMode}
+              action={this.toggleRawMode}
               active={isRawMode}
               title="Markdown mode"
             >
               <Markdown />
             </RichEditorToolbarButton>
             <RichEditorToolbarButton
-              action={this.handleToggleFullscreen}
+              action={this.toggleFullscreen}
               title={isFullscreen ? 'Exit fullscreen' : 'Fullscreen'}
             >
               {isFullscreen ? <FullscreenExit /> : <Fullscreen />}
