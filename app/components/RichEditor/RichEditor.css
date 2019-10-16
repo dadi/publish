@@ -94,6 +94,10 @@
   margin-top: 0;
 }
 
+.editor > *:last-child {
+  margin-bottom: 0;
+}
+
 .editor .image-wrapper {
   background-color: var(--edit-color-background-2);
   display: flex;
