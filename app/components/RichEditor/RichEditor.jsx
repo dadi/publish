@@ -714,6 +714,7 @@ export default class RichEditor extends React.Component {
 
     return (
       <div className={containerStyle.getClasses()}>
+        <div className={styles.divider} />
         <RichEditorToolbar isFullscreen={isFullscreen}>
           <div>
             <RichEditorToolbarButton

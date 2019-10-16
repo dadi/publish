@@ -8,6 +8,11 @@
   background-color: var(--edit-color-background-1);
 }
 
+.divider {
+  border-bottom: var(--edit-border-width-standard) solid
+    var(--edit-color-border-light);
+}
+
 .editor {
   --font-mono: 'Roboto Mono', monospace;
   --margin: 24px;
