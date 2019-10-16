@@ -148,15 +148,15 @@ const plugin = {
     }
 
     if (isModAlt1(e)) {
-      return editor.toggleBlock(BLOCK_HEADING1)
+      return editor.toggleBlocks(BLOCK_HEADING1)
     }
 
     if (isModAlt2(e)) {
-      return editor.toggleBlock(BLOCK_HEADING2)
+      return editor.toggleBlocks(BLOCK_HEADING2)
     }
 
     if (isModAlt3(e)) {
-      return editor.toggleBlock(BLOCK_HEADING3)
+      return editor.toggleBlocks(BLOCK_HEADING3)
     }
 
     if (isEnter(e) && editor.isInHeading()) {
@@ -508,7 +508,7 @@ export default class RichEditor extends React.Component {
   }
 
   hasBlock(type) {
-    return this.value.blocks.some(block => block.type === type)
+    return this.value.blocks.every(block => block.type === type)
   }
 
   hasInline(type) {
@@ -522,16 +522,11 @@ export default class RichEditor extends React.Component {
   isListOfType(type) {
     const {blocks, document} = this.value
 
-    let valueIsInList = this.hasBlock(type)
-
-    if (blocks.size > 0) {
-      const parent = document.getParent(blocks.first().key)
-
-      valueIsInList =
-        this.hasBlock(BLOCK_LIST_ITEM) && parent && parent.type === type
-    }
-
-    return valueIsInList
+    return blocks.every(
+      block =>
+        block.type === BLOCK_LIST_ITEM &&
+        document.getParent(block.key).type === type
+    )
   }
 
   openLinkPrompt(currentHref) {
