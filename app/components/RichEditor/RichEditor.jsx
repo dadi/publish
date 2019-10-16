@@ -567,7 +567,13 @@ export default class RichEditor extends React.Component {
     }
 
     if (isFullscreen) {
-      return <FullscreenComp>{this.renderEditor()}</FullscreenComp>
+      return (
+        <FullscreenComp>
+          <div className={styles['fullscreen-wrapper']}>
+            {this.renderEditor()}
+          </div>
+        </FullscreenComp>
+      )
     }
 
     return this.renderEditor()
@@ -669,19 +675,11 @@ export default class RichEditor extends React.Component {
   }
 
   renderEditor() {
-    const {isFullscreen, isRawMode} = this.state
-    const containerStyle = new Style(styles).addIf(
-      'container-fullscreen',
-      isFullscreen
-    )
-    const editorWrapperStyle = new Style(styles, 'editor-wrapper').addIf(
-      'editor-wrapper-raw',
-      isRawMode
-    )
-    const editorStyle = new Style(styles, 'editor').addIf(
-      'editor-focused',
-      this.state.isFocused
-    )
+    const {isFocused, isFullscreen, isRawMode} = this.state
+    const containerStyle = new Style(styles, 'container')
+      .addIf('fullscreen', isFullscreen)
+      .addIf('raw-mode', isRawMode)
+      .addIf('focused', isFocused)
 
     // Deserialising the value and caching the result, so that other methods
     // can use it.
@@ -818,13 +816,10 @@ export default class RichEditor extends React.Component {
           </div>
         </RichEditorToolbar>
 
-        <div
-          className={editorWrapperStyle.getClasses()}
-          ref={el => (this.container = el)}
-        >
+        <div ref={el => (this.container = el)}>
           {isRawMode ? (
             <Editor
-              className={editorStyle.getClasses()}
+              className={styles.editor}
               onChange={this.handleChange}
               ref={el => (this.editor = el)}
               schema={SCHEMA_RAW}
@@ -832,7 +827,7 @@ export default class RichEditor extends React.Component {
             />
           ) : (
             <Editor
-              className={editorStyle.getClasses()}
+              className={styles.editor}
               onChange={this.handleChange}
               plugins={plugins}
               renderBlock={this.renderBlock}
