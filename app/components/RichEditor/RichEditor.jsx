@@ -101,6 +101,7 @@ const isModAltN = isHotkey('mod+alt+n')
 const isModAltB = isHotkey('mod+alt+b')
 const isEnter = isHotkey('enter')
 const isBackspace = isHotkey('backspace')
+const isDelete = isHotkey('delete')
 
 // http://www.stucox.com/blog/you-cant-detect-a-touchscreen/
 const isTouchDevice = window.matchMedia('(pointer: coarse)').matches
@@ -323,6 +324,7 @@ const plugin = {
       blocks.size &&
       selection.start.isAtStartOfNode(blocks.first()) &&
       selection.end.isAtStartOfNode(blocks.first())
+    const isEmptyBlock = blocks.size === 1 && blocks.first().text === ''
 
     if (isEnter(e)) {
       if (editor.isInHeading()) {
@@ -334,7 +336,7 @@ const plugin = {
       }
 
       if (editor.isInBlocks(BLOCK_LIST_ITEM)) {
-        if (blocks.size === 1 && blocks.first().text === '') {
+        if (isEmptyBlock) {
           return editor
             .setBlocks(DEFAULT_NODE)
             .unwrapBlock(BLOCK_NUMBERED_LIST)
@@ -360,6 +362,12 @@ const plugin = {
         .setBlocks(DEFAULT_NODE)
         .unwrapBlock(BLOCK_NUMBERED_LIST)
         .unwrapBlock(BLOCK_BULLETED_LIST)
+    }
+
+    if (isDelete(e) && editor.isInBlocks(BLOCK_LIST_ITEM) && isEmptyBlock) {
+      next()
+
+      return editor.moveToStartOfNextBlock()
     }
 
     next()
