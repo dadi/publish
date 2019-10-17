@@ -108,7 +108,10 @@ const isTouchDevice = window.matchMedia('(pointer: coarse)').matches
 const plugin = {
   commands: {
     toggleBlocks(editor, type) {
-      editor.setBlocks(editor.isInBlocks(type) ? DEFAULT_NODE : type)
+      editor
+        .setBlocks(editor.isInBlocks(type) ? DEFAULT_NODE : type)
+        .unwrapBlock(BLOCK_BULLETED_LIST)
+        .unwrapBlock(BLOCK_NUMBERED_LIST)
     },
     toggleBold(editor) {
       editor.toggleMark(MARK_BOLD)
