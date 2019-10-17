@@ -365,6 +365,115 @@ const plugin = {
 
 const plugins = [plugin]
 
+function renderBlock(props, _, next) {
+  const {attributes, children, isFocused, node} = props
+
+  switch (node.type) {
+    case BLOCK_CODE: {
+      const language = node.data.get('language')
+
+      return (
+        <pre {...attributes}>
+          <code className={language && `language-${language}`}>{children}</code>
+        </pre>
+      )
+    }
+
+    case BLOCK_BLOCKQUOTE:
+      return <blockquote {...attributes}>{children}</blockquote>
+
+    case BLOCK_BULLETED_LIST:
+      return <ul {...attributes}>{children}</ul>
+
+    case BLOCK_HEADING1:
+      return (
+        <h1 {...attributes} className={styles.heading}>
+          {children}
+        </h1>
+      )
+
+    case BLOCK_HEADING2:
+      return (
+        <h2 {...attributes} className={styles.heading}>
+          {children}
+        </h2>
+      )
+
+    case BLOCK_HEADING3:
+      return (
+        <h3 {...attributes} className={styles.heading}>
+          {children}
+        </h3>
+      )
+
+    case BLOCK_HEADING4:
+      return (
+        <h4 {...attributes} className={styles.heading}>
+          {children}
+        </h4>
+      )
+
+    case BLOCK_HEADING5:
+      return (
+        <h5 {...attributes} className={styles.heading}>
+          {children}
+        </h5>
+      )
+
+    case BLOCK_HEADING6:
+      return (
+        <h6 {...attributes} className={styles.heading}>
+          {children}
+        </h6>
+      )
+
+    case BLOCK_HR:
+      return <hr />
+
+    case BLOCK_IMAGE: {
+      const imageWrapperStyle = new Style(styles, 'image-wrapper').addIf(
+        'focused',
+        isFocused
+      )
+
+      return (
+        <div className={imageWrapperStyle.getClasses()}>
+          <img
+            {...attributes}
+            alt={node.data.get('alt')}
+            src={node.data.get('src')}
+          />
+        </div>
+      )
+    }
+
+    case BLOCK_LIST_ITEM:
+      return <li {...attributes}>{children}</li>
+
+    case BLOCK_NUMBERED_LIST:
+      return <ol {...attributes}>{children}</ol>
+
+    default:
+      return next()
+  }
+}
+
+function renderMark({children, mark, attributes}, _, next) {
+  switch (mark.type) {
+    case MARK_BOLD:
+      return <strong {...attributes}>{children}</strong>
+
+    case MARK_CODE:
+      return <code {...attributes}>{children}</code>
+
+    case MARK_ITALIC:
+      return <em {...attributes}>{children}</em>
+
+    default:
+      return next()
+  }
+}
+
 function openLinkPrompt(currentHref) {
   return window.prompt(
     'Enter the link URL or clear the field to remove the link',
@@ -427,18 +536,16 @@ export default class RichEditor extends React.Component {
   constructor(props) {
     super(props)
 
+    this.closeFullscreen = () => this.setState({isFullscreen: false})
     this.handleChange = this.handleChange.bind(this)
     this.handleMediaInsert = this.handleMediaInsert.bind(this)
-    this.toggleFullscreen = () =>
-      this.setState(({isFullscreen}) => ({isFullscreen: !isFullscreen}))
-    this.closeFullscreen = () => this.setState({isFullscreen: false})
-    this.toggleRawMode = this.toggleRawMode.bind(this)
-    this.renderBlock = this.renderBlock.bind(this)
     this.renderEditor = this.renderEditor.bind(this)
     this.renderInline = this.renderInline.bind(this)
-    this.renderMark = this.renderMark.bind(this)
     this.startSelectingMedia = () => this.setState({isSelectingMedia: true})
     this.stopSelectingMedia = () => this.setState({isSelectingMedia: false})
+    this.toggleFullscreen = () =>
+      this.setState(({isFullscreen}) => ({isFullscreen: !isFullscreen}))
+    this.toggleRawMode = this.toggleRawMode.bind(this)
 
     this.hotKeys = new HotKeys({escape: this.closeFullscreen})
 
@@ -563,11 +670,6 @@ export default class RichEditor extends React.Component {
     })
   }
 
-  toggleRawMode() {
-    this.props.onChange(this.serialise(this.value))
-    this.setState(({isRawMode}) => ({isRawMode: !isRawMode}))
-  }
-
   render() {
     const {isFullscreen, isSelectingMedia, isRawMode} = this.state
 
@@ -613,10 +715,10 @@ export default class RichEditor extends React.Component {
         onChange={this.handleChange}
         plugins={plugins}
         ref={el => (this.editor = el)}
-        renderBlock={this.renderBlock}
+        renderBlock={renderBlock}
         renderEditor={this.renderEditor}
         renderInline={this.renderInline}
-        renderMark={this.renderMark}
+        renderMark={renderMark}
         schema={SCHEMA_RICH}
         value={this.value}
       />
@@ -631,101 +733,6 @@ export default class RichEditor extends React.Component {
     }
 
     return editor
-  }
-
-  renderBlock(props, _, next) {
-    const {attributes, children, isFocused, node} = props
-
-    switch (node.type) {
-      case BLOCK_CODE: {
-        const language = node.data.get('language')
-
-        return (
-          <pre {...attributes}>
-            <code className={language && `language-${language}`}>
-              {children}
-            </code>
-          </pre>
-        )
-      }
-
-      case BLOCK_BLOCKQUOTE:
-        return <blockquote {...attributes}>{children}</blockquote>
-
-      case BLOCK_BULLETED_LIST:
-        return <ul {...attributes}>{children}</ul>
-
-      case BLOCK_HEADING1:
-        return (
-          <h1 {...attributes} className={styles.heading}>
-            {children}
-          </h1>
-        )
-
-      case BLOCK_HEADING2:
-        return (
-          <h2 {...attributes} className={styles.heading}>
-            {children}
-          </h2>
-        )
-
-      case BLOCK_HEADING3:
-        return (
-          <h3 {...attributes} className={styles.heading}>
-            {children}
-          </h3>
-        )
-
-      case BLOCK_HEADING4:
-        return (
-          <h4 {...attributes} className={styles.heading}>
-            {children}
-          </h4>
-        )
-
-      case BLOCK_HEADING5:
-        return (
-          <h5 {...attributes} className={styles.heading}>
-            {children}
-          </h5>
-        )
-
-      case BLOCK_HEADING6:
-        return (
-          <h6 {...attributes} className={styles.heading}>
-            {children}
-          </h6>
-        )
-
-      case BLOCK_HR:
-        return <hr />
-
-      case BLOCK_IMAGE: {
-        const imageWrapperStyle = new Style(styles, 'image-wrapper').addIf(
-          'focused',
-          isFocused
-        )
-
-        return (
-          <div className={imageWrapperStyle.getClasses()}>
-            <img
-              {...attributes}
-              alt={node.data.get('alt')}
-              src={node.data.get('src')}
-            />
-          </div>
-        )
-      }
-
-      case BLOCK_LIST_ITEM:
-        return <li {...attributes}>{children}</li>
-
-      case BLOCK_NUMBERED_LIST:
-        return <ol {...attributes}>{children}</ol>
-
-      default:
-        return next()
-    }
   }
 
   renderEditor(_, editor, next) {
@@ -898,22 +905,6 @@ export default class RichEditor extends React.Component {
     }
   }
 
-  renderMark({children, mark, attributes}, _, next) {
-    switch (mark.type) {
-      case MARK_BOLD:
-        return <strong {...attributes}>{children}</strong>
-
-      case MARK_CODE:
-        return <code {...attributes}>{children}</code>
-
-      case MARK_ITALIC:
-        return <em {...attributes}>{children}</em>
-
-      default:
-        return next()
-    }
-  }
-
   serialise(value) {
     const {format} = this.props
     const {isRawMode} = this.state
@@ -927,5 +918,10 @@ export default class RichEditor extends React.Component {
     }
 
     return value
+  }
+
+  toggleRawMode() {
+    this.props.onChange(this.serialise(this.value))
+    this.setState(({isRawMode}) => ({isRawMode: !isRawMode}))
   }
 }
