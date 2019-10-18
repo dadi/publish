@@ -210,6 +210,9 @@ const plugin = {
 
       if (!editor.value.selection.isExpanded) return
 
+      // On touch devices, we open a native prompt to input the link address.
+      // On non-touch, we just wrap the text in a link node; the link prompt
+      // component gets rendered as a part of rendering the link node.
       if (!isTouchDevice) {
         return editor.wrapInline({type: INLINE_LINK, data: {href: ''}})
       }
