@@ -8,11 +8,6 @@
   background-color: var(--edit-color-background-1);
 }
 
-.container:not(.fullscreen) {
-  border-top: solid var(--edit-border-width-standard)
-    var(--edit-color-border-light);
-}
-
 .button {
   border: 0;
   border-radius: var(--edit-radius-elem);
