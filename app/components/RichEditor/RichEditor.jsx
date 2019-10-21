@@ -1,3 +1,4 @@
+import * as Nodes from './slateNodes'
 import {
   Code,
   FormatBold,
@@ -12,23 +13,24 @@ import {
   ImageSearch,
   InsertLink
 } from '@material-ui/icons'
-import {Document, Value} from 'slate'
+import {isTouchDevice, openLinkPrompt} from './utils'
+import {renderBlock, renderMark} from './slateRender'
 import {RichEditorToolbar, RichEditorToolbarButton} from './RichEditorToolbar'
 import {Editor} from 'slate-react'
 import FullscreenComp from 'components/Fullscreen/Fullscreen'
 import HotKeys from 'lib/hot-keys'
-import isHotkey from 'is-hotkey'
 import {Markdown} from 'mdi-material-ui'
 import MarkdownSerializer from '@edithq/slate-md-serializer'
 import PlainSerializer from 'slate-plain-serializer'
+import plugin from './slatePlugin'
 import proptypes from 'prop-types'
 import React from 'react'
 import ReferenceSelectView from 'views/ReferenceSelectView/ReferenceSelectView'
 import RichEditorLink from './RichEditorLink'
 import Style from 'lib/Style'
 import styles from './RichEditor.css'
+import {Value} from 'slate'
 
-const DEFAULT_NODE = 'paragraph'
 const EMPTY_VALUE = {
   document: {
     nodes: [
@@ -43,35 +45,6 @@ const EMPTY_VALUE = {
 
 const FORMAT_MARKDOWN = 'markdown'
 
-const BLOCK_BLOCKQUOTE = 'block-quote'
-const BLOCK_BULLETED_LIST = 'bulleted-list'
-const BLOCK_CODE = 'code'
-const BLOCK_HEADING1 = 'heading1'
-const BLOCK_HEADING2 = 'heading2'
-const BLOCK_HEADING3 = 'heading3'
-const BLOCK_HEADING4 = 'heading4'
-const BLOCK_HEADING5 = 'heading5'
-const BLOCK_HEADING6 = 'heading6'
-const BLOCK_HR = 'horizontal-rule'
-const BLOCK_IMAGE = 'image'
-const BLOCK_LIST_ITEM = 'list-item'
-const BLOCK_NUMBERED_LIST = 'ordered-list'
-
-const HEADINGS = [
-  BLOCK_HEADING1,
-  BLOCK_HEADING2,
-  BLOCK_HEADING3,
-  BLOCK_HEADING4,
-  BLOCK_HEADING5,
-  BLOCK_HEADING6
-]
-
-const INLINE_LINK = 'link'
-
-const MARK_BOLD = 'bold'
-const MARK_CODE = 'code'
-const MARK_ITALIC = 'italic'
-
 const SCHEMA_RAW = {
   document: {
     nodes: [{match: [{type: 'line'}]}]
@@ -84,415 +57,9 @@ const SCHEMA_RAW = {
 }
 const SCHEMA_RICH = {
   blocks: {
-    image: {isVoid: true},
-    'horizontal-rule': {isVoid: true}
+    [Nodes.BLOCK_IMAGE]: {isVoid: true},
+    [Nodes.BLOCK_HR]: {isVoid: true}
   }
-}
-
-const isModB = isHotkey('mod+b')
-const isModI = isHotkey('mod+i')
-const isModBacktick = isHotkey('mod+`')
-const isModQ = isHotkey('mod+q')
-const isModK = isHotkey('mod+k')
-const isModAlt1 = isHotkey('mod+alt+1')
-const isModAlt2 = isHotkey('mod+alt+2')
-const isModAlt3 = isHotkey('mod+alt+3')
-const isModAltN = isHotkey('mod+alt+n')
-const isModAltB = isHotkey('mod+alt+b')
-const isEnter = isHotkey('enter')
-const isBackspace = isHotkey('backspace')
-const isDelete = isHotkey('delete')
-
-// http://www.stucox.com/blog/you-cant-detect-a-touchscreen/
-const isTouchDevice = window.matchMedia('(pointer: coarse)').matches
-
-const plugin = {
-  commands: {
-    toggleBlocks(editor, type) {
-      editor
-        .setBlocks(editor.isInBlocks(type) ? DEFAULT_NODE : type)
-        .unwrapBlock(BLOCK_BULLETED_LIST)
-        .unwrapBlock(BLOCK_NUMBERED_LIST)
-    },
-    toggleBold(editor) {
-      editor.toggleMark(MARK_BOLD)
-    },
-    toggleItalic(editor) {
-      editor.toggleMark(MARK_ITALIC)
-    },
-    toggleCode(editor) {
-      const {blocks, selection} = editor.value
-
-      if (!blocks.size) return
-
-      const isInCodeBlocks = editor.isInBlocks(BLOCK_CODE)
-      const isOnlyOneBlock = blocks.first() === blocks.last()
-      const isNotWholeBlock = !(
-        selection.start.isAtStartOfNode(blocks.first()) &&
-        selection.end.isAtEndOfNode(blocks.last())
-      )
-
-      if (
-        !blocks.size ||
-        (!isInCodeBlocks && isOnlyOneBlock && isNotWholeBlock)
-      ) {
-        return editor.toggleMark(MARK_CODE)
-      }
-
-      editor.moveToRangeOfNode(blocks.first(), blocks.last())
-
-      // Code blocks have a single text leaf node containing the whole content
-      // of the block; lines are separated by `\n`.
-      if (isInCodeBlocks) {
-        const lines = blocks
-          .flatMap(codeBlock => codeBlock.text.split('\n'))
-          .map(line => ({
-            object: 'block',
-            type: DEFAULT_NODE,
-            nodes: [{object: 'text', text: line}]
-          }))
-
-        return editor
-          .delete()
-          .setBlocks(DEFAULT_NODE)
-          .insertFragment(Document.create({nodes: lines}))
-      }
-
-      const text = PlainSerializer.serialize({
-        document: editor.value.fragment
-      })
-
-      editor
-        .delete()
-        .setBlocks(BLOCK_CODE)
-        .insertText(text)
-    },
-    toggleHeading1(editor) {
-      editor.toggleBlocks(BLOCK_HEADING1)
-    },
-    toggleHeading2(editor) {
-      editor.toggleBlocks(BLOCK_HEADING2)
-    },
-    toggleHeading3(editor) {
-      editor.toggleBlocks(BLOCK_HEADING3)
-    },
-    toggleBlockquote(editor) {
-      if (editor.isInBlockQuote()) {
-        return editor.unwrapBlock(BLOCK_BLOCKQUOTE)
-      }
-
-      editor.wrapBlock(BLOCK_BLOCKQUOTE)
-    },
-    toggleNumberedList(editor) {
-      if (editor.isInList(BLOCK_NUMBERED_LIST)) {
-        return editor.setBlocks(DEFAULT_NODE).unwrapBlock(BLOCK_NUMBERED_LIST)
-      }
-
-      editor
-        .setBlocks(BLOCK_LIST_ITEM)
-        .unwrapBlock(BLOCK_BULLETED_LIST)
-        .wrapBlock(BLOCK_NUMBERED_LIST)
-    },
-    toggleBulletedList(editor) {
-      if (editor.isInList(BLOCK_BULLETED_LIST)) {
-        return editor.setBlocks(DEFAULT_NODE).unwrapBlock(BLOCK_BULLETED_LIST)
-      }
-
-      editor
-        .setBlocks(BLOCK_LIST_ITEM)
-        .unwrapBlock(BLOCK_NUMBERED_LIST)
-        .wrapBlock(BLOCK_BULLETED_LIST)
-    },
-    toggleLink(editor) {
-      if (editor.hasLink()) {
-        return editor.unwrapInline(INLINE_LINK)
-      }
-
-      if (!editor.value.selection.isExpanded) return
-
-      // On touch devices, we open a native prompt to input the link address.
-      // On non-touch, we just wrap the text in a link node; the link prompt
-      // component gets rendered as a part of rendering the link node.
-      if (!isTouchDevice) {
-        return editor.wrapInline({type: INLINE_LINK, data: {href: ''}})
-      }
-
-      const href = openLinkPrompt()
-
-      if (href !== '') {
-        editor.wrapInline({type: INLINE_LINK, data: {href}})
-      }
-    },
-    splitHeading(editor) {
-      const {blocks, selection} = editor.value
-
-      if (selection.start.isAtStartOfNode(blocks.first())) {
-        const isWholeBlock = selection.end.isAtEndOfNode(blocks.last())
-
-        // Insert blank paragraph *before* the heading. If we hadn't selected
-        // the whole heading, the cursor is in the inserted blank paragraph;
-        // move it to the heading block.
-        return isWholeBlock
-          ? editor.insertBlock(DEFAULT_NODE)
-          : editor.insertBlock(DEFAULT_NODE).moveToStartOfNextBlock()
-      }
-
-      editor.splitBlock().setBlocks(DEFAULT_NODE)
-    }
-  },
-  queries: {
-    isInBlocks(editor, type) {
-      return editor.value.blocks.every(block => block.type === type)
-    },
-    isInBlockQuote(editor) {
-      const {blocks, document} = editor.value
-
-      return blocks.every(block => {
-        const furthestBlock = document.getFurthestBlock(block.key)
-
-        return (
-          block.type === BLOCK_BLOCKQUOTE ||
-          (furthestBlock && furthestBlock.type === BLOCK_BLOCKQUOTE)
-        )
-      })
-    },
-    isInList(editor, type) {
-      const {blocks, document} = editor.value
-
-      return blocks.every(
-        block =>
-          block.type === BLOCK_LIST_ITEM &&
-          document.getParent(block.key).type === type
-      )
-    },
-    hasMark(editor, type) {
-      return editor.value.activeMarks.some(block => block.type === type)
-    },
-    hasLink(editor) {
-      const {inlines} = editor.value
-
-      return inlines.size === 1 && inlines.first().type === INLINE_LINK
-    },
-    isInHeading(editor) {
-      return editor.value.blocks.every(block => HEADINGS.includes(block.type))
-    }
-  },
-  onKeyDown(e, editor, next) {
-    if (isModB(e)) {
-      return editor.toggleBold()
-    }
-
-    if (isModI(e)) {
-      return editor.toggleItalic()
-    }
-
-    if (isModBacktick(e)) {
-      e.preventDefault()
-
-      return editor.toggleCode()
-    }
-
-    if (isModQ(e)) {
-      return editor.toggleBlockquote()
-    }
-
-    if (isModK(e)) {
-      e.preventDefault()
-
-      return editor.toggleLink()
-    }
-
-    if (isModAlt1(e)) {
-      return editor.toggleHeading1()
-    }
-
-    if (isModAlt2(e)) {
-      return editor.toggleHeading2()
-    }
-
-    if (isModAlt3(e)) {
-      return editor.toggleHeading3()
-    }
-
-    if (isModAltN(e)) {
-      return editor.toggleNumberedList()
-    }
-
-    if (isModAltB(e)) {
-      return editor.toggleBulletedList()
-    }
-
-    const {blocks, selection} = editor.value
-    const isSelectionAtStart =
-      blocks.size &&
-      selection.start.isAtStartOfNode(blocks.first()) &&
-      selection.end.isAtStartOfNode(blocks.first())
-    const isEmptyBlock = blocks.size === 1 && blocks.first().text === ''
-
-    if (isEnter(e)) {
-      if (editor.isInHeading()) {
-        return editor.splitHeading()
-      }
-
-      if (editor.isInBlocks(BLOCK_CODE)) {
-        return editor.insertText('\n')
-      }
-
-      if (editor.isInBlocks(BLOCK_LIST_ITEM)) {
-        if (isEmptyBlock) {
-          return editor
-            .setBlocks(DEFAULT_NODE)
-            .unwrapBlock(BLOCK_NUMBERED_LIST)
-            .unwrapBlock(BLOCK_BULLETED_LIST)
-        }
-
-        if (isSelectionAtStart) {
-          return editor
-            .insertBlock(DEFAULT_NODE)
-            .unwrapBlock(BLOCK_NUMBERED_LIST)
-            .unwrapBlock(BLOCK_BULLETED_LIST)
-            .moveToStartOfNextBlock()
-        }
-      }
-    }
-
-    if (
-      isBackspace(e) &&
-      editor.isInBlocks(BLOCK_LIST_ITEM) &&
-      isSelectionAtStart
-    ) {
-      return editor
-        .setBlocks(DEFAULT_NODE)
-        .unwrapBlock(BLOCK_NUMBERED_LIST)
-        .unwrapBlock(BLOCK_BULLETED_LIST)
-    }
-
-    if (isDelete(e) && editor.isInBlocks(BLOCK_LIST_ITEM) && isEmptyBlock) {
-      next()
-
-      return editor.moveToStartOfNextBlock()
-    }
-
-    next()
-  }
-}
-
-const plugins = [plugin]
-
-function renderBlock(props, _, next) {
-  const {attributes, children, isFocused, node} = props
-
-  switch (node.type) {
-    case BLOCK_CODE: {
-      const language = node.data.get('language')
-
-      return (
-        <pre {...attributes}>
-          <code className={language && `language-${language}`}>{children}</code>
-        </pre>
-      )
-    }
-
-    case BLOCK_BLOCKQUOTE:
-      return <blockquote {...attributes}>{children}</blockquote>
-
-    case BLOCK_BULLETED_LIST:
-      return <ul {...attributes}>{children}</ul>
-
-    case BLOCK_HEADING1:
-      return (
-        <h1 {...attributes} className={styles.heading}>
-          {children}
-        </h1>
-      )
-
-    case BLOCK_HEADING2:
-      return (
-        <h2 {...attributes} className={styles.heading}>
-          {children}
-        </h2>
-      )
-
-    case BLOCK_HEADING3:
-      return (
-        <h3 {...attributes} className={styles.heading}>
-          {children}
-        </h3>
-      )
-
-    case BLOCK_HEADING4:
-      return (
-        <h4 {...attributes} className={styles.heading}>
-          {children}
-        </h4>
-      )
-
-    case BLOCK_HEADING5:
-      return (
-        <h5 {...attributes} className={styles.heading}>
-          {children}
-        </h5>
-      )
-
-    case BLOCK_HEADING6:
-      return (
-        <h6 {...attributes} className={styles.heading}>
-          {children}
-        </h6>
-      )
-
-    case BLOCK_HR:
-      return <hr />
-
-    case BLOCK_IMAGE: {
-      const imageWrapperStyle = new Style(styles, 'image-wrapper').addIf(
-        'focused',
-        isFocused
-      )
-
-      return (
-        <div className={imageWrapperStyle.getClasses()}>
-          <img
-            {...attributes}
-            alt={node.data.get('alt')}
-            src={node.data.get('src')}
-          />
-        </div>
-      )
-    }
-
-    case BLOCK_LIST_ITEM:
-      return <li {...attributes}>{children}</li>
-
-    case BLOCK_NUMBERED_LIST:
-      return <ol {...attributes}>{children}</ol>
-
-    default:
-      return next()
-  }
-}
-
-function renderMark({children, mark, attributes}, _, next) {
-  switch (mark.type) {
-    case MARK_BOLD:
-      return <strong {...attributes}>{children}</strong>
-
-    case MARK_CODE:
-      return <code {...attributes}>{children}</code>
-
-    case MARK_ITALIC:
-      return <em {...attributes}>{children}</em>
-
-    default:
-      return next()
-  }
-}
-
-function openLinkPrompt(currentHref) {
-  return window.prompt(
-    'Enter the link URL or clear the field to remove the link',
-    currentHref || ''
-  )
 }
 
 /**
@@ -648,7 +215,7 @@ export default class RichEditor extends React.Component {
 
   handleLinkUpdate(node, href) {
     if (href === '') {
-      return this.editor.unwrapInlineByKey(node.key, INLINE_LINK)
+      return this.editor.unwrapInlineByKey(node.key, Nodes.INLINE_LINK)
     }
 
     this.editor.setNodeByKey(node.key, {data: {href}})
@@ -727,7 +294,7 @@ export default class RichEditor extends React.Component {
       <Editor
         className={styles.editor}
         onChange={this.handleChange}
-        plugins={plugins}
+        plugins={plugin}
         ref={el => (this.editor = el)}
         renderBlock={renderBlock}
         renderEditor={this.renderEditor}
@@ -763,7 +330,7 @@ export default class RichEditor extends React.Component {
           <div>
             <RichEditorToolbarButton
               action={editor.toggleBold}
-              active={editor.hasMark(MARK_BOLD)}
+              active={editor.hasMark(Nodes.MARK_BOLD)}
               disabled={isRawMode}
               title="Bold" // (Ctrl+B)"
             >
@@ -771,7 +338,7 @@ export default class RichEditor extends React.Component {
             </RichEditorToolbarButton>
             <RichEditorToolbarButton
               action={editor.toggleItalic}
-              active={editor.hasMark(MARK_ITALIC)}
+              active={editor.hasMark(Nodes.MARK_ITALIC)}
               disabled={isRawMode}
               title="Italic" // (Ctrl+I)"
             >
@@ -779,7 +346,7 @@ export default class RichEditor extends React.Component {
             </RichEditorToolbarButton>
             <RichEditorToolbarButton
               action={editor.toggleHeading1}
-              active={editor.isInBlocks(BLOCK_HEADING1)}
+              active={editor.isInBlocks(Nodes.BLOCK_HEADING1)}
               disabled={isRawMode}
               title="Heading 1" // (Ctrl+Alt+1)"
             >
@@ -787,7 +354,7 @@ export default class RichEditor extends React.Component {
             </RichEditorToolbarButton>
             <RichEditorToolbarButton
               action={editor.toggleHeading2}
-              active={editor.isInBlocks(BLOCK_HEADING2)}
+              active={editor.isInBlocks(Nodes.BLOCK_HEADING2)}
               disabled={isRawMode}
               title="Heading 2" // (Ctrl+Alt+2)"
             >
@@ -795,7 +362,7 @@ export default class RichEditor extends React.Component {
             </RichEditorToolbarButton>
             <RichEditorToolbarButton
               action={editor.toggleHeading3}
-              active={editor.isInBlocks(BLOCK_HEADING3)}
+              active={editor.isInBlocks(Nodes.BLOCK_HEADING3)}
               disabled={isRawMode}
               title="Heading 3" // (Ctrl+Alt+3)"
             >
@@ -803,7 +370,7 @@ export default class RichEditor extends React.Component {
             </RichEditorToolbarButton>
             <RichEditorToolbarButton
               action={editor.toggleNumberedList}
-              active={editor.isInList(BLOCK_NUMBERED_LIST)}
+              active={editor.isInList(Nodes.BLOCK_NUMBERED_LIST)}
               disabled={isRawMode}
               title="Numbered list" // (Ctrl+Shift+7)"
             >
@@ -811,7 +378,7 @@ export default class RichEditor extends React.Component {
             </RichEditorToolbarButton>
             <RichEditorToolbarButton
               action={editor.toggleBulletedList}
-              active={editor.isInList(BLOCK_BULLETED_LIST)}
+              active={editor.isInList(Nodes.BLOCK_BULLETED_LIST)}
               disabled={isRawMode}
               title="Bulleted list" // (Ctrl+Shift+8)"
             >
@@ -842,7 +409,8 @@ export default class RichEditor extends React.Component {
             <RichEditorToolbarButton
               action={editor.toggleCode}
               active={
-                editor.isInBlocks(BLOCK_CODE) || editor.hasMark(MARK_CODE)
+                editor.isInBlocks(Nodes.BLOCK_CODE) ||
+                editor.hasMark(Nodes.MARK_CODE)
               }
               disabled={isRawMode}
               title="Code" // (Ctrl+`)"
@@ -889,7 +457,7 @@ export default class RichEditor extends React.Component {
 
   renderInline({children, node}, _, next) {
     switch (node.type) {
-      case INLINE_LINK: {
+      case Nodes.INLINE_LINK: {
         const href = node.data.get('href')
 
         if (isTouchDevice) {
