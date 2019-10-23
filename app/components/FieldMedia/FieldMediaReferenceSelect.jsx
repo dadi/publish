@@ -1,5 +1,5 @@
-import {getMediaUrl} from 'lib/util/url'
 import DocumentGridList from 'components/DocumentGridList/DocumentGridList'
+import {getMediaUrl} from 'lib/util/url'
 import MediaGridCard from 'containers/MediaGridCard/MediaGridCard'
 import proptypes from 'prop-types'
 import React from 'react'

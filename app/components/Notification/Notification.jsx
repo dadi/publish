@@ -1,9 +1,9 @@
+import {Done, Error, Warning} from '@material-ui/icons'
 import {Button} from '@dadi/edit-ui'
 import proptypes from 'prop-types'
 import React from 'react'
 import Style from 'lib/Style'
 import styles from './Notification.css'
-import {Done, Error, Warning} from '@material-ui/icons'
 
 /**
  * A notification strip, anchored to the bottom of the screen.

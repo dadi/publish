@@ -1,9 +1,9 @@
 import * as Constants from 'lib/constants'
-import {TextInput} from '@dadi/edit-ui'
 import Label from 'components/Label/Label'
 import proptypes from 'prop-types'
 import React from 'react'
 import styles from './FieldPassword.css'
+import {TextInput} from '@dadi/edit-ui'
 
 /**
  * Component for API fields of type Password
