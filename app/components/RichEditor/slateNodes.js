@@ -11,7 +11,6 @@ export const BLOCK_HEADING6 = 'heading6'
 export const BLOCK_HR = 'horizontal-rule'
 export const BLOCK_IMAGE = 'image'
 export const BLOCK_LIST_ITEM = 'list-item'
-export const BLOCK_LIST_ITEM_TEXT = 'list-item-text'
 export const BLOCK_NUMBERED_LIST = 'ordered-list'
 
 export const HEADINGS = [

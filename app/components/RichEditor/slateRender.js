@@ -3,6 +3,8 @@ import React from 'react'
 import Style from 'lib/Style'
 import styles from './RichEditor.css'
 
+const listTypes = [Nodes.BLOCK_BULLETED_LIST, Nodes.BLOCK_NUMBERED_LIST]
+
 export function renderBlock(props, _, next) {
   const {attributes, children, isFocused, node} = props
 
@@ -22,6 +24,14 @@ export function renderBlock(props, _, next) {
 
     case Nodes.BLOCK_BULLETED_LIST:
       return <ul {...attributes}>{children}</ul>
+
+    case Nodes.DEFAULT_BLOCK:
+      return children[0] &&
+        children[0].props.node.type === Nodes.BLOCK_IMAGE ? (
+        <div {...attributes}>{children}</div>
+      ) : (
+        <p {...attributes}>{children}</p>
+      )
 
     case Nodes.BLOCK_HEADING1:
       return (
@@ -86,8 +96,23 @@ export function renderBlock(props, _, next) {
       )
     }
 
-    case Nodes.BLOCK_LIST_ITEM:
-      return <li {...attributes}>{children}</li>
+    case Nodes.BLOCK_LIST_ITEM: {
+      // Simple list items (containing a paragraph and a nested list) are rendered
+      // without a margin between the two children.
+      const isSimpleListItem =
+        children.length === 2 &&
+        children[0].props.node.type === Nodes.DEFAULT_BLOCK &&
+        listTypes.includes(children[1].props.node.type)
+
+      return (
+        <li
+          {...attributes}
+          className={isSimpleListItem ? styles['simple-list-item'] : undefined}
+        >
+          {children}
+        </li>
+      )
+    }
 
     case Nodes.BLOCK_NUMBERED_LIST:
       return <ol {...attributes}>{children}</ol>

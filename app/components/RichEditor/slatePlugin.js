@@ -15,16 +15,14 @@ const isModAlt3 = isHotkey('mod+alt+3')
 const isModAltN = isHotkey('mod+alt+n')
 const isModAltB = isHotkey('mod+alt+b')
 const isEnter = isHotkey('enter')
+const isShiftEnter = isHotkey('shift+enter')
 const isBackspace = isHotkey('backspace')
 const isDelete = isHotkey('delete')
 
 const plugin = {
   commands: {
     toggleBlocks(editor, type) {
-      editor
-        .setBlocks(editor.isInBlocks(type) ? Nodes.DEFAULT_BLOCK : type)
-        .unwrapBlock(Nodes.BLOCK_BULLETED_LIST)
-        .unwrapBlock(Nodes.BLOCK_NUMBERED_LIST)
+      editor.setBlocks(editor.isInBlocks(type) ? Nodes.DEFAULT_BLOCK : type)
     },
     toggleBold(editor) {
       editor.toggleMark(Nodes.MARK_BOLD)
@@ -93,31 +91,66 @@ const plugin = {
         return editor.unwrapBlock(Nodes.BLOCK_BLOCKQUOTE)
       }
 
-      editor.wrapBlock(Nodes.BLOCK_BLOCKQUOTE)
+      const {blocks, document, selection} = editor.value
+      const topLevelBlocks = blocks.map(
+        block => document.getFurthestBlock(block.key) || block
+      )
+      const range = selection.moveToRangeOfNode(
+        topLevelBlocks.first(),
+        topLevelBlocks.last()
+      )
+
+      editor.wrapBlockAtRange(range, Nodes.BLOCK_BLOCKQUOTE)
     },
     toggleNumberedList(editor) {
-      if (editor.isInList(Nodes.BLOCK_NUMBERED_LIST)) {
+      const {blocks, document} = editor.value
+
+      if (editor.isInNumberedList()) {
         return editor
-          .setBlocks(Nodes.DEFAULT_BLOCK)
+          .unwrapBlock(Nodes.BLOCK_LIST_ITEM)
           .unwrapBlock(Nodes.BLOCK_NUMBERED_LIST)
       }
 
-      editor
-        .setBlocks(Nodes.BLOCK_LIST_ITEM)
-        .unwrapBlock(Nodes.BLOCK_BULLETED_LIST)
-        .wrapBlock(Nodes.BLOCK_NUMBERED_LIST)
+      if (editor.isInBulletedList()) {
+        return blocks.forEach(block => {
+          const listBlock = document.getParent(
+            document.getParent(block.key).key
+          )
+
+          editor.setNodeByKey(listBlock.key, Nodes.BLOCK_NUMBERED_LIST)
+        })
+      }
+
+      editor.setBlocks(Nodes.DEFAULT_BLOCK).wrapBlock(Nodes.BLOCK_NUMBERED_LIST)
+
+      blocks.forEach(block => {
+        editor.wrapBlockByKey(block.key, {type: Nodes.BLOCK_LIST_ITEM})
+      })
     },
     toggleBulletedList(editor) {
-      if (editor.isInList(Nodes.BLOCK_BULLETED_LIST)) {
+      const {blocks, document} = editor.value
+
+      if (editor.isInBulletedList()) {
         return editor
-          .setBlocks(Nodes.DEFAULT_BLOCK)
+          .unwrapBlock(Nodes.BLOCK_LIST_ITEM)
           .unwrapBlock(Nodes.BLOCK_BULLETED_LIST)
       }
 
-      editor
-        .setBlocks(Nodes.BLOCK_LIST_ITEM)
-        .unwrapBlock(Nodes.BLOCK_NUMBERED_LIST)
-        .wrapBlock(Nodes.BLOCK_BULLETED_LIST)
+      if (editor.isInBulletedList()) {
+        return blocks.forEach(block => {
+          const listBlock = document.getParent(
+            document.getParent(block.key).key
+          )
+
+          editor.setNodeByKey(listBlock.key, Nodes.BLOCK_BULLETED_LIST)
+        })
+      }
+
+      editor.setBlocks(Nodes.DEFAULT_BLOCK).wrapBlock(Nodes.BLOCK_BULLETED_LIST)
+
+      blocks.forEach(block => {
+        editor.wrapBlockByKey(block.key, {type: Nodes.BLOCK_LIST_ITEM})
+      })
     },
     toggleLink(editor) {
       if (editor.hasLink()) {
@@ -178,11 +211,25 @@ const plugin = {
     isInList(editor, type) {
       const {blocks, document} = editor.value
 
-      return blocks.every(
-        block =>
-          block.type === Nodes.BLOCK_LIST_ITEM &&
-          document.getParent(block.key).type === type
-      )
+      return blocks.every(block => {
+        const parent = document.getParent(block.key)
+
+        if (!parent || parent.type !== Nodes.BLOCK_LIST_ITEM) return false
+
+        const grandparent = document.getParent(parent.key)
+
+        return type
+          ? grandparent.type === type
+          : [Nodes.BLOCK_NUMBERED_LIST, Nodes.BLOCK_BULLETED_LIST].includes(
+              grandparent.type
+            )
+      })
+    },
+    isInBulletedList(editor) {
+      return editor.isInList(Nodes.BLOCK_BULLETED_LIST)
+    },
+    isInNumberedList(editor) {
+      return editor.isInList(Nodes.BLOCK_NUMBERED_LIST)
     },
     hasMark(editor, type) {
       return editor.value.activeMarks.some(block => block.type === type)
@@ -243,59 +290,86 @@ const plugin = {
       return editor.toggleBulletedList()
     }
 
-    const {blocks, selection} = editor.value
-    const isSelectionAtStart =
-      blocks.size &&
-      selection.start.isAtStartOfNode(blocks.first()) &&
-      selection.end.isAtStartOfNode(blocks.first())
-    const isEmptyBlock = blocks.size === 1 && blocks.first().text === ''
+    if (isShiftEnter(e) && !editor.isInList()) {
+      // Lists skipped here because in lists, Shift+Enter has the default behavior
+      // (split the paragraph block), whereas Enter splits the whole list item.
+
+      return editor.insertText('\n')
+    }
 
     if (isEnter(e)) {
-      if (editor.isInHeading()) {
+      if (editor.isInHeading() && !editor.isInList()) {
         return editor.splitHeading()
       }
 
       if (editor.isInBlocks(Nodes.BLOCK_CODE)) {
         return editor.insertText('\n')
       }
+    }
 
-      if (editor.isInBlocks(Nodes.BLOCK_LIST_ITEM)) {
-        if (isEmptyBlock) {
-          return editor
-            .setBlocks(Nodes.DEFAULT_BLOCK)
-            .unwrapBlock(Nodes.BLOCK_NUMBERED_LIST)
-            .unwrapBlock(Nodes.BLOCK_BULLETED_LIST)
-        }
+    if (editor.isInList()) {
+      const {blocks, document, selection} = editor.value
+      const listItemAtStart =
+        blocks.size &&
+        document.getClosest(
+          blocks.first().key,
+          node => node.type === Nodes.BLOCK_LIST_ITEM
+        )
+      const listItemAtEnd =
+        blocks.size &&
+        document.getClosest(
+          blocks.last().key,
+          node => node.type === Nodes.BLOCK_LIST_ITEM
+        )
+      const isSelectionAtStart =
+        blocks.size &&
+        selection.start.isAtStartOfNode(listItemAtStart) &&
+        selection.end.isAtStartOfNode(listItemAtStart)
+      const isEmptyBlock =
+        blocks.size === 1 &&
+        listItemAtStart.nodes.size === 1 &&
+        listItemAtStart.text === ''
 
-        if (isSelectionAtStart) {
-          return editor
-            .insertBlock(Nodes.DEFAULT_BLOCK)
-            .unwrapBlock(Nodes.BLOCK_NUMBERED_LIST)
-            .unwrapBlock(Nodes.BLOCK_BULLETED_LIST)
-            .moveToStartOfNextBlock()
-        }
+      if (
+        (isEnter(e) && isEmptyBlock) ||
+        (isBackspace(e) && isSelectionAtStart)
+      ) {
+        return editor
+          .setBlocks(Nodes.DEFAULT_BLOCK)
+          .unwrapBlock(Nodes.BLOCK_LIST_ITEM)
+          .unwrapBlock(Nodes.BLOCK_NUMBERED_LIST)
+          .unwrapBlock(Nodes.BLOCK_BULLETED_LIST)
       }
-    }
 
-    if (
-      isBackspace(e) &&
-      editor.isInBlocks(Nodes.BLOCK_LIST_ITEM) &&
-      isSelectionAtStart
-    ) {
-      return editor
-        .setBlocks(Nodes.DEFAULT_BLOCK)
-        .unwrapBlock(Nodes.BLOCK_NUMBERED_LIST)
-        .unwrapBlock(Nodes.BLOCK_BULLETED_LIST)
-    }
+      if (isEnter(e) && isSelectionAtStart) {
+        return editor
+          .insertBlock(Nodes.DEFAULT_BLOCK)
+          .unwrapBlock(Nodes.BLOCK_LIST_ITEM)
+          .unwrapBlock(Nodes.BLOCK_NUMBERED_LIST)
+          .unwrapBlock(Nodes.BLOCK_BULLETED_LIST)
+          .moveToStartOfNextBlock()
+      }
 
-    if (
-      isDelete(e) &&
-      editor.isInBlocks(Nodes.BLOCK_LIST_ITEM) &&
-      isEmptyBlock
-    ) {
-      next()
+      if (isEnter(e)) {
+        return editor.splitBlock(2)
+      }
 
-      return editor.moveToStartOfNextBlock()
+      if (isDelete(e) && selection.end.isAtEndOfNode(listItemAtEnd)) {
+        const nextListItem = document.getNextSibling(listItemAtEnd.key)
+
+        if (!nextListItem) {
+          next()
+
+          return
+        }
+
+        const firstChild = nextListItem.nodes.first()
+
+        return editor
+          .delete()
+          .mergeNodeByKey(nextListItem.key)
+          .mergeNodeByKey(firstChild.key)
+      }
     }
 
     next()
