@@ -55,58 +55,59 @@ module.exports = {
         name: 'copyright'
       })
       .as('Copyright Field'),
-    mediaSearchField: locate('input[class*="DocumentFilters__input"]').as(
+    mediaSearchField: locate('input[placeholder*="Search"]').as(
       'Media Search Field'
     ),
     docFilterSuggestionsForm: locate(
-      'div[class*="DocumentFilters__suggestions"]'
+      'div[class*="DocumentListController__suggestions"]'
     ).as('Filter Suggestions Form'),
     docFilterSuggestionsOptions: locate(
-      'span[class*="DocumentFilters__suggestion-prefix"]'
+      'span[class*="DocumentListController__suggestion-prefix"]'
     ).as('Filter Suggestions'),
     fileNameContainsFilter: locate(
-      'span[class*="DocumentFilters__suggestion-prefix"]'
+      'span[class*="DocumentListController__suggestion-prefix"]'
     )
       .withText('Filename contains')
       .as('Filename Contains Filter'),
-    saveMenu: locate('button[class*="ButtonWithOptions__launcher"]').as(
+    saveMenu: locate('button[class*="ButtonWithOptions__sideButton"]').as(
       'Save Menu'
     ),
-    saveGoBack: locate('button')
-      .withText('Save and go back')
-      .as('Save And Go Back Button'),
-    saveButton: locate('button')
-      .withText('Save and continue')
-      .as('Save And Continue Button'),
+    saveGoBack: locate('div[class*="ButtonWithOptions__dropdownItem"]')
+      .withText('Save & go back')
+      .as('Save & Go Back'),
+    save: locate('button[class*="ButtonWithOptions__mainButton"]').as(
+      'Save Button'
+    ),
     totalImages: locate('span strong:nth-child(2)').as(
       'Total Number of Images'
     ),
-    checkImage: locate('input[class *= "MediaGridCard__select___"]')
+    checkImage: locate('label[class *= "MediaGridCard__select___"]')
       .first()
       .as('Select Image'),
     applyButton: locate('button')
       .withText('Apply')
       .as('Apply Button'),
-    selectDelete: locate('.//select').as('Select Delete'),
-    deleteButton: locate('button')
-      .withText('Yes, delete it.')
-      .as('Delete Button'),
+    selectDelete: locate('button[class*="delete-button"]').as('Select Delete'),
+    deleteButton: locate('button[class*="delete-button"]').as('Delete Button'),
+    confirmDeleteButton: locate('button')
+      .withText('Yes, delete it')
+      .as('Confirm Delete Button'),
     nevermindButton: locate('*')
       .withAttr({
         'data-name': 'cancel-reference-selection-button'
       })
       .as('Back to document'),
-    filterButton: locate('button[class*="DocumentFilters__button"]').as(
-      'Filter Button'
-    ),
+    filterButton: locate('button')
+      .withAttr({'data-name': 'add-filter-button'})
+      .as('Filter Button'),
     filterForm: locate('form[class*="DocumentFilters__tooltip"]').as(
       'Add Filter Form'
     ),
     filterField: locate(
-      'select[class*="DocumentFilters__tooltip-dropdown-left"]'
+      'div[class*="field-selector"] select[class*="Select"]'
     ).as('Filter Field'),
     filterOperator: locate(
-      'select[class*="DocumentFilters__tooltip-dropdown-right"]'
+      'div[class*="operator-selector"] select[class*="Select"]'
     ).as('Filter Operator'),
     filterValueString: locate('input[class*="FieldString__filter-input"]').as(
       'Search String Value'
@@ -114,19 +115,19 @@ module.exports = {
     filterValueNumber: locate('input[class*="FieldNumber__filter-input"]').as(
       'Search Number Value'
     ),
-    addFilter: locate('button[class*="DocumentFilters__tooltip"]')
-      .withText('Add filter')
-      .as('Add Filter Button'),
+    applyFilterButton: locate('button[class*="update-filter-button"]').as(
+      'Apply Filter Button'
+    ),
     updateFilter: locate('button[class*="DocumentFilters__tooltip"]')
       .withText('Update filter')
       .as('Update Filter Button'),
-    filterWrapper: locate('div[class*="DocumentFilters__filter-wrapper"]').as(
-      'Filtered Detail'
+    filterWrapper: locate(
+      'span[class*="DocumentListController__filter-field"]'
+    ).as('Filtered Detail'),
+    filterRemove: locate('button[class*="remove-filter-button"]').as(
+      'Filter Remove Button'
     ),
-    filterClose: locate('button[class*="DocumentFilters__filter-close"]').as(
-      'Filter Close Button'
-    ),
-    filterText: locate('div[class*="DocumentFilters__filter___"]').as(
+    filterText: locate('div[class*="DocumentListController__filter___"]').as(
       'Filter Text'
     ),
     fileNameField: locate('input[name*="fileName"]').as('Filename Field'),
@@ -142,17 +143,14 @@ module.exports = {
   async addMedia() {
     await I.amOnPage('/media')
     await I.waitForFunction(() => document.readyState === 'complete')
-    await I.waitForText('Media Library')
     await I.waitForElement(this.locators.footer)
     await I.seeElement(this.locators.dropArea)
-    // I.wait(2)
     const images = await I.grabNumberOfVisibleElements(this.locators.images)
 
     await I.seeNumberOfVisibleElements(this.locators.images, images)
     await I.seeTotalGreaterThanZero(images)
     await I.attachFile(this.locators.fileUpload, 'functional/images/Stone.jpeg')
     await I.waitForFunction(() => document.readyState === 'complete')
-    // I.wait(2)
     const newImages = await I.grabNumberOfVisibleElements(this.locators.images)
 
     I.seeTotalHasIncreased(newImages, images)
@@ -162,10 +160,8 @@ module.exports = {
   async selectMedia() {
     await I.amOnPage('/media')
     await I.waitForFunction(() => document.readyState === 'complete')
-    await I.waitForText('Media Library')
     await I.waitForElement(this.locators.footer)
     await I.seeElement(this.locators.dropArea)
-    // I.wait(2)
     await I.see('Stone.jpeg')
     const stoneLink = await I.grabAttributeFrom(this.locators.stoneURL, 'href')
     const dogLink = await I.grabAttributeFrom(this.locators.dogURL, 'href')
@@ -174,8 +170,8 @@ module.exports = {
     await I.click(this.locators.stoneImage)
     await I.waitForFunction(() => document.readyState === 'complete')
     await I.seeInCurrentUrl(stoneLink)
-    await I.see('Details')
-    await I.see('Metadata')
+    await I.see('DETAILS')
+    await I.see('METADATA')
     await I.seeElement(this.locators.editImage)
     await I.seeElement(this.locators.fileNameField)
     const stoneFileNameText = await I.grabValueFrom(this.locators.fileNameField)
@@ -210,8 +206,8 @@ module.exports = {
     await I.click(this.locators.dogImage)
     await I.waitForFunction(() => document.readyState === 'complete')
     await I.seeInCurrentUrl(dogLink)
-    await I.see('Details')
-    await I.see('Metadata')
+    await I.see('DETAILS')
+    await I.see('METADATA')
     await I.seeElement(this.locators.editImage)
     await I.seeElement(this.locators.fileNameField)
     const dogFileNameText = await I.grabValueFrom(this.locators.fileNameField)
@@ -246,8 +242,8 @@ module.exports = {
     await I.click(this.locators.girlImage)
     await I.waitForFunction(() => document.readyState === 'complete')
     await I.seeInCurrentUrl(girlLink)
-    await I.see('Details')
-    await I.see('Metadata')
+    await I.see('DETAILS')
+    await I.see('METADATA')
     await I.seeElement(this.locators.editImage)
     await I.seeElement(this.locators.fileNameField)
     const girlFileNameText = await I.grabValueFrom(this.locators.fileNameField)
@@ -284,10 +280,8 @@ module.exports = {
   async filterMedia() {
     await I.amOnPage('/media')
     await I.waitForFunction(() => document.readyState === 'complete')
-    await I.waitForText('Media Library')
     await I.waitForElement(this.locators.footer)
     await I.seeElement(this.locators.dropArea)
-    // I.wait(2)
     const mediaImages = await I.grabNumberOfVisibleElements(
       this.locators.images
     )
@@ -314,12 +308,12 @@ module.exports = {
     await I.seeElement(this.locators.filterWrapper)
     const containsFilterValue = await I.grabTextFrom(this.locators.filterText)
 
-    I.seeStringsAreEqual(containsFilterValue, "Filenamecontains'gi'\n×")
+    I.seeStringsAreEqual(containsFilterValue, "Filename\ncontains\n'gi'")
     I.click(this.locators.filterWrapper)
     const filenameValue = await I.grabValueFrom(this.locators.filterValueString)
 
     await I.seeStringsAreEqual(filenameValue, 'gi')
-    I.click(this.locators.filterClose)
+    I.click(this.locators.filterRemove)
     const mediaImagesReset = await I.grabNumberOfVisibleElements(
       this.locators.images
     )
@@ -327,11 +321,10 @@ module.exports = {
     await I.seeNumberOfVisibleElements(this.locators.images, mediaImagesReset)
     // Number value retained
     I.click(this.locators.filterButton)
-    await I.seeElement(this.locators.filterForm)
     I.selectOption(this.locators.filterField, 'Height')
     I.selectOption(this.locators.filterOperator, 'is less than or equal to')
     I.fillField(this.locators.filterValueNumber, '675')
-    I.click(this.locators.addFilter)
+    I.click(this.locators.applyFilterButton)
     const heightFiltered = await I.grabNumberOfVisibleElements(
       this.locators.images
     )
@@ -342,20 +335,19 @@ module.exports = {
 
     I.seeStringsAreEqual(
       numberFilterValue,
-      "Heightis less than or equal to'675'\n×"
+      "Height\nis less than or equal to\n'675'"
     )
     I.click(this.locators.filterWrapper)
     const heightValue = await I.grabValueFrom(this.locators.filterValueNumber)
 
     await I.seeNumbersAreEqual(heightValue, '675')
-    I.click(this.locators.filterClose)
+    I.click(this.locators.filterRemove)
     // Filter search summary is correct and case-sensitive
     I.click(this.locators.filterButton)
-    await I.seeElement(this.locators.filterForm)
     I.selectOption(this.locators.filterField, 'Alternative text')
     I.selectOption(this.locators.filterOperator, 'contains')
     I.fillField(this.locators.filterValueString, 'Dog')
-    I.click(this.locators.addFilter)
+    I.click(this.locators.applyFilterButton)
     const altTextFilter = await I.grabNumberOfVisibleElements(
       this.locators.images
     )
@@ -364,14 +356,17 @@ module.exports = {
     await I.seeElement(this.locators.filterWrapper)
     const altTextFilterValue = await I.grabTextFrom(this.locators.filterText)
 
-    I.seeStringsAreEqual(altTextFilterValue, "Alternative textcontains'Dog'\n×")
+    I.seeStringsAreEqual(
+      altTextFilterValue,
+      "Alternative text\ncontains\n'Dog'"
+    )
     I.click(this.locators.filterWrapper)
     I.selectOption(this.locators.filterField, 'Caption')
     I.fillField(this.locators.filterValueString, 'Dog')
-    I.click(this.locators.updateFilter)
+    I.click(this.locators.applyFilterButton)
     const captionFilterValue = await I.grabTextFrom(this.locators.filterText)
 
-    I.seeStringsAreEqual(captionFilterValue, "Captioncontains'Dog'\n×")
+    I.seeStringsAreEqual(captionFilterValue, "Caption\ncontains\n'Dog'")
     const captionFilter = await I.grabNumberOfVisibleElements(
       this.locators.images
     )
@@ -382,20 +377,16 @@ module.exports = {
   async deleteMedia() {
     await I.amOnPage('/media')
     await I.waitForFunction(() => document.readyState === 'complete')
-    await I.waitForText('Media Library')
     await I.waitForElement(this.locators.footer)
     await I.seeElement(this.locators.dropArea)
-    // I.wait(2)
     const total = await I.grabTextFrom(this.locators.totalImages)
 
     await I.see('Stone.jpeg')
     I.click(this.locators.checkImage)
-    I.selectOption(this.locators.selectDelete, 'Delete (1)')
-    I.click(this.locators.applyButton)
-    I.waitForText('Are you sure you want to delete the selected document?')
     I.click(this.locators.deleteButton)
+    I.waitForText('Are you sure you want to delete the selected document?')
+    I.click(this.locators.confirmDeleteButton)
     I.waitForText('The document has been deleted')
-    // I.wait(2)
     await I.dontSee('Stone.jpeg')
     const newTotal = await I.grabTextFrom(this.locators.totalImages)
 
@@ -405,14 +396,13 @@ module.exports = {
     await I.click(this.locators.dogImage)
     await I.waitForFunction(() => document.readyState === 'complete')
     await I.seeInCurrentUrl(dogLink)
-    await I.see('Details')
-    await I.see('Metadata')
+    await I.see('DETAILS')
+    await I.see('METADATA')
     await I.seeElement(this.locators.editImage)
     await I.click(this.locators.editDeleteButton)
     I.waitForText('Are you sure you want to delete this document?')
     I.pressKey('Enter')
     I.waitForText('The document has been deleted')
-    // I.wait(2)
     await I.see('girl.png')
     await I.dontSee('dog.jpg')
   },

@@ -55,9 +55,9 @@ module.exports = {
         type: 'password'
       })
       .at(1),
-    accountMenuOpen: locate('span')
-      .withText('Open')
-      .as('Account Menu Open'),
+    accountMenuOpen: locate('button[class*="Header__user-menu-toggle"]').as(
+      'Account Menu Open'
+    ),
     accountMenuClose: locate('span')
       .withText('Close')
       .as('Account Menu Close'),
@@ -72,8 +72,6 @@ module.exports = {
   async changePersonalDetails(first, last) {
     await I.amOnPage('/profile/personal-details')
     I.seeInCurrentUrl('/profile/personal-details')
-    I.seeElement(this.locators.personalDetailsTab)
-    I.seeElement(this.locators.credentialsTab)
     I.seeElement(this.locators.firstNameField)
     I.seeElement(this.locators.lastNameField)
     I.see('First name')
@@ -84,9 +82,6 @@ module.exports = {
     I.click(this.locators.saveSettings)
     I.waitForText('Your settings have been updated')
     I.waitForFunction(() => document.readyState === 'complete')
-    // I.click(this.locators.accountMenuOpen)
-    // I.see(`${first} ${last}`)
-    // I.click(this.locators.accountMenuClose)
   },
 
   async invalidCurrentPassword(

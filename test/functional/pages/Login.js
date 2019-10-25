@@ -23,16 +23,15 @@ module.exports = {
     signInButton: locate('button[type = submit]')
       .withText('Sign In')
       .as('Sign In Button'),
-    navigationMenu: locate('nav[class*="Nav"]').as('Navigation Menu'),
     articleLink: locate('a').withAttr({
       href: '/articles'
     }),
     signOutButton: locate('a')
       .withText('Sign out')
       .as('Sign Out Button'),
-    accountMenuOpen: locate('span')
-      .withText('Open')
-      .as('Account Menu Open')
+    accountMenuOpen: locate('button[class*="Header__user-menu-toggle"]').as(
+      'Account Menu Open'
+    )
   },
 
   async validateSignInPage() {
@@ -67,9 +66,8 @@ module.exports = {
     I.click(this.locators.signInButton)
     I.waitForFunction(() => document.readyState === 'complete')
     I.resizeWindow(1200, 650)
-    I.waitForText('Welcome,')
-    I.waitForVisible(this.locators.navigationMenu, 4)
-    I.see('Articles')
+    I.waitForText('Welcome')
+    I.see('ARTICLES')
   },
 
   async validateSignOut() {
