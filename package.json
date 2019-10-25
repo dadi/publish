@@ -4,7 +4,7 @@
   "description": "DADI Publish",
   "main": "index.js",
   "scripts": {
-    "build": "NODE_ENV=production webpack --progress",
+    "build": "NODE_ENV=production webpack",
     "format": "prettier --write \"./**/*.{js,jsx,md,html}\"",
     "prepublishOnly": "npm run build",
     "test": "npm run test:lint && npm run build && npm run test:functional",
