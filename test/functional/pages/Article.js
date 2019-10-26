@@ -457,7 +457,7 @@ module.exports = {
     I.see(subCategoryNames[1].trim())
 
     // Select Web Services
-    I.scrollTo(this.locators.selectWebService)
+    I.scrollTo(this.locators.selectNetworkService)
     I.click(this.locators.selectWebService)
     I.waitForFunction(() => document.readyState === 'complete')
     const numberWebServices = await I.grabNumberOfVisibleElements(
@@ -485,6 +485,7 @@ module.exports = {
     I.see(webServicesNames[0].trim())
     I.see(webServicesNames[4].trim())
     //Select Network Service
+    // I.scrollPageToBottom()
     // I.scrollTo(this.locators.selectNetworkService)
     // I.click(this.locators.selectNetworkService)
     // I.waitForFunction(() => document.readyState === 'complete')
