@@ -111,20 +111,21 @@ const plugin = {
           .unwrapBlock(Nodes.BLOCK_NUMBERED_LIST)
       }
 
-      if (editor.isInBulletedList()) {
-        return blocks.forEach(block => {
-          const listBlock = document.getParent(
-            document.getParent(block.key).key
-          )
-
-          editor.setNodeByKey(listBlock.key, Nodes.BLOCK_NUMBERED_LIST)
-        })
-      }
-
-      editor.setBlocks(Nodes.DEFAULT_BLOCK).wrapBlock(Nodes.BLOCK_NUMBERED_LIST)
-
       blocks.forEach(block => {
-        editor.wrapBlockByKey(block.key, {type: Nodes.BLOCK_LIST_ITEM})
+        const parent = document.getParent(block.key)
+
+        if (!parent || parent.type !== Nodes.BLOCK_LIST_ITEM) {
+          editor
+            .setNodeByKey(block.key, Nodes.DEFAULT_BLOCK)
+            .wrapBlockByKey(block.key, Nodes.BLOCK_NUMBERED_LIST)
+            .wrapBlockByKey(block.key, Nodes.BLOCK_LIST_ITEM)
+        } else if (parent) {
+          const grandparent = document.getParent(parent.key)
+
+          if (grandparent.type === Nodes.BLOCK_BULLETED_LIST) {
+            editor.setNodeByKey(grandparent.key, Nodes.BLOCK_NUMBERED_LIST)
+          }
+        }
       })
     },
     toggleBulletedList(editor) {
@@ -136,20 +137,21 @@ const plugin = {
           .unwrapBlock(Nodes.BLOCK_BULLETED_LIST)
       }
 
-      if (editor.isInBulletedList()) {
-        return blocks.forEach(block => {
-          const listBlock = document.getParent(
-            document.getParent(block.key).key
-          )
-
-          editor.setNodeByKey(listBlock.key, Nodes.BLOCK_BULLETED_LIST)
-        })
-      }
-
-      editor.setBlocks(Nodes.DEFAULT_BLOCK).wrapBlock(Nodes.BLOCK_BULLETED_LIST)
-
       blocks.forEach(block => {
-        editor.wrapBlockByKey(block.key, {type: Nodes.BLOCK_LIST_ITEM})
+        const parent = document.getParent(block.key)
+
+        if (!parent || parent.type !== Nodes.BLOCK_LIST_ITEM) {
+          editor
+            .setNodeByKey(block.key, Nodes.DEFAULT_BLOCK)
+            .wrapBlockByKey(block.key, Nodes.BLOCK_BULLETED_LIST)
+            .wrapBlockByKey(block.key, Nodes.BLOCK_LIST_ITEM)
+        } else if (parent) {
+          const grandparent = document.getParent(parent.key)
+
+          if (grandparent.type === Nodes.BLOCK_NUMBERED_LIST) {
+            editor.setNodeByKey(grandparent.key, Nodes.BLOCK_BULLETED_LIST)
+          }
+        }
       })
     },
     toggleLink(editor) {

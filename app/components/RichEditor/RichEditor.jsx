@@ -27,6 +27,7 @@ import proptypes from 'prop-types'
 import React from 'react'
 import ReferenceSelectView from 'views/ReferenceSelectView/ReferenceSelectView'
 import RichEditorLink from './RichEditorLink'
+import SCHEMA_RICH from './slateSchemaRich'
 import Style from 'lib/Style'
 import styles from './RichEditor.css'
 import {Value} from 'slate'
@@ -53,12 +54,6 @@ const SCHEMA_RAW = {
     line: {
       nodes: [{match: {object: 'text'}}]
     }
-  }
-}
-const SCHEMA_RICH = {
-  blocks: {
-    [Nodes.BLOCK_IMAGE]: {isVoid: true},
-    [Nodes.BLOCK_HR]: {isVoid: true}
   }
 }
 
