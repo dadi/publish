@@ -352,14 +352,12 @@ module.exports = {
     stringListEmptyField: locate(
       'svg[class*="MuiSvgIcon-root SortableList__icon-add"]+input[value=""]'
     ).as('Empty Multi-Entry String Item'),
-    secondElement: locate(
-      'svg[class*="MuiSvgIcon-root SortableList__icon-drag"]'
-    ).before('input[value="Second String"]'),
-    thirdElement: locate('div')
-      .withAttr({
-        'data-field-name': 'stringList'
-      })
-      .find('svg'),
+    secondElement: locate('[role="presentation"]').before(
+      'input[value="Second String"]'
+    ),
+    thirdElement: locate('[role="presentation"]').before(
+      'input[value="Third String"]'
+    ),
     multiEntryStringText: locate('input[value*="String"]').as(
       'Multi-Entry String Text'
     ),
@@ -1023,21 +1021,21 @@ module.exports = {
 
     await I.seeNumbersAreEqual(initialNumStringListAddElements, 1)
 
-    // const stringValueArray = await I.grabAttributeFrom(
-    //   this.locators.multiEntryStringText,
-    //   'value'
-    // )
+    const stringValueArray = await I.grabAttributeFrom(
+      this.locators.multiEntryStringText,
+      'value'
+    )
 
-    // await I.dragAndDrop(this.locators.thirdElement, this.locators.secondElement)
-    // const stringValueArrayAfter = await I.grabAttributeFrom(
-    //   this.locators.multiEntryStringText,
-    //   'value'
-    // )
+    await I.dragAndDrop(this.locators.thirdElement, this.locators.secondElement)
+    const stringValueArrayAfter = await I.grabAttributeFrom(
+      this.locators.multiEntryStringText,
+      'value'
+    )
 
-    // await I.seeStringsAreNotEqual(
-    //   stringValueArray.toString(),
-    //   stringValueArrayAfter.toString()
-    // )
+    await I.seeStringsAreNotEqual(
+      stringValueArray.toString(),
+      stringValueArrayAfter.toString()
+    )
 
     await I.click(this.locators.mutliEntryFirstRemoveButton)
 
