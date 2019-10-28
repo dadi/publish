@@ -14,10 +14,78 @@ const isModAlt2 = isHotkey('mod+alt+2')
 const isModAlt3 = isHotkey('mod+alt+3')
 const isModAltN = isHotkey('mod+alt+n')
 const isModAltB = isHotkey('mod+alt+b')
+const isModLBr = isHotkey('mod+[')
+const isModRBr = isHotkey('mod+]')
 const isEnter = isHotkey('enter')
 const isShiftEnter = isHotkey('shift+enter')
 const isBackspace = isHotkey('backspace')
 const isDelete = isHotkey('delete')
+
+const isListNode = node =>
+  node &&
+  (node.type === Nodes.BLOCK_NUMBERED_LIST ||
+    node.type === Nodes.BLOCK_BULLETED_LIST)
+const isListItemNode = node => node && node.type === Nodes.BLOCK_LIST_ITEM
+
+const canIndentItems = (editor, items) =>
+  items.size && editor.value.document.getPreviousSibling(items.first().key)
+
+function indentListItems(editor, items) {
+  const {document} = editor.value
+
+  if (!items.size) return
+
+  const previousSibling = document.getPreviousSibling(items.first().key)
+
+  if (!previousSibling) return
+
+  const targetList = previousSibling.nodes.last()
+  const parentList = document.getParent(items.first().key)
+  const listType = isListNode(targetList) ? targetList.type : parentList.type
+
+  items.forEach(block => {
+    editor.removeNodeByKey(block.key)
+  })
+
+  // This list will be merged with the target list during normalization.
+  editor.insertNodeByKey(previousSibling.key, previousSibling.nodes.size, {
+    object: 'block',
+    type: listType,
+    nodes: items
+  })
+}
+
+const canDeindentItems = (editor, items) =>
+  items.size &&
+  editor.value.document.getClosest(items.first().key, isListItemNode)
+
+function deindentListItems(editor, items) {
+  const {document} = editor.value
+
+  if (!items.size) return
+
+  const parentListItem = document.getClosest(items.first().key, isListItemNode)
+
+  if (!parentListItem) return
+
+  const innerList = document.getParent(items.first().key)
+  const outerList = document.getParent(parentListItem.key)
+
+  items.forEach(block => {
+    editor.removeNodeByKey(block.key)
+  })
+
+  if (items.size === innerList.nodes.size) {
+    // We're moving all of the items of the list; delete the list.
+    editor.removeNodeByKey(innerList.key)
+  }
+
+  editor.insertFragmentByKey(
+    outerList.key,
+    outerList.nodes.findIndex(item => item === parentListItem) + 1,
+    Document.create({nodes: items})
+  )
+}
 
 const plugin = {
   commands: {
@@ -192,6 +260,106 @@ const plugin = {
       }
 
       editor.splitBlock().setBlocks(Nodes.DEFAULT_BLOCK)
+    },
+    indent(editor) {
+      const {blocks, document, selection} = editor.value
+      const {anchor, focus} = selection
+      const {key: anchorKey, offset: anchorOffset} = anchor
+      const {key: focusKey, offset: focusOffset} = focus
+
+      const parentBlocks = blocks
+        .map(({key}) => document.getParent(key))
+        .skipUntil(isListItemNode)
+        .takeWhile(isListItemNode)
+
+      if (!parentBlocks.size) return
+
+      const firstItemDepth = document.getDepth(parentBlocks.first().key)
+      const higherLevelItemIndex = parentBlocks.findIndex(
+        ({key}) => document.getDepth(key) < firstItemDepth
+      )
+
+      if (higherLevelItemIndex !== -1) {
+        const higherLevelItemDepth = document.getDepth(
+          parentBlocks.get(higherLevelItemIndex).key
+        )
+        const firstPart = parentBlocks
+          .slice(0, higherLevelItemIndex)
+          .filter(({key}) => document.getDepth(key) === firstItemDepth)
+        const secondPart = parentBlocks
+          .slice(higherLevelItemIndex)
+          .filter(({key}) => document.getDepth(key) === higherLevelItemDepth)
+
+        // Only proceed if all items can be moved.
+        if (
+          canIndentItems(editor, firstPart) &&
+          canIndentItems(editor, secondPart)
+        ) {
+          indentListItems(editor, firstPart)
+          indentListItems(editor, secondPart)
+        }
+      } else {
+        indentListItems(
+          editor,
+          parentBlocks.filter(
+            ({key}) => document.getDepth(key) === firstItemDepth
+          )
+        )
+      }
+
+      editor
+        .moveAnchorTo(anchorKey, anchorOffset)
+        .moveFocusTo(focusKey, focusOffset)
+    },
+    deindent(editor) {
+      const {blocks, document, selection} = editor.value
+      const {anchor, focus} = selection
+      const {key: anchorKey, offset: anchorOffset} = anchor
+      const {key: focusKey, offset: focusOffset} = focus
+
+      const parentBlocks = blocks
+        .map(({key}) => document.getParent(key))
+        .skipUntil(isListItemNode)
+        .takeWhile(isListItemNode)
+
+      if (!parentBlocks.size) return
+
+      const firstItemDepth = document.getDepth(parentBlocks.first().key)
+      const higherLevelItemIndex = parentBlocks.findIndex(
+        ({key}) => document.getDepth(key) < firstItemDepth
+      )
+
+      if (higherLevelItemIndex !== -1) {
+        const higherLevelItemDepth = document.getDepth(
+          parentBlocks.get(higherLevelItemIndex).key
+        )
+        const firstPart = parentBlocks
+          .slice(0, higherLevelItemIndex)
+          .filter(({key}) => document.getDepth(key) === firstItemDepth)
+        const secondPart = parentBlocks
+          .slice(higherLevelItemIndex)
+          .filter(({key}) => document.getDepth(key) === higherLevelItemDepth)
+
+        // Only proceed if all items can be moved.
+        if (
+          canDeindentItems(editor, firstPart) &&
+          canDeindentItems(editor, secondPart)
+        ) {
+          deindentListItems(editor, firstPart)
+          deindentListItems(editor, secondPart)
+        }
+      } else {
+        deindentListItems(
+          editor,
+          parentBlocks.filter(
+            ({key}) => document.getDepth(key) === firstItemDepth
+          )
+        )
+      }
+
+      editor
+        .moveAnchorTo(anchorKey, anchorOffset)
+        .moveFocusTo(focusKey, focusOffset)
     }
   },
   queries: {
@@ -292,10 +460,17 @@ const plugin = {
       return editor.toggleBulletedList()
     }
 
+    if (isModLBr(e)) {
+      return editor.deindent()
+    }
+
+    if (isModRBr(e)) {
+      return editor.indent()
+    }
+
     if (isShiftEnter(e) && !editor.isInList()) {
       // Lists skipped here because in lists, Shift+Enter has the default behavior
       // (split the paragraph block), whereas Enter splits the whole list item.
-
       return editor.insertText('\n')
     }
 
@@ -312,17 +487,9 @@ const plugin = {
     if (editor.isInList()) {
       const {blocks, document, selection} = editor.value
       const listItemAtStart =
-        blocks.size &&
-        document.getClosest(
-          blocks.first().key,
-          node => node.type === Nodes.BLOCK_LIST_ITEM
-        )
+        blocks.size && document.getClosest(blocks.first().key, isListItemNode)
       const listItemAtEnd =
-        blocks.size &&
-        document.getClosest(
-          blocks.last().key,
-          node => node.type === Nodes.BLOCK_LIST_ITEM
-        )
+        blocks.size && document.getClosest(blocks.last().key, isListItemNode)
       const isSelectionAtStart =
         blocks.size &&
         selection.start.isAtStartOfNode(listItemAtStart) &&

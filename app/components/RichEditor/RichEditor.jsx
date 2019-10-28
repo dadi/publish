@@ -2,8 +2,8 @@ import * as Nodes from './slateNodes'
 import {
   Code,
   FormatBold,
-  // FormatIndentDecrease,
-  // FormatIndentIncrease,
+  FormatIndentDecrease,
+  FormatIndentIncrease,
   FormatItalic,
   FormatListBulleted,
   FormatListNumbered,
@@ -379,20 +379,20 @@ export default class RichEditor extends React.Component {
             >
               <FormatListBulleted />
             </RichEditorToolbarButton>
-            {/* <RichEditorToolbarButton
-              action={() => {}}
+            <RichEditorToolbarButton
+              action={editor.deindent}
               disabled={isRawMode}
-              title="Decrease indent (Ctrl+[)"
+              title="Decrease indent" // (Ctrl+[)"
             >
               <FormatIndentDecrease />
             </RichEditorToolbarButton>
             <RichEditorToolbarButton
-              action={() => {}}
+              action={editor.indent}
               disabled={isRawMode}
-              title="Increase indent (Ctrl+])"
+              title="Increase indent" // (Ctrl+])"
             >
               <FormatIndentIncrease />
-            </RichEditorToolbarButton> */}
+            </RichEditorToolbarButton>
             <RichEditorToolbarButton
               action={editor.toggleBlockquote}
               active={!isRawMode && editor.isInBlockQuote()}
