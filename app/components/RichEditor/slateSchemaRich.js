@@ -1,5 +1,20 @@
 import * as Nodes from './slateNodes'
 
+// Blocks such that if they are at the edge of the document or next to another
+// nonexitable block, it's impossible to insert a regular paragraph in between
+// without using keyboard shortcuts.
+const nonexitableNodes = [
+  Nodes.BLOCK_CODE,
+  Nodes.BLOCK_BLOCKQUOTE,
+  Nodes.BLOCK_HR,
+  Nodes.BLOCK_IMAGE
+]
+
+const defaultBlock = {
+  object: 'block',
+  type: Nodes.DEFAULT_BLOCK
+}
+
 export default {
   blocks: {
     [Nodes.BLOCK_IMAGE]: {isVoid: true},
@@ -51,6 +66,37 @@ export default {
             .unwrapNodeByKey(error.child.key)
             .unwrapNodeByKey(error.child.key)
         }
+      }
+    },
+
+    // Make sure nonexitable blocks are surrounded by lines so that we can exit them.
+    {
+      match: {type: type => nonexitableNodes.includes(type)},
+      previous: {type: type => !nonexitableNodes.includes(type)},
+      next: {type: type => !nonexitableNodes.includes(type)},
+      normalize(editor, error) {
+        const {document} = editor.value
+        const parent = document.getParent(error.node.key) || document
+        const index = parent.nodes.indexOf(
+          error.code === 'previous_sibling_type_invalid'
+            ? error.node
+            : error.next
+        )
+
+        editor.insertNodeByKey(parent.key, index, defaultBlock)
+      }
+    },
+
+    {
+      match: {object: 'document'},
+      first: {type: type => !nonexitableNodes.includes(type)},
+      last: {type: type => !nonexitableNodes.includes(type)},
+      normalize(editor, error) {
+        const {document} = editor.value
+        const index =
+          error.code === 'first_child_type_invalid' ? 0 : document.nodes.size
+
+        editor.insertNodeByKey(document.key, index, defaultBlock)
       }
     }
   ]
