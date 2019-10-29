@@ -315,6 +315,8 @@ module.exports = {
       .find('span[class*="Label__error-message-text"]')
       .withText('This field is not in the right format')
       .as('Regex Error Message'),
+    stringOptionDisabled: locate('option[disabled]'),
+    stringOptionSelected: locate('option[value="three"]'),
     stringOptions: locate('div')
       .withAttr({
         'data-field-name': 'stringOptions'
@@ -324,6 +326,10 @@ module.exports = {
         name: 'stringOptions'
       })
       .as('String options'),
+    optionOne: locate('input[id="one"]').as('Option 1 Checkbox'),
+    optionTwo: locate('input[id="two"]').as('Option 2 Checkbox'),
+    optionThree: locate('input[id="three"]').as('Option 3 Checkbox'),
+    optionFour: locate('input[id="four"]').as('Option 4 Checkbox'),
     stringOptionsMulti: locate('div')
       .withAttr({
         'data-field-name': 'stringOptionsMultiple'
@@ -989,7 +995,23 @@ module.exports = {
     await I.clearField(this.locators.stringRegex)
     await I.fillField(this.locators.stringRegex, 'pqpq')
     await I.waitForInvisible(this.locators.stringRegexError)
+
+    await I.scrollTo(this.locators.stringOptions)
+    const disabled = await I.grabTextFrom(this.locators.stringOptionDisabled)
+
+    await I.seeStringsAreEqual(disabled, 'Please select String options')
     await I.selectOption(this.locators.stringOptions, 'Option three')
+    const option = await I.grabTextFrom(this.locators.stringOptionSelected)
+
+    await I.seeStringsAreEqual(option, 'Option three')
+
+    await I.scrollTo(this.locators.stringOptionsMulti)
+    await I.checkOption(this.locators.optionOne)
+    await I.checkOption(this.locators.optionFour)
+    await I.seeCheckboxIsChecked(this.locators.optionOne)
+    await I.dontSeeCheckboxIsChecked(this.locators.optionTwo)
+    await I.dontSeeCheckboxIsChecked(this.locators.optionThree)
+    await I.seeCheckboxIsChecked(this.locators.optionFour)
 
     await I.scrollTo(this.locators.stringList)
     await I.fillField(this.locators.stringList, 'First String')
