@@ -27,7 +27,7 @@ const isListNode = node =>
     node.type === Nodes.BLOCK_BULLETED_LIST)
 const isListItemNode = node => node && node.type === Nodes.BLOCK_LIST_ITEM
 
-const canIndentItems = (editor, items) =>
+const canIndentListItems = (editor, items) =>
   items.size && editor.value.document.getPreviousSibling(items.first().key)
 
 function indentListItems(editor, items) {
@@ -55,7 +55,7 @@ function indentListItems(editor, items) {
   })
 }
 
-const canDeindentItems = (editor, items) =>
+const canDeindentListItems = (editor, items) =>
   items.size &&
   editor.value.document.getClosest(items.first().key, isListItemNode)
 
@@ -87,16 +87,66 @@ function deindentListItems(editor, items) {
   )
 }
 
+function changeListIndentation(editor, change) {
+  const {blocks, document, selection} = editor.value
+  const {anchor, focus} = selection
+  const {key: anchorKey, offset: anchorOffset} = anchor
+  const {key: focusKey, offset: focusOffset} = focus
+  const checkFn =
+    change === 'increase' ? canIndentListItems : canDeindentListItems
+  const moveFn = change === 'increase' ? indentListItems : deindentListItems
+
+  const parentBlocks = blocks
+    .map(({key}) => document.getParent(key))
+    .skipUntil(isListItemNode)
+    .takeWhile(isListItemNode)
+
+  if (!parentBlocks.size) return
+
+  const firstItemDepth = document.getDepth(parentBlocks.first().key)
+  const higherLevelItemIndex = parentBlocks.findIndex(
+    ({key}) => document.getDepth(key) < firstItemDepth
+  )
+
+  if (higherLevelItemIndex !== -1) {
+    const higherLevelItemDepth = document.getDepth(
+      parentBlocks.get(higherLevelItemIndex).key
+    )
+    const firstPart = parentBlocks
+      .slice(0, higherLevelItemIndex)
+      .filter(({key}) => document.getDepth(key) === firstItemDepth)
+    const secondPart = parentBlocks
+      .slice(higherLevelItemIndex)
+      .filter(({key}) => document.getDepth(key) === higherLevelItemDepth)
+
+    // Only proceed if all items can be moved.
+    if (checkFn(editor, firstPart) && checkFn(editor, secondPart)) {
+      moveFn(editor, firstPart)
+      moveFn(editor, secondPart)
+    }
+  } else {
+    moveFn(
+      editor,
+      parentBlocks.filter(({key}) => document.getDepth(key) === firstItemDepth)
+    )
+  }
+
+  editor
+    .moveAnchorTo(anchorKey, anchorOffset)
+    .moveFocusTo(focusKey, focusOffset)
+}
+
 const plugin = {
   commands: {
     toggleBlocks(editor, type) {
       editor.setBlocks(editor.isInBlocks(type) ? Nodes.DEFAULT_BLOCK : type)
     },
     toggleBold(editor) {
-      editor.toggleMark(Nodes.MARK_BOLD)
+      !editor.isInBlocks(Nodes.BLOCK_CODE) && editor.toggleMark(Nodes.MARK_BOLD)
     },
     toggleItalic(editor) {
-      editor.toggleMark(Nodes.MARK_ITALIC)
+      !editor.isInBlocks(Nodes.BLOCK_CODE) &&
+        editor.toggleMark(Nodes.MARK_ITALIC)
     },
     toggleCode(editor) {
       const {blocks, selection} = editor.value
@@ -223,6 +273,8 @@ const plugin = {
       })
     },
     toggleLink(editor) {
+      if (editor.isInBlocks(Nodes.BLOCK_CODE)) return
+
       if (editor.hasLink()) {
         return editor.unwrapInline(Nodes.INLINE_LINK)
       }
@@ -263,103 +315,73 @@ const plugin = {
     },
     indent(editor) {
       const {blocks, document, selection} = editor.value
-      const {anchor, focus} = selection
-      const {key: anchorKey, offset: anchorOffset} = anchor
-      const {key: focusKey, offset: focusOffset} = focus
 
-      const parentBlocks = blocks
-        .map(({key}) => document.getParent(key))
-        .skipUntil(isListItemNode)
-        .takeWhile(isListItemNode)
+      if (editor.isInBlocks(Nodes.BLOCK_CODE) && blocks.size === 1) {
+        const INDENT = '  '
+        const {start, end} = selection
 
-      if (!parentBlocks.size) return
-
-      const firstItemDepth = document.getDepth(parentBlocks.first().key)
-      const higherLevelItemIndex = parentBlocks.findIndex(
-        ({key}) => document.getDepth(key) < firstItemDepth
-      )
-
-      if (higherLevelItemIndex !== -1) {
-        const higherLevelItemDepth = document.getDepth(
-          parentBlocks.get(higherLevelItemIndex).key
+        // A code block always contains exactly one text block (no marks or inlines).
+        const {key, offset: startOffset} = start
+        const {offset: endOffset} = end
+        const {text} = document.getNode(key)
+        const path = document.getPath(key)
+        const startIndex = text.lastIndexOf('\n', startOffset - 1)
+        const newText = text.replace(/^|\n/g, (match, index) =>
+          index >= startIndex && (index < endOffset || match === '')
+            ? match + INDENT
+            : match
         )
-        const firstPart = parentBlocks
-          .slice(0, higherLevelItemIndex)
-          .filter(({key}) => document.getDepth(key) === firstItemDepth)
-        const secondPart = parentBlocks
-          .slice(higherLevelItemIndex)
-          .filter(({key}) => document.getDepth(key) === higherLevelItemDepth)
+        const lengthDiff = newText.length - text.length
+        const newAnchorOffset = selection.isForward
+          ? startOffset + INDENT.length
+          : endOffset + lengthDiff
+        const newFocusOffset = selection.isBackward
+          ? startOffset + INDENT.length
+          : endOffset + lengthDiff
 
-        // Only proceed if all items can be moved.
-        if (
-          canIndentItems(editor, firstPart) &&
-          canIndentItems(editor, secondPart)
-        ) {
-          indentListItems(editor, firstPart)
-          indentListItems(editor, secondPart)
-        }
+        editor
+          // `setNodeByKey` doesn't work with changing text. Implementation using
+          // `insertText` (preserves selection offsets even through undos) turned
+          // out to be too complex.
+          .replaceNodeByKey(key, {object: 'text', text: newText})
+          .moveAnchorTo(path, newAnchorOffset)
+          .moveFocusTo(path, newFocusOffset)
       } else {
-        indentListItems(
-          editor,
-          parentBlocks.filter(
-            ({key}) => document.getDepth(key) === firstItemDepth
-          )
-        )
+        changeListIndentation(editor, 'increase')
       }
-
-      editor
-        .moveAnchorTo(anchorKey, anchorOffset)
-        .moveFocusTo(focusKey, focusOffset)
     },
     deindent(editor) {
       const {blocks, document, selection} = editor.value
-      const {anchor, focus} = selection
-      const {key: anchorKey, offset: anchorOffset} = anchor
-      const {key: focusKey, offset: focusOffset} = focus
 
-      const parentBlocks = blocks
-        .map(({key}) => document.getParent(key))
-        .skipUntil(isListItemNode)
-        .takeWhile(isListItemNode)
-
-      if (!parentBlocks.size) return
-
-      const firstItemDepth = document.getDepth(parentBlocks.first().key)
-      const higherLevelItemIndex = parentBlocks.findIndex(
-        ({key}) => document.getDepth(key) < firstItemDepth
-      )
-
-      if (higherLevelItemIndex !== -1) {
-        const higherLevelItemDepth = document.getDepth(
-          parentBlocks.get(higherLevelItemIndex).key
+      if (editor.isInBlocks(Nodes.BLOCK_CODE) && blocks.size === 1) {
+        const INDENT = '  '
+        const {start, end} = selection
+        const {key, offset: startOffset} = start
+        const {offset: endOffset} = end
+        const {text} = document.getNode(key)
+        const path = document.getPath(key)
+        const startIndex = text.lastIndexOf('\n', startOffset - 1)
+        const re = RegExp(`(^|\n)${INDENT}`, 'g')
+        const newText = text.replace(re, (match, group1, index) =>
+          index >= startIndex && (index < endOffset || match === INDENT)
+            ? group1
+            : match
         )
-        const firstPart = parentBlocks
-          .slice(0, higherLevelItemIndex)
-          .filter(({key}) => document.getDepth(key) === firstItemDepth)
-        const secondPart = parentBlocks
-          .slice(higherLevelItemIndex)
-          .filter(({key}) => document.getDepth(key) === higherLevelItemDepth)
+        const lengthDiff = text.length - newText.length
+        const newAnchorOffset = selection.isForward
+          ? startOffset - INDENT.length
+          : endOffset - lengthDiff
+        const newFocusOffset = selection.isBackward
+          ? startOffset - INDENT.length
+          : endOffset - lengthDiff
 
-        // Only proceed if all items can be moved.
-        if (
-          canDeindentItems(editor, firstPart) &&
-          canDeindentItems(editor, secondPart)
-        ) {
-          deindentListItems(editor, firstPart)
-          deindentListItems(editor, secondPart)
-        }
+        editor
+          .replaceNodeByKey(key, {object: 'text', text: newText})
+          .moveAnchorTo(path, newAnchorOffset)
+          .moveFocusTo(path, newFocusOffset)
       } else {
-        deindentListItems(
-          editor,
-          parentBlocks.filter(
-            ({key}) => document.getDepth(key) === firstItemDepth
-          )
-        )
+        changeListIndentation(editor, 'decrease')
       }
-
-      editor
-        .moveAnchorTo(anchorKey, anchorOffset)
-        .moveFocusTo(focusKey, focusOffset)
     }
   },
   queries: {

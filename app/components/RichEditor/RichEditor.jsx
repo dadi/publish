@@ -326,7 +326,7 @@ export default class RichEditor extends React.Component {
             <RichEditorToolbarButton
               action={editor.toggleBold}
               active={!isRawMode && editor.hasMark(Nodes.MARK_BOLD)}
-              disabled={isRawMode}
+              disabled={isRawMode || editor.isInBlocks(Nodes.BLOCK_CODE)}
               title="Bold" // (Ctrl+B)"
             >
               <FormatBold />
@@ -334,7 +334,7 @@ export default class RichEditor extends React.Component {
             <RichEditorToolbarButton
               action={editor.toggleItalic}
               active={!isRawMode && editor.hasMark(Nodes.MARK_ITALIC)}
-              disabled={isRawMode}
+              disabled={isRawMode || editor.isInBlocks(Nodes.BLOCK_CODE)}
               title="Italic" // (Ctrl+I)"
             >
               <FormatItalic />
@@ -416,13 +416,14 @@ export default class RichEditor extends React.Component {
             <RichEditorToolbarButton
               action={editor.toggleLink}
               active={!isRawMode && editor.hasLink()}
-              disabled={isRawMode}
+              disabled={isRawMode || editor.isInBlocks(Nodes.BLOCK_CODE)}
               title="Insert link" // (Ctrl+K)"
             >
               <InsertLink />
             </RichEditorToolbarButton>
             <RichEditorToolbarButton
               action={this.startSelectingMedia}
+              disabled={editor.isInBlocks(Nodes.BLOCK_CODE)}
               title="Insert asset from library"
             >
               <ImageSearch />
