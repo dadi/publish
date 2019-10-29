@@ -498,11 +498,12 @@ const plugin = {
         blocks.size === 1 &&
         listItemAtStart.nodes.size === 1 &&
         listItemAtStart.text === ''
+      const prevItem = document.getPreviousSibling(listItemAtStart.key)
+      const isPrevItemEmpty =
+        prevItem && prevItem.nodes.size === 1 && prevItem.text === ''
+      const isInTopLevelList = document.getDepth(listItemAtStart.key) === 2
 
-      if (
-        (isEnter(e) && isEmptyBlock) ||
-        (isBackspace(e) && isSelectionAtStart)
-      ) {
+      if (isEnter(e) && isEmptyBlock && isInTopLevelList) {
         return editor
           .setBlocks(Nodes.DEFAULT_BLOCK)
           .unwrapBlock(Nodes.BLOCK_LIST_ITEM)
@@ -510,13 +511,36 @@ const plugin = {
           .unwrapBlock(Nodes.BLOCK_BULLETED_LIST)
       }
 
-      if (isEnter(e) && isSelectionAtStart) {
+      if (
+        isEnter(e) &&
+        isSelectionAtStart &&
+        (!prevItem || isPrevItemEmpty) &&
+        isInTopLevelList
+      ) {
+        if (isPrevItemEmpty) {
+          const prevItemChildKey = prevItem.nodes.first().key
+
+          return editor
+            .unwrapBlockByKey(prevItemChildKey, Nodes.BLOCK_LIST_ITEM)
+            .unwrapBlockByKey(prevItemChildKey, Nodes.BLOCK_NUMBERED_LIST)
+            .unwrapBlockByKey(prevItemChildKey, Nodes.BLOCK_BULLETED_LIST)
+        }
+
         return editor
           .insertBlock(Nodes.DEFAULT_BLOCK)
           .unwrapBlock(Nodes.BLOCK_LIST_ITEM)
           .unwrapBlock(Nodes.BLOCK_NUMBERED_LIST)
           .unwrapBlock(Nodes.BLOCK_BULLETED_LIST)
           .moveToStartOfNextBlock()
+      }
+
+      if (isBackspace(e) && isSelectionAtStart) {
+        return isInTopLevelList
+          ? editor
+              .unwrapBlock(Nodes.BLOCK_LIST_ITEM)
+              .unwrapBlock(Nodes.BLOCK_NUMBERED_LIST)
+              .unwrapBlock(Nodes.BLOCK_BULLETED_LIST)
+          : editor.deindent()
       }
 
       if (isEnter(e)) {
