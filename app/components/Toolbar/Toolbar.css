@@ -1,0 +1,17 @@
+.container {
+  width: 100%;
+  background-color: var(--edit-color-background-1);
+  font-family: var(--theme-font-family);
+  display: flex;
+  position: relative;
+  justify-content: space-between;
+  min-height: var(--editif-toolbar-height);
+  padding: var(--edit-margin-md) var(--edit-margin-lg);
+  box-shadow: var(--edit-shadow-4px-top);
+}
+
+@media (min-width: 1024px) {
+  .container {
+    padding: var(--edit-margin-md) var(--edit-margin-xxl);
+  }
+}

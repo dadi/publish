@@ -1,0 +1,55 @@
+{
+  "cluster": false,
+  "app": {
+    "name": "Publish API"
+  },
+  "publicUrl": {
+    "host": "@@HOST@@",
+    "port": 80,
+    "protocol": "http"
+  },
+  "server": {
+    "host": "0.0.0.0",
+    "port": 8081
+  },
+  "datastore": "@dadi/api-filestore",
+  "auth": {
+    "tokenUrl": "/token",
+    "tokenTtl": 1800000,
+    "clientCollection": "client-store",
+    "tokenCollection": "token-store",
+    "datastore": "@dadi/api-filestore",
+    "database": "dadicloud"
+  },
+  "caching": {
+    "ttl": 1200,
+    "directory": {
+      "enabled": false,
+      "path": "./cache/api",
+      "extension": "json",
+      "autoFlush": true,
+      "autoFlushInterval": 60
+    },
+    "redis": {
+      "enabled": false,
+      "host": "127.0.0.1",
+      "port": 6379
+    }
+  },
+  "paths": {
+    "collections": "workspace/collections",
+    "endpoints": "workspace/endpoints",
+    "hooks": "workspace/hooks"
+  },
+  "logging": {
+    "enabled": true,
+    "level": "info",
+    "path": "./log",
+    "filename": "api",
+    "extension": "log"
+  },
+  "feedback": false,
+  "i18n": {
+    "languages": ["pt", "fr", "es"]
+  }
+}

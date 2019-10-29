@@ -149,7 +149,7 @@
       "settings": {
         "collection": "categories"
       }
-    },    
+    },
     "sub-category": {
       "type": "Reference",
       "required": false,
@@ -241,7 +241,7 @@
         }
       }
     },
-     "redditUrl": {
+    "redditUrl": {
       "type": "String",
       "required": false,
       "label": "Reddit URL",
@@ -302,7 +302,7 @@
   "settings": {
     "displayName": "Articles",
     "cache": false,
-    "count": 8,
+    "count": 18,
     "storeRevisions": false,
     "description": "",
     "compose": true,

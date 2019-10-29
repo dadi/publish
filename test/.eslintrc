@@ -1,0 +1,10 @@
+{
+  "plugins": ["codeceptjs"],
+  "env": {
+    "codeceptjs/codeceptjs": true
+  },
+  "globals": {
+    "locate": false,
+    "document": false
+  }
+}

@@ -1,43 +1,9 @@
 .DS_Store
-
-# NPM
-node_modules/
-
-# Build
-build/
-
-# Logging
+app/lib/field-components.js
+dist/
 log/
-npm-debug.log
-
-# Test suite
-coverage/
-
-# Config
-config/config.*.json
-# Except test config
-!config/config.test.json
-
-.wallet
-.tmp
-frontend/components/**/*.json
-frontend/containers/**/*.json
-frontend/views/**/*.json
-
-# Bundles
-public/bundle.js
-public/main.css
-public/bundle.js.map
-public/main.css.map
-public/storybook
-
-# Webpack-generated files
-component-map.json
-frontend/lib/field-components.js
-stats.json
-jest*
-workspace/
-.DS_Store
-
+node_modules/
 test/api/workspace/db
 test/functional/output
+webpack-report.json
+test/api/database

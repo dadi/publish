@@ -1,0 +1,38 @@
+.container {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 0;
+  position: sticky;
+  top: 0;
+  z-index: var(--edit-z-index-rich-editor-toolbar);
+  background-color: var(--edit-color-background-1);
+}
+
+.button {
+  border: 0;
+  border-radius: var(--edit-radius-elem);
+  cursor: pointer;
+  margin-right: var(--edit-margin-xs);
+  padding: 0;
+  color: var(--edit-color-text-2);
+  transition: all var(--edit-transition-duration-standard);
+  height: 24px;
+  width: 24px;
+}
+
+.button > * {
+  vertical-align: middle;
+}
+
+.button:disabled {
+  color: var(--edit-color-off);
+}
+
+.button:not(:disabled):not(.active):hover {
+  background-color: var(--edit-color-background-3);
+}
+
+.button.active {
+  color: var(--edit-color-positive-opacity);
+  background-color: var(--edit-color-positive-hint);
+}

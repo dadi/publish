@@ -1,0 +1,7 @@
+.icon {
+  display: inline-block;
+  vertical-align: middle;
+  width: 0;
+  height: 0;
+  border-style: solid;
+}

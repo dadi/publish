@@ -5,8 +5,30 @@
       "label": "Colour",
       "publish": {
         "subType": "Color",
-        "section": "Publish fields",
-        "placement": "main"
+        "display": {
+          "list": true,
+          "edit": true
+        }
+      }
+    },
+    "object": {
+      "type": "Object",
+      "publish": {
+        "display": {
+          "list": true,
+          "edit": true
+        }
+      }
+    },
+    "string": {
+      "type": "String",
+      "label": "Normal String field",
+      "comment": "I am here just to allow filters to work",
+      "publish": {
+        "display": {
+          "list": true,
+          "edit": true
+        }
       }
     }
   },
@@ -31,7 +53,6 @@
         }
       }
     ],
-    "hooks": {
-    }
+    "hooks": {}
   }
 }

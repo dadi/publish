@@ -1,0 +1,41 @@
+.body-open {
+  overflow: hidden;
+}
+
+.content {
+  background: rgb(255, 255, 255);
+  border: 1px solid var(--edit-color-grayscale-40);
+  border-radius: var(--edit-radius-elem);
+  outline: none;
+  overflow: hidden;
+}
+
+.overlay.fullscreen .content {
+  bottom: 40px;
+  left: 40px;
+  right: 40px;
+  top: 40px;
+  position: absolute;
+}
+
+.content.scrollable {
+  overflow: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.overlay {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: rgba(0, 0, 0, 0.6);
+  bottom: 0px;
+  left: 0px;
+  position: fixed;
+  right: 0px;
+  top: 0px;
+  z-index: 2000;
+}
+
+.overlay.fullscreen {
+  display: block;
+}

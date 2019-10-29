@@ -1,0 +1,21 @@
+.container {
+  position: relative;
+}
+
+.input {
+  padding-right: 44px !important;
+}
+
+.picker {
+  position: absolute;
+  right: 0;
+  top: 100%;
+  margin-top: 10px;
+}
+
+.calendar-icon {
+  pointer-events: none;
+  position: absolute;
+  top: 8px;
+  right: 8px;
+}

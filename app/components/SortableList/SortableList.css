@@ -1,0 +1,49 @@
+.list-container {
+  position: relative;
+}
+
+.list-item {
+  display: flex;
+  align-items: center;
+  background-color: var(--edit-color-background-1);
+}
+
+.icon-drag {
+  cursor: move;
+}
+
+.icon-drag,
+.icon-add {
+  color: var(--edit-color-text-3);
+  transition: color var(--edit-transition-duration-standard) !important;
+}
+
+.icon-drag:hover,
+.dragged .icon-drag {
+  color: var(--edit-color-text-1);
+}
+
+.open-button {
+  margin-right: 5px;
+}
+
+.open-icon {
+  margin: -6px 0 -6px var(--edit-margin-xxs) !important;
+}
+
+.open-button > * {
+  vertical-align: middle;
+}
+
+.dragged {
+  position: absolute;
+  transform: scale(1.02);
+  box-shadow: var(--edit-shadow-4px);
+  z-index: 2;
+}
+
+.drag-placeholder {
+  border-radius: var(--edit-radius-input);
+  border: var(--edit-border-width-standard) dashed
+    var(--edit-color-border-light);
+}

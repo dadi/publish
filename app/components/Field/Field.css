@@ -1,0 +1,13 @@
+.field {
+  transition: opacity 0.4s ease-in-out;
+}
+
+.field-disabled {
+  opacity: 0.4;
+  pointer-events: none;
+  user-select: none;
+}
+
+.field + .field {
+  margin-top: 28px;
+}

@@ -1,0 +1,84 @@
+.container {
+  display: inline-block;
+  background-color: var(--theme-colour-background, #ffffff);
+  border: 1px solid var(--edit-color-opacity-70);
+  border-radius: var(--edit-radius-input);
+  z-index: 2000;
+  font-size: var(--edit-font-size-xs);
+}
+
+.container button {
+  font-size: var(--edit-font-size-xs);
+}
+
+.page-icon {
+  color: var(--edit-color-text-3);
+  margin: var(--edit-margin-xs);
+  padding: 0;
+}
+
+.page-icon svg {
+  margin: -4px;
+  vertical-align: middle;
+}
+
+.page-icon-prev svg {
+  transform: rotate(90deg);
+}
+
+.page-icon-next svg {
+  transform: rotate(-90deg);
+}
+
+.head {
+  display: flex;
+  align-items: center;
+  border-radius: inherit;
+  color: var(--edit-color-grayscale-20);
+  justify-content: space-between;
+  background-color: var(--edit-color-background-2);
+  min-width: 200px;
+}
+
+.calendar {
+  margin: 10px 6px;
+}
+
+.calendar-head {
+  color: var(--edit-color-grayscale-40);
+  padding-bottom: 5px;
+}
+
+.calendar-day {
+  border: 1px solid transparent;
+  border-radius: 3px;
+  color: var(--edit-color-grayscale-60);
+  cursor: pointer;
+  padding: 4px 6px;
+  text-align: center;
+  width: 100%;
+}
+
+.calendar-day:hover {
+  background-color: var(--edit-color-grayscale-90);
+}
+
+.calendar-day-current {
+  border-color: var(--edit-color-positive);
+}
+
+.calendar-day-faded {
+  color: var(--edit-color-grayscale-85);
+}
+
+.calendar-day-active {
+  background-color: var(--edit-color-positive-hint);
+  color: var(--edit-color-grayscale-40);
+}
+
+.time-picker select {
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+  border-color: var(--edit-color-opacity-70);
+  border-width: 1px 0 0 0 !important;
+}

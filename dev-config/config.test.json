@@ -1,0 +1,39 @@
+{
+  "app": {
+    "name": "Edit Interface"
+  },
+  "server": {
+    "host": "0.0.0.0",
+    "port": 3003
+  },
+  "api": {
+    "name": "Publish Test API",
+    "host": "http://localhost",
+    "port": 3004,
+    "menu": [
+      "articles",
+      {
+        "collections": ["pages", "team"],
+        "title": "Content"
+      },
+      {
+        "collections": ["categories", "sub-categories", "milestones"],
+        "title": "Taxonomy"
+      },
+      "web-services",
+      {
+        "collections": [
+          "field-test-boolean",
+          "field-test-date",
+          "field-test-media",
+          "field-test-other",
+          "field-test-number",
+          "field-test-reference",
+          "field-test-string",
+          "no-filterable-fields"
+        ],
+        "title": "Field Testing"
+      }
+    ]
+  }
+}

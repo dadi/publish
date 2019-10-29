@@ -38,6 +38,15 @@
         "multiline": true
       }
     },
+    "stringList": {
+      "type": "String",
+      "label": "Multi-entry string",
+      "publish": {
+        "section": "Strings",
+        "placement": "main",
+        "list": true
+      }
+    },
     "stringHeightTypeContent": {
       "type": "String",
       "label": "String with heightType content",

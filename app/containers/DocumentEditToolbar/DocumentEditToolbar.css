@@ -1,0 +1,111 @@
+.container {
+  width: 100%;
+  background-color: var(--edit-color-background-1);
+  display: flex;
+  padding: var(--edit-margin-md) var(--edit-margin-lg);
+  position: relative;
+  box-shadow: var(--edit-shadow-4px-top);
+  min-height: var(--editif-toolbar-height);
+  z-index: var(--edit-z-index-toolbar);
+}
+
+@media (min-width: 1024px) {
+  .container {
+    padding: var(--edit-margin-md) var(--edit-margin-xxl);
+  }
+}
+
+.expand {
+  flex: 1;
+  padding-right: var(--edit-margin-sm);
+}
+
+.expand button {
+  outline: 0;
+  padding: 0;
+}
+
+.expand svg {
+  color: var(--edit-color-text-3);
+  transition: transform var(--edit-transition-duration-long),
+    color var(--edit-transition-duration-standard) !important;
+  transform: rotate(-180deg);
+}
+
+.expand svg:hover {
+  color: var(--edit-color-text-2);
+}
+
+.container.expanded .expand svg {
+  transform: none;
+}
+
+.content {
+  display: flex;
+  flex-direction: column-reverse;
+  align-items: flex-start;
+  margin: calc(-1 * var(--edit-margin-md)) 0 0 calc(-1 * var(--edit-margin-xl));
+}
+
+.content > * {
+  margin: var(--edit-margin-md) 0 0 var(--edit-margin-xl);
+}
+
+.metadata {
+  font-size: var(--edit-font-size-sm);
+  color: var(--edit-color-text-2);
+  flex: 1;
+  display: none;
+  flex-direction: column;
+  justify-content: space-around;
+}
+
+.language-selector {
+  display: none;
+}
+
+@media (min-width: 768px) {
+  .expand {
+    display: none;
+  }
+
+  .content {
+    flex: 1;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .metadata {
+    display: flex;
+  }
+
+  .language-selector {
+    display: block;
+  }
+}
+
+.container.expanded .metadata {
+  display: flex;
+}
+
+.container.expanded .language-selector {
+  display: block;
+}
+
+.buttons {
+  display: flex;
+}
+
+.delete-button {
+  margin-right: var(--edit-margin-sm) !important;
+}
+
+@media (max-width: 1023px) {
+  .delete-button,
+  .save-button,
+  .save-button-options > button {
+    padding-left: 25px !important;
+    padding-right: 25px !important;
+  }
+}

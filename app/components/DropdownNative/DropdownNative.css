@@ -1,0 +1,28 @@
+.dropdown {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  background-color: var(--edit-color-background-2);
+  background-image: url('./icon.svg');
+  background-repeat: no-repeat;
+  background-size: 20px;
+  background-position-x: right;
+  background-position-y: 50%;
+  border: solid var(--edit-border-width-standard) var(--edit-color-border-light);
+  border-radius: var(--edit-radius-input);
+  padding: 4px 24px 4px 10px;
+  position: relative;
+  outline: none;
+  transition-property: border-color, background-color, color;
+  transition-duration: var(--edit-transition-duration-standard);
+}
+
+.dropdown:hover {
+  background-color: var(--edit-color-background-1);
+  border-color: var(--edit-color-border-dark);
+}
+
+.dropdown-text-small {
+  font-size: var(--edit-font-size-sm);
+  padding-left: 5px;
+}

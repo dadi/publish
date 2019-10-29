@@ -1,0 +1,83 @@
+.table {
+  --cell-y-padding: var(--edit-margin-md);
+  --cell-x-padding: calc(var(--cell-y-padding) / 2);
+  --cell-padding: var(--cell-y-padding) var(--cell-x-padding);
+  --select-cell-width: 47px;
+
+  border: solid var(--edit-border-width-standard) var(--edit-color-border-light);
+  text-align: left;
+  width: 100%;
+}
+
+.cell {
+  padding: var(--cell-padding);
+  vertical-align: middle;
+  max-width: 300px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.cell:first-child:not(.select-cell) {
+  padding-left: calc(2 * var(--cell-x-padding));
+}
+
+.cell:last-child:not(.select-cell) {
+  padding-right: calc(2 * var(--cell-x-padding));
+}
+
+.head {
+  background-color: var(--edit-color-background-4);
+}
+
+.head .cell {
+  position: relative;
+  padding: 0;
+}
+
+.cell.select-cell {
+  padding: 0;
+  position: relative;
+  width: var(--select-cell-width);
+}
+
+.select-spacer {
+  width: var(--select-cell-width);
+}
+
+.select-label {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.row {
+  background-color: var(--edit-color-background-1);
+  color: var(--edit-color-text-2);
+  transition: all var(--edit-transition-duration-short);
+  position: relative;
+  cursor: pointer;
+}
+
+.row:nth-child(even) {
+  background-color: var(--edit-color-background-2);
+}
+
+.row.row-hovered:not(.row-selected) {
+  background-color: var(--edit-color-highlight-2);
+}
+
+.row.row-selected {
+  background-color: var(--edit-color-highlight-1);
+  color: var(--edit-color-text-1);
+}
+
+.row .row-cell-blank,
+.row.row-selected .row-cell-blank {
+  color: var(--edit-color-text-3);
+}

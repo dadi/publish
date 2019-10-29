@@ -1,0 +1,118 @@
+.title {
+  font-size: var(--edit-font-size-heading-2);
+  color: var(--edit-color-heading);
+  margin: var(--edit-margin-md) var(--edit-margin-lg);
+}
+
+.subtitle {
+  color: var(--edit-color-grayscale-40);
+  margin: calc(-1 * var(--edit-margin-md)) var(--edit-margin-lg)
+    var(--edit-margin-md) var(--edit-margin-lg);
+}
+
+@media (min-width: 1024px) {
+  .title {
+    display: inline-block;
+    margin: var(--edit-margin-md) var(--edit-margin-xxl);
+    margin-right: -20px;
+  }
+
+  .subtitle {
+    display: inline-block;
+    margin: var(--edit-margin-md) var(--edit-margin-xxl);
+  }
+}
+
+.table-wrapper {
+  --padding-small: var(--edit-margin-lg);
+  --padding-large: var(--edit-margin-xxl);
+
+  overflow-x: auto;
+  padding-left: var(--padding-small);
+  display: flex;
+  -webkit-overflow-scrolling: touch;
+}
+
+.table-wrapper .after {
+  flex: 0 0 var(--padding-small);
+  width: var(--padding-small);
+}
+
+@media (min-width: 1024px) {
+  .table-wrapper {
+    padding-left: var(--padding-large);
+  }
+
+  .table-wrapper .after {
+    flex: 0 0 var(--padding-large);
+    width: var(--padding-large);
+  }
+}
+
+.column-header {
+  --cell-y-padding: var(--edit-margin-md);
+  --cell-x-padding: calc(var(--cell-y-padding) / 2);
+  --cell-padding: var(--cell-y-padding) var(--cell-x-padding);
+
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  color: var(--edit-color-heading);
+  font-weight: 700;
+  padding: var(--cell-padding);
+}
+
+.column-header:hover {
+  background-color: var(--edit-color-grayscale-85);
+}
+
+th:last-child .column-header {
+  padding-right: calc(2 * var(--cell-x-padding));
+}
+
+.column-header .arrow {
+  font-size: var(--edit-icon-size-sm);
+  transition: all var(--edit-transition-duration-standard);
+}
+
+.arrow {
+  margin-left: 10px;
+  position: relative;
+  width: 12px;
+  height: 12px;
+}
+
+.arrow:before,
+.arrow:after {
+  content: ' ';
+  position: absolute;
+  left: 3px;
+  width: 50%;
+  height: 50%;
+  border-width: 0 0 2px 2px;
+  border-style: solid;
+  border-color: var(--edit-color-grayscale-70);
+}
+
+.arrow:before {
+  top: 0;
+  transform: rotate(135deg);
+}
+
+.arrow:after {
+  bottom: 0;
+  transform: rotate(-45deg);
+}
+
+.arrow.desc:before,
+.arrow.asc:after {
+  border-color: black;
+}
+
+.column-header:hover .arrow:before {
+  top: -1px;
+}
+
+.column-header:hover .arrow:after {
+  bottom: -1px;
+}

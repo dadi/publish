@@ -1,0 +1,181 @@
+.container.fullscreen {
+  padding-bottom: var(--edit-margin-xxl);
+  margin: 0 auto;
+  max-width: 700px;
+}
+
+.fullscreen-wrapper {
+  background-color: var(--edit-color-background-1);
+  min-height: 100vh;
+  padding: var(--edit-margin-lg);
+}
+
+.divider {
+  border-bottom: var(--edit-border-width-standard) solid
+    var(--edit-color-border-light);
+}
+
+.editor {
+  --font-mono: 'Roboto Mono', monospace;
+  --margin: 15px;
+  --margin-sm: 10px;
+  --margin-lg: 20px;
+
+  overflow-y: auto;
+  border: solid var(--edit-border-width-standard) var(--edit-color-border-light);
+  border-radius: var(--edit-radius-input);
+  background-color: var(--edit-color-background-2);
+  padding: var(--edit-elem-padding-standard);
+  transition-property: border-color, background-color, color;
+  transition-duration: var(--edit-transition-duration-standard);
+  cursor: text;
+}
+
+.container.focused .editor {
+  border-color: var(--edit-color-border-dark);
+  background-color: var(--edit-color-background-1);
+}
+
+.container.raw-mode .editor {
+  font-family: var(--font-mono);
+}
+
+.editor strong,
+.editor h1,
+.editor h2,
+.editor h3,
+.editor h4,
+.editor h5,
+.editor h6 {
+  font-weight: 700;
+}
+
+.editor h1,
+.editor h2,
+.editor h3 {
+  margin: var(--margin-lg) 0 var(--margin-sm) 0;
+}
+
+.editor h4,
+.editor h5,
+.editor h6 {
+  margin: var(--margin) 0 var(--margin-sm) 0;
+}
+
+.editor h1 {
+  font-size: 1.875em;
+}
+
+.editor h2 {
+  font-size: 1.5em;
+}
+
+.editor h3 {
+  font-size: 1.25em;
+}
+
+.editor em {
+  font-style: italic;
+}
+
+.editor a {
+  color: var(--edit-color-positive);
+  text-decoration: underline;
+}
+
+.editor code {
+  font-family: var(--font-mono);
+  font-size: var(--edit-font-size-sm);
+}
+
+.editor pre {
+  background-color: var(--edit-color-background-3);
+  padding: var(--edit-margin-xs);
+}
+
+.editor :not(pre) > code {
+  color: var(--edit-color-positive-darker-2);
+  background-color: var(--edit-color-positive-hint);
+  padding: 0 2px;
+}
+
+.editor .image-wrapper,
+.editor hr,
+.editor pre,
+.editor blockquote,
+.editor > ul,
+.editor > ol,
+.editor p {
+  margin: var(--margin) 0;
+}
+
+.editor h1 + p,
+.editor h2 + p,
+.editor h3 + p,
+.editor h4 + p,
+.editor h5 + p,
+.editor h6 + p {
+  margin-top: var(--margin-sm);
+}
+
+.editor li.simple-list-item > * {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+.editor > *:first-child,
+.editor > *:first-child > *:first-child,
+li > *:first-child {
+  margin-top: 0;
+}
+
+.editor > *:last-child,
+.editor > *:last-child > *:last-child,
+li > *:last-child {
+  margin-bottom: 0;
+}
+
+.editor .image-wrapper {
+  background-color: var(--edit-color-background-2);
+  display: flex;
+  justify-content: center;
+  padding: var(--edit-margin-xs);
+  border: var(--edit-border-width-standard) dashed transparent;
+  transition: border-color var(--edit-transition-duration-standard);
+}
+
+.editor .image-wrapper.focused {
+  border-color: var(--edit-color-positive-opacity);
+}
+
+.editor .image-wrapper img {
+  display: block;
+  max-height: 20em;
+  max-width: 100%;
+}
+
+.editor blockquote {
+  border-left: 2px solid var(--edit-color-border-light);
+  color: var(--edit-color-text-3);
+  padding-left: var(--edit-margin-sm);
+}
+
+.editor ol,
+.editor ul {
+  margin-left: 20px;
+  list-style-position: outside;
+}
+
+.editor ol {
+  list-style-type: decimal;
+}
+
+.editor ul {
+  list-style-type: disc;
+}
+
+.toolbar-heading-icon {
+  font-weight: 700;
+  letter-spacing: -1px;
+  font-size: var(--edit-font-size-lg);
+}

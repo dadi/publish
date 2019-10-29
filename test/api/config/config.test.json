@@ -14,12 +14,14 @@
   },
   "datastore": "@dadi/api-filestore",
   "auth": {
+    "tokenKey": "test",
     "tokenUrl": "/token",
     "tokenTtl": 1800000,
     "clientCollection": "client-store",
     "tokenCollection": "token-store",
     "datastore": "@dadi/api-filestore",
-    "database": "dadicloud"
+    "database": "dadicloud",
+    "hashSecrets": false
   },
   "caching": {
     "ttl": 1200,

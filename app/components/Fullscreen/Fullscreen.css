@@ -1,0 +1,8 @@
+.active + * {
+  display: none !important;
+}
+
+.active,
+.active > div {
+  min-height: 100vh;
+}

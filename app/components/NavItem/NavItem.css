@@ -1,0 +1,108 @@
+.container {
+  position: relative;
+  display: inline-block;
+  /* Align menu items in drawer with the close icon. */
+  --drawer-side-padding: calc(var(--edit-margin-md) + 7px);
+}
+
+.container.in-drawer {
+  width: 100%;
+}
+
+.label {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  padding: var(--edit-margin-sm);
+  text-transform: uppercase;
+  white-space: nowrap;
+  font-weight: 700;
+  transition: all var(--edit-transition-duration-standard);
+  font-size: var(--edit-font-size-nav);
+  letter-spacing: var(--edit-spacing-nav);
+}
+
+.container.in-drawer .label {
+  font-size: var(--edit-font-size-lg);
+}
+
+@media (min-width: 480px) {
+  .container.in-drawer .label {
+    font-size: var(--edit-font-size-nav);
+  }
+}
+
+.label:not(a) {
+  cursor: default;
+}
+
+.container:not(.active):hover .label {
+  color: var(--edit-color-text-inverse-1);
+}
+
+.container.active .label {
+  color: var(--edit-color-positive);
+}
+
+.container.in-drawer .label {
+  display: inline-block;
+  padding: var(--edit-margin-sm) var(--drawer-side-padding);
+}
+
+.expand-icon {
+  width: var(--edit-icon-size-md);
+  height: var(--edit-icon-size-md);
+  transition: transform var(--edit-transition-duration-long) !important;
+  margin: -4px 0;
+  vertical-align: middle;
+}
+
+.container.in-drawer.open .expand-icon {
+  transform: rotate(180deg);
+}
+
+.sub-items {
+  background-color: var(--edit-color-background-1);
+}
+
+.dropdown {
+  position: absolute;
+  left: 0;
+  top: 100%;
+  z-index: var(--edit-z-index-dropdown);
+  background-color: var(--edit-color-background-1);
+  color: var(--edit-color-text-3);
+  box-shadow: var(--edit-shadow-8px);
+}
+
+.dropdown-item {
+  display: block;
+  padding: var(--edit-margin-sm) var(--edit-margin-md);
+  white-space: nowrap;
+  transition: all var(--edit-transition-duration-short);
+  font-size: var(--edit-font-size-sm);
+  color: var(--edit-color-text-2);
+}
+
+.container.in-drawer .dropdown-item {
+  padding: var(--edit-margin-sm) var(--drawer-side-padding);
+}
+
+.container.in-drawer .dropdown-item {
+  font-size: var(--edit-font-size-lg);
+}
+
+@media (min-width: 480px) {
+  .container.in-drawer .dropdown-item {
+    font-size: var(--edit-font-size-sm);
+  }
+}
+
+.dropdown-item:hover {
+  background-color: var(--edit-color-background-3);
+}
+
+.dropdown-item.active {
+  color: var(--edit-color-positive);
+  font-weight: 700;
+}

@@ -2,32 +2,36 @@
 
 const I = actor()
 
-const {
-  assert,
-  expect
-} = require('chai')
+const {assert, expect} = require('chai')
 
 module.exports = {
-
   // insert your locators and methods here
   locators: {
-    usernameField: (locate('input').withAttr({
-      placeholder: 'Your username'
-    }).as('Username Field')),
-    passwordField: (locate('input').withAttr({
-      placeholder: 'Your password'
-    }).as('Password Field')),
-    signInButtonDisabled: (locate('button[type=submit][disabled]').as('Sign In Button Disabled')),
-    signInButton: (locate('button[type = submit]').withText('Sign In').as('Sign In Button')),
-    publishMenu: (locate('a').withAttr({
-      href: '/'
-    }).as('Publish Menu')),
-    navigationMenu: (locate('.//nav').as('Navigation Menu')),
-    articleLink: (locate('a').withAttr({
+    usernameField: locate('input')
+      .withAttr({
+        placeholder: 'Your username'
+      })
+      .as('Username Field'),
+    passwordField: locate('input')
+      .withAttr({
+        placeholder: 'Your password'
+      })
+      .as('Password Field'),
+    signInButtonDisabled: locate('button[type=submit][disabled]').as(
+      'Sign In Button Disabled'
+    ),
+    signInButton: locate('button[type = submit]')
+      .withText('Sign In')
+      .as('Sign In Button'),
+    articleLink: locate('a').withAttr({
       href: '/articles'
-    })),
-    signOutButton: (locate('button').withText('Sign out').as('Sign Out Button')),
-    accountMenuOpen: (locate('span').withText('Open').as('Account Menu Open'))
+    }),
+    signOutButton: locate('a')
+      .withText('Sign out')
+      .as('Sign Out Button'),
+    accountMenuOpen: locate('button[class*="Header__user-menu-toggle"]').as(
+      'Account Menu Open'
+    )
   },
 
   async validateSignInPage() {
@@ -62,9 +66,8 @@ module.exports = {
     I.click(this.locators.signInButton)
     I.waitForFunction(() => document.readyState === 'complete')
     I.resizeWindow(1200, 650)
-    I.waitForText('Welcome,')
-    I.waitForVisible(this.locators.navigationMenu, 4)
-    I.see('Articles')
+    I.waitForText('Welcome')
+    I.see('ARTICLES')
   },
 
   async validateSignOut() {
@@ -82,10 +85,11 @@ module.exports = {
   },
 
   async createSession(id, secret, url) {
-    let data = await I.getSessionToken(id, secret)
-    let x = JSON.parse(data)
-    let token = x.accessToken
-    let value = Date.now() + 1800 * 1000
+    const data = await I.getSessionToken(id, secret)
+    const x = JSON.parse(data)
+    const token = x.accessToken
+    const value = Date.now() + 1800 * 1000
+
     await I.amOnPage(url)
     await I.setCookie({
       name: 'accessToken',

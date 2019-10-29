@@ -1,0 +1,25 @@
+.container {
+  display: flex;
+  align-items: center;
+  position: relative;
+}
+
+.picker {
+  position: absolute;
+  left: 0;
+  top: 100%;
+  margin-top: 10px;
+}
+
+.list {
+  display: flex;
+  align-items: center;
+}
+
+.swatch {
+  width: 13px;
+  height: 13px;
+  border-radius: var(--edit-radius-elem);
+  border: var(--edit-border-width-standard) solid var(--edit-color-border-light);
+  margin-right: var(--edit-margin-xs);
+}

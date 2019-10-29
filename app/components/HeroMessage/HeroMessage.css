@@ -1,0 +1,25 @@
+.container {
+  font-family: var(--theme-font-family, sans-serif);
+  text-align: center;
+  padding: 0 var(--edit-margin-md);
+  position: absolute;
+  top: 50%;
+  top: 50vh;
+  left: 0;
+  right: 0;
+  transform: translateY(-50%);
+}
+
+.title {
+  color: var(--edit-color-primary);
+  font-size: var(--edit-font-size-heading-2);
+}
+
+.subtitle {
+  color: var(--edit-color-grayscale-30);
+  margin-top: 10px;
+}
+
+.children {
+  margin-top: 40px;
+}

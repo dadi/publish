@@ -1,0 +1,36 @@
+.filter-input {
+  font-size: var(--edit-font-size-sm);
+  width: 100%;
+}
+
+.list-link {
+  color: inherit;
+  text-decoration: none;
+  border-bottom: solid 1px var(--edit-color-underline);
+}
+
+.list-link:hover {
+  border-bottom-color: var(--edit-color-underline-hover);
+}
+
+.with-ellipsis {
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.free-input-wrapper {
+  display: flex;
+}
+
+.free-input-wrapper input {
+  flex: 1;
+}
+
+.open-icon {
+  margin-left: var(--edit-margin-xxs) !important;
+}
+
+.open-button > * {
+  vertical-align: middle !important;
+}

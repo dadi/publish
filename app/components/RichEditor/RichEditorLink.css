@@ -1,0 +1,23 @@
+.popup {
+  background-color: var(--edit-color-background-1);
+  border-radius: var(--edit-radius-elem);
+  box-shadow: var(--edit-shadow-4px);
+  padding: var(--edit-margin-xs);
+  position: absolute;
+  z-index: var(--edit-z-index-dropdown);
+  margin-top: 10px;
+}
+
+.input {
+  min-width: 200px;
+  padding-left: var(--edit-margin-xs) !important;
+  padding-right: var(--edit-margin-xs) !important;
+}
+
+.button {
+  margin-left: var(--edit-margin-xs) !important;
+}
+
+.form {
+  display: flex;
+}

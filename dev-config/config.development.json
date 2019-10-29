@@ -1,0 +1,38 @@
+{
+  "api": {
+    "host": "http://api-develop.publish.dadi.technology",
+    "port": 80,
+    "_host": "http://localhost",
+    "_port": 8081,
+    "menu": [
+      {
+        "collections": [
+          "pages",
+          "team",
+          "web-services",
+          "network-services",
+          "from-second-property"
+        ],
+        "title": "Content"
+      },
+      {
+        "collections": ["categories", "sub-categories", "milestones"],
+        "title": "Taxonomy"
+      },
+      {
+        "collections": [
+          "field-test-boolean",
+          "field-test-date",
+          "field-test-media",
+          "field-test-other",
+          "field-test-number",
+          "field-test-reference",
+          "field-test-string",
+          "no-filterable-fields",
+          "field-test"
+        ],
+        "title": "Field Testing"
+      }
+    ]
+  }
+}

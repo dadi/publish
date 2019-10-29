@@ -1,0 +1,25 @@
+.dropdown {
+  position: absolute;
+  left: 0;
+  top: 100%;
+  z-index: var(--edit-z-index-dropdown);
+  background-color: var(--edit-color-background-1);
+  color: var(--edit-color-text-2);
+  box-shadow: var(--edit-shadow-8px);
+}
+
+.dropdown-item {
+  display: block;
+  padding: var(--edit-margin-sm) var(--edit-margin-md);
+  white-space: nowrap;
+  transition: all var(--edit-transition-duration-short);
+}
+
+.dropdown-item:hover {
+  background-color: var(--edit-color-background-3);
+}
+
+.dropdown-item.active {
+  color: var(--edit-color-positive-opacity);
+  font-weight: 700;
+}

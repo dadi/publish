@@ -9,6 +9,16 @@
         "placement": "main"
       }
     },
+    "boolWithComment": {
+      "type": "Boolean",
+      "label": "A boolean with a comment",
+      "comment": "This is a comment, hello world",
+      "required": true,
+      "publish": {
+        "section": "Booleans",
+        "placement": "main"
+      }
+    },
     "boolReadOnly": {
       "type": "Boolean",
       "label": "A read-only boolean",
@@ -40,8 +50,6 @@
         }
       }
     ],
-    "hooks": {
-
-    }
+    "hooks": {}
   }
 }
