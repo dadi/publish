@@ -5,6 +5,41 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [3.0.0](2019-10-29)
+
+### Added
+
+- [#389](https://github.com/dadi/publish/issues/389): add string list component
+- [#709](https://github.com/dadi/publish/issues/709): give focus to the Username field on sign-in page
+- [#730](https://github.com/dadi/publish/pull/730): introduce API URL for internal server access
+- [#762](https://github.com/dadi/publish/pull/762): add support for single-document collections
+
+### Changed
+
+- [#755](https://github.com/dadi/publish/pull/755): adjust to API 6.0 URL format
+- [#770](https://github.com/dadi/publish/pull/770): add new styling
+
+### Fixed
+
+- [#642](https://github.com/dadi/publish/issues/642): sorting in reference select view
+- [#646](https://github.com/dadi/publish/issues/646): text overlaps when field has long comment property
+- [#685](https://github.com/dadi/publish/issues/685): reference fields container overflow
+- [#698](https://github.com/dadi/publish/pull/698): fixed the URL of the inline image select view when creating new documents
+- [#706](https://github.com/dadi/publish/issues/706): allow Number fields to be unset
+- [#713](https://github.com/dadi/publish/issues/713): offline API causes white screen when a session is present
+- [#727](https://github.com/dadi/publish/issues/727): crash after changing API address and logging back in
+- [#732](https://github.com/dadi/publish/pull/732): use correct link for documents on reference select view
+- [#739](https://github.com/dadi/publish/issues/739): unable to clear Reference field on list view
+- [#746](https://github.com/dadi/publish/issues/746): link field appears out of body copy panel
+- [#749](https://github.com/dadi/publish/issues/749): can't add text to an article that ends with an image
+- [#750](https://github.com/dadi/publish/issues/750): can't add body copy, after trying to save without it
+- [#757](https://github.com/dadi/publish/pull/757): fix miscellaneous bugs with DateTime field
+- [#765](https://github.com/dadi/publish/pull/765): clear selection when leaving select view
+
+### BREAKING CHANGES
+
+Versions of API prior to 6.0.0 are no longer supported.
+
 ## [2.3.1](2019-04-12)
 
 ### Fixed
