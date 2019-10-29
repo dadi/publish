@@ -2,8 +2,8 @@ import * as Nodes from './slateNodes'
 import {
   Code,
   FormatBold,
-  // FormatIndentDecrease,
-  // FormatIndentIncrease,
+  FormatIndentDecrease,
+  FormatIndentIncrease,
   FormatItalic,
   FormatListBulleted,
   FormatListNumbered,
@@ -27,6 +27,7 @@ import proptypes from 'prop-types'
 import React from 'react'
 import ReferenceSelectView from 'views/ReferenceSelectView/ReferenceSelectView'
 import RichEditorLink from './RichEditorLink'
+import SCHEMA_RICH from './slateSchemaRich'
 import Style from 'lib/Style'
 import styles from './RichEditor.css'
 import {Value} from 'slate'
@@ -53,12 +54,6 @@ const SCHEMA_RAW = {
     line: {
       nodes: [{match: {object: 'text'}}]
     }
-  }
-}
-const SCHEMA_RICH = {
-  blocks: {
-    [Nodes.BLOCK_IMAGE]: {isVoid: true},
-    [Nodes.BLOCK_HR]: {isVoid: true}
   }
 }
 
@@ -330,7 +325,7 @@ export default class RichEditor extends React.Component {
           <div>
             <RichEditorToolbarButton
               action={editor.toggleBold}
-              active={editor.hasMark(Nodes.MARK_BOLD)}
+              active={!isRawMode && editor.hasMark(Nodes.MARK_BOLD)}
               disabled={isRawMode}
               title="Bold" // (Ctrl+B)"
             >
@@ -338,7 +333,7 @@ export default class RichEditor extends React.Component {
             </RichEditorToolbarButton>
             <RichEditorToolbarButton
               action={editor.toggleItalic}
-              active={editor.hasMark(Nodes.MARK_ITALIC)}
+              active={!isRawMode && editor.hasMark(Nodes.MARK_ITALIC)}
               disabled={isRawMode}
               title="Italic" // (Ctrl+I)"
             >
@@ -346,7 +341,7 @@ export default class RichEditor extends React.Component {
             </RichEditorToolbarButton>
             <RichEditorToolbarButton
               action={editor.toggleHeading1}
-              active={editor.isInBlocks(Nodes.BLOCK_HEADING1)}
+              active={!isRawMode && editor.isInBlocks(Nodes.BLOCK_HEADING1)}
               disabled={isRawMode}
               title="Heading 1" // (Ctrl+Alt+1)"
             >
@@ -354,7 +349,7 @@ export default class RichEditor extends React.Component {
             </RichEditorToolbarButton>
             <RichEditorToolbarButton
               action={editor.toggleHeading2}
-              active={editor.isInBlocks(Nodes.BLOCK_HEADING2)}
+              active={!isRawMode && editor.isInBlocks(Nodes.BLOCK_HEADING2)}
               disabled={isRawMode}
               title="Heading 2" // (Ctrl+Alt+2)"
             >
@@ -362,7 +357,7 @@ export default class RichEditor extends React.Component {
             </RichEditorToolbarButton>
             <RichEditorToolbarButton
               action={editor.toggleHeading3}
-              active={editor.isInBlocks(Nodes.BLOCK_HEADING3)}
+              active={!isRawMode && editor.isInBlocks(Nodes.BLOCK_HEADING3)}
               disabled={isRawMode}
               title="Heading 3" // (Ctrl+Alt+3)"
             >
@@ -370,7 +365,7 @@ export default class RichEditor extends React.Component {
             </RichEditorToolbarButton>
             <RichEditorToolbarButton
               action={editor.toggleNumberedList}
-              active={editor.isInList(Nodes.BLOCK_NUMBERED_LIST)}
+              active={!isRawMode && editor.isInList(Nodes.BLOCK_NUMBERED_LIST)}
               disabled={isRawMode}
               title="Numbered list" // (Ctrl+Shift+7)"
             >
@@ -378,29 +373,29 @@ export default class RichEditor extends React.Component {
             </RichEditorToolbarButton>
             <RichEditorToolbarButton
               action={editor.toggleBulletedList}
-              active={editor.isInList(Nodes.BLOCK_BULLETED_LIST)}
+              active={!isRawMode && editor.isInList(Nodes.BLOCK_BULLETED_LIST)}
               disabled={isRawMode}
               title="Bulleted list" // (Ctrl+Shift+8)"
             >
               <FormatListBulleted />
             </RichEditorToolbarButton>
-            {/* <RichEditorToolbarButton
-              action={() => {}}
+            <RichEditorToolbarButton
+              action={editor.deindent}
               disabled={isRawMode}
-              title="Decrease indent (Ctrl+[)"
+              title="Decrease indent" // (Ctrl+[)"
             >
               <FormatIndentDecrease />
             </RichEditorToolbarButton>
             <RichEditorToolbarButton
-              action={() => {}}
+              action={editor.indent}
               disabled={isRawMode}
-              title="Increase indent (Ctrl+])"
+              title="Increase indent" // (Ctrl+])"
             >
               <FormatIndentIncrease />
-            </RichEditorToolbarButton> */}
+            </RichEditorToolbarButton>
             <RichEditorToolbarButton
               action={editor.toggleBlockquote}
-              active={editor.isInBlockQuote()}
+              active={!isRawMode && editor.isInBlockQuote()}
               disabled={isRawMode}
               title="Blockquote" // (Ctrl+Q)"
             >
@@ -409,8 +404,9 @@ export default class RichEditor extends React.Component {
             <RichEditorToolbarButton
               action={editor.toggleCode}
               active={
-                editor.isInBlocks(Nodes.BLOCK_CODE) ||
-                editor.hasMark(Nodes.MARK_CODE)
+                !isRawMode &&
+                (editor.isInBlocks(Nodes.BLOCK_CODE) ||
+                  editor.hasMark(Nodes.MARK_CODE))
               }
               disabled={isRawMode}
               title="Code" // (Ctrl+`)"
@@ -419,7 +415,7 @@ export default class RichEditor extends React.Component {
             </RichEditorToolbarButton>
             <RichEditorToolbarButton
               action={editor.toggleLink}
-              active={editor.hasLink()}
+              active={!isRawMode && editor.hasLink()}
               disabled={isRawMode}
               title="Insert link" // (Ctrl+K)"
             >

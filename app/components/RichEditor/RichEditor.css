@@ -6,6 +6,8 @@
 
 .fullscreen-wrapper {
   background-color: var(--edit-color-background-1);
+  min-height: 100vh;
+  padding: var(--edit-margin-lg);
 }
 
 .divider {
