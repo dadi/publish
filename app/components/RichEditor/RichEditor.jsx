@@ -205,43 +205,31 @@ export default class RichEditor extends React.Component {
 
     const newHref = openLinkPrompt(currentHref)
 
-    return this.handleLinkUpdate(node, newHref)
+    this.handleLinkUpdate(node, newHref)
   }
 
   handleLinkUpdate(node, href) {
-    if (href === '') {
-      return this.editor.unwrapInlineByKey(node.key, Nodes.INLINE_LINK)
-    }
-
-    this.editor.setNodeByKey(node.key, {data: {href}})
+    href === ''
+      ? this.editor.unwrapInlineByKey(node.key, Nodes.INLINE_LINK)
+      : this.editor.setNodeByKey(node.key, {data: {href}})
   }
 
   handleMediaInsert(mediaSelection) {
-    const {isRawMode} = this.state
-
     this.setState({...this.initialMediaState}, () => {
-      mediaSelection.forEach(mediaObject => {
-        if (!mediaObject.url) return
+      mediaSelection.forEach(({altText, url}) => {
+        if (!url) return
 
-        if (isRawMode) {
-          return this.editor.insertBlock({
-            type: 'line',
-            nodes: [
-              {
-                object: 'text',
-                text: `![${mediaObject.altText || ''}](${mediaObject.url})`
-              }
-            ]
-          })
-        }
+        const block = this.state.isRawMode
+          ? {
+              type: 'line',
+              nodes: [{object: 'text', text: `![${altText || ''}](${url})`}]
+            }
+          : {
+              type: 'image',
+              data: {alt: altText, src: url}
+            }
 
-        this.editor.insertBlock({
-          type: 'image',
-          data: {
-            alt: mediaObject.altText,
-            src: mediaObject.url
-          }
-        })
+        this.editor.insertBlock(block)
       })
     })
   }
