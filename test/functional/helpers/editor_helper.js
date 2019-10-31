@@ -2,10 +2,6 @@
 
 'use strict'
 
-// const {
-//   expect
-// } = require('chai')
-
 class Editor extends Helper {
   async getPage() {
     return this.helpers['Puppeteer'].page
