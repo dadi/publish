@@ -160,10 +160,8 @@ export default class RichEditor extends React.Component {
     }
   }
 
-  componentDidUpdate(_, prevState) {
-    if (this.state.isFullscreen !== prevState.isFullscreen) {
-      this.containerBounds = this.container.getBoundingClientRect()
-    }
+  componentDidUpdate() {
+    this.containerBounds = this.container.getBoundingClientRect()
   }
 
   componentWillMount() {

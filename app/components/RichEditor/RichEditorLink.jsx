@@ -150,20 +150,22 @@ export default class RichEditorLink extends React.Component {
     const {height, width} = this.popupRef.current.getBoundingClientRect()
     const {
       bottom: linkBottom,
-      left: linkLeft
+      left: linkLeft,
+      top: linkTop
     } = this.linkRef.current.getBoundingClientRect()
 
     const POPUP_MARGIN = 10
     const left =
       Math.min(bounds.right - linkLeft - width - POPUP_MARGIN, 0) + 'px'
+    const isEnoughSpaceBottom =
+      linkBottom + POPUP_MARGIN + height < bounds.bottom
+    const isEnoughSpaceTop = linkTop - POPUP_MARGIN - height > bounds.top
     const top =
-      linkBottom + POPUP_MARGIN + 1 + height > bounds.bottom
+      !isEnoughSpaceBottom && isEnoughSpaceTop
         ? -(height + 2 * POPUP_MARGIN) + 'px'
         : undefined
 
     if (popupStyle.left !== left || popupStyle.top !== top) {
-      console.log(left, top)
-
       this.setState({popupStyle: {left, top}})
     }
   }
