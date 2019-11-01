@@ -1,7 +1,10 @@
 import {Button, TextInput} from '@dadi/edit-ui'
+import isHotkey from 'is-hotkey'
 import proptypes from 'prop-types'
 import React from 'react'
 import styles from './RichEditorLink.css'
+
+const isEscape = isHotkey('escape')
 
 export default class RichEditorLink extends React.Component {
   static propTypes = {
@@ -29,13 +32,23 @@ export default class RichEditorLink extends React.Component {
     /**
      * A callback to be fired when the value of the link is updated.
      */
-    onChange: proptypes.func
+    onChange: proptypes.func.isRequired
   }
 
   constructor(props) {
     super(props)
 
-    this.clickHandler = this.handleClick.bind(this)
+    this.detectClickOut = this.detectClickOut.bind(this)
+    this.detectEscape = this.detectEscape.bind(this)
+    this.focusInput = () => this.inputRef.current.focus()
+    this.openPrompt = () => this.setState({editing: true})
+    this.saveValue = this.saveValue.bind(this)
+    this.updateValue = e => this.setState({href: e.target.value})
+
+    this.containerRef = React.createRef()
+    this.inputRef = React.createRef()
+    this.linkRef = React.createRef()
+    this.popupRef = React.createRef()
     this.state = {
       editing: props.href === '',
       href: props.href,
@@ -44,106 +57,66 @@ export default class RichEditorLink extends React.Component {
   }
 
   componentDidMount() {
-    document.body.addEventListener('mousedown', this.clickHandler)
+    document.body.addEventListener('mousedown', this.detectClickOut)
+
+    if (this.inputRef.current) {
+      setTimeout(this.focusInput, 0)
+    }
+
+    this.setPopupPosition()
+  }
+
+  componentDidUpdate() {
+    this.setPopupPosition()
   }
 
   componentWillUnmount() {
-    document.body.removeEventListener('mousedown', this.clickHandler)
+    document.body.removeEventListener('mousedown', this.detectClickOut)
   }
 
-  handleClick(event) {
-    const {href, onChange} = this.props
-    const {editing} = this.state
+  detectClickOut(event) {
+    const {current} = this.containerRef
 
-    if (editing && this.container && !this.container.contains(event.target)) {
-      this.setState({
-        editing: false,
-        href
-      })
+    if (this.state.editing && current && !current.contains(event.target)) {
+      const {href, onChange} = this.props
 
-      if (href === '' && typeof onChange === 'function') {
-        onChange(href)
-      }
+      this.setState({editing: false, href})
+      if (href === '') onChange('')
     }
   }
 
-  handleLinkClick(event) {
-    event.preventDefault()
+  detectEscape(event) {
+    if (isEscape(event)) {
+      const {href, onChange} = this.props
 
-    this.setState({
-      editing: true
-    })
-  }
-
-  handleLinkUpdate(event) {
-    this.setState({
-      href: event.target.value
-    })
-  }
-
-  // getPopupOffset() {
-  //   const {bounds} = this.props
-  //   const {popupElement, container} = this
-
-  //   if (!bounds || !popupElement || !container) {
-  //     return {}
-  //   }
-
-  //   const {right} = popupElement.getBoundingClientRect()
-  //   const {top: linkTop} = this.container.getBoundingClientRect()
-
-  //   const leftOffset = Math.min(bounds.right - right, 0)
-  //   const verticalOffset = -popupElement.clientHeight * 1.5
-  //   const topOrBottom = bounds.top > linkTop + verticalOffset ? 'bottom' : 'top'
-
-  //   return {left: leftOffset, [topOrBottom]: verticalOffset}
-  // }
-
-  handleSave(event) {
-    event.preventDefault()
-
-    const {onChange} = this.props
-    const {href} = this.state
-
-    if (typeof onChange === 'function') {
-      onChange(href)
+      this.setState({editing: false, href})
+      if (href === '') onChange('')
     }
-
-    this.setState({
-      editing: false
-    })
   }
 
   render() {
-    const {children} = this.props
-    const {editing, href} = this.state
-    // const popupStyle = this.getPopupOffset()
+    const {editing, href, popupStyle} = this.state
 
     return (
-      <span
-        className={styles.container}
-        ref={el => {
-          this.container = el
-        }}
-      >
-        <a href={href} onClick={this.handleLinkClick.bind(this)}>
-          {children}
+      <span className={styles.container} ref={this.containerRef}>
+        <a onClick={this.openPrompt} ref={this.linkRef}>
+          {this.props.children}
         </a>
 
         {editing && (
           <div
             className={styles.popup}
             contentEditable={false}
-            ref={el => {
-              this.popupElement = el
-            }}
-            // style={popupStyle}
+            ref={this.popupRef}
+            style={popupStyle}
           >
-            <form className={styles.form} onSubmit={this.handleSave.bind(this)}>
+            <form className={styles.form} onSubmit={this.saveValue}>
               <TextInput
                 autoFocus
                 className={styles.input}
-                onChange={this.handleLinkUpdate.bind(this)}
+                onChange={this.updateValue}
+                onKeyDown={this.detectEscape}
+                ref={this.inputRef}
                 value={href}
               />
 
@@ -160,5 +133,38 @@ export default class RichEditorLink extends React.Component {
         )}
       </span>
     )
+  }
+
+  saveValue(event) {
+    event.preventDefault()
+    this.setState({editing: false})
+    this.props.onChange(this.state.href)
+  }
+
+  setPopupPosition() {
+    const {bounds} = this.props
+    const {popupStyle} = this.state
+
+    if (!bounds || !this.popupRef.current || !this.linkRef.current) return
+
+    const {height, width} = this.popupRef.current.getBoundingClientRect()
+    const {
+      bottom: linkBottom,
+      left: linkLeft
+    } = this.linkRef.current.getBoundingClientRect()
+
+    const POPUP_MARGIN = 10
+    const left =
+      Math.min(bounds.right - linkLeft - width - POPUP_MARGIN, 0) + 'px'
+    const top =
+      linkBottom + POPUP_MARGIN + 1 + height > bounds.bottom
+        ? -(height + 2 * POPUP_MARGIN) + 'px'
+        : undefined
+
+    if (popupStyle.left !== left || popupStyle.top !== top) {
+      console.log(left, top)
+
+      this.setState({popupStyle: {left, top}})
+    }
   }
 }

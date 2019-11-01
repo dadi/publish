@@ -212,6 +212,8 @@ export default class RichEditor extends React.Component {
     href === ''
       ? this.editor.unwrapInlineByKey(node.key, Nodes.INLINE_LINK)
       : this.editor.setNodeByKey(node.key, {data: {href}})
+
+    this.editor.focus()
   }
 
   handleMediaInsert(mediaSelection) {
