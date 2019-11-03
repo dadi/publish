@@ -2,6 +2,7 @@ const bootMessage = require('@dadi/boot')
 const colors = require('colors/safe')
 const config = require('./config')
 const packageJSON = require('./package.json')
+const path = require('path')
 const Server = require('./server')
 
 class App {
@@ -42,7 +43,7 @@ class App {
     }
   }
 
-  run({configPath} = {}) {
+  run({configPath = path.join(process.cwd(), 'config')} = {}) {
     // Initialise config.
     config.initialise(configPath)
 

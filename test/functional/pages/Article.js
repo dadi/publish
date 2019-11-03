@@ -1,16 +1,11 @@
 'use strict'
 
-const {assert, expect} = require('chai')
 const moment = require('moment')
 const random = require('../helpers/random')
 
-let I
+const I = actor()
 
 module.exports = {
-  _init() {
-    I = require('../stepDefinitions/steps_file.js')()
-  },
-
   // insert your locators and methods here
   locators: {
     publishMenu: locate('a')
@@ -359,24 +354,24 @@ module.exports = {
   },
 
   async validateArticlePage() {
-    await I.amOnPage('/articles')
-    await I.waitForVisible(this.locators.articleTitleHeading)
-    await I.waitForElement(this.locators.footer)
-    await I.seeElement(this.locators.createNewButton)
+    I.amOnPage('/articles')
+    I.waitForVisible(this.locators.articleTitleHeading)
+    I.waitForElement(this.locators.footer)
+    I.seeElement(this.locators.createNewButton)
     const articles = await I.grabNumberOfVisibleElements(
       this.locators.articleRows
     )
     const navItems = await I.grabTextFrom(this.locators.navMenu)
 
-    await I.seeStringsAreEqual(
+    I.seeStringsAreEqual(
       navItems.toString(),
       'ARTICLES,CONTENT,TAXONOMY,WEB SERVICES,NETWORK SERVICES,MEDIA LIBRARY'
     )
-    await I.seeNumberOfVisibleElements(this.locators.articleRows, articles)
+    I.seeNumberOfVisibleElements(this.locators.articleRows, articles)
     const range = await I.grabTextFrom(this.locators.numberOfArticles)
     const number = range.substring(2, 4).trim()
 
-    await I.seeNumbersAreEqual(articles.toString(), number)
+    I.seeNumbersAreEqual(articles.toString(), number)
   },
 
   async addArticle() {
@@ -529,10 +524,10 @@ module.exports = {
   },
 
   async editArticle() {
-    await I.amOnPage('/articles')
-    await I.waitForVisible(this.locators.articleTitleHeading)
-    await I.waitForElement(this.locators.footer)
-    await I.seeElement(this.locators.createNewButton)
+    I.amOnPage('/articles')
+    I.waitForVisible(this.locators.articleTitleHeading)
+    I.waitForElement(this.locators.footer)
+    I.seeElement(this.locators.createNewButton)
 
     const articlesNames = await I.grabTextFrom(this.locators.numEditArticles)
 
@@ -564,20 +559,14 @@ module.exports = {
     const authorsNamesAsc = await I.grabTextFrom(this.locators.numOfAuthors)
 
     // Check names sorted correctly ascending alphabetically
-    await I.seeStringsAreEqual(
-      authorsNamesAsc.toString(),
-      sortNamesAsc.toString()
-    )
+    I.seeStringsAreEqual(authorsNamesAsc.toString(), sortNamesAsc.toString())
 
     I.click(this.locators.authorNameDesc)
 
     const authorsNamesDesc = await I.grabTextFrom(this.locators.numOfAuthors)
 
     // Check names sorted correctly descending alphabetically
-    await I.seeStringsAreEqual(
-      authorsNamesDesc.toString(),
-      sortNamesDesc.toString()
-    )
+    I.seeStringsAreEqual(authorsNamesDesc.toString(), sortNamesDesc.toString())
 
     I.click(this.locators.saveSelected)
     I.waitForFunction(() => document.readyState === 'complete')
@@ -692,10 +681,10 @@ module.exports = {
   },
 
   async deleteArticle() {
-    await I.amOnPage('/articles')
-    await I.waitForVisible(this.locators.articleTitleHeading)
-    await I.waitForElement(this.locators.footer)
-    await I.seeElement(this.locators.createNewButton)
+    I.amOnPage('/articles')
+    I.waitForVisible(this.locators.articleTitleHeading)
+    I.waitForElement(this.locators.footer)
+    I.seeElement(this.locators.createNewButton)
     const total = await I.grabTextFrom(this.locators.totalArticles)
 
     const deleteArticles = await I.grabTextFrom(this.locators.numEditArticles)
@@ -775,103 +764,103 @@ module.exports = {
   },
 
   async richTextInput() {
-    await I.amOnPage('/articles/new')
-    await I.waitForFunction(() => document.readyState === 'complete')
-    await I.seeInCurrentUrl('/articles/new')
-    await I.waitForVisible(this.locators.titleField)
-    await I.fillField(this.locators.titleField, 'Rich Text')
-    await I.scrollTo(this.locators.selectCategory)
+    I.amOnPage('/articles/new')
+    I.waitForFunction(() => document.readyState === 'complete')
+    I.seeInCurrentUrl('/articles/new')
+    I.waitForVisible(this.locators.titleField)
+    I.fillField(this.locators.titleField, 'Rich Text')
+    I.scrollTo(this.locators.selectCategory)
 
     // Bold
-    await I.fillField(this.locators.bodyField, 'Bold Text')
-    await I.pressKey('ArrowLeft')
-    await I.pressKey('ArrowLeft')
-    await I.pressKey('ArrowLeft')
-    await I.pressKey('ArrowLeft')
-    await I.pressKey('ArrowLeft')
-    await I.pressKey(['Shift', 'Home', 'Shift'])
-    await I.emulateCommandButtonPressBold()
-    await I.appendField(this.locators.bodyField, '  ')
-    await I.pressKey('Enter')
+    I.fillField(this.locators.bodyField, 'Bold Text')
+    I.pressKey('ArrowLeft')
+    I.pressKey('ArrowLeft')
+    I.pressKey('ArrowLeft')
+    I.pressKey('ArrowLeft')
+    I.pressKey('ArrowLeft')
+    I.pressKey(['Shift', 'Home', 'Shift'])
+    I.emulateCommandButtonPressBold()
+    I.appendField(this.locators.bodyField, '  ')
+    I.pressKey('Enter')
 
     // Italic
-    await I.fillField(this.locators.bodyField, 'Italic Text')
-    await I.pressKey('ArrowLeft')
-    await I.pressKey('ArrowLeft')
-    await I.pressKey('ArrowLeft')
-    await I.pressKey('ArrowLeft')
-    await I.pressKey('ArrowLeft')
-    await I.pressKey(['Shift', 'Home', 'Shift'])
-    await I.emulateCommandButtonPressItalic()
-    await I.appendField(this.locators.bodyField, '  ')
-    await I.pressKey('Enter')
+    I.fillField(this.locators.bodyField, 'Italic Text')
+    I.pressKey('ArrowLeft')
+    I.pressKey('ArrowLeft')
+    I.pressKey('ArrowLeft')
+    I.pressKey('ArrowLeft')
+    I.pressKey('ArrowLeft')
+    I.pressKey(['Shift', 'Home', 'Shift'])
+    I.emulateCommandButtonPressItalic()
+    I.appendField(this.locators.bodyField, '  ')
+    I.pressKey('Enter')
 
     // H1
-    await I.click(this.locators.h1Button)
-    await I.fillField(this.locators.bodyField, 'Header 1')
-    await I.pressKey('Enter')
+    I.click(this.locators.h1Button)
+    I.fillField(this.locators.bodyField, 'Header 1')
+    I.pressKey('Enter')
 
     // H2
-    await I.click(this.locators.h2Button)
-    await I.fillField(this.locators.bodyField, 'Header 2')
-    await I.pressKey('Enter')
+    I.click(this.locators.h2Button)
+    I.fillField(this.locators.bodyField, 'Header 2')
+    I.pressKey('Enter')
 
     // H3
-    await I.click(this.locators.h3Button)
-    await I.fillField(this.locators.bodyField, 'Header 3')
-    await I.pressKey('Enter')
+    I.click(this.locators.h3Button)
+    I.fillField(this.locators.bodyField, 'Header 3')
+    I.pressKey('Enter')
 
     // Blockquote
-    await I.fillField(this.locators.bodyField, 'Some text')
-    await I.pressKey('Enter')
-    await I.fillField(this.locators.bodyField, 'Blockquote')
-    await I.click(this.locators.quoteButton)
-    await I.pressKey('Enter')
-    await I.click(this.locators.quoteButton)
+    I.fillField(this.locators.bodyField, 'Some text')
+    I.pressKey('Enter')
+    I.fillField(this.locators.bodyField, 'Blockquote')
+    I.click(this.locators.quoteButton)
+    I.pressKey('Enter')
+    I.click(this.locators.quoteButton)
 
     // Link
-    await I.fillField(this.locators.bodyField, 'Some more text')
-    await I.pressKey('Enter')
-    await I.fillField(this.locators.bodyField, 'Link')
-    await I.pressKey(['Shift', 'Home', 'Shift'])
-    await I.click(this.locators.linkButton)
-    await I.waitForElement(this.locators.linkField)
-    await I.fillField(this.locators.linkField, 'www.link.com')
-    await I.pressKey('Enter')
-    await I.appendField(this.locators.bodyField, '  ')
-    await I.pressKey('Enter')
+    I.fillField(this.locators.bodyField, 'Some more text')
+    I.pressKey('Enter')
+    I.fillField(this.locators.bodyField, 'Link')
+    I.pressKey(['Shift', 'Home', 'Shift'])
+    I.click(this.locators.linkButton)
+    I.waitForElement(this.locators.linkField)
+    I.fillField(this.locators.linkField, 'www.link.com')
+    I.pressKey('Enter')
+    I.appendField(this.locators.bodyField, '  ')
+    I.pressKey('Enter')
 
     // Ordered List
-    await I.click(this.locators.orderedListButton)
-    await I.fillField(this.locators.bodyField, 'Point 1')
-    await I.pressKey('Enter')
-    await I.fillField(this.locators.bodyField, 'Point 2')
-    await I.pressKey('Enter')
-    await I.click(this.locators.orderedListButton)
+    I.click(this.locators.orderedListButton)
+    I.fillField(this.locators.bodyField, 'Point 1')
+    I.pressKey('Enter')
+    I.fillField(this.locators.bodyField, 'Point 2')
+    I.pressKey('Enter')
+    I.click(this.locators.orderedListButton)
 
     // Unordered List
-    await I.click(this.locators.unOrderedListButton)
-    await I.fillField(this.locators.bodyField, 'Bullet 1')
-    await I.pressKey('Enter')
-    await I.fillField(this.locators.bodyField, 'Bullet 2')
-    await I.pressKey('Enter')
-    await I.click(this.locators.unOrderedListButton)
+    I.click(this.locators.unOrderedListButton)
+    I.fillField(this.locators.bodyField, 'Bullet 1')
+    I.pressKey('Enter')
+    I.fillField(this.locators.bodyField, 'Bullet 2')
+    I.pressKey('Enter')
+    I.click(this.locators.unOrderedListButton)
 
     // Save
-    await I.click(this.locators.save)
-    await I.waitForText('The document has been created', 2)
-    await I.scrollTo(this.locators.selectCategory)
-    await I.seeElement(this.locators.boldText)
-    await I.seeElement(this.locators.italicText)
-    await I.seeElement(this.locators.h1Text)
-    await I.seeElement(this.locators.h2Text)
-    await I.seeElement(this.locators.h3Text)
-    await I.seeElement(this.locators.quoteText)
-    await I.seeElement(this.locators.linkText)
-    await I.seeElement(this.locators.orderedList1)
-    await I.seeElement(this.locators.orderedList2)
-    await I.seeElement(this.locators.unorderedList1)
-    await I.seeElement(this.locators.unorderedList2)
+    I.click(this.locators.save)
+    I.waitForText('The document has been created', 2)
+    I.scrollTo(this.locators.selectCategory)
+    I.seeElement(this.locators.boldText)
+    I.seeElement(this.locators.italicText)
+    I.seeElement(this.locators.h1Text)
+    I.seeElement(this.locators.h2Text)
+    I.seeElement(this.locators.h3Text)
+    I.seeElement(this.locators.quoteText)
+    I.seeElement(this.locators.linkText)
+    I.seeElement(this.locators.orderedList1)
+    I.seeElement(this.locators.orderedList2)
+    I.seeElement(this.locators.unorderedList1)
+    I.seeElement(this.locators.unorderedList2)
 
     // (!) TO DO: We need a better way of testing the rich editor. Currently,
     // it works by typing *and* selecting text at the same time, which means
@@ -886,41 +875,41 @@ module.exports = {
     //    -- dm (03/07/2019)
 
     // Text mode and Full Screen
-    await I.click(this.locators.textButton)
-    await I.see('**Bold** Text')
-    await I.see('_Italic_ Text')
-    await I.see('# Header 1')
-    await I.see('## Header 2')
-    await I.see('### Header 3')
-    await I.see('> Blockquote')
-    await I.see('(www.link.com)')
-    await I.see('1. Point 1')
-    await I.see('2. Point 2')
-    await I.see('- Bullet 1')
-    await I.see('- Bullet 2')
-    await I.click(this.locators.textButton)
-    await I.click(this.locators.fullScreenButton)
-    await I.dontSeeElement(this.locators.titleField)
-    await I.dontSeeElement(this.locators.selectCategory)
-    await I.click(this.locators.exitFullScreenButton)
-    await I.seeElement(this.locators.titleField)
-    await I.seeElement(this.locators.selectCategory)
+    I.click(this.locators.textButton)
+    I.see('**Bold** Text')
+    I.see('_Italic_ Text')
+    I.see('# Header 1')
+    I.see('## Header 2')
+    I.see('### Header 3')
+    I.see('> Blockquote')
+    I.see('(www.link.com)')
+    I.see('1. Point 1')
+    I.see('2. Point 2')
+    I.see('- Bullet 1')
+    I.see('- Bullet 2')
+    I.click(this.locators.textButton)
+    I.click(this.locators.fullScreenButton)
+    I.dontSeeElement(this.locators.titleField)
+    I.dontSeeElement(this.locators.selectCategory)
+    I.click(this.locators.exitFullScreenButton)
+    I.seeElement(this.locators.titleField)
+    I.seeElement(this.locators.selectCategory)
   },
 
   async inlineImage() {
-    await I.amOnPage('/articles/new')
-    await I.waitForFunction(() => document.readyState === 'complete')
-    await I.seeInCurrentUrl('/articles/new')
-    await I.waitForVisible(this.locators.titleField)
-    await I.fillField(this.locators.titleField, 'Inline Image')
+    I.amOnPage('/articles/new')
+    I.waitForFunction(() => document.readyState === 'complete')
+    I.seeInCurrentUrl('/articles/new')
+    I.waitForVisible(this.locators.titleField)
+    I.fillField(this.locators.titleField, 'Inline Image')
 
     // Inline Image
-    await I.appendField(this.locators.bodyField, '')
-    await I.click(this.locators.imageButton)
-    await I.click(this.locators.dogImage)
-    await I.click(this.locators.insertButton)
-    await I.click(this.locators.save)
-    await I.waitForText('The document has been created', 2)
+    I.appendField(this.locators.bodyField, '')
+    I.click(this.locators.imageButton)
+    I.click(this.locators.dogImage)
+    I.click(this.locators.insertButton)
+    I.click(this.locators.save)
+    I.waitForText('The document has been created', 2)
     // Get today's date for URL
     const year = await moment(new Date()).format('YYYY')
     const month = await moment(new Date()).format('MM')
@@ -935,14 +924,14 @@ module.exports = {
       day +
       '/dog.jpg'
 
-    await I.seeStringContains(imageLink, expectedImageLink)
+    I.seeStringContains(imageLink, expectedImageLink)
     // markdown view
     I.wait(2)
-    await I.scrollTo(this.locators.selectCategory)
-    await I.click(this.locators.textButton)
-    await I.seeElement(this.locators.markdownText)
+    I.scrollTo(this.locators.selectCategory)
+    I.click(this.locators.textButton)
+    I.seeElement(this.locators.markdownText)
     const imageText = await I.grabTextFrom(this.locators.markdownText)
 
-    await I.seeStringsAreEqual(imageText, '![](' + expectedImageLink + ')')
+    I.seeStringsAreEqual(imageText, '![](' + expectedImageLink + ')')
   }
 }

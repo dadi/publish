@@ -70,15 +70,15 @@ module.exports = {
   },
 
   async changePersonalDetails(first, last) {
-    await I.amOnPage('/profile/personal-details')
+    I.amOnPage('/profile/personal-details')
     I.seeInCurrentUrl('/profile/personal-details')
     I.seeElement(this.locators.firstNameField)
     I.seeElement(this.locators.lastNameField)
     I.see('First name')
-    await I.fillField(this.locators.firstNameField, first)
+    I.fillField(this.locators.firstNameField, first)
     I.see('Last name')
-    await I.fillField(this.locators.lastNameField, '')
-    await I.fillField(this.locators.lastNameField, last)
+    I.fillField(this.locators.lastNameField, '')
+    I.fillField(this.locators.lastNameField, last)
     I.click(this.locators.saveSettings)
     I.waitForText('Your settings have been updated')
     I.waitForFunction(() => document.readyState === 'complete')
@@ -89,12 +89,12 @@ module.exports = {
     newPassword,
     confirmNewPassword
   ) {
-    await I.amOnPage('/profile/credentials')
+    I.amOnPage('/profile/credentials')
     I.waitForFunction(() => document.readyState === 'complete')
     I.seeInCurrentUrl('/profile/credentials')
-    await I.fillField(this.locators.currentPasswordField, currentPassword)
-    await I.fillField(this.locators.newPasswordField, newPassword)
-    await I.fillField(this.locators.confirmNewPasswordField, confirmNewPassword)
+    I.fillField(this.locators.currentPasswordField, currentPassword)
+    I.fillField(this.locators.newPasswordField, newPassword)
+    I.fillField(this.locators.confirmNewPasswordField, confirmNewPassword)
     I.click(this.locators.saveSettings)
     I.waitForFunction(() => document.readyState === 'complete')
     I.waitForText('The current password is incorrect')
@@ -104,12 +104,12 @@ module.exports = {
   },
 
   async newPasswordsNoMatch(currentPassword, newPassword, confirmNewPassword) {
-    await I.amOnPage('/profile/credentials')
+    I.amOnPage('/profile/credentials')
     I.waitForFunction(() => document.readyState === 'complete')
     I.seeInCurrentUrl('/profile/credentials')
-    await I.fillField(this.locators.currentPasswordField, currentPassword)
-    await I.fillField(this.locators.newPasswordField, newPassword)
-    await I.fillField(this.locators.confirmNewPasswordField, confirmNewPassword)
+    I.fillField(this.locators.currentPasswordField, currentPassword)
+    I.fillField(this.locators.newPasswordField, newPassword)
+    I.fillField(this.locators.confirmNewPasswordField, confirmNewPassword)
     I.see('The passwords must match')
     I.seeElement(this.locators.saveSetttingsDisabled)
   },
@@ -119,12 +119,12 @@ module.exports = {
     newPassword,
     confirmNewPassword
   ) {
-    await I.amOnPage('/profile/credentials')
+    I.amOnPage('/profile/credentials')
     I.waitForFunction(() => document.readyState === 'complete')
     I.seeInCurrentUrl('/profile/credentials')
-    await I.fillField(this.locators.currentPasswordField, currentPassword)
-    await I.fillField(this.locators.newPasswordField, newPassword)
-    await I.fillField(this.locators.confirmNewPasswordField, confirmNewPassword)
+    I.fillField(this.locators.currentPasswordField, currentPassword)
+    I.fillField(this.locators.newPasswordField, newPassword)
+    I.fillField(this.locators.confirmNewPasswordField, confirmNewPassword)
     I.click(this.locators.saveSettings)
     I.waitForText('Your settings have been updated')
     I.click(this.locators.accountMenuOpen)
