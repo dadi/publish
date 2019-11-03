@@ -1,4 +1,7 @@
 .container {
+  position: absolute;
+  bottom: 100%;
+  width: 100%;
   opacity: 0;
   transform: translateY(100%);
   transition: opacity 0.3s ease-in-out 0.05s, transform 0.3s ease-in-out;
