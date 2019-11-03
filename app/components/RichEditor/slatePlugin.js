@@ -247,8 +247,8 @@ const plugin = {
         const {text} = document.getNode(key)
         const path = document.getPath(key)
         const startIndex = text.lastIndexOf('\n', startOffset - 1)
-        const re = RegExp(`(^|\n)${INDENT}`, 'g')
-        const newText = text.replace(re, (match, group1, index) =>
+        const lineIndentations = RegExp(`(^|\n)${INDENT}`, 'g')
+        const newText = text.replace(lineIndentations, (match, group1, index) =>
           index >= startIndex && (index < endOffset || match === INDENT)
             ? group1
             : match
