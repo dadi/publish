@@ -392,16 +392,29 @@ const plugin = {
       }
     }
 
+    const {blocks, document, selection} = editor.value
+
+    if (isBackspace(e) && editor.isInBlockQuote()) {
+      const isCursorAtStart =
+        selection.isCollapsed && selection.start.isAtStartOfNode(blocks.first())
+
+      if (isCursorAtStart) {
+        return editor.toggleBlockquote()
+      }
+    }
+
     if (editor.isInList()) {
-      const {blocks, document, selection} = editor.value
-      const listItemAtStart =
-        blocks.size && document.getClosest(blocks.first().key, isListItemNode)
-      const listItemAtEnd =
-        blocks.size && document.getClosest(blocks.last().key, isListItemNode)
+      const listItemAtStart = document.getClosest(
+        blocks.first().key,
+        isListItemNode
+      )
+      const listItemAtEnd = document.getClosest(
+        blocks.last().key,
+        isListItemNode
+      )
       const isSelectionAtStart =
-        blocks.size &&
-        selection.start.isAtStartOfNode(listItemAtStart) &&
-        selection.end.isAtStartOfNode(listItemAtStart)
+        selection.isCollapsed &&
+        selection.start.isAtStartOfNode(listItemAtStart)
       const isEmptyBlock =
         blocks.size === 1 &&
         listItemAtStart.nodes.size === 1 &&
