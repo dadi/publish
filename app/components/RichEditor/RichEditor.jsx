@@ -160,8 +160,8 @@ export default class RichEditor extends React.Component {
     }
   }
 
-  componentDidUpdate(_, prevState) {
-    if (this.state.isFullscreen !== prevState.isFullscreen) {
+  componentDidUpdate() {
+    if (this.container) {
       this.containerBounds = this.container.getBoundingClientRect()
     }
   }
@@ -205,43 +205,33 @@ export default class RichEditor extends React.Component {
 
     const newHref = openLinkPrompt(currentHref)
 
-    return this.handleLinkUpdate(node, newHref)
+    this.handleLinkUpdate(node, newHref)
   }
 
   handleLinkUpdate(node, href) {
-    if (href === '') {
-      return this.editor.unwrapInlineByKey(node.key, Nodes.INLINE_LINK)
-    }
+    href === ''
+      ? this.editor.unwrapInlineByKey(node.key, Nodes.INLINE_LINK)
+      : this.editor.setNodeByKey(node.key, {data: {href}})
 
-    this.editor.setNodeByKey(node.key, {data: {href}})
+    this.editor.focus()
   }
 
   handleMediaInsert(mediaSelection) {
-    const {isRawMode} = this.state
-
     this.setState({...this.initialMediaState}, () => {
-      mediaSelection.forEach(mediaObject => {
-        if (!mediaObject.url) return
+      mediaSelection.forEach(({altText, url}) => {
+        if (!url) return
 
-        if (isRawMode) {
-          return this.editor.insertBlock({
-            type: 'line',
-            nodes: [
-              {
-                object: 'text',
-                text: `![${mediaObject.altText || ''}](${mediaObject.url})`
-              }
-            ]
-          })
-        }
+        const block = this.state.isRawMode
+          ? {
+              type: 'line',
+              nodes: [{object: 'text', text: `![${altText || ''}](${url})`}]
+            }
+          : {
+              type: 'image',
+              data: {alt: altText, src: url}
+            }
 
-        this.editor.insertBlock({
-          type: 'image',
-          data: {
-            alt: mediaObject.altText,
-            src: mediaObject.url
-          }
-        })
+        this.editor.insertBlock(block)
       })
     })
   }
@@ -326,7 +316,7 @@ export default class RichEditor extends React.Component {
             <RichEditorToolbarButton
               action={editor.toggleBold}
               active={!isRawMode && editor.hasMark(Nodes.MARK_BOLD)}
-              disabled={isRawMode}
+              disabled={isRawMode || editor.isInBlocks(Nodes.BLOCK_CODE)}
               title="Bold" // (Ctrl+B)"
             >
               <FormatBold />
@@ -334,7 +324,7 @@ export default class RichEditor extends React.Component {
             <RichEditorToolbarButton
               action={editor.toggleItalic}
               active={!isRawMode && editor.hasMark(Nodes.MARK_ITALIC)}
-              disabled={isRawMode}
+              disabled={isRawMode || editor.isInBlocks(Nodes.BLOCK_CODE)}
               title="Italic" // (Ctrl+I)"
             >
               <FormatItalic />
@@ -416,13 +406,14 @@ export default class RichEditor extends React.Component {
             <RichEditorToolbarButton
               action={editor.toggleLink}
               active={!isRawMode && editor.hasLink()}
-              disabled={isRawMode}
+              disabled={isRawMode || editor.isInBlocks(Nodes.BLOCK_CODE)}
               title="Insert link" // (Ctrl+K)"
             >
               <InsertLink />
             </RichEditorToolbarButton>
             <RichEditorToolbarButton
               action={this.startSelectingMedia}
+              disabled={editor.isInBlocks(Nodes.BLOCK_CODE)}
               title="Insert asset from library"
             >
               <ImageSearch />
