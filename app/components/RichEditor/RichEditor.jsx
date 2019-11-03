@@ -161,7 +161,9 @@ export default class RichEditor extends React.Component {
   }
 
   componentDidUpdate() {
-    this.containerBounds = this.container.getBoundingClientRect()
+    if (this.container) {
+      this.containerBounds = this.container.getBoundingClientRect()
+    }
   }
 
   componentWillMount() {

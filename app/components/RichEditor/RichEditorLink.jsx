@@ -99,7 +99,7 @@ export default class RichEditorLink extends React.Component {
 
     return (
       <span className={styles.container} ref={this.containerRef}>
-        <a onClick={this.openPrompt} ref={this.linkRef}>
+        <a href={href} onClick={this.openPrompt} ref={this.linkRef}>
           {this.props.children}
         </a>
 
