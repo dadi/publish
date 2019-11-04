@@ -268,6 +268,17 @@ const plugin = {
       } else {
         changeListIndentation(editor, 'decrease')
       }
+    },
+    unwrapFromList(editor, key) {
+      key
+        ? editor
+            .unwrapBlockByKey(key, Nodes.BLOCK_LIST_ITEM)
+            .unwrapBlockByKey(key, Nodes.BLOCK_NUMBERED_LIST)
+            .unwrapBlockByKey(key, Nodes.BLOCK_BULLETED_LIST)
+        : editor
+            .unwrapBlock(Nodes.BLOCK_LIST_ITEM)
+            .unwrapBlock(Nodes.BLOCK_NUMBERED_LIST)
+            .unwrapBlock(Nodes.BLOCK_BULLETED_LIST)
     }
   },
   queries: {
@@ -425,11 +436,7 @@ const plugin = {
       const isInTopLevelList = document.getDepth(listItemAtStart.key) === 2
 
       if (isEnter(e) && isEmptyBlock && isInTopLevelList) {
-        return editor
-          .setBlocks(Nodes.DEFAULT_BLOCK)
-          .unwrapBlock(Nodes.BLOCK_LIST_ITEM)
-          .unwrapBlock(Nodes.BLOCK_NUMBERED_LIST)
-          .unwrapBlock(Nodes.BLOCK_BULLETED_LIST)
+        return editor.setBlocks(Nodes.DEFAULT_BLOCK).unwrapFromList()
       }
 
       if (
@@ -439,29 +446,17 @@ const plugin = {
         isInTopLevelList
       ) {
         if (isPrevItemEmpty) {
-          const prevItemChildKey = prevItem.nodes.first().key
-
-          return editor
-            .unwrapBlockByKey(prevItemChildKey, Nodes.BLOCK_LIST_ITEM)
-            .unwrapBlockByKey(prevItemChildKey, Nodes.BLOCK_NUMBERED_LIST)
-            .unwrapBlockByKey(prevItemChildKey, Nodes.BLOCK_BULLETED_LIST)
+          return editor.unwrapFromList(prevItem.nodes.first().key)
         }
 
         return editor
           .insertBlock(Nodes.DEFAULT_BLOCK)
-          .unwrapBlock(Nodes.BLOCK_LIST_ITEM)
-          .unwrapBlock(Nodes.BLOCK_NUMBERED_LIST)
-          .unwrapBlock(Nodes.BLOCK_BULLETED_LIST)
+          .unwrapFromList()
           .moveToStartOfNextBlock()
       }
 
       if (isBackspace(e) && isSelectionAtStart) {
-        return isInTopLevelList
-          ? editor
-              .unwrapBlock(Nodes.BLOCK_LIST_ITEM)
-              .unwrapBlock(Nodes.BLOCK_NUMBERED_LIST)
-              .unwrapBlock(Nodes.BLOCK_BULLETED_LIST)
-          : editor.deindent()
+        return isInTopLevelList ? editor.unwrapFromList() : editor.deindent()
       }
 
       if (isEnter(e)) {
