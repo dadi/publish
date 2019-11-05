@@ -405,7 +405,7 @@ const plugin = {
 
     const {blocks, document, selection} = editor.value
 
-    if (isBackspace(e) && editor.isInBlockQuote()) {
+    if (isBackspace(e) && editor.isInBlockQuote() && !editor.isInList()) {
       const isCursorAtStartOfBlock =
         selection.isCollapsed && selection.start.isAtStartOfNode(blocks.first())
 
@@ -422,7 +422,10 @@ const plugin = {
       const isItemEmpty = blocks.size === 1 && itemAtStart.text === ''
       const prevItem = document.getPreviousSibling(itemAtStart.key)
       const isPrevItemEmpty = prevItem && prevItem.text === ''
-      const isInTopLevelList = document.getDepth(itemAtStart.key) === 2
+      const listBlock = document.getParent(itemAtStart.key)
+      const parentOfList = document.getParent(listBlock.key)
+      const isInTopLevelList =
+        !parentOfList || parentOfList.type !== Nodes.BLOCK_LIST_ITEM
 
       if (isEnter(e) && isItemEmpty && isInTopLevelList) {
         return editor.setBlocks(Nodes.DEFAULT_BLOCK).unwrapFromList()
