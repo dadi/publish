@@ -270,15 +270,17 @@ const plugin = {
       }
     },
     unwrapFromList(editor, key) {
-      key
-        ? editor
-            .unwrapBlockByKey(key, Nodes.BLOCK_LIST_ITEM)
-            .unwrapBlockByKey(key, Nodes.BLOCK_NUMBERED_LIST)
-            .unwrapBlockByKey(key, Nodes.BLOCK_BULLETED_LIST)
-        : editor
-            .unwrapBlock(Nodes.BLOCK_LIST_ITEM)
-            .unwrapBlock(Nodes.BLOCK_NUMBERED_LIST)
-            .unwrapBlock(Nodes.BLOCK_BULLETED_LIST)
+      if (key) {
+        editor
+          .unwrapBlockByKey(key, Nodes.BLOCK_LIST_ITEM)
+          .unwrapBlockByKey(key, Nodes.BLOCK_NUMBERED_LIST)
+          .unwrapBlockByKey(key, Nodes.BLOCK_BULLETED_LIST)
+      } else {
+        editor
+          .unwrapBlock(Nodes.BLOCK_LIST_ITEM)
+          .unwrapBlock(Nodes.BLOCK_NUMBERED_LIST)
+          .unwrapBlock(Nodes.BLOCK_BULLETED_LIST)
+      }
     }
   },
   queries: {
