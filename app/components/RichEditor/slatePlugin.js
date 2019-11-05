@@ -99,16 +99,21 @@ const plugin = {
         return editor.unwrapBlock(Nodes.BLOCK_BLOCKQUOTE)
       }
 
-      const {blocks, document, selection} = editor.value
-      const topLevelBlocks = blocks.map(
-        block => document.getFurthestBlock(block.key) || block
-      )
-      const range = selection.moveToRangeOfNode(
-        topLevelBlocks.first(),
-        topLevelBlocks.last()
-      )
+      editor.withoutNormalizing(() => {
+        const {document, selection} = editor.value
+        const topLevelBlocks = document.getRootBlocksAtRange(selection)
 
-      editor.wrapBlockAtRange(range, Nodes.BLOCK_BLOCKQUOTE)
+        topLevelBlocks.forEach(({key}) => {
+          editor.wrapBlockByKey(key, Nodes.BLOCK_BLOCKQUOTE)
+        })
+
+        const {document: newDocument, selection: newSelection} = editor.value
+        const newTopLevelBlocks = newDocument.getRootBlocksAtRange(newSelection)
+
+        newTopLevelBlocks.rest().forEach(({key}) => {
+          editor.mergeNodeByKey(key)
+        })
+      })
     },
     toggleNumberedList(editor) {
       const {blocks, document} = editor.value
