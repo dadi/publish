@@ -13,6 +13,7 @@ import {
   ImageSearch,
   InsertLink,
   Redo,
+  StrikethroughS,
   Undo
 } from '@material-ui/icons'
 import {isMac, isTouchDevice, openLinkPrompt} from './utils'
@@ -40,6 +41,7 @@ const undoTooltip = `Undo (${MOD}+Z)`
 const redoTooltip = `Redo (${MOD}+Y)`
 const boldTooltip = `Bold (${MOD}+B)`
 const italicTooltip = `Italic (${MOD}+I)`
+const strikeTooltip = `Strikethrough (${MOD}+${OPT}+S)`
 const h1Tooltip = `Heading 1 (${MOD}+${OPT}+1)`
 const h2Tooltip = `Heading 2 (${MOD}+${OPT}+2)`
 const h3Tooltip = `Heading 3 (${MOD}+${OPT}+3)`
@@ -365,6 +367,14 @@ export default class RichEditor extends React.Component {
               title={italicTooltip}
             >
               <FormatItalic />
+            </RichEditorToolbarButton>
+            <RichEditorToolbarButton
+              action={editor.toggleStrikethrough}
+              active={!isRawMode && editor.hasMark(Nodes.MARK_DEL)}
+              disabled={isRawMode || editor.isInBlocks(Nodes.BLOCK_CODE)}
+              title={strikeTooltip}
+            >
+              <StrikethroughS />
             </RichEditorToolbarButton>
             <RichEditorToolbarButton
               action={editor.toggleHeading1}

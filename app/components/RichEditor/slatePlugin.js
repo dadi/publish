@@ -7,6 +7,7 @@ import PlainSerializer from 'slate-plain-serializer'
 
 const isModB = isHotkey('mod+b')
 const isModI = isHotkey('mod+i')
+const isModAltS = isHotkey('mod+alt+s')
 const isModBacktick = isHotkey('mod+`')
 const isModQ = isHotkey('mod+q')
 const isModK = isHotkey('mod+k')
@@ -33,6 +34,9 @@ const plugin = {
     toggleItalic(editor) {
       !editor.isInBlocks(Nodes.BLOCK_CODE) &&
         editor.toggleMark(Nodes.MARK_ITALIC)
+    },
+    toggleStrikethrough(editor) {
+      !editor.isInBlocks(Nodes.BLOCK_CODE) && editor.toggleMark(Nodes.MARK_DEL)
     },
     toggleCode(editor) {
       const {blocks, selection} = editor.value
@@ -330,6 +334,10 @@ const plugin = {
 
     if (isModI(e)) {
       return editor.toggleItalic()
+    }
+
+    if (isModAltS(e)) {
+      return editor.toggleStrikethrough()
     }
 
     if (isModBacktick(e)) {

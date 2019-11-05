@@ -133,6 +133,9 @@ export function renderMark({children, mark, attributes}, _, next) {
     case Nodes.MARK_ITALIC:
       return <em {...attributes}>{children}</em>
 
+    case Nodes.MARK_DEL:
+      return <del {...attributes}>{children}</del>
+
     default:
       return next()
   }
