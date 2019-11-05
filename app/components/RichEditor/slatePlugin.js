@@ -268,6 +268,19 @@ const plugin = {
       } else {
         changeListIndentation(editor, 'decrease')
       }
+    },
+    unwrapFromList(editor, key) {
+      if (key) {
+        editor
+          .unwrapBlockByKey(key, Nodes.BLOCK_LIST_ITEM)
+          .unwrapBlockByKey(key, Nodes.BLOCK_NUMBERED_LIST)
+          .unwrapBlockByKey(key, Nodes.BLOCK_BULLETED_LIST)
+      } else {
+        editor
+          .unwrapBlock(Nodes.BLOCK_LIST_ITEM)
+          .unwrapBlock(Nodes.BLOCK_NUMBERED_LIST)
+          .unwrapBlock(Nodes.BLOCK_BULLETED_LIST)
+      }
     }
   },
   queries: {
@@ -392,77 +405,61 @@ const plugin = {
       }
     }
 
-    if (editor.isInList()) {
-      const {blocks, document, selection} = editor.value
-      const listItemAtStart =
-        blocks.size && document.getClosest(blocks.first().key, isListItemNode)
-      const listItemAtEnd =
-        blocks.size && document.getClosest(blocks.last().key, isListItemNode)
-      const isSelectionAtStart =
-        blocks.size &&
-        selection.start.isAtStartOfNode(listItemAtStart) &&
-        selection.end.isAtStartOfNode(listItemAtStart)
-      const isEmptyBlock =
-        blocks.size === 1 &&
-        listItemAtStart.nodes.size === 1 &&
-        listItemAtStart.text === ''
-      const prevItem = document.getPreviousSibling(listItemAtStart.key)
-      const isPrevItemEmpty =
-        prevItem && prevItem.nodes.size === 1 && prevItem.text === ''
-      const isInTopLevelList = document.getDepth(listItemAtStart.key) === 2
+    const {blocks, document, selection} = editor.value
 
-      if (isEnter(e) && isEmptyBlock && isInTopLevelList) {
-        return editor
-          .setBlocks(Nodes.DEFAULT_BLOCK)
-          .unwrapBlock(Nodes.BLOCK_LIST_ITEM)
-          .unwrapBlock(Nodes.BLOCK_NUMBERED_LIST)
-          .unwrapBlock(Nodes.BLOCK_BULLETED_LIST)
+    if (isBackspace(e) && editor.isInBlockQuote() && !editor.isInList()) {
+      const isCursorAtStartOfBlock =
+        selection.isCollapsed && selection.start.isAtStartOfNode(blocks.first())
+
+      if (isCursorAtStartOfBlock) {
+        return editor.toggleBlockquote()
+      }
+    }
+
+    if (editor.isInList()) {
+      const itemAtStart = document.getParent(blocks.first().key)
+      const itemAtEnd = document.getParent(blocks.last().key)
+      const isCursorAtStartOfItem =
+        selection.isCollapsed && selection.start.isAtStartOfNode(itemAtStart)
+      const isItemEmpty = blocks.size === 1 && itemAtStart.text === ''
+      const prevItem = document.getPreviousSibling(itemAtStart.key)
+      const isPrevItemEmpty = prevItem && prevItem.text === ''
+      const listBlock = document.getParent(itemAtStart.key)
+      const parentOfList = document.getParent(listBlock.key)
+      const isInTopLevelList =
+        !parentOfList || parentOfList.type !== Nodes.BLOCK_LIST_ITEM
+
+      if (isEnter(e) && isItemEmpty && isInTopLevelList) {
+        return editor.setBlocks(Nodes.DEFAULT_BLOCK).unwrapFromList()
       }
 
       if (
         isEnter(e) &&
-        isSelectionAtStart &&
+        isCursorAtStartOfItem &&
         (!prevItem || isPrevItemEmpty) &&
         isInTopLevelList
       ) {
-        if (isPrevItemEmpty) {
-          const prevItemChildKey = prevItem.nodes.first().key
-
-          return editor
-            .unwrapBlockByKey(prevItemChildKey, Nodes.BLOCK_LIST_ITEM)
-            .unwrapBlockByKey(prevItemChildKey, Nodes.BLOCK_NUMBERED_LIST)
-            .unwrapBlockByKey(prevItemChildKey, Nodes.BLOCK_BULLETED_LIST)
-        }
-
-        return editor
-          .insertBlock(Nodes.DEFAULT_BLOCK)
-          .unwrapBlock(Nodes.BLOCK_LIST_ITEM)
-          .unwrapBlock(Nodes.BLOCK_NUMBERED_LIST)
-          .unwrapBlock(Nodes.BLOCK_BULLETED_LIST)
-          .moveToStartOfNextBlock()
+        return isPrevItemEmpty
+          ? editor.unwrapFromList(prevItem.nodes.first().key)
+          : editor
+              // First item in a top level list--insert a paragraph before it.
+              .insertBlock(Nodes.DEFAULT_BLOCK)
+              .unwrapFromList()
+              .moveToStartOfNextBlock()
       }
 
-      if (isBackspace(e) && isSelectionAtStart) {
-        return isInTopLevelList
-          ? editor
-              .unwrapBlock(Nodes.BLOCK_LIST_ITEM)
-              .unwrapBlock(Nodes.BLOCK_NUMBERED_LIST)
-              .unwrapBlock(Nodes.BLOCK_BULLETED_LIST)
-          : editor.deindent()
+      if (isBackspace(e) && isCursorAtStartOfItem) {
+        return isInTopLevelList ? editor.unwrapFromList() : editor.deindent()
       }
 
       if (isEnter(e)) {
         return editor.splitBlock(2)
       }
 
-      if (isDelete(e) && selection.end.isAtEndOfNode(listItemAtEnd)) {
-        const nextListItem = document.getNextSibling(listItemAtEnd.key)
+      if (isDelete(e) && selection.end.isAtEndOfNode(itemAtEnd)) {
+        const nextListItem = document.getNextSibling(itemAtEnd.key)
 
-        if (!nextListItem) {
-          next()
-
-          return
-        }
+        if (!nextListItem) return next()
 
         const firstChild = nextListItem.nodes.first()
 
