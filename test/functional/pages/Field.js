@@ -952,10 +952,10 @@ module.exports = {
     I.seeElement(this.locators.fridayCal)
     I.seeElement(this.locators.saturdayCal)
     I.click(this.locators.calForwardArrow)
-    let newMomentMonth = moment(new Date()).add(1, 'months')
-
-    newMomentMonth = newMomentMonth.format('MMMM YYYY')
     const newCurrentMonth = await I.grabTextFrom(this.locators.currentDate)
+    const newMomentMonth = moment(new Date())
+      .add(1, 'months')
+      .format('MMMM YYYY')
 
     I.seeStringsAreEqual(newCurrentMonth, newMomentMonth)
     I.click(this.locators.newCurrentDay)
