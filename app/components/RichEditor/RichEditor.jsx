@@ -15,7 +15,7 @@ import {
   Redo,
   Undo
 } from '@material-ui/icons'
-import {isTouchDevice, openLinkPrompt} from './utils'
+import {isMac, isTouchDevice, openLinkPrompt} from './utils'
 import {renderBlock, renderMark} from './slateRender'
 import {RichEditorToolbar, RichEditorToolbarButton} from './RichEditorToolbar'
 import {Editor} from 'slate-react'
@@ -33,6 +33,24 @@ import SCHEMA_RICH from './slateSchemaRich'
 import Style from 'lib/Style'
 import styles from './RichEditor.css'
 import {Value} from 'slate'
+
+const MOD = isMac ? '⌘' : 'Ctrl'
+const OPT = isMac ? '⌥' : 'Alt'
+const undoTooltip = `Undo (${MOD}+Z)`
+const redoTooltip = `Redo (${MOD}+Y)`
+const boldTooltip = `Bold (${MOD}+B)`
+const italicTooltip = `Italic (${MOD}+I)`
+const h1Tooltip = `Heading 1 (${MOD}+${OPT}+1)`
+const h2Tooltip = `Heading 2 (${MOD}+${OPT}+2)`
+const h3Tooltip = `Heading 3 (${MOD}+${OPT}+3)`
+const numListTooltip = `Numbered list (${MOD}+${OPT}+N)`
+const bulListTooltip = `Bulleted list (${MOD}+${OPT}+B)`
+const deindentTooltip = `Decrease indent (${MOD}+[)`
+const indentTooltip = `Increase indent (${MOD}+])`
+const quoteTooltip = `Blockquote (${MOD}+Q)`
+const codeTooltip = `Code (${MOD}+\`)`
+const linkTooltip = `Insert link (${MOD}+K)`
+const imageTooltip = `Insert image from library`
 
 const EMPTY_VALUE = {
   document: {
@@ -321,14 +339,14 @@ export default class RichEditor extends React.Component {
             <RichEditorToolbarButton
               action={editor.undo}
               disabled={!undos || !undos.size}
-              title="Undo"
+              title={undoTooltip}
             >
               <Undo />
             </RichEditorToolbarButton>
             <RichEditorToolbarButton
               action={editor.redo}
               disabled={!redos || !redos.size}
-              title="Redo"
+              title={redoTooltip}
             >
               <Redo />
             </RichEditorToolbarButton>
@@ -336,7 +354,7 @@ export default class RichEditor extends React.Component {
               action={editor.toggleBold}
               active={!isRawMode && editor.hasMark(Nodes.MARK_BOLD)}
               disabled={isRawMode || editor.isInBlocks(Nodes.BLOCK_CODE)}
-              title="Bold" // (Ctrl+B)"
+              title={boldTooltip}
             >
               <FormatBold />
             </RichEditorToolbarButton>
@@ -344,7 +362,7 @@ export default class RichEditor extends React.Component {
               action={editor.toggleItalic}
               active={!isRawMode && editor.hasMark(Nodes.MARK_ITALIC)}
               disabled={isRawMode || editor.isInBlocks(Nodes.BLOCK_CODE)}
-              title="Italic" // (Ctrl+I)"
+              title={italicTooltip}
             >
               <FormatItalic />
             </RichEditorToolbarButton>
@@ -352,7 +370,7 @@ export default class RichEditor extends React.Component {
               action={editor.toggleHeading1}
               active={!isRawMode && editor.isInBlocks(Nodes.BLOCK_HEADING1)}
               disabled={isRawMode}
-              title="Heading 1" // (Ctrl+Alt+1)"
+              title={h1Tooltip}
             >
               <span className={styles['toolbar-heading-icon']}>H1</span>
             </RichEditorToolbarButton>
@@ -360,7 +378,7 @@ export default class RichEditor extends React.Component {
               action={editor.toggleHeading2}
               active={!isRawMode && editor.isInBlocks(Nodes.BLOCK_HEADING2)}
               disabled={isRawMode}
-              title="Heading 2" // (Ctrl+Alt+2)"
+              title={h2Tooltip}
             >
               <span className={styles['toolbar-heading-icon']}>H2</span>
             </RichEditorToolbarButton>
@@ -368,7 +386,7 @@ export default class RichEditor extends React.Component {
               action={editor.toggleHeading3}
               active={!isRawMode && editor.isInBlocks(Nodes.BLOCK_HEADING3)}
               disabled={isRawMode}
-              title="Heading 3" // (Ctrl+Alt+3)"
+              title={h3Tooltip}
             >
               <span className={styles['toolbar-heading-icon']}>H3</span>
             </RichEditorToolbarButton>
@@ -376,7 +394,7 @@ export default class RichEditor extends React.Component {
               action={editor.toggleNumberedList}
               active={!isRawMode && editor.isInList(Nodes.BLOCK_NUMBERED_LIST)}
               disabled={isRawMode}
-              title="Numbered list" // (Ctrl+Shift+7)"
+              title={numListTooltip}
             >
               <FormatListNumbered />
             </RichEditorToolbarButton>
@@ -384,21 +402,21 @@ export default class RichEditor extends React.Component {
               action={editor.toggleBulletedList}
               active={!isRawMode && editor.isInList(Nodes.BLOCK_BULLETED_LIST)}
               disabled={isRawMode}
-              title="Bulleted list" // (Ctrl+Shift+8)"
+              title={bulListTooltip}
             >
               <FormatListBulleted />
             </RichEditorToolbarButton>
             <RichEditorToolbarButton
               action={editor.deindent}
               disabled={isRawMode}
-              title="Decrease indent" // (Ctrl+[)"
+              title={deindentTooltip}
             >
               <FormatIndentDecrease />
             </RichEditorToolbarButton>
             <RichEditorToolbarButton
               action={editor.indent}
               disabled={isRawMode}
-              title="Increase indent" // (Ctrl+])"
+              title={indentTooltip}
             >
               <FormatIndentIncrease />
             </RichEditorToolbarButton>
@@ -406,7 +424,7 @@ export default class RichEditor extends React.Component {
               action={editor.toggleBlockquote}
               active={!isRawMode && editor.isInBlockQuote()}
               disabled={isRawMode}
-              title="Blockquote" // (Ctrl+Q)"
+              title={quoteTooltip}
             >
               <FormatQuote />
             </RichEditorToolbarButton>
@@ -418,7 +436,7 @@ export default class RichEditor extends React.Component {
                   editor.hasMark(Nodes.MARK_CODE))
               }
               disabled={isRawMode}
-              title="Code" // (Ctrl+`)"
+              title={codeTooltip}
             >
               <Code />
             </RichEditorToolbarButton>
@@ -426,14 +444,14 @@ export default class RichEditor extends React.Component {
               action={editor.toggleLink}
               active={!isRawMode && editor.hasLink()}
               disabled={isRawMode || editor.isInBlocks(Nodes.BLOCK_CODE)}
-              title="Insert link" // (Ctrl+K)"
+              title={linkTooltip}
             >
               <InsertLink />
             </RichEditorToolbarButton>
             <RichEditorToolbarButton
               action={this.startSelectingMedia}
               disabled={editor.isInBlocks(Nodes.BLOCK_CODE)}
-              title="Insert asset from library"
+              title={imageTooltip}
             >
               <ImageSearch />
             </RichEditorToolbarButton>
