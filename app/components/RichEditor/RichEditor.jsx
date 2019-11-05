@@ -11,7 +11,9 @@ import {
   Fullscreen,
   FullscreenExit,
   ImageSearch,
-  InsertLink
+  InsertLink,
+  Redo,
+  Undo
 } from '@material-ui/icons'
 import {isTouchDevice, openLinkPrompt} from './utils'
 import {renderBlock, renderMark} from './slateRender'
@@ -307,12 +309,29 @@ export default class RichEditor extends React.Component {
       .addIf('fullscreen', isFullscreen)
       .addIf('raw-mode', isRawMode)
       .addIf('focused', isFocused)
+    const {data} = editor.value
+    const undos = data.get('undos')
+    const redos = data.get('redos')
 
     return (
       <div className={containerStyle.getClasses()}>
         <div className={styles.divider} />
         <RichEditorToolbar isFullscreen={isFullscreen}>
           <div>
+            <RichEditorToolbarButton
+              action={editor.undo}
+              disabled={!undos || !undos.size}
+              title="Undo"
+            >
+              <Undo />
+            </RichEditorToolbarButton>
+            <RichEditorToolbarButton
+              action={editor.redo}
+              disabled={!redos || !redos.size}
+              title="Redo"
+            >
+              <Redo />
+            </RichEditorToolbarButton>
             <RichEditorToolbarButton
               action={editor.toggleBold}
               active={!isRawMode && editor.hasMark(Nodes.MARK_BOLD)}
