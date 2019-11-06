@@ -7,6 +7,7 @@ import PlainSerializer from 'slate-plain-serializer'
 
 const isModB = isHotkey('mod+b')
 const isModI = isHotkey('mod+i')
+const isModAltS = isHotkey('mod+alt+s')
 const isModBacktick = isHotkey('mod+`')
 const isModQ = isHotkey('mod+q')
 const isModK = isHotkey('mod+k')
@@ -33,6 +34,9 @@ const plugin = {
     toggleItalic(editor) {
       !editor.isInBlocks(Nodes.BLOCK_CODE) &&
         editor.toggleMark(Nodes.MARK_ITALIC)
+    },
+    toggleStrikethrough(editor) {
+      !editor.isInBlocks(Nodes.BLOCK_CODE) && editor.toggleMark(Nodes.MARK_DEL)
     },
     toggleCode(editor) {
       const {blocks, selection} = editor.value
@@ -95,16 +99,21 @@ const plugin = {
         return editor.unwrapBlock(Nodes.BLOCK_BLOCKQUOTE)
       }
 
-      const {blocks, document, selection} = editor.value
-      const topLevelBlocks = blocks.map(
-        block => document.getFurthestBlock(block.key) || block
-      )
-      const range = selection.moveToRangeOfNode(
-        topLevelBlocks.first(),
-        topLevelBlocks.last()
-      )
+      editor.withoutNormalizing(() => {
+        const {document, selection} = editor.value
+        const topLevelBlocks = document.getRootBlocksAtRange(selection)
 
-      editor.wrapBlockAtRange(range, Nodes.BLOCK_BLOCKQUOTE)
+        topLevelBlocks.forEach(({key}) => {
+          editor.wrapBlockByKey(key, Nodes.BLOCK_BLOCKQUOTE)
+        })
+
+        const {document: newDocument, selection: newSelection} = editor.value
+        const newTopLevelBlocks = newDocument.getRootBlocksAtRange(newSelection)
+
+        newTopLevelBlocks.rest().forEach(({key}) => {
+          editor.mergeNodeByKey(key)
+        })
+      })
     },
     toggleNumberedList(editor) {
       const {blocks, document} = editor.value
@@ -343,6 +352,10 @@ const plugin = {
 
     if (isModI(e)) {
       return editor.toggleItalic()
+    }
+
+    if (isModAltS(e)) {
+      return editor.toggleStrikethrough()
     }
 
     if (isModBacktick(e)) {

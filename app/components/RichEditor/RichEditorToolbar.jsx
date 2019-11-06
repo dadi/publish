@@ -50,23 +50,26 @@ export class RichEditorToolbarButton extends React.Component {
     text: proptypes.string
   }
 
+  constructor(props) {
+    super(props)
+    this.handleClick = this.handleClick.bind(this)
+  }
+
   handleClick(event) {
-    const {action} = this.props
-
     event.preventDefault()
-
-    action.call(this, event)
+    this.props.action(event)
   }
 
   render() {
-    const {active, children, disabled, title} = this.props
+    const {active, children, disabled, name, title} = this.props
     const buttonStyle = new Style(styles, 'button').addIf('active', active)
 
     return (
       <button
         className={buttonStyle.getClasses()}
+        data-name={name}
         disabled={disabled}
-        onMouseDown={this.handleClick.bind(this)}
+        onMouseDown={this.handleClick}
         type="button"
         title={title}
       >
