@@ -23,13 +23,20 @@ import ProfileEditView from 'views/ProfileEditView/ProfileEditView'
 import React from 'react'
 import SignInView from 'views/SignInView/SignInView'
 
+const UUID_REGEX =
+  '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}'
+
 const baseRoutes = [
   {
     path: '/:collection/new/:section?',
     render: props => <DocumentEditView isNewDocument {...props} />
   },
   {
-    path: '/:collection/:documentId/:section?',
+    path: `/:collection/:documentId(${UUID_REGEX})/:section?`,
+    component: DocumentEditView
+  },
+  {
+    path: '/:collection/:section',
     component: DocumentEditView
   },
   {

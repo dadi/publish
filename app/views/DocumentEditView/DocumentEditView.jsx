@@ -198,7 +198,7 @@ class DocumentEditView extends React.Component {
   // - `name`: name of the section
   // - `slug`: slug of the section
   groupFieldsIntoSections(fields) {
-    const {documentId, onBuildBaseUrl, route} = this.props
+    const {isNewDocument, onBuildBaseUrl, route} = this.props
     const {section: activeSectionSlug} = route.params
 
     const sections = {}
@@ -236,7 +236,7 @@ class DocumentEditView extends React.Component {
       return {
         fields: fieldsInPlacements,
         href: onBuildBaseUrl.call(this, {
-          createNew: !documentId,
+          createNew: isNewDocument,
           section: slug
         }),
         isActive,
