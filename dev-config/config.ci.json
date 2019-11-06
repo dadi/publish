@@ -24,11 +24,7 @@
           "title": "Content"
         },
         {
-          "collections": [
-            "categories",
-            "sub-categories",
-            "milestones"
-          ],
+          "collections": ["categories", "sub-categories", "milestones"],
           "title": "Taxonomy"
         },
         {
@@ -46,10 +42,7 @@
           "title": "Field Testing"
         },
         {
-          "collections": [
-            "test-single-document",
-            "test-single-document-tabs"
-          ],
+          "collections": ["test-single-document", "test-single-document-tabs"],
           "title": "Single Document"
         }
       ]

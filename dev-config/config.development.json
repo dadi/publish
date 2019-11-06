@@ -16,11 +16,7 @@
         "title": "Content"
       },
       {
-        "collections": [
-          "categories",
-          "sub-categories",
-          "milestones"
-        ],
+        "collections": ["categories", "sub-categories", "milestones"],
         "title": "Taxonomy"
       },
       {

@@ -13,18 +13,11 @@
     "menu": [
       "articles",
       {
-        "collections": [
-          "pages",
-          "team"
-        ],
+        "collections": ["pages", "team"],
         "title": "Content"
       },
       {
-        "collections": [
-          "categories",
-          "sub-categories",
-          "milestones"
-        ],
+        "collections": ["categories", "sub-categories", "milestones"],
         "title": "Taxonomy"
       },
       "web-services",
@@ -42,10 +35,7 @@
         "title": "Field Testing"
       },
       {
-        "collections": [
-          "test-single-document",
-          "test-single-document-tabs"
-        ],
+        "collections": ["test-single-document", "test-single-document-tabs"],
         "title": "Single Document"
       }
     ]
