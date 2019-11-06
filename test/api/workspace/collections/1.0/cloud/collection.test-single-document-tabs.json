@@ -4,6 +4,7 @@
       "type": "String",
       "label": "Title",
       "publish": {
+        "section": "Home",
         "placement": "main",
         "display": {
           "edit": true,
@@ -15,6 +16,7 @@
       "type": "Reference",
       "label": "Reference",
       "publish": {
+        "section": "Home",
         "placement": "main",
         "display": {
           "edit": true
@@ -23,10 +25,22 @@
       "settings": {
         "collection": "team"
       }
-    }
+    },
+    "titleTab2": {
+      "type": "String",
+      "label": "Title Tab 2",
+      "publish": {
+        "section": "More",
+        "placement": "main",
+        "display": {
+          "edit": true,
+          "list": true
+        }
+      }
+    },
   },
   "settings": {
-    "displayName": "Basic single document",
+    "displayName": "Advanced single document",
     "publish": {
       "isSingleDocument": true
     }
