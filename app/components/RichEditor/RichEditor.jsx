@@ -341,6 +341,7 @@ export default class RichEditor extends React.Component {
             <RichEditorToolbarButton
               action={editor.undo}
               disabled={!undos || !undos.size}
+              name="editor-undo-button"
               title={undoTooltip}
             >
               <Undo />
@@ -348,6 +349,7 @@ export default class RichEditor extends React.Component {
             <RichEditorToolbarButton
               action={editor.redo}
               disabled={!redos || !redos.size}
+              name="editor-redo-button"
               title={redoTooltip}
             >
               <Redo />
@@ -356,6 +358,7 @@ export default class RichEditor extends React.Component {
               action={editor.toggleBold}
               active={!isRawMode && editor.hasMark(Nodes.MARK_BOLD)}
               disabled={isRawMode || editor.isInBlocks(Nodes.BLOCK_CODE)}
+              name="editor-bold-button"
               title={boldTooltip}
             >
               <FormatBold />
@@ -364,6 +367,7 @@ export default class RichEditor extends React.Component {
               action={editor.toggleItalic}
               active={!isRawMode && editor.hasMark(Nodes.MARK_ITALIC)}
               disabled={isRawMode || editor.isInBlocks(Nodes.BLOCK_CODE)}
+              name="editor-italic-button"
               title={italicTooltip}
             >
               <FormatItalic />
@@ -372,6 +376,7 @@ export default class RichEditor extends React.Component {
               action={editor.toggleStrikethrough}
               active={!isRawMode && editor.hasMark(Nodes.MARK_DEL)}
               disabled={isRawMode || editor.isInBlocks(Nodes.BLOCK_CODE)}
+              name="editor-strikethrough-button"
               title={strikeTooltip}
             >
               <StrikethroughS />
@@ -380,6 +385,7 @@ export default class RichEditor extends React.Component {
               action={editor.toggleHeading1}
               active={!isRawMode && editor.isInBlocks(Nodes.BLOCK_HEADING1)}
               disabled={isRawMode}
+              name="editor-h1-button"
               title={h1Tooltip}
             >
               <span className={styles['toolbar-heading-icon']}>H1</span>
@@ -388,6 +394,7 @@ export default class RichEditor extends React.Component {
               action={editor.toggleHeading2}
               active={!isRawMode && editor.isInBlocks(Nodes.BLOCK_HEADING2)}
               disabled={isRawMode}
+              name="editor-h2-button"
               title={h2Tooltip}
             >
               <span className={styles['toolbar-heading-icon']}>H2</span>
@@ -396,6 +403,7 @@ export default class RichEditor extends React.Component {
               action={editor.toggleHeading3}
               active={!isRawMode && editor.isInBlocks(Nodes.BLOCK_HEADING3)}
               disabled={isRawMode}
+              name="editor-h3-button"
               title={h3Tooltip}
             >
               <span className={styles['toolbar-heading-icon']}>H3</span>
@@ -404,6 +412,7 @@ export default class RichEditor extends React.Component {
               action={editor.toggleNumberedList}
               active={!isRawMode && editor.isInList(Nodes.BLOCK_NUMBERED_LIST)}
               disabled={isRawMode}
+              name="editor-ol-button"
               title={numListTooltip}
             >
               <FormatListNumbered />
@@ -412,6 +421,7 @@ export default class RichEditor extends React.Component {
               action={editor.toggleBulletedList}
               active={!isRawMode && editor.isInList(Nodes.BLOCK_BULLETED_LIST)}
               disabled={isRawMode}
+              name="editor-ul-button"
               title={bulListTooltip}
             >
               <FormatListBulleted />
@@ -419,6 +429,7 @@ export default class RichEditor extends React.Component {
             <RichEditorToolbarButton
               action={editor.deindent}
               disabled={isRawMode}
+              name="editor-deindent-button"
               title={deindentTooltip}
             >
               <FormatIndentDecrease />
@@ -426,6 +437,7 @@ export default class RichEditor extends React.Component {
             <RichEditorToolbarButton
               action={editor.indent}
               disabled={isRawMode}
+              name="editor-indent-button"
               title={indentTooltip}
             >
               <FormatIndentIncrease />
@@ -434,6 +446,7 @@ export default class RichEditor extends React.Component {
               action={editor.toggleBlockquote}
               active={!isRawMode && editor.isInBlockQuote()}
               disabled={isRawMode}
+              name="editor-blockquote-button"
               title={quoteTooltip}
             >
               <FormatQuote />
@@ -446,6 +459,7 @@ export default class RichEditor extends React.Component {
                   editor.hasMark(Nodes.MARK_CODE))
               }
               disabled={isRawMode}
+              name="editor-code-button"
               title={codeTooltip}
             >
               <Code />
@@ -454,6 +468,7 @@ export default class RichEditor extends React.Component {
               action={editor.toggleLink}
               active={!isRawMode && editor.hasLink()}
               disabled={isRawMode || editor.isInBlocks(Nodes.BLOCK_CODE)}
+              name="editor-link-button"
               title={linkTooltip}
             >
               <InsertLink />
@@ -461,6 +476,7 @@ export default class RichEditor extends React.Component {
             <RichEditorToolbarButton
               action={this.startSelectingMedia}
               disabled={editor.isInBlocks(Nodes.BLOCK_CODE)}
+              name="editor-image-button"
               title={imageTooltip}
             >
               <ImageSearch />
@@ -471,12 +487,14 @@ export default class RichEditor extends React.Component {
             <RichEditorToolbarButton
               action={this.toggleRawMode}
               active={isRawMode}
+              name="editor-markdown-button"
               title="Markdown mode"
             >
               <Markdown />
             </RichEditorToolbarButton>
             <RichEditorToolbarButton
               action={this.toggleFullscreen}
+              name="editor-fullscreen-button"
               title={isFullscreen ? 'Exit fullscreen' : 'Fullscreen'}
             >
               {isFullscreen ? <FullscreenExit /> : <Fullscreen />}

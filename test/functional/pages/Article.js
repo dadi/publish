@@ -220,40 +220,48 @@ module.exports = {
     cancelButton: locate('button[class*="Button__accent--negative"]').as(
       'Cancel Button'
     ),
-    boldButton: locate('button')
-      .withText('Bold')
+    boldButton: locate('*')
+      .withAttr({'data-name': 'editor-bold-button'})
       .as('Bold Button'),
-    italicButton: locate('button')
-      .withText('Italic')
+    italicButton: locate('*')
+      .withAttr({'data-name': 'editor-italic-button'})
       .as('Italic Button'),
-    linkButton: locate('button[title*="Insert link"]').as('Link Button'),
-    h1Button: locate('button')
-      .withText('H1')
+    linkButton: locate('*')
+      .withAttr({'data-name': 'editor-link-button'})
+      .as('Link Button'),
+    h1Button: locate('*')
+      .withAttr({'data-name': 'editor-h1-button'})
       .as('Header 1 Button'),
-    h2Button: locate('button')
-      .withText('H2')
+    h2Button: locate('*')
+      .withAttr({'data-name': 'editor-h2-button'})
       .as('Header 2 Button'),
-    h3Button: locate('button')
-      .withText('H3')
+    h3Button: locate('*')
+      .withAttr({'data-name': 'editor-h3-button'})
       .as('Header 3 Button'),
-    quoteButton: locate('button[title*="Blockquote"]').as('Blockquote Button'),
-    orderedListButton: locate('button[title*="Numbered list"]').as(
-      'Numbered List Button'
-    ),
-    unOrderedListButton: locate('button[title*="Bulleted list"]').as(
-      'Bullet Point Button'
-    ),
-    codeButton: locate('button[title*="Code"]').as('Code Button'),
-    imageButton: locate('button[title*="Insert asset from library"]').as(
-      'Image Button'
-    ),
-    fullScreenButton: locate('button[title*="Fullscreen"]').as(
-      'Full Screen Button'
-    ),
-    exitFullScreenButton: locate('button[title*="Exit fullscreen"]').as(
-      'Exit Full Screen Button'
-    ),
-    textButton: locate('button[title*="Markdown mode"]').as('Text Button'),
+    quoteButton: locate('*')
+      .withAttr({'data-name': 'editor-blockquote-button'})
+      .as('Blockquote Button'),
+    orderedListButton: locate('*')
+      .withAttr({'data-name': 'editor-ol-button'})
+      .as('Numbered List Button'),
+    unOrderedListButton: locate('*')
+      .withAttr({'data-name': 'editor-ul-button'})
+      .as('Bullet Point Button'),
+    codeButton: locate('*')
+      .withAttr({'data-name': 'editor-code-button'})
+      .as('Code Button'),
+    imageButton: locate('*')
+      .withAttr({'data-name': 'editor-image-button'})
+      .as('Image Button'),
+    fullScreenButton: locate('*')
+      .withAttr({'data-name': 'editor-fullscreen-button'})
+      .as('Full Screen Button'),
+    exitFullScreenButton: locate('*')
+      .withAttr({'data-name': 'editor-fullscreen-button'})
+      .as('Exit Full Screen Button'),
+    textButton: locate('*')
+      .withAttr({'data-name': 'editor-markdown-button'})
+      .as('Text Button'),
     boldText: locate('span')
       .withText('Bold')
       .inside('strong')
