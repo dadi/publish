@@ -11,7 +11,7 @@ import {
   registerProgressCallback
 } from 'lib/api-bridge-client'
 import AuthenticatedRoute from './AuthenticatedRoute'
-import buildGroupedRoutes from './buildGroupedRoutes'
+import buildRoutes from './buildRoutes'
 import {connectRedux} from 'lib/redux'
 import {debounce} from 'lib/util'
 import DocumentEditView from 'views/DocumentEditView/DocumentEditView'
@@ -22,39 +22,6 @@ import LoadingBar from 'containers/LoadingBar/LoadingBar'
 import ProfileEditView from 'views/ProfileEditView/ProfileEditView'
 import React from 'react'
 import SignInView from 'views/SignInView/SignInView'
-
-const UUID_REGEX =
-  '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}'
-
-const baseRoutes = [
-  {
-    path: '/:collection/new/:section?',
-    render: props => <DocumentEditView isNewDocument {...props} />
-  },
-  {
-    path: `/:collection/:documentId(${UUID_REGEX})/:section?`,
-    component: DocumentEditView
-  },
-  {
-    path: '/:collection/:section',
-    component: DocumentEditView
-  },
-  {
-    path: '/:collection',
-    component: DocumentListView
-  }
-]
-
-function buildRoutes({menu, isMultiProperty}) {
-  const routes = [...buildGroupedRoutes(menu, baseRoutes), ...baseRoutes]
-
-  return isMultiProperty
-    ? routes.map(route => ({
-        ...route,
-        path: '/:property' + route.path
-      }))
-    : routes
-}
 
 class App extends React.Component {
   constructor(props) {

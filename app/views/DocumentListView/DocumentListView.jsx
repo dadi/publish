@@ -546,6 +546,7 @@ class DocumentListView extends React.Component {
 
 function mapState(state, ownProps) {
   const {
+    isSingleDocument,
     route: {params, search, searchString}
   } = ownProps
 
@@ -555,12 +556,6 @@ function mapState(state, ownProps) {
       : state.app.config.api.collections.find(collection => {
           return collection.slug === params.collection
         })
-
-  const isSingleDocument =
-    collection &&
-    collection.settings &&
-    collection.settings.publish &&
-    collection.settings.publish.isSingleDocument
 
   const {group} = params
   const contentKey = isSingleDocument
@@ -579,7 +574,6 @@ function mapState(state, ownProps) {
   return {
     collection,
     contentKey,
-    isSingleDocument,
     selectionKey,
     state
   }
