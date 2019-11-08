@@ -33,6 +33,10 @@
           "no-filterable-fields"
         ],
         "title": "Field Testing"
+      },
+      {
+        "collections": ["test-single-document", "test-single-document-tabs"],
+        "title": "Single Document"
       }
     ]
   }

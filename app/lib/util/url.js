@@ -71,9 +71,12 @@ export function buildUrl({
   group = this.props.route.params.group,
   property = this.props.route.params.property,
   search = this.props.route.search,
-  section = this.props.route.params.section
+  section
 } = {}) {
-  if (!createNew && !documentId) section = null
+  if (createNew || documentId) {
+    section = section || this.props.route.params.section
+  }
+
   if (createNew) documentId = 'new'
 
   const urlNodes = [property, group, collection, documentId, section]
