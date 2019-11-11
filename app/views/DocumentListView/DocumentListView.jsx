@@ -2,6 +2,7 @@ import * as appActions from 'actions/appActions'
 import * as Constants from 'lib/constants'
 import * as documentActions from 'actions/documentActions'
 import * as selectionActions from 'actions/selectionActions'
+import {buildUrl} from 'lib/util/url'
 import {Button} from '@dadi/edit-ui'
 import {connectRedux} from 'lib/redux'
 import DocumentEditView from 'views/DocumentEditView/DocumentEditView'
@@ -37,6 +38,7 @@ class DocumentListView extends React.Component {
   constructor(props) {
     super(props)
 
+    this.buildBaseUrl = buildUrl.bind(this)
     this.deleteSelected = this.deleteSelected.bind(this)
     this.handleEmptyDocumentList = this.handleEmptyDocumentList.bind(this)
     this.handleFiltersUpdate = this.handleFiltersUpdate.bind(this)
@@ -104,7 +106,7 @@ class DocumentListView extends React.Component {
   }
 
   handleEmptyDocumentList({selection}) {
-    const {onBuildBaseUrl, route} = this.props
+    const {route} = this.props
     const {filter} = route.search
 
     if (filter && Object.keys(filter).length > 0) {
@@ -112,7 +114,7 @@ class DocumentListView extends React.Component {
       // we might as well remove the filter instead of showing a "No documents
       // found" message.
       if (filter.$selected && selection.length === 0) {
-        const redirectUrl = onBuildBaseUrl.call(this, {
+        const redirectUrl = this.buildBaseUrl({
           search: {
             ...route.search,
             filter: {
@@ -155,9 +157,7 @@ class DocumentListView extends React.Component {
       )
     }
 
-    const createNewHref = onBuildBaseUrl.call(this, {
-      createNew: true
-    })
+    const createNewHref = this.buildBaseUrl({createNew: true})
 
     return (
       <HeroMessage
@@ -187,10 +187,10 @@ class DocumentListView extends React.Component {
   }
 
   handleFiltersUpdate(newFilters) {
-    const {onBuildBaseUrl, route} = this.props
+    const {route} = this.props
     const newFilterValue =
       Object.keys(newFilters).length > 0 ? newFilters : null
-    const newUrl = onBuildBaseUrl.call(this, {
+    const newUrl = this.buildBaseUrl({
       search: {
         ...route.search,
         filter: newFilterValue
@@ -210,10 +210,10 @@ class DocumentListView extends React.Component {
   }
 
   handlePageChange(page) {
-    const {onBuildBaseUrl, route} = this.props
+    const {route} = this.props
     const {history, search} = route
 
-    history.push(onBuildBaseUrl.call(this, {search: {...search, page}}))
+    history.push(this.buildBaseUrl({search: {...search, page}}))
   }
 
   handleSelect(selection) {
@@ -226,9 +226,10 @@ class DocumentListView extends React.Component {
   }
 
   handleSort({sortBy, sortOrder}) {
-    const {onBuildBaseUrl, route} = this.props
+    const {route} = this.props
+    const {history, search} = route
     const newSearch = {
-      ...route.search,
+      ...search,
       sort: undefined,
       order: undefined
     }
@@ -238,11 +239,7 @@ class DocumentListView extends React.Component {
       newSearch.order = sortOrder
     }
 
-    const newUrl = onBuildBaseUrl.call(this, {
-      search: newSearch
-    })
-
-    route.history.push(newUrl)
+    history.push(this.buildBaseUrl({search: newSearch}))
   }
 
   render() {
@@ -250,7 +247,6 @@ class DocumentListView extends React.Component {
       collection,
       contentKey,
       isSingleDocument,
-      onBuildBaseUrl,
       route,
       selection,
       state
@@ -299,7 +295,7 @@ class DocumentListView extends React.Component {
     // If the page parameter is higher than the number of pages available for
     // the current document set, we redirect to the last valid page.
     if (totalPages > 0 && page > totalPages) {
-      const redirectUrl = onBuildBaseUrl.call(this, {
+      const redirectUrl = this.buildBaseUrl({
         search: {...search, page: metadata.totalPages}
       })
 
@@ -313,10 +309,7 @@ class DocumentListView extends React.Component {
     // button.
     const createNewHref = collection.IS_MEDIA_BUCKET
       ? undefined
-      : onBuildBaseUrl.call(this, {
-          createNew: true,
-          search: null
-        })
+      : this.buildBaseUrl({createNew: true, search: null})
 
     return (
       <>
@@ -374,13 +367,7 @@ class DocumentListView extends React.Component {
   }
 
   renderMain() {
-    const {
-      collection,
-      contentKey,
-      onBuildBaseUrl,
-      route,
-      selection
-    } = this.props
+    const {collection, contentKey, route, selection} = this.props
     const {filter, order, page, sort} = route.search
 
     if (collection.IS_MEDIA_BUCKET) {
@@ -401,7 +388,7 @@ class DocumentListView extends React.Component {
               documents={documents}
               isFilteringSelection={filter && filter.$selected}
               hasSelection={hasSelection}
-              onBuildBaseUrl={onBuildBaseUrl.bind(this)}
+              onBuildBaseUrl={this.buildBaseUrl}
               onSelect={onSelect}
               order={order}
               selectedDocuments={selectedDocuments}
@@ -439,7 +426,7 @@ class DocumentListView extends React.Component {
             collection={collection}
             documents={documents}
             fields={visibleFields}
-            onBuildBaseUrl={onBuildBaseUrl.bind(this)}
+            onBuildBaseUrl={this.buildBaseUrl}
             onSelect={onSelect}
             onSort={this.handleSort}
             order={order}
