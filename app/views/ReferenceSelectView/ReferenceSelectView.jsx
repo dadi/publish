@@ -4,13 +4,12 @@ import {getFieldType, getVisibleFields} from 'lib/fields'
 import {ArrowBack} from '@material-ui/icons'
 import {Button} from '@dadi/edit-ui'
 import {connectRedux} from 'lib/redux'
-import DocumentGridList from 'components/DocumentGridList/DocumentGridList'
 import DocumentList from 'containers/DocumentList/DocumentList'
 import DocumentListController from 'components/DocumentListController/DocumentListController'
 import DocumentListToolbar from 'components/DocumentListToolbar/DocumentListToolbar'
 import DocumentTableList from 'containers/DocumentTableList/DocumentTableList'
 import HeroMessage from 'components/HeroMessage/HeroMessage'
-import MediaGridCard from 'containers/MediaGridCard/MediaGridCard'
+import MediaList from 'components/MediaList/MediaList'
 import React from 'react'
 import Style from 'lib/Style'
 import styles from './ReferenceSelectView.css'
@@ -179,9 +178,16 @@ class ReferenceSelectView extends React.Component {
             }}
             onBuildBaseUrl={buildUrl}
             onEmptyList={this.handleEmptyDocumentList}
-            onRender={({documents, onSelect, selectedDocuments}) => {
+            onRender={({
+              documents,
+              hasSelection,
+              onSelect,
+              selectedDocuments
+            }) => {
               return this.renderList({
                 documents,
+                hasSelection,
+                isFilteringSelection,
                 onSelect,
                 referencedCollection,
                 selectedDocuments
@@ -217,23 +223,28 @@ class ReferenceSelectView extends React.Component {
     )
   }
 
-  renderList({documents, onSelect, referencedCollection, selectedDocuments}) {
-    const {referenceFieldSchema} = this.props
+  renderList({
+    documents,
+    hasSelection,
+    isFilteringSelection,
+    onSelect,
+    referencedCollection,
+    selectedDocuments
+  }) {
+    const {buildUrl, referenceFieldSchema} = this.props
+    const {sortBy, sortOrder} = this.state
 
     if (referencedCollection.IS_MEDIA_BUCKET) {
       return (
-        <DocumentGridList
+        <MediaList
           documents={documents}
-          onRenderCard={({item, isSelected, onSelect}) => (
-            <MediaGridCard
-              key={item._id}
-              isSelected={isSelected}
-              item={item}
-              onSelect={onSelect}
-            />
-          )}
+          isFilteringSelection={isFilteringSelection}
+          hasSelection={hasSelection}
+          onBuildBaseUrl={buildUrl}
           onSelect={onSelect}
+          order={sortOrder}
           selectedDocuments={selectedDocuments}
+          sort={sortBy}
         />
       )
     }
@@ -250,8 +261,6 @@ class ReferenceSelectView extends React.Component {
       _publishCollection: collection,
       _publishGroup: group
     } = referencedCollection
-
-    const {sortBy, sortOrder} = this.state
 
     return (
       <DocumentTableList
