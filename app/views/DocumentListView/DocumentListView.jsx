@@ -396,9 +396,11 @@ class DocumentListView extends React.Component {
             <MediaList
               documents={documents}
               isFilteringSelection={filter && filter.$selected}
+              onMediaUpload={this.handleMediaUpload}
               hasSelection={hasSelection}
               onBuildBaseUrl={this.buildBaseUrl}
               onSelect={onSelect}
+              onSort={this.handleSort}
               order={order}
               selectedDocuments={selectedDocuments}
               sort={sort}

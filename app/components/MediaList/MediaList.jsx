@@ -29,15 +29,25 @@ class MediaList extends React.Component {
     hasSelection: proptypes.bool,
 
     /**
-     * A callback to be used to obtain the base URL for the given page, as
+     * Callback to be called to obtain the base URL for the given page, as
      * determined by the view.
      */
     onBuildBaseUrl: proptypes.func,
 
     /**
-     * Callback to be fired when the selection changes.
+     * Callback to be called when files are uploaded.
+     */
+    onMediaUpload: proptypes.func,
+
+    /**
+     * Callback to be called when the selection changes.
      */
     onSelect: proptypes.func,
+
+    /**
+     * Callback to be called when the user sorts the list.
+     */
+    onSort: proptypes.func,
 
     /**
      * The order used to sort the documents by the `sort` field.
@@ -72,7 +82,9 @@ class MediaList extends React.Component {
       hasSelection,
       isFilteringSelection,
       onBuildBaseUrl,
+      onMediaUpload,
       onSelect,
+      onSort,
       order,
       selectedDocuments,
       sort
@@ -87,14 +99,14 @@ class MediaList extends React.Component {
     }
 
     return (
-      <DropArea onDrop={this.handleMediaUpload}>
+      <DropArea onDrop={onMediaUpload}>
         {!isFilteringSelection && (
           <MediaListController
             documents={documents}
             mode={listMode}
             onListModeUpdate={this.updateMediaListMode}
             onSelect={onSelect}
-            onUpload={this.handleMediaUpload}
+            onUpload={onMediaUpload}
             selectedDocuments={selectedDocuments}
           />
         )}
@@ -124,7 +136,7 @@ class MediaList extends React.Component {
             fields={MEDIA_TABLE_FIELDS}
             onBuildBaseUrl={onBuildBaseUrl}
             onSelect={onSelect}
-            onSort={this.handleSort}
+            onSort={onSort}
             order={order}
             selectedDocuments={selectedDocuments}
             sort={sort}
