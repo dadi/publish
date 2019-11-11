@@ -47,12 +47,14 @@ class DocumentListView extends React.Component {
     this.handlePageChange = this.handlePageChange.bind(this)
     this.handleSelect = this.handleSelect.bind(this)
     this.handleSort = this.handleSort.bind(this)
+    this.updateMediaListMode = mediaListMode => this.setState({mediaListMode})
 
     this.showDeletePrompt = () => this.setState({isShowingDeletePrompt: true})
     this.hideDeletePrompt = () => this.setState({isShowingDeletePrompt: false})
 
     this.state = {
-      isShowingDeletePrompt: false
+      isShowingDeletePrompt: false,
+      mediaListMode: 'grid'
     }
   }
 
@@ -395,10 +397,12 @@ class DocumentListView extends React.Component {
           }) => (
             <MediaList
               documents={documents}
-              isFilteringSelection={filter && filter.$selected}
-              onMediaUpload={this.handleMediaUpload}
               hasSelection={hasSelection}
+              isFilteringSelection={filter && filter.$selected}
+              mode={this.state.mediaListMode}
               onBuildBaseUrl={this.buildBaseUrl}
+              onListModeUpdate={this.updateMediaListMode}
+              onMediaUpload={this.handleMediaUpload}
               onSelect={onSelect}
               onSort={this.handleSort}
               order={order}

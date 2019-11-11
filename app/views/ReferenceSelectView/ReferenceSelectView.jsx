@@ -23,9 +23,12 @@ class ReferenceSelectView extends React.Component {
     this.handleEmptyDocumentList = this.handleEmptyDocumentList.bind(this)
     this.handleFiltersUpdate = this.handleFiltersUpdate.bind(this)
     this.handleSelectionUpdate = this.handleSelectionUpdate.bind(this)
+    this.sortList = ({sortBy, sortOrder}) => this.setState({sortBy, sortOrder})
+    this.updateMediaListMode = mediaListMode => this.setState({mediaListMode})
 
     this.state = {
       filter: undefined,
+      mediaListMode: 'grid',
       page: 1,
       sortBy: undefined,
       sortOrder: undefined,
@@ -232,16 +235,19 @@ class ReferenceSelectView extends React.Component {
     selectedDocuments
   }) {
     const {buildUrl, referenceFieldSchema} = this.props
-    const {sortBy, sortOrder} = this.state
+    const {mediaListMode, sortBy, sortOrder} = this.state
 
     if (referencedCollection.IS_MEDIA_BUCKET) {
       return (
         <MediaList
           documents={documents}
-          isFilteringSelection={isFilteringSelection}
           hasSelection={hasSelection}
+          isFilteringSelection={isFilteringSelection}
+          mode={mediaListMode}
           onBuildBaseUrl={buildUrl}
+          onListModeUpdate={this.updateMediaListMode}
           onSelect={onSelect}
+          onSort={this.sortList}
           order={sortOrder}
           selectedDocuments={selectedDocuments}
           sort={sortBy}
@@ -275,7 +281,7 @@ class ReferenceSelectView extends React.Component {
           })
         }
         onSelect={onSelect}
-        onSort={({sortBy, sortOrder}) => this.setState({sortBy, sortOrder})}
+        onSort={this.sortList}
         order={sortOrder}
         selectedDocuments={selectedDocuments}
         sort={sortBy}

@@ -19,20 +19,30 @@ class MediaList extends React.Component {
     documents: proptypes.array,
 
     /**
+     * Whether any documents are selected.
+     */
+    hasSelection: proptypes.bool,
+
+    /**
      * Whether the view is filtered to only show selected documents.
      */
     isFilteringSelection: proptypes.bool,
 
     /**
-     * Whether any documents are selected.
+     * Whether to display the items in a table or grid form.
      */
-    hasSelection: proptypes.bool,
+    mode: proptypes.oneOf(['table', 'grid']),
 
     /**
      * Callback to be called to obtain the base URL for the given page, as
      * determined by the view.
      */
     onBuildBaseUrl: proptypes.func,
+
+    /**
+     * Callback to be called when the user changes the list display mode.
+     */
+    onListModeUpdate: proptypes.func,
 
     /**
      * Callback to be called when files are uploaded.
@@ -69,11 +79,6 @@ class MediaList extends React.Component {
     super(props)
 
     this.renderFieldMediaItem = this.renderFieldMediaItem.bind(this)
-    this.updateMediaListMode = listMode => this.setState({listMode})
-
-    this.state = {
-      listMode: 'grid'
-    }
   }
 
   render() {
@@ -81,7 +86,9 @@ class MediaList extends React.Component {
       documents,
       hasSelection,
       isFilteringSelection,
+      mode,
       onBuildBaseUrl,
+      onListModeUpdate,
       onMediaUpload,
       onSelect,
       onSort,
@@ -89,7 +96,6 @@ class MediaList extends React.Component {
       selectedDocuments,
       sort
     } = this.props
-    const {listMode} = this.state
     const schema = {
       ...Constants.MEDIA_COLLECTION_SCHEMA,
       fields: {
@@ -98,20 +104,20 @@ class MediaList extends React.Component {
       }
     }
 
-    return (
-      <DropArea onDrop={onMediaUpload}>
+    const contents = (
+      <>
         {!isFilteringSelection && (
           <MediaListController
             documents={documents}
-            mode={listMode}
-            onListModeUpdate={this.updateMediaListMode}
+            mode={mode}
+            onListModeUpdate={onListModeUpdate}
             onSelect={onSelect}
             onUpload={onMediaUpload}
             selectedDocuments={selectedDocuments}
           />
         )}
 
-        {listMode === 'grid' && (
+        {mode === 'grid' && (
           <DocumentGridList
             documents={documents}
             onRenderCard={({item, isSelected, onSelect}) => (
@@ -129,7 +135,7 @@ class MediaList extends React.Component {
           />
         )}
 
-        {listMode === 'table' && (
+        {mode === 'table' && (
           <DocumentTableList
             collection={schema}
             documents={documents}
@@ -142,7 +148,13 @@ class MediaList extends React.Component {
             sort={sort}
           />
         )}
-      </DropArea>
+      </>
+    )
+
+    return onMediaUpload ? (
+      <DropArea onDrop={onMediaUpload}>{contents}</DropArea>
+    ) : (
+      contents
     )
   }
 
