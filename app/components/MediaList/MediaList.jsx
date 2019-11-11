@@ -58,28 +58,26 @@ class MediaList extends React.Component {
   constructor(props) {
     super(props)
 
-    this.renderFieldMediaItem = ({document}) => (
-      <FieldMediaItem config={this.props.config} isList value={document} />
-    )
-    this.updateMediaListMode = mediaListMode => this.setState({mediaListMode})
+    this.renderFieldMediaItem = this.renderFieldMediaItem.bind(this)
+    this.updateMediaListMode = listMode => this.setState({listMode})
 
     this.state = {
-      mediaListMode: 'grid'
+      listMode: 'grid'
     }
   }
 
   render() {
     const {
       documents,
-      isFilteringSelection,
       hasSelection,
+      isFilteringSelection,
       onBuildBaseUrl,
       onSelect,
       order,
       selectedDocuments,
       sort
     } = this.props
-    const {mediaListMode} = this.state
+    const {listMode} = this.state
     const schema = {
       ...Constants.MEDIA_COLLECTION_SCHEMA,
       fields: {
@@ -93,7 +91,7 @@ class MediaList extends React.Component {
         {!isFilteringSelection && (
           <MediaListController
             documents={documents}
-            mode={mediaListMode}
+            mode={listMode}
             onListModeUpdate={this.updateMediaListMode}
             onSelect={onSelect}
             onUpload={this.handleMediaUpload}
@@ -101,7 +99,7 @@ class MediaList extends React.Component {
           />
         )}
 
-        {mediaListMode === 'grid' && (
+        {listMode === 'grid' && (
           <DocumentGridList
             documents={documents}
             onRenderCard={({item, isSelected, onSelect}) => (
@@ -119,7 +117,7 @@ class MediaList extends React.Component {
           />
         )}
 
-        {mediaListMode === 'table' && (
+        {listMode === 'table' && (
           <DocumentTableList
             collection={schema}
             documents={documents}
@@ -134,6 +132,10 @@ class MediaList extends React.Component {
         )}
       </DropArea>
     )
+  }
+
+  renderFieldMediaItem({document}) {
+    return <FieldMediaItem config={this.props.config} isList value={document} />
   }
 }
 
