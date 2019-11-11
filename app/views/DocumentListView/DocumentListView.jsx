@@ -370,14 +370,23 @@ class DocumentListView extends React.Component {
     const {collection, contentKey, route, selection} = this.props
     const {filter, order, page, sort} = route.search
 
+    const commonDocumentListProps = {
+      collection,
+      contentKey,
+      filters: filter,
+      onEmptyList: this.handleEmptyDocumentList,
+      onNetworkError: this.handleNetworkError,
+      onSelect: this.handleSelect,
+      order,
+      page,
+      selection,
+      sort
+    }
+
     if (collection.IS_MEDIA_BUCKET) {
       return (
         <DocumentList
-          collection={Constants.MEDIA_COLLECTION_SCHEMA}
-          contentKey={contentKey}
-          filters={filter}
-          onEmptyList={this.handleEmptyDocumentList}
-          onNetworkError={this.handleNetworkError}
+          {...commonDocumentListProps}
           onRender={({
             documents,
             hasSelection,
@@ -395,12 +404,7 @@ class DocumentListView extends React.Component {
               sort={sort}
             />
           )}
-          onSelect={this.handleSelect}
-          order={order}
-          page={page}
           selectAllHotKey="mod+a"
-          selection={selection}
-          sort={sort}
         />
       )
     }
@@ -415,12 +419,8 @@ class DocumentListView extends React.Component {
 
     return (
       <DocumentList
-        collection={collection}
-        contentKey={contentKey}
+        {...commonDocumentListProps}
         fields={visibleFields}
-        filters={filter}
-        onEmptyList={this.handleEmptyDocumentList}
-        onNetworkError={this.handleNetworkError}
         onRender={({documents, onSelect, selectedDocuments}) => (
           <DocumentTableList
             collection={collection}
@@ -435,11 +435,6 @@ class DocumentListView extends React.Component {
             title={collection.name}
           />
         )}
-        onSelect={this.handleSelect}
-        order={order}
-        page={page}
-        selection={selection}
-        sort={sort}
       />
     )
   }
