@@ -340,6 +340,9 @@ module.exports = {
     ),
     navMenu: locate('nav > ul > li').as('Navigation Menu'),
     dogImage: locate('img[src*="dog"]').as('Dog Image'),
+    dogImageCheckbox: locate('div[data-filename*="dog"]')
+      .find('input[type="checkbox"]')
+      .as('Dog Image Checkbox'),
     insertButton: locate(
       'button[data-name*="save-reference-selection-button"]'
     ).as('Insert Items Button'),
@@ -914,7 +917,7 @@ module.exports = {
     // Inline Image
     I.appendField(this.locators.bodyField, '')
     I.click(this.locators.imageButton)
-    I.click(this.locators.dogImage)
+    I.click(this.locators.dogImageCheckbox)
     I.click(this.locators.insertButton)
     I.click(this.locators.save)
     I.waitForText('The document has been created', 2)

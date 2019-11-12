@@ -459,13 +459,21 @@ module.exports = {
       'Save Button'
     ),
     totalImages: locate('.//strong[2]').as('Total Number of Images'),
-    stoneJpeg: locate('img[src*="Stone"]').as('JPEG Image 1'),
-    watsonJpeg: locate('img[src*="Watson"]').as('JPEG Image 2'),
-    dogJpg: locate('img[src*="dog"]').as('JPG Image'),
-    girlPng: locate('img[src*="girl"]').as('PNG Image'),
-    pdf: locate('div[class*="MediaGridCard__filename"]')
-      .withText('DADI_Publish.pdf')
-      .as('PDF Document'),
+    stoneJpegCheckbox: locate('div[data-filename*="Stone"]')
+      .find('input[type="checkbox"]')
+      .as('JPEG Image 1 Checkbox'),
+    watsonJpegCheckbox: locate('div[data-filename*="Watson"]')
+      .find('input[type="checkbox"]')
+      .as('JPEG Image 2 Checkbox'),
+    dogJpgCheckbox: locate('div[data-filename*="dog"]')
+      .find('input[type="checkbox"]')
+      .as('JPG Image Checkbox'),
+    girlPngCheckbox: locate('div[data-filename*="girl"]')
+      .find('input[type="checkbox"]')
+      .as('PNG Image Checkbox'),
+    pdfCheckbox: locate('div[data-filename="DADI_Publish.pdf"]')
+      .find('input[type="checkbox"]')
+      .as('PDF Document Checkbox'),
     cancelButton: locate('button[class*="Button__accent--negative"]').as(
       'Cancel Button'
     ),
@@ -1317,9 +1325,9 @@ module.exports = {
     I.waitForText('An error has occurred. The document could not be created', 2)
     I.click(this.locators.mediaReqExisting)
     I.waitForFunction(() => document.readyState === 'complete')
-    I.click(this.locators.pdf)
-    I.click(this.locators.stoneJpeg)
-    I.click(this.locators.girlPng)
+    I.click(this.locators.pdfCheckbox)
+    I.click(this.locators.stoneJpegCheckbox)
+    I.click(this.locators.girlPngCheckbox)
     I.click(this.locators.saveSelected)
     I.waitForFunction(() => document.readyState === 'complete')
     I.seeElement(this.locators.mediaReqPdf)
@@ -1343,7 +1351,7 @@ module.exports = {
     I.see('.jpeg')
     I.dontSee('.png')
     I.dontSee('.pdf')
-    I.click(this.locators.dogJpg)
+    I.click(this.locators.dogJpgCheckbox)
     I.click(this.locators.saveSelected)
     I.waitForFunction(() => document.readyState === 'complete')
     I.seeElement(this.locators.mediaJpegAdded)
@@ -1357,7 +1365,7 @@ module.exports = {
     I.dontSee('.jpeg')
     I.dontSee('.jpg')
     I.dontSee('.pdf')
-    I.click(this.locators.girlPng)
+    I.click(this.locators.girlPngCheckbox)
     I.click(this.locators.saveSelected)
     I.waitForFunction(() => document.readyState === 'complete')
     I.scrollTo(this.locators.mediaJnPDrop)
@@ -1375,8 +1383,8 @@ module.exports = {
     I.see('.jpeg')
     I.see('.jpg')
     I.dontSee('.pdf')
-    I.click(this.locators.dogJpg)
-    I.click(this.locators.girlPng)
+    I.click(this.locators.dogJpgCheckbox)
+    I.click(this.locators.girlPngCheckbox)
     I.click(this.locators.saveSelected)
     I.waitForFunction(() => document.readyState === 'complete')
     I.scrollTo(this.locators.mediaJnPDevice)
@@ -1392,7 +1400,7 @@ module.exports = {
     I.dontSee('.jpeg')
     I.dontSee('.jpg')
     I.dontSee('.png')
-    I.click(this.locators.pdf)
+    I.click(this.locators.pdfCheckbox)
     I.click(this.locators.saveSelected)
     I.waitForFunction(() => document.readyState === 'complete')
     I.scrollTo(this.locators.mediaJnPDrop)
@@ -1454,7 +1462,7 @@ module.exports = {
   },
 
   async validateSingleDocument() {
-    I.amOnPage('/test-single-document')
+    I.amOnPage('/single-document/test-single-document')
     I.wait(2)
     I.waitForFunction(() => document.readyState === 'complete')
     I.seeElement(this.locators.singleTitle)

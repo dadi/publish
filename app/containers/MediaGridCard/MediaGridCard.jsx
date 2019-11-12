@@ -104,6 +104,7 @@ class MediaGridCard extends React.Component {
     return (
       <div
         className={itemStyle.getClasses()}
+        data-filename={item.fileName}
         onClick={this.handleCardClick.bind(this)}
       >
         <label
