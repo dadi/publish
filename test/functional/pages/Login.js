@@ -2,8 +2,6 @@
 
 const I = actor()
 
-const {assert, expect} = require('chai')
-
 module.exports = {
   // insert your locators and methods here
   locators: {
@@ -90,16 +88,16 @@ module.exports = {
     const token = x.accessToken
     const value = Date.now() + 1800 * 1000
 
-    await I.amOnPage(url)
-    await I.setCookie({
+    I.amOnPage(url)
+    I.setCookie({
       name: 'accessToken',
       value: token
     })
-    await I.setCookie({
+    I.setCookie({
       name: 'accessTokenExpiry',
       value: value.toString()
     })
-    await I.resizeWindow(1200, 650)
+    I.resizeWindow(1200, 650)
   },
 
   async deleteUser(id) {

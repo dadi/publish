@@ -1,6 +1,6 @@
 Feature('Misc Field Test Page - @smoke')
 
-BeforeSuite(async (mediaPage, fieldPage, loginPage) => {
+BeforeSuite(async (fieldPage, loginPage) => {
   await loginPage.deleteUser('misc-field')
   await loginPage.addUser('misc-field', '123456', [
     'media:mediaStore',
@@ -13,7 +13,7 @@ BeforeSuite(async (mediaPage, fieldPage, loginPage) => {
   )
 })
 
-AfterSuite(async (I, loginPage, mediaPage) => {
+AfterSuite(async (I, loginPage) => {
   await I.clearCookie('accessToken')
   await loginPage.deleteUser('misc-field')
 })

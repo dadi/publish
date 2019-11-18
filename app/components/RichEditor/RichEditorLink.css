@@ -1,3 +1,7 @@
+.container {
+  position: relative;
+}
+
 .popup {
   background-color: var(--edit-color-background-1);
   border-radius: var(--edit-radius-elem);

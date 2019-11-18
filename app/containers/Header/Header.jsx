@@ -39,8 +39,12 @@ class Header extends React.Component {
   positionNav() {
     const {areCollectionsInDrawer} = this.state
 
-    const shouldBeInDrawer =
-      this.outerRef.current.clientWidth < this.shadowRef.current.offsetWidth + 1
+    const outerWidth = this.outerRef.current.clientWidth
+    const innerWidth = this.shadowRef.current.offsetWidth
+
+    if (!outerWidth || !innerWidth) return
+
+    const shouldBeInDrawer = outerWidth < innerWidth + 1
 
     if (!shouldBeInDrawer && this.state.isDrawerOpen) {
       this.setState({isDrawerOpen: false})
