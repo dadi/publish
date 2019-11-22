@@ -35,7 +35,7 @@ export default class FieldStringList extends React.Component {
   }
 
   render() {
-    const {internalLink, schema, value} = this.props
+    const {internalLink, schema, value, fieldName} = this.props
 
     // If there's no value, we return `null`.
     if (!value) return null
@@ -73,7 +73,8 @@ export default class FieldStringList extends React.Component {
       return this.renderOptions([value], schema)
     }
 
-    return this.renderTrimmedValue(value)
+    // Render the value or the a link to the document
+    return this.renderValue(value, fieldName)
   }
 
   renderOptions(options, schema) {
@@ -110,6 +111,43 @@ export default class FieldStringList extends React.Component {
 
   renderTrimmedValue(value) {
     return <span className={styles['with-ellipsis']}>{value}</span>
+  }
+
+  renderValue(value, fieldName) {
+    // Copy the collection fields object for comparison
+    let fields = Object.assign({}, this.props.collection.fields)
+
+    // Reduce the fields object to only those listed in the table
+    Object.keys(fields).forEach(key => {
+      const field = fields[key]
+      if (
+        field.publish &&
+        field.publish.display &&
+        !field.publish.display.list
+      ) {
+        delete fields[key]
+      }
+    })
+
+    // If this field is the first in the table then render value as a link
+    if (Object.keys(fields)[0] == fieldName) {
+      const link = this.props.collection.path + '/' + this.props.document._id
+
+      return (
+        <Link
+          className={styles['list-link']}
+          onClick={this.markEvent}
+          onMouseEnter={this.hoverOn}
+          onMouseLeave={this.hoverOff}
+          to={link}
+        >
+          {value}
+        </Link>
+      )
+    }
+
+    // Otherwise return the trimmed value
+    return this.renderTrimmedValue(value)
   }
 
   renderLinkValue(value, template) {
