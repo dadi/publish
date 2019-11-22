@@ -143,6 +143,7 @@ class SignIn extends React.Component {
                       onChange={this.handleInputChange.bind(this, 'email')}
                       onInput={this.handleInputChange.bind(this, 'email')}
                       placeholder="Your username"
+                      autocapitalize="none"
                       value={email}
                     />
                   </Label>
