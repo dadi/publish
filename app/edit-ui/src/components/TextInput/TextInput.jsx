@@ -33,8 +33,14 @@ export default React.forwardRef(function TextInput(
   // Resizing section.
   const maybeResize = useCallback(() => {
     if (autoresize && !resizable && ref.current) {
-      ref.current.style.height = 'auto'
-      ref.current.style.height = `${ref.current.scrollHeight + 2}px`
+      const timer = setInterval(() => {
+        if (ref.current.scrollHeight > 0) {
+          clearInterval(timer)
+        }
+
+        ref.current.style.height = 'auto'
+        ref.current.style.height = `${ref.current.scrollHeight + 2}px`
+      }, 200)
     }
   }, [autoresize, ref, resizable])
 
