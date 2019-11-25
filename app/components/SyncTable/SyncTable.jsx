@@ -119,18 +119,28 @@ class SyncTable extends React.Component {
   goToDocument(id, event) {
     if (event.__innerClick) {
       event.__innerClick = undefined
-
       return
     }
 
     const {onBuildBaseUrl, route} = this.props
 
-    route.history.push(
-      onBuildBaseUrl({
-        documentId: id,
-        search: null
-      })
-    )
+    const url = onBuildBaseUrl({
+      documentId: id,
+      search: null
+    })
+
+    if (event.metaKey) {
+      return this.goToNewTab(url)
+    }
+
+    route.history.push(url)
+  }
+
+  goToNewTab(url) {
+    const win = window.open(url, '_blank')
+    if (win != null) {
+      win.focus()
+    }
   }
 
   render() {
