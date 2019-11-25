@@ -83,8 +83,13 @@ export default class FieldStringList extends React.Component {
 
     let optionsArray = options
 
+    // Remove empty strings from array
+    optionsArray = optionsArray.filter(function(e) {
+      return String(e).trim()
+    })
+
     if (optionsBlock) {
-      optionsArray = options.map(option => {
+      optionsArray = optionsArray.map(option => {
         const match = optionsBlock.find(optionBlock => {
           return optionBlock.value === option
         })
@@ -93,11 +98,11 @@ export default class FieldStringList extends React.Component {
           return match.label
         }
 
-        return this.renderTrimmedValue(option, maxLength / maxOptions)
+        return option.label
       })
     }
 
-    const excessOptions = options.length - maxOptions
+    const excessOptions = optionsArray.length - maxOptions
 
     if (excessOptions > 0) {
       optionsArray = optionsArray.slice(0, maxOptions)
