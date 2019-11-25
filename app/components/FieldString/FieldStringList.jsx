@@ -114,24 +114,13 @@ export default class FieldStringList extends React.Component {
   }
 
   renderValue(value, fieldName) {
-    // Copy the collection fields object for comparison
-    let fields = Object.assign({}, this.props.collection.fields)
+    // Get the string fields listed
+    const fields = this.props.collection.fields
 
-    // Reduce the fields object to only those listed in the table
-    Object.keys(fields).forEach(key => {
-      const field = fields[key]
-      if (
-        field.publish &&
-        field.publish.display &&
-        !field.publish.display.list
-      ) {
-        delete fields[key]
-      }
-    })
-
-    // If this field is the first in the table then render value as a link
-    if (Object.keys(fields)[0] == fieldName) {
-      const link = this.props.collection.path + '/' + this.props.document._id
+    // If this is the first field in the table then render value as a link
+    if (Object.keys(fields)[0] === fieldName) {
+      const link =
+        this.props.collection._publishLink + '/' + this.props.document._id
 
       return (
         <Link
