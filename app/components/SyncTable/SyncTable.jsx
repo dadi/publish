@@ -119,6 +119,7 @@ class SyncTable extends React.Component {
   goToDocument(id, event) {
     if (event.__innerClick) {
       event.__innerClick = undefined
+
       return
     }
 
@@ -138,7 +139,8 @@ class SyncTable extends React.Component {
 
   goToNewTab(url) {
     const win = window.open(url, '_blank')
-    if (win != null) {
+
+    if (win !== null) {
       win.focus()
     }
   }
