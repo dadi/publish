@@ -33,18 +33,22 @@ export default React.forwardRef(function TextInput(
   // Resizing section.
   const maybeResize = useCallback(() => {
     if (autoresize && !resizable && ref.current) {
-      const timer = setInterval(() => {
-        if (ref.current.scrollHeight > 0) {
-          clearInterval(timer)
-        }
-
-        ref.current.style.height = 'auto'
-        ref.current.style.height = `${ref.current.scrollHeight + 2}px`
-      }, 200)
+      ref.current.style.height = 'auto'
+      ref.current.style.height = `${ref.current.scrollHeight + 2}px`
     }
   }, [autoresize, ref, resizable])
 
-  useEffect(maybeResize, [value])
+  // useEffect(maybeResize, [value])
+  useEffect(() => {
+    maybeResize()
+    const timer = setInterval(() => {
+      if (ref.current.scrollHeight > 0) {
+        clearInterval(timer)
+      }
+
+      maybeResize()
+    }, 200)
+  }, [value])
 
   // onChange handling section.
   const onChange = useCallback(
