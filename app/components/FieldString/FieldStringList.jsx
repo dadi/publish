@@ -90,7 +90,7 @@ export default class FieldStringList extends React.Component {
         })
 
         if (match) {
-          return this.renderTrimmedValue(match.label, maxLength / maxOptions)
+          return match.label
         }
 
         return this.renderTrimmedValue(option, maxLength / maxOptions)
