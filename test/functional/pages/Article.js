@@ -543,9 +543,7 @@ module.exports = {
     const articlesNames = await I.grabTextFrom(this.locators.numEditArticles)
 
     I.click(
-      locate(
-        'span[class*="FieldString__with-ellipsis"] | a[class*="FieldString__list-link"]'
-      )
+      locate('*[class*="FieldString__"]')
         .withText(articlesNames[1].trim())
         .as('Article to Edit')
     )
@@ -595,9 +593,7 @@ module.exports = {
     I.dontSee(articlesNames[1])
     I.see('This Article Is Updated')
     I.click(
-      locate(
-        'span[class*="FieldString__with-ellipsis"] | a[class*="FieldString__list-link"]'
-      )
+      locate('*[class*="FieldString__"]')
         .withText('This Article Is Updated')
         .as('Updated Link')
     )
@@ -717,9 +713,7 @@ module.exports = {
 
     I.seeTotalHasDecreased(newTotal, total)
     I.click(
-      locate(
-        'span[class*="FieldString__with-ellipsis"] | a[class*="FieldString__list-link"]'
-      )
+      locate('*[class*="FieldString__"]')
         .withText(deleteArticles[1].trim())
         .as('Second Article to Delete')
     )
