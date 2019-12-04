@@ -834,7 +834,7 @@ module.exports = {
     I.pressKey('Enter')
     I.fillField(this.locators.bodyField, 'Link')
     I.pressKey(['Shift', 'Home', 'Shift'])
-    I.acceptPopup() 
+    I.acceptPopup()
     I.click(this.locators.linkButton)
     // I.waitForElement(this.locators.linkField)
     // I.fillField(this.locators.linkField, 'www.link.com')
