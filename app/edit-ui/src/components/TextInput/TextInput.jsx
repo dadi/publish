@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect, useRef} from 'react'
+import React, {useCallback, useEffect, useMemo, useRef} from 'react'
 import classnames from '../../util/classnames'
 // import PropTypes from 'prop-types'
 import styles from './TextInput.css'
@@ -38,11 +38,18 @@ export default React.forwardRef(function TextInput(
     }
   }, [autoresize, ref, resizable])
 
+  // Handle resize
   useEffect(maybeResize, [value])
+
+  // Handle resize for secondary tabs
+  useMemo(() => {
+    setTimeout(() => maybeResize(), 1)
+  })
 
   // onChange handling section.
   const onChange = useCallback(
     e => {
+      console.log('onChange')
       maybeResize()
       props.onChange(e)
     },

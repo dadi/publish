@@ -65,6 +65,8 @@
 
 .button {
   flex: 1 !important;
+  padding-top: 11px;
+  padding-bottom: 11px;
 }
 
 .button:not(:first-child) {
