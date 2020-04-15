@@ -5,6 +5,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [3.0.2](2019-12-09)
+
+### Fixed
+
+- [#823](https://github.com/dadi/publish/issues/823): fix string select appear as '[object]' in list view
+- [#824](https://github.com/dadi/publish/issues/824): fix string options on secondary tabs not rendering
+- [#825](https://github.com/dadi/publish/issues/825): support for cmd+click to open entries in a new tab
+
+### Added 
+
+- [#827](https://github.com/dadi/publish/pull/827): disable auto-capitalize for username on sign-in
+
 ## [3.0.1](2019-11-18)
 
 ### Fixed

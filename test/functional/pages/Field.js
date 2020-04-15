@@ -895,7 +895,8 @@ module.exports = {
     I.seeElement(this.locators.thursdayCal)
     I.seeElement(this.locators.fridayCal)
     I.seeElement(this.locators.saturdayCal)
-    const momentMonth = moment(new Date()).format('MMMM YYYY')
+
+    const momentMonth = moment().format('MMMM YYYY')
     const currentMonth = await I.grabTextFrom(this.locators.currentDate)
 
     I.seeStringsAreEqual(currentMonth, momentMonth)
