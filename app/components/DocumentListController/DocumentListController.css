@@ -8,14 +8,11 @@
 .drawer {
   display: flex;
   background-color: var(--edit-color-background-1);
-  box-shadow: var(--edit-shadow-4px-bottom);
   align-items: center;
 }
 
 .top-bar {
   justify-content: space-between;
-  border-bottom: var(--edit-border-width-standard) solid
-    var(--edit-color-background-1);
 }
 
 .container.filters-open .drawer {

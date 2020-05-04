@@ -74,6 +74,7 @@ class DocumentTableList extends React.Component {
 
     this.handleRowRender = this.handleRowRender.bind(this)
     this.renderColumnHeader = this.renderColumnHeader.bind(this)
+    this.renderHeadRow = this.renderHeadRow.bind(this)
   }
 
   getSelectedRows() {
@@ -87,6 +88,18 @@ class DocumentTableList extends React.Component {
     }, {})
 
     return selectedRows
+  }
+
+  renderHeadRow() {
+    const selection = Object.keys(this.props.selectedDocuments)
+
+    if (selection.length === 0) return null
+
+    return (
+      <div className={styles['head-row']}>
+        <p>{selection.length} selected</p>
+      </div>
+    )
   }
 
   handleRowRender(value, data, column) {
@@ -116,9 +129,7 @@ class DocumentTableList extends React.Component {
       onSelect,
       order,
       selectedDocuments,
-      sort,
-      subtitle,
-      title
+      sort
     } = this.props
     const collectionFields = (collection && collection.fields) || {}
     const listableFields = fieldsToDisplay.reduce((fields, fieldName) => {
@@ -138,34 +149,38 @@ class DocumentTableList extends React.Component {
     })
 
     return (
-      <>
-        {title && <h1 className={styles.title}>{title}</h1>}
-
-        {subtitle && <p className={styles.subtitle}>{subtitle}</p>}
-
-        <div className={styles['table-wrapper']}>
-          <SyncTable
-            columns={tableColumns}
-            data={documents}
-            onBuildBaseUrl={onBuildBaseUrl}
-            onRender={this.handleRowRender}
-            onSelect={onSelect}
-            renderColumnHeader={this.renderColumnHeader}
-            selectedRows={selectedDocuments}
-            selectLimit={Infinity}
-            sortable={true}
-            sortBy={sort}
-            sortOrder={order}
-          />
-          <div className={styles.after} />
-        </div>
-      </>
+      <div className={styles['table-wrapper']}>
+        <SyncTable
+          columns={tableColumns}
+          data={documents}
+          onBuildBaseUrl={onBuildBaseUrl}
+          onRender={this.handleRowRender}
+          onSelect={onSelect}
+          renderColumnHeader={this.renderColumnHeader}
+          renderHeadRow={this.renderHeadRow}
+          selectedRows={selectedDocuments}
+          selectLimit={Infinity}
+          sortable={true}
+          sortBy={sort}
+          sortOrder={order}
+        />
+      </div>
     )
   }
 
   renderColumnHeader(column) {
-    const {sort: sortBy, onSort, order: sortOrder} = this.props
+    const {
+      selectedDocuments,
+      sort: sortBy,
+      onSort,
+      order: sortOrder
+    } = this.props
     const isSorted = sortBy === column.id
+    const hasSelection = Object.keys(selectedDocuments).length > 0
+    const headerStyle = new Style(styles, 'column-header').addIf(
+      'with-selection',
+      hasSelection
+    )
     const newOrder = isSorted && sortOrder === 'asc' ? 'desc' : 'asc'
     const iconStyle = new Style(styles, 'arrow')
       .addIf('asc', isSorted && sortOrder === 'asc')
@@ -185,7 +200,7 @@ class DocumentTableList extends React.Component {
 
     return (
       <a
-        className={styles['column-header']}
+        className={headerStyle.getClasses()}
         data-column={sortBy}
         data-name="column-header"
         data-sort-order={newSort.sortOrder}

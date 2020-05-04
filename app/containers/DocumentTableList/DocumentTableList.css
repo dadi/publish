@@ -27,8 +27,6 @@
   --padding-small: var(--edit-margin-lg);
   --padding-large: var(--edit-margin-xxl);
 
-  overflow-x: auto;
-  padding-left: var(--padding-small);
   display: flex;
   -webkit-overflow-scrolling: touch;
 }
@@ -39,10 +37,6 @@
 }
 
 @media (min-width: 1024px) {
-  .table-wrapper {
-    padding-left: var(--padding-large);
-  }
-
   .table-wrapper .after {
     flex: 0 0 var(--padding-large);
     width: var(--padding-large);
@@ -50,20 +44,16 @@
 }
 
 .column-header {
-  --cell-y-padding: var(--edit-margin-md);
-  --cell-x-padding: calc(var(--cell-y-padding) / 2);
-  --cell-padding: var(--cell-y-padding) var(--cell-x-padding);
-
+  height: 60px; /* --editif-table-header-cell-height-expanded */
   display: flex;
   align-items: center;
   cursor: pointer;
   color: var(--edit-color-heading);
   font-weight: 700;
-  padding: var(--cell-padding);
 }
 
-.column-header:hover {
-  background-color: var(--edit-color-grayscale-85);
+.column-header.with-selection {
+  height: 34px; /* --editif-table-header-cell-height-expanded - --editif-table-header-row-height */
 }
 
 th:last-child .column-header {
@@ -115,4 +105,12 @@ th:last-child .column-header {
 
 .column-header:hover .arrow:after {
   bottom: -1px;
+}
+
+.head-row {
+  display: flex;
+  align-items: center;
+  padding: 0 var(--edit-margin-md);
+  border-top: 1px solid white;
+  height: 26px; /* --editif-table-header-row-height */
 }
