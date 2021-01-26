@@ -175,6 +175,7 @@ class DocumentEditToolbar extends React.Component {
     } = this.props
     const {api} = state.app.config
     const {document: documentStore} = state
+
     const document = documentStore[contentKey] || {}
     const {isSaving, remote = null, validationErrors} = document
     const hasConnectionIssues = state.app.networkStatus !== Constants.NETWORK_OK
@@ -205,6 +206,89 @@ class DocumentEditToolbar extends React.Component {
       'expanded',
       isExpanded
     )
+
+    /*
+     *
+     * NB: for this changes to take effect, following changes need to be done to Edit config:
+     *
+     {
+      ...,
+      "apis": [{
+        ...,
+        "routesWithDisabledCRUD": [
+        {
+          "route": "/testfilter",
+          "isExportDownloadPage": true,
+          "downloadExportSecureKey": "...",
+          "disableUnsavedChangesNotification": true
+        }
+        ]
+      }
+      */
+
+    // check if this page should be customized
+    const customizedRouteConfig = state.app.config.api.routesWithDisabledCRUD
+      ? state.app.config.api.routesWithDisabledCRUD.find(
+          routeConfig => this.props.route.path === routeConfig.route
+        )
+      : false
+
+    const isOrderExportDownloadPage =
+      customizedRouteConfig && customizedRouteConfig.isExportDownloadPage
+    let ordersExportFilterData = {}
+
+    if (isOrderExportDownloadPage) {
+      const docData = Object.values(this.props.state.document)[0]
+
+      if (docData && (docData.local || docData.remote)) {
+        ordersExportFilterData = {
+          ...((docData && docData.remote) || {}),
+          ...((docData && docData.local) || {})
+        }
+      }
+    }
+
+    let buttonElement = (
+      <Button
+        accent="positive"
+        className={styles['save-button']}
+        disabled={
+          hasConnectionIssues ||
+          hasValidationErrors ||
+          isSaving ||
+          (isOrderExportDownloadPage &&
+            (!ordersExportFilterData.fromDate ||
+              !ordersExportFilterData.toDate))
+        }
+        isLoading={isSaving}
+        onClick={
+          (!isOrderExportDownloadPage && saveOptions.primary.action) ||
+          undefined
+        }
+      >
+        {isOrderExportDownloadPage ? 'Download Export' : 'Save document'}
+      </Button>
+    )
+
+    if (ordersExportFilterData.fromDate && ordersExportFilterData.toDate) {
+      const dateFrom = new Date(ordersExportFilterData.fromDate)
+        .toISOString()
+        .substr(0, 19)
+      const dateTo = new Date(ordersExportFilterData.toDate)
+        .toISOString()
+        .substr(0, 19)
+
+      const code = customizedRouteConfig.downloadExportSecureKey
+
+      buttonElement = (
+        <a
+          href={`https://api.prod.internal.bolfoods.com/orderExport?k=${code}&limit=100&from=${dateFrom}&to=${dateTo}`}
+          download
+        >
+          {buttonElement}
+        </a>
+      )
+    }
 
     return (
       <footer className={containerStyle.getClasses()}>
@@ -280,17 +364,7 @@ class DocumentEditToolbar extends React.Component {
             )}
 
             {isSingleDocument ? (
-              <Button
-                accent="positive"
-                className={styles['save-button']}
-                disabled={Boolean(
-                  hasConnectionIssues || hasValidationErrors || isSaving
-                )}
-                isLoading={isSaving}
-                onClick={saveOptions.primary.action}
-              >
-                Save document
-              </Button>
+              buttonElement
             ) : (
               <ButtonWithOptions
                 accent="positive"

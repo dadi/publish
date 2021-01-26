@@ -47,12 +47,31 @@ class DocumentEditView extends React.Component {
   }
 
   componentDidUpdate(oldProps) {
-    const {actions, collection, contentKey, document, documentId} = this.props
+    const {
+      state,
+      actions,
+      collection,
+      contentKey,
+      document,
+      documentId
+    } = this.props
     const {document: oldDocument} = oldProps
     const isSaving = (oldDocument.saveAttempts || 0) < document.saveAttempts
 
+    // check if this page should be customized
+    const customizedRouteConfig = state.app.config.api.routesWithDisabledCRUD
+      ? state.app.config.api.routesWithDisabledCRUD.find(
+          routeConfig => this.props.route.path === routeConfig.route
+        )
+      : false
+
+    const shoulddisableUnsavedChangesNotification =
+      customizedRouteConfig &&
+      customizedRouteConfig.disableUnsavedChangesNotification
+
     // Are there unsaved changes?
     if (
+      !shoulddisableUnsavedChangesNotification &&
       !document.isLoading &&
       document.wasLoadedFromLocalStorage &&
       !this.shownUnsavedChangesNotification
