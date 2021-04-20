@@ -63,12 +63,11 @@ export default class DateTime {
   }
 
   format(format, convertToUTC = true) {
+    // convertToUTC - this param doesn't seem to be ever used in the code... so always defaults to true
     let output = null
 
     try {
-      const date = convertToUTC
-        ? this._getUTCDateFromLocalDate(this.localDate)
-        : this.localDate
+      const date = this.localDate
 
       if (format === 'unix') {
         output =
@@ -85,7 +84,11 @@ export default class DateTime {
     return output
   }
 
-  getDate() {
+  getDate(options ={toUTC:false}) {
+    if(options.toUTC){
+      return this._getUTCDateFromLocalDate(this.localDate)
+    }
+
     return this.localDate
   }
 
