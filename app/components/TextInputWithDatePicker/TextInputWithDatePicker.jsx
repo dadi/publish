@@ -140,9 +140,15 @@ export default class TextInputWithDatePicker extends React.Component {
   handleInputChange(event) {
     const {format, onChange} = this.props
     const {value} = event.target
-    const newDate = new DateTime(event.target.value, format)
+    const newDate = new DateTime(
+      event.target.value,
+      format === 'unix' ? 'YYYY/MM/DD HH:mm' : format
+    )
 
-    if (value.length === format.length && newDate.isValid()) {
+    if (
+      (format === 'unix' || value.length === format.length) &&
+      newDate.isValid()
+    ) {
       if (typeof onChange === 'function') {
         const utcDate = newDate.getDate({toUTC: true})
 
@@ -219,6 +225,7 @@ export default class TextInputWithDatePicker extends React.Component {
       containerClassName
     )
     const showTimePicker =
+      format === 'unix' ||
       typeof format !== 'string' ||
       format.includes('HH') ||
       format.includes('mm')
