@@ -225,6 +225,7 @@ export default class TextInputWithDatePicker extends React.Component {
       containerClassName
     )
     const showTimePicker =
+      format === 'unix' ||
       typeof format !== 'string' ||
       format.includes('HH') ||
       format.includes('mm')
