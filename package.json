@@ -50,7 +50,7 @@
     "is-hotkey": "^0.1.4",
     "js-cookie": "^2.2.0",
     "js-promise-queue": "^1.1.0",
-    "lint-staged": "^8.2.1",
+    "lint-staged": "^13.1.0",
     "mini-css-extract-plugin": "^0.6.0",
     "moment": "^2.24.0",
     "nodemon": "^1.19.1",
